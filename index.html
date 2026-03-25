@@ -21,7 +21,8 @@
             transition: all 0.5s ease;
         }
 
-        /* ===== SCAN LINES ===== */
+        /* ===== DUAL SCANLINES ===== */
+        /* Fine scan — very subtle */
         body::before {
             content: '';
             position: fixed;
@@ -31,27 +32,61 @@
             background: repeating-linear-gradient(
                 0deg,
                 transparent,
-                transparent 3px,
-                rgba(255,255,255,0.025) 3px,
-                rgba(255,255,255,0.025) 4px
+                transparent 2px,
+                rgba(255,255,255,0.018) 2px,
+                rgba(255,255,255,0.018) 4px
             );
         }
 
-        .scan-line {
+        /* Bold scan — more visible */
+        body::after {
+            content: '';
             position: fixed;
-            left: 0; top: 0;
-            width: 100%; height: 1px;
-            background: rgba(255,255,255,0.55);
-            z-index: 49;
+            inset: 0;
+            z-index: 50;
             pointer-events: none;
-            animation: scanDown 7s linear infinite;
-            box-shadow: 0 0 8px rgba(255,255,255,0.3);
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 8px,
+                rgba(0,0,0,0.06) 8px,
+                rgba(0,0,0,0.06) 10px
+            );
         }
 
-        @keyframes scanDown {
-            0%   { top: -2px; opacity: 0; }
-            4%   { opacity: 1; }
-            96%  { opacity: 1; }
+        /* Moving scan beam */
+        .scan-beam {
+            position: fixed;
+            left: 0; top: 0;
+            width: 100%; height: 3px;
+            background: linear-gradient(
+                180deg,
+                transparent,
+                rgba(255,255,255,0.12) 40%,
+                rgba(255,255,255,0.2) 50%,
+                rgba(255,255,255,0.12) 60%,
+                transparent
+            );
+            z-index: 49;
+            pointer-events: none;
+            animation: scanBeam 4s linear infinite;
+        }
+
+        body.day .scan-beam {
+            background: linear-gradient(
+                180deg,
+                transparent,
+                rgba(0,0,0,0.08) 40%,
+                rgba(0,0,0,0.14) 50%,
+                rgba(0,0,0,0.08) 60%,
+                transparent
+            );
+        }
+
+        @keyframes scanBeam {
+            0%   { top: -4px; opacity: 0; }
+            5%   { opacity: 1; }
+            95%  { opacity: 1; }
             100% { top: 100%; opacity: 0; }
         }
 
@@ -77,93 +112,87 @@
         body.day .dark-bg { opacity: 0; }
         body.day .day-bg  { opacity: 1; }
 
-        /* ===== GLITCH ON BACKGROUND ===== */
-        .bg-glitch {
+        /* ===== GLITCH ON BACKGROUND — EVERY SECOND ===== */
+        .glitch-layer {
             position: fixed;
             inset: 0;
             z-index: 2;
             pointer-events: none;
             background: url('dark-bg.webp') center/cover no-repeat;
-            animation: bgGlitch 5s steps(1) infinite;
         }
 
-        body.day .bg-glitch {
-            background: url('day-bg.webp') center/cover no-repeat;
-        }
+        body.day .glitch-layer { background: url('day-bg.webp') center/cover no-repeat; }
 
-        @keyframes bgGlitch {
-            0%, 80%, 100% { clip-path: none; transform: none; filter: none; opacity: 0; }
-            82% {
-                clip-path: polygon(0 15%, 100% 15%, 100% 28%, 0 28%);
-                transform: translate(-6px, 0) scale(1.02);
-                filter: hue-rotate(90deg) saturate(2);
-                opacity: 0.5;
-            }
-            84% {
-                clip-path: polygon(0 55%, 100% 55%, 100% 68%, 0 68%);
-                transform: translate(6px, 0) scale(1.02);
-                filter: hue-rotate(-90deg) saturate(1.5) brightness(1.3);
+        /* Slice 1 — cyan/blue shift */
+        .g1 { animation: g1 1s steps(1) infinite; }
+        @keyframes g1 {
+            0%,78%,100% { clip-path: none; transform: none; filter: none; opacity: 0; }
+            80% {
+                clip-path: polygon(0 10%, 100% 10%, 100% 25%, 0 25%);
+                transform: translate(-5px, 0) scale(1.01);
+                filter: hue-rotate(80deg) saturate(2);
                 opacity: 0.45;
             }
-            86% {
-                clip-path: polygon(0 0, 100% 0, 100% 40%, 0 40%);
-                transform: translate(3px, 0);
-                filter: hue-rotate(45deg);
-                opacity: 0.35;
-            }
-            88% {
-                clip-path: polygon(0 70%, 100% 70%, 100% 85%, 0 85%);
-                transform: translate(-4px, 0) scale(1.01);
-                filter: hue-rotate(-45deg) brightness(1.2);
+            82% {
+                clip-path: polygon(0 60%, 100% 60%, 100% 72%, 0 72%);
+                transform: translate(5px, 0);
+                filter: hue-rotate(80deg) saturate(1.8);
                 opacity: 0.4;
             }
-            90%, 99% { clip-path: none; transform: none; filter: none; opacity: 0; }
+            84% { opacity: 0; }
         }
 
-        /* Glitch slice 2 — red channel */
-        .bg-glitch2 {
-            position: fixed;
-            inset: 0;
-            z-index: 3;
-            pointer-events: none;
-            background: url('dark-bg.webp') center/cover no-repeat;
-            animation: bgGlitch2 5s steps(1) infinite;
-        }
-
-        body.day .bg-glitch2 {
-            background: url('day-bg.webp') center/cover no-repeat;
-        }
-
-        @keyframes bgGlitch2 {
-            0%, 81%, 100% { clip-path: none; transform: translateX(0); opacity: 0; }
+        /* Slice 2 — red/desaturation */
+        .g2 { animation: g2 1s steps(1) infinite; }
+        @keyframes g2 {
+            0%,81%,100% { clip-path: none; transform: none; filter: none; opacity: 0; }
             83% {
-                clip-path: polygon(0 40%, 100% 40%, 100% 52%, 0 52%);
-                transform: translate(8px, 0);
-                filter: brightness(1.4) saturate(0) hue-rotate(0deg);
+                clip-path: polygon(0 38%, 100% 38%, 100% 50%, 0 50%);
+                transform: translate(7px, 0);
+                filter: brightness(1.5) saturate(0) hue-rotate(0deg);
                 opacity: 0.5;
             }
             85% {
-                clip-path: polygon(0 5%, 100% 5%, 100% 18%, 0 18%);
-                transform: translate(-5px, 0);
+                clip-path: polygon(0 78%, 100% 78%, 100% 88%, 0 88%);
+                transform: translate(-4px, 0);
                 filter: brightness(1.3) saturate(0);
                 opacity: 0.4;
             }
             87% { opacity: 0; }
         }
 
-        /* ===== TOP LEFT — BRAND ===== */
+        /* Slice 3 — horizontal shift */
+        .g3 { animation: g3 1s steps(1) infinite; }
+        @keyframes g3 {
+            0%,84%,100% { clip-path: none; transform: none; opacity: 0; }
+            86% {
+                clip-path: polygon(0 0, 100% 0, 100% 18%, 0 18%);
+                transform: translate(3px, 0);
+                filter: hue-rotate(-60deg) brightness(1.2);
+                opacity: 0.35;
+            }
+            88% { opacity: 0; }
+        }
+
+        /* Slice 4 — bottom slice */
+        .g4 { animation: g4 1s steps(1) infinite; }
+        @keyframes g4 {
+            0%,86%,100% { clip-path: none; transform: none; opacity: 0; }
+            88% {
+                clip-path: polygon(0 80%, 100% 80%, 100% 95%, 0 95%);
+                transform: translate(-6px, 0) scale(1.01);
+                filter: hue-rotate(40deg) brightness(1.15);
+                opacity: 0.38;
+            }
+            90% { opacity: 0; }
+        }
+
+        /* ===== BRAND — TOP LEFT ===== */
         .brand {
             position: fixed;
             top: 28px; left: 32px;
             z-index: 10;
-            transition: color 0.5s;
         }
-
-        body.dark .brand { color: rgba(255,255,255,0.9); }
-        body.day  .brand { color: rgba(15,15,35,0.85); }
-
-        body.dark .brand-name { color: rgba(255,255,255,0.9); text-shadow: none; }
-        body.day  .brand-name { color: rgba(15,15,35,0.85); text-shadow: none; }
 
         .brand-name {
             font-family: 'Orbitron', sans-serif;
@@ -174,6 +203,9 @@
             line-height: 1;
         }
 
+        body.dark  .brand-name { color: rgba(255,255,255,0.92); }
+        body.day   .brand-name { color: rgba(10,10,30,0.88); }
+
         .brand-sub {
             font-size: 0.55rem;
             letter-spacing: 5px;
@@ -181,37 +213,40 @@
             margin-top: 5px;
         }
 
+        body.dark  .brand-sub { color: rgba(255,255,255,0.5); }
+        body.day   .brand-sub { color: rgba(10,10,30,0.5); }
+
         /* ===== TOGGLE — TOP RIGHT ===== */
         .toggle {
             position: fixed;
-            top: 26px; right: 32px;
+            top: 22px; right: 32px;
             z-index: 10;
-            width: 44px; height: 44px;
+            width: 50px; height: 50px;
             border-radius: 50%;
             cursor: pointer;
             display: flex; align-items: center; justify-content: center;
             background: transparent;
             border: none;
-            transition: color 0.4s;
         }
 
-        body.dark .toggle { color: rgba(255,255,255,0.85); }
-        body.day  .toggle { color: rgba(15,15,35,0.8); }
+        .toggle svg {
+            width: 20px; height: 20px;
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        body.dark  .toggle { color: rgba(255,255,255,0.9); }
+        body.day   .toggle { color: rgba(10,10,30,0.85); }
 
         .toggle:hover { opacity: 0.6; }
-        .toggle svg { width: 20px; height: 20px; stroke-width: 1.5; }
 
         /* ===== CORNER TICKS ===== */
         .tick {
-            position: fixed;
-            z-index: 10;
-            width: 14px; height: 14px;
-            pointer-events: none;
+            position: fixed; z-index: 10; width: 14px; height: 14px; pointer-events: none;
         }
-        .tick::before, .tick::after { content: ''; position: absolute; opacity: 0.35; transition: opacity 0.4s; }
-        body.dark .tick::before, body.dark .tick::after { background: rgba(255,255,255,0.35); }
-        body.day  .tick::before, body.day  .tick::after { background: rgba(15,15,35,0.35); }
-
+        .tick::before, .tick::after { content: ''; position: absolute; transition: background 0.4s, opacity 0.4s; }
+        body.dark  .tick::before, body.dark  .tick::after { background: rgba(255,255,255,0.35); }
+        body.day   .tick::before, body.day   .tick::after { background: rgba(10,10,30,0.35); }
         .tick-tl { top: 18px; left: 18px; }
         .tick-tl::before { top: 0; left: 0; width: 100%; height: 1px; }
         .tick-tl::after  { top: 0; left: 0; width: 1px; height: 100%; }
@@ -223,7 +258,7 @@
         @media (max-width: 500px) {
             .brand-name { font-size: 0.85rem; letter-spacing: 3px; }
             .brand { top: 22px; left: 22px; }
-            .toggle { top: 20px; right: 22px; }
+            .toggle { top: 18px; right: 22px; width: 44px; height: 44px; }
         }
     </style>
 </head>
@@ -234,11 +269,13 @@
     <div class="bg day-bg"></div>
 
     <!-- Glitch Layers on Background -->
-    <div class="bg-glitch"></div>
-    <div class="bg-glitch2"></div>
+    <div class="glitch-layer g1"></div>
+    <div class="glitch-layer g2"></div>
+    <div class="glitch-layer g3"></div>
+    <div class="glitch-layer g4"></div>
 
-    <!-- Scan Line -->
-    <div class="scan-line"></div>
+    <!-- Moving Scan Beam -->
+    <div class="scan-beam"></div>
 
     <!-- Corner Ticks -->
     <div class="tick tick-tl"></div>
@@ -252,38 +289,35 @@
 
     <!-- Toggle — TOP RIGHT -->
     <button class="toggle" id="toggle-btn" title="Toggle Theme">
-        <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <!-- Sun = shown in dark mode → click to switch to day -->
+        <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
         </svg>
-        <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+        <!-- Moon = shown in day mode → click to switch to dark -->
+        <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="display:none">
             <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
         </svg>
     </button>
 
     <script>
         const toggle = document.getElementById('toggle-btn');
-        const sunIcon = document.getElementById('icon-sun');
-        const moonIcon = document.getElementById('icon-moon');
-
+        const sun  = document.getElementById('icon-sun');
+        const moon = document.getElementById('icon-moon');
         let isDark = true;
-
-        function applyTheme(dark) {
-            if (dark) {
-                document.body.classList.add('dark');
-                document.body.classList.remove('day');
-                sunIcon.style.display  = 'block';
-                moonIcon.style.display = 'none';
-            } else {
-                document.body.classList.add('day');
-                document.body.classList.remove('dark');
-                sunIcon.style.display  = 'none';
-                moonIcon.style.display = 'block';
-            }
-        }
 
         toggle.addEventListener('click', () => {
             isDark = !isDark;
-            applyTheme(isDark);
+            if (isDark) {
+                document.body.classList.add('dark');
+                document.body.classList.remove('day');
+                sun.style.display  = 'block';
+                moon.style.display = 'none';
+            } else {
+                document.body.classList.add('day');
+                document.body.classList.remove('dark');
+                sun.style.display  = 'none';
+                moon.style.display = 'block';
+            }
         });
     </script>
 </body>
