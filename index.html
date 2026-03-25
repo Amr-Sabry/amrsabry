@@ -17,7 +17,7 @@
         }
 
         /* ===== DUAL SCANLINES — ultra close + thick ===== */
-        /* Fine lines every 1px */
+        /* Fine lines every 2px */
         body::before {
             content: '';
             position: fixed;
@@ -28,8 +28,8 @@
                 0deg,
                 transparent,
                 transparent 2px,
-                rgba(180,180,180,0.05) 2px,
-                rgba(180,180,180,0.05) 4px
+                rgba(180,180,180,0.025) 2px,
+                rgba(180,180,180,0.025) 4px
             );
         }
 
@@ -44,8 +44,8 @@
                 0deg,
                 transparent,
                 transparent 6px,
-                rgba(180,180,180,0.10) 6px,
-                rgba(180,180,180,0.10) 10px
+                rgba(180,180,180,0.05) 6px,
+                rgba(180,180,180,0.05) 10px
             );
         }
 
@@ -60,26 +60,26 @@
             background: linear-gradient(
                 180deg,
                 transparent,
-                rgba(180,180,180,0.15) 40%,
-                rgba(180,180,180,0.25) 50%,
-                rgba(180,180,180,0.15) 60%,
+                rgba(180,180,180,0.07) 40%,
+                rgba(180,180,180,0.12) 50%,
+                rgba(180,180,180,0.07) 60%,
                 transparent
             );
-            animation: scanBeam 3s linear infinite;
+            animation: scanBeam 6s linear infinite;
         }
 
         .scan-beam.b2 {
             height: 6px;
-            opacity: 0.5;
-            animation: scanBeam2 7s linear infinite;
-            animation-delay: -2s;
+            opacity: 0.4;
+            animation: scanBeam2 10s linear infinite;
+            animation-delay: -3s;
         }
 
         .scan-beam.b3 {
             height: 2px;
-            opacity: 0.3;
-            animation: scanBeam3 5s linear infinite;
-            animation-delay: -4s;
+            opacity: 0.25;
+            animation: scanBeam3 8s linear infinite;
+            animation-delay: -5s;
         }
 
         @keyframes scanBeam {
@@ -91,8 +91,8 @@
 
         @keyframes scanBeam2 {
             0%   { top: -6px; opacity: 0; }
-            5%   { opacity: 0.7; }
-            95%  { opacity: 0.7; }
+            5%   { opacity: 0.8; }
+            95%  { opacity: 0.8; }
             100% { top: 100%; opacity: 0; }
         }
 
