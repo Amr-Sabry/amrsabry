@@ -5,115 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Amr Sabry | Creative Director</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
             --accent: #6C63FF;
             --accent2: #00E5FF;
-            --text-dark: #ffffff;
-            --text-light: #1a1a2e;
+            --c: rgba(255,255,255,0.88);
+            --c-sub: rgba(255,255,255,0.45);
         }
 
         body {
-            font-family: 'Exo 2', sans-serif;
+            font-family: 'Space Mono', monospace;
             min-height: 100vh;
             overflow: hidden;
-            transition: all 0.6s ease;
+            transition: all 0.5s ease;
         }
 
-        /* ===== CRT SCANLINES ===== */
+        body.day { --c: rgba(15,15,35,0.82); --c-sub: rgba(15,15,35,0.45); }
+
+        /* ===== SCAN LINES ===== */
         body::before {
             content: '';
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            inset: 0;
             z-index: 50;
             pointer-events: none;
             background: repeating-linear-gradient(
                 0deg,
                 transparent,
-                transparent 2px,
-                rgba(0, 0, 0, 0.03) 2px,
-                rgba(0, 0, 0, 0.03) 4px
+                transparent 3px,
+                rgba(255,255,255,0.025) 3px,
+                rgba(255,255,255,0.025) 4px
             );
         }
 
-        /* ===== SCANNING LINE ===== */
         .scan-line {
             position: fixed;
             left: 0; top: 0;
-            width: 100%; height: 2px;
-            background: linear-gradient(90deg,
-                transparent 0%,
-                rgba(108, 99, 255, 0.15) 20%,
-                rgba(0, 229, 255, 0.25) 50%,
-                rgba(108, 99, 255, 0.15) 80%,
-                transparent 100%
-            );
+            width: 100%; height: 1px;
+            background: rgba(255,255,255,0.55);
             z-index: 49;
             pointer-events: none;
-            animation: scan 6s linear infinite;
+            animation: scanDown 7s linear infinite;
+            box-shadow: 0 0 8px rgba(255,255,255,0.3);
         }
 
-        @keyframes scan {
+        @keyframes scanDown {
             0%   { top: -2px; opacity: 0; }
-            5%   { opacity: 1; }
-            95%  { opacity: 1; }
+            4%   { opacity: 1; }
+            96%  { opacity: 1; }
             100% { top: 100%; opacity: 0; }
-        }
-
-        /* ===== GLITCH Flicker on load ===== */
-        @keyframes glitchIn {
-            0%   { opacity: 0; transform: translateX(-2px); clip-path: inset(40% 0 20% 0); }
-            20%  { opacity: 1; transform: translateX(2px);  clip-path: inset(10% 0 60% 0); }
-            40%  { transform: translateX(-1px); clip-path: inset(70% 0 5% 0); }
-            60%  { transform: translateX(1px);  clip-path: inset(30% 0 40% 0); }
-            80%  { transform: translateX(0);    clip-path: inset(0% 0 0% 0); }
-            100% { opacity: 1; transform: translateX(0); clip-path: inset(0% 0 0% 0); }
-        }
-
-        @keyframes glitchText {
-            0%, 100% { text-shadow: none; }
-            92% { text-shadow: none; }
-            93% { text-shadow: 2px 0 var(--accent), -2px 0 var(--accent2); }
-            94% { text-shadow: -2px 0 var(--accent), 2px 0 var(--accent2); }
-            95% { text-shadow: none; }
-            96% { text-shadow: 1px 0 var(--accent2), -1px 0 var(--accent); }
-        }
-
-        /* ===== RGB Split on brand hover ===== */
-        @keyframes rgbSplit {
-            0%, 100% {
-                text-shadow: none;
-                transform: translate(0);
-            }
-            25% {
-                text-shadow: 2px 0 var(--accent), -2px 0 var(--accent2);
-                transform: translate(0);
-            }
-            50% {
-                text-shadow: -2px 0 var(--accent2), 2px 0 var(--accent);
-                transform: translate(1px, -1px);
-            }
-            75% {
-                text-shadow: 1px 0 var(--accent), -1px 0 var(--accent2);
-                transform: translate(-1px, 1px);
-            }
-        }
-
-        @keyframes flicker {
-            0%, 97%, 100% { opacity: 1; }
-            98% { opacity: 0.85; }
-            99% { opacity: 1; }
         }
 
         /* ===== BACKGROUNDS ===== */
         .bg {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            inset: 0;
             z-index: 0;
             transition: opacity 0.6s ease;
         }
@@ -130,190 +79,112 @@
         }
 
         body.day .dark-bg { opacity: 0; }
-        body.day .day-bg { opacity: 1; }
+        body.day .day-bg  { opacity: 1; }
 
-        /* ===== TOP BAR ===== */
-        .top-bar {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 20px 30px;
-        }
-
-        /* Brand - CENTERED */
+        /* ===== TOP LEFT — BRAND ===== */
         .brand {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, calc(-50% + 20px));
-            text-align: center;
+            top: 28px; left: 32px;
             z-index: 10;
-            animation: glitchIn 1.2s ease forwards, flicker 8s ease infinite;
+            color: var(--c);
+            transition: color 0.5s;
         }
-
-        body.dark .brand { color: var(--text-dark); }
-        body.day .brand { color: var(--text-light); }
 
         .brand-name {
             font-family: 'Orbitron', sans-serif;
-            font-size: 2.2rem;
+            font-size: 1.05rem;
             font-weight: 900;
-            letter-spacing: 6px;
+            letter-spacing: 5px;
             text-transform: uppercase;
             line-height: 1;
-        }
-
-        body.dark .brand-name {
-            text-shadow: 0 0 20px rgba(108, 99, 255, 0.3);
-        }
-
-        .brand:hover .brand-name {
-            animation: rgbSplit 0.4s ease infinite, glitchText 4s ease infinite;
+            color: var(--c);
+            transition: color 0.5s;
         }
 
         .brand-sub {
-            font-size: 0.6rem;
-            font-weight: 300;
-            letter-spacing: 8px;
-            opacity: 0.5;
-            margin-top: 8px;
-            animation: glitchIn 1.4s ease forwards, flicker 10s 2s ease infinite;
-        }
-
-        /* coming soon */
-        .coming-soon {
-            position: fixed;
-            top: calc(50% + 52px);
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.6rem;
-            font-weight: 400;
+            font-size: 0.55rem;
             letter-spacing: 5px;
-            text-transform: uppercase;
-            animation: flicker 6s 1.5s ease infinite;
-            transition: color 0.4s;
-            cursor: pointer;
+            opacity: 0.5;
+            margin-top: 5px;
+            color: var(--c-sub);
+            transition: color 0.5s;
         }
 
-        body.dark .coming-soon { color: rgba(108, 99, 255, 0.6); }
-        body.dark .coming-soon:hover { color: rgba(0, 229, 255, 0.8); }
-        body.day .coming-soon { color: rgba(108, 99, 255, 0.5); }
-        body.day .coming-soon:hover { color: rgba(108, 99, 255, 0.9); }
-
-        .coming-soon.hidden {
-            opacity: 0.25;
-            text-decoration: line-through;
+        /* ===== GLITCH ===== */
+        .glitching {
+            animation: glitchFlash 3s steps(1) infinite;
         }
 
-        /* ===== THEME TOGGLE (TOP RIGHT) ===== */
-        .toggle-wrap {
+        @keyframes glitchFlash {
+            0%, 89%, 100% {
+                text-shadow: none;
+                transform: translate(0);
+                clip-path: none;
+            }
+            90% {
+                text-shadow: -3px 0 #ff0055, 3px 0 #00ffff;
+                transform: translate(-2px, 1px);
+                clip-path: inset(20% 0 50% 0);
+            }
+            92% {
+                text-shadow: 3px 0 #ff0055, -3px 0 #00ffff;
+                transform: translate(2px, -1px);
+                clip-path: inset(60% 0 10% 0);
+            }
+            94% {
+                text-shadow: none;
+                transform: translate(0);
+                clip-path: none;
+            }
+            95% {
+                text-shadow: -2px 0 #00ffff, 2px 0 #ff0055;
+                transform: translate(1px, 0);
+            }
+            97%, 99% {
+                text-shadow: none;
+                transform: translate(0);
+            }
+        }
+
+        /* ===== TOGGLE — TOP RIGHT ===== */
+        .toggle {
             position: fixed;
-            top: 20px; right: 30px;
-            z-index: 11;
-            position: fixed;
-            width: 52px; height: 26px;
-            cursor: pointer;
-        }
-
-        .toggle-wrap input { display: none; }
-
-        .toggle-track {
-            position: absolute;
-            inset: 0;
-            border-radius: 13px;
-            transition: all 0.4s ease;
-        }
-
-        body.dark .toggle-track {
-            background: rgba(10,10,30,0.7);
-            border: 1.5px solid rgba(108,99,255,0.3);
-        }
-
-        body.day .toggle-track {
-            background: rgba(255,255,255,0.7);
-            border: 1.5px solid rgba(108,99,255,0.2);
-        }
-
-        .toggle-thumb {
-            position: absolute;
-            top: 3px; left: 3px;
-            width: 18px; height: 18px;
+            top: 26px; right: 32px;
+            z-index: 10;
+            width: 44px; height: 44px;
             border-radius: 50%;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--c);
+            transition: color 0.4s, background 0.3s;
+            background: transparent;
+            border: none;
         }
 
-        body.dark .toggle-thumb {
-            background: linear-gradient(135deg, var(--accent), var(--accent2));
-        }
+        .toggle:hover { color: var(--c); }
+        .toggle svg { width: 20px; height: 20px; stroke-width: 1.5; }
 
-        body.day .toggle-thumb {
-            background: linear-gradient(135deg, var(--accent), var(--accent2));
-        }
-
-        #theme-toggle:checked ~ .toggle-wrap .toggle-track .toggle-thumb { left: 29px; }
-
-        .toggle-icons {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 5px;
+        /* ===== CORNER TICKS ===== */
+        .tick {
+            position: fixed;
+            z-index: 10;
+            width: 14px; height: 14px;
             pointer-events: none;
         }
-
-        .toggle-icons span {
-            font-size: 0.55rem;
-            opacity: 0.6;
-            transition: opacity 0.3s;
-        }
-
-        body.day .toggle-icons span:first-child { opacity: 0.3; }
-        body.dark .toggle-icons span:last-child { opacity: 0.3; }
-
-        /* ===== CORNER DECORATIONS ===== */
-        .corner {
-            position: fixed;
-            width: 30px; height: 30px;
-            z-index: 10;
-            opacity: 0.3;
-        }
-
-        .corner::before, .corner::after {
-            content: '';
-            position: absolute;
-            background: var(--accent);
-        }
-
-        .corner-tl { top: 16px; left: 16px; }
-        .corner-tl::before { top: 0; left: 0; width: 100%; height: 1px; }
-        .corner-tl::after  { top: 0; left: 0; width: 1px; height: 100%; }
-
-        .corner-tr { top: 16px; right: 16px; }
-        .corner-tr::before { top: 0; right: 0; width: 100%; height: 1px; }
-        .corner-tr::after  { top: 0; right: 0; width: 1px; height: 100%; }
-
-        .corner-bl { bottom: 16px; left: 16px; }
-        .corner-bl::before { bottom: 0; left: 0; width: 100%; height: 1px; }
-        .corner-bl::after  { bottom: 0; left: 0; width: 1px; height: 100%; }
-
-        .corner-br { bottom: 16px; right: 16px; }
-        .corner-br::before { bottom: 0; right: 0; width: 100%; height: 1px; }
-        .corner-br::after  { bottom: 0; right: 0; width: 1px; height: 100%; }
-
-        body.day .corner { opacity: 0.15; }
+        .tick::before, .tick::after { content: ''; position: absolute; background: var(--c); opacity: 0.35; transition: opacity 0.4s, background 0.4s; }
+        body.day .tick::before, body.day .tick::after { opacity: 0.2; }
+        .tick-tl { top: 18px; left: 18px; }
+        .tick-tl::before { top: 0; left: 0; width: 100%; height: 1px; }
+        .tick-tl::after  { top: 0; left: 0; width: 1px; height: 100%; }
+        .tick-br { bottom: 18px; right: 18px; }
+        .tick-br::before { bottom: 0; right: 0; width: 100%; height: 1px; }
+        .tick-br::after  { bottom: 0; right: 0; width: 1px; height: 100%; }
 
         /* ===== RESPONSIVE ===== */
-        @media (max-width: 600px) {
-            .brand-name { font-size: 1.4rem; letter-spacing: 3px; }
-            .brand { transform: translate(-50%, calc(-50% + 10px)); }
-            .coming-soon { top: calc(50% + 40px); font-size: 0.5rem; }
-            .top-bar { padding: 16px 20px; }
+        @media (max-width: 500px) {
+            .brand-name { font-size: 0.85rem; letter-spacing: 3px; }
+            .brand { top: 22px; left: 22px; }
+            .toggle { top: 20px; right: 22px; }
         }
     </style>
 </head>
@@ -323,63 +194,65 @@
     <div class="bg dark-bg"></div>
     <div class="bg day-bg"></div>
 
-    <!-- CRT Scanlines -->
+    <!-- Scan Line -->
     <div class="scan-line"></div>
 
-    <!-- Corner Decorations -->
-    <div class="corner corner-tl"></div>
-    <div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div>
-    <div class="corner corner-br"></div>
+    <!-- Corner Ticks -->
+    <div class="tick tick-tl"></div>
+    <div class="tick tick-br"></div>
 
-    <!-- Brand - CENTERED -->
+    <!-- Brand — TOP LEFT -->
     <div class="brand">
-        <div class="brand-name">Amr Sabry</div>
+        <div class="brand-name glitching" id="brand-name">Amr Sabry</div>
         <div class="brand-sub">Creative Director</div>
     </div>
 
-    <!-- Coming Soon -->
-    <div class="coming-soon" id="uc-badge">coming soon...</div>
-
-    <!-- Theme Toggle -->
-    <label class="toggle-wrap">
-        <input type="checkbox" id="theme-toggle" checked>
-        <div class="toggle-track">
-            <div class="toggle-thumb"></div>
-            <div class="toggle-icons">
-                <span>☀</span>
-                <span>◐</span>
-            </div>
-        </div>
-    </label>
+    <!-- Toggle — TOP RIGHT -->
+    <button class="toggle" id="toggle-btn" title="Toggle Theme">
+        <!-- Sun icon (shown in dark mode) -->
+        <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+        </svg>
+        <!-- Moon icon (shown in day mode) -->
+        <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+        </svg>
+    </button>
 
     <script>
-        // Theme Toggle
-        const toggle = document.getElementById('theme-toggle');
-        const badge = document.getElementById('uc-badge');
+        const toggle = document.getElementById('toggle-btn');
+        const sunIcon = document.getElementById('icon-sun');
+        const moonIcon = document.getElementById('icon-moon');
+        const brand = document.getElementById('brand-name');
 
-        toggle.addEventListener('change', () => {
-            if (toggle.checked) {
-                document.body.classList.remove('day');
+        let isDark = true;
+
+        function applyTheme(dark) {
+            if (dark) {
                 document.body.classList.add('dark');
+                document.body.classList.remove('day');
+                sunIcon.style.display  = 'block';
+                moonIcon.style.display = 'none';
             } else {
-                document.body.classList.remove('dark');
                 document.body.classList.add('day');
+                document.body.classList.remove('dark');
+                sunIcon.style.display  = 'none';
+                moonIcon.style.display = 'block';
             }
+        }
+
+        toggle.addEventListener('click', () => {
+            isDark = !isDark;
+            applyTheme(isDark);
         });
 
-        // Coming Soon Toggle
-        let ucVisible = true;
-        badge.addEventListener('click', () => {
-            ucVisible = !ucVisible;
-            if (ucVisible) {
-                badge.classList.remove('hidden');
-                badge.textContent = 'coming soon...';
-            } else {
-                badge.classList.add('hidden');
-                badge.textContent = 'hidden';
-            }
-        });
+        // Keep glitch alive — restart animation every 4s
+        function restartGlitch() {
+            brand.classList.remove('glitching');
+            void brand.offsetWidth; // reflow
+            brand.classList.add('glitching');
+        }
+        setInterval(restartGlitch, 4000);
     </script>
 </body>
 </html>
