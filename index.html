@@ -4,15 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Amr Sabry | Creative Director</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Futuristic Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
+        :root {
+            --glass-dark: rgba(10, 10, 30, 0.55);
+            --glass-light: rgba(255, 255, 255, 0.55);
+            --accent: #6C63FF;
+            --accent2: #00E5FF;
+            --text-dark: #ffffff;
+            --text-light: #1a1a2e;
+        }
+
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Exo 2', sans-serif;
             min-height: 100vh;
-            transition: all 0.5s ease;
             overflow: hidden;
+            transition: all 0.6s ease;
         }
 
         /* ===== BACKGROUNDS ===== */
@@ -38,28 +51,138 @@
         body.day .dark-bg { opacity: 0; }
         body.day .day-bg { opacity: 1; }
 
-        /* ===== OVERLAY ===== */
+        /* ===== GLASSMORPHISM OVERLAY ===== */
         .overlay {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: 1;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
         }
 
         body.dark .overlay {
-            background: rgba(0,0,0,0.35);
-            backdrop-filter: blur(2px);
+            background: rgba(5, 5, 20, 0.3);
         }
 
         body.day .overlay {
-            background: rgba(255,255,255,0.15);
-            backdrop-filter: blur(1px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* ===== GLOW ACCENTS ===== */
+        body.dark .glow-line {
+            position: fixed;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .glow-h {
+            width: 200px; height: 1px;
+            top: 20%; left: 5%;
+            background: linear-gradient(90deg, transparent, var(--accent2), transparent);
+            box-shadow: 0 0 20px var(--accent2);
+        }
+
+        .glow-h2 {
+            width: 150px; height: 1px;
+            bottom: 25%; right: 8%;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            box-shadow: 0 0 15px var(--accent);
+        }
+
+        body.day .glow-h,
+        body.day .glow-h2 { display: none; }
+
+        /* ===== TOP BAR ===== */
+        .top-bar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 30px;
+        }
+
+        /* Brand */
+        .brand {
+            transition: all 0.4s;
+        }
+
+        body.dark .brand { color: var(--text-dark); }
+        body.day .brand { color: var(--text-light); }
+
+        .brand-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .brand-sub {
+            font-size: 0.6rem;
+            font-weight: 300;
+            letter-spacing: 5px;
+            opacity: 0.6;
+            margin-top: 2px;
+            font-family: 'Exo 2', sans-serif;
+        }
+
+        /* Social Icons - Line Art */
+        .social {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social a {
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.35s ease;
+            text-decoration: none;
+            border: 1.5px solid transparent;
+        }
+
+        body.dark .social a {
+            background: var(--glass-dark);
+            border-color: rgba(108, 99, 255, 0.25);
+            color: rgba(255,255,255,0.7);
+            backdrop-filter: blur(10px);
+        }
+
+        body.dark .social a:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(108, 99, 255, 0.4);
+            transform: translateY(-3px);
+            color: var(--accent2);
+        }
+
+        body.day .social a {
+            background: var(--glass-light);
+            border-color: rgba(108, 99, 255, 0.2);
+            color: rgba(26,26,46,0.7);
+            backdrop-filter: blur(10px);
+        }
+
+        body.day .social a:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(108, 99, 255, 0.25);
+            transform: translateY(-3px);
+            color: var(--accent);
+        }
+
+        .social svg {
+            width: 16px; height: 16px;
+            stroke-width: 1.5;
         }
 
         /* ===== BOTTOM CONTROLS ===== */
         .controls {
             position: fixed;
-            bottom: 30px;
+            bottom: 28px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 10;
@@ -68,211 +191,137 @@
             gap: 14px;
         }
 
-        /* ===== NEUMORPHIC TOGGLE ===== */
-        .toggle {
-            width: 56px;
-            height: 30px;
-            border-radius: 15px;
-            cursor: pointer;
-            position: relative;
-            border: none;
-            transition: all 0.4s ease;
-            display: flex;
-            align-items: center;
-        }
-
-        body.dark .toggle {
-            background: rgba(30,30,50,0.55);
-            box-shadow:
-                4px 4px 12px rgba(0,0,0,0.5),
-                -3px -3px 10px rgba(60,60,90,0.25),
-                inset 1px 1px 3px rgba(0,0,0,0.4),
-                inset -1px -1px 3px rgba(60,60,90,0.2);
-        }
-
-        body.day .toggle {
-            background: rgba(255,255,255,0.55);
-            box-shadow:
-                4px 4px 12px rgba(0,0,0,0.1),
-                -3px -3px 10px rgba(255,255,255,0.7),
-                inset 1px 1px 3px rgba(0,0,0,0.06),
-                inset -1px -1px 3px rgba(255,255,255,0.8);
-        }
-
-        .toggle-thumb {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            position: absolute;
-            left: 4px;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-        }
-
-        body.dark .toggle-thumb {
-            background: rgba(40,40,70,0.9);
-            box-shadow: 2px 2px 6px rgba(0,0,0,0.5), -1px -1px 4px rgba(70,70,100,0.3);
-        }
-
-        body.day .toggle-thumb {
-            background: rgba(255,255,255,0.95);
-            box-shadow: 2px 2px 6px rgba(0,0,0,0.1), -1px -1px 4px rgba(255,255,255,0.9);
-        }
-
-        .toggle input { display: none; }
-        .toggle input:checked ~ .toggle-thumb { left: 30px; }
-
         .toggle-label {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             transition: color 0.4s;
         }
 
-        body.dark .toggle-label { color: rgba(255,255,255,0.7); }
-        body.day .toggle-label { color: rgba(0,0,0,0.6); }
+        body.dark .toggle-label { color: rgba(255,255,255,0.5); }
+        body.day .toggle-label { color: rgba(26,26,46,0.45); }
 
-        /* ===== NEUMORPHIC BADGE ===== */
+        /* Theme Toggle - Futuristic Pill */
+        .toggle-wrap {
+            position: relative;
+            width: 52px; height: 26px;
+            cursor: pointer;
+        }
+
+        .toggle-wrap input { display: none; }
+
+        .toggle-track {
+            position: absolute;
+            inset: 0;
+            border-radius: 13px;
+            transition: all 0.4s ease;
+        }
+
+        body.dark .toggle-track {
+            background: rgba(10,10,30,0.7);
+            border: 1.5px solid rgba(108,99,255,0.3);
+            box-shadow: 0 0 10px rgba(108,99,255,0.15);
+        }
+
+        body.day .toggle-track {
+            background: rgba(255,255,255,0.7);
+            border: 1.5px solid rgba(108,99,255,0.2);
+            box-shadow: 0 0 10px rgba(108,99,255,0.1);
+        }
+
+        .toggle-thumb {
+            position: absolute;
+            top: 3px; left: 3px;
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        body.dark .toggle-thumb {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            box-shadow: 0 0 8px rgba(108,99,255,0.6);
+        }
+
+        body.day .toggle-thumb {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            box-shadow: 0 0 8px rgba(108,99,255,0.5);
+        }
+
+        .toggle-thumb svg {
+            width: 10px; height: 10px;
+            stroke: white;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        #theme-toggle:checked ~ .toggle-track .toggle-thumb { left: 29px; }
+
+        /* Badge - Minimal Outline */
         .badge {
-            padding: 7px 18px;
+            padding: 6px 16px;
             border-radius: 50px;
             cursor: pointer;
-            border: none;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.75rem;
+            border: 1.5px solid;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.6rem;
             font-weight: 600;
-            letter-spacing: 1.5px;
+            letter-spacing: 2px;
             text-transform: uppercase;
             transition: all 0.35s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: transparent;
         }
+
+        .badge svg { width: 12px; height: 12px; stroke-width: 1.5; }
 
         body.dark .badge {
-            background: rgba(30,30,50,0.55);
-            color: rgba(255,255,255,0.85);
-            box-shadow:
-                4px 4px 12px rgba(0,0,0,0.5),
-                -3px -3px 10px rgba(60,60,90,0.25),
-                inset 1px 1px 3px rgba(0,0,0,0.4),
-                inset -1px -1px 3px rgba(60,60,90,0.2);
+            border-color: rgba(231, 76, 60, 0.5);
+            color: rgba(231, 76, 60, 0.85);
         }
 
-        body.dark .badge:active {
-            box-shadow:
-                inset 3px 3px 8px rgba(0,0,0,0.5),
-                inset -2px -2px 6px rgba(60,60,90,0.25);
+        body.dark .badge:hover {
+            background: rgba(231, 76, 60, 0.15);
+            box-shadow: 0 0 15px rgba(231, 76, 60, 0.25);
+            border-color: rgba(231, 76, 60, 0.8);
         }
 
         body.day .badge {
-            background: rgba(255,255,255,0.55);
-            color: rgba(0,0,0,0.7);
-            box-shadow:
-                4px 4px 12px rgba(0,0,0,0.1),
-                -3px -3px 10px rgba(255,255,255,0.7),
-                inset 1px 1px 3px rgba(0,0,0,0.06),
-                inset -1px -1px 3px rgba(255,255,255,0.8);
+            border-color: rgba(231, 76, 60, 0.5);
+            color: rgba(231, 76, 60, 0.8);
         }
 
-        body.day .badge:active {
-            box-shadow:
-                inset 3px 3px 8px rgba(0,0,0,0.1),
-                inset -2px -2px 6px rgba(255,255,255,0.7);
+        body.day .badge:hover {
+            background: rgba(231, 76, 60, 0.08);
+            box-shadow: 0 0 15px rgba(231, 76, 60, 0.2);
+            border-color: rgba(231, 76, 60, 0.7);
         }
 
-        .badge:hover { transform: scale(1.05); }
-        .badge:active { transform: scale(0.97); }
+        .badge.badge-hidden {
+            opacity: 0.3;
+        }
 
-        .badge.hidden-badge { opacity: 0.35; }
-
-        /* ===== VISIBILITY INDICATOR ===== */
-        .vis-indicator {
+        /* Hint text */
+        .hint {
             font-size: 0.6rem;
             opacity: 0;
             transition: opacity 0.3s;
             text-align: center;
-            margin-top: 4px;
+            margin-top: 6px;
             letter-spacing: 1px;
         }
 
-        body.dark .vis-indicator { color: rgba(255,255,255,0.4); }
-        body.day .vis-indicator { color: rgba(0,0,0,0.35); }
-        .vis-indicator.show { opacity: 1; }
-
-        /* ===== TOP-LEFT BRAND ===== */
-        .brand {
-            position: fixed;
-            top: 24px;
-            left: 28px;
-            z-index: 10;
-            transition: color 0.4s;
-        }
-
-        body.dark .brand { color: rgba(255,255,255,0.9); }
-        body.day .brand { color: rgba(0,0,0,0.75); }
-
-        .brand-name {
-            font-size: 1.1rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        .brand-title {
-            font-size: 0.65rem;
-            font-weight: 400;
-            opacity: 0.65;
-            letter-spacing: 1px;
-        }
-
-        /* ===== TOP-RIGHT SOCIAL ===== */
-        .social {
-            position: fixed;
-            top: 24px;
-            right: 28px;
-            z-index: 10;
-            display: flex;
-            gap: 10px;
-        }
-
-        .social a {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.85rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        body.dark .social a {
-            background: rgba(30,30,50,0.45);
-            color: rgba(255,255,255,0.8);
-            box-shadow:
-                3px 3px 8px rgba(0,0,0,0.45),
-                -2px -2px 6px rgba(60,60,90,0.2);
-        }
-
-        body.day .social a {
-            background: rgba(255,255,255,0.5);
-            color: rgba(0,0,0,0.65);
-            box-shadow:
-                3px 3px 8px rgba(0,0,0,0.08),
-                -2px -2px 6px rgba(255,255,255,0.7);
-        }
-
-        .social a:hover {
-            transform: translateY(-3px) scale(1.1);
-        }
+        body.dark .hint { color: rgba(255,255,255,0.3); }
+        body.day .hint { color: rgba(26,26,46,0.3); }
+        .hint.show { opacity: 1; }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 500px) {
+            .brand-name { font-size: 0.85rem; letter-spacing: 2px; }
+            .social a { width: 32px; height: 32px; }
             .controls { gap: 10px; }
-            .badge { padding: 6px 14px; font-size: 0.65rem; }
-            .toggle { width: 48px; height: 26px; }
-            .toggle input:checked ~ .toggle-thumb { left: 22px; }
-            .toggle-thumb { width: 18px; height: 18px; }
-            .social a { width: 30px; height: 30px; font-size: 0.75rem; }
+            .badge { padding: 5px 12px; font-size: 0.55rem; }
+            .top-bar { padding: 16px 20px; }
         }
     </style>
 </head>
@@ -285,37 +334,68 @@
     <!-- Overlay -->
     <div class="overlay"></div>
 
-    <!-- Brand -->
-    <div class="brand">
-        <div class="brand-name">Amr Sabry</div>
-        <div class="brand-title">Creative Director</div>
-    </div>
+    <!-- Futuristic Glow Lines -->
+    <div class="glow-line glow-h"></div>
+    <div class="glow-line glow-h2"></div>
 
-    <!-- Social Links -->
-    <div class="social">
-        <a href="#" title="Instagram">📸</a>
-        <a href="#" title="Twitter">🐦</a>
-        <a href="#" title="LinkedIn">💼</a>
-        <a href="#" title="Behance">🎨</a>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="brand">
+            <div class="brand-name">Amr Sabry</div>
+            <div class="brand-sub">Creative Director</div>
+        </div>
+
+        <div class="social">
+            <!-- Instagram - Line Art -->
+            <a href="#" title="Instagram">
+                <i data-lucide="instagram"></i>
+            </a>
+            <!-- Twitter/X - Line Art -->
+            <a href="#" title="Twitter">
+                <i data-lucide="twitter"></i>
+            </a>
+            <!-- LinkedIn - Line Art -->
+            <a href="#" title="LinkedIn">
+                <i data-lucide="linkedin"></i>
+            </a>
+            <!-- Behance - Line Art -->
+            <a href="#" title="Behance">
+                <i data-lucide="figma"></i>
+            </a>
+            <!-- Dribbble -->
+            <a href="#" title="Dribbble">
+                <i data-lucide="dribbble"></i>
+            </a>
+        </div>
     </div>
 
     <!-- Bottom Controls -->
     <div class="controls">
-        <span class="toggle-label">☀️</span>
+        <span class="toggle-label">☀</span>
 
-        <label class="toggle">
+        <label class="toggle-wrap">
             <input type="checkbox" id="theme-toggle" checked>
-            <div class="toggle-thumb">🌙</div>
+            <div class="toggle-track">
+                <div class="toggle-thumb">
+                    <i data-lucide="sun"></i>
+                </div>
+            </div>
         </label>
 
-        <span class="toggle-label">🌙</span>
+        <span class="toggle-label">◐</span>
 
-        <button class="badge" id="uc-badge">🚧 Construction</button>
+        <button class="badge" id="uc-badge">
+            <i data-lucide="construction"></i>
+            Construction
+        </button>
     </div>
 
-    <div class="vis-indicator" id="vis-ind">click badge to toggle</div>
+    <div class="hint" id="hint">tap badge to toggle</div>
 
     <script>
+        // Init Lucide icons
+        lucide.createIcons();
+
         // Theme Toggle
         const toggle = document.getElementById('theme-toggle');
 
@@ -327,31 +407,34 @@
                 document.body.classList.remove('dark');
                 document.body.classList.add('day');
             }
+            lucide.createIcons();
         });
 
         // Under Construction Toggle
         const badge = document.getElementById('uc-badge');
-        const visInd = document.getElementById('vis-ind');
+        const hint = document.getElementById('hint');
         let ucVisible = true;
 
-        // Show hint briefly
+        // Show hint
         setTimeout(() => {
-            visInd.classList.add('show');
-            setTimeout(() => visInd.classList.remove('show'), 2000);
-        }, 1000);
+            hint.classList.add('show');
+            setTimeout(() => hint.classList.remove('show'), 2000);
+        }, 800);
 
         badge.addEventListener('click', () => {
             ucVisible = !ucVisible;
             if (ucVisible) {
-                badge.classList.remove('hidden-badge');
-                badge.textContent = '🚧 Construction';
+                badge.classList.remove('badge-hidden');
+                badge.innerHTML = '<i data-lucide="construction"></i> Construction';
+                hint.textContent = 'visible';
             } else {
-                badge.classList.add('hidden-badge');
-                badge.textContent = '✅ Hidden';
+                badge.classList.add('badge-hidden');
+                badge.innerHTML = '<i data-lucide="check"></i> Hidden';
+                hint.textContent = 'hidden';
             }
-            visInd.textContent = ucVisible ? 'visible' : 'hidden';
-            visInd.classList.add('show');
-            setTimeout(() => visInd.classList.remove('show'), 1200);
+            lucide.createIcons();
+            hint.classList.add('show');
+            setTimeout(() => hint.classList.remove('show'), 1200);
         });
     </script>
 </body>
