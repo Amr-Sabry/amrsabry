@@ -52,22 +52,7 @@
         body.day .day-bg { opacity: 1; }
 
         /* ===== GLASSMORPHISM OVERLAY ===== */
-        .overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 1;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-        }
 
-        body.dark .overlay {
-            background: rgba(5, 5, 20, 0.3);
-        }
-
-        body.day .overlay {
-            background: rgba(255, 255, 255, 0.15);
-        }
 
         /* ===== GLOW ACCENTS ===== */
         body.dark .glow-line {
@@ -255,50 +240,37 @@
 
         #theme-toggle:checked ~ .toggle-track .toggle-thumb { left: 29px; }
 
-        /* Badge - Minimal Outline */
-        .badge {
-            padding: 6px 16px;
-            border-radius: 50px;
-            cursor: pointer;
-            border: 1.5px solid;
+        /* Under Construction - Plain Text */
+        .uc-text {
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.6rem;
+            font-size: 0.65rem;
             font-weight: 600;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             text-transform: uppercase;
+            cursor: pointer;
             transition: all 0.35s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: transparent;
+            padding: 6px 0;
         }
 
-        .badge svg { width: 12px; height: 12px; stroke-width: 1.5; }
-
-        body.dark .badge {
-            border-color: rgba(231, 76, 60, 0.5);
-            color: rgba(231, 76, 60, 0.85);
+        body.dark .uc-text {
+            color: rgba(231, 76, 60, 0.7);
         }
 
-        body.dark .badge:hover {
-            background: rgba(231, 76, 60, 0.15);
-            box-shadow: 0 0 15px rgba(231, 76, 60, 0.25);
-            border-color: rgba(231, 76, 60, 0.8);
+        body.dark .uc-text:hover {
+            color: rgba(231, 76, 60, 1);
         }
 
-        body.day .badge {
-            border-color: rgba(231, 76, 60, 0.5);
-            color: rgba(231, 76, 60, 0.8);
+        body.day .uc-text {
+            color: rgba(231, 76, 60, 0.7);
         }
 
-        body.day .badge:hover {
-            background: rgba(231, 76, 60, 0.08);
-            box-shadow: 0 0 15px rgba(231, 76, 60, 0.2);
-            border-color: rgba(231, 76, 60, 0.7);
+        body.day .uc-text:hover {
+            color: rgba(231, 76, 60, 1);
         }
 
-        .badge.badge-hidden {
+        .uc-text.hidden {
             opacity: 0.3;
+            text-decoration: line-through;
         }
 
         /* Hint text */
@@ -384,10 +356,7 @@
 
         <span class="toggle-label">◐</span>
 
-        <button class="badge" id="uc-badge">
-            <i data-lucide="construction"></i>
-            Construction
-        </button>
+        <div class="uc-text" id="uc-badge">Under Construction</div>
     </div>
 
     <div class="hint" id="hint">tap badge to toggle</div>
@@ -424,15 +393,14 @@
         badge.addEventListener('click', () => {
             ucVisible = !ucVisible;
             if (ucVisible) {
-                badge.classList.remove('badge-hidden');
-                badge.innerHTML = '<i data-lucide="construction"></i> Construction';
+                badge.classList.remove('hidden');
+                badge.textContent = 'Under Construction';
                 hint.textContent = 'visible';
             } else {
-                badge.classList.add('badge-hidden');
-                badge.innerHTML = '<i data-lucide="check"></i> Hidden';
+                badge.classList.add('hidden');
+                badge.textContent = 'Hidden';
                 hint.textContent = 'hidden';
             }
-            lucide.createIcons();
             hint.classList.add('show');
             setTimeout(() => hint.classList.remove('show'), 1200);
         });
