@@ -16,8 +16,8 @@
             transition: all 0.5s ease;
         }
 
-        /* ===== DUAL SCANLINES — fine + bold ===== */
-        /* Fine lines every 2px */
+        /* ===== DUAL SCANLINES — ultra close + thick ===== */
+        /* Fine lines every 1px */
         body::before {
             content: '';
             position: fixed;
@@ -27,13 +27,13 @@
             background: repeating-linear-gradient(
                 0deg,
                 transparent,
-                transparent 2px,
-                rgba(255,107,0,0.04) 2px,
-                rgba(255,107,0,0.04) 4px
+                transparent 1px,
+                rgba(255,107,0,0.05) 1px,
+                rgba(255,107,0,0.05) 2px
             );
         }
 
-        /* Bold lines every 8px */
+        /* Bold lines every 4px */
         body::after {
             content: '';
             position: fixed;
@@ -43,32 +43,61 @@
             background: repeating-linear-gradient(
                 0deg,
                 transparent,
-                transparent 8px,
-                rgba(255,107,0,0.09) 8px,
-                rgba(255,107,0,0.09) 10px
+                transparent 4px,
+                rgba(255,107,0,0.13) 4px,
+                rgba(255,107,0,0.13) 6px
             );
         }
 
-        /* Moving scan beam */
+        /* ===== MULTI SCAN BEAMS — different speeds & opacities ===== */
         .scan-beam {
             position: fixed;
-            left: 0; top: 0;
-            width: 100%; height: 3px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            z-index: 49;
+            pointer-events: none;
             background: linear-gradient(
                 180deg,
                 transparent,
-                rgba(255,107,0,0.18) 40%,
-                rgba(255,107,0,0.28) 50%,
-                rgba(255,107,0,0.18) 60%,
+                rgba(255,107,0,0.30) 40%,
+                rgba(255,107,0,0.50) 50%,
+                rgba(255,107,0,0.30) 60%,
                 transparent
             );
-            z-index: 49;
-            pointer-events: none;
-            animation: scanBeam 4s linear infinite;
+            animation: scanBeam 3s linear infinite;
+        }
+
+        .scan-beam.b2 {
+            height: 4px;
+            opacity: 0.6;
+            animation: scanBeam2 7s linear infinite;
+            animation-delay: -2s;
+        }
+
+        .scan-beam.b3 {
+            height: 1px;
+            opacity: 0.4;
+            animation: scanBeam3 5s linear infinite;
+            animation-delay: -4s;
         }
 
         @keyframes scanBeam {
             0%   { top: -4px; opacity: 0; }
+            5%   { opacity: 1; }
+            95%  { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        @keyframes scanBeam2 {
+            0%   { top: -6px; opacity: 0; }
+            5%   { opacity: 0.7; }
+            95%  { opacity: 0.7; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        @keyframes scanBeam3 {
+            0%   { top: -3px; opacity: 0; }
             5%   { opacity: 1; }
             95%  { opacity: 1; }
             100% { top: 100%; opacity: 0; }
@@ -245,8 +274,10 @@
     <div class="glitch-layer g3"></div>
     <div class="glitch-layer g4"></div>
 
-    <!-- Scan Beam -->
-    <div class="scan-beam"></div>
+    <!-- Multi Scan Beams -->
+    <div class="scan-beam b1"></div>
+    <div class="scan-beam b2"></div>
+    <div class="scan-beam b3"></div>
 
     <!-- Corner Ticks -->
     <div class="tick tick-tl"></div>
