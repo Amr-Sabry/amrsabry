@@ -180,7 +180,6 @@
             position: fixed;
             top: 28px; left: 32px;
             z-index: 10;
-            color: #fff;
         }
 
         .brand-name {
@@ -190,17 +189,20 @@
             letter-spacing: 5px;
             text-transform: uppercase;
             line-height: 1;
-            color: #fff;
-            text-shadow: 0 0 18px rgba(255,255,255,0.18);
         }
+
+        body.dark  .brand-name { color: rgba(255,255,255,0.92); text-shadow: 0 0 18px rgba(255,255,255,0.18); }
+        body.day   .brand-name { color: rgba(10,10,30,0.88); }
 
         .brand-sub {
             font-size: 0.55rem;
             letter-spacing: 5px;
             opacity: 0.5;
             margin-top: 5px;
-            color: rgba(255,255,255,0.5);
         }
+
+        body.dark  .brand-sub { color: rgba(255,255,255,0.5); }
+        body.day   .brand-sub { color: rgba(10,10,30,0.5); }
 
         /* ===== TOGGLE — TOP RIGHT ===== */
         .toggle {
@@ -213,9 +215,11 @@
             display: flex; align-items: center; justify-content: center;
             background: transparent;
             border: none;
-            color: #fff;
             transition: color 0.3s;
         }
+
+        body.dark  .toggle { color: rgba(255,255,255,0.92); }
+        body.day   .toggle { color: rgba(10,10,30,0.85); }
 
         .toggle:hover { opacity: 0.6; }
         .toggle svg { width: 20px; height: 20px; stroke-width: 1.5; fill: none; }
@@ -224,10 +228,9 @@
         .tick {
             position: fixed; z-index: 10; width: 14px; height: 14px; pointer-events: none;
         }
-        .tick::before, .tick::after {
-            content: ''; position: absolute;
-            background: rgba(255,255,255,0.35);
-        }
+        .tick::before, .tick::after { content: ''; position: absolute; transition: background 0.4s; }
+        body.dark  .tick::before, body.dark  .tick::after { background: rgba(255,255,255,0.35); }
+        body.day   .tick::before, body.day   .tick::after { background: rgba(10,10,30,0.3); }
         .tick-tl { top: 18px; left: 18px; }
         .tick-tl::before { top: 0; left: 0; width: 100%; height: 1px; }
         .tick-tl::after  { top: 0; left: 0; width: 1px; height: 100%; }
