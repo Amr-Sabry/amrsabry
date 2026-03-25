@@ -16,70 +16,62 @@
             transition: all 0.5s ease;
         }
 
-        /* ===== CRT VIGNETTE ===== */
+        /* ===== DUAL SCANLINES — fine + bold ===== */
+        /* Fine lines every 2px */
         body::before {
             content: '';
             position: fixed;
             inset: 0;
             z-index: 50;
             pointer-events: none;
-            background: radial-gradient(
-                ellipse at center,
-                transparent 55%,
-                rgba(0, 0, 0, 0.35) 100%
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(255,107,0,0.04) 2px,
+                rgba(255,107,0,0.04) 4px
             );
         }
 
-        /* ===== NOISE GRAIN ===== */
+        /* Bold lines every 8px */
         body::after {
             content: '';
             position: fixed;
-            inset: -50%;
-            z-index: 48;
+            inset: 0;
+            z-index: 50;
             pointer-events: none;
-            width: 200%;
-            height: 200%;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-            animation: grain 0.4s steps(1) infinite;
-            opacity: 0.4;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 8px,
+                rgba(255,107,0,0.09) 8px,
+                rgba(255,107,0,0.09) 10px
+            );
         }
 
-        @keyframes grain {
-            0%,100%  { transform: translate(0,0); }
-            10%      { transform: translate(-2%, -3%); }
-            20%      { transform: translate(3%, 2%); }
-            30%      { transform: translate(-1%, 3%); }
-            40%      { transform: translate(3%, -1%); }
-            50%      { transform: translate(-3%, 1%); }
-            60%      { transform: translate(1%, -3%); }
-            70%      { transform: translate(-1%, -1%); }
-            80%      { transform: translate(2%, 3%); }
-            90%      { transform: translate(-2%, 2%); }
-        }
-
-        /* ===== HORIZONTAL SCAN BAND ===== */
-        .h-band {
+        /* Moving scan beam */
+        .scan-beam {
             position: fixed;
-            left: 0;
-            width: 100%;
-            height: 80px;
-            z-index: 49;
-            pointer-events: none;
+            left: 0; top: 0;
+            width: 100%; height: 3px;
             background: linear-gradient(
                 180deg,
-                transparent 0%,
-                rgba(255,255,255,0.04) 40%,
-                rgba(255,255,255,0.07) 50%,
-                rgba(255,255,255,0.04) 60%,
-                transparent 100%
+                transparent,
+                rgba(255,107,0,0.18) 40%,
+                rgba(255,107,0,0.28) 50%,
+                rgba(255,107,0,0.18) 60%,
+                transparent
             );
-            animation: bandDown 5s linear infinite;
-            filter: blur(1px);
+            z-index: 49;
+            pointer-events: none;
+            animation: scanBeam 4s linear infinite;
         }
 
-        @keyframes bandDown {
-            0%   { top: -80px; }
-            100% { top: 100%; }
+        @keyframes scanBeam {
+            0%   { top: -4px; opacity: 0; }
+            5%   { opacity: 1; }
+            95%  { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
         }
 
         /* ===== BACKGROUNDS ===== */
@@ -253,8 +245,8 @@
     <div class="glitch-layer g3"></div>
     <div class="glitch-layer g4"></div>
 
-    <!-- Ambient Effects -->
-    <div class="h-band"></div>
+    <!-- Scan Beam -->
+    <div class="scan-beam"></div>
 
     <!-- Corner Ticks -->
     <div class="tick tick-tl"></div>
