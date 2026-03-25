@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amr Sabry | Creative Director</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            transition: all 0.5s ease;
+            overflow: hidden;
+        }
+
+        /* ===== BACKGROUNDS ===== */
+        .bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        .bg.dark-bg {
+            background: url('dark-bg.webp') center/cover no-repeat;
+            opacity: 1;
+        }
+
+        .bg.day-bg {
+            background: url('day-bg.webp') center/cover no-repeat;
+            opacity: 0;
+            position: absolute;
+        }
+
+        body.day .dark-bg { opacity: 0; }
+        body.day .day-bg { opacity: 1; }
+
+        /* ===== OVERLAY ===== */
+        .overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+        }
+
+        body.dark .overlay {
+            background: rgba(0,0,0,0.35);
+            backdrop-filter: blur(2px);
+        }
+
+        body.day .overlay {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(1px);
+        }
+
+        /* ===== BOTTOM CONTROLS ===== */
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        /* ===== NEUMORPHIC TOGGLE ===== */
+        .toggle {
+            width: 56px;
+            height: 30px;
+            border-radius: 15px;
+            cursor: pointer;
+            position: relative;
+            border: none;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        body.dark .toggle {
+            background: rgba(30,30,50,0.55);
+            box-shadow:
+                4px 4px 12px rgba(0,0,0,0.5),
+                -3px -3px 10px rgba(60,60,90,0.25),
+                inset 1px 1px 3px rgba(0,0,0,0.4),
+                inset -1px -1px 3px rgba(60,60,90,0.2);
+        }
+
+        body.day .toggle {
+            background: rgba(255,255,255,0.55);
+            box-shadow:
+                4px 4px 12px rgba(0,0,0,0.1),
+                -3px -3px 10px rgba(255,255,255,0.7),
+                inset 1px 1px 3px rgba(0,0,0,0.06),
+                inset -1px -1px 3px rgba(255,255,255,0.8);
+        }
+
+        .toggle-thumb {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            position: absolute;
+            left: 4px;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        body.dark .toggle-thumb {
+            background: rgba(40,40,70,0.9);
+            box-shadow: 2px 2px 6px rgba(0,0,0,0.5), -1px -1px 4px rgba(70,70,100,0.3);
+        }
+
+        body.day .toggle-thumb {
+            background: rgba(255,255,255,0.95);
+            box-shadow: 2px 2px 6px rgba(0,0,0,0.1), -1px -1px 4px rgba(255,255,255,0.9);
+        }
+
+        .toggle input { display: none; }
+        .toggle input:checked ~ .toggle-thumb { left: 30px; }
+
+        .toggle-label {
+            font-size: 0.8rem;
+            transition: color 0.4s;
+        }
+
+        body.dark .toggle-label { color: rgba(255,255,255,0.7); }
+        body.day .toggle-label { color: rgba(0,0,0,0.6); }
+
+        /* ===== NEUMORPHIC BADGE ===== */
+        .badge {
+            padding: 7px 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            border: none;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            transition: all 0.35s ease;
+        }
+
+        body.dark .badge {
+            background: rgba(30,30,50,0.55);
+            color: rgba(255,255,255,0.85);
+            box-shadow:
+                4px 4px 12px rgba(0,0,0,0.5),
+                -3px -3px 10px rgba(60,60,90,0.25),
+                inset 1px 1px 3px rgba(0,0,0,0.4),
+                inset -1px -1px 3px rgba(60,60,90,0.2);
+        }
+
+        body.dark .badge:active {
+            box-shadow:
+                inset 3px 3px 8px rgba(0,0,0,0.5),
+                inset -2px -2px 6px rgba(60,60,90,0.25);
+        }
+
+        body.day .badge {
+            background: rgba(255,255,255,0.55);
+            color: rgba(0,0,0,0.7);
+            box-shadow:
+                4px 4px 12px rgba(0,0,0,0.1),
+                -3px -3px 10px rgba(255,255,255,0.7),
+                inset 1px 1px 3px rgba(0,0,0,0.06),
+                inset -1px -1px 3px rgba(255,255,255,0.8);
+        }
+
+        body.day .badge:active {
+            box-shadow:
+                inset 3px 3px 8px rgba(0,0,0,0.1),
+                inset -2px -2px 6px rgba(255,255,255,0.7);
+        }
+
+        .badge:hover { transform: scale(1.05); }
+        .badge:active { transform: scale(0.97); }
+
+        .badge.hidden-badge { opacity: 0.35; }
+
+        /* ===== VISIBILITY INDICATOR ===== */
+        .vis-indicator {
+            font-size: 0.6rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+            text-align: center;
+            margin-top: 4px;
+            letter-spacing: 1px;
+        }
+
+        body.dark .vis-indicator { color: rgba(255,255,255,0.4); }
+        body.day .vis-indicator { color: rgba(0,0,0,0.35); }
+        .vis-indicator.show { opacity: 1; }
+
+        /* ===== TOP-LEFT BRAND ===== */
+        .brand {
+            position: fixed;
+            top: 24px;
+            left: 28px;
+            z-index: 10;
+            transition: color 0.4s;
+        }
+
+        body.dark .brand { color: rgba(255,255,255,0.9); }
+        body.day .brand { color: rgba(0,0,0,0.75); }
+
+        .brand-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-title {
+            font-size: 0.65rem;
+            font-weight: 400;
+            opacity: 0.65;
+            letter-spacing: 1px;
+        }
+
+        /* ===== TOP-RIGHT SOCIAL ===== */
+        .social {
+            position: fixed;
+            top: 24px;
+            right: 28px;
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+        }
+
+        .social a {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        body.dark .social a {
+            background: rgba(30,30,50,0.45);
+            color: rgba(255,255,255,0.8);
+            box-shadow:
+                3px 3px 8px rgba(0,0,0,0.45),
+                -2px -2px 6px rgba(60,60,90,0.2);
+        }
+
+        body.day .social a {
+            background: rgba(255,255,255,0.5);
+            color: rgba(0,0,0,0.65);
+            box-shadow:
+                3px 3px 8px rgba(0,0,0,0.08),
+                -2px -2px 6px rgba(255,255,255,0.7);
+        }
+
+        .social a:hover {
+            transform: translateY(-3px) scale(1.1);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 500px) {
+            .controls { gap: 10px; }
+            .badge { padding: 6px 14px; font-size: 0.65rem; }
+            .toggle { width: 48px; height: 26px; }
+            .toggle input:checked ~ .toggle-thumb { left: 22px; }
+            .toggle-thumb { width: 18px; height: 18px; }
+            .social a { width: 30px; height: 30px; font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body class="dark">
+
+    <!-- Backgrounds -->
+    <div class="bg dark-bg"></div>
+    <div class="bg day-bg"></div>
+
+    <!-- Overlay -->
+    <div class="overlay"></div>
+
+    <!-- Brand -->
+    <div class="brand">
+        <div class="brand-name">Amr Sabry</div>
+        <div class="brand-title">Creative Director</div>
+    </div>
+
+    <!-- Social Links -->
+    <div class="social">
+        <a href="#" title="Instagram">📸</a>
+        <a href="#" title="Twitter">🐦</a>
+        <a href="#" title="LinkedIn">💼</a>
+        <a href="#" title="Behance">🎨</a>
+    </div>
+
+    <!-- Bottom Controls -->
+    <div class="controls">
+        <span class="toggle-label">☀️</span>
+
+        <label class="toggle">
+            <input type="checkbox" id="theme-toggle" checked>
+            <div class="toggle-thumb">🌙</div>
+        </label>
+
+        <span class="toggle-label">🌙</span>
+
+        <button class="badge" id="uc-badge">🚧 Construction</button>
+    </div>
+
+    <div class="vis-indicator" id="vis-ind">click badge to toggle</div>
+
+    <script>
+        // Theme Toggle
+        const toggle = document.getElementById('theme-toggle');
+
+        toggle.addEventListener('change', () => {
+            if (toggle.checked) {
+                document.body.classList.remove('day');
+                document.body.classList.add('dark');
+            } else {
+                document.body.classList.remove('dark');
+                document.body.classList.add('day');
+            }
+        });
+
+        // Under Construction Toggle
+        const badge = document.getElementById('uc-badge');
+        const visInd = document.getElementById('vis-ind');
+        let ucVisible = true;
+
+        // Show hint briefly
+        setTimeout(() => {
+            visInd.classList.add('show');
+            setTimeout(() => visInd.classList.remove('show'), 2000);
+        }, 1000);
+
+        badge.addEventListener('click', () => {
+            ucVisible = !ucVisible;
+            if (ucVisible) {
+                badge.classList.remove('hidden-badge');
+                badge.textContent = '🚧 Construction';
+            } else {
+                badge.classList.add('hidden-badge');
+                badge.textContent = '✅ Hidden';
+            }
+            visInd.textContent = ucVisible ? 'visible' : 'hidden';
+            visInd.classList.add('show');
+            setTimeout(() => visInd.classList.remove('show'), 1200);
+        });
+    </script>
+</body>
+</html>
