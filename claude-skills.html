@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Skills Hub | Amr Sabry</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Space Mono', monospace;
+            min-height: 100vh;
+            background: #06060e;
+            color: #c8c8e0;
+            overflow-x: hidden;
+        }
+
+        /* Scanlines */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            pointer-events: none;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(180,180,180,0.02) 2px, rgba(180,180,180,0.02) 4px);
+        }
+
+        /* Scan beam */
+        .scan-beam {
+            position: fixed;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            z-index: 49;
+            pointer-events: none;
+            background: linear-gradient(180deg, transparent, rgba(255,107,0,0.06) 40%, rgba(255,107,0,0.1) 50%, rgba(255,107,0,0.06) 60%, transparent);
+            animation: scanBeam 8s linear infinite;
+        }
+        @keyframes scanBeam { 0% { top: -4px; opacity: 0; } 5% { opacity: 1; } 95% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+
+        /* Header */
+        .header {
+            padding: 28px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            background: rgba(6,6,14,0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,107,0,0.1);
+        }
+        .brand-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 900;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: #FF6B00;
+            text-shadow: 0 0 18px rgba(255,107,0,0.35);
+            text-decoration: none;
+        }
+        .brand-name:hover { opacity: 0.8; }
+        .header-badge {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.55rem;
+            letter-spacing: 3px;
+            color: rgba(255,107,0,0.5);
+            text-transform: uppercase;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 60px 24px 40px;
+        }
+        .hero h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 900;
+            letter-spacing: 4px;
+            color: #FF6B00;
+            text-shadow: 0 0 30px rgba(255,107,0,0.3);
+            margin-bottom: 12px;
+        }
+        .hero p {
+            font-size: 0.85rem;
+            opacity: 0.5;
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        .hero .count {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            color: #FF6B00;
+            opacity: 0.6;
+            letter-spacing: 3px;
+            margin-top: 16px;
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            padding: 20px 32px 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Skill Card */
+        .card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,107,0,0.12);
+            border-radius: 12px;
+            padding: 24px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255,107,0,0.4), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .card:hover { border-color: rgba(255,107,0,0.3); transform: translateY(-2px); }
+        .card:hover::before { opacity: 1; }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        .card-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #FF6B00;
+        }
+        .card-size {
+            font-size: 0.65rem;
+            opacity: 0.35;
+            white-space: nowrap;
+        }
+        .card-desc {
+            font-size: 0.75rem;
+            line-height: 1.6;
+            opacity: 0.55;
+            margin-bottom: 16px;
+            min-height: 48px;
+        }
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+        .tag {
+            font-size: 0.6rem;
+            letter-spacing: 1px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: rgba(255,107,0,0.08);
+            color: rgba(255,107,0,0.6);
+            border: 1px solid rgba(255,107,0,0.1);
+        }
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            padding: 10px 20px;
+            border: 1px solid rgba(255,107,0,0.3);
+            border-radius: 8px;
+            background: rgba(255,107,0,0.08);
+            color: #FF6B00;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+        .download-btn:hover {
+            background: rgba(255,107,0,0.15);
+            border-color: rgba(255,107,0,0.5);
+            box-shadow: 0 0 20px rgba(255,107,0,0.15);
+        }
+        .download-btn svg { width: 14px; height: 14px; }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 24px;
+            font-size: 0.65rem;
+            opacity: 0.25;
+            border-top: 1px solid rgba(255,107,0,0.06);
+        }
+
+        /* Corner ticks */
+        .tick { position: fixed; z-index: 10; width: 14px; height: 14px; pointer-events: none; }
+        .tick::before, .tick::after { content: ''; position: absolute; background: rgba(255,107,0,0.3); }
+        .tick-tl { top: 18px; left: 18px; }
+        .tick-tl::before { top: 0; left: 0; width: 100%; height: 1px; }
+        .tick-tl::after { top: 0; left: 0; width: 1px; height: 100%; }
+        .tick-br { bottom: 18px; right: 18px; }
+        .tick-br::before { bottom: 0; right: 0; width: 100%; height: 1px; }
+        .tick-br::after { bottom: 0; right: 0; width: 1px; height: 100%; }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 1.4rem; }
+            .grid { grid-template-columns: 1fr; padding: 16px; }
+            .header { padding: 20px 16px; }
+            .brand-name { font-size: 0.8rem; letter-spacing: 3px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="scan-beam"></div>
+    <div class="tick tick-tl"></div>
+    <div class="tick tick-br"></div>
+
+    <div class="header">
+        <a href="/" class="brand-name">Amr Sabry</a>
+        <span class="header-badge">Claude Skills Hub</span>
+    </div>
+
+    <div class="hero">
+        <h1>SKILLS HUB</h1>
+        <p>All Claude skills synced across devices. Download any .skill file and install it in Claude on any machine.</p>
+        <div class="count">13 SKILLS AVAILABLE</div>
+    </div>
+
+    <div class="grid">
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-name">ELEVEN11AI MANAGER</div>
+                <div class="card-size">2.7 KB</div>
+            </div>
+            <div class="card-desc">Manage, develop, deploy eleven11ai.com. Full pipeline: clone, edit, commit, push, auto-deploy via Vercel.</div>
+            <div class="card-tags"><span class="tag">WEBSITE</span><span class="tag">DEPLOY</span><span class="tag">VERCEL</span></div>
+            <a href="skills/eleven11ai-manager.skill" class="download-btn" download>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                DOWNLOAD
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-name">AMRSABRY MANAGER</div>
+                <div class="card-size">3.1 KB</div>
+            </div>
+            <div class="card-desc">Manage, develop, deploy amrsabry.com portfolio. Full pipeline with glassmorphism design system.</div>
+            <div class="card-tags"><span class="tag">PORTFOLIO</span><span class="tag">DEPLOY</span><span class="tag">VERCEL</span></div>
+            <a href="skills/amrsabry-manager.skill" class="download-btn" download>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                DOWNLOAD
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-name">AI PROJECT ROADMAP</div>
+                <div class="card-size">28 KB</div>
+            </div>
+            <div class="card-desc">Generate professional dark-themed PDF production roadmaps for AI cinematic/creative projects with Aroma Studios branding.</div>
+            <div class="card-tags"><span class="tag">PDF</span><span class="tag">ROADMAP</span><span class="tag">AROMA</span></div>
+            <a href="skills/ai-project-roadmap.skill" class="download-btn" download>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                DOWNLOAD
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-name">AROMA BUDGET</div>
+                <div class="card-size">21 KB</div>
+            </div>
+            <div class="card-desc">Generate professional dark-themed PDF budget proposals for Aroma Studio with SIM-card UI, Gantt timelines, CPS analysis.</div>
+            <div class="card-tags"><span class="tag">PDF</span><span class="tag">BUDGET</span><span class="tag">AROMA</span></div>
+            <a href="skills/aroma-budget.skill" class="download-btn" download>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                DOWNLOAD
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-name">AROMA WORKSHEET</div>
+                <div class="card-size">40 KB</div>
+            </div>
+            <div class="card-desc">Generate production worksheets for AI cinematic projects. Subscription costs, shot breakdowns, Gantt charts, capacity planning.</div>
+            <div class="card-tags"><span class="tag">PDF</span><span class="tag">PRODUCTION</span><span class="tag">AROMA</span></div>
+            <a href="skills/aroma-production-worksheet.skill" class="download-btn" download>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                DOWNLOAD
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-name">BLENDER CONTROL</div>
+                <div class="card-size">10 KB</div>
+            </div>
+            <div class="card-desc">Control Blender 3D directly from Claude. Create objects, animate, apply materials, render, and execute bpy commands.</div>
+            <div class="card-tags"><span class="tag">3D</span><span class="tag">BLENDER</span><span class="tag">PYTHON</span></div>
+            <a href="skills/blender-control.skill" class="download-btn" download>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                DOWNLOAD
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-name">CANVAS DESIGN</div>
+                <div class="card-size">2.6 MB</div>
+            </div>
+            <div class="card-desc">Create beautiful visual art in PNG and PDF. Includes 40+ professional fonts. Posters, art, design, static pieces.</div>
+            <div class="card-tags"><span class="tag">DESIGN</span><span class="tag">ART</span><span class="tag">FONTS</span></div>
+            <a href="skills/canvas-design.skill" class="download-btn" download>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                DOWNLOAD
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-name">ARABIC FONT CONVERTER</div>
+                <div class="card-size">8.4 KB</div>
+            </div>
+            <div class="card-desc">Convert OTF fonts (CFF/PostScript) to TTF format for ReportLab PDF generation. Fixes Arabic font issues in PDFs.</div>
+            <div class="card-tags"><span class="tag">FONTS</span><span class="tag">ARABIC</span><span class="tag">PDF</span></div>
+            <a href="skills/arabic-font-converter.skill" class="download-btn" download>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                DOWNLOAD
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-name">HIGGSFIELD IMAGE GEN</div>
+                <div class="card-size">7.2 KB</div>
+            </div>
+            <div class="card-desc">Generate AI images using Higgsfield's Nano Banana Flash model via Chrome browser automation.</div>
+            <div class="card-tags"><span class="tag">AI</span><span class="tag">IMAGES</span><span class="tag">CHROME</span></div>
+            <a href="skills/higgsfield-image-gen.skill" class="download-btn" download>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                DOWNLOAD
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-name">VIDEO SCENE EXTRACTOR</div>
+                <div class="card-size">5 KB</div>
+            </div>
+            <div class="card-desc">Extract screenshots from every scene in a video using ffmpeg scene detection. Key frames, thumbnails, scene splits.</div>
+            <div class="card-tags"><span class="tag">VIDEO</span><span class="tag">FFMPEG</span><span class="tag">FRAMES</span></div>
+            <a href="skills/video-scene-extractor.skill" class="download-btn" download>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                DOWNLOAD
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-name">YOUTUBE WATCHER</div>
+                <div class="card-size">2.8 KB</div>
+            </div>
+            <div class="card-desc">Extract info from YouTube videos: metadata, transcripts, summaries, and analysis via Chrome browser.</div>
+            <div class="card-tags"><span class="tag">YOUTUBE</span><span class="tag">TRANSCRIPT</span><span class="tag">CHROME</span></div>
+            <a href="skills/youtube-watcher.skill" class="download-btn" download>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                DOWNLOAD
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-name">WEB ARTIFACTS BUILDER</div>
+                <div class="card-size">30 KB</div>
+            </div>
+            <div class="card-desc">Create elaborate multi-component HTML artifacts using React, Tailwind CSS, and shadcn/ui components.</div>
+            <div class="card-tags"><span class="tag">REACT</span><span class="tag">TAILWIND</span><span class="tag">WEB</span></div>
+            <a href="skills/web-artifacts-builder.skill" class="download-btn" download>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                DOWNLOAD
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-name">SKILL CREATOR</div>
+                <div class="card-size">73 KB</div>
+            </div>
+            <div class="card-desc">Create new skills, modify existing ones, run evals, benchmark performance, and optimize skill descriptions.</div>
+            <div class="card-tags"><span class="tag">META</span><span class="tag">EVALS</span><span class="tag">DEV</span></div>
+            <a href="skills/skill-creator.skill" class="download-btn" download>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                DOWNLOAD
+            </a>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        Skills Hub by Amr Sabry &mdash; Powered by Claude
+    </div>
+</body>
+</html>
+
