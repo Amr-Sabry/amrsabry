@@ -96,6 +96,19 @@
   .copy{background:var(--orange);color:#1a0a00}
   .send{background:#25d366;color:#022}
   .hint{margin-top:16px;font-size:12px;color:var(--muted);text-align:center;line-height:1.7}
+  .name{display:block;width:100%;margin:0 0 10px;padding:12px 14px;border-radius:14px;border:1px solid #33404b;background:#0d1216;
+    color:#e8eef3;font-family:'Cairo';font-size:15px;text-align:center;outline:none;-webkit-user-select:text;user-select:text}
+  .name:focus{border-color:var(--teal)}
+  .crew{margin-top:18px;width:100%;background:rgba(255,255,255,.04);border:1px solid #2c353e;border-radius:16px;padding:12px 14px}
+  .crew h4{margin:0 0 8px;font-size:13px;color:var(--muted);font-weight:700;display:flex;justify-content:space-between}
+  .crew h4 span{font-family:'Orbitron';color:var(--teal);font-size:12px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:#141a1f;border:1px solid #2f3a44;font-size:13px;transition:.15s}
+  .chip i{width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 6px var(--teal)}
+  .chip.me i{background:var(--orange);box-shadow:0 0 6px var(--orange)}
+  .chip.talk{border-color:var(--red);background:rgba(255,59,59,.12)}
+  .chip.talk i{background:var(--red);box-shadow:0 0 10px var(--red);animation:pulse .6s infinite alternate}
+  @keyframes pulse{to{transform:scale(1.5)}}
   .hidden{display:none!important}
 </style>
 </head>
@@ -116,6 +129,7 @@
 
     <div class="grille" id="grille"></div>
 
+    <input class="name" id="nameIn" maxlength="18" placeholder="اكتب اسمك (اختياري)">
     <button class="power" id="powerBtn">تشغيل الجهاز ⏻</button>
     <button class="ptt hidden" id="ptt" disabled>اضغط واتكلم<small>أو اضغط مسطرة الكيبورد</small></button>
 
@@ -125,8 +139,13 @@
     </div>
   </div>
 
+  <div class="crew hidden" id="crew">
+    <h4>اللي على القناة <span id="count">1/8</span></h4>
+    <div class="chips" id="chips"></div>
+  </div>
+
   <div class="share hidden" id="shareBox">
-    <p>ابعت اللينك ده للي عاوز تكلمه — أول ما يفتحه ويشغّل الجهاز هتتوصلوا:</p>
+    <p>ابعت اللينك ده لكل اللي عاوزهم على القناة (لحد 8 أشخاص) — أول ما حد يفتحه ويشغّل الجهاز بيدخل معاكم:</p>
     <div class="link" id="shareLink"></div>
     <div class="btns">
       <button class="copy" id="copyBtn">نسخ اللينك</button>
@@ -134,7 +153,7 @@
     </div>
   </div>
 
-  <div class="hint">اضغط على الزرار البرتقاني طول ما انت بتتكلم وسيبه لما تخلص — زي الواكي توكي بالظبط.<br>الصوت مباشر بينكم (Peer-to-Peer) ومش بيتسجل في أي مكان.</div>
+  <div class="hint">اضغط على الزرار البرتقاني طول ما انت بتتكلم وسيبه لما تخلص. أكتر من واحد يقدروا يتكلموا في نفس الوقت، واللي بيتكلم بينوّر أحمر في القايمة.<br>الصوت مباشر بينكم (Peer-to-Peer) ومش بيتسجل في أي مكان.</div>
 </div>
 
 <script>
@@ -143,12 +162,13 @@
   const app = $('app'), statusEl = $('status'), meterEl = $('meter');
   const ptt = $('ptt'), powerBtn = $('powerBtn');
   const params = new URLSearchParams(location.search);
-  const target = params.get('c');              // guest mode if present
+  const target = params.get('c');              // room (host) id when joining
   const isGuest = !!target;
+  const MAX = 8;
 
-  // speaker grille
   const g = $('grille'); for (let i = 0; i < 44; i++) g.appendChild(document.createElement('i'));
   $('roleTag').textContent = isGuest ? 'ضيف' : 'المضيف';
+  try { $('nameIn').value = localStorage.getItem('wt11-name') || ''; } catch (e) {}
 
   const ICE = { iceServers: [
     { urls: 'stun:stun.l.google.com:19302' },
@@ -156,13 +176,16 @@
     { urls: 'stun:global.stun.twilio.com:3478' }
   ]};
 
-  let peer, localStream, localTrack, conn, call, ctx, remoteAudio;
-  let talking = false, locked = false, muted = false, linked = false, remoteTx = false;
-  let reconnecting = false, retryTimer = null, localAnalyser = null, remoteAnalyser = null;
+  let peer, myId = '', myName = '', localStream, localTrack, ctx, localAnalyser = null;
+  let talking = false, locked = false, muted = false, linked = false, roomFull = false;
+  let reconnecting = false, retryTimer = null, flash = null, flashTimer = null;
+  const peers = new Map();   // id -> {id,name,conn,call,audio,an,tx,out}
 
-  const setStatus = t => statusEl.textContent = t;
   const rand = n => Array.from(crypto.getRandomValues(new Uint8Array(n))).map(b => 'abcdefghjkmnpqrstuvwxyz23456789'[b % 31]).join('');
   const chanOf = id => 'CH ' + (id.split('').reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 997, 7) + 3).toString().padStart(3, '0');
+  const esc = t => String(t || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const openPeers = () => [...peers.values()].filter(p => p.conn && p.conn.open);
+  function note(t, ms = 2500) { flash = t; clearTimeout(flashTimer); flashTimer = setTimeout(() => { flash = null; refresh(); }, ms); refresh(); }
 
   // ---------- sounds ----------
   function tone(freq, dur, when = 0, vol = .15, type = 'sine') {
@@ -174,14 +197,14 @@
   }
   function squelch(dur = .12, vol = .08) {
     if (!ctx || muted) return;
-    const len = ctx.sampleRate * dur, buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0);
+    const len = ctx.sampleRate * dur, b = ctx.createBuffer(1, len, ctx.sampleRate), d = b.getChannelData(0);
     for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
     const s = ctx.createBufferSource(), f = ctx.createBiquadFilter(), gn = ctx.createGain();
     f.type = 'bandpass'; f.frequency.value = 2200; f.Q.value = .7; gn.gain.value = vol;
-    s.buffer = buf; s.connect(f).connect(gn).connect(ctx.destination); s.start();
+    s.buffer = b; s.connect(f).connect(gn).connect(ctx.destination); s.start();
   }
   const chirp = () => tone(1250, .07, 0, .12);
-  const roger = () => { tone(1000, .08, 0, .12); tone(1450, .1, .09, .12); };
+  const roger = () => { tone(1000, .08, 0, .1); tone(1450, .1, .09, .1); };
 
   // ---------- meters ----------
   function makeAnalyser(stream) {
@@ -197,145 +220,213 @@
   (function loop() {
     let v = 0;
     if (talking && localAnalyser) v = level(localAnalyser);
-    else if (remoteTx && remoteAnalyser) v = level(remoteAnalyser);
+    peers.forEach(p => { if (p.tx && p.an) v = Math.max(v, level(p.an)); });
     meterEl.style.width = v + '%';
     requestAnimationFrame(loop);
   })();
 
-  // ---------- UI state ----------
-  function setLinked(v) {
-    linked = v;
-    app.classList.toggle('linked', v);
-    $('linkTxt').textContent = v ? 'LINK' : 'ON';
-    ptt.disabled = !v;
-    if (v) setStatus('متوصلين ✅ اضغط واتكلم');
-  }
-  function setRemoteTx(v) {
-    remoteTx = v;
-    app.classList.toggle('rx', v);
-    if (v) { squelch(); setStatus('📻 الطرف التاني بيتكلم...'); }
-    else { roger(); setTimeout(() => squelch(.08, .05), 220); if (linked && !talking) setStatus('متوصلين ✅ اضغط واتكلم'); }
+  // ---------- UI ----------
+  function refresh() {
+    const list = openPeers();
+    linked = list.length > 0;
+    const speakers = list.filter(p => p.tx);
+    app.classList.toggle('linked', linked);
+    app.classList.toggle('rx', speakers.length > 0);
+    if (peer && peer.open) $('linkTxt').textContent = linked ? 'LINK' : 'ON';
+    ptt.disabled = !linked;
+    if (!linked && talking) { talking = false; locked = false; localTrack.enabled = false; app.classList.remove('tx'); $('lockBtn').classList.remove('active'); }
+
+    $('count').textContent = (list.length + 1) + '/' + MAX;
+    $('chips').innerHTML = `<span class="chip me${talking ? ' talk' : ''}"><i></i>${esc(myName)} (انت)</span>` +
+      list.map(p => `<span class="chip${p.tx ? ' talk' : ''}"><i></i>${esc(p.name || '...')}</span>`).join('');
+
+    let st;
+    if (flash) st = flash;
+    else if (talking && speakers.length) st = '🎙️ بتتكلم مع ' + speakers.map(p => p.name).join('، ');
+    else if (talking) st = locked ? '🔓 الميك مفتوح — الكل سامعك' : '🎙️ بتتكلم دلوقتي...';
+    else if (speakers.length) st = '📻 ' + speakers.map(p => p.name).join('، ') + (speakers.length > 1 ? ' بيتكلموا' : ' بيتكلم');
+    else if (linked) st = `متوصل مع ${list.length} ✅ اضغط واتكلم`;
+    else if (roomFull) st = 'القناة مليانة (8 أشخاص) 🚫';
+    else if (!peer) st = statusEl.textContent;
+    else st = isGuest ? 'بتصل بالقناة...' : 'ابعت اللينك ومستني حد يدخل 📡';
+    statusEl.textContent = st;
   }
 
   // ---------- talk ----------
+  const broadcast = m => openPeers().forEach(p => { try { p.conn.send(m); } catch (e) {} });
   function startTalk() {
     if (!linked || talking) return;
-    if (remoteTx) { tone(300, .15, 0, .12, 'square'); setStatus('استنى الطرف التاني يخلص ✋'); return; }
     talking = true; localTrack.enabled = true;
     app.classList.add('tx'); chirp(); navigator.vibrate?.(25);
-    send({ t: 'tx', on: true }); setStatus('🎙️ بتتكلم دلوقتي...');
+    broadcast({ t: 'tx', on: true }); refresh();
   }
   function stopTalk() {
     if (!talking || locked) return;
     talking = false; localTrack.enabled = false;
     app.classList.remove('tx'); tone(900, .06, 0, .08); navigator.vibrate?.(12);
-    send({ t: 'tx', on: false }); if (linked) setStatus('متوصلين ✅ اضغط واتكلم');
+    broadcast({ t: 'tx', on: false }); refresh();
   }
-  const send = m => { try { conn && conn.open && conn.send(m); } catch (e) {} };
 
   ptt.addEventListener('pointerdown', e => { e.preventDefault(); ptt.setPointerCapture?.(e.pointerId); startTalk(); });
   ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(ev => ptt.addEventListener(ev, () => stopTalk()));
   ptt.addEventListener('contextmenu', e => e.preventDefault());
-  window.addEventListener('keydown', e => { if (e.code === 'Space' && !e.repeat && localTrack) { e.preventDefault(); startTalk(); } });
-  window.addEventListener('keyup', e => { if (e.code === 'Space' && localTrack) { e.preventDefault(); stopTalk(); } });
+  const typing = () => document.activeElement && document.activeElement.tagName === 'INPUT';
+  window.addEventListener('keydown', e => { if (e.code === 'Space' && !e.repeat && localTrack && !typing()) { e.preventDefault(); startTalk(); } });
+  window.addEventListener('keyup', e => { if (e.code === 'Space' && localTrack && !typing()) { e.preventDefault(); stopTalk(); } });
   window.addEventListener('blur', () => { if (!locked) stopTalk(); });
 
   $('lockBtn').onclick = () => {
     if (!linked) return;
-    locked = !locked; $('lockBtn').classList.toggle('active', locked);
-    if (locked) { startTalk(); if (!talking) { locked = false; $('lockBtn').classList.remove('active'); } }
-    else { stopTalk(); }
+    if (!locked) { startTalk(); if (talking) { locked = true; $('lockBtn').classList.add('active'); } }
+    else { locked = false; $('lockBtn').classList.remove('active'); stopTalk(); }
+    refresh();
   };
   $('muteBtn').onclick = () => {
     muted = !muted; $('muteBtn').classList.toggle('active', muted);
     $('muteBtn').textContent = muted ? '🔇 مكتوم' : '🔊 الصوت';
-    if (remoteAudio) remoteAudio.muted = muted;
+    peers.forEach(p => { if (p.audio) p.audio.muted = muted; });
   };
 
-  // ---------- connections ----------
-  function attachData(c) {
-    if (conn && conn !== c) try { conn.close(); } catch (e) {}
-    conn = c;
-    c.on('open', () => { setLinked(true); squelch(); roger(); });
-    c.on('data', m => { if (m && m.t === 'tx') setRemoteTx(!!m.on); if (m && m.t === 'bye') dropped(); });
-    c.on('close', dropped);
-    c.on('error', dropped);
+  // ---------- mesh ----------
+  function ent(id) { if (!peers.has(id)) peers.set(id, { id, name: '', tx: false }); return peers.get(id); }
+  function removePeer(id) {
+    const p = peers.get(id); if (!p) return;
+    peers.delete(id);
+    try { p.conn && p.conn.close(); } catch (e) {}
+    try { p.call && p.call.close(); } catch (e) {}
+    if (p.audio) { p.audio.srcObject = null; p.audio.remove(); }
+    return p;
   }
-  function attachCall(cl) {
-    if (call && call !== cl) try { call.close(); } catch (e) {}
-    call = cl;
-    cl.on('stream', s => {
-      remoteAudio.srcObject = s; remoteAudio.muted = muted;
-      remoteAudio.play().catch(() => {});
-      try { remoteAnalyser = makeAnalyser(s); } catch (e) {}
+  function dropped(id, c) {
+    const p = peers.get(id);
+    if (!p || (c && p.conn !== c)) return;
+    const wasOpen = !!p.name;
+    removePeer(id);
+    if (wasOpen) { tone(400, .25, 0, .1, 'triangle'); note('👋 ' + (p.name || 'حد') + ' خرج من القناة'); }
+    if (isGuest && id === target && !roomFull) scheduleRetry();
+    refresh();
+  }
+  // keep one link per pair: on a clash, the link started by the smaller id wins
+  function keepIncoming(existing, fromId) { return !(existing && existing.out && fromId > myId); }
+
+  function attachData(c, outgoing) {
+    const p = ent(c.peer);
+    if (p.conn && p.conn !== c) {
+      if (!outgoing && !keepIncoming({ out: p.connOut }, c.peer)) { c.close(); return; }
+      const old = p.conn; p.conn = null; try { old.close(); } catch (e) {}
+    }
+    p.conn = c; p.connOut = outgoing;
+    c.on('open', () => {
+      if (!isGuest && !outgoing && openPeers().length > MAX - 1) { c.send({ t: 'full' }); setTimeout(() => dropped(c.peer, c), 400); return; }
+      p.last = Date.now();
+      c.send({ t: 'hi', name: myName, tx: talking });
+      if (!isGuest && !outgoing) c.send({ t: 'roster', ids: openPeers().map(x => x.id).filter(x => x !== c.peer) });
+      if (c.peer === target) clearTimeout(retryTimer);
     });
-    cl.on('close', dropped);
+    c.on('data', m => onData(p, m));
+    c.on('close', () => dropped(c.peer, c));
+    c.on('error', () => dropped(c.peer, c));
   }
-  function dropped() {
-    if (!linked && !conn) return;
-    setLinked(false); remoteTx = false; app.classList.remove('rx', 'tx');
-    talking = false; locked = false; $('lockBtn').classList.remove('active');
-    if (localTrack) localTrack.enabled = false;
-    conn = null; call = null;
-    tone(400, .25, 0, .1, 'triangle');
-    if (isGuest) { setStatus('الاتصال اتقطع… بحاول أوصل تاني'); scheduleRetry(); }
-    else setStatus('الطرف التاني خرج — مستني حد يدخل من اللينك');
+  function attachCall(cl, outgoing) {
+    const p = ent(cl.peer);
+    if (p.call && p.call !== cl) {
+      if (!outgoing && !keepIncoming({ out: p.callOut }, cl.peer)) { cl.close(); return; }
+      const old = p.call; p.call = null; try { old.close(); } catch (e) {}
+    }
+    p.call = cl; p.callOut = outgoing;
+    cl.on('stream', s => {
+      if (!p.audio) { p.audio = new Audio(); p.audio.autoplay = true; p.audio.setAttribute('playsinline', ''); document.body.appendChild(p.audio); }
+      p.audio.srcObject = s; p.audio.muted = muted; p.audio.play().catch(() => {});
+      try { p.an = makeAnalyser(s); } catch (e) {}
+    });
+    cl.on('close', () => { if (p.call === cl) p.call = null; });
+  }
+  function onData(p, m) {
+    if (!m || typeof m !== 'object') return;
+    p.last = Date.now();
+    if (m.t === 'ping') return;
+    if (m.t === 'hi') {
+      const first = !p.name;
+      p.name = String(m.name || 'ضيف').slice(0, 18); p.tx = !!m.tx;
+      if (first) { squelch(); roger(); note('✅ ' + p.name + ' دخل القناة'); }
+      refresh();
+    } else if (m.t === 'tx') {
+      const on = !!m.on; if (on === p.tx) return;
+      p.tx = on;
+      if (on) squelch(); else { roger(); setTimeout(() => squelch(.08, .05), 220); }
+      refresh();
+    } else if (m.t === 'roster' && Array.isArray(m.ids)) {
+      m.ids.slice(0, MAX).forEach(id => { if (typeof id === 'string' && id !== myId && !(peers.get(id)?.conn)) connectTo(id); });
+    } else if (m.t === 'full') {
+      roomFull = true; clearTimeout(retryTimer); refresh();
+    } else if (m.t === 'bye') {
+      dropped(p.id);
+    }
+  }
+  function connectTo(id) {
+    attachData(peer.connect(id, { reliable: true }), true);
+    attachCall(peer.call(id, localStream), true);
   }
   function dialHost() {
     clearTimeout(retryTimer);
-    if (linked) return;
-    setStatus('بتصل بالطرف التاني...');
-    attachData(peer.connect(target, { reliable: true }));
-    attachCall(peer.call(target, localStream));
+    if (roomFull || peers.get(target)?.conn?.open) return;
+    removePeer(target);
+    connectTo(target);
+    retryTimer = setTimeout(() => { if (!peers.get(target)?.conn?.open) dialHost(); }, 8000);
   }
   function scheduleRetry() { clearTimeout(retryTimer); retryTimer = setTimeout(dialHost, 3000); }
 
   function startPeer(id, attempt = 0) {
     peer = new Peer(id, { config: ICE, debug: 0 });
-    peer.on('open', myId => {
-      app.classList.add('on'); $('linkTxt').textContent = 'ON';
+    peer.on('open', id2 => {
+      myId = id2; app.classList.add('on'); $('crew').classList.remove('hidden');
       if (isGuest) { $('chan').textContent = chanOf(target); dialHost(); }
       else {
         $('chan').textContent = chanOf(myId);
         const link = location.origin + location.pathname + '?c=' + myId;
         $('shareLink').textContent = link; $('shareBox').classList.remove('hidden');
         history.replaceState(null, '', location.pathname + '?h=' + myId);
-        setStatus('ابعت اللينك ومستني الطرف التاني 📡');
       }
+      refresh();
     });
-    peer.on('connection', c => { if (!isGuest) attachData(c); });
-    peer.on('call', c => { c.answer(localStream); attachCall(c); });
+    peer.on('connection', c => attachData(c, false));
+    peer.on('call', c => { c.answer(localStream); attachCall(c, false); });
     peer.on('disconnected', () => {
       if (reconnecting || peer.destroyed) return; reconnecting = true;
       setTimeout(() => { reconnecting = false; try { if (!peer.destroyed && peer.disconnected) peer.reconnect(); } catch (e) {} }, 2500);
     });
     peer.on('error', err => {
       const t = err.type;
-      if (t === 'unavailable-id' && attempt < 6) { peer.destroy(); setStatus('بجهّز القناة...'); setTimeout(() => startPeer(id, attempt + 1), 2500); return; }
+      if (t === 'unavailable-id' && attempt < 6) { peer.destroy(); statusEl.textContent = 'بجهّز القناة...'; setTimeout(() => startPeer(id, attempt + 1), 2500); return; }
       if (t === 'unavailable-id') { peer.destroy(); startPeer('wt11-' + rand(10)); return; }
-      if (t === 'peer-unavailable') { setStatus('الطرف التاني مش فاتح الجهاز دلوقتي… بحاول كل شوية ⏳'); conn = null; call = null; scheduleRetry(); return; }
-      if (t === 'network' || t === 'server-error' || t === 'socket-error' || t === 'socket-closed') { setStatus('مشكلة في النت… بحاول تاني'); return; }
-      if (t === 'browser-incompatible') { setStatus('المتصفح ده مش بيدعم الصوت المباشر — جرّب Chrome أو Safari'); return; }
-      setStatus('حصل خطأ: ' + t);
+      if (t === 'peer-unavailable') {
+        const bad = (String(err.message).match(/wt11-[a-z0-9]+/) || [])[0];
+        if (bad) removePeer(bad);
+        if (isGuest && (!bad || bad === target)) { note('صاحب القناة مش فاتح الجهاز دلوقتي… بحاول كل شوية ⏳', 2900); scheduleRetry(); }
+        refresh(); return;
+      }
+      if (['network', 'server-error', 'socket-error', 'socket-closed'].includes(t)) { note('مشكلة في النت… بحاول تاني', 3000); return; }
+      if (t === 'browser-incompatible') { note('المتصفح ده مش بيدعم الصوت المباشر — جرّب Chrome أو Safari', 8000); return; }
     });
   }
 
   powerBtn.onclick = async () => {
-    powerBtn.disabled = true; setStatus('بطلب إذن الميكروفون...');
+    powerBtn.disabled = true; statusEl.textContent = 'بطلب إذن الميكروفون...';
+    myName = ($('nameIn').value.trim() || (isGuest ? 'ضيف ' + rand(2).toUpperCase() : 'المضيف')).slice(0, 18);
+    try { localStorage.setItem('wt11-name', $('nameIn').value.trim()); } catch (e) {}
     try {
       ctx = new (window.AudioContext || window.webkitAudioContext)(); await ctx.resume();
       localStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
       localTrack = localStream.getAudioTracks()[0]; localTrack.enabled = false;
       localAnalyser = makeAnalyser(localStream);
-      remoteAudio = new Audio(); remoteAudio.autoplay = true; remoteAudio.playsInline = true;
-      remoteAudio.setAttribute('playsinline', ''); document.body.appendChild(remoteAudio);
     } catch (e) {
       powerBtn.disabled = false;
-      setStatus('محتاج إذن الميكروفون عشان الجهاز يشتغل 🎙️'); return;
+      statusEl.textContent = 'محتاج إذن الميكروفون عشان الجهاز يشتغل 🎙️'; return;
     }
     chirp(); squelch(.2);
-    powerBtn.classList.add('hidden'); ptt.classList.remove('hidden'); $('tools').classList.remove('hidden');
-    if (typeof Peer === 'undefined') { setStatus('مكتبة الاتصال ماحمّلتش — اتأكد من النت'); return; }
+    powerBtn.classList.add('hidden'); $('nameIn').classList.add('hidden');
+    ptt.classList.remove('hidden'); $('tools').classList.remove('hidden');
+    if (typeof Peer === 'undefined') { statusEl.textContent = 'مكتبة الاتصال ماحمّلتش — اتأكد من النت'; return; }
     const savedHost = params.get('h');
     startPeer(isGuest ? 'wt11-' + rand(10) : (savedHost && /^wt11-[a-z0-9]{6,16}$/.test(savedHost) ? savedHost : 'wt11-' + rand(8)));
   };
@@ -347,12 +438,21 @@
     setTimeout(() => $('copyBtn').textContent = 'نسخ اللينك', 1800);
   };
   $('sendBtn').onclick = () => {
-    const l = $('shareLink').textContent, text = 'تعالى نتكلم واكي توكي 📻 ' + l;
+    const l = $('shareLink').textContent, text = 'تعالى على قناة الواكي توكي 📻 ' + l;
     if (navigator.share) navigator.share({ title: 'واكي توكي', text, url: l }).catch(() => {});
     else window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
   };
 
-  window.addEventListener('beforeunload', () => { send({ t: 'bye' }); try { peer && peer.destroy(); } catch (e) {} });
+  // heartbeat: notice people who vanished (closed tab, lost signal)
+  setInterval(() => {
+    broadcast({ t: 'ping' });
+    const now = Date.now();
+    openPeers().forEach(p => { if (p.last && now - p.last > 10000) dropped(p.id, p.conn); });
+  }, 3000);
+
+  const bye = () => { broadcast({ t: 'bye' }); try { peer && peer.destroy(); } catch (e) {} };
+  window.addEventListener('pagehide', bye);
+  window.addEventListener('beforeunload', bye);
 })();
 </script>
 </body>
