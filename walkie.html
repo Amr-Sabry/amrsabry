@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0b0f12">
+<title>Walkie Talkie · Amr Sabry</title>
+<meta name="description" content="واكي توكي صوت مباشر — اضغط واتكلم">
+<meta property="og:title" content="📻 Walkie Talkie · Amr Sabry">
+<meta property="og:description" content="افتح اللينك، شغّل الجهاز، واضغط واتكلم.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Orbitron:wght@700;900&family=VT323&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
+<style>
+  :root{
+    --bg:#0b0f12; --body:#1a2026; --body2:#232b33; --edge:#0e1317;
+    --orange:#ff7a1a; --orange2:#ffb066; --teal:#19d3c5; --red:#ff3b3b;
+    --lcd:#0f2a26; --lcdText:#7dffe9; --muted:#8a97a3;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:'Cairo',system-ui,sans-serif;color:#e8eef3;
+    background:radial-gradient(1200px 600px at 80% -10%,rgba(25,211,197,.18),transparent 60%),
+               radial-gradient(900px 600px at 0% 110%,rgba(255,122,26,.18),transparent 60%),var(--bg);
+    display:flex;align-items:center;justify-content:center;padding:28px 16px;min-height:100%;
+    -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+  }
+  .wrap{width:100%;max-width:380px;display:flex;flex-direction:column;align-items:center}
+  .antenna{width:26px;height:90px;margin-left:190px;margin-bottom:-6px;border-radius:12px 12px 4px 4px;
+    background:linear-gradient(90deg,#11161a,#2b343c 45%,#11161a);box-shadow:inset 0 -8px 0 #0a0e11}
+  .antenna::before{content:"";display:block;width:12px;height:12px;margin:8px auto;border-radius:50%;
+    background:#333;transition:.2s}
+  .tx .antenna::before{background:var(--red);box-shadow:0 0 14px var(--red)}
+  .rx .antenna::before{background:var(--teal);box-shadow:0 0 14px var(--teal)}
+  .device{
+    width:100%;border-radius:38px;padding:22px 22px 26px;position:relative;
+    background:linear-gradient(160deg,var(--body2),var(--body) 40%,#12171c);
+    box-shadow:0 30px 60px rgba(0,0,0,.6),inset 0 2px 0 rgba(255,255,255,.06),inset 0 -6px 0 var(--edge);
+    border:1px solid #2c353e;
+  }
+  .brand{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-size:12px;color:var(--muted);letter-spacing:.5px}
+  .brand b{color:var(--orange);font-family:"Orbitron",sans-serif;font-weight:900;font-size:14px;letter-spacing:1.5px}
+  .led{width:10px;height:10px;border-radius:50%;background:#3a1a1a;display:inline-block;margin-inline-start:6px;vertical-align:middle;transition:.2s}
+  .on .led{background:var(--orange);box-shadow:0 0 10px var(--orange)}
+  .linked .led{background:var(--teal);box-shadow:0 0 10px var(--teal)}
+
+  .lcd{
+    background:linear-gradient(180deg,#0c221f,var(--lcd));border-radius:14px;padding:12px 14px;
+    border:2px solid #081613;box-shadow:inset 0 0 22px rgba(0,0,0,.7);
+    font-family:'VT323',monospace;color:var(--lcdText);text-shadow:0 0 6px rgba(125,255,233,.5);
+    direction:ltr;
+  }
+  .lcd .row{display:flex;justify-content:space-between;align-items:center}
+  .ch{font-size:34px;line-height:1}
+  .bars{display:flex;gap:3px;align-items:flex-end;height:22px}
+  .bars i{width:5px;background:rgba(125,255,233,.15);border-radius:1px}
+  .bars i:nth-child(1){height:25%}.bars i:nth-child(2){height:50%}.bars i:nth-child(3){height:75%}.bars i:nth-child(4){height:100%}
+  .linked .bars i{background:var(--lcdText)}
+  .status{font-family:'Cairo',sans-serif;direction:rtl;text-align:right;font-size:14px;margin-top:6px;min-height:22px;text-shadow:none;color:#bff}
+  .meter{height:8px;margin-top:8px;border-radius:4px;background:rgba(125,255,233,.1);overflow:hidden}
+  .meter span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--orange));transition:width .06s}
+
+  .grille{display:grid;grid-template-columns:repeat(11,1fr);gap:7px;margin:20px 8px 18px}
+  .grille i{aspect-ratio:1;border-radius:50%;background:#0b0f12;box-shadow:inset 0 2px 2px rgba(0,0,0,.8),0 1px 0 rgba(255,255,255,.05)}
+
+  .ptt{
+    display:block;margin:0 auto;width:190px;height:190px;border-radius:50%;border:none;cursor:pointer;
+    background:radial-gradient(circle at 35% 30%,var(--orange2),var(--orange) 45%,#c24d00);
+    box-shadow:0 12px 0 #7a3000,0 20px 30px rgba(0,0,0,.5),inset 0 -6px 12px rgba(0,0,0,.25);
+    color:#2a1000;font-family:'Cairo',sans-serif;font-weight:900;font-size:22px;line-height:1.3;
+    transition:transform .08s,box-shadow .08s,filter .2s;touch-action:none;
+  }
+  .ptt small{display:block;font-weight:700;font-size:12px;opacity:.75}
+  .ptt:active,.tx .ptt{transform:translateY(8px);box-shadow:0 4px 0 #7a3000,0 8px 16px rgba(0,0,0,.5),inset 0 -2px 8px rgba(0,0,0,.3)}
+  .tx .ptt{background:radial-gradient(circle at 35% 30%,#ff8a8a,var(--red) 50%,#a30000);box-shadow:0 4px 0 #5c0000,0 0 40px rgba(255,59,59,.6)}
+  .ptt:disabled{filter:grayscale(.85) brightness(.7);cursor:not-allowed}
+  .power{
+    display:block;width:100%;margin-top:4px;padding:14px;border-radius:16px;border:none;cursor:pointer;
+    background:linear-gradient(180deg,var(--teal),#0ea397);color:#022;font-family:'Cairo';font-weight:900;font-size:18px;
+    box-shadow:0 6px 0 #076b63;
+  }
+  .power:active{transform:translateY(4px);box-shadow:0 2px 0 #076b63}
+
+  .tools{display:flex;gap:10px;margin-top:26px}
+  .tools button{flex:1;padding:10px;border-radius:12px;border:1px solid #33404b;background:#141a1f;color:#dfe7ee;
+    font-family:'Cairo';font-weight:700;font-size:14px;cursor:pointer}
+  .tools button.active{border-color:var(--orange);color:var(--orange);box-shadow:0 0 12px rgba(255,122,26,.3)}
+
+  .share{margin-top:18px;width:100%;background:rgba(255,255,255,.04);border:1px dashed #3a4854;border-radius:16px;padding:14px}
+  .share p{margin:0 0 8px;font-size:13px;color:var(--muted)}
+  .link{direction:ltr;font-size:12px;background:#0d1216;border-radius:10px;padding:10px;word-break:break-all;color:var(--teal);
+    -webkit-user-select:all;user-select:all}
+  .share .btns{display:flex;gap:8px;margin-top:10px}
+  .share .btns button{flex:1;padding:10px;border-radius:10px;border:none;font-family:'Cairo';font-weight:700;cursor:pointer}
+  .copy{background:var(--orange);color:#1a0a00}
+  .send{background:#25d366;color:#022}
+  .hint{margin-top:16px;font-size:12px;color:var(--muted);text-align:center;line-height:1.7}
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <div class="antenna"></div>
+  <div class="device">
+    <div class="brand"><b>AMR SABRY</b><span id="roleTag">جهاز</span><span><span id="linkTxt">OFF</span><span class="led"></span></span></div>
+
+    <div class="lcd">
+      <div class="row">
+        <div class="ch" id="chan">CH --</div>
+        <div class="bars"><i></i><i></i><i></i><i></i></div>
+      </div>
+      <div class="status" id="status">دوس «تشغيل» عشان تبدأ</div>
+      <div class="meter"><span id="meter"></span></div>
+    </div>
+
+    <div class="grille" id="grille"></div>
+
+    <button class="power" id="powerBtn">تشغيل الجهاز ⏻</button>
+    <button class="ptt hidden" id="ptt" disabled>اضغط واتكلم<small>أو اضغط مسطرة الكيبورد</small></button>
+
+    <div class="tools hidden" id="tools">
+      <button id="lockBtn">🔒 قفل الميك</button>
+      <button id="muteBtn">🔊 الصوت</button>
+    </div>
+  </div>
+
+  <div class="share hidden" id="shareBox">
+    <p>ابعت اللينك ده للي عاوز تكلمه — أول ما يفتحه ويشغّل الجهاز هتتوصلوا:</p>
+    <div class="link" id="shareLink"></div>
+    <div class="btns">
+      <button class="copy" id="copyBtn">نسخ اللينك</button>
+      <button class="send" id="sendBtn">إرسال</button>
+    </div>
+  </div>
+
+  <div class="hint">اضغط على الزرار البرتقاني طول ما انت بتتكلم وسيبه لما تخلص — زي الواكي توكي بالظبط.<br>الصوت مباشر بينكم (Peer-to-Peer) ومش بيتسجل في أي مكان.</div>
+</div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const app = $('app'), statusEl = $('status'), meterEl = $('meter');
+  const ptt = $('ptt'), powerBtn = $('powerBtn');
+  const params = new URLSearchParams(location.search);
+  const target = params.get('c');              // guest mode if present
+  const isGuest = !!target;
+
+  // speaker grille
+  const g = $('grille'); for (let i = 0; i < 44; i++) g.appendChild(document.createElement('i'));
+  $('roleTag').textContent = isGuest ? 'ضيف' : 'المضيف';
+
+  const ICE = { iceServers: [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+    { urls: 'stun:global.stun.twilio.com:3478' }
+  ]};
+
+  let peer, localStream, localTrack, conn, call, ctx, remoteAudio;
+  let talking = false, locked = false, muted = false, linked = false, remoteTx = false;
+  let reconnecting = false, retryTimer = null, localAnalyser = null, remoteAnalyser = null;
+
+  const setStatus = t => statusEl.textContent = t;
+  const rand = n => Array.from(crypto.getRandomValues(new Uint8Array(n))).map(b => 'abcdefghjkmnpqrstuvwxyz23456789'[b % 31]).join('');
+  const chanOf = id => 'CH ' + (id.split('').reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 997, 7) + 3).toString().padStart(3, '0');
+
+  // ---------- sounds ----------
+  function tone(freq, dur, when = 0, vol = .15, type = 'sine') {
+    if (!ctx || muted) return;
+    const o = ctx.createOscillator(), gn = ctx.createGain(), t = ctx.currentTime + when;
+    o.type = type; o.frequency.value = freq;
+    gn.gain.setValueAtTime(vol, t); gn.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    o.connect(gn).connect(ctx.destination); o.start(t); o.stop(t + dur + .02);
+  }
+  function squelch(dur = .12, vol = .08) {
+    if (!ctx || muted) return;
+    const len = ctx.sampleRate * dur, buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
+    const s = ctx.createBufferSource(), f = ctx.createBiquadFilter(), gn = ctx.createGain();
+    f.type = 'bandpass'; f.frequency.value = 2200; f.Q.value = .7; gn.gain.value = vol;
+    s.buffer = buf; s.connect(f).connect(gn).connect(ctx.destination); s.start();
+  }
+  const chirp = () => tone(1250, .07, 0, .12);
+  const roger = () => { tone(1000, .08, 0, .12); tone(1450, .1, .09, .12); };
+
+  // ---------- meters ----------
+  function makeAnalyser(stream) {
+    const src = ctx.createMediaStreamSource(stream), a = ctx.createAnalyser();
+    a.fftSize = 512; src.connect(a); return a;
+  }
+  const buf = new Uint8Array(512);
+  function level(a) {
+    a.getByteTimeDomainData(buf); let m = 0;
+    for (const v of buf) m = Math.max(m, Math.abs(v - 128));
+    return Math.min(100, m / 128 * 180);
+  }
+  (function loop() {
+    let v = 0;
+    if (talking && localAnalyser) v = level(localAnalyser);
+    else if (remoteTx && remoteAnalyser) v = level(remoteAnalyser);
+    meterEl.style.width = v + '%';
+    requestAnimationFrame(loop);
+  })();
+
+  // ---------- UI state ----------
+  function setLinked(v) {
+    linked = v;
+    app.classList.toggle('linked', v);
+    $('linkTxt').textContent = v ? 'LINK' : 'ON';
+    ptt.disabled = !v;
+    if (v) setStatus('متوصلين ✅ اضغط واتكلم');
+  }
+  function setRemoteTx(v) {
+    remoteTx = v;
+    app.classList.toggle('rx', v);
+    if (v) { squelch(); setStatus('📻 الطرف التاني بيتكلم...'); }
+    else { roger(); setTimeout(() => squelch(.08, .05), 220); if (linked && !talking) setStatus('متوصلين ✅ اضغط واتكلم'); }
+  }
+
+  // ---------- talk ----------
+  function startTalk() {
+    if (!linked || talking) return;
+    if (remoteTx) { tone(300, .15, 0, .12, 'square'); setStatus('استنى الطرف التاني يخلص ✋'); return; }
+    talking = true; localTrack.enabled = true;
+    app.classList.add('tx'); chirp(); navigator.vibrate?.(25);
+    send({ t: 'tx', on: true }); setStatus('🎙️ بتتكلم دلوقتي...');
+  }
+  function stopTalk() {
+    if (!talking || locked) return;
+    talking = false; localTrack.enabled = false;
+    app.classList.remove('tx'); tone(900, .06, 0, .08); navigator.vibrate?.(12);
+    send({ t: 'tx', on: false }); if (linked) setStatus('متوصلين ✅ اضغط واتكلم');
+  }
+  const send = m => { try { conn && conn.open && conn.send(m); } catch (e) {} };
+
+  ptt.addEventListener('pointerdown', e => { e.preventDefault(); ptt.setPointerCapture?.(e.pointerId); startTalk(); });
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(ev => ptt.addEventListener(ev, () => stopTalk()));
+  ptt.addEventListener('contextmenu', e => e.preventDefault());
+  window.addEventListener('keydown', e => { if (e.code === 'Space' && !e.repeat && localTrack) { e.preventDefault(); startTalk(); } });
+  window.addEventListener('keyup', e => { if (e.code === 'Space' && localTrack) { e.preventDefault(); stopTalk(); } });
+  window.addEventListener('blur', () => { if (!locked) stopTalk(); });
+
+  $('lockBtn').onclick = () => {
+    if (!linked) return;
+    locked = !locked; $('lockBtn').classList.toggle('active', locked);
+    if (locked) { startTalk(); if (!talking) { locked = false; $('lockBtn').classList.remove('active'); } }
+    else { stopTalk(); }
+  };
+  $('muteBtn').onclick = () => {
+    muted = !muted; $('muteBtn').classList.toggle('active', muted);
+    $('muteBtn').textContent = muted ? '🔇 مكتوم' : '🔊 الصوت';
+    if (remoteAudio) remoteAudio.muted = muted;
+  };
+
+  // ---------- connections ----------
+  function attachData(c) {
+    if (conn && conn !== c) try { conn.close(); } catch (e) {}
+    conn = c;
+    c.on('open', () => { setLinked(true); squelch(); roger(); });
+    c.on('data', m => { if (m && m.t === 'tx') setRemoteTx(!!m.on); if (m && m.t === 'bye') dropped(); });
+    c.on('close', dropped);
+    c.on('error', dropped);
+  }
+  function attachCall(cl) {
+    if (call && call !== cl) try { call.close(); } catch (e) {}
+    call = cl;
+    cl.on('stream', s => {
+      remoteAudio.srcObject = s; remoteAudio.muted = muted;
+      remoteAudio.play().catch(() => {});
+      try { remoteAnalyser = makeAnalyser(s); } catch (e) {}
+    });
+    cl.on('close', dropped);
+  }
+  function dropped() {
+    if (!linked && !conn) return;
+    setLinked(false); remoteTx = false; app.classList.remove('rx', 'tx');
+    talking = false; locked = false; $('lockBtn').classList.remove('active');
+    if (localTrack) localTrack.enabled = false;
+    conn = null; call = null;
+    tone(400, .25, 0, .1, 'triangle');
+    if (isGuest) { setStatus('الاتصال اتقطع… بحاول أوصل تاني'); scheduleRetry(); }
+    else setStatus('الطرف التاني خرج — مستني حد يدخل من اللينك');
+  }
+  function dialHost() {
+    clearTimeout(retryTimer);
+    if (linked) return;
+    setStatus('بتصل بالطرف التاني...');
+    attachData(peer.connect(target, { reliable: true }));
+    attachCall(peer.call(target, localStream));
+  }
+  function scheduleRetry() { clearTimeout(retryTimer); retryTimer = setTimeout(dialHost, 3000); }
+
+  function startPeer(id, attempt = 0) {
+    peer = new Peer(id, { config: ICE, debug: 0 });
+    peer.on('open', myId => {
+      app.classList.add('on'); $('linkTxt').textContent = 'ON';
+      if (isGuest) { $('chan').textContent = chanOf(target); dialHost(); }
+      else {
+        $('chan').textContent = chanOf(myId);
+        const link = location.origin + location.pathname + '?c=' + myId;
+        $('shareLink').textContent = link; $('shareBox').classList.remove('hidden');
+        history.replaceState(null, '', location.pathname + '?h=' + myId);
+        setStatus('ابعت اللينك ومستني الطرف التاني 📡');
+      }
+    });
+    peer.on('connection', c => { if (!isGuest) attachData(c); });
+    peer.on('call', c => { c.answer(localStream); attachCall(c); });
+    peer.on('disconnected', () => {
+      if (reconnecting || peer.destroyed) return; reconnecting = true;
+      setTimeout(() => { reconnecting = false; try { if (!peer.destroyed && peer.disconnected) peer.reconnect(); } catch (e) {} }, 2500);
+    });
+    peer.on('error', err => {
+      const t = err.type;
+      if (t === 'unavailable-id' && attempt < 6) { peer.destroy(); setStatus('بجهّز القناة...'); setTimeout(() => startPeer(id, attempt + 1), 2500); return; }
+      if (t === 'unavailable-id') { peer.destroy(); startPeer('wt11-' + rand(10)); return; }
+      if (t === 'peer-unavailable') { setStatus('الطرف التاني مش فاتح الجهاز دلوقتي… بحاول كل شوية ⏳'); conn = null; call = null; scheduleRetry(); return; }
+      if (t === 'network' || t === 'server-error' || t === 'socket-error' || t === 'socket-closed') { setStatus('مشكلة في النت… بحاول تاني'); return; }
+      if (t === 'browser-incompatible') { setStatus('المتصفح ده مش بيدعم الصوت المباشر — جرّب Chrome أو Safari'); return; }
+      setStatus('حصل خطأ: ' + t);
+    });
+  }
+
+  powerBtn.onclick = async () => {
+    powerBtn.disabled = true; setStatus('بطلب إذن الميكروفون...');
+    try {
+      ctx = new (window.AudioContext || window.webkitAudioContext)(); await ctx.resume();
+      localStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+      localTrack = localStream.getAudioTracks()[0]; localTrack.enabled = false;
+      localAnalyser = makeAnalyser(localStream);
+      remoteAudio = new Audio(); remoteAudio.autoplay = true; remoteAudio.playsInline = true;
+      remoteAudio.setAttribute('playsinline', ''); document.body.appendChild(remoteAudio);
+    } catch (e) {
+      powerBtn.disabled = false;
+      setStatus('محتاج إذن الميكروفون عشان الجهاز يشتغل 🎙️'); return;
+    }
+    chirp(); squelch(.2);
+    powerBtn.classList.add('hidden'); ptt.classList.remove('hidden'); $('tools').classList.remove('hidden');
+    if (typeof Peer === 'undefined') { setStatus('مكتبة الاتصال ماحمّلتش — اتأكد من النت'); return; }
+    const savedHost = params.get('h');
+    startPeer(isGuest ? 'wt11-' + rand(10) : (savedHost && /^wt11-[a-z0-9]{6,16}$/.test(savedHost) ? savedHost : 'wt11-' + rand(8)));
+  };
+
+  $('copyBtn').onclick = async () => {
+    const l = $('shareLink').textContent;
+    try { await navigator.clipboard.writeText(l); $('copyBtn').textContent = 'اتنسخ ✓'; }
+    catch (e) { $('copyBtn').textContent = 'انسخه يدوي'; }
+    setTimeout(() => $('copyBtn').textContent = 'نسخ اللينك', 1800);
+  };
+  $('sendBtn').onclick = () => {
+    const l = $('shareLink').textContent, text = 'تعالى نتكلم واكي توكي 📻 ' + l;
+    if (navigator.share) navigator.share({ title: 'واكي توكي', text, url: l }).catch(() => {});
+    else window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+  };
+
+  window.addEventListener('beforeunload', () => { send({ t: 'bye' }); try { peer && peer.destroy(); } catch (e) {} });
+})();
+</script>
+</body>
+</html>
