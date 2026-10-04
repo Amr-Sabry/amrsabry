@@ -172,7 +172,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 <header class="hero" data-mascot-say="أهلاً! أنا هشرحلك الصفحة.. انزل معايا خطوة خطوة" data-mascot-mood="happy"><div class="wrap">
   <div>
     <div class="kicker">Modern Saudi Crunch · CG product films · Round 04</div>
-    <h1>Four flavours. <em>One crunch.</em></h1>
+    <h1>Three flavours. <em>One crunch.</em></h1>
     <p>One link, the whole process. Spin the pack, look at the concept frames, read the boards for each film, play the animatics, then tell us what you think, frame by frame. This page updates every time we move a step forward.</p>
   </div>
   <div>
@@ -181,8 +181,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
       <span class="sticker plum ar" style="transform:rotate(5deg)">مررره يمي</span>
     </div>
     <div class="meta">
-      <div><b>Range</b><span>Potato Chips × 4</span></div>
-      <div><b>Films</b><span>4 × 8 sec + 1 × 15 sec</span></div>
+      <div><b>Range</b><span>Potato Chips × 3</span></div>
+      <div><b>Films</b><span>3 × 8 sec + 1 × 15 sec</span></div>
       <div><b>Technique</b><span>Full CG, no live action</span></div>
       <div><b>Updated</b><span>04 Oct 2026</span></div>
     </div>
@@ -237,9 +237,9 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
     <div class="card">
       <h3>The 15 second film</h3>
       <ul>
-        <li>Opens on four chips falling, one per flavour.</li>
-        <li>Each pack flies through its own flavour for 2.2 seconds, then one clean chip snap.</li>
-        <li>Ends on the four packs together with the logo and <b class="ar" style="font-weight:800">مررره يمي</b>.</li>
+        <li>Opens on the chips falling, one per flavour.</li>
+        <li>Each pack flies through its own flavour for 2.8 seconds, then one clean chip snap.</li>
+        <li>Ends on the packs together with the logo and <b class="ar" style="font-weight:800">مررره يمي</b>.</li>
       </ul>
     </div>
   </div>
@@ -251,9 +251,9 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
     <div class="card">
       <h3>The 15 second film</h3>
       <ul>
-        <li>Opens on four chips falling, one per flavour.</li>
+        <li>Opens on the chips falling, one per flavour.</li>
         <li>Each flavour gets a 2.5 second beat in its own colour world.</li>
-        <li>Ends on the four packs together with the logo and <b class="ar" style="font-weight:800">مررره يمي</b>.</li>
+        <li>Ends on the packs together with the logo and <b class="ar" style="font-weight:800">مررره يمي</b>.</li>
       </ul>
     </div>
   </div>
@@ -296,7 +296,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
       <h3>What happens next</h3>
       <ul>
         <li><b>Approved boards</b> go into 3D layout and animation, flavour by flavour.</li>
-        <li><b>05 Final films:</b> four 6 second films and the 15 second film, with sound design.</li>
+        <li><b>05 Final films:</b> three 8 second films and the 15 second film, with sound design.</li>
         <li>Each step lands on this same link, with the earlier steps kept for reference.</li>
       </ul>
     </div>
@@ -492,16 +492,14 @@ const mkB=(id,name,col,ing,open,burst,back)=>({id,name,len:'8s',col,fr:[
 const FILMS_B=[
  mkB('cheese','French Cheese','#F7931D','cheese and chips','The top seal tears open on its own. Chips and cheese cubes pop out.','Chips, cheese wedges and cubes fountain out and fill the frame around one hero chip.','Everything spirals back down into the pack.'),
  mkB('chili','Chili','#D91F33','chilies and chips','The top seal tears open on its own. Chips and chili flakes pop out with heat.','Chips, whole chilies and a storm of flakes fountain out around one hero chip.','Chips, chilies and flakes spiral back down into the pack.'),
- mkB('salt','Himalayan Salt','#E587A2','the salt bowl and chips','The top seal tears open on its own. Chips and salt crystals pop out.','Chips, pink salt crystals and the wooden spoon fountain out around one hero chip.','Chips and crystals spiral back down into the pack.'),
  mkB('ketchup','Tomato Ketchup','#2484C6','ketchup, tomatoes and chips','The top seal tears open on its own. Chips and a few ketchup drops pop out.','Chips, two tomatoes and a single ketchup ribbon rise out around one hero chip.','Chips, tomatoes and the ribbon spiral back down into the pack.'),
- {id:'mix',name:'All four',len:'15s',col:'#713258',fr:[
-  {i:'mix-1',t:'Four chips',d:'Four chips fall side by side, each trailing its own seasoning.',sfx:'Four whooshes.',s:1.5},
-  {i:'mix-2',t:'French Cheese',d:'Cheese pack flies at camera through exploding cheese.',sfx:'Thud. Crunch.',s:2.2},
-  {i:'mix-3',t:'Chili',d:'Chili pack cuts across frame with a burst of flakes.',sfx:'Snap. Crunch.',s:2.2},
-  {i:'mix-4',t:'Himalayan Salt',d:'Salt pack sweeps through a spray of crystals.',sfx:'Crystal rush. Crunch.',s:2.2},
-  {i:'mix-5',t:'Tomato Ketchup',d:'Ketchup pack breaks through a ketchup splash.',sfx:'Splash. Crunch.',s:2.2},
-  {i:'b-mix-5',t:'The clean snap',d:'Macro. One chip snaps into two equal halves. A clean break, not a single crumb: proof of the quality.',sfx:'One sharp, clean snap.',s:1.4},
-  {i:'b-mix-6',t:'The line-up',d:'All four packs land in a row with their ingredients. Logo and tagline: مررره يمي.',sfx:'Four hits. Logo sting.',s:3.3}]}
+ {id:'mix',name:'All flavours',len:'15s',col:'#713258',fr:[
+  {i:'mix-1',t:'The chips',d:'Chips fall side by side, each trailing its own seasoning.',sfx:'Whooshes.',s:1.5},
+  {i:'mix-2',t:'French Cheese',d:'Cheese pack flies at camera through exploding cheese.',sfx:'Thud. Crunch.',s:2.8},
+  {i:'mix-3',t:'Chili',d:'Chili pack cuts across frame with a burst of flakes.',sfx:'Snap. Crunch.',s:2.8},
+  {i:'mix-5',t:'Tomato Ketchup',d:'Ketchup pack breaks through a ketchup splash.',sfx:'Splash. Crunch.',s:2.8},
+  {i:'b-mix-5',t:'The clean snap',d:'Macro. One chip snaps into two equal halves. A clean break, not a single crumb: proof of the quality.',sfx:'One sharp, clean snap.',s:1.6},
+  {i:'b-mix-6',t:'The line-up',d:'The packs land in a row with their ingredients. Logo and tagline: مررره يمي.',sfx:'Pack hits. Logo sting.',s:3.5}]}
 ];
 FILMS_A.forEach(F=>F.fr.forEach((f,i)=>f.i=(F.id==='mix'&&i===5)?'b-mix-6':F.id+'-'+(i+1)));
 const OPTS={B:{name:'Pack first',films:FILMS_B}};
