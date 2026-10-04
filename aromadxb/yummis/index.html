@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Yummis × Aroma — Interactive Review</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="description" content="Yummis film — interactive client review: 3D pack, storyboard and animatic.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Rubik:wght@500;800;900&display=swap" rel="stylesheet">
+<script type="importmap">{"imports":{"three":"/aromadxb/yummis/three.module.min.js"}}</script>
+<style>
+:root{--plum:#713258;--teal:#00B2AD;--cream:#FFF2DD;--beige:#F5E8C8;--ink:#3b1a2e;--fl:#DD6617;--flp:#F7931D}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--cream);color:var(--plum);font-family:"Bricolage Grotesque","Rubik",system-ui,sans-serif;font-size:16px;line-height:1.45;overflow-x:hidden}
+.ar{font-family:"Rubik",sans-serif;font-weight:800;direction:rtl}
+h1,h2,h3{font-weight:800;line-height:.95;letter-spacing:-.02em;text-transform:uppercase}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+.wrap{max-width:1280px;margin:0 auto;padding:0 24px}
+
+/* top bar */
+.top{position:sticky;top:0;z-index:50;background:rgba(255,242,221,.92);backdrop-filter:blur(10px);border-bottom:2px solid var(--plum)}
+.top .wrap{display:flex;align-items:center;gap:20px;height:64px}
+.top img{height:40px}
+.top .by{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.7}
+.steps{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.steps a{text-decoration:none;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:8px 12px;border-radius:99px;border:2px solid var(--plum);color:var(--plum);display:flex;gap:6px;align-items:center;white-space:nowrap}
+.steps a.done{background:var(--plum);color:var(--cream)}
+.steps a.now{background:var(--teal);border-color:var(--teal);color:#fff}
+.steps a.next{opacity:.45;border-style:dashed}
+
+/* hero */
+.hero{padding:56px 0 36px;position:relative}
+.hero .wrap{display:grid;grid-template-columns:1.25fr 1fr;gap:32px;align-items:end}
+.kicker{font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:14px}
+.hero h1{font-size:clamp(46px,8.4vw,124px)}
+.hero h1 em{font-style:normal;color:var(--teal)}
+.hero p{font-size:18px;max-width:46ch;margin-top:20px;color:var(--ink)}
+.sticker{display:inline-block;background:var(--teal);color:#fff;padding:10px 22px 12px;border-radius:50%;font-size:26px;transform:rotate(-6deg);line-height:1.1;text-align:center}
+.sticker.plum{background:var(--plum);color:var(--cream)}
+.sticker.out{background:none;border:2px solid currentColor;color:var(--plum)}
+.meta{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.meta div{border:2px solid var(--plum);border-radius:16px;padding:14px 16px}
+.meta b{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--teal)}
+.meta span{font-weight:800;font-size:17px}
+
+section{padding:64px 0;scroll-margin-top:64px}
+.sec-h{display:flex;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:26px}
+.sec-h .n{font-size:13px;font-weight:800;letter-spacing:.1em;color:var(--teal)}
+.sec-h h2{font-size:clamp(36px,5.4vw,76px)}
+.sec-h p{max-width:44ch;margin-left:auto;color:var(--ink)}
+
+/* stage */
+#stage-sec{background:var(--fl);color:#fff;transition:background .6s;padding:56px 0 40px}
+#stage-sec .sec-h .n,#stage-sec .sec-h p{color:#fff}
+.stage{position:relative;height:min(78vh,760px);min-height:520px;border-radius:28px;overflow:hidden;background:radial-gradient(circle at 50% 42%,rgba(255,255,255,.28),rgba(0,0,0,.14) 78%);touch-action:pan-y}
+.stage canvas{width:100%!important;height:100%!important;display:block;cursor:grab}
+.stage canvas:active{cursor:grabbing}
+.bigword{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(90px,22vw,330px);font-weight:800;letter-spacing:-.04em;color:rgba(255,255,255,.13);pointer-events:none;user-select:none;text-transform:uppercase;white-space:nowrap}
+.hud{position:absolute;left:18px;top:18px;display:flex;flex-direction:column;gap:8px;z-index:3}
+.pill{background:rgba(255,242,221,.95);color:var(--plum);border-radius:99px;padding:5px;display:flex;gap:4px;box-shadow:0 4px 0 rgba(0,0,0,.18)}
+.pill button{padding:9px 16px;border-radius:99px;font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.03em}
+.pill button.on{background:var(--plum);color:var(--cream)}
+.flv{position:absolute;right:18px;top:18px;display:flex;flex-direction:column;gap:10px;z-index:3}
+.flv button{display:flex;align-items:center;gap:10px;background:rgba(255,242,221,.95);color:var(--plum);padding:8px 16px 8px 8px;border-radius:99px;font-weight:800;font-size:13px;text-transform:uppercase;box-shadow:0 4px 0 rgba(0,0,0,.18);transition:transform .2s}
+.flv button i{width:26px;height:26px;border-radius:50%;border:3px solid #fff;display:block}
+.flv button.on{transform:translateX(-10px);background:var(--plum);color:var(--cream)}
+.hint{position:absolute;left:0;right:0;bottom:16px;text-align:center;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;opacity:.85;pointer-events:none}
+.tag{position:absolute;left:22px;bottom:44px;z-index:3;pointer-events:none}
+.tag .ar{font-size:clamp(22px,3vw,40px);line-height:1}
+.tag .en{font-weight:800;font-size:clamp(20px,2.6vw,34px);text-transform:uppercase;line-height:1}
+.specs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+.specs div{background:rgba(255,255,255,.16);border-radius:16px;padding:14px 16px}
+.specs b{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.85}
+.specs span{font-weight:800}
+
+/* storyboard */
+.concept{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px}
+.card{border:2px solid var(--plum);border-radius:22px;padding:22px}
+.card.fill{background:var(--plum);color:var(--cream)}
+.card h3{font-size:24px;margin-bottom:10px}
+.card p{color:inherit}
+.card ul{margin:8px 0 0 18px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.fr{border:2px solid var(--plum);border-radius:18px;overflow:hidden;background:#fff;display:flex;flex-direction:column}
+.fr .im{aspect-ratio:16/9;background:#eee center/cover no-repeat;position:relative;cursor:zoom-in}
+.fr .im .no{position:absolute;left:10px;top:10px;background:var(--plum);color:var(--cream);font-weight:800;font-size:12px;padding:4px 10px;border-radius:99px}
+.fr .im .du{position:absolute;right:10px;top:10px;background:var(--teal);color:#fff;font-weight:800;font-size:12px;padding:4px 10px;border-radius:99px}
+.fr .tx{padding:14px 16px;flex:1}
+.fr .tx b{display:block;font-weight:800;text-transform:uppercase;font-size:15px;margin-bottom:4px}
+.fr .tx small{display:block;font-size:13px;color:var(--ink)}
+.fr .tx .sfx{margin-top:8px;font-size:12px;font-weight:800;color:var(--teal);text-transform:uppercase;letter-spacing:.05em}
+.fb{display:flex;gap:6px;padding:0 12px 12px;flex-wrap:wrap}
+.fb button{font-size:12px;font-weight:800;text-transform:uppercase;padding:7px 12px;border-radius:99px;border:2px solid var(--plum)}
+.fb button.ok.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.fb button.ch.on{background:#D91F33;border-color:#D91F33;color:#fff}
+.fb textarea{width:100%;font:inherit;font-size:13px;border:2px solid var(--plum);border-radius:12px;padding:8px 10px;min-height:54px;display:none;resize:vertical;background:var(--cream);color:var(--ink)}
+.fb textarea.show{display:block}
+
+/* animatic */
+#ani-sec{background:var(--plum);color:var(--cream)}
+#ani-sec .sec-h p{color:var(--cream)}
+.player{position:relative;aspect-ratio:16/9;background:#111;border-radius:22px;overflow:hidden}
+.player .sh{position:absolute;inset:0;background:center/cover no-repeat;opacity:0;will-change:transform,opacity}
+.player .cap{z-index:5;position:absolute;left:0;right:0;bottom:0;padding:18px 22px;background:linear-gradient(transparent,rgba(0,0,0,.75));color:#fff;display:flex;justify-content:space-between;gap:16px;align-items:end;font-weight:800}
+.player .cap .sfx{color:#7ff3ee;text-transform:uppercase;font-size:13px;letter-spacing:.06em;text-align:right}
+.player .tc{z-index:5;position:absolute;left:16px;top:14px;font:600 13px ui-monospace,monospace;color:#fff;background:rgba(0,0,0,.55);padding:4px 10px;border-radius:8px}
+.player .big{z-index:6;position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.player .big button{width:96px;height:96px;border-radius:50%;background:var(--teal);color:#fff;font-size:34px;box-shadow:0 6px 0 rgba(0,0,0,.3)}
+.ctl{display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap}
+.ctl button{background:var(--cream);color:var(--plum);font-weight:800;text-transform:uppercase;font-size:13px;padding:10px 18px;border-radius:99px}
+.ctl button.on{background:var(--teal);color:#fff}
+.tl{flex:1;min-width:220px;display:flex;gap:3px;height:34px;cursor:pointer}
+.tl i{display:block;height:100%;background:rgba(255,242,221,.22);border-radius:6px;position:relative;overflow:hidden}
+.tl i b{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--teal)}
+
+/* feedback */
+.sum{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.sum pre{white-space:pre-wrap;font:500 14px/1.5 "Bricolage Grotesque",sans-serif;background:#fff;border:2px solid var(--plum);border-radius:18px;padding:18px;min-height:160px;color:var(--ink)}
+.btn{display:inline-block;background:var(--plum);color:var(--cream);font-weight:800;text-transform:uppercase;padding:14px 24px;border-radius:99px;margin:10px 8px 0 0;text-decoration:none}
+.btn.t{background:var(--teal);color:#fff}
+footer{padding:36px 0;border-top:2px solid var(--plum);font-size:13px;font-weight:600}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.lb{position:fixed;inset:0;background:rgba(40,12,30,.94);z-index:99;display:none;align-items:center;justify-content:center;padding:24px;cursor:zoom-out}
+.lb.show{display:flex}
+.lb img{max-width:100%;max-height:100%;border-radius:14px}
+@media(max-width:900px){
+ .hero .wrap,.concept,.sum{grid-template-columns:1fr}
+ .grid{grid-template-columns:1fr 1fr}
+ .specs{grid-template-columns:1fr 1fr}
+ .steps a span{display:none}
+ .top .by{display:none}
+ .flv button span{display:none}.flv button{padding:8px}
+ .sec-h p{margin-left:0}
+}
+@media(max-width:560px){.grid{grid-template-columns:1fr}.stage{height:70vh}.wrap{padding:0 16px}}
+</style>
+</head>
+<body>
+
+<div class="top"><div class="wrap">
+  <img src="/aromadxb/yummis/logo.png" alt="Yummis يميز">
+  <div class="by">Interactive review · by Aroma Studios</div>
+  <nav class="steps">
+    <a href="#stage-sec" class="now">01 <span>3D Model</span></a>
+    <a href="#sb-sec" class="now">02 <span>Storyboard</span></a>
+    <a href="#ani-sec" class="now">03 <span>Animatic</span></a>
+    <a href="#fb-sec" class="next">04 <span>Style frames</span></a>
+    <a href="#fb-sec" class="next">05 <span>Final film</span></a>
+  </nav>
+</div></div>
+
+<header class="hero"><div class="wrap">
+  <div>
+    <div class="kicker">Modern Saudi Crunch · Product film · Round 01</div>
+    <h1>Open it <em>loud.</em></h1>
+    <p>One link, the whole process. Spin the pack, read the boards, play the animatic, then tell us what you think, frame by frame. This page updates every time we move a step forward.</p>
+  </div>
+  <div>
+    <div style="margin-bottom:18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <span class="sticker ar">افتحها<br>بصوت</span>
+      <span class="sticker plum ar" style="transform:rotate(5deg)">مررره يمي</span>
+    </div>
+    <div class="meta">
+      <div><b>Range</b><span>Potato Chips × 4</span></div>
+      <div><b>Stage</b><span>Model · Boards · Animatic</span></div>
+      <div><b>Film length</b><span id="m-len">20 sec</span></div>
+      <div><b>Updated</b><span>04 Oct 2026</span></div>
+    </div>
+  </div>
+</div></header>
+
+<section id="stage-sec"><div class="wrap">
+  <div class="sec-h">
+    <div><div class="n">STEP 01</div><h2>The pack.<br>The chip.</h2></div>
+    <p>Real-time 3D built from the approved pack artwork. Drag to turn it 360°, scroll or pinch to zoom, switch between the four flavours.</p>
+  </div>
+  <div class="stage" id="stage">
+    <div class="bigword" id="bigword">Cheese</div>
+    <div class="hud">
+      <div class="pill" id="modes">
+        <button data-m="pack" class="on">Pack</button><button data-m="chip">Chip</button><button data-m="hero">Hero</button>
+      </div>
+      <div class="pill" id="opts"><button id="spin" class="on">Auto spin</button><button id="flip">Flip</button></div>
+    </div>
+    <div class="flv" id="flv"></div>
+    <div class="tag"><div class="ar" id="t-ar"></div><div class="en" id="t-en"></div></div>
+    <div class="hint">Drag to rotate · Scroll to zoom</div>
+  </div>
+  <div class="specs">
+    <div><b>Flavour</b><span id="s-name"></span></div>
+    <div><b>On-pack colour</b><span id="s-pack"></span></div>
+    <div><b>Communication background</b><span id="s-bg"></span></div>
+    <div><b>Mood</b><span id="s-mood"></span></div>
+  </div>
+</div></section>
+
+<section id="sb-sec"><div class="wrap">
+  <div class="sec-h">
+    <div><div class="n">STEP 02</div><h2>Storyboard.</h2></div>
+    <p>Black and white sketch pass. Composition, action and rhythm only. No colour, no lighting, no final design yet.</p>
+  </div>
+  <div class="concept">
+    <div class="card fill">
+      <h3>The idea: some snacks whisper. Ours never learned how.</h3>
+      <p>A silent room. One pack. The moment it opens, the crunch becomes a visible shockwave that wakes up everything around it and pulls everyone in. The pack and the chip are the heroes, the sound is the story.</p>
+    </div>
+    <div class="card">
+      <h3>Why it fits Yummis</h3>
+      <ul>
+        <li>Built on the brand's own signature: <b>you hear it before you taste it.</b></li>
+        <li>Four flavours get one clean beauty beat each, in their own colour world.</li>
+        <li>Ends on sharing, the "Sociable" trait, and the consumer tagline.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="grid" id="grid"></div>
+</div></section>
+
+<section id="ani-sec"><div class="wrap">
+  <div class="sec-h">
+    <div><div class="n" style="color:#7ff3ee">STEP 03</div><h2>Animatic.</h2></div>
+    <p>The boards cut to time with camera moves and a rough crunch track, so you can judge pace before anything is rendered.</p>
+  </div>
+  <div class="player" id="player">
+    <div class="sh" id="shA"></div><div class="sh" id="shB"></div>
+    <div class="tc" id="tc">00:00 / 00:20</div>
+    <div class="cap"><div id="cap"></div><div class="sfx" id="capsfx"></div></div>
+    <div class="big" id="big"><button aria-label="Play">▶</button></div>
+  </div>
+  <div class="ctl">
+    <button id="pp">Play</button>
+    <div class="tl" id="tl"></div>
+    <button id="snd" class="on">Sound on</button>
+  </div>
+</div></section>
+
+<section id="fb-sec"><div class="wrap">
+  <div class="sec-h">
+    <div><div class="n">YOUR TURN</div><h2>Feedback.</h2></div>
+    <p>Mark each frame as approved or add a note under it. Everything you mark is collected here, ready to send back in one message.</p>
+  </div>
+  <div class="sum">
+    <div>
+      <pre id="sum">No feedback yet. Use the buttons under each storyboard frame.</pre>
+      <button class="btn" id="copy">Copy feedback</button>
+      <a class="btn t" id="mail" href="#">Send by email</a>
+    </div>
+    <div class="card">
+      <h3>What happens next</h3>
+      <ul>
+        <li><b>04 Style frames:</b> approved boards become full-colour key frames in the Yummis look.</li>
+        <li><b>05 Final film:</b> animation, sound design and the four flavour cut-downs.</li>
+        <li>Each step lands on this same link, with the earlier steps kept for reference.</li>
+      </ul>
+    </div>
+  </div>
+</div></section>
+
+<footer><div class="wrap"><span>Yummis يميز · Modern Saudi Crunch</span><span>Produced by Aroma Studios · Confidential work in progress</span></div></footer>
+<div class="lb" id="lb"><img alt=""></div>
+
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from '/aromadxb/yummis/OrbitControls.js';
+import {RoomEnvironment} from '/aromadxb/yummis/RoomEnvironment.js';
+const A='/aromadxb/yummis/';
+const $=s=>document.querySelector(s);
+
+const FL=[
+ {id:'cheese', name:'French Cheese', ar:'بالجبنة الفرنسية', pack:'#F7931D', bg:'#DD6617', mood:'Warm · rich · appetizing', word:'Cheese', dust:['#F9A825','#FFD54F','#E65100']},
+ {id:'chili',  name:'Chili', ar:'بالفلفل الحار', pack:'#D91F33', bg:'#D02925', mood:'Hot · bold · energetic', word:'Chili', dust:['#B71C1C','#E53935','#7f1010']},
+ {id:'salt',   name:'Himalayan Salt', ar:'ملح الهيمالايا', pack:'#E587A2', bg:'#EA8CB3', mood:'Soft · light · distinctive', word:'Salt', dust:['#fff','#F8BBD0','#fde']},
+ {id:'ketchup',name:'Tomato Ketchup', ar:'بكاتشب الطماطم', pack:'#2484C6', bg:'#004182', mood:'Fresh · cool · confident', word:'Ketchup', dust:['#C62828','#EF5350','#8E0000']}
+];
+
+/* ---------- three ---------- */
+const stage=$('#stage');
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.NoToneMapping;
+stage.appendChild(renderer.domElement);
+const scene=new THREE.Scene();
+const pm=new THREE.PMREMGenerator(renderer);
+scene.environment=pm.fromScene(new RoomEnvironment(),.04).texture;
+const cam=new THREE.PerspectiveCamera(32,1,.1,50);cam.position.set(0,.1,7.4);
+const ctl=new OrbitControls(cam,renderer.domElement);
+ctl.enableDamping=true;ctl.enablePan=false;ctl.minDistance=3.2;ctl.maxDistance=11;ctl.autoRotate=true;ctl.autoRotateSpeed=2.2;
+scene.add(new THREE.HemisphereLight(0xffffff,0xd8c8b8,1.5));
+const key=new THREE.DirectionalLight(0xffffff,.75);key.position.set(3,4,5);scene.add(key);
+const rim=new THREE.DirectionalLight(0xffffff,.5);rim.position.set(-4,2,-4);scene.add(rim);
+
+/* pillow bag */
+function bagGeo(){
+  const W=2,H=2.4,g=new THREE.PlaneGeometry(W,H,56,72),p=g.attributes.position,T=.36,s0=.07,s1=.93;
+  for(let i=0;i<p.count;i++){
+    const u=p.getX(i)/W+.5,v=p.getY(i)/H+.5;
+    let z=0;
+    if(v>s0&&v<s1){
+      const s=(v-s0)/(s1-s0);
+      const py=Math.pow(Math.sin(Math.PI*s),.5);
+      const px=Math.pow(Math.max(0,1-Math.pow(Math.abs(2*u-1),2.4)),.62);
+      const belly=1+.14*(.5-s);
+      const wr=.012*Math.sin(u*38+s*4)*Math.pow(1-Math.sin(Math.PI*s),2)*6;
+      z=T*py*px*belly+wr*px;
+    }
+    p.setZ(i,z);
+  }
+  g.computeVertexNormals();return g;
+}
+const tl=new THREE.TextureLoader();
+function tex(u){const t=tl.load(u);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;return t}
+const bagG=bagGeo();
+const mk=()=>new THREE.MeshPhysicalMaterial({alphaTest:.5,roughness:.5,metalness:.0,clearcoat:.35,clearcoatRoughness:.4,envMapIntensity:.22,side:THREE.FrontSide});
+const mF=mk(),mB=mk();
+const bag=new THREE.Group();
+const front=new THREE.Mesh(bagG,mF),back=new THREE.Mesh(bagG,mB);back.rotation.y=Math.PI;
+bag.add(front,back);bag.scale.setScalar(1.22);scene.add(bag);
+const T={};FL.forEach(f=>T[f.id]={f:tex(A+f.id+'-front.webp'),b:tex(A+f.id+'-back.webp')});
+
+/* chip */
+function rnd(seed){let s=seed;return()=>(s=(s*16807)%2147483647)/2147483647}
+function chipGeo(seed){
+  const R=40,S=110,pos=[],uv=[],idx=[],r=rnd(seed);
+  const a1=r()*6,a2=r()*6,k=.34+r()*.12,e=.9+r()*.12;
+  for(let i=0;i<=R;i++){const t=i/R;
+    for(let j=0;j<=S;j++){const th=j/S*Math.PI*2;
+      const edge=1+.055*Math.sin(3*th+a1)+.035*Math.sin(5*th+a2)+.02*Math.sin(9*th);
+      const rr=t*edge,x=rr*Math.cos(th)*1.12,y=rr*Math.sin(th)*e;
+      let z=k*(x*x-y*y)+.035*Math.sin(5*x+a1)*Math.cos(4*y+a2)+.02*Math.sin(11*x*y+a2);
+      z+=.05*t*t*Math.sin(2*th+a1);
+      pos.push(x,y,z);uv.push(.5+x/2.4,.5+y/2.4);
+    }}
+  for(let i=0;i<R;i++)for(let j=0;j<S;j++){const a=i*(S+1)+j,b=a+S+1;idx.push(a,b,a+1,b,b+1,a+1)}
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+  g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
+  g.setIndex(idx);g.computeVertexNormals();return g;
+}
+function chipTex(f){
+  const c=document.createElement('canvas');c.width=c.height=1024;const x=c.getContext('2d'),r=rnd(f.id.length*977+13);
+  const g=x.createRadialGradient(512,512,60,512,512,560);g.addColorStop(0,'#F4CF6B');g.addColorStop(.7,'#EDBE55');g.addColorStop(1,'#C98A2B');
+  x.fillStyle=g;x.fillRect(0,0,1024,1024);
+  for(let i=0;i<260;i++){const px=r()*1024,py=r()*1024,rad=10+r()*60;const gg=x.createRadialGradient(px,py,0,px,py,rad);
+    const dark=r()>.55;gg.addColorStop(0,dark?'rgba(176,112,28,.22)':'rgba(255,236,170,.30)');gg.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=gg;x.fillRect(px-rad,py-rad,rad*2,rad*2)}
+  for(let i=0;i<34;i++){const px=r()*1024,py=r()*1024,rad=14+r()*34;x.beginPath();x.arc(px,py,rad,0,7);x.fillStyle='rgba(255,240,190,.35)';x.fill();x.lineWidth=3;x.strokeStyle='rgba(150,95,20,.35)';x.stroke()}
+  const n=f.id==='salt'?900:2600;
+  for(let i=0;i<n;i++){x.fillStyle=f.dust[(r()*f.dust.length)|0];x.globalAlpha=.45+r()*.5;const s=1+r()*(f.id==='salt'?5:3.4);x.fillRect(r()*1024,r()*1024,s,s)}
+  x.globalAlpha=1;
+  if(f.id!=='salt'){x.globalCompositeOperation='multiply';x.fillStyle=f.id==='cheese'?'rgba(255,190,90,.35)':'rgba(235,120,90,.28)';x.fillRect(0,0,1024,1024);x.globalCompositeOperation='source-over'}
+  const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;return t;
+}
+const CT={};FL.forEach(f=>CT[f.id]=chipTex(f));
+const chipM=new THREE.MeshStandardMaterial({side:THREE.DoubleSide,roughness:.8,metalness:0,bumpScale:3,envMapIntensity:.25});
+const chip=new THREE.Mesh(chipGeo(7),chipM);chip.scale.setScalar(1.05);chip.rotation.x=-1.0;scene.add(chip);
+const minis=new THREE.Group();scene.add(minis);
+const MP=[[-1.75,.95,.4,.34],[1.8,.55,.2,.42],[-1.55,-.9,.7,.3],[1.6,-1,.5,.36],[.2,1.5,-.6,.26],[-2.3,.05,-.5,.24],[2.35,-.2,-.6,.22]];
+MP.forEach((m,i)=>{const c=new THREE.Mesh(chipGeo(31+i*17),chipM);c.position.set(m[0],m[1],m[2]);c.scale.setScalar(m[3]);c.rotation.set(i*1.3,i*2.1,i*.7);c.userData={s:.4+i*.13,o:i};minis.add(c)});
+
+let mode='pack',cur=FL[0],spinKick=0;
+function setFlavor(f){
+  cur=f;mF.map=T[f.id].f;mB.map=T[f.id].b;mF.needsUpdate=mB.needsUpdate=true;
+  chipM.map=CT[f.id];chipM.bumpMap=CT[f.id];chipM.needsUpdate=true;
+  document.documentElement.style.setProperty('--fl',f.bg);
+  $('#bigword').textContent=f.word;$('#t-ar').textContent=f.ar;$('#t-en').textContent=f.name;
+  $('#s-name').textContent=f.name;$('#s-pack').textContent=f.pack;$('#s-bg').textContent=f.bg;$('#s-mood').textContent=f.mood;
+  document.querySelectorAll('#flv button').forEach(b=>b.classList.toggle('on',b.dataset.f===f.id));
+  spinKick=1;
+}
+function setMode(m){
+  mode=m;bag.visible=m!=='chip';chip.visible=m==='chip';minis.visible=m==='hero';
+  document.querySelectorAll('#modes button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
+  cam.position.set(0,.1,m==='hero'?8.6:7.4);ctl.target.set(0,0,0);
+}
+FL.forEach(f=>{const b=document.createElement('button');b.dataset.f=f.id;b.innerHTML=`<i style="background:${f.pack}"></i><span>${f.name}</span>`;b.onclick=()=>setFlavor(f);$('#flv').appendChild(b)});
+document.querySelectorAll('#modes button').forEach(b=>b.onclick=()=>setMode(b.dataset.m));
+$('#spin').onclick=e=>{ctl.autoRotate=!ctl.autoRotate;e.target.classList.toggle('on',ctl.autoRotate)};
+let flipT=0;$('#flip').onclick=()=>{flipT+=Math.PI};
+setFlavor(FL[0]);setMode('pack');
+
+function size(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);cam.aspect=w/h;cam.fov=w<600?44:32;cam.updateProjectionMatrix()}
+new ResizeObserver(size).observe(stage);size();
+const clock=new THREE.Clock();let flipC=0;
+window.__yummis={scene,cam,ctl,bag,chip,setFlavor,setMode,FL,renderer};
+renderer.setAnimationLoop(()=>{
+  const t=clock.getElapsedTime();
+  flipC+=(flipT-flipC)*.08;spinKick*=.93;
+  bag.rotation.y=flipC+spinKick*Math.PI*2;
+  bag.position.y=Math.sin(t*1.1)*.05;bag.rotation.z=Math.sin(t*.8)*.025;
+  chip.rotation.z=t*.25;chip.rotation.x=-1.0+Math.sin(t*.7)*.3;chip.position.y=Math.sin(t*1.2)*.06;
+  minis.children.forEach(c=>{c.rotation.x+=.004*c.userData.s*3;c.rotation.y+=.006*c.userData.s*3;c.position.y+=Math.sin(t*c.userData.s*2+c.userData.o)*.0015});
+  ctl.update();renderer.render(scene,cam);
+});
+
+/* ---------- storyboard ---------- */
+const SB=[
+ {t:'Silence',d:'Night. Gaming room, three friends frozen on a tense last round. Nobody breathes. The pack sits untouched on the table.',sfx:'Room tone. A clock ticks.',s:2.2},
+ {t:'The grip',d:'Extreme close-up. Two hands take the top seal of the Yummis pack. Knuckles tighten.',sfx:'Foil creak.',s:1.6},
+ {t:'Open it loud',d:'The pack tears open. A ring of sound bursts outward, chips launch into the air.',sfx:'RRRIP + bass hit.',s:1.6},
+ {t:'Hero chip',d:'Macro. One chip turns slowly in mid-air, seasoning dust drifting off its edge.',sfx:'Whoosh, slowed down.',s:2.2},
+ {t:'The crunch',d:'Profile close-up. He bites. The chip cracks and the crunch is drawn as a shockwave.',sfx:'CRUNCH.',s:1.4},
+ {t:'The room wakes up',d:'Wide. The shockwave rolls through the room: cushions jump, headphones fly, both friends snap their heads round.',sfx:'Crunch echo, gasp.',s:2.0},
+ {t:'Four flavours',d:'Four packs land in a row, each with its ingredient: cheese wedge, chili, pink salt, ketchup swirl.',sfx:'Four hits, one per pack.',s:2.6},
+ {t:'Everybody in',d:'Top shot. Hands from every side dive into the open pack at once.',sfx:'Laughter, crunches overlap.',s:1.8},
+ {t:'Worth the snap',d:'The three friends squeeze into a selfie, pack held up front, mid-laugh.',sfx:'Phone shutter.',s:1.8},
+ {t:'Pack shot',d:'Hero pack centred, chips falling around it. Logo and tagline: مررره يمي.',sfx:'Final crunch. Logo sting.',s:2.8}
+];
+const img=i=>A+'sb-'+String(i+1).padStart(2,'0')+'.webp';
+const total=SB.reduce((a,b)=>a+b.s,0);$('#m-len').textContent=Math.round(total)+' sec';
+const LS='yummis-fb-r1';let FB={};try{FB=JSON.parse(localStorage.getItem(LS)||'{}')}catch(e){}
+const save=()=>{try{localStorage.setItem(LS,JSON.stringify(FB))}catch(e){}summary()};
+function summary(){
+  const L=[];SB.forEach((f,i)=>{const x=FB[i];if(!x||(!x.s&&!x.n))return;L.push(`Frame ${String(i+1).padStart(2,'0')} · ${f.t}: ${x.s==='ok'?'APPROVED':x.s==='ch'?'CHANGE':''}${x.n?' — '+x.n:''}`)});
+  const txt=L.length?'Yummis film · Round 01 feedback\n\n'+L.join('\n'):'No feedback yet. Use the buttons under each storyboard frame.';
+  $('#sum').textContent=txt;$('#mail').href='mailto:amr.sabry.designer@gmail.com?subject='+encodeURIComponent('Yummis film · Round 01 feedback')+'&body='+encodeURIComponent(txt);
+}
+SB.forEach((f,i)=>{
+  const el=document.createElement('div');el.className='fr';
+  el.innerHTML=`<div class="im" style="background-image:url(${img(i)})"><span class="no">${String(i+1).padStart(2,'0')}</span><span class="du">${f.s.toFixed(1)}s</span></div>
+  <div class="tx"><b>${f.t}</b><small>${f.d}</small><div class="sfx">SFX · ${f.sfx}</div></div>
+  <div class="fb"><button class="ok">Approve</button><button class="ch">Change</button><textarea placeholder="What should change in this frame?"></textarea></div>`;
+  const ok=el.querySelector('.ok'),ch=el.querySelector('.ch'),ta=el.querySelector('textarea');
+  const paint=()=>{const x=FB[i]||{};ok.classList.toggle('on',x.s==='ok');ch.classList.toggle('on',x.s==='ch');ta.classList.toggle('show',x.s==='ch');ta.value=x.n||''};
+  ok.onclick=()=>{FB[i]={...(FB[i]||{}),s:FB[i]?.s==='ok'?'':'ok'};paint();save()};
+  ch.onclick=()=>{FB[i]={...(FB[i]||{}),s:FB[i]?.s==='ch'?'':'ch'};paint();save()};
+  ta.oninput=()=>{FB[i]={...(FB[i]||{}),n:ta.value};save()};
+  el.querySelector('.im').onclick=()=>{$('#lb img').src=img(i);$('#lb').classList.add('show')};
+  paint();$('#grid').appendChild(el);
+});
+$('#lb').onclick=()=>$('#lb').classList.remove('show');
+summary();
+$('#copy').onclick=async e=>{try{await navigator.clipboard.writeText($('#sum').textContent);e.target.textContent='Copied'}catch(_){e.target.textContent='Select the text to copy'}setTimeout(()=>e.target.textContent='Copy feedback',1800)};
+
+/* ---------- animatic ---------- */
+const MOVES=[[1.0,1.12,0,0],[1.25,1.05,0,2],[1.0,1.3,0,0],[1.15,1.0,-2,2],[1.3,1.1,2,0],[1.2,1.0,0,0],[1.05,1.15,-3,0],[1.25,1.05,0,-2],[1.0,1.12,0,1],[1.18,1.0,0,0]];
+const tlEl=$('#tl');SB.forEach((f,i)=>{const s=document.createElement('i');s.style.flex=f.s;s.innerHTML='<b></b>';s.onclick=()=>{seek(i)};tlEl.appendChild(s)});
+SB.forEach((_,i)=>{const p=new Image();p.src=img(i)});
+let playing=false,ai=-1,t0=0,acc=0,sound=true,AC=null,layer=0;
+const shs=[$('#shA'),$('#shB')];
+function noise(dur,freq,gain,type='bandpass'){
+  if(!sound)return;AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+  const n=AC.sampleRate*dur,b=AC.createBuffer(1,n,AC.sampleRate),d=b.getChannelData(0);
+  for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,2.2)*(Math.random()>.35?1:.1);
+  const s=AC.createBufferSource();s.buffer=b;const f=AC.createBiquadFilter();f.type=type;f.frequency.value=freq;f.Q.value=.8;const g=AC.createGain();g.gain.value=gain;
+  s.connect(f).connect(g).connect(AC.destination);s.start();
+}
+function thump(){if(!sound)return;AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.frequency.setValueAtTime(120,AC.currentTime);o.frequency.exponentialRampToValueAtTime(38,AC.currentTime+.35);g.gain.setValueAtTime(.7,AC.currentTime);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+.45);o.connect(g).connect(AC.destination);o.start();o.stop(AC.currentTime+.5)}
+const SFX=[()=>noise(.05,5000,.05,'highpass'),()=>noise(.5,3500,.18,'highpass'),()=>{noise(.45,2600,.6);thump()},()=>noise(.9,700,.12,'lowpass'),()=>{noise(.3,3200,.9);thump()},()=>{noise(.6,1400,.35);},()=>{[0,.45,.9,1.35].forEach(d=>setTimeout(()=>playing&&thump(),d*1000))},()=>{[0,.2,.5,.8,1.1].forEach(d=>setTimeout(()=>playing&&noise(.2,3000,.5),d*1000))},()=>noise(.06,6000,.5,'highpass'),()=>{noise(.3,3200,.8);thump()}];
+function show(i){
+  ai=i;layer^=1;const el=shs[layer],old=shs[layer^1],m=MOVES[i],d=SB[i].s;
+  el.style.transition='none';el.style.backgroundImage=`url(${img(i)})`;el.style.transform=`scale(${m[0]}) translate(${-m[2]}%,${-m[3]}%)`;el.style.opacity=1;el.style.zIndex=2;old.style.zIndex=1;
+  el.getBoundingClientRect();
+  el.style.transition=`transform ${d+.3}s linear`;el.style.transform=`scale(${m[1]}) translate(${m[2]}%,${m[3]}%)`;
+  setTimeout(()=>{if(shs[layer]!==old)old.style.opacity=0},60);
+  $('#cap').textContent=String(i+1).padStart(2,'0')+' · '+SB[i].t;$('#capsfx').textContent=SB[i].sfx;
+  if(playing)SFX[i]();
+}
+const fmt=s=>'00:'+String(Math.floor(s)).padStart(2,'0');
+function tick(){
+  if(!playing)return;
+  const el=(performance.now()-t0)/1000;let a=0,i=0;
+  for(;i<SB.length;i++){if(el<a+SB[i].s)break;a+=SB[i].s}
+  if(i>=SB.length){stop(true);return}
+  if(i!==ai)show(i);
+  tlEl.querySelectorAll('i b').forEach((b,k)=>b.style.width=k<i?'100%':k===i?((el-a)/SB[i].s*100)+'%':'0');
+  $('#tc').textContent=fmt(el)+' / '+fmt(total);
+  requestAnimationFrame(tick);
+}
+function play(from=0){playing=true;ai=-1;t0=performance.now()-from*1000;$('#big').style.display='none';$('#pp').textContent='Pause';requestAnimationFrame(tick)}
+function stop(end){playing=false;$('#pp').textContent=end?'Replay':'Play';if(end){$('#big').style.display='flex'}}
+function seek(i){let a=0;for(let k=0;k<i;k++)a+=SB[k].s;play(a)}
+$('#pp').onclick=()=>playing?stop(false):play(0);
+$('#big').onclick=()=>play(0);
+$('#snd').onclick=e=>{sound=!sound;e.target.classList.toggle('on',sound);e.target.textContent=sound?'Sound on':'Sound off'};
+shs[0].style.backgroundImage=`url(${img(0)})`;shs[0].style.opacity=1;$('#cap').textContent='01 · '+SB[0].t;$('#tc').textContent='00:00 / '+fmt(total);
+window.__ani={play,stop,seek,SB};
+</script>
+</body>
+</html>
