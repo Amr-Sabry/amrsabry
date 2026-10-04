@@ -101,7 +101,7 @@ h1, h2, h3, p { margin: 0; }
 #log .tag { font: normal 600 11px/1.5 var(--body); color: var(--teal); border: 1px solid var(--line); padding: 0 5px; flex: none; }
 #log span { min-width: 0; overflow-wrap: anywhere; }
 
-#pipe { list-style: none; margin: 4px 0 8px; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; counter-reset: step; }
+#pipe { list-style: none; margin: 4px 0 8px; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; counter-reset: step; }
 #pipe li { counter-increment: step; position: relative; background: var(--panel-2); border: 1px solid var(--line); padding: 10px 4px 8px; display: grid; justify-items: center; gap: 2px; text-align: center; min-width: 0; }
 #pipe li::before { content: counter(step); position: absolute; top: 3px; inset-inline-start: 5px; font: 800 16px/1 var(--display); color: var(--accent); }
 #pipe strong { font: 600 13px/1.3 var(--body); } #pipe span { font-size: 12px; color: var(--muted); line-height: 1.3; }
@@ -149,12 +149,12 @@ ul.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .pill { font: 600 11px/1 var(--body); padding: 4px 7px; border: 1px solid; white-space: nowrap; flex: none; }
 .pill.done { color: var(--good); } .pill.active { color: #fff; background: var(--accent); border-color: var(--accent); } .pill.blocked { color: var(--bad); } .pill.todo { color: var(--muted); } .pill.stale { color: var(--gold); } .pill.locked { color: var(--muted); letter-spacing: .06em; }
 .bar { display: flex; gap: 2px; } .bar i { width: 7px; height: 8px; background: #1d3840; } .bar i.on { background: var(--gold); }
-.team { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.team { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .agent { position: relative; background: var(--panel-2); border: 1px solid var(--line); padding: 7px 2px 6px; display: grid; justify-items: center; gap: 1px; text-align: center; min-width: 0; }
 .agent:hover { border-color: var(--teal); } .agent.p1 { border-color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
 .agent canvas { margin-bottom: 4px; }
-.agent strong { font: 600 12px/1.25 var(--body); overflow-wrap: anywhere; }
-.a-cls { font: 600 11px/1.1 var(--display); letter-spacing: .06em; color: var(--teal); direction: ltr; }
+.agent strong { font: 600 14px/1.25 var(--body); overflow-wrap: anywhere; }
+.a-cls { font: 600 13px/1.1 var(--display); letter-spacing: .06em; color: var(--teal); direction: ltr; }
 .a-p1 { position: absolute; top: 4px; inset-inline-start: 4px; background: var(--gold); color: #1a1200; font: 800 14px/1 var(--display); padding: 2px 4px 1px; }
 .load { display: flex; align-items: center; gap: 8px; background: var(--panel-2); border: 1px solid var(--line); padding: 6px 8px; }
 .load.top { border-color: var(--accent); } .load.low { opacity: .8; }
@@ -205,7 +205,7 @@ dialog::backdrop { background: rgba(4, 8, 10, .74); }
 @media (max-width: 560px) {
   .titleblock h1 { font-size: 26px; } .brand img { height: 40px; } .dxb-tag { font-size: 21px; }
   .hud { padding: 10px; } .worlds { width: 100%; } .worlds button { flex: 1; }
-  #pipe { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  #pipe { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .meter .v { font-size: 22px; } .btn.quiet { margin-inline-start: 0; }
   .c-head { align-items: flex-start; } .c-head canvas { width: 96px !important; height: 120px !important; }
 }
@@ -356,11 +356,6 @@ const AGENTS = [
     move:'مرفوض', moveDesc:'بيرفض أي حاجة أول مرة. مبدأ.',
     weak:'شغل مفيهوش غلطة. بيتلخبط.',
     lines:['ده مش على الجريد.','فيه بيكسل ناقص هنا.','مرفوض. جرّب تاني.','مين راجع ده؟ ...أنا لسه ماراجعتش.'] },
-  { id:'dlv', role:'الدليفري', cls:'DELIVERY', lvl:11, shirt:'#d83a2e', pants:'#22242c',
-    stats:{قهوة:50, صبر:60, تركيز:45, سرعة:99},
-    move:'اللينك في السكة', moveDesc:'بيوصّل التسليم قبل الديدلاين بدقيقة. دايماً دقيقة.',
-    weak:'ملف 40 جيجا.',
-    lines:['اللينك في السكة!','وصلت قبل الديدلاين بدقيقة.','الملف تقيل والطريق زحمة.','حد طالب تسليم؟'] },
   { id:'boss', role:'المخرج', cls:'DIRECTOR', lvl:99, shirt:'#2a2f3a', pants:'#1a2630',
     stats:{قهوة:90, صبر:35, تركيز:95, سرعة:40},
     move:'كات!', moveDesc:'كلمة واحدة منه بتعيد شغل يوم كامل.',
@@ -378,13 +373,13 @@ const WORLDS = {
         note:'الداشبورد نفسه. مبني كله بالكود، من غير ولا صورة غير اللوجو.' },
       { id:'logo', title:'تركيب لوجو أروما', path:'/aroma', status:'done', pct:100, agents:['des'],
         note:'نفس اللوجو بتاع تمبلت البرزنتيشنات.' },
-      { id:'domain', title:'ربط amrsabry.com/aroma', path:'/aroma', status:'done', pct:100, agents:['dlv','eng'],
+      { id:'domain', title:'ربط amrsabry.com/aroma', path:'/aroma', status:'done', pct:100, agents:['dev','eng'],
         note:'اترفعت وشغّالة على الدومين.' },
       { id:'lock', title:'قفل الباب', path:'/aroma', status:'todo', pct:0, agents:['qa'],
         note:'باسورد للداشبورد قبل ما أول عميل ياخد لينك.' },
       { id:'vault', title:'مخزن الفيديوهات', path:'/aroma', status:'todo', pct:0, agents:['eng'],
         note:'مكان للملفات التقيلة جنب الموقع.' },
-      { id:'first', title:'أول تسليم لعميل', path:'/aroma/project-name', status:'locked', pct:0, agents:['dlv','boss'],
+      { id:'first', title:'أول تسليم لعميل', path:'/aroma/project-name', status:'locked', pct:0, agents:['boss'],
         note:'بيتفتح مع أول بروجكت.' },
     ],
     lines:['الزحمة على المحور النهارده.','مين طالب شاي؟'],
@@ -398,11 +393,11 @@ const WORLDS = {
         note:'نفس المحرك، بسكاي لاين دبي وأرضية رخام.' },
       { id:'logo', title:'لوجو أروما DXB الأصلي', path:'/aromadxb', status:'blocked', pct:20, agents:['des'],
         note:'محتاج ملف اللوجو بتاع الكارت. المعروض دلوقتي لوجو أروما + علامة DXB مؤقتة.' },
-      { id:'domain', title:'ربط amrsabry.com/aromadxb', path:'/aromadxb', status:'done', pct:100, agents:['dlv','eng'],
+      { id:'domain', title:'ربط amrsabry.com/aromadxb', path:'/aromadxb', status:'done', pct:100, agents:['dev','eng'],
         note:'اترفعت وشغّالة على الدومين.' },
       { id:'lock', title:'قفل الباب', path:'/aromadxb', status:'todo', pct:0, agents:['qa'],
         note:'باسورد للداشبورد قبل ما أول عميل ياخد لينك.' },
-      { id:'first', title:'أول تسليم لعميل', path:'/aromadxb/project-name', status:'locked', pct:0, agents:['dlv','boss'],
+      { id:'first', title:'أول تسليم لعميل', path:'/aromadxb/project-name', status:'locked', pct:0, agents:['boss'],
         note:'بيتفتح مع أول بروجكت.' },
     ],
     lines:['الحر بره 45. محدش يفتح الشباك.','التكييف على 18 ومحدش يلمسه.'],
@@ -421,7 +416,7 @@ const PROJECTS = [
     note:'موديل العبوة بالمقاس الحقيقي ورندرات من كذا زاوية. بليت اللقطة sh0040 وصل.',
     cast:['eng','qa','rnd','col'],
     scene:[['eng','موديل العبوة اتبنى بالمقاس الحقيقي. بالملّي.','go','glow',''],['qa','والكتابة؟ لازم تطلع زي ملف الطباعة بالحرف.','go','big',''],['eng','بالحرف. جرّب تلاقي غلطة.','cheer','',''],['rnd','الرندرات من كل الزوايا شغّالة.. 99%.','sleep','spin','99%'],['col','والستايل على ريفرنس العميل. مش من دماغنا.','jump','glow',''],['qa','ماشي. بس هبص تاني برضه.','go','shake','']],
-    talk:[[['rnd','رندر عبوة Always وصل 99%.'],['eng','بقاله ساعة 99%.']],[['edt','بليت sh0040 بتاع Always وصل؟'],['dlv','وصل. تقيل بس وصل.']],[['qa','الكتابة على عبوة Always زي الملف بالحرف؟'],['eng','بالحرف وبالمقاس.']]] },
+    talk:[[['rnd','رندر عبوة Always وصل 99%.'],['eng','بقاله ساعة 99%.']],[['edt','بليت sh0040 بتاع Always وصل؟'],['eng','وصل. تقيل بس وصل.']],[['qa','الكتابة على عبوة Always زي الملف بالحرف؟'],['eng','بالحرف وبالمقاس.']]] },
   { id:'map', tag:'الخريطة', title:'مسيرة التنمية', sub:'خريطة 3D تفاعلية', stages:MAPS, at:2, fresh:true, updated:'3 أكتوبر', agents:['dev','eng'],
     note:'الموديلز بتتبني بالكود على مقاسات المواقع الحقيقية. 369 موديل للمراجعة.',
     cast:['dev','eng','des','qa'],
@@ -434,9 +429,9 @@ const PROJECTS = [
     talk:[[['cre','هنا مصر فكرتها اتغيّرت.'],['des','وأنا مستني البريف عشان أبدأ.']],[['des','هنا مصر فكرتها اتغيّرت.'],['boss','مستنيين البريف الجديد من عمرو.']]] },
   { id:'npd', tag:'NPD', title:'أفلام NPD', sub:'11 فيلم مؤكد · حوالي 50 دقيقة', stages:FILM, at:1, updated:'22 سبتمبر', agents:['edt','boss'],
     note:'آخر حاجة مسجّلة: السكوب اتحدد على القايمة الرسمية، وفيه فيديو مستني تأكيد.',
-    cast:['boss','edt','dlv'],
-    scene:[['boss','السكوب اتحدد: 11 فيلم مؤكد من قايمة الـ 37.','shout','','11/37'],['edt','حوالي خمسين دقيقة. هحتاج قهوة كتير.','go','shake',''],['dlv','وفيه فيلم لسه مستني تأكيد. واقف مستنيه.','no','',''],['boss','أول ما يتأكد، ندخل عليه.','shout','jump','ACTION!'],['edt','وأنا جاهز على التايم لاين.','cheer','glow','']],
-    talk:[[['edt','أفلام NPD: 11 فيلم وخمسين دقيقة. مين هينام؟'],['rnd','أنا.']],[['boss','فيلم NPD اللي مستني تأكيد.. اتأكد؟'],['dlv','لسه. واقف على السكوتر.']]] },
+    cast:['boss','edt','qa'],
+    scene:[['boss','السكوب اتحدد: 11 فيلم مؤكد من قايمة الـ 37.','shout','','11/37'],['edt','حوالي خمسين دقيقة. هحتاج قهوة كتير.','go','shake',''],['qa','وفيه فيلم لسه مستني تأكيد. مش هعدّيه غير لما يتأكد.','no','',''],['boss','أول ما يتأكد، ندخل عليه.','shout','jump','ACTION!'],['edt','وأنا جاهز على التايم لاين.','cheer','glow','']],
+    talk:[[['edt','أفلام NPD: 11 فيلم وخمسين دقيقة. مين هينام؟'],['rnd','أنا.']],[['boss','فيلم NPD اللي مستني تأكيد.. اتأكد؟'],['qa','لسه. وأنا مستنيه.']]] },
   { id:'fab', tag:'FAB', title:'FAB — Salary Transfer', sub:'صور الحملة + 5 أفلام · إنتاج AI', stages:FILM, at:2, updated:'13 أغسطس', agents:['col','des'],
     note:'آخر حاجة مسجّلة: بايبل الكاست واللبس، وبرومبتات اللوكيشنز.',
     cast:['cre','des','col','boss'],
@@ -454,9 +449,9 @@ const PROJECTS = [
     talk:[[['cre','Salam: كل إعلان بشخصيتين، ولد وبنت.'],['des','يعني 8 شيتات. عارف.']],[['des','شخصيات Salam التمانية: مفيش اتنين شبه بعض.'],['qa','هعدّهم.']],[['col','الأخضر في كل حاجة في Salam. حتى المناكير.'],['des','خصوصاً المناكير.']]] },
   { id:'chipsy', tag:'Chipsy', title:'Chipsy — Yummy', sub:'', stages:FILM, at:null, live:true, updated:'4 أكتوبر', agents:['edt','col'],
     note:'شغّال دلوقتي. المرحلة بالتفصيل لسه ماتسجّلتش.',
-    cast:['dlv','rnd','edt'],
-    scene:[['dlv','شيبسي Yummy شغّال دلوقتي.','jump','jump',''],['rnd','في أنهي مرحلة؟','no','',''],['edt','عمرو لسه ماقالش التفاصيل. بس الشغل ماشي.','go','shake',''],['rnd','طيب. صحّوني لما المرحلة تتكتب.','sleep','',''],['dlv','وأنا جاهز بالسكوتر أول ما يخلص.','cheer','glow','']],
-    talk:[[['dlv','شيبسي Yummy شغّال دلوقتي.'],['edt','ماشي. بس محدش ياكل وهو شغال.']],[['rnd','شيبسي؟ أنا جعان.'],['edt','ده مشروع. مش أكل.']]] },
+    cast:['col','rnd','edt'],
+    scene:[['col','شيبسي Yummy شغّال دلوقتي.','jump','jump',''],['rnd','في أنهي مرحلة؟','no','',''],['edt','عمرو لسه ماقالش التفاصيل. بس الشغل ماشي.','go','shake',''],['rnd','طيب. صحّوني لما المرحلة تتكتب.','sleep','',''],['col','وأنا جاهز ألوّنه أول ما يوصلني.','cheer','glow','']],
+    talk:[[['col','شيبسي Yummy شغّال دلوقتي.'],['edt','ماشي. بس محدش ياكل وهو شغال.']],[['rnd','شيبسي؟ أنا جعان.'],['edt','ده مشروع. مش أكل.']]] },
 ];
 const projStatus = (p) => p.at == null ? (p.live ? 'live' : 'todo') : (p.fresh ? 'active' : 'stale');
 const projPct = (p) => p.at == null ? 0 : Math.round((p.at + .5) / p.stages.length * 100);
@@ -465,10 +460,9 @@ const projPct = (p) => p.at == null ? 0 : Math.round((p.at + .5) / p.stages.leng
    time spent in other chats is not counted. Figures are rounded estimates of how the session's time was split. */
 const WORKLOG = [
   { a:'eng', m:35, what:'بناء الاستوديو ومحرك المشاهد' },
-  { a:'dev', m:30, what:'قايمة المشاريع، الراديو، مشاهد الكروت، وإصلاح الأعطال' },
+  { a:'dev', m:50, what:'قايمة المشاريع، الراديو، مشاهد الكروت، إصلاح الأعطال، والرفع على amrsabry.com' },
   { a:'des', m:25, what:'اللوجو، الواجهة، شكل الـ Agents، والبروبس' },
   { a:'cre', m:20, what:'أفكار اللعبة وكتابة حوارات المشاريع' },
-  { a:'dlv', m:20, what:'الرفع على amrsabry.com' },
   { a:'qa',  m:15, what:'الاختبارات والسكرين شوت قبل كل نشر' },
 ];
 const WORKLOG_FROM = '4 أكتوبر';
@@ -557,7 +551,7 @@ function disc(c, cx, cy, r) { for (let y = -r; y <= r; y++) { const w = Math.rou
 /* ================= AMR SABRY — the one character, nine jobs ================= */
 const SKIN = '#e0ab80', SKIN_S = '#c9905f', HAIR = '#151113', BEARD = '#1e1719', STUB = BEARD, DARK = '#0c0b0d', LENS = '#f3d9bd';
 
-/* The base look, shared by every agent: tall swept-up black hair, black rectangular glasses, a full dark beard.
+/* The base look, shared by every agent: tall swept-up black hair, black rectangular glasses, clean-shaven.
    Roles are told apart by outfit and what they carry, so the face stays the same. */
 function drawAmr(cx, fy, d, o = {}) {
   const bob = o.bob | 0, hy = fy - 23 + bob, ty = fy - 12 + bob, f = o.frame | 0, id = d.id;
@@ -605,9 +599,9 @@ function drawAmr(cx, fy, d, o = {}) {
   if (id === 'cre') R('#101114', cx - 3, ty - 1, 6, 1);
   // head + ears
   R(SKIN, cx - 5, hy + 1, 10, 10); R(SKIN, cx - 6, hy + 2, 12, 8); R(SKIN, cx - 7, hy + 5, 1, 2); R(SKIN, cx + 6, hy + 5, 1, 2); R(SKIN_S, cx - 1, hy + 7, 2, 1);
-  // beard: full and dark, joined to the sideburns
-  R(BEARD, cx - 6, hy + 7, 1, 3); R(BEARD, cx + 5, hy + 7, 1, 3); R(BEARD, cx - 5, hy + 8, 10, 2); R(BEARD, cx - 4, hy + 10, 8, 1);
-  if (o.sleep) R('#b9796c', cx - 1, hy + 9, 2, 1); else if (o.cheer || o.happy) R(PAPER, cx - 2, hy + 9, 4, 1); else R('#c98a7a', cx - 1 + face, hy + 9, 3, 1);
+  // clean-shaven: just a mouth and a soft jaw shade
+  R(SKIN_S, cx - 4, hy + 10, 8, 1);
+  if (o.sleep) R('#b9796c', cx - 1, hy + 8, 2, 1); else if (o.cheer || o.happy) { R('#8a3b34', cx - 2, hy + 8, 4, 2); R(PAPER, cx - 2, hy + 8, 4, 1); } else R('#b9796c', cx - 1 + face, hy + 8, 3, 1);
   // hair: tall, swept up
   R(HAIR, cx - 3, hy - 3, 7, 1); R(HAIR, cx - 5, hy - 2, 11, 2); R(HAIR, cx - 6, hy, 12, 3); R(HAIR, cx - 7, hy, 1, 3); R(HAIR, cx + 6, hy, 1, 2); R(HAIR, cx - 6, hy + 3, 1, 4); R(HAIR, cx + 5, hy + 3, 1, 4); R('#2a2226', cx - 2, hy - 2, 4, 1);
   // glasses: black rectangular frames
@@ -948,7 +942,6 @@ function initAgents() {
     else if (d.id === 'boss') a.home = { x: 106, y: 194, sit: true };
     else if (d.id === 'rnd') { a.home = { x: 331, y: 193, sit: true }; a.state = 'sleep'; }
     else if (d.id === 'qa') { a.home = { x: 192, y: 206, sit: false }; a.state = 'roam'; a.wait = 2; }
-    else if (d.id === 'dlv') { a.home = { x: 268, y: 208, sit: false }; a.state = 'idle'; }
     else if (d.id === 'cre') { a.home = { x: 158, y: 205, sit: false }; a.state = 'think'; a.wait = 1; }
     a.x = a.home.x; a.y = a.home.y;
     sim.agents[d.id] = a;
@@ -998,14 +991,6 @@ function update(dt) {
   // one desk agent at a time walks to the coffee machine
   sim.coffeeTrip -= dt;
   if (!sim.scene && sim.coffeeTrip <= 0) { sim.coffeeTrip = 22 + Math.random() * 16; const c = ROW_KIND.map(id => sim.agents[id]).filter(a => a.state === 'work' && a.id !== sim.p1 && atHome(a)); if (c.length) coffeeTrip(pick(c)); }
-  // delivery scooter loop
-  const sc = sim.scooter, dl = sim.agents.dlv; sc.timer -= dt;
-  if (sim.p1 !== 'dlv') {
-    if (sc.phase === 'parked' && sc.timer <= 0 && atHome(dl) && !sim.scene && dl.state === 'idle') { sc.phase = 'out'; sc.dir = -1; dl.state = 'ride'; say({ x: sc.x, y: sc.y - 8 }, 'اللينك في السكة!', 2200); pushLog('dlv', 'طلع بتسليم. محدش يسأله راجع إمتى.'); beep(330, .05); }
-    else if (sc.phase === 'out') { sc.x -= 82 * dt; if (sc.x < -30) { sc.phase = 'away'; sc.timer = 3.5; } }
-    else if (sc.phase === 'away' && sc.timer <= 0) { sc.phase = 'in'; sc.x = W + 30; sc.dir = -1; }
-    else if (sc.phase === 'in') { sc.x -= 82 * dt; if (sc.x <= 290) { sc.x = 290; sc.phase = 'parked'; sc.timer = 34 + Math.random() * 20; dl.state = 'idle'; addXP(10, 270, 180); pushLog('dlv', 'رجع. التسليم وصل قبل الديدلاين بدقيقة.'); } }
-  }
   // cat
   const c = sim.cat; c.timer -= dt; c.f = Math.floor(t * 5);
   if (c.mode === 'walk') { c.x += c.dir * 14 * dt; if (c.x < 12) c.dir = 1; if (c.x > 372) c.dir = -1; }
@@ -1069,8 +1054,6 @@ function draw() {
   ROW_X.forEach((x, i) => { const a = sim.agents[ROW_KIND[i]], on = a.state === 'work' && atHome(a); L.push({ y: 149, d: () => drawChair(x) }); L.push({ y: 158, d: () => drawDesk(x, ROW_KIND[i], t, speed, on) }); });
   L.push({ y: 192, d: () => drawBossChair(106) }, { y: 201, d: () => drawBossDesk(106) }, { y: 200, d: () => drawCoffee(t, sim.boost > 0) },
     { y: 199, d: () => drawBoard(PROJECTS.map(p => ({ status: p.at == null && !p.live ? 'todo' : 'active' }))) }, { y: 199.5, d: () => drawRack(t) }, { y: 191, d: drawBeanbag }, { y: 200.5, d: () => drawPlant(w) });
-  const sc = sim.scooter, riding = sim.agents.dlv.state === 'ride';
-  if (sc.phase !== 'away') L.push({ y: sc.y, d: () => drawScooter(sc.x, sc.y, sc.dir, riding ? sim.agents.dlv.def : null, Math.floor(t * 8)) });
   const cat = sim.cat; L.push({ y: cat.y, d: () => drawCat(cat.x, cat.y, cat.dir, cat.f, cat.mode) });
   sim.hits = []; const focus = [];
   if (sim.scene) { const pr = { y: SPOT.y + .5, d: () => drawPropFx(sim.scene.p.id, SPOT.x, SPOT.y, t, sim.scene.pfx) }; L.push(pr); focus.push(pr); }
@@ -1189,13 +1172,12 @@ function pushLog(id, text, tag) {
 
 /* ---------- project scenes: the cast walks to the middle of the floor and talks it through ---------- */
 const SPOT = { x: 196, y: 213 }, MARKS = [[-30, -2], [30, -2], [-54, 0], [54, 0], [-78, -1]];
-const defaultState = (id) => id === 'qa' ? 'roam' : id === 'rnd' ? 'sleep' : id === 'dlv' ? 'idle' : id === 'cre' ? 'think' : 'work';
+const defaultState = (id) => id === 'qa' ? 'roam' : id === 'rnd' ? 'sleep' : id === 'cre' ? 'think' : 'work';
 function outPath(a) { const h = a.home; if (!h.sit || Math.abs(a.x - h.x) > 1 || Math.abs(a.y - h.y) > 1 || a.id === 'rnd') return []; if (a.id === 'boss') return [{ x: 146, y: 194 }, { x: 146, y: 207 }]; return [{ x: h.x + 22, y: h.y }, { x: h.x + 22, y: 166 }]; }
 function homePath(a) { const h = a.home; if (!h.sit || a.id === 'rnd') return [{ x: h.x, y: h.y }]; if (a.id === 'boss') return [{ x: 146, y: 207 }, { x: 146, y: 194 }, { x: h.x, y: h.y }]; return [{ x: h.x + 22, y: 166 }, { x: h.x + 22, y: h.y }, { x: h.x, y: h.y }]; }
 function startScene(pid) {
   if (sim.scene) endScene(true);
   const p = PROJECTS.find(x => x.id === pid), cast = p.cast.map(id => sim.agents[id]);
-  if (p.cast.includes('dlv')) { const sc = sim.scooter, d = sim.agents.dlv; sc.phase = 'parked'; sc.x = 290; sc.timer = 45; if (d.state === 'ride') { d.x = d.home.x; d.y = d.home.y; } }
   bubbles.forEach(b => b.el.remove()); bubbles = [];
   sim.scene = { p, cast, phase: 'gather', i: -1, chars: 0, hold: 0, timer: 0, speaker: null, pfx: '', near: {}, mark: {} };
   cast.forEach((a, k) => { const m = MARKS[k], path = [...outPath(a), { x: SPOT.x + m[0], y: SPOT.y + m[1] }]; sim.scene.mark[a.id] = { x: SPOT.x + m[0], y: SPOT.y + m[1] }; a.fx = null; a.state = 'scene'; a.after = null; a.wait = 0; a.moved = true; go(a, path, () => { a.face = m[0] < 0 ? 1 : -1; }); });
@@ -1394,7 +1376,7 @@ function renderTeam() {
     + 'وقت كلود المسجّل بدأ ' + WORKLOG_FROM + ' وبيحسب شغل الداشبورد ده بس' + (noTime.length ? '؛ لسه ماسجّلوش وقت: ' + noTime.map(r => r.d.role).join('، ') + '.' : '.');
   const grid = $('#teamGrid'); grid.textContent = '';
   AGENTS.forEach(d => {
-    const b = el('button', 'agent' + (sim.p1 === d.id ? ' p1' : '')); b.type = 'button'; b.appendChild(avatarCanvas(d, 2));
+    const b = el('button', 'agent' + (sim.p1 === d.id ? ' p1' : '')); b.type = 'button'; b.appendChild(avatarCanvas(d, 3));
     b.appendChild(el('strong', null, d.role)); b.appendChild(el('span', 'a-cls', d.cls));
     if (sim.p1 === d.id) b.appendChild(el('span', 'a-p1', 'P1'));
     b.addEventListener('click', () => { openCard(d.id); beep(700); }); grid.appendChild(b);
@@ -1430,7 +1412,7 @@ function openCard(id) {
 }
 $('#card').addEventListener('click', (e) => { if (e.target === $('#card')) $('#card').close(); });
 
-const PIPE = [['cre', 'يطلّع الفكرة'], ['eng', 'يبني الصفحة'], ['des', 'يلبّسها'], ['dev', 'يشغّلها'], ['qa', 'يرفضها مرة'], ['boss', 'يقول كات'], ['dlv', 'يوصّل اللينك']];
+const PIPE = [['cre', 'يطلّع الفكرة'], ['eng', 'يبني الصفحة'], ['des', 'يلبّسها'], ['dev', 'يشغّلها'], ['qa', 'يرفضها مرة'], ['boss', 'يقول كات']];
 function renderPipe() {
   const ol = $('#pipe'); ol.textContent = '';
   PIPE.forEach(([id, verb]) => { const d = AGENTS.find(a => a.id === id), li = el('li'), b = el('button', 'crewbtn'); b.type = 'button'; b.appendChild(headCanvas(d, 3)); b.addEventListener('click', () => openCard(id)); li.appendChild(b); li.appendChild(el('strong', null, d.role)); li.appendChild(el('span', null, verb)); ol.appendChild(li); });
