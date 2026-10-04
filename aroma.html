@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>AmrSabry Twins</title>
+<title>AmrSabry Agents</title>
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#081014">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Handjet:wght@400;600;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
@@ -123,6 +123,11 @@ ul.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .quest { background: var(--panel-2); border: 1px solid var(--line); border-inline-start: 4px solid var(--line); padding: 9px 11px; display: grid; gap: 4px; }
 .quest.done { border-inline-start-color: var(--good); } .quest.active { border-inline-start-color: var(--accent); } .quest.blocked { border-inline-start-color: var(--bad); } .quest.todo { border-inline-start-color: var(--gold); }
 .quest.locked { opacity: .62; } .quest.live { border-inline-start-color: var(--accent); } .quest.stale { border-inline-start-color: var(--gold); }
+.mini-wrap { border: 1px solid var(--line); background: #0a1216; margin-block: 4px 2px; }
+.mini { display: block; width: 100%; height: auto; aspect-ratio: 128 / 50; }
+.mini-cap { display: flex; gap: 7px; align-items: baseline; padding: 5px 8px 6px; border-top: 1px solid var(--line); font-size: 12.5px; line-height: 1.45; min-height: 3.6em; background: var(--panel); }
+.mini-cap b { color: var(--gold); font-weight: 600; flex: none; } .mini-cap span { min-width: 0; }
+.btn.tiny { white-space: nowrap; }
 .q-sub { font-size: 12.5px; color: var(--teal); line-height: 1.4; }
 .track { display: flex; gap: 3px; margin-top: 5px; } .track i { flex: 1; height: 8px; background: #1d3840; } .track i.past { background: var(--teal); } .track i.now { background: var(--accent); box-shadow: 0 -3px 0 var(--accent); }
 .quest.stale .track i.past { background: #4f8f8a; } .quest.stale .track i.now { background: var(--gold); box-shadow: 0 -3px 0 var(--gold); }
@@ -205,8 +210,8 @@ dialog::backdrop { background: rgba(4, 8, 10, .74); }
       <span class="dxb-tag" id="dxbTag" hidden title="علامة مؤقتة لحد ما ييجي لوجو DXB الأصلي">DXB</span>
     </button>
     <div class="titleblock">
-      <h1>AmrSabry <span>Twins</span></h1>
-      <p>جيش من راجل واحد. تسعة توائم، كلهم عمرو صبري.</p>
+      <h1>AmrSabry <span>Agents</span></h1>
+      <p>جيش من راجل واحد. <span class="nAgents">9</span> Agents، كلهم عمرو صبري.</p>
     </div>
     <nav class="worlds" id="worldTabs" aria-label="الفرع">
       <button type="button" data-world="aroma" aria-pressed="true">AROMA<small>القاهرة</small></button>
@@ -222,7 +227,7 @@ dialog::backdrop { background: rgba(4, 8, 10, .74); }
   <main class="grid">
     <section class="left" aria-label="الاستوديو">
       <div class="stage" id="stage">
-        <canvas id="cv" width="768" height="432" aria-label="استوديو بيكسل فيه التوائم التسعة شغالين على مكاتبهم"></canvas>
+        <canvas id="cv" width="768" height="432" aria-label="استوديو بيكسل فيه الـ Agents شغالين على مكاتبهم"></canvas>
         <div id="bubbles"></div>
         <div class="chips"><span class="chip" id="chipCity">CAIRO HQ</span><span class="chip amr" id="chipAmr"></span><span class="chip rec">REC</span></div>
         <div id="scene" hidden>
@@ -237,7 +242,7 @@ dialog::backdrop { background: rgba(4, 8, 10, .74); }
         <button class="btn quiet" id="btnSound" type="button" aria-pressed="false">الصوت: مقفول</button>
       </div>
       <section class="radio" aria-label="راديو الاستوديو">
-        <div class="sec-h"><h2>راديو الاستوديو</h2><span>التوائم بيتكلموا عن المشاريع</span></div>
+        <div class="sec-h"><h2>راديو الاستوديو</h2><span>الـ Agents بيتكلموا عن المشاريع</span></div>
         <ul id="log" aria-live="off"></ul>
       </section>
       <section class="radio pipe" aria-label="خط التسليم">
@@ -250,7 +255,7 @@ dialog::backdrop { background: rgba(4, 8, 10, .74); }
     <aside class="side">
       <div class="tabs" role="tablist" aria-label="لوحة التحكم">
         <button type="button" role="tab" data-tab="quests" aria-selected="true" aria-controls="p-quests">المشاريع<small id="questDone">0</small></button>
-        <button type="button" role="tab" data-tab="team" aria-selected="false" aria-controls="p-team" tabindex="-1">التوائم<small>9</small></button>
+        <button type="button" role="tab" data-tab="team" aria-selected="false" aria-controls="p-team" tabindex="-1">Agents<small class="nAgents">9</small></button>
         <button type="button" role="tab" data-tab="ach" aria-selected="false" aria-controls="p-ach" tabindex="-1">الإنجازات<small id="achDone">0/0</small></button>
       </div>
       <div class="panel" role="tabpanel" id="p-quests">
@@ -268,7 +273,7 @@ dialog::backdrop { background: rgba(4, 8, 10, .74); }
         </details>
       </div>
       <div class="panel" role="tabpanel" id="p-team" hidden>
-        <div class="sec-h"><h2>CHARACTER SELECT</h2><span>اختار التوأم بتاعك</span></div>
+        <div class="sec-h"><h2>CHARACTER SELECT</h2><span>اختار الـ Agent بتاعك</span></div>
         <div class="team" id="teamGrid"></div>
       </div>
       <div class="panel" role="tabpanel" id="p-ach" hidden>
@@ -286,8 +291,8 @@ dialog::backdrop { background: rgba(4, 8, 10, .74); }
   <dialog id="card" aria-labelledby="cardTitle"><div id="cardBody"></div></dialog>
   <div id="toasts" aria-live="polite"></div>
   <div id="boot">
-    <h2>AmrSabry <span>Twins</span></h2>
-    <p class="sub">تسعة توائم. راجل واحد.</p>
+    <h2>AmrSabry <span>Agents</span></h2>
+    <p class="sub"><span class="nAgents">9</span> Agents. راجل واحد.</p>
     <div id="bootCrew"></div>
     <div class="loadbar"><i></i></div>
     <p class="tip"><b>نصيحة:</b> <span id="bootTip"></span></p>
@@ -399,42 +404,42 @@ const PROJECTS = [
   { id:'always', tag:'Always', title:'Always — Super Night XXL', sub:'فيديو العبوة · موديل 3D ورندرات', stages:FILM, at:4, fresh:true, updated:'3 أكتوبر', agents:['eng','rnd'],
     note:'موديل العبوة بالمقاس الحقيقي ورندرات من كذا زاوية. بليت اللقطة sh0040 وصل.',
     cast:['eng','qa','rnd','col'],
-    scene:[['eng','موديل العبوة اتبنى بالمقاس الحقيقي. بالملّي.'],['qa','والكتابة؟ لازم تطلع زي ملف الطباعة بالحرف.'],['eng','بالحرف. جرّب تلاقي غلطة.'],['rnd','الرندرات من كل الزوايا شغّالة.. 99%.'],['col','والستايل على ريفرنس العميل. مش من دماغنا.'],['qa','ماشي. بس هبص تاني برضه.']],
+    scene:[['eng','موديل العبوة اتبنى بالمقاس الحقيقي. بالملّي.','go','glow',''],['qa','والكتابة؟ لازم تطلع زي ملف الطباعة بالحرف.','go','big',''],['eng','بالحرف. جرّب تلاقي غلطة.','cheer','',''],['rnd','الرندرات من كل الزوايا شغّالة.. 99%.','sleep','spin','99%'],['col','والستايل على ريفرنس العميل. مش من دماغنا.','jump','glow',''],['qa','ماشي. بس هبص تاني برضه.','go','shake','']],
     talk:[[['rnd','رندر عبوة Always وصل 99%.'],['eng','بقاله ساعة 99%.']],[['edt','بليت sh0040 بتاع Always وصل؟'],['dlv','وصل. تقيل بس وصل.']],[['qa','الكتابة على عبوة Always زي الملف بالحرف؟'],['eng','بالحرف وبالمقاس.']]] },
   { id:'map', tag:'الخريطة', title:'مسيرة التنمية', sub:'خريطة 3D تفاعلية', stages:MAPS, at:2, fresh:true, updated:'3 أكتوبر', agents:['dev','eng'],
     note:'الموديلز بتتبني بالكود على مقاسات المواقع الحقيقية. 369 موديل للمراجعة.',
     cast:['dev','eng','des','qa'],
-    scene:[['dev','الخريطة كلها مرسومة بالكود. كبّر زي ما تكبّر، مابتبوظش.'],['eng','والموديلز على مكان ومقاس الموقع الحقيقي. مفيش خيال.'],['des','ومفيش أسود كئيب في أي حتة.'],['qa','369 موديل. هراجعهم واحد واحد.'],['dev','وهتشتغل تاتش. الزراير كبيرة.'],['qa','الغلطة هنا ممنوعة. فاهمين؟']],
+    scene:[['dev','الخريطة كلها مرسومة بالكود. كبّر زي ما تكبّر، مابتبوظش.','go','glow',''],['eng','والموديلز على مكان ومقاس الموقع الحقيقي. مفيش خيال.','go','big',''],['des','ومفيش أسود كئيب في أي حتة.','no','',''],['qa','369 موديل. هراجعهم واحد واحد.','go','','369'],['dev','وهتشتغل تاتش. الزراير كبيرة.','jump','shake',''],['qa','الغلطة هنا ممنوعة. فاهمين؟','no','glow','']],
     talk:[[['dev','369 موديل في الخريطة. مين عدّهم؟'],['qa','أنا. وهراجعهم كلهم.']],[['des','الخريطة مفيهاش أسود. ولا نقطة.'],['col','أخيراً حد فاهم.']],[['eng','موديل الخريطة لازم على مقاس الموقع الحقيقي.'],['dev','مش من الخيال، عارف.']]] },
   { id:'huna', tag:'هنا مصر', title:'هنا مصر', sub:'', stages:BRAND, at:null, updated:null, agents:[],
     note:'الفكرة اتغيّرت. مستني البريف الجديد من عمرو عشان المرحلة تتكتب صح.',
     cast:['boss','des'],
-    scene:[['des','هنا مصر بقت على فكرة جديدة.'],['boss','والبريف الجديد لسه ماوصلش الاستوديو.'],['des','يبقى مانكتبش حاجة من دماغنا.'],['boss','صح. نستنى عمرو.']],
+    scene:[['des','هنا مصر بقت على فكرة جديدة.','go','shake',''],['boss','والبريف الجديد لسه ماوصلش الاستوديو.','no','',''],['des','يبقى مانكتبش حاجة من دماغنا.','no','',''],['boss','صح. نستنى عمرو.','shout','jump','?']],
     talk:[[['des','هنا مصر فكرتها اتغيّرت.'],['boss','مستنيين البريف الجديد من عمرو.']]] },
   { id:'npd', tag:'NPD', title:'أفلام NPD', sub:'11 فيلم مؤكد · حوالي 50 دقيقة', stages:FILM, at:1, updated:'22 سبتمبر', agents:['edt','boss'],
     note:'آخر حاجة مسجّلة: السكوب اتحدد على القايمة الرسمية، وفيه فيديو مستني تأكيد.',
     cast:['boss','edt','dlv'],
-    scene:[['boss','السكوب اتحدد: 11 فيلم مؤكد من قايمة الـ 37.'],['edt','حوالي خمسين دقيقة. هحتاج قهوة كتير.'],['dlv','وفيه فيلم لسه مستني تأكيد. واقف مستنيه.'],['boss','أول ما يتأكد، ندخل عليه.'],['edt','وأنا جاهز على التايم لاين.']],
+    scene:[['boss','السكوب اتحدد: 11 فيلم مؤكد من قايمة الـ 37.','shout','','11/37'],['edt','حوالي خمسين دقيقة. هحتاج قهوة كتير.','go','shake',''],['dlv','وفيه فيلم لسه مستني تأكيد. واقف مستنيه.','no','',''],['boss','أول ما يتأكد، ندخل عليه.','shout','jump','ACTION!'],['edt','وأنا جاهز على التايم لاين.','cheer','glow','']],
     talk:[[['edt','أفلام NPD: 11 فيلم وخمسين دقيقة. مين هينام؟'],['rnd','أنا.']],[['boss','فيلم NPD اللي مستني تأكيد.. اتأكد؟'],['dlv','لسه. واقف على السكوتر.']]] },
   { id:'fab', tag:'FAB', title:'FAB — Salary Transfer', sub:'صور الحملة + 5 أفلام · إنتاج AI', stages:FILM, at:2, updated:'13 أغسطس', agents:['col','des'],
     note:'آخر حاجة مسجّلة: بايبل الكاست واللبس، وبرومبتات اللوكيشنز.',
     cast:['des','col','boss'],
-    scene:[['des','بايبل الكاست واللبس جاهز. كل شخصية بزواياها.'],['col','واللوكيشنز الخمسة فاضيين من غير ناس. ريفرنس نضيف.'],['boss','الإضاءة من المكان نفسه. مفيش لمعة إعلانات.'],['des','نفس بلوك الاستايل في آخر كل برومبت. حملة واحدة.'],['col','ألوان غنية بس هادية. فاهمك.']],
+    scene:[['des','بايبل الكاست واللبس جاهز. كل شخصية بزواياها.','go','glow',''],['col','واللوكيشنز الخمسة فاضيين من غير ناس. ريفرنس نضيف.','go','','5'],['boss','الإضاءة من المكان نفسه. مفيش لمعة إعلانات.','shout','glow',''],['des','نفس بلوك الاستايل في آخر كل برومبت. حملة واحدة.','work','',''],['col','ألوان غنية بس هادية. فاهمك.','cheer','jump','']],
     talk:[[['col','لوكيشنز FAB الخمسة لازم يبانوا حملة واحدة.'],['des','نفس بلوك الاستايل في كل برومبت.']],[['des','بايبل كاست FAB: 32 زاوية للبطلة.'],['qa','وأنا هراجع الـ 32.']]] },
   { id:'fairy', tag:'Fairy', title:'Fairy — Mercury TVC', sub:'فيلم AI على ستوري بورد الوكالة', stages:FILM, at:2, updated:'9 أغسطس', agents:['boss','des'],
     note:'آخر حاجة مسجّلة: برومبتات اللقطات، النسخة التالتة (سينماتيك).',
     cast:['boss','des','qa','col'],
-    scene:[['boss','فريم 11 طلع قوي. الباقي يبقى زيه.'],['des','بلوك السينماتوجرافي بتاعه اتحط في كل الفريمات.'],['qa','والكتابة على العبوة؟ دي بتبوظ في التوليد.'],['des','عندنا رندر العبوة بكتابة سليمة. بيترفق مع كل لقطة.'],['col','فليرز دافية والأزرق مخفف.'],['boss','يبان متصوّر. مش متولّد.']],
+    scene:[['boss','فريم 11 طلع قوي. الباقي يبقى زيه.','shout','','11'],['des','بلوك السينماتوجرافي بتاعه اتحط في كل الفريمات.','go','glow',''],['qa','والكتابة على العبوة؟ دي بتبوظ في التوليد.','go','big',''],['des','عندنا رندر العبوة بكتابة سليمة. بيترفق مع كل لقطة.','cheer','glow',''],['col','فليرز دافية والأزرق مخفف.','jump','spin',''],['boss','يبان متصوّر. مش متولّد.','shout','','CUT!']],
     talk:[[['boss','فريم 11 في Fairy طلع قوي. عايز الباقي زيه.'],['col','فليرز دافية وأزرق مخفف. حاضر.']],[['edt','جبل الأطباق في مطبخ Fairy ده مين هيغسله؟'],['rnd','مش أنا.']],[['qa','كتابة عبوة Fairy سليمة في كل لقطة؟'],['des','برندر العبوة المرفق. سليمة.']]] },
   { id:'salam', tag:'Salam', title:'Salam — SOHO', sub:'4 إعلانات + 12 نسخة + فيلم دقيقة · AI', stages:FILM, at:1, updated:'6 أغسطس', agents:['des','qa'],
     note:'آخر حاجة مسجّلة: شيتات الـ 8 شخصيات (V5) وجدول الـ CPS المضغوط.',
     cast:['des','qa','col'],
-    scene:[['des','8 شخصيات لأربع إعلانات. مفيش اتنين شبه بعض.'],['qa','هعدّهم. وهبص على كل وش.'],['col','البنات كلهم في درجات الأخضر. حتى المناكير.'],['des','والجلد طبيعي بمسامه. مفيش بلاستيك.'],['qa','ومفيش ولا لوجو على الهدوم؟'],['des','ولا لوجو. دي النسخة الخامسة يا راجل.']],
+    scene:[['des','8 شخصيات لأربع إعلانات. مفيش اتنين شبه بعض.','go','glow','8'],['qa','هعدّهم. وهبص على كل وش.','go','big',''],['col','البنات كلهم في درجات الأخضر. حتى المناكير.','jump','',''],['des','والجلد طبيعي بمسامه. مفيش بلاستيك.','work','',''],['qa','ومفيش ولا لوجو على الهدوم؟','no','',''],['des','ولا لوجو. دي النسخة الخامسة يا راجل.','cheer','jump','V5']],
     talk:[[['des','شخصيات Salam التمانية: مفيش اتنين شبه بعض.'],['qa','هعدّهم.']],[['col','الأخضر في كل حاجة في Salam. حتى المناكير.'],['des','خصوصاً المناكير.']]] },
   { id:'chipsy', tag:'Chipsy', title:'Chipsy — Yummy', sub:'', stages:FILM, at:null, live:true, updated:'4 أكتوبر', agents:['edt','col'],
     note:'شغّال دلوقتي. المرحلة بالتفصيل لسه ماتسجّلتش.',
     cast:['dlv','rnd','edt'],
-    scene:[['dlv','شيبسي Yummy شغّال دلوقتي.'],['rnd','في أنهي مرحلة؟'],['edt','عمرو لسه ماقالش التفاصيل. بس الشغل ماشي.'],['rnd','طيب. صحّوني لما المرحلة تتكتب.'],['dlv','وأنا جاهز بالسكوتر أول ما يخلص.']],
+    scene:[['dlv','شيبسي Yummy شغّال دلوقتي.','jump','jump',''],['rnd','في أنهي مرحلة؟','no','',''],['edt','عمرو لسه ماقالش التفاصيل. بس الشغل ماشي.','go','shake',''],['rnd','طيب. صحّوني لما المرحلة تتكتب.','sleep','',''],['dlv','وأنا جاهز بالسكوتر أول ما يخلص.','cheer','glow','']],
     talk:[[['dlv','شيبسي Yummy شغّال دلوقتي.'],['edt','ماشي. بس محدش ياكل وهو شغال.']],[['rnd','شيبسي؟ أنا جعان.'],['edt','ده مشروع. مش أكل.']]] },
 ];
 const projStatus = (p) => p.at == null ? (p.live ? 'live' : 'todo') : (p.fresh ? 'active' : 'stale');
@@ -456,13 +461,13 @@ const ACHIEVEMENTS = [
   { id:'coffee', title:'قهوة للجميع',      desc:'شغّلت مكنة القهوة.' },
   { id:'logo3',  title:'اللوجو كبر 3 مرات', desc:'والمصمم لسه عايش.' },
   { id:'wake',   title:'صحّيت بتاع الرندر', desc:'ووقف عند 99% برضه.' },
-  { id:'team',   title:'عرفت التوائم كلهم',  desc:'فتحت كارت التوائم التسعة.' },
+  { id:'team',   title:'عرفت الـ Agents كلهم', desc:'فتحت كارت كل Agent.' },
   { id:'cat',    title:'بيكسل راضية عنك',  desc:'دلّعت قطة الاستوديو.' },
   { id:'travel', title:'سافرت الفرع التاني', desc:'القاهرة ↔ دبي في ثانية.' },
-  { id:'p1',     title:'نزلت الملعب',      desc:'اخترت توأم ولعبت بيه.' },
+  { id:'p1',     title:'نزلت الملعب',      desc:'اخترت Agent ولعبت بيه.' },
   { id:'over',   title:'الصبر خلص',        desc:'وصّلت الفريق لـ Game Over.' },
   { id:'konami', title:'↑↑↓↓←→←→BA',       desc:'عارف انت عملت إيه.', secret:true },
-  { id:'scene',  title:'حضرت أول مشهد',     desc:'شفت التوائم بيتكلموا عن مشروع.' },
+  { id:'scene',  title:'حضرت أول مشهد',     desc:'شفت الـ Agents بيتكلموا عن مشروع.' },
   { id:'deadline', title:'سلّم قبل الديدلاين', desc:'نادر جداً. بيتفتح مع أول تسليم حقيقي.', real:true },
 ];
 
@@ -857,6 +862,32 @@ function drawProp(kind, x, y, t) {
     R(PAPER, x - 12, y - 17, 24, 16); pline('#9fb3b3', x - 12, y - 17, x, y - 9); pline('#9fb3b3', x + 11, y - 17, x, y - 9); R(ACCENT, x - 2, y - 11, 4, 4); if (b) ptext('?', x - 1, y - 26, GOLD);
   }
 }
+
+/* Prop with an effect: glow / shake / jump / spin (turntable) / big */
+function drawPropFx(kind, x, y, t, fx) {
+  let dx = 0, dy = 0, sx = 1, sc = 1;
+  if (fx === 'shake') dx = Math.floor(t * 14) & 1 ? 1 : -1;
+  if (fx === 'jump') dy = -Math.round(Math.abs(Math.sin(t * 7)) * 5);
+  if (fx === 'spin') { sx = Math.cos(t * 3.2); if (Math.abs(sx) < .12) sx = .12; }
+  if (fx === 'big') sc = 1.3 + Math.sin(t * 5) * .05;
+  if (fx === 'glow') { g.globalAlpha = .16 + .08 * Math.sin(t * 6); disc(GOLD, x, y - 13, 19); g.globalAlpha = .2; disc(PAPER, x, y - 13, 12); g.globalAlpha = 1; }
+  g.save(); g.translate(Math.round(x + dx), Math.round(y + dy)); g.scale(sx * sc, sc); drawProp(kind, 0, 0, t); g.restore();
+}
+/* A tiny themed set for the looping scene on each project card (128 x 46) */
+function drawBackdrop(kind, t) {
+  const WM = 128, HM = 46, FL = 33;
+  if (kind === 'always') { R('#1b1740', 0, 0, WM, FL); for (let i = 0; i < 14; i++) if ((Math.floor(t * 2) + i) % 5) R(PAPER, (i * 37) % WM, (i * 11) % 22 + 2); disc('#ffd27a', 104, 10, 5); disc('#1b1740', 107, 8, 4); R('#2a2170', 0, FL, WM, HM - FL); R('#3b2f8f', 0, FL, WM, 1); }
+  else if (kind === 'map') { R('#0d2a30', 0, 0, WM, FL); for (let x = 0; x < WM; x += 8) R('#12383f', x, 0, 1, FL); for (let y = 0; y < FL; y += 8) R('#12383f', 0, y, WM, 1); R('#12383f', 0, FL, WM, HM - FL); R(TEAL, 0, FL, WM, 1); }
+  else if (kind === 'npd') { R('#201418', 0, 0, WM, FL); R('#0a0607', 0, 3, WM, 9); for (let x = (Math.floor(t * 10) % 8) - 8; x < WM; x += 8) { R(PAPER, x + 2, 4, 3, 2); R(PAPER, x + 2, 9, 3, 2); } R('#2c1c20', 0, FL, WM, HM - FL); R(ACCENT, 0, FL, WM, 1); }
+  else if (kind === 'fab') { R('#0e2a4a', 0, 0, WM, FL); R(GOLD, 0, 6, WM, 1); R(GOLD, 0, 9, WM, 1); for (let x = 6; x < WM; x += 24) R('#143a66', x, 13, 12, 18); R('#12345c', 0, FL, WM, HM - FL); R(GOLD, 0, FL, WM, 1); }
+  else if (kind === 'fairy') { R('#dfeee4', 0, 0, WM, FL); for (let x = 0; x < WM; x += 8) for (let y = 0; y < FL; y += 8) if (((x + y) / 8) & 1) R('#c4e3d0', x, y, 8, 8); R('#2f9e5a', 0, 26, WM, 3); R('#247a45', 0, FL, WM, HM - FL); R('#3fbf70', 0, FL, WM, 1); }
+  else if (kind === 'salam') { R('#123d2a', 0, 0, WM, FL); R('#1a5238', 20, 0, 88, FL); R('#1f6a45', 20, 0, 1, FL); R('#1f6a45', 107, 0, 1, FL); R('#1a5238', 0, FL, WM, HM - FL); R('#3fbf70', 0, FL, WM, 1); }
+  else if (kind === 'chipsy') { R('#d83a2e', 0, 0, WM, FL); for (let k = 0; k < 9; k++) { const a = k * .7 + t * .4; pline('#ffd23f', 64, 34, 64 + Math.cos(a) * 90, 34 - Math.abs(Math.sin(a)) * 60); } R('#ffd23f', 0, FL, WM, HM - FL); R('#e0a800', 0, FL, WM, 1); }
+  else { R('#14262d', 0, 0, WM, FL); for (let i = 0; i < 5; i++) ptext('?', 10 + i * 26, 6 + (i & 1) * 9, '#24424b', 2); R('#1c3038', 0, FL, WM, HM - FL); R('#31505a', 0, FL, WM, 1); }
+}
+function drawTalkDots(x, y, t) { R(PAPER, x - 5, y - 6, 11, 6); R(PAPER, x - 1, y, 2, 1); R(INK, x - 6, y - 5, 1, 4); R(INK, x + 6, y - 5, 1, 4); for (let k = 0; k < 3; k++) if (Math.floor(t * 4) % 4 > k) R(INK, x - 3 + k * 3, y - 4, 1, 2); }
+
+function drawBulb(x, y, on) { const c = on ? '#ffd23f' : '#6b6b55'; R(c, x - 2, y - 5, 5, 4); R(c, x - 1, y - 6, 3, 1); R('#9fb3b3', x - 1, y - 1, 3, 2); if (on) { R(PAPER, x - 1, y - 4, 1, 1); R('#ffd23f', x - 5, y - 4, 2, 1); R('#ffd23f', x + 4, y - 4, 2, 1); R('#ffd23f', x, y - 9, 1, 2); } }
 /* ===== Simulation + UI ===== */
 const CFG = Object.assign({ world: 'aroma', nav: false }, window.STUDIO_CFG || {});
 const $ = (s, r = document) => r.querySelector(s);
@@ -993,7 +1024,7 @@ function draw() {
   R('#06100c', 321, 69, 52, 6); R(bc, 322, 70, Math.round(50 * pct / 100), 4);
   if (pct < 99 || Math.floor(t * 2) & 1 || sim.awake > 0) ptext(label, 321, 79, bc);
   // LED ticker
-  const msg = 'AMRSABRY TWINS    ONE MAN ARMY    9 TWINS 1 GUY    AMR NOW IN DUBAI    ' + PROJECTS.length + ' LIVE PROJECTS    DEADLINE: YESTERDAY    RENDER 99%    ' + w.name + ' ' + w.cityEn + '    ', mw = ptextW(msg) + 1;
+  const msg = 'AMRSABRY AGENTS    ONE MAN ARMY    ' + AGENTS.length + ' AGENTS 1 GUY    AMR NOW IN DUBAI    ' + PROJECTS.length + ' LIVE PROJECTS    DEADLINE: YESTERDAY    RENDER 99%    ' + w.name + ' ' + w.cityEn + '    ', mw = ptextW(msg) + 1;
   g.save(); g.beginPath(); g.rect(8, 101, 368, 9); g.clip(); const off = Math.floor(t * 16) % mw; ptext(msg + msg + msg, 8 - off, 103, '#ff8a3c'); g.restore();
   // entities, painter-sorted
   const L = [];
@@ -1004,15 +1035,16 @@ function draw() {
   if (sc.phase !== 'away') L.push({ y: sc.y, d: () => drawScooter(sc.x, sc.y, sc.dir, riding ? sim.agents.dlv.def : null, Math.floor(t * 8)) });
   const cat = sim.cat; L.push({ y: cat.y, d: () => drawCat(cat.x, cat.y, cat.dir, cat.f, cat.mode) });
   sim.hits = []; const focus = [];
-  if (sim.scene) { const pr = { y: SPOT.y + .5, d: () => drawProp(sim.scene.p.id, SPOT.x, SPOT.y, t) }; L.push(pr); focus.push(pr); }
+  if (sim.scene) { const pr = { y: SPOT.y + .5, d: () => drawPropFx(sim.scene.p.id, SPOT.x, SPOT.y, t, sim.scene.pfx) }; L.push(pr); focus.push(pr); }
   Object.values(sim.agents).forEach(a => {
     if (a.state === 'ride') return;
     const home = atHome(a), sit = home && a.home.sit && a.id !== sim.p1 || (a.id === sim.p1 && home && a.home.sit && !a.moved);
     const asleep = a.id === 'rnd' && sim.awake <= 0 && a.id !== sim.p1 && home;
     const inScene = sim.scene && a.state === 'scene', speaking = inScene && sim.scene.phase === 'talk' && sim.scene.speaker === a.id;
-    const o = { sit, sleep: asleep, type: a.state === 'work' && home, walk: a.moving, frame: Math.floor(t * (a.moving ? 7 : 6 * speed)), face: a.face,
-      blink: ((t + a.blinkAt) % 4) < .14, bob: party ? (Math.floor(t * 8 + a.x) & 1 ? -2 : 0) : speaking ? (Math.floor(t * 6) & 1 ? -1 : 0) : (a.moving ? Math.floor(t * 7) & 1 : 0), cheer: party, happy: sim.boost > 0 || speaking, shout: a.shout > t || (speaking && a.id === 'boss') };
-    const dr = { y: a.y, d: () => drawAmr(a.x, a.y, a.def, o) }; L.push(dr); if (inScene) focus.push(dr);
+    const fx = inScene && a.fx && a.fx.until > t ? a.fx.type : null, jy = fx === 'jump' ? Math.round(Math.abs(Math.sin(t * 9)) * 5) : 0;
+    const o = { sit, sleep: asleep || fx === 'sleep', type: (a.state === 'work' && home) || fx === 'work', walk: a.moving, frame: Math.floor(t * (a.moving ? 7 : 6 * speed)), face: fx === 'no' ? (Math.floor(t * 5) & 1 ? 1 : -1) : a.face,
+      blink: ((t + a.blinkAt) % 4) < .14, bob: party ? (Math.floor(t * 8 + a.x) & 1 ? -2 : 0) : speaking ? (Math.floor(t * 6) & 1 ? -1 : 0) : (a.moving ? Math.floor(t * 7) & 1 : 0), cheer: party || fx === 'cheer', happy: sim.boost > 0 || speaking, shout: a.shout > t };
+    const dr = { y: a.y, d: () => drawAmr(a.x, a.y - jy, a.def, o) }; L.push(dr); if (inScene) focus.push(dr);
     sim.hits.push({ kind: 'agent', id: a.id, x0: a.x - 9, x1: a.x + 9, y0: a.y - 27, y1: a.y + 1, z: a.y });
   });
   L.sort((a, b) => a.y - b.y).forEach(e => e.d());
@@ -1126,16 +1158,26 @@ function startScene(pid) {
   const p = PROJECTS.find(x => x.id === pid), cast = p.cast.map(id => sim.agents[id]);
   if (p.cast.includes('dlv')) { const sc = sim.scooter, d = sim.agents.dlv; sc.phase = 'parked'; sc.x = 290; sc.timer = 45; if (d.state === 'ride') { d.x = d.home.x; d.y = d.home.y; } }
   bubbles.forEach(b => b.el.remove()); bubbles = [];
-  sim.scene = { p, cast, phase: 'gather', i: -1, chars: 0, hold: 0, timer: 0, speaker: null };
-  cast.forEach((a, k) => { const m = MARKS[k], path = [...outPath(a), { x: SPOT.x + m[0], y: SPOT.y + m[1] }]; a.state = 'scene'; a.after = null; a.wait = 0; a.moved = true; go(a, path, () => { a.face = m[0] < 0 ? 1 : -1; }); });
-  $('#stage').classList.add('cine'); $('#scene').hidden = false; $('#scTitle').textContent = p.title; $('#scWho').textContent = 'التوائم بيتجمّعوا'; $('#scLine').textContent = '...'; $('#scFace').textContent = ''; $('#scCount').textContent = '';
+  sim.scene = { p, cast, phase: 'gather', i: -1, chars: 0, hold: 0, timer: 0, speaker: null, pfx: '', near: {}, mark: {} };
+  cast.forEach((a, k) => { const m = MARKS[k], path = [...outPath(a), { x: SPOT.x + m[0], y: SPOT.y + m[1] }]; sim.scene.mark[a.id] = { x: SPOT.x + m[0], y: SPOT.y + m[1] }; a.fx = null; a.state = 'scene'; a.after = null; a.wait = 0; a.moved = true; go(a, path, () => { a.face = m[0] < 0 ? 1 : -1; }); });
+  $('#stage').classList.add('cine'); $('#scene').hidden = false; $('#scTitle').textContent = p.title; $('#scWho').textContent = 'الـ Agents بيتجمّعوا'; $('#scLine').textContent = '...'; $('#scFace').textContent = ''; $('#scCount').textContent = '';
   unlock('scene'); pushLog(null, 'مشهد جديد على الفلور.', p.tag); beep(440, .06);
 }
 function nextLine() {
   const s = sim.scene; s.i++; if (s.i >= s.p.scene.length) return endScene();
-  const [who, text] = s.p.scene[s.i], d = AGENTS.find(a => a.id === who); s.chars = 0; s.speaker = who;
+  const [who, text, act, pfx, pop] = s.p.scene[s.i], d = AGENTS.find(a => a.id === who); s.chars = 0; s.speaker = who; doAct(s, who, act, pfx, pop);
   $('#scWho').textContent = 'عمرو صبري ' + d.role; const f = $('#scFace'); f.textContent = ''; f.appendChild(headCanvas(d, 3)); $('#scLine').textContent = ''; $('#scCount').textContent = (s.i + 1) + '/' + s.p.scene.length;
   pushLog(who, text, s.p.tag); beep(560 + s.i * 30, .04);
+}
+function doAct(s, who, act, pfx, pop) {
+  const a = sim.agents[who], t = sim.t, mk = s.mark[who], side = mk.x < SPOT.x ? 'L' : 'R';
+  s.pfx = pfx || '';
+  if (pop) sim.parts.push({ type: 'txt', txt: pop, x: SPOT.x - ptextW(pop) / 2, y: SPOT.y - 36, vy: -5, life: 2.6, c: GOLD });
+  if (act === 'go') {           // step up to the prop; whoever was there steps back
+    const prev = s.near[side]; if (prev && prev !== a) { const pm = s.mark[prev.id]; go(prev, [{ x: pm.x, y: pm.y }], () => { prev.face = pm.x < SPOT.x ? 1 : -1; }); }
+    s.near[side] = a; a.fx = { type: 'work', until: t + 99 }; go(a, [{ x: SPOT.x + (side === 'L' ? -17 : 17), y: SPOT.y - 1 }], () => { a.face = side === 'L' ? 1 : -1; });
+  } else if (act === 'shout') { a.shout = t + 2.4; a.fx = { type: 'jump', until: t + .7 }; }
+  else a.fx = { type: act, until: t + (act === 'sleep' ? 99 : 2.6) };
 }
 function updateScene(dt) {
   const s = sim.scene; if (!s) return; s.timer += dt;
@@ -1143,13 +1185,14 @@ function updateScene(dt) {
     if (s.cast.every(a => !a.moving) || s.timer > 9) { s.cast.forEach(a => { if (a.moving) { const pt = a.path[a.path.length - 1]; a.x = pt.x; a.y = pt.y; a.path = []; a.moving = false; a.onArrive = null; a.face = a.x < SPOT.x ? 1 : -1; } }); s.phase = 'talk'; nextLine(); }
     return;
   }
+  s.cast.forEach(a => { if (a.fx && a.fx.type === 'sleep' && Math.random() < dt * 1.5) sim.parts.push({ type: 'txt', txt: 'Z', x: a.x + 5, y: a.y - 26, vy: -6, vx: 3, life: 1.6, c: '#9fc4e8' }); });
   const line = s.p.scene[s.i][1];
   if (s.chars < line.length) { s.chars = Math.min(line.length, s.chars + dt * 34); $('#scLine').textContent = line.slice(0, Math.floor(s.chars)); if (s.chars >= line.length) s.hold = 2.6; }
   else { s.hold -= dt; if (s.hold <= 0) nextLine(); }
 }
 function endScene(silent) {
   const s = sim.scene; if (!s) return; sim.scene = null; $('#scene').hidden = true; $('#stage').classList.remove('cine');
-  s.cast.forEach(a => { a.path = []; a.onArrive = null; if (a.id === sim.p1) { a.state = 'player'; a.moving = false; a.face = 0; return; } a.state = 'trip'; go(a, homePath(a), () => { a.state = defaultState(a.id); a.wait = 1; a.moved = false; }); });
+  s.cast.forEach(a => { a.path = []; a.onArrive = null; a.fx = null; if (a.id === sim.p1) { a.state = 'player'; a.moving = false; a.face = 0; return; } a.state = 'trip'; go(a, homePath(a), () => { a.state = defaultState(a.id); a.wait = 1; a.moved = false; }); });
   if (!silent) addXP(15); sim.nextEvent = 5;
 }
 $('#scNext').addEventListener('click', () => { const s = sim.scene; if (!s || s.phase !== 'talk') return; const line = s.p.scene[s.i][1]; if (s.chars < line.length) { s.chars = line.length; $('#scLine').textContent = line; s.hold = 2.6; } else nextLine(); });
@@ -1186,7 +1229,7 @@ function setP1(id) {
   else $('#hint').textContent = HINT;
   renderTeam();
 }
-const HINT = 'دوس «شوف المشهد» على أي مشروع، أو دوس على أي توأم في الاستوديو.';
+const HINT = 'كل مشروع مشهده شغّال في الكارت بتاعه. دوس على أي Agent في الاستوديو تعرفه.';
 
 /* ---------- stage input ---------- */
 cv.addEventListener('click', (ev) => {
@@ -1220,9 +1263,49 @@ function showTab(name) {
 }
 $$('[role=tab]').forEach(b => b.addEventListener('click', () => { showTab(b.dataset.tab); beep(600, .03); }));
 
+/* Every project card plays its own scene, all the time, all at once: the real script, acted out, with the line as a caption */
+const LINE_T = 3.6;
+let minis = [];
+const miniSeen = window.IntersectionObserver ? new IntersectionObserver(es => es.forEach(e => { e.target._on = e.isIntersecting; })) : null;
+function miniScene(p) {
+  const wrap = el('div', 'mini-wrap'), c = document.createElement('canvas'), cap = el('p', 'mini-cap'); c.width = 128 * 3; c.height = 50 * 3; c.className = 'mini'; c._on = true;
+  c.setAttribute('role', 'img'); c.setAttribute('aria-label', 'مشهد متحرك: ' + p.cast.map(id => AGENTS.find(a => a.id === id).role).join('، '));
+  wrap.appendChild(c); wrap.appendChild(cap); minis.push({ c, x: c.getContext('2d'), p, cap, idx: -1 }); if (miniSeen) miniSeen.observe(c); return wrap;
+}
+function drawMinis(t) {
+  const OFF = [-23, 23, -42, 42, -58], FY = 46;
+  minis.forEach((m, mi) => {
+    if (!m.c.isConnected) return;
+    const p = m.p, tt = t + mi * 1.3, idx = Math.floor(tt / LINE_T) % p.scene.length, ph = (tt % LINE_T) / LINE_T, [who, text, act, pfx, pop] = p.scene[idx];
+    if (idx !== m.idx) { m.idx = idx; m.cap.textContent = ''; m.cap.appendChild(el('b', null, AGENTS.find(a => a.id === who).role)); m.cap.appendChild(el('span', null, text)); }
+    if (!m.c._on) return;
+    g = m.x; g.setTransform(3, 0, 0, 3, 0, 0); g.imageSmoothingEnabled = false; g.save(); g.translate(0, 4); drawBackdrop(p.id, tt); g.restore(); R('#0a1216', 0, 0, 128, 4);
+    const list = [{ y: FY + 1.5, d: () => drawPropFx(p.id, 64, FY + 1, tt, ph > .1 && ph < .9 ? pfx : '') }];
+    p.cast.forEach((id, k) => {
+      const d = AGENTS.find(a => a.id === id), on = id === who, side = OFF[k] < 0 ? 1 : -1; let x = 64 + OFF[k], y = FY - (k > 1 ? 1 : 0);
+      const o = { face: side, blink: ((tt + k) % 3.3) < .12, frame: Math.floor(tt * 6) }; let bulb = false;
+      if (id === 'rnd' && !on) o.sleep = true;
+      if (on) {
+        o.happy = true;
+        if (act === 'go') { const gp = ph < .22 ? ph / .22 : ph > .86 ? (1 - ph) / .14 : 1; x += side * Math.round(gp * 9); o.walk = ph < .22 || ph > .86; o.type = !o.walk; }
+        else if (act === 'work') o.type = true;
+        else if (act === 'cheer') o.cheer = true;
+        else if (act === 'jump') y -= Math.round(Math.abs(Math.sin(tt * 9)) * 4);
+        else if (act === 'no') o.face = Math.floor(tt * 5) & 1 ? 1 : -1;
+        else if (act === 'sleep') o.sleep = true;
+        else if (act === 'shout') { o.shout = true; if (ph < .2) y -= 2; }
+        else if (act === 'idea') { bulb = true; if (ph < .3) y -= Math.round(Math.abs(Math.sin(tt * 9)) * 3); }
+      }
+      list.push({ y, d: () => { drawAmr(x, y, d, o); if (bulb) drawBulb(x, y - 30, Math.floor(tt * 4) & 1 || ph > .3); else if (on && !o.sleep) drawTalkDots(x, y - 28, tt); if (o.sleep && Math.floor(tt * 2) & 1) ptext('Z', x + 6, y - 28, '#9fc4e8'); } });
+    });
+    list.sort((a, b) => a.y - b.y).forEach(e => e.d());
+    if (pop && ph < .75) ptext(pop, 64 - ptextW(pop) / 2, FY - 30 - Math.round(ph * 10), GOLD);
+  });
+}
+function playScene(id) { startScene(id); $('#stage').scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' }); }
 function crewRow(ids) { const crew = el('div', 'crew'); ids.forEach(id => { const d = AGENTS.find(a => a.id === id), b = el('button', 'crewbtn'); b.type = 'button'; b.appendChild(headCanvas(d)); b.addEventListener('click', () => openCard(id)); crew.appendChild(b); }); return crew; }
 function renderQuests() {
-  const w = sim.world, list = $('#questList'); list.textContent = '';
+  const w = sim.world, list = $('#questList'); list.textContent = ''; minis = [];
   const stale = PROJECTS.filter(p => !['active', 'live'].includes(projStatus(p))).length;
   $('#questSum').textContent = PROJECTS.length + ' مشاريع' + (stale ? ' · ' + stale + ' محتاجين تحديث' : ''); $('#questDone').textContent = PROJECTS.length;
   const seg = $('#questSeg'); seg.textContent = ''; PROJECTS.forEach(p => seg.appendChild(el('i', projStatus(p))));
@@ -1230,13 +1313,14 @@ function renderQuests() {
     const st = projStatus(p), key = st === 'todo' ? 'nodata' : st, li = el('li', 'quest ' + st), top = el('div', 'q-top');
     top.appendChild(el('h3', null, p.title)); top.appendChild(el('span', 'pill ' + STATUS[key].cls, st === 'active' ? p.stages[p.at] : STATUS[key].label)); li.appendChild(top);
     if (p.sub) li.appendChild(el('p', 'q-sub', p.sub));
+    li.appendChild(miniScene(p));
     const track = el('div', 'track'); track.setAttribute('role', 'img');
     track.setAttribute('aria-label', p.at == null ? 'المرحلة مش مسجّلة' : 'المرحلة ' + (p.at + 1) + ' من ' + p.stages.length + ': ' + p.stages[p.at]);
     p.stages.forEach((s, i) => { const c = el('i', p.at == null ? '' : i < p.at ? 'past' : i === p.at ? 'now' : ''); c.title = s; track.appendChild(c); });
     li.appendChild(track);
     if (p.at != null) { const sl = el('p', 'q-stage'); sl.appendChild(el('b', null, (st === 'stale' ? 'آخر مرحلة مسجّلة: ' : 'المرحلة: ') + p.stages[p.at])); sl.appendChild(el('span', null, (p.at + 1) + '/' + p.stages.length)); li.appendChild(sl); }
     li.appendChild(el('p', 'q-note', p.note));
-    const foot = el('div', 'q-foot'); foot.appendChild(el('span', 'q-date', p.updated ? 'آخر تحديث: ' + p.updated : 'مستني تحديث من عمرو')); const sb = el('button', 'btn tiny', 'شوف المشهد'); sb.type = 'button'; sb.addEventListener('click', () => { startScene(p.id); $('#stage').scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' }); }); foot.appendChild(sb); foot.appendChild(crewRow(p.cast)); li.appendChild(foot);
+    const foot = el('div', 'q-foot'); foot.appendChild(el('span', 'q-date', p.updated ? 'آخر تحديث: ' + p.updated : 'مستني تحديث من عمرو')); foot.appendChild(crewRow(p.cast)); li.appendChild(foot);
     list.appendChild(li);
   });
   // the studio's own to-do list, tucked away
@@ -1293,7 +1377,7 @@ function applyWorld(key, first) {
   $$('#worldTabs button').forEach(b => b.setAttribute('aria-pressed', b.dataset.world === key));
   $('#dxbTag').hidden = key !== 'dxb'; $('#logoImg').alt = key === 'dxb' ? 'Aroma Studios DXB' : 'Aroma Studios';
   $('#chipCity').textContent = w.cityEn; $('#chipAmr').textContent = w.here; $('#amrAt').textContent = w.hereAr; $('#pipePath').textContent = 'amrsabry.com' + w.path + '/project-name'; $('#worldIntro').textContent = w.intro; $('#worldPath').textContent = 'amrsabry.com' + w.path;
-  document.title = w.name + ' × AmrSabry Twins';
+  document.title = w.name + ' × AmrSabry Agents';
   renderQuests(); renderTeam(); renderAch(); renderHud();
   if (!first) { pushLog(null, 'وصلنا ' + w.city + '. ' + w.intro); unlock('travel'); jingle([392, 523, 659]); }
 }
@@ -1317,12 +1401,13 @@ function boot() {
   const hashWorld = (location.hash || '').replace('#', ''); const key = WORLDS[hashWorld] ? hashWorld : (WORLDS[CFG.world] ? CFG.world : 'aroma');
   initAgents(); resize(); renderPipe(); applyWorld(key, true); $('#hint').textContent = HINT;
   const p1 = store.get('p1', null); if (p1 && sim.agents[p1]) { sim.p1 = p1; const a = sim.agents[p1]; a.state = 'player'; a.moved = true; a.x = Math.min(W - 20, a.home.x + 22); a.y = Math.max(170, a.home.y + 12); renderTeam(); $('#hint').textContent = 'بتلعب بـ' + a.def.role + '. دوس على الأرض أو استخدم الأسهم عشان يتحرك.'; }
-  pushLog(null, 'الاستوديو فتح. التوائم التسعة على مكاتبهم.');
+  $$('.nAgents').forEach(e => { e.textContent = AGENTS.length; });
+  pushLog(null, 'الاستوديو فتح. الـ ' + AGENTS.length + ' Agents على مكاتبهم.');
   $('#bootTip').textContent = pick(TIPS); AGENTS.forEach(d => $('#bootCrew').appendChild(avatarCanvas(d, 3, { happy: true })));
   const b = $('#boot'); const end = () => { if (b.hidden) return; b.classList.add('out'); setTimeout(() => { b.hidden = true; }, 450); unlock('open'); };
   if (reduced) { b.hidden = true; unlock('open'); } else { setTimeout(end, 2300); b.addEventListener('click', end); }
   let last = performance.now();
-  const loop = (now) => { const dt = Math.min(.05, (now - last) / 1000); last = now; update(dt); draw(); requestAnimationFrame(loop); };
+  const loop = (now) => { const dt = Math.max(0, Math.min(.05, (now - last) / 1000)); last = now; update(dt); draw(); drawMinis(sim.t); requestAnimationFrame(loop); };
   requestAnimationFrame(loop);
   if (window.ResizeObserver) new ResizeObserver(resize).observe(cv.parentElement); else window.addEventListener('resize', resize);
 }
