@@ -155,7 +155,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 @media(max-width:560px){.grid,.grid.four,.grid.five{grid-template-columns:1fr}.opts{display:flex;flex-direction:column;border-radius:22px}.stage{height:70vh}.wrap{padding:0 16px}}
 </style>
 </head>
-<body>
+<body data-mascot-lines="بالراحة عالسكرول.. أنا ماسك نفسي بالعافية|لسه فيه تحت.. الحلو دايماً في الآخر|رجعت تاني؟ عجبك صح؟|أنا شغال بالشيبس.. حد يشحنّي">
 
 <div class="top"><div class="wrap">
   <img src="/r/yummis/logo.png" alt="Yummis يميز">
@@ -169,7 +169,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   </nav>
 </div></div>
 
-<header class="hero"><div class="wrap">
+<header class="hero" data-mascot-say="أهلاً! أنا من فريق أروما.. والشيبس مش عليّا" data-mascot-mood="happy"><div class="wrap">
   <div>
     <div class="kicker">Modern Saudi Crunch · CG product films · Round 04</div>
     <h1>Four flavours. <em>One crunch.</em></h1>
@@ -189,7 +189,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   </div>
 </div></header>
 
-<section id="stage-sec" data-mascot-say="Go on, spin it. It never gets dizzy. I do." data-mascot-mood="happy"><div class="wrap">
+<section id="stage-sec" data-mascot-say="لفّ الكيس براحتك.. أنا اللي بدوخ مش هو" data-mascot-mood="dizzy"><div class="wrap">
   <div class="sec-h">
     <div><div class="n">STEP 01</div><h2>The pack.<br>The chip.</h2></div>
     <p>Real-time 3D built from the approved pack artwork. Drag to turn it 360°, scroll or pinch to zoom, switch between the four flavours.</p>
@@ -214,7 +214,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   </div>
 </div></section>
 
-<section id="cf-sec" data-mascot-say="Nobody feed me. I am on a pixel diet." data-mascot-mood="wow"><div class="wrap">
+<section id="cf-sec" data-mascot-say="ممنوع الأكل من الشاشة.. جربت قبلك وما نفع" data-mascot-mood="wow"><div class="wrap">
   <div class="sec-h">
     <div><div class="n">STEP 02</div><h2>Concept frames.</h2></div>
     <p>The look we are aiming for: the real pack, its ingredient and the chip in each flavour's own colour world. These are look targets, not final renders.</p>
@@ -223,7 +223,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   <div class="cfth" id="cfth"></div>
 </div></section>
 
-<section id="sb-sec" data-mascot-say="Pencil only. The colour is waiting for your yes." data-mascot-mood="idle"><div class="wrap">
+<section id="sb-sec" data-mascot-say="رصاص بس يا فندم.. الألوان مستنية موافقتك" data-mascot-mood="idle"><div class="wrap">
   <div class="sec-h">
     <div><div class="n">STEP 03</div><h2>Storyboards.</h2></div>
     <p>Black and white sketch pass. Composition, action and rhythm only. Pick a film to see its frames.</p>
@@ -261,7 +261,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   <div class="grid" id="grid"></div>
 </div></section>
 
-<section id="ani-sec" data-mascot-say="Sound on. This crunch was recorded with love." data-mascot-mood="happy"><div class="wrap">
+<section id="ani-sec" data-mascot-say="علّي الصوت.. القرمشة دي اتسجلت بضمير" data-mascot-mood="happy"><div class="wrap">
   <div class="sec-h">
     <div><div class="n" style="color:#7ff3ee">STEP 04</div><h2>Animatic.</h2></div>
     <p>The boards cut to time with camera moves and a rough crunch track, so you can judge pace before anything is rendered.</p>
@@ -281,7 +281,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   </div>
 </div></section>
 
-<section id="fb-sec" data-mascot-say="Your turn. Be honest, we can take it." data-mascot-mood="happy"><div class="wrap">
+<section id="fb-sec" data-mascot-say="دورك بقى.. قول رأيك بصراحة، قلبنا كبير" data-mascot-mood="happy"><div class="wrap">
   <div class="sec-h">
     <div><div class="n">YOUR TURN</div><h2>Feedback.</h2></div>
     <p>Mark each frame as approved or add a note under it. Everything you mark is collected here, ready to send back in one message.</p>
@@ -303,7 +303,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   </div>
 </div></section>
 
-<footer><div class="wrap"><span>Yummis يميز · Modern Saudi Crunch</span><span>Produced by Aroma Studios · Confidential work in progress</span></div></footer>
+<footer data-mascot-say="خلصت؟ طب والكيس اللي فتحته في خيالك؟" data-mascot-mood="sleepy"><div class="wrap"><span>Yummis يميز · Modern Saudi Crunch</span><span>Produced by Aroma Studios · Confidential work in progress</span></div></footer>
 <div class="lb" id="lb"><img alt=""></div>
 
 <script type="module">
@@ -524,8 +524,8 @@ function grid(){
     <div class="fb"><button class="ok">Approve</button><button class="ch">Change</button><textarea placeholder="What should change in this frame?"></textarea></div>`;
     const ok=el.querySelector('.ok'),ch=el.querySelector('.ch'),ta=el.querySelector('textarea'),u=img(i);
     const paint=()=>{const x=FB[k]||{};ok.classList.toggle('on',x.s==='ok');ch.classList.toggle('on',x.s==='ch');ta.classList.toggle('show',x.s==='ch');ta.value=x.n||''};
-    ok.onclick=()=>{FB[k]={...(FB[k]||{}),s:FB[k]?.s==='ok'?'':'ok'};paint();save()};
-    ch.onclick=()=>{FB[k]={...(FB[k]||{}),s:FB[k]?.s==='ch'?'':'ch'};paint();save()};
+    ok.onclick=()=>{FB[k]={...(FB[k]||{}),s:FB[k]?.s==='ok'?'':'ok'};paint();save();if(FB[k].s&&window.AromaMascot)AromaMascot.say('الله ينوّر! فريم واتوافق عليه','happy')};
+    ch.onclick=()=>{FB[k]={...(FB[k]||{}),s:FB[k]?.s==='ch'?'':'ch'};paint();save();if(FB[k].s&&window.AromaMascot)AromaMascot.say('ولا يهمك.. اكتب عايز إيه وإحنا نظبطها','idle')};
     ta.oninput=()=>{FB[k]={...(FB[k]||{}),n:ta.value};save()};
     el.querySelector('.im').onclick=()=>{$('#lb img').src=u;$('#lb').classList.add('show')};
     paint();G.appendChild(el);
@@ -598,12 +598,12 @@ window.__ani={play,stop,seek,setFilm,setOpt,OPTS};
    A floating 3D head shaped like the Aroma logo block, with an LED pixel screen for a face and two
    outline hands. He sits in a corner, follows the cursor with his eyes, and reacts as the page scrolls.
 
-   Use:  paste this whole file in a <script> at the end of <body>   (or <script src="aroma-mascot.js" defer>)
+   Use:  paste this whole file in a <script> at the end of <body data-mascot-lines="بالراحة عالسكرول.. أنا ماسك نفسي بالعافية|لسه فيه تحت.. الحلو دايماً في الآخر|رجعت تاني؟ عجبك صح؟|أنا شغال بالشيبس.. حد يشحنّي">   (or <script src="aroma-mascot.js" defer>)
    Needs three.js r128; it loads it from cdnjs by itself if the page has not.
 
    Optional, on any element:   data-mascot-say="Line he says when this scrolls into view"
                                data-mascot-mood="happy | wow | dizzy | sleepy | sad | idle"
-   Optional, on <body>:        data-mascot-side="left"      (default: right)
+   Optional, on <body data-mascot-lines="بالراحة عالسكرول.. أنا ماسك نفسي بالعافية|لسه فيه تحت.. الحلو دايماً في الآخر|رجعت تاني؟ عجبك صح؟|أنا شغال بالشيبس.. حد يشحنّي">:        data-mascot-side="left"      (default: right)
                                data-mascot-lines="Line one|Line two|Line three"   (replaces the stock scroll lines)
    From script:                AromaMascot.say('Text', 'happy')
    Respects prefers-reduced-motion (he does not load) and does nothing without WebGL. */
