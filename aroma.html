@@ -71,12 +71,24 @@ h1, h2, h3, p { margin: 0; }
 #over { position: absolute; inset: 0; z-index: 4; display: grid; place-content: center; text-align: center; background: rgba(8, 4, 4, .82); }
 #over b { font: 800 clamp(44px, 9vw, 110px)/.9 var(--display); color: var(--bad); letter-spacing: .06em; }
 #over span { direction: rtl; font-size: clamp(13px, 1.6vw, 18px); }
+.stage { container-type: inline-size; } .stage.cine .chips { display: none; }
+#scene { position: absolute; inset: 0; z-index: 3; display: flex; flex-direction: column; justify-content: flex-start; pointer-events: none; direction: rtl; font-size: clamp(11px, 2cqw, 17px); }
+#scene > * { pointer-events: auto; }
+.sc-top { display: flex; align-items: center; gap: .7em; background: rgba(4, 8, 10, .92); padding: .45em .8em; border-bottom: 2px solid var(--line); }
+.sc-k { font: 800 1.15em/1 var(--display); letter-spacing: .08em; color: #1a1200; background: var(--gold); padding: .2em .45em .1em; }
+.sc-top b { font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-inline-end: auto; }
+.sc-x, .sc-next { font: 600 .9em/1.2 var(--body); background: var(--panel-2); border: 2px solid var(--line); padding: .3em .8em; } .sc-next { background: var(--accent); border-color: #ff7a5c; color: #fff; }
+.sc-box { display: flex; align-items: center; gap: .9em; background: rgba(8, 16, 20, .95); border-bottom: 2px solid var(--accent); padding: .6em .8em; }
+#scFace { flex: none; width: 54px; height: 48px; background: #0a1820; border: 2px solid var(--line); display: grid; place-content: center; }
+.sc-txt { flex: 1; min-width: 0; display: grid; gap: .1em; } .sc-txt b { color: var(--gold); font-weight: 600; font-size: .9em; } .sc-txt p { font-size: 1.12em; line-height: 1.45; font-weight: 500; min-height: 2.9em; }
+.sc-side { display: grid; gap: .3em; justify-items: center; flex: none; } #scCount { font: .8em/1 var(--mono); color: var(--muted); direction: ltr; }
 .hint { color: var(--muted); font-size: 13px; }
 .actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .btn { background: var(--panel-2); border: 2px solid var(--line); box-shadow: 3px 3px 0 var(--shadow); padding: 7px 14px; font: 600 14px/1.3 var(--body); }
 .btn:hover { border-color: var(--teal); } .btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--shadow); }
 .btn.primary { background: var(--accent); border-color: #ff7a5c; color: #fff; }
 .btn.quiet { color: var(--muted); margin-inline-start: auto; }
+.btn.tiny { padding: 3px 9px; font-size: 12px; box-shadow: 2px 2px 0 var(--shadow); }
 .radio { background: var(--panel); border: 2px solid var(--line); padding: 10px 14px; }
 .sec-h { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
 .sec-h h2 { font: 800 22px/1 var(--display); letter-spacing: .06em; }
@@ -86,6 +98,7 @@ h1, h2, h3, p { margin: 0; }
 #log li:first-child { color: var(--text); } #log li { color: var(--muted); }
 #log time { font: 11px/1 var(--mono); color: var(--teal); direction: ltr; flex: none; }
 #log b { color: var(--gold); font-weight: 600; flex: none; }
+#log .tag { font: normal 600 11px/1.5 var(--body); color: var(--teal); border: 1px solid var(--line); padding: 0 5px; flex: none; }
 #log span { min-width: 0; overflow-wrap: anywhere; }
 
 #pipe { list-style: none; margin: 4px 0 8px; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; counter-reset: step; }
@@ -105,11 +118,11 @@ h1, h2, h3, p { margin: 0; }
 .world-card code, .q-path { font: 12px/1.4 var(--mono); color: var(--teal); direction: ltr; text-align: right; display: block; overflow-wrap: anywhere; }
 .world-card p { color: var(--muted); font-size: 13px; }
 .seg { display: flex; gap: 3px; } .seg i { flex: 1; height: 8px; background: #1d3840; }
-.seg i.stale { background: var(--gold); } .seg i.done { background: var(--good); } .seg i.active { background: var(--accent); } .seg i.blocked { background: var(--bad); } .seg i.todo { background: var(--gold); }
+.seg i.stale { background: var(--gold); } .seg i.live { background: var(--accent); } .seg i.done { background: var(--good); } .seg i.active { background: var(--accent); } .seg i.blocked { background: var(--bad); } .seg i.todo { background: var(--gold); }
 ul.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .quest { background: var(--panel-2); border: 1px solid var(--line); border-inline-start: 4px solid var(--line); padding: 9px 11px; display: grid; gap: 4px; }
 .quest.done { border-inline-start-color: var(--good); } .quest.active { border-inline-start-color: var(--accent); } .quest.blocked { border-inline-start-color: var(--bad); } .quest.todo { border-inline-start-color: var(--gold); }
-.quest.locked { opacity: .62; } .quest.stale { border-inline-start-color: var(--gold); }
+.quest.locked { opacity: .62; } .quest.live { border-inline-start-color: var(--accent); } .quest.stale { border-inline-start-color: var(--gold); }
 .q-sub { font-size: 12.5px; color: var(--teal); line-height: 1.4; }
 .track { display: flex; gap: 3px; margin-top: 5px; } .track i { flex: 1; height: 8px; background: #1d3840; } .track i.past { background: var(--teal); } .track i.now { background: var(--accent); box-shadow: 0 -3px 0 var(--accent); }
 .quest.stale .track i.past { background: #4f8f8a; } .quest.stale .track i.now { background: var(--gold); box-shadow: 0 -3px 0 var(--gold); }
@@ -203,7 +216,6 @@ dialog::backdrop { background: rgba(4, 8, 10, .74); }
       <div class="meter"><span class="k">LVL</span><span class="v" id="lvl">1</span><div class="xp" aria-hidden="true"><i id="xpFill"></i></div></div>
       <div class="meter"><span class="k">الصبر</span><div id="hearts" role="img"></div></div>
       <div class="meter"><span class="k">قهوة</span><span class="v" id="coffeeN">0</span></div>
-      <div class="meter"><span id="ver" title="رقم النسخة الحالية">v1</span></div>
     </div>
   </header>
 
@@ -213,17 +225,19 @@ dialog::backdrop { background: rgba(4, 8, 10, .74); }
         <canvas id="cv" width="768" height="432" aria-label="استوديو بيكسل فيه التوائم التسعة شغالين على مكاتبهم"></canvas>
         <div id="bubbles"></div>
         <div class="chips"><span class="chip" id="chipCity">CAIRO HQ</span><span class="chip amr" id="chipAmr"></span><span class="chip rec">REC</span></div>
+        <div id="scene" hidden>
+          <div class="sc-top"><span class="sc-k">مشهد</span><b id="scTitle"></b><button class="sc-x" id="scClose" type="button">قفل</button></div>
+          <div class="sc-box"><div id="scFace"></div><div class="sc-txt"><b id="scWho"></b><p id="scLine"></p></div><div class="sc-side"><span id="scCount"></span><button class="sc-next" id="scNext" type="button">التالي</button></div></div>
+        </div>
         <div id="over" hidden><b>GAME OVER</b><span>الصبر خلص. بريك قهوة إجباري.</span></div>
       </div>
       <p class="hint" id="hint"></p>
       <div class="actions">
         <button class="btn primary" id="btnCoffee" type="button">قهوة للجميع</button>
-        <button class="btn" id="btnLogo" type="button">كبّر اللوجو</button>
-        <button class="btn" id="btnRev" type="button">اطلب تعديل</button>
         <button class="btn quiet" id="btnSound" type="button" aria-pressed="false">الصوت: مقفول</button>
       </div>
       <section class="radio" aria-label="راديو الاستوديو">
-        <div class="sec-h"><h2>راديو الاستوديو</h2><span>آخر اللي اتقال على الفلور</span></div>
+        <div class="sec-h"><h2>راديو الاستوديو</h2><span>التوائم بيتكلموا عن المشاريع</span></div>
         <ul id="log" aria-live="off"></ul>
       </section>
       <section class="radio pipe" aria-label="خط التسليم">
@@ -343,8 +357,8 @@ const WORLDS = {
         note:'الداشبورد نفسه. مبني كله بالكود، من غير ولا صورة غير اللوجو.' },
       { id:'logo', title:'تركيب لوجو أروما', path:'/aroma', status:'done', pct:100, agents:['des'],
         note:'نفس اللوجو بتاع تمبلت البرزنتيشنات.' },
-      { id:'domain', title:'ربط amrsabry.com/aroma', path:'/aroma', status:'active', pct:70, agents:['dlv','eng'],
-        note:'الصفحة جاهزة. فاضل الرفع على الدومين.' },
+      { id:'domain', title:'ربط amrsabry.com/aroma', path:'/aroma', status:'done', pct:100, agents:['dlv','eng'],
+        note:'اترفعت وشغّالة على الدومين.' },
       { id:'lock', title:'قفل الباب', path:'/aroma', status:'todo', pct:0, agents:['qa'],
         note:'باسورد للداشبورد قبل ما أول عميل ياخد لينك.' },
       { id:'vault', title:'مخزن الفيديوهات', path:'/aroma', status:'todo', pct:0, agents:['eng'],
@@ -363,8 +377,8 @@ const WORLDS = {
         note:'نفس المحرك، بسكاي لاين دبي وأرضية رخام.' },
       { id:'logo', title:'لوجو أروما DXB الأصلي', path:'/aromadxb', status:'blocked', pct:20, agents:['des'],
         note:'محتاج ملف اللوجو بتاع الكارت. المعروض دلوقتي لوجو أروما + علامة DXB مؤقتة.' },
-      { id:'domain', title:'ربط amrsabry.com/aromadxb', path:'/aromadxb', status:'active', pct:70, agents:['dlv','eng'],
-        note:'الصفحة جاهزة. فاضل الرفع على الدومين.' },
+      { id:'domain', title:'ربط amrsabry.com/aromadxb', path:'/aromadxb', status:'done', pct:100, agents:['dlv','eng'],
+        note:'اترفعت وشغّالة على الدومين.' },
       { id:'lock', title:'قفل الباب', path:'/aromadxb', status:'todo', pct:0, agents:['qa'],
         note:'باسورد للداشبورد قبل ما أول عميل ياخد لينك.' },
       { id:'first', title:'أول تسليم لعميل', path:'/aromadxb/project-name', status:'locked', pct:0, agents:['dlv','boss'],
@@ -380,27 +394,55 @@ const WORLDS = {
 const AMR_AT = 'dxb';
 const FILM = ['بريف', 'تحضير', 'إنتاج', 'أوفلاين', 'أونلاين و VFX', 'جريد وميكس', 'تسليم'];
 const MAPS = ['الداتا', 'الخريطة', 'الموديلز', 'التحكم واللغات', 'المراجعة', 'العرض'];
+const BRAND = ['اللوجو', 'اعتماد الاتجاه', 'أنيميشن اللوجو', 'الكي آرت والبوسترات', 'الديك', 'تسليم'];
 const PROJECTS = [
-  { id:'always', title:'Always — Super Night XXL', sub:'فيديو العبوة · موديل 3D ورندرات', stages:FILM, at:4, fresh:true, updated:'3 أكتوبر', agents:['eng','rnd'],
-    note:'موديل العبوة بالمقاس الحقيقي ورندرات من كذا زاوية. بليت اللقطة sh0040 وصل.' },
-  { id:'map', title:'مسيرة التنمية', sub:'خريطة 3D تفاعلية', stages:MAPS, at:2, fresh:true, updated:'3 أكتوبر', agents:['dev','eng'],
-    note:'الموديلز بتتبني بالكود على مقاسات المواقع الحقيقية. 369 موديل للمراجعة.' },
-  { id:'npd', title:'أفلام NPD', sub:'11 فيلم مؤكد · حوالي 50 دقيقة', stages:FILM, at:1, updated:'22 سبتمبر', agents:['edt','boss'],
-    note:'آخر حاجة مسجّلة: السكوب اتحدد على القايمة الرسمية، وفيه فيديو مستني تأكيد.' },
-  { id:'fab', title:'FAB — Salary Transfer', sub:'صور الحملة + 5 أفلام · إنتاج AI', stages:FILM, at:2, updated:'13 أغسطس', agents:['col','des'],
-    note:'آخر حاجة مسجّلة: بايبل الكاست واللبس، وبرومبتات اللوكيشنز.' },
-  { id:'fairy', title:'Fairy — Mercury TVC', sub:'فيلم AI على ستوري بورد الوكالة', stages:FILM, at:2, updated:'9 أغسطس', agents:['boss','des'],
-    note:'آخر حاجة مسجّلة: برومبتات اللقطات، النسخة التالتة (سينماتيك).' },
-  { id:'salam', title:'Salam — SOHO', sub:'4 إعلانات + 12 نسخة + فيلم دقيقة · AI', stages:FILM, at:1, updated:'6 أغسطس', agents:['des','qa'],
-    note:'آخر حاجة مسجّلة: شيتات الـ 8 شخصيات (V5) وجدول الـ CPS المضغوط.' },
-  { id:'chipsy', title:'Chipsy — Yummy', sub:'', stages:FILM, at:null, updated:null, agents:[],
-    note:'مفيش مرحلة مسجّلة عندي للمشروع ده.' },
+  { id:'always', tag:'Always', title:'Always — Super Night XXL', sub:'فيديو العبوة · موديل 3D ورندرات', stages:FILM, at:4, fresh:true, updated:'3 أكتوبر', agents:['eng','rnd'],
+    note:'موديل العبوة بالمقاس الحقيقي ورندرات من كذا زاوية. بليت اللقطة sh0040 وصل.',
+    cast:['eng','qa','rnd','col'],
+    scene:[['eng','موديل العبوة اتبنى بالمقاس الحقيقي. بالملّي.'],['qa','والكتابة؟ لازم تطلع زي ملف الطباعة بالحرف.'],['eng','بالحرف. جرّب تلاقي غلطة.'],['rnd','الرندرات من كل الزوايا شغّالة.. 99%.'],['col','والستايل على ريفرنس العميل. مش من دماغنا.'],['qa','ماشي. بس هبص تاني برضه.']],
+    talk:[[['rnd','رندر عبوة Always وصل 99%.'],['eng','بقاله ساعة 99%.']],[['edt','بليت sh0040 بتاع Always وصل؟'],['dlv','وصل. تقيل بس وصل.']],[['qa','الكتابة على عبوة Always زي الملف بالحرف؟'],['eng','بالحرف وبالمقاس.']]] },
+  { id:'map', tag:'الخريطة', title:'مسيرة التنمية', sub:'خريطة 3D تفاعلية', stages:MAPS, at:2, fresh:true, updated:'3 أكتوبر', agents:['dev','eng'],
+    note:'الموديلز بتتبني بالكود على مقاسات المواقع الحقيقية. 369 موديل للمراجعة.',
+    cast:['dev','eng','des','qa'],
+    scene:[['dev','الخريطة كلها مرسومة بالكود. كبّر زي ما تكبّر، مابتبوظش.'],['eng','والموديلز على مكان ومقاس الموقع الحقيقي. مفيش خيال.'],['des','ومفيش أسود كئيب في أي حتة.'],['qa','369 موديل. هراجعهم واحد واحد.'],['dev','وهتشتغل تاتش. الزراير كبيرة.'],['qa','الغلطة هنا ممنوعة. فاهمين؟']],
+    talk:[[['dev','369 موديل في الخريطة. مين عدّهم؟'],['qa','أنا. وهراجعهم كلهم.']],[['des','الخريطة مفيهاش أسود. ولا نقطة.'],['col','أخيراً حد فاهم.']],[['eng','موديل الخريطة لازم على مقاس الموقع الحقيقي.'],['dev','مش من الخيال، عارف.']]] },
+  { id:'huna', tag:'هنا مصر', title:'هنا مصر', sub:'', stages:BRAND, at:null, updated:null, agents:[],
+    note:'الفكرة اتغيّرت. مستني البريف الجديد من عمرو عشان المرحلة تتكتب صح.',
+    cast:['boss','des'],
+    scene:[['des','هنا مصر بقت على فكرة جديدة.'],['boss','والبريف الجديد لسه ماوصلش الاستوديو.'],['des','يبقى مانكتبش حاجة من دماغنا.'],['boss','صح. نستنى عمرو.']],
+    talk:[[['des','هنا مصر فكرتها اتغيّرت.'],['boss','مستنيين البريف الجديد من عمرو.']]] },
+  { id:'npd', tag:'NPD', title:'أفلام NPD', sub:'11 فيلم مؤكد · حوالي 50 دقيقة', stages:FILM, at:1, updated:'22 سبتمبر', agents:['edt','boss'],
+    note:'آخر حاجة مسجّلة: السكوب اتحدد على القايمة الرسمية، وفيه فيديو مستني تأكيد.',
+    cast:['boss','edt','dlv'],
+    scene:[['boss','السكوب اتحدد: 11 فيلم مؤكد من قايمة الـ 37.'],['edt','حوالي خمسين دقيقة. هحتاج قهوة كتير.'],['dlv','وفيه فيلم لسه مستني تأكيد. واقف مستنيه.'],['boss','أول ما يتأكد، ندخل عليه.'],['edt','وأنا جاهز على التايم لاين.']],
+    talk:[[['edt','أفلام NPD: 11 فيلم وخمسين دقيقة. مين هينام؟'],['rnd','أنا.']],[['boss','فيلم NPD اللي مستني تأكيد.. اتأكد؟'],['dlv','لسه. واقف على السكوتر.']]] },
+  { id:'fab', tag:'FAB', title:'FAB — Salary Transfer', sub:'صور الحملة + 5 أفلام · إنتاج AI', stages:FILM, at:2, updated:'13 أغسطس', agents:['col','des'],
+    note:'آخر حاجة مسجّلة: بايبل الكاست واللبس، وبرومبتات اللوكيشنز.',
+    cast:['des','col','boss'],
+    scene:[['des','بايبل الكاست واللبس جاهز. كل شخصية بزواياها.'],['col','واللوكيشنز الخمسة فاضيين من غير ناس. ريفرنس نضيف.'],['boss','الإضاءة من المكان نفسه. مفيش لمعة إعلانات.'],['des','نفس بلوك الاستايل في آخر كل برومبت. حملة واحدة.'],['col','ألوان غنية بس هادية. فاهمك.']],
+    talk:[[['col','لوكيشنز FAB الخمسة لازم يبانوا حملة واحدة.'],['des','نفس بلوك الاستايل في كل برومبت.']],[['des','بايبل كاست FAB: 32 زاوية للبطلة.'],['qa','وأنا هراجع الـ 32.']]] },
+  { id:'fairy', tag:'Fairy', title:'Fairy — Mercury TVC', sub:'فيلم AI على ستوري بورد الوكالة', stages:FILM, at:2, updated:'9 أغسطس', agents:['boss','des'],
+    note:'آخر حاجة مسجّلة: برومبتات اللقطات، النسخة التالتة (سينماتيك).',
+    cast:['boss','des','qa','col'],
+    scene:[['boss','فريم 11 طلع قوي. الباقي يبقى زيه.'],['des','بلوك السينماتوجرافي بتاعه اتحط في كل الفريمات.'],['qa','والكتابة على العبوة؟ دي بتبوظ في التوليد.'],['des','عندنا رندر العبوة بكتابة سليمة. بيترفق مع كل لقطة.'],['col','فليرز دافية والأزرق مخفف.'],['boss','يبان متصوّر. مش متولّد.']],
+    talk:[[['boss','فريم 11 في Fairy طلع قوي. عايز الباقي زيه.'],['col','فليرز دافية وأزرق مخفف. حاضر.']],[['edt','جبل الأطباق في مطبخ Fairy ده مين هيغسله؟'],['rnd','مش أنا.']],[['qa','كتابة عبوة Fairy سليمة في كل لقطة؟'],['des','برندر العبوة المرفق. سليمة.']]] },
+  { id:'salam', tag:'Salam', title:'Salam — SOHO', sub:'4 إعلانات + 12 نسخة + فيلم دقيقة · AI', stages:FILM, at:1, updated:'6 أغسطس', agents:['des','qa'],
+    note:'آخر حاجة مسجّلة: شيتات الـ 8 شخصيات (V5) وجدول الـ CPS المضغوط.',
+    cast:['des','qa','col'],
+    scene:[['des','8 شخصيات لأربع إعلانات. مفيش اتنين شبه بعض.'],['qa','هعدّهم. وهبص على كل وش.'],['col','البنات كلهم في درجات الأخضر. حتى المناكير.'],['des','والجلد طبيعي بمسامه. مفيش بلاستيك.'],['qa','ومفيش ولا لوجو على الهدوم؟'],['des','ولا لوجو. دي النسخة الخامسة يا راجل.']],
+    talk:[[['des','شخصيات Salam التمانية: مفيش اتنين شبه بعض.'],['qa','هعدّهم.']],[['col','الأخضر في كل حاجة في Salam. حتى المناكير.'],['des','خصوصاً المناكير.']]] },
+  { id:'chipsy', tag:'Chipsy', title:'Chipsy — Yummy', sub:'', stages:FILM, at:null, live:true, updated:'4 أكتوبر', agents:['edt','col'],
+    note:'شغّال دلوقتي. المرحلة بالتفصيل لسه ماتسجّلتش.',
+    cast:['dlv','rnd','edt'],
+    scene:[['dlv','شيبسي Yummy شغّال دلوقتي.'],['rnd','في أنهي مرحلة؟'],['edt','عمرو لسه ماقالش التفاصيل. بس الشغل ماشي.'],['rnd','طيب. صحّوني لما المرحلة تتكتب.'],['dlv','وأنا جاهز بالسكوتر أول ما يخلص.']],
+    talk:[[['dlv','شيبسي Yummy شغّال دلوقتي.'],['edt','ماشي. بس محدش ياكل وهو شغال.']],[['rnd','شيبسي؟ أنا جعان.'],['edt','ده مشروع. مش أكل.']]] },
 ];
-const projStatus = (p) => p.at == null ? 'todo' : (p.fresh ? 'active' : 'stale');
+const projStatus = (p) => p.at == null ? (p.live ? 'live' : 'todo') : (p.fresh ? 'active' : 'stale');
 const projPct = (p) => p.at == null ? 0 : Math.round((p.at + .5) / p.stages.length * 100);
 
 const STATUS = {
   stale:  { label:'محتاج تحديث', cls:'stale' },
+  live:   { label:'شغّال دلوقتي', cls:'active' },
   nodata: { label:'مفيش بيانات', cls:'todo' },
   done:   { label:'خلصت',   cls:'done' },
   active: { label:'شغّالة', cls:'active' },
@@ -418,9 +460,9 @@ const ACHIEVEMENTS = [
   { id:'cat',    title:'بيكسل راضية عنك',  desc:'دلّعت قطة الاستوديو.' },
   { id:'travel', title:'سافرت الفرع التاني', desc:'القاهرة ↔ دبي في ثانية.' },
   { id:'p1',     title:'نزلت الملعب',      desc:'اخترت توأم ولعبت بيه.' },
-  { id:'final5', title:'Final_v5_FINAL_بجد', desc:'طلبت خمس تعديلات ورا بعض.' },
   { id:'over',   title:'الصبر خلص',        desc:'وصّلت الفريق لـ Game Over.' },
   { id:'konami', title:'↑↑↓↓←→←→BA',       desc:'عارف انت عملت إيه.', secret:true },
+  { id:'scene',  title:'حضرت أول مشهد',     desc:'شفت التوائم بيتكلموا عن مشروع.' },
   { id:'deadline', title:'سلّم قبل الديدلاين', desc:'نادر جداً. بيتفتح مع أول تسليم حقيقي.', real:true },
 ];
 
@@ -458,7 +500,7 @@ const FONT = {
   Z:'111001010100111', 0:'111101101101111', 1:'010110010010111', 2:'110001010100111', 3:'110001010001110',
   4:'101101111001001', 5:'111100110001110', 6:'011100111101111', 7:'111001010010010', 8:'111101111101111',
   9:'111101111001110', '%':'101001010100101', ':':'000010000010000', '.':'000000000000010', '-':'000000111000000',
-  '!':'010010010000010', '+':'000010111010000', '/':'001001010100100', ' ':'000000000000000',
+  '!':'010010010000010', '?':'110001010000010', '+':'000010111010000', '/':'001001010100100', ' ':'000000000000000',
 };
 function ptext(str, x, y, c, s = 1, gap = 1) {
   for (const ch of String(str)) {
@@ -782,6 +824,39 @@ function drawCat(x, y, dir, f, mode) {
   }
   g.restore();
 }
+
+/* ================= Project props: what the twins gather around in a project scene ================= */
+function drawProp(kind, x, y, t) {
+  const b = Math.floor(t * 2) & 1;
+  g.globalAlpha = .5; R('#020607', x - 14, y - 1, 28, 2); g.globalAlpha = 1;
+  if (kind === 'always') {            // the night pack
+    R('#3b2f8f', x - 9, y - 25, 18, 24); R('#5546c0', x - 9, y - 25, 18, 3); R('#2a2170', x + 7, y - 22, 2, 21);
+    disc('#ffd27a', x + 2, y - 18, 3); disc('#3b2f8f', x + 4, y - 19, 2); R(PAPER, x - 6, y - 20, 1, 1); R(PAPER, x - 3, y - 17, 1, 1); if (b) R(PAPER, x - 5, y - 15, 1, 1);
+    R(PAPER, x - 7, y - 11, 14, 5); R('#3b2f8f', x - 5, y - 9, 10, 1); R('#8f84e8', x - 7, y - 4, 12, 1);
+  } else if (kind === 'map') {        // hologram map table
+    R('#22383f', x - 15, y - 7, 30, 6); R('#3f5760', x - 15, y - 8, 30, 1); R('#0c161a', x - 13, y - 1, 3, 1); R('#0c161a', x + 10, y - 1, 3, 1);
+    g.globalAlpha = .18; R(TEAL, x - 13, y - 24, 26, 16); g.globalAlpha = .9;
+    R(TEAL, x - 9, y - 23, 14, 13); R(TEAL, x + 5, y - 23, 4, 5); R(TEAL, x + 5, y - 18, 2, 2); R('#1f8f96', x - 9, y - 17, 14, 1); R('#1f8f96', x - 3, y - 23, 1, 13);
+    pline(PAPER, x + 1, y - 22, x - 1, y - 11); g.globalAlpha = 1;
+    [[x, y - 21], [x - 5, y - 15], [x + 3, y - 13]].forEach(([px, py], k) => { if ((Math.floor(t * 3) + k) % 3) R(ACCENT, px, py - 1, 2, 2); });
+  } else if (kind === 'npd') {        // film cans + clapper
+    for (let k = 0; k < 3; k++) { R('#4a505a', x - 11, y - 6 - k * 5, 22, 5); R('#6a727d', x - 11, y - 6 - k * 5, 22, 1); R('#30343c', x - 2, y - 4 - k * 5, 4, 2); }
+    R('#16181c', x - 9, y - 26, 18, 9); for (let k = 0; k < 6; k++) R(k & 1 ? '#16181c' : PAPER, x - 9 + k * 3, y - 28 + (b ? 0 : 1), 3, 2); ptext('11', x - 3, y - 24, PAPER);
+  } else if (kind === 'fab') {        // phone + coins
+    R('#16181c', x - 9, y - 25, 14, 24); R('#0e2a4a', x - 8, y - 23, 12, 19); R('#5fe08a', x - 3, y - 20 - b, 2, 8); R('#5fe08a', x - 5, y - 18 - b, 6, 1); R('#5fe08a', x - 4, y - 19 - b, 4, 1); R(PAPER, x - 6, y - 9, 8, 1); R('#7fa5a8', x - 6, y - 7, 5, 1);
+    for (let k = 0; k < 4; k++) { R(GOLD, x + 7, y - 3 - k * 3, 8, 2); R('#b8862b', x + 7, y - 1 - k * 3, 8, 1); }
+  } else if (kind === 'fairy') {      // bottle + clean plates
+    R('#2f9e5a', x - 13, y - 18, 9, 17); R('#2f9e5a', x - 11, y - 22, 5, 4); R(PAPER, x - 11, y - 24, 5, 2); R('#ffd23f', x - 12, y - 13, 7, 6); R('#d83a2e', x - 11, y - 11, 5, 2); R('#3fbf70', x - 13, y - 18, 2, 17);
+    for (let k = 0; k < 5; k++) { R(PAPER, x, y - 3 - k * 3, 13, 2); R('#cfd8dc', x + 1, y - 1 - k * 3, 11, 1); }
+    if (b) { R(PAPER, x + 10, y - 22, 1, 5); R(PAPER, x + 8, y - 20, 5, 1); } else R(PAPER, x + 3, y - 19, 1, 1);
+  } else if (kind === 'salam') {      // character sheets
+    ['#1f6a6e', '#2f9e5a', '#247a45', '#3fbf70'].forEach((c, k) => { const cx = x - 14 + k * 7, cy = y - 16 - (k & 1) * 4; R(PAPER, cx, cy, 6, 14); R(c, cx + 1, cy + 7, 4, 6); R(SKIN, cx + 1, cy + 2, 4, 4); R(k & 1 ? c : HAIR, cx + 1, cy + 1, 4, 2); });
+  } else if (kind === 'chipsy') {     // a bag nobody has opened yet
+    R('#ffd23f', x - 8, y - 23, 16, 22); R('#e0a800', x - 8, y - 23, 16, 2); R('#e0a800', x - 8, y - 3, 16, 2); R('#d83a2e', x - 8, y - 16, 16, 8); ptext('?', x - 1, y - 15, PAPER); if (b) ptext('?', x + 9, y - 27, GOLD);
+  } else {                            // a sealed brief
+    R(PAPER, x - 12, y - 17, 24, 16); pline('#9fb3b3', x - 12, y - 17, x, y - 9); pline('#9fb3b3', x + 11, y - 17, x, y - 9); R(ACCENT, x - 2, y - 11, 4, 4); if (b) ptext('?', x - 1, y - 26, GOLD);
+  }
+}
 /* ===== Simulation + UI ===== */
 const CFG = Object.assign({ world: 'aroma', nav: false }, window.STUDIO_CFG || {});
 const $ = (s, r = document) => r.querySelector(s);
@@ -837,7 +912,7 @@ function update(dt) {
   if (sim.boost > 0) sim.boost -= dt; if (sim.party > 0) sim.party -= dt; if (sim.awake > 0) sim.awake -= dt;
   // player
   const p1 = sim.p1 && sim.agents[sim.p1];
-  if (p1) {
+  if (p1 && p1.state !== 'scene') {
     const k = sim.keys, vx = (k.ArrowRight || k.d ? 1 : 0) - (k.ArrowLeft || k.a ? 1 : 0), vy = (k.ArrowDown || k.s ? 1 : 0) - (k.ArrowUp || k.w ? 1 : 0);
     if (vx || vy) { p1.path = []; p1.moving = true; p1.x = Math.max(8, Math.min(W - 8, p1.x + vx * 46 * dt)); p1.y = Math.max(164, Math.min(213, p1.y + vy * 46 * dt)); if (vx) p1.face = vx; p1.kb = true; }
     else if (p1.kb) { p1.kb = false; p1.moving = false; p1.face = 0; }
@@ -848,17 +923,16 @@ function update(dt) {
     if (a.wait > 0) { a.wait -= dt; if (a.wait <= 0 && a.after) { const f = a.after; a.after = null; f(); } }
     if (a.id === sim.p1) return;
     if (a.state === 'roam' && !a.moving && a.wait <= 0) {
-      if (a.inspecting && Math.random() < .5) say(a, pick(a.def.lines), 2600);
-      a.inspecting = true; const s = pick(QA_STOPS); go(a, [{ x: s.x, y: s.y }], () => { a.wait = 2.5 + Math.random() * 2.5; });
+      const s = pick(QA_STOPS); go(a, [{ x: s.x, y: s.y }], () => { a.wait = 2.5 + Math.random() * 2.5; });
     }
   });
   // one desk agent at a time walks to the coffee machine
   sim.coffeeTrip -= dt;
-  if (sim.coffeeTrip <= 0) { sim.coffeeTrip = 22 + Math.random() * 16; const c = ROW_KIND.map(id => sim.agents[id]).filter(a => a.state === 'work' && a.id !== sim.p1 && atHome(a)); if (c.length) coffeeTrip(pick(c)); }
+  if (!sim.scene && sim.coffeeTrip <= 0) { sim.coffeeTrip = 22 + Math.random() * 16; const c = ROW_KIND.map(id => sim.agents[id]).filter(a => a.state === 'work' && a.id !== sim.p1 && atHome(a)); if (c.length) coffeeTrip(pick(c)); }
   // delivery scooter loop
   const sc = sim.scooter, dl = sim.agents.dlv; sc.timer -= dt;
   if (sim.p1 !== 'dlv') {
-    if (sc.phase === 'parked' && sc.timer <= 0 && atHome(dl)) { sc.phase = 'out'; sc.dir = -1; dl.state = 'ride'; say({ x: sc.x, y: sc.y - 8 }, 'اللينك في السكة!', 2200); pushLog('dlv', 'طلع بتسليم. محدش يسأله راجع إمتى.'); beep(330, .05); }
+    if (sc.phase === 'parked' && sc.timer <= 0 && atHome(dl) && !sim.scene && dl.state === 'idle') { sc.phase = 'out'; sc.dir = -1; dl.state = 'ride'; say({ x: sc.x, y: sc.y - 8 }, 'اللينك في السكة!', 2200); pushLog('dlv', 'طلع بتسليم. محدش يسأله راجع إمتى.'); beep(330, .05); }
     else if (sc.phase === 'out') { sc.x -= 82 * dt; if (sc.x < -30) { sc.phase = 'away'; sc.timer = 3.5; } }
     else if (sc.phase === 'away' && sc.timer <= 0) { sc.phase = 'in'; sc.x = W + 30; sc.dir = -1; }
     else if (sc.phase === 'in') { sc.x -= 82 * dt; if (sc.x <= 290) { sc.x = 290; sc.phase = 'parked'; sc.timer = 34 + Math.random() * 20; dl.state = 'idle'; addXP(10, 270, 180); pushLog('dlv', 'رجع. التسليم وصل قبل الديدلاين بدقيقة.'); } }
@@ -867,17 +941,22 @@ function update(dt) {
   const c = sim.cat; c.timer -= dt; c.f = Math.floor(t * 5);
   if (c.mode === 'walk') { c.x += c.dir * 14 * dt; if (c.x < 12) c.dir = 1; if (c.x > 372) c.dir = -1; }
   if (c.timer <= 0) { c.mode = pick(['walk', 'walk', 'sit', 'sleep']); c.timer = c.mode === 'walk' ? 5 + Math.random() * 6 : 4 + Math.random() * 5; if (Math.random() < .4) c.dir *= -1; }
-  // ambient chatter
+  // radio: the twins talk about the projects, whether or not they are on them
   sim.nextEvent -= dt;
-  if (sim.nextEvent <= 0) {
-    sim.nextEvent = 5.5 + Math.random() * 4;
-    const pool = Object.values(sim.agents).filter(a => a.state !== 'ride' && a.state !== 'trip' && a.id !== 'rnd' && activeBubbles() < 2);
-    if (pool.length) { const a = pick(pool), line = Math.random() < .14 ? pick(w.lines) : pick(a.def.lines); say(a, line, 3000); pushLog(a.id, line); addXP(4); }
-    else if (Math.random() < .5) { const a = sim.agents.rnd; say(a, 'Zzz... 99%...', 2400); }
+  if (!sim.scene && sim.nextEvent <= 0) {
+    sim.nextEvent = 7.5 + Math.random() * 4;
+    const free = (id) => { const a = sim.agents[id]; return a.state !== 'ride' && a.state !== 'trip' && a.state !== 'sip' && a.id !== sim.p1; };
+    const opts = []; PROJECTS.forEach(p => p.talk.forEach(tk => { if (tk.every(l => free(l[0])) && tk !== sim.lastTalk) opts.push([p, tk]); }));
+    if (opts.length) {
+      const [p, tk] = pick(opts); sim.lastTalk = tk;
+      tk.forEach((l, k) => setTimeout(() => { if (sim.scene) return; const a = sim.agents[l[0]]; if (l[0] === 'rnd') sim.awake = Math.max(sim.awake, 2.8); say(a, l[1], 3000); pushLog(l[0], l[1], p.tag); }, k * 2400));
+      addXP(4);
+    }
   }
+  updateScene(dt);
   // the director calls the shots
   sim.nextStamp -= dt;
-  if (sim.nextStamp <= 0 && sim.p1 !== 'boss') { sim.nextStamp = 14 + Math.random() * 10; const b = sim.agents.boss; const call = pick(['ACTION!', 'CUT!']); b.shout = sim.t + 1.4; sim.parts.push({ type: 'txt', txt: call, x: b.x - ptextW(call) / 2, y: b.y - 36, vy: -7, life: 2.2, c: GOLD }); beep(520, .05); }
+  if (sim.nextStamp <= 0 && sim.p1 !== 'boss' && sim.agents.boss.state === 'work') { sim.nextStamp = 14 + Math.random() * 10; const b = sim.agents.boss; const call = pick(['ACTION!', 'CUT!']); b.shout = sim.t + 1.4; sim.parts.push({ type: 'txt', txt: call, x: b.x - ptextW(call) / 2, y: b.y - 36, vy: -7, life: 2.2, c: GOLD }); beep(520, .05); }
   // particles
   if (Math.random() < dt * 3) sim.parts.push({ type: 'steam', x: 18 + Math.random() * 3, y: 174, vy: -6, life: 1.4 });
   if (sim.awake <= 0 && sim.p1 !== 'rnd' && Math.random() < dt * 0.9) sim.parts.push({ type: 'txt', txt: 'Z', x: 338, y: 168, vy: -6, vx: 3, life: 2, c: '#9fc4e8' });
@@ -920,21 +999,27 @@ function draw() {
   const L = [];
   ROW_X.forEach((x, i) => { const a = sim.agents[ROW_KIND[i]], on = a.state === 'work' && atHome(a); L.push({ y: 149, d: () => drawChair(x) }); L.push({ y: 158, d: () => drawDesk(x, ROW_KIND[i], t, speed, on) }); });
   L.push({ y: 192, d: () => drawBossChair(106) }, { y: 201, d: () => drawBossDesk(106) }, { y: 200, d: () => drawCoffee(t, sim.boost > 0) },
-    { y: 199, d: () => drawBoard(PROJECTS.map(p => ({ status: p.at == null ? 'todo' : 'active' }))) }, { y: 199.5, d: () => drawRack(t) }, { y: 191, d: drawBeanbag }, { y: 200.5, d: () => drawPlant(w) });
+    { y: 199, d: () => drawBoard(PROJECTS.map(p => ({ status: p.at == null && !p.live ? 'todo' : 'active' }))) }, { y: 199.5, d: () => drawRack(t) }, { y: 191, d: drawBeanbag }, { y: 200.5, d: () => drawPlant(w) });
   const sc = sim.scooter, riding = sim.agents.dlv.state === 'ride';
   if (sc.phase !== 'away') L.push({ y: sc.y, d: () => drawScooter(sc.x, sc.y, sc.dir, riding ? sim.agents.dlv.def : null, Math.floor(t * 8)) });
   const cat = sim.cat; L.push({ y: cat.y, d: () => drawCat(cat.x, cat.y, cat.dir, cat.f, cat.mode) });
-  sim.hits = [];
+  sim.hits = []; const focus = [];
+  if (sim.scene) { const pr = { y: SPOT.y + .5, d: () => drawProp(sim.scene.p.id, SPOT.x, SPOT.y, t) }; L.push(pr); focus.push(pr); }
   Object.values(sim.agents).forEach(a => {
     if (a.state === 'ride') return;
     const home = atHome(a), sit = home && a.home.sit && a.id !== sim.p1 || (a.id === sim.p1 && home && a.home.sit && !a.moved);
     const asleep = a.id === 'rnd' && sim.awake <= 0 && a.id !== sim.p1 && home;
+    const inScene = sim.scene && a.state === 'scene', speaking = inScene && sim.scene.phase === 'talk' && sim.scene.speaker === a.id;
     const o = { sit, sleep: asleep, type: a.state === 'work' && home, walk: a.moving, frame: Math.floor(t * (a.moving ? 7 : 6 * speed)), face: a.face,
-      blink: ((t + a.blinkAt) % 4) < .14, bob: party ? (Math.floor(t * 8 + a.x) & 1 ? -2 : 0) : (a.moving ? Math.floor(t * 7) & 1 : 0), cheer: party, happy: sim.boost > 0, shout: a.shout > t };
-    L.push({ y: a.y, d: () => drawAmr(a.x, a.y, a.def, o) });
+      blink: ((t + a.blinkAt) % 4) < .14, bob: party ? (Math.floor(t * 8 + a.x) & 1 ? -2 : 0) : speaking ? (Math.floor(t * 6) & 1 ? -1 : 0) : (a.moving ? Math.floor(t * 7) & 1 : 0), cheer: party, happy: sim.boost > 0 || speaking, shout: a.shout > t || (speaking && a.id === 'boss') };
+    const dr = { y: a.y, d: () => drawAmr(a.x, a.y, a.def, o) }; L.push(dr); if (inScene) focus.push(dr);
     sim.hits.push({ kind: 'agent', id: a.id, x0: a.x - 9, x1: a.x + 9, y0: a.y - 27, y1: a.y + 1, z: a.y });
   });
   L.sort((a, b) => a.y - b.y).forEach(e => e.d());
+  if (sim.scene) {   // cutscene: dim the floor, keep the cast and their prop in the light
+    g.globalAlpha = .58; R('#04080a', 0, 0, W, H); g.globalAlpha = .07; for (let r = 0; r < 60; r++) R(GOLD, SPOT.x - 30 - r, 150 + r, 60 + r * 2, 1); g.globalAlpha = 1;
+    focus.sort((a, b) => a.y - b.y).forEach(e => e.d());
+  }
   sim.hits.push({ kind: 'cat', x0: cat.x - 9, x1: cat.x + 9, y0: cat.y - 12, y1: cat.y + 2, z: cat.y + 300 },
     { kind: 'coffee', x0: 4, x1: 46, y0: 160, y1: 200, z: 1 }, { kind: 'rack', x0: 346, x1: 378, y0: 136, y1: 199, z: 1 },
     { kind: 'board', x0: 171, x1: 213, y0: 159, y1: 198, z: 1 }, { kind: 'sign', x0: SIGN.x, x1: SIGN.x + SIGN.w, y0: SIGN.y, y1: SIGN.y + SIGN.h, z: 1 },
@@ -942,9 +1027,9 @@ function draw() {
   // quest markers above the agents who own live quests
   const marked = {};
   PROJECTS.forEach(p => {
-    if (p.at == null) return;
-    p.agents.forEach(id => { const a = sim.agents[id]; if (marked[id] || a.state === 'ride' || a.id === sim.p1) return; marked[id] = 1; const by = a.y - 31;
-      R(INK, a.x - 9, by, 18, 4); R(p.fresh ? GOLD : '#7fa5a8', a.x - 8, by + 1, Math.round(16 * projPct(p) / 100), 2); });
+    if (p.at == null && !p.live) return;
+    p.agents.forEach(id => { const a = sim.agents[id]; if (marked[id] || a.state === 'ride' || a.state === 'scene' || a.id === sim.p1) return; marked[id] = 1; const by = a.y - 31;
+      R(INK, a.x - 9, by, 18, 4); R(p.fresh ? GOLD : '#7fa5a8', a.x - 8, by + 1, p.live ? 4 + (Math.floor(t * 3) % 4) * 4 : Math.round(16 * projPct(p) / 100), 2); });
   });
   // player marker
   const p1 = sim.p1 && sim.agents[sim.p1];
@@ -966,6 +1051,7 @@ function draw() {
 const bubbleLayer = $('#bubbles'); let bubbles = [];
 const activeBubbles = () => bubbles.length;
 function say(ent, text, ms = 2800) {
+  if (sim.scene) return;
   bubbles = bubbles.filter(b => { if (b.ent === ent) { b.el.remove(); return false; } return true; });
   if (bubbles.length >= 3) { const old = bubbles.shift(); old.el.remove(); }
   const e = el('div', 'bubble', text); bubbleLayer.appendChild(e); bubbles.push({ ent, el: e, until: performance.now() + ms });
@@ -1014,7 +1100,6 @@ function renderHud() {
   $('#lvl').textContent = level(); $('#xpFill').style.width = (save.xp % 120) / 120 * 100 + '%'; $('#coffeeN').textContent = save.coffee;
   const h = $('#hearts'); h.textContent = ''; for (let i = 0; i < 5; i++) h.appendChild(icon('heart', i < sim.patience ? '#ff5d5d' : '#2c4a52', 2));
   h.setAttribute('aria-label', 'صبر الفريق ' + sim.patience + ' من 5');
-  $('#ver').textContent = sim.rev ? 'Final_v' + (sim.rev + 1) + (sim.rev > 1 ? '_FINAL' : '') + (sim.rev > 3 ? '_بجد' : '') : 'v1';
 }
 function toast(title, body) {
   const t = el('div', 'toast'); t.appendChild(el('b', null, title)); if (body) t.appendChild(el('span', null, body)); const box = $('#toasts'); while (box.children.length > 1) box.firstChild.remove(); box.appendChild(t);
@@ -1024,12 +1109,51 @@ function unlock(id) {
   if (save.ach.includes(id)) return; const a = ACHIEVEMENTS.find(x => x.id === id); if (!a || a.real) return;
   save.ach.push(id); store.set('save', save); toast('إنجاز جديد', a.title); jingle([784, 988, 1175]); addXP(25); renderAch();
 }
-function pushLog(id, text) {
+function pushLog(id, text, tag) {
   const d = id && AGENTS.find(a => a.id === id), [h, m] = worldClock(sim.world.tz), li = el('li');
   li.appendChild(el('time', null, String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0')));
-  li.appendChild(el('b', null, d ? d.role : 'الاستوديو')); li.appendChild(el('span', null, text));
-  const log = $('#log'); log.prepend(li); while (log.children.length > 7) log.lastChild.remove();
+  li.appendChild(el('b', null, d ? d.role : 'الاستوديو')); if (tag) li.appendChild(el('i', 'tag', tag)); li.appendChild(el('span', null, text));
+  const log = $('#log'); log.prepend(li); while (log.children.length > 8) log.lastChild.remove();
 }
+
+/* ---------- project scenes: the cast walks to the middle of the floor and talks it through ---------- */
+const SPOT = { x: 196, y: 213 }, MARKS = [[-30, -2], [30, -2], [-54, 0], [54, 0]];
+const defaultState = (id) => id === 'qa' ? 'roam' : id === 'rnd' ? 'sleep' : id === 'dlv' ? 'idle' : 'work';
+function outPath(a) { const h = a.home; if (!h.sit || Math.abs(a.x - h.x) > 1 || Math.abs(a.y - h.y) > 1 || a.id === 'rnd') return []; if (a.id === 'boss') return [{ x: 146, y: 194 }, { x: 146, y: 207 }]; return [{ x: h.x + 22, y: h.y }, { x: h.x + 22, y: 166 }]; }
+function homePath(a) { const h = a.home; if (!h.sit || a.id === 'rnd') return [{ x: h.x, y: h.y }]; if (a.id === 'boss') return [{ x: 146, y: 207 }, { x: 146, y: 194 }, { x: h.x, y: h.y }]; return [{ x: h.x + 22, y: 166 }, { x: h.x + 22, y: h.y }, { x: h.x, y: h.y }]; }
+function startScene(pid) {
+  if (sim.scene) endScene(true);
+  const p = PROJECTS.find(x => x.id === pid), cast = p.cast.map(id => sim.agents[id]);
+  if (p.cast.includes('dlv')) { const sc = sim.scooter, d = sim.agents.dlv; sc.phase = 'parked'; sc.x = 290; sc.timer = 45; if (d.state === 'ride') { d.x = d.home.x; d.y = d.home.y; } }
+  bubbles.forEach(b => b.el.remove()); bubbles = [];
+  sim.scene = { p, cast, phase: 'gather', i: -1, chars: 0, hold: 0, timer: 0, speaker: null };
+  cast.forEach((a, k) => { const m = MARKS[k], path = [...outPath(a), { x: SPOT.x + m[0], y: SPOT.y + m[1] }]; a.state = 'scene'; a.after = null; a.wait = 0; a.moved = true; go(a, path, () => { a.face = m[0] < 0 ? 1 : -1; }); });
+  $('#stage').classList.add('cine'); $('#scene').hidden = false; $('#scTitle').textContent = p.title; $('#scWho').textContent = 'التوائم بيتجمّعوا'; $('#scLine').textContent = '...'; $('#scFace').textContent = ''; $('#scCount').textContent = '';
+  unlock('scene'); pushLog(null, 'مشهد جديد على الفلور.', p.tag); beep(440, .06);
+}
+function nextLine() {
+  const s = sim.scene; s.i++; if (s.i >= s.p.scene.length) return endScene();
+  const [who, text] = s.p.scene[s.i], d = AGENTS.find(a => a.id === who); s.chars = 0; s.speaker = who;
+  $('#scWho').textContent = 'عمرو صبري ' + d.role; const f = $('#scFace'); f.textContent = ''; f.appendChild(headCanvas(d, 3)); $('#scLine').textContent = ''; $('#scCount').textContent = (s.i + 1) + '/' + s.p.scene.length;
+  pushLog(who, text, s.p.tag); beep(560 + s.i * 30, .04);
+}
+function updateScene(dt) {
+  const s = sim.scene; if (!s) return; s.timer += dt;
+  if (s.phase === 'gather') {
+    if (s.cast.every(a => !a.moving) || s.timer > 9) { s.cast.forEach(a => { if (a.moving) { const pt = a.path[a.path.length - 1]; a.x = pt.x; a.y = pt.y; a.path = []; a.moving = false; a.onArrive = null; a.face = a.x < SPOT.x ? 1 : -1; } }); s.phase = 'talk'; nextLine(); }
+    return;
+  }
+  const line = s.p.scene[s.i][1];
+  if (s.chars < line.length) { s.chars = Math.min(line.length, s.chars + dt * 34); $('#scLine').textContent = line.slice(0, Math.floor(s.chars)); if (s.chars >= line.length) s.hold = 2.6; }
+  else { s.hold -= dt; if (s.hold <= 0) nextLine(); }
+}
+function endScene(silent) {
+  const s = sim.scene; if (!s) return; sim.scene = null; $('#scene').hidden = true; $('#stage').classList.remove('cine');
+  s.cast.forEach(a => { a.path = []; a.onArrive = null; if (a.id === sim.p1) { a.state = 'player'; a.moving = false; a.face = 0; return; } a.state = 'trip'; go(a, homePath(a), () => { a.state = defaultState(a.id); a.wait = 1; a.moved = false; }); });
+  if (!silent) addXP(15); sim.nextEvent = 5;
+}
+$('#scNext').addEventListener('click', () => { const s = sim.scene; if (!s || s.phase !== 'talk') return; const line = s.p.scene[s.i][1]; if (s.chars < line.length) { s.chars = line.length; $('#scLine').textContent = line; s.hold = 2.6; } else nextLine(); });
+$('#scClose').addEventListener('click', () => endScene());
 
 /* ---------- things you can do ---------- */
 function coffeeForAll() {
@@ -1042,10 +1166,6 @@ function growLogo() {
   const des = sim.agents.des; sim.logoStep = Math.min(3, sim.logoStep + 1);
   $('#logoBtn').style.setProperty('--grow', 1 + sim.logoStep * .22); say(des, LOGO_LINES[sim.logoStep - 1], 2600); pushLog('des', LOGO_LINES[sim.logoStep - 1]); beep(300 + sim.logoStep * 120, .08);
   if (sim.logoStep === 3) { unlock('logo3'); losePatience(); clearTimeout(growLogo.t); growLogo.t = setTimeout(() => { sim.logoStep = 0; $('#logoBtn').style.setProperty('--grow', 1); pushLog('des', 'رجّع اللوجو لحجمه وهو ساكت.'); }, 3800); }
-}
-function revision() {
-  sim.rev++; const a = pick(Object.values(sim.agents).filter(x => x.state !== 'ride' && x.id !== 'rnd')); say(a, pick(GROANS), 2400);
-  pushLog(null, 'العميل طلب تعديل. النسخة بقت ' + ('Final_v' + (sim.rev + 1)) + '.'); beep(180, .12); if (sim.rev >= 4) unlock('final5'); losePatience();
 }
 function losePatience() {
   sim.patience = Math.max(0, sim.patience - 1); renderHud();
@@ -1066,7 +1186,7 @@ function setP1(id) {
   else $('#hint').textContent = HINT;
   renderTeam();
 }
-const HINT = 'دوس على أي حد في الاستوديو. المكنة والقطة والسيرفر واليافطة كمان.';
+const HINT = 'دوس «شوف المشهد» على أي مشروع، أو دوس على أي توأم في الاستوديو.';
 
 /* ---------- stage input ---------- */
 cv.addEventListener('click', (ev) => {
@@ -1103,7 +1223,7 @@ $$('[role=tab]').forEach(b => b.addEventListener('click', () => { showTab(b.data
 function crewRow(ids) { const crew = el('div', 'crew'); ids.forEach(id => { const d = AGENTS.find(a => a.id === id), b = el('button', 'crewbtn'); b.type = 'button'; b.appendChild(headCanvas(d)); b.addEventListener('click', () => openCard(id)); crew.appendChild(b); }); return crew; }
 function renderQuests() {
   const w = sim.world, list = $('#questList'); list.textContent = '';
-  const stale = PROJECTS.filter(p => projStatus(p) !== 'active').length;
+  const stale = PROJECTS.filter(p => !['active', 'live'].includes(projStatus(p))).length;
   $('#questSum').textContent = PROJECTS.length + ' مشاريع' + (stale ? ' · ' + stale + ' محتاجين تحديث' : ''); $('#questDone').textContent = PROJECTS.length;
   const seg = $('#questSeg'); seg.textContent = ''; PROJECTS.forEach(p => seg.appendChild(el('i', projStatus(p))));
   PROJECTS.forEach(p => {
@@ -1116,7 +1236,7 @@ function renderQuests() {
     li.appendChild(track);
     if (p.at != null) { const sl = el('p', 'q-stage'); sl.appendChild(el('b', null, (st === 'stale' ? 'آخر مرحلة مسجّلة: ' : 'المرحلة: ') + p.stages[p.at])); sl.appendChild(el('span', null, (p.at + 1) + '/' + p.stages.length)); li.appendChild(sl); }
     li.appendChild(el('p', 'q-note', p.note));
-    const foot = el('div', 'q-foot'); foot.appendChild(el('span', 'q-date', p.updated ? 'آخر تحديث: ' + p.updated : 'مستني تحديث من عمرو')); foot.appendChild(crewRow(p.agents)); li.appendChild(foot);
+    const foot = el('div', 'q-foot'); foot.appendChild(el('span', 'q-date', p.updated ? 'آخر تحديث: ' + p.updated : 'مستني تحديث من عمرو')); const sb = el('button', 'btn tiny', 'شوف المشهد'); sb.type = 'button'; sb.addEventListener('click', () => { startScene(p.id); $('#stage').scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' }); }); foot.appendChild(sb); foot.appendChild(crewRow(p.cast)); li.appendChild(foot);
     list.appendChild(li);
   });
   // the studio's own to-do list, tucked away
@@ -1185,9 +1305,7 @@ $$('#worldTabs button').forEach(b => b.addEventListener('click', () => {
 
 /* ---------- buttons ---------- */
 $('#btnCoffee').addEventListener('click', coffeeForAll);
-$('#btnLogo').addEventListener('click', growLogo);
 $('#logoBtn').addEventListener('click', growLogo);
-$('#btnRev').addEventListener('click', revision);
 $('#btnSound').addEventListener('click', () => { soundOn = !soundOn; $('#btnSound').setAttribute('aria-pressed', soundOn); $('#btnSound').textContent = soundOn ? 'الصوت: شغّال' : 'الصوت: مقفول'; if (soundOn) jingle([523, 784]); });
 
 /* On the real domain each URL is its own branch: no switcher at the top, same content in both */
