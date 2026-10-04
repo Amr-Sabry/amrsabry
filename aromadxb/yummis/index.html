@@ -99,6 +99,17 @@ section{padding:64px 0;scroll-margin-top:64px}
 .fb textarea{width:100%;font:inherit;font-size:13px;border:2px solid var(--plum);border-radius:12px;padding:8px 10px;min-height:54px;display:none;resize:vertical;background:var(--cream);color:var(--ink)}
 .fb textarea.show{display:block}
 
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.tabs button{display:flex;align-items:center;gap:8px;padding:10px 18px;border-radius:99px;border:2px solid var(--plum);font-weight:800;font-size:13px;text-transform:uppercase}
+.tabs button i{width:14px;height:14px;border-radius:50%;display:block}
+.tabs button.on{background:var(--plum);color:var(--cream)}
+.tabs.dark button{border-color:var(--cream);color:var(--cream)}
+.tabs.dark button.on{background:var(--cream);color:var(--plum)}
+.grid.four{grid-template-columns:repeat(4,1fr)}
+.cfbig{aspect-ratio:16/9;border-radius:24px;background:#222 center/cover no-repeat;cursor:zoom-in;border:2px solid var(--plum)}
+.cfth{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:12px}
+.cfth button{aspect-ratio:16/9;border-radius:12px;background:center/cover no-repeat;border:3px solid transparent;opacity:.7}
+.cfth button.on{border-color:var(--teal);opacity:1}
 /* animatic */
 #ani-sec{background:var(--plum);color:var(--cream)}
 #ani-sec .sec-h p{color:var(--cream)}
@@ -128,14 +139,14 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .lb img{max-width:100%;max-height:100%;border-radius:14px}
 @media(max-width:900px){
  .hero .wrap,.concept,.sum{grid-template-columns:1fr}
- .grid{grid-template-columns:1fr 1fr}
+ .grid,.grid.four{grid-template-columns:1fr 1fr}
  .specs{grid-template-columns:1fr 1fr}
  .steps a span{display:none}
  .top .by{display:none}
  .flv button span{display:none}.flv button{padding:8px}
  .sec-h p{margin-left:0}
 }
-@media(max-width:560px){.grid{grid-template-columns:1fr}.stage{height:70vh}.wrap{padding:0 16px}}
+@media(max-width:560px){.grid,.grid.four{grid-template-columns:1fr}.stage{height:70vh}.wrap{padding:0 16px}}
 </style>
 </head>
 <body>
@@ -145,28 +156,28 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   <div class="by">Interactive review · by Aroma Studios</div>
   <nav class="steps">
     <a href="#stage-sec" class="now">01 <span>3D Model</span></a>
-    <a href="#sb-sec" class="now">02 <span>Storyboard</span></a>
-    <a href="#ani-sec" class="now">03 <span>Animatic</span></a>
-    <a href="#fb-sec" class="next">04 <span>Style frames</span></a>
-    <a href="#fb-sec" class="next">05 <span>Final film</span></a>
+    <a href="#cf-sec" class="now">02 <span>Concept frames</span></a>
+    <a href="#sb-sec" class="now">03 <span>Storyboards</span></a>
+    <a href="#ani-sec" class="now">04 <span>Animatic</span></a>
+    <a href="#fb-sec" class="next">05 <span>Final films</span></a>
   </nav>
 </div></div>
 
 <header class="hero"><div class="wrap">
   <div>
-    <div class="kicker">Modern Saudi Crunch · Product film · Round 01</div>
-    <h1>Open it <em>loud.</em></h1>
-    <p>One link, the whole process. Spin the pack, read the boards, play the animatic, then tell us what you think, frame by frame. This page updates every time we move a step forward.</p>
+    <div class="kicker">Modern Saudi Crunch · CG product films · Round 02</div>
+    <h1>Four flavours. <em>One crunch.</em></h1>
+    <p>One link, the whole process. Spin the pack, look at the concept frames, read the boards for each film, play the animatics, then tell us what you think, frame by frame. This page updates every time we move a step forward.</p>
   </div>
   <div>
     <div style="margin-bottom:18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <span class="sticker ar">افتحها<br>بصوت</span>
+      <span class="sticker ar">قرمشة<br>تسمعها</span>
       <span class="sticker plum ar" style="transform:rotate(5deg)">مررره يمي</span>
     </div>
     <div class="meta">
       <div><b>Range</b><span>Potato Chips × 4</span></div>
-      <div><b>Stage</b><span>Model · Boards · Animatic</span></div>
-      <div><b>Film length</b><span id="m-len">20 sec</span></div>
+      <div><b>Films</b><span>4 × 6 sec + 1 × 15 sec</span></div>
+      <div><b>Technique</b><span>Full CG, no live action</span></div>
       <div><b>Updated</b><span>04 Oct 2026</span></div>
     </div>
   </div>
@@ -197,36 +208,47 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   </div>
 </div></section>
 
+<section id="cf-sec"><div class="wrap">
+  <div class="sec-h">
+    <div><div class="n">STEP 02</div><h2>Concept frames.</h2></div>
+    <p>The look we are aiming for: the real pack, its ingredient and the chip in each flavour's own colour world. These are look targets, not final renders.</p>
+  </div>
+  <div class="cfbig" id="cfbig"></div>
+  <div class="cfth" id="cfth"></div>
+</div></section>
+
 <section id="sb-sec"><div class="wrap">
   <div class="sec-h">
-    <div><div class="n">STEP 02</div><h2>Storyboard.</h2></div>
-    <p>Black and white sketch pass. Composition, action and rhythm only. No colour, no lighting, no final design yet.</p>
+    <div><div class="n">STEP 03</div><h2>Storyboards.</h2></div>
+    <p>Black and white sketch pass. Composition, action and rhythm only. Pick a film to see its frames.</p>
   </div>
   <div class="concept">
     <div class="card fill">
-      <h3>The idea: some snacks whisper. Ours never learned how.</h3>
-      <p>A silent room. One pack. The moment it opens, the crunch becomes a visible shockwave that wakes up everything around it and pulls everyone in. The pack and the chip are the heroes, the sound is the story.</p>
+      <h3>One structure, four flavours</h3>
+      <p>Every 6 second film follows the same four beats so the range reads as one family: the ingredient hits, the chip takes the flavour, the pack arrives, the pack shot lands with the tagline. Only the action changes with the flavour.</p>
     </div>
     <div class="card">
-      <h3>Why it fits Yummis</h3>
+      <h3>The 15 second film</h3>
       <ul>
-        <li>Built on the brand's own signature: <b>you hear it before you taste it.</b></li>
-        <li>Four flavours get one clean beauty beat each, in their own colour world.</li>
-        <li>Ends on sharing, the "Sociable" trait, and the consumer tagline.</li>
+        <li>Opens on four chips falling, one per flavour.</li>
+        <li>Each flavour gets a 2.5 second beat in its own colour world.</li>
+        <li>Ends on the four packs together with the logo and <b class="ar" style="font-weight:800">مررره يمي</b>.</li>
       </ul>
     </div>
   </div>
+  <div class="tabs" id="tabsA"></div>
   <div class="grid" id="grid"></div>
 </div></section>
 
 <section id="ani-sec"><div class="wrap">
   <div class="sec-h">
-    <div><div class="n" style="color:#7ff3ee">STEP 03</div><h2>Animatic.</h2></div>
+    <div><div class="n" style="color:#7ff3ee">STEP 04</div><h2>Animatic.</h2></div>
     <p>The boards cut to time with camera moves and a rough crunch track, so you can judge pace before anything is rendered.</p>
   </div>
+  <div class="tabs dark" id="tabsB"></div>
   <div class="player" id="player">
     <div class="sh" id="shA"></div><div class="sh" id="shB"></div>
-    <div class="tc" id="tc">00:00 / 00:20</div>
+    <div class="tc" id="tc"></div>
     <div class="cap"><div id="cap"></div><div class="sfx" id="capsfx"></div></div>
     <div class="big" id="big"><button aria-label="Play">▶</button></div>
   </div>
@@ -251,8 +273,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
     <div class="card">
       <h3>What happens next</h3>
       <ul>
-        <li><b>04 Style frames:</b> approved boards become full-colour key frames in the Yummis look.</li>
-        <li><b>05 Final film:</b> animation, sound design and the four flavour cut-downs.</li>
+        <li><b>Approved boards</b> go into 3D layout and animation, flavour by flavour.</li>
+        <li><b>05 Final films:</b> four 6 second films and the 15 second film, with sound design.</li>
         <li>Each step lands on this same link, with the earlier steps kept for reference.</li>
       </ul>
     </div>
@@ -294,30 +316,35 @@ const key=new THREE.DirectionalLight(0xffffff,.75);key.position.set(3,4,5);scene
 const rim=new THREE.DirectionalLight(0xffffff,.5);rim.position.set(-4,2,-4);scene.add(rim);
 
 /* pillow bag */
-function bagGeo(){
-  const W=2,H=2.4,g=new THREE.PlaneGeometry(W,H,56,72),p=g.attributes.position,T=.36,s0=.07,s1=.93;
+const SIL={"F":[[0.003,0.997],[0.006,0.998],[0.009,0.995],[0.012,0.992],[0.016,0.984],[0.02,0.976],[0.026,0.97],[0.031,0.964],[0.035,0.959],[0.038,0.955],[0.042,0.952],[0.045,0.949],[0.049,0.946],[0.052,0.943],[0.055,0.941],[0.059,0.938],[0.063,0.937],[0.066,0.935],[0.069,0.932],[0.073,0.929],[0.076,0.925],[0.08,0.922],[0.085,0.918],[0.085,0.916],[0.081,0.912],[0.079,0.908],[0.079,0.908],[0.079,0.909],[0.08,0.909],[0.082,0.909],[0.083,0.909],[0.084,0.909],[0.085,0.909],[0.086,0.908],[0.086,0.908],[0.087,0.908],[0.086,0.908],[0.086,0.908],[0.086,0.909],[0.086,0.909],[0.086,0.91],[0.086,0.911],[0.085,0.911],[0.084,0.912],[0.083,0.912],[0.083,0.913],[0.082,0.913],[0.081,0.914],[0.08,0.914],[0.079,0.915],[0.078,0.916],[0.077,0.917],[0.076,0.917],[0.076,0.917],[0.077,0.917],[0.078,0.917],[0.078,0.915],[0.078,0.913],[0.074,0.918],[0.067,0.925],[0.063,0.931],[0.059,0.937],[0.054,0.942],[0.049,0.947],[0.044,0.953],[0.039,0.958],[0.032,0.963],[0.026,0.968],[0.019,0.973],[0.016,0.982],[0.014,0.982],[0.013,0.984],[0.013,0.984]],"B":[[0.001,0.997],[0.002,0.998],[0.004,0.998],[0.007,0.994],[0.014,0.984],[0.02,0.976],[0.026,0.97],[0.031,0.964],[0.035,0.96],[0.039,0.956],[0.042,0.952],[0.045,0.949],[0.049,0.946],[0.052,0.943],[0.056,0.941],[0.059,0.939],[0.063,0.937],[0.066,0.935],[0.07,0.932],[0.073,0.929],[0.076,0.925],[0.08,0.922],[0.086,0.918],[0.085,0.916],[0.082,0.912],[0.079,0.908],[0.079,0.909],[0.079,0.909],[0.081,0.91],[0.082,0.909],[0.083,0.909],[0.084,0.909],[0.085,0.909],[0.086,0.908],[0.086,0.908],[0.087,0.908],[0.087,0.908],[0.087,0.908],[0.087,0.909],[0.086,0.909],[0.086,0.91],[0.086,0.911],[0.085,0.911],[0.084,0.912],[0.084,0.912],[0.083,0.913],[0.082,0.913],[0.081,0.914],[0.08,0.915],[0.079,0.916],[0.078,0.916],[0.077,0.917],[0.077,0.917],[0.076,0.918],[0.077,0.918],[0.078,0.917],[0.079,0.915],[0.078,0.913],[0.075,0.918],[0.067,0.925],[0.063,0.932],[0.059,0.937],[0.055,0.942],[0.049,0.947],[0.044,0.953],[0.039,0.958],[0.032,0.963],[0.026,0.968],[0.023,0.973],[0.02,0.977],[0.017,0.98],[0.014,0.983],[0.013,0.984]]};
+function bagGeo(tab,otab){
+  const W=2,H=2.4,NX=64,NY=72,g=new THREE.PlaneGeometry(W,H,NX,NY),p=g.attributes.position,uvA=g.attributes.uv,T=.43,s0=.06,s1=.94,e=.006;
   for(let i=0;i<p.count;i++){
-    const u=p.getX(i)/W+.5,v=p.getY(i)/H+.5;
+    const u=p.getX(i)/W+.5,v=p.getY(i)/H+.5,r=Math.round(v*NY);
+    const o=otab[r],t=tab[r];
+    p.setX(i,((o[0]+(o[1]-o[0])*u)-.5)*W);
+    uvA.setX(i,t[0]+e+(t[1]-t[0]-2*e)*u);
     let z=0;
     if(v>s0&&v<s1){
       const s=(v-s0)/(s1-s0);
-      const py=Math.pow(Math.sin(Math.PI*s),.5);
-      const px=Math.pow(Math.max(0,1-Math.pow(Math.abs(2*u-1),2.4)),.62);
-      const belly=1+.14*(.5-s);
-      const wr=.012*Math.sin(u*38+s*4)*Math.pow(1-Math.sin(Math.PI*s),2)*6;
+      const py=Math.pow(Math.sin(Math.PI*s),.55);
+      const px=Math.pow(Math.max(0,1-Math.pow(Math.abs(2*u-1),2.2)),.5);
+      const belly=1+.16*(.5-s);
+      const wr=.07*Math.sin(u*34+s*3)*Math.pow(1-Math.sin(Math.PI*s),2.2);
       z=T*py*px*belly+wr*px;
     }
     p.setZ(i,z);
   }
   g.computeVertexNormals();return g;
 }
+const mirr=t=>t.map(r=>[1-r[1],1-r[0]]);
 const tl=new THREE.TextureLoader();
 function tex(u){const t=tl.load(u);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;return t}
-const bagG=bagGeo();
-const mk=()=>new THREE.MeshPhysicalMaterial({alphaTest:.5,roughness:.5,metalness:.0,clearcoat:.35,clearcoatRoughness:.4,envMapIntensity:.22,side:THREE.FrontSide});
+const bagF=bagGeo(SIL.F,SIL.F),bagB=bagGeo(SIL.B,mirr(SIL.F));
+const mk=()=>new THREE.MeshPhysicalMaterial({alphaTest:.35,roughness:.5,metalness:.0,clearcoat:.35,clearcoatRoughness:.4,envMapIntensity:.22,side:THREE.FrontSide});
 const mF=mk(),mB=mk();
 const bag=new THREE.Group();
-const front=new THREE.Mesh(bagG,mF),back=new THREE.Mesh(bagG,mB);back.rotation.y=Math.PI;
+const front=new THREE.Mesh(bagF,mF),back=new THREE.Mesh(bagB,mB);back.rotation.y=Math.PI;
 bag.add(front,back);bag.scale.setScalar(1.22);scene.add(bag);
 const T={};FL.forEach(f=>T[f.id]={f:tex(A+f.id+'-front.webp'),b:tex(A+f.id+'-back.webp')});
 
@@ -395,88 +422,128 @@ renderer.setAnimationLoop(()=>{
   ctl.update();renderer.render(scene,cam);
 });
 
-/* ---------- storyboard ---------- */
-const SB=[
- {t:'Silence',d:'Night. Gaming room, three friends frozen on a tense last round. Nobody breathes. The pack sits untouched on the table.',sfx:'Room tone. A clock ticks.',s:2.2},
- {t:'The grip',d:'Extreme close-up. Two hands take the top seal of the Yummis pack. Knuckles tighten.',sfx:'Foil creak.',s:1.6},
- {t:'Open it loud',d:'The pack tears open. A ring of sound bursts outward, chips launch into the air.',sfx:'RRRIP + bass hit.',s:1.6},
- {t:'Hero chip',d:'Macro. One chip turns slowly in mid-air, seasoning dust drifting off its edge.',sfx:'Whoosh, slowed down.',s:2.2},
- {t:'The crunch',d:'Profile close-up. He bites. The chip cracks and the crunch is drawn as a shockwave.',sfx:'CRUNCH.',s:1.4},
- {t:'The room wakes up',d:'Wide. The shockwave rolls through the room: cushions jump, headphones fly, both friends snap their heads round.',sfx:'Crunch echo, gasp.',s:2.0},
- {t:'Four flavours',d:'Four packs land in a row, each with its ingredient: cheese wedge, chili, pink salt, ketchup swirl.',sfx:'Four hits, one per pack.',s:2.6},
- {t:'Everybody in',d:'Top shot. Hands from every side dive into the open pack at once.',sfx:'Laughter, crunches overlap.',s:1.8},
- {t:'Worth the snap',d:'The three friends squeeze into a selfie, pack held up front, mid-laugh.',sfx:'Phone shutter.',s:1.8},
- {t:'Pack shot',d:'Hero pack centred, chips falling around it. Logo and tagline: مررره يمي.',sfx:'Final crunch. Logo sting.',s:2.8}
+/* ---------- concept frames ---------- */
+const CF=[['all','All four'],['cheese','French Cheese'],['chili','Chili'],['salt','Himalayan Salt'],['ketchup','Tomato Ketchup']];
+const cfu=k=>A+'cf-'+k+'.webp';let cfc='all';
+function setCF(k){cfc=k;$('#cfbig').style.backgroundImage=`url(${cfu(k)})`;document.querySelectorAll('#cfth button').forEach(b=>b.classList.toggle('on',b.dataset.k===k))}
+CF.forEach(([k,n])=>{const b=document.createElement('button');b.dataset.k=k;b.title=n;b.setAttribute('aria-label',n);b.style.backgroundImage=`url(${cfu(k)})`;b.onclick=()=>setCF(k);$('#cfth').appendChild(b)});
+setCF('all');
+$('#cfbig').onclick=()=>{$('#lb img').src=cfu(cfc);$('#lb').classList.add('show')};
+
+/* ---------- storyboards ---------- */
+const FILMS=[
+ {id:'cheese',name:'French Cheese',len:'6s',col:'#F7931D',fr:[
+  {t:'The drop',d:'A wedge of cheese slams into frame. Cubes bounce up around it.',sfx:'Heavy thud.',s:1.2},
+  {t:'Hero chip',d:'One chip flies through a cloud of cheese powder and picks up the flavour.',sfx:'Whoosh.',s:1.6},
+  {t:'Break through',d:'The pack bursts up through a wall of tumbling cheese.',sfx:'Crunch hit.',s:1.4},
+  {t:'Pack shot',d:'Pack, cheese and chips settle. Logo and tagline: مررره يمي.',sfx:'Final crunch. Logo sting.',s:1.8}]},
+ {id:'chili',name:'Chili',len:'6s',col:'#D91F33',fr:[
+  {t:'The snap',d:'A chili pepper snaps in half mid-air. Flakes and seeds explode.',sfx:'Sharp snap.',s:1.2},
+  {t:'Hero chip',d:'One chip slices through a storm of chili flakes, heat rising behind it.',sfx:'Sizzle whoosh.',s:1.6},
+  {t:'Hard landing',d:'The pack lands. A ring of chili flakes blasts outward.',sfx:'Impact. Crunch hit.',s:1.4},
+  {t:'Pack shot',d:'Pack, chilies and chips in heat haze. Logo and tagline: مررره يمي.',sfx:'Final crunch. Logo sting.',s:1.8}]},
+ {id:'salt',name:'Himalayan Salt',len:'6s',col:'#E587A2',fr:[
+  {t:'Salt rain',d:'Pink salt crystals fall in slow motion into a wooden spoon.',sfx:'Soft crystal patter.',s:1.4},
+  {t:'Hero chip',d:'One chip turns slowly while single crystals land on it.',sfx:'Light ticks.',s:1.6},
+  {t:'The rise',d:'The pack rises out of a dune of salt, crystals pouring off its shoulders.',sfx:'Rushing grains. Crunch hit.',s:1.4},
+  {t:'Pack shot',d:'Pack, salt bowl and chips. Logo and tagline: مررره يمي.',sfx:'Final crunch. Logo sting.',s:1.6}]},
+ {id:'ketchup',name:'Tomato Ketchup',len:'6s',col:'#2484C6',fr:[
+  {t:'The splash',d:'A tomato drops into ketchup and throws up a crown splash.',sfx:'Wet splash.',s:1.2},
+  {t:'Hero chip',d:'One chip surfs the crest of a ketchup wave.',sfx:'Whoosh.',s:1.6},
+  {t:'The ribbon',d:'A ribbon of ketchup spirals around the spinning pack.',sfx:'Swirl. Crunch hit.',s:1.4},
+  {t:'Pack shot',d:'Pack, ketchup, tomatoes and chips. Logo and tagline: مررره يمي.',sfx:'Final crunch. Logo sting.',s:1.8}]},
+ {id:'mix',name:'All four',len:'15s',col:'#713258',fr:[
+  {t:'Four chips',d:'Four chips fall side by side, each trailing its own seasoning.',sfx:'Four whooshes.',s:1.5},
+  {t:'French Cheese',d:'Cheese pack flies at camera through exploding cheese.',sfx:'Thud. Crunch.',s:2.5},
+  {t:'Chili',d:'Chili pack cuts across frame with a burst of flakes.',sfx:'Snap. Crunch.',s:2.5},
+  {t:'Himalayan Salt',d:'Salt pack sweeps through a spray of crystals.',sfx:'Crystal rush. Crunch.',s:2.5},
+  {t:'Tomato Ketchup',d:'Ketchup pack breaks through a ketchup splash.',sfx:'Splash. Crunch.',s:2.5},
+  {t:'The line-up',d:'All four packs land in a row with their ingredients. Logo and tagline: مررره يمي.',sfx:'Four hits. Logo sting.',s:3.5}]}
 ];
-const img=i=>A+'sb-'+String(i+1).padStart(2,'0')+'.webp';
-const total=SB.reduce((a,b)=>a+b.s,0);$('#m-len').textContent=Math.round(total)+' sec';
-const LS='yummis-fb-r1';let FB={};try{FB=JSON.parse(localStorage.getItem(LS)||'{}')}catch(e){}
+let film=FILMS[0];
+const img=i=>A+'sb-'+film.id+'-'+(i+1)+'.webp';
+const LS='yummis-fb-r2';let FB={};try{FB=JSON.parse(localStorage.getItem(LS)||'{}')}catch(e){}
 const save=()=>{try{localStorage.setItem(LS,JSON.stringify(FB))}catch(e){}summary()};
 function summary(){
-  const L=[];SB.forEach((f,i)=>{const x=FB[i];if(!x||(!x.s&&!x.n))return;L.push(`Frame ${String(i+1).padStart(2,'0')} · ${f.t}: ${x.s==='ok'?'APPROVED':x.s==='ch'?'CHANGE':''}${x.n?' — '+x.n:''}`)});
-  const txt=L.length?'Yummis film · Round 01 feedback\n\n'+L.join('\n'):'No feedback yet. Use the buttons under each storyboard frame.';
-  $('#sum').textContent=txt;$('#mail').href='mailto:amr.sabry.designer@gmail.com?subject='+encodeURIComponent('Yummis film · Round 01 feedback')+'&body='+encodeURIComponent(txt);
+  const L=[];FILMS.forEach(F=>F.fr.forEach((f,i)=>{const x=FB[F.id+i];if(!x||(!x.s&&!x.n))return;L.push(`${F.name} ${F.len} · Frame ${i+1} · ${f.t}: ${x.s==='ok'?'APPROVED':x.s==='ch'?'CHANGE':''}${x.n?' — '+x.n:''}`)}));
+  const txt=L.length?'Yummis films · Round 02 feedback\n\n'+L.join('\n'):'No feedback yet. Use the buttons under each storyboard frame.';
+  $('#sum').textContent=txt;$('#mail').href='mailto:amr.sabry.designer@gmail.com?subject='+encodeURIComponent('Yummis films · Round 02 feedback')+'&body='+encodeURIComponent(txt);
 }
-SB.forEach((f,i)=>{
-  const el=document.createElement('div');el.className='fr';
-  el.innerHTML=`<div class="im" style="background-image:url(${img(i)})"><span class="no">${String(i+1).padStart(2,'0')}</span><span class="du">${f.s.toFixed(1)}s</span></div>
-  <div class="tx"><b>${f.t}</b><small>${f.d}</small><div class="sfx">SFX · ${f.sfx}</div></div>
-  <div class="fb"><button class="ok">Approve</button><button class="ch">Change</button><textarea placeholder="What should change in this frame?"></textarea></div>`;
-  const ok=el.querySelector('.ok'),ch=el.querySelector('.ch'),ta=el.querySelector('textarea');
-  const paint=()=>{const x=FB[i]||{};ok.classList.toggle('on',x.s==='ok');ch.classList.toggle('on',x.s==='ch');ta.classList.toggle('show',x.s==='ch');ta.value=x.n||''};
-  ok.onclick=()=>{FB[i]={...(FB[i]||{}),s:FB[i]?.s==='ok'?'':'ok'};paint();save()};
-  ch.onclick=()=>{FB[i]={...(FB[i]||{}),s:FB[i]?.s==='ch'?'':'ch'};paint();save()};
-  ta.oninput=()=>{FB[i]={...(FB[i]||{}),n:ta.value};save()};
-  el.querySelector('.im').onclick=()=>{$('#lb img').src=img(i);$('#lb').classList.add('show')};
-  paint();$('#grid').appendChild(el);
-});
+function grid(){
+  const G=$('#grid');G.innerHTML='';G.classList.toggle('four',film.fr.length===4);
+  film.fr.forEach((f,i)=>{
+    const k=film.id+i,el=document.createElement('div');el.className='fr';
+    el.innerHTML=`<div class="im" style="background-image:url(${img(i)})"><span class="no">${String(i+1).padStart(2,'0')}</span><span class="du">${f.s.toFixed(1)}s</span></div>
+    <div class="tx"><b>${f.t}</b><small>${f.d}</small><div class="sfx">SFX · ${f.sfx}</div></div>
+    <div class="fb"><button class="ok">Approve</button><button class="ch">Change</button><textarea placeholder="What should change in this frame?"></textarea></div>`;
+    const ok=el.querySelector('.ok'),ch=el.querySelector('.ch'),ta=el.querySelector('textarea'),u=img(i);
+    const paint=()=>{const x=FB[k]||{};ok.classList.toggle('on',x.s==='ok');ch.classList.toggle('on',x.s==='ch');ta.classList.toggle('show',x.s==='ch');ta.value=x.n||''};
+    ok.onclick=()=>{FB[k]={...(FB[k]||{}),s:FB[k]?.s==='ok'?'':'ok'};paint();save()};
+    ch.onclick=()=>{FB[k]={...(FB[k]||{}),s:FB[k]?.s==='ch'?'':'ch'};paint();save()};
+    ta.oninput=()=>{FB[k]={...(FB[k]||{}),n:ta.value};save()};
+    el.querySelector('.im').onclick=()=>{$('#lb img').src=u;$('#lb').classList.add('show')};
+    paint();G.appendChild(el);
+  });
+}
 $('#lb').onclick=()=>$('#lb').classList.remove('show');
-summary();
 $('#copy').onclick=async e=>{try{await navigator.clipboard.writeText($('#sum').textContent);e.target.textContent='Copied'}catch(_){e.target.textContent='Select the text to copy'}setTimeout(()=>e.target.textContent='Copy feedback',1800)};
 
 /* ---------- animatic ---------- */
-const MOVES=[[1.0,1.12,0,0],[1.25,1.05,0,2],[1.0,1.3,0,0],[1.15,1.0,-2,2],[1.3,1.1,2,0],[1.2,1.0,0,0],[1.05,1.15,-3,0],[1.25,1.05,0,-2],[1.0,1.12,0,1],[1.18,1.0,0,0]];
-const tlEl=$('#tl');SB.forEach((f,i)=>{const s=document.createElement('i');s.style.flex=f.s;s.innerHTML='<b></b>';s.onclick=()=>{seek(i)};tlEl.appendChild(s)});
-SB.forEach((_,i)=>{const p=new Image();p.src=img(i)});
-let playing=false,ai=-1,t0=0,acc=0,sound=true,AC=null,layer=0;
+const MOVES=[[1.0,1.14,0,0],[1.22,1.04,-2,1],[1.0,1.25,0,0],[1.16,1.0,0,0],[1.2,1.05,2,0],[1.14,1.0,0,0]];
+const tlEl=$('#tl');
+let playing=false,ai=-1,t0=0,sound=true,AC=null,layer=0,total=0;
 const shs=[$('#shA'),$('#shB')];
+const ac=()=>AC=AC||new (window.AudioContext||window.webkitAudioContext)();
 function noise(dur,freq,gain,type='bandpass'){
-  if(!sound)return;AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+  if(!sound)return;ac();
   const n=AC.sampleRate*dur,b=AC.createBuffer(1,n,AC.sampleRate),d=b.getChannelData(0);
   for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,2.2)*(Math.random()>.35?1:.1);
   const s=AC.createBufferSource();s.buffer=b;const f=AC.createBiquadFilter();f.type=type;f.frequency.value=freq;f.Q.value=.8;const g=AC.createGain();g.gain.value=gain;
   s.connect(f).connect(g).connect(AC.destination);s.start();
 }
-function thump(){if(!sound)return;AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.frequency.setValueAtTime(120,AC.currentTime);o.frequency.exponentialRampToValueAtTime(38,AC.currentTime+.35);g.gain.setValueAtTime(.7,AC.currentTime);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+.45);o.connect(g).connect(AC.destination);o.start();o.stop(AC.currentTime+.5)}
-const SFX=[()=>noise(.05,5000,.05,'highpass'),()=>noise(.5,3500,.18,'highpass'),()=>{noise(.45,2600,.6);thump()},()=>noise(.9,700,.12,'lowpass'),()=>{noise(.3,3200,.9);thump()},()=>{noise(.6,1400,.35);},()=>{[0,.45,.9,1.35].forEach(d=>setTimeout(()=>playing&&thump(),d*1000))},()=>{[0,.2,.5,.8,1.1].forEach(d=>setTimeout(()=>playing&&noise(.2,3000,.5),d*1000))},()=>noise(.06,6000,.5,'highpass'),()=>{noise(.3,3200,.8);thump()}];
+function thump(){if(!sound)return;ac();const o=AC.createOscillator(),g=AC.createGain();o.frequency.setValueAtTime(120,AC.currentTime);o.frequency.exponentialRampToValueAtTime(38,AC.currentTime+.35);g.gain.setValueAtTime(.7,AC.currentTime);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+.45);o.connect(g).connect(AC.destination);o.start();o.stop(AC.currentTime+.5)}
+function sfx(i){const n=film.fr.length;
+  if(film.id==='mix'){if(i===0)noise(.8,900,.2,'lowpass');else if(i===n-1){[0,.3,.6,.9].forEach(d=>setTimeout(()=>playing&&thump(),d*1000));setTimeout(()=>playing&&noise(.3,3200,.8),1300)}else{thump();setTimeout(()=>playing&&noise(.3,3200,.8),700)}return}
+  if(i===0)thump();else if(i===1)noise(.9,800,.18,'lowpass');else if(i===2){noise(.35,3000,.8);thump()}else{noise(.3,3200,.9);setTimeout(()=>playing&&thump(),500)}
+}
 function show(i){
-  ai=i;layer^=1;const el=shs[layer],old=shs[layer^1],m=MOVES[i],d=SB[i].s;
+  ai=i;layer^=1;const el=shs[layer],old=shs[layer^1],m=MOVES[i%MOVES.length],d=film.fr[i].s;
   el.style.transition='none';el.style.backgroundImage=`url(${img(i)})`;el.style.transform=`scale(${m[0]}) translate(${-m[2]}%,${-m[3]}%)`;el.style.opacity=1;el.style.zIndex=2;old.style.zIndex=1;
   el.getBoundingClientRect();
   el.style.transition=`transform ${d+.3}s linear`;el.style.transform=`scale(${m[1]}) translate(${m[2]}%,${m[3]}%)`;
-  setTimeout(()=>{if(shs[layer]!==old)old.style.opacity=0},60);
-  $('#cap').textContent=String(i+1).padStart(2,'0')+' · '+SB[i].t;$('#capsfx').textContent=SB[i].sfx;
-  if(playing)SFX[i]();
+  setTimeout(()=>{if(shs[layer]===el)old.style.opacity=0},60);
+  $('#cap').textContent=String(i+1).padStart(2,'0')+' · '+film.fr[i].t;$('#capsfx').textContent=film.fr[i].sfx;
+  if(playing)sfx(i);
 }
 const fmt=s=>'00:'+String(Math.floor(s)).padStart(2,'0');
 function tick(){
   if(!playing)return;
   const el=(performance.now()-t0)/1000;let a=0,i=0;
-  for(;i<SB.length;i++){if(el<a+SB[i].s)break;a+=SB[i].s}
-  if(i>=SB.length){stop(true);return}
+  for(;i<film.fr.length;i++){if(el<a+film.fr[i].s)break;a+=film.fr[i].s}
+  if(i>=film.fr.length){stop(true);return}
   if(i!==ai)show(i);
-  tlEl.querySelectorAll('i b').forEach((b,k)=>b.style.width=k<i?'100%':k===i?((el-a)/SB[i].s*100)+'%':'0');
+  tlEl.querySelectorAll('i b').forEach((b,k)=>b.style.width=k<i?'100%':k===i?((el-a)/film.fr[i].s*100)+'%':'0');
   $('#tc').textContent=fmt(el)+' / '+fmt(total);
   requestAnimationFrame(tick);
 }
 function play(from=0){playing=true;ai=-1;t0=performance.now()-from*1000;$('#big').style.display='none';$('#pp').textContent='Pause';requestAnimationFrame(tick)}
 function stop(end){playing=false;$('#pp').textContent=end?'Replay':'Play';if(end){$('#big').style.display='flex'}}
-function seek(i){let a=0;for(let k=0;k<i;k++)a+=SB[k].s;play(a)}
+function seek(i){let a=0;for(let k=0;k<i;k++)a+=film.fr[k].s;play(a)}
 $('#pp').onclick=()=>playing?stop(false):play(0);
 $('#big').onclick=()=>play(0);
 $('#snd').onclick=e=>{sound=!sound;e.target.classList.toggle('on',sound);e.target.textContent=sound?'Sound on':'Sound off'};
-shs[0].style.backgroundImage=`url(${img(0)})`;shs[0].style.opacity=1;$('#cap').textContent='01 · '+SB[0].t;$('#tc').textContent='00:00 / '+fmt(total);
-window.__ani={play,stop,seek,SB};
+function setFilm(F){
+  stop(false);film=F;total=F.fr.reduce((a,b)=>a+b.s,0);
+  document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.f===F.id));
+  grid();
+  tlEl.innerHTML='';F.fr.forEach((f,i)=>{const s=document.createElement('i');s.style.flex=f.s;s.innerHTML='<b></b>';s.onclick=()=>seek(i);tlEl.appendChild(s);const p=new Image();p.src=img(i)});
+  shs.forEach(e=>{e.style.transition='none';e.style.opacity=0;e.style.transform='none'});layer=0;
+  shs[0].style.backgroundImage=`url(${img(0)})`;shs[0].style.opacity=1;
+  $('#cap').textContent='01 · '+F.fr[0].t;$('#capsfx').textContent=F.name+' · '+F.len;$('#tc').textContent='00:00 / '+fmt(total);$('#big').style.display='flex';$('#pp').textContent='Play';
+}
+['#tabsA','#tabsB'].forEach(id=>FILMS.forEach(F=>{const b=document.createElement('button');b.dataset.f=F.id;b.innerHTML=`<i style="background:${F.col}"></i>${F.name} · ${F.len}`;b.onclick=()=>setFilm(F);$(id).appendChild(b)}));
+setFilm(FILMS[0]);summary();
+window.__ani={play,stop,seek,setFilm,FILMS};
 </script>
 </body>
 </html>
