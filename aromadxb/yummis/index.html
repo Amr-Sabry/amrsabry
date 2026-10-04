@@ -237,9 +237,9 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
     <div class="card">
       <h3>The 15 second film</h3>
       <ul>
-        <li>Opens on the four closed packs together.</li>
-        <li>Each pack opens for a 2.2 second flavour burst, then one clean chip snap.</li>
-        <li>Everything returns to the packs. Line-up, logo and <b class="ar" style="font-weight:800">مررره يمي</b>.</li>
+        <li>Opens on four chips falling, one per flavour.</li>
+        <li>Each pack flies through its own flavour for 2.2 seconds, then one clean chip snap.</li>
+        <li>Ends on the four packs together with the logo and <b class="ar" style="font-weight:800">مررره يمي</b>.</li>
       </ul>
     </div>
   </div>
@@ -495,13 +495,13 @@ const FILMS_B=[
  mkB('salt','Himalayan Salt','#E587A2','the salt bowl and chips','The top seal tears open on its own. Chips and salt crystals pop out.','Chips, pink salt crystals and the wooden spoon fountain out around one hero chip.','Chips and crystals spiral back down into the pack.'),
  mkB('ketchup','Tomato Ketchup','#2484C6','ketchup, tomatoes and chips','The top seal tears open on its own. Chips and a few ketchup drops pop out.','Chips, two tomatoes and a single ketchup ribbon rise out around one hero chip.','Chips, tomatoes and the ribbon spiral back down into the pack.'),
  {id:'mix',name:'All four',len:'15s',col:'#713258',fr:[
-  {i:'b-mix-1',t:'Four packs first',d:'All four closed packs land in a row. Product first.',sfx:'Four soft thuds.',s:1.3},
-  {i:'b-cheese-3',t:'French Cheese',d:'The cheese pack opens and its flavour bursts out.',sfx:'Rip. Crunch.',s:2.2},
-  {i:'b-chili-3',t:'Chili',d:'The chili pack opens and its flavour bursts out.',sfx:'Rip. Crunch.',s:2.2},
-  {i:'b-salt-3',t:'Himalayan Salt',d:'The salt pack opens and its flavour bursts out.',sfx:'Rip. Crunch.',s:2.2},
-  {i:'b-ketchup-3',t:'Tomato Ketchup',d:'The ketchup pack opens and its flavour bursts out.',sfx:'Rip. Crunch.',s:2.2},
-  {i:'b-mix-5',t:'The clean snap',d:'Macro. One chip snaps into two equal halves. A clean break, not a single crumb: proof of the quality.',sfx:'One sharp, clean snap.',s:1.6},
-  {i:'b-mix-6',t:'The line-up',d:'Everything returns to the packs. Four packs with their ingredients. Logo and tagline: مررره يمي.',sfx:'Reverse swirl. Logo sting.',s:3.3}]}
+  {i:'mix-1',t:'Four chips',d:'Four chips fall side by side, each trailing its own seasoning.',sfx:'Four whooshes.',s:1.5},
+  {i:'mix-2',t:'French Cheese',d:'Cheese pack flies at camera through exploding cheese.',sfx:'Thud. Crunch.',s:2.2},
+  {i:'mix-3',t:'Chili',d:'Chili pack cuts across frame with a burst of flakes.',sfx:'Snap. Crunch.',s:2.2},
+  {i:'mix-4',t:'Himalayan Salt',d:'Salt pack sweeps through a spray of crystals.',sfx:'Crystal rush. Crunch.',s:2.2},
+  {i:'mix-5',t:'Tomato Ketchup',d:'Ketchup pack breaks through a ketchup splash.',sfx:'Splash. Crunch.',s:2.2},
+  {i:'b-mix-5',t:'The clean snap',d:'Macro. One chip snaps into two equal halves. A clean break, not a single crumb: proof of the quality.',sfx:'One sharp, clean snap.',s:1.4},
+  {i:'b-mix-6',t:'The line-up',d:'All four packs land in a row with their ingredients. Logo and tagline: مررره يمي.',sfx:'Four hits. Logo sting.',s:3.3}]}
 ];
 FILMS_A.forEach(F=>F.fr.forEach((f,i)=>f.i=(F.id==='mix'&&i===5)?'b-mix-6':F.id+'-'+(i+1)));
 const OPTS={B:{name:'Pack first',films:FILMS_B}};
