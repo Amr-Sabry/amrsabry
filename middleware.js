@@ -13,8 +13,12 @@ export default function middleware(request) {
     if (path === '/') {
       return new Response(null, { headers: { 'x-middleware-rewrite': new URL('/aromahub', request.url).toString() } });
     }
-    if (path === '/aromahub') return;
+    if (path === '/admin') {
+      return new Response(null, { headers: { 'x-middleware-rewrite': new URL('/aromahub-admin', request.url).toString() } });
+    }
+    if (path === '/aromahub' || path === '/aromahub-admin') return;
+    if (path.startsWith('/r/')) return;        // project rooms live under /r/<slug>
     return notFound();
   }
-  if (path === '/aromahub' || path === '/aromahub.html') return notFound();
+  if (path === '/aromahub' || path === '/aromahub.html' || path === '/aromahub-admin' || path === '/aromahub-admin.html' || path.startsWith('/r/')) return notFound();
 }
