@@ -761,10 +761,11 @@ window.__ani={play,stop,seek,setFilm,setOpt,OPTS};
 <script>
 /* mascot-follow: on this page the mascot drifts after the cursor, and when the cursor rests he looks at the design, then back at the viewer */
 (function(){
-  var fine=window.matchMedia&&matchMedia('(hover:hover) and (pointer:fine)').matches&&!matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var fine=true;
   var w=null,cx=0,cy=0,tx=0,ty=0,has=false,last=0,lt=performance.now();
   function find(){var d=document.body.children;for(var i=d.length-1;i>=0;i--){if(d[i].style&&d[i].style.zIndex==='2147483000')return d[i]}return null}
-  addEventListener('pointermove',function(e){if(!e.isTrusted)return;tx=e.clientX;ty=e.clientY;has=true;last=performance.now()},{passive:true});
+  function mv(e){if(!e.isTrusted||e.pointerType==='touch')return;tx=e.clientX;ty=e.clientY;has=true;last=performance.now()}
+  addEventListener('pointermove',mv,{passive:true});addEventListener('mousemove',mv,{passive:true});
   function design(){var ids=['#stage','#cfbig','#grid','#player','#sum'],best=null,bd=1e9,mid=innerHeight/2;
     ids.forEach(function(q){var el=document.querySelector(q);if(!el)return;var r=el.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight)return;var d=Math.abs((r.top+r.bottom)/2-mid);if(d<bd){bd=d;best=r}});
     return best?[best.left+best.width/2,Math.max(40,Math.min(innerHeight-40,(best.top+best.bottom)/2))]:[innerWidth*.4,innerHeight*.4]}
@@ -775,10 +776,10 @@ window.__ani={play,stop,seek,setFilm,setOpt,OPTS};
     var now=performance.now(),dt=Math.min(.05,(now-lt)/1000);lt=now;
     if(fine&&has){
       var S=w.offsetWidth,hx=innerWidth-8-S/2,hy=innerHeight-8-S/2;
-      var gx=tx+S*.62,gy=Math.min(innerHeight-S/2-4,Math.max(S/2+4,ty+S*.48));
-      if(gx>innerWidth-S/2-4) gx=tx-S*.62;
+      var gx=tx+S*.5,gy=Math.min(innerHeight-S/2-4,Math.max(S/2+4,ty+S*.38));
+      if(gx>innerWidth-S/2-4) gx=tx-S*.5;
       gx=Math.min(innerWidth-S/2-4,Math.max(S/2+4,gx));
-      var k=1-Math.pow(.01,dt);cx+=((gx-hx)-cx)*k;cy+=((gy-hy)-cy)*k;
+      var k=1-Math.pow(.0004,dt);cx+=((gx-hx)-cx)*k;cy+=((gy-hy)-cy)*k;
       w.style.transform='translate('+cx.toFixed(1)+'px,'+cy.toFixed(1)+'px)';
     }
     if(now-last>900){
