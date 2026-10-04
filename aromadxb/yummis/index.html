@@ -106,6 +106,12 @@ section{padding:64px 0;scroll-margin-top:64px}
 .tabs.dark button{border-color:var(--cream);color:var(--cream)}
 .tabs.dark button.on{background:var(--cream);color:var(--plum)}
 .grid.four{grid-template-columns:repeat(4,1fr)}
+.grid.five{grid-template-columns:repeat(5,1fr)}
+.opts{display:inline-flex;gap:4px;padding:5px;border-radius:99px;border:2px solid var(--plum);margin-bottom:18px}
+.opts button{padding:11px 22px;border-radius:99px;font-weight:800;font-size:14px;text-transform:uppercase}
+.opts button.on{background:var(--teal);color:#fff}
+.opts.dark{border-color:var(--cream);color:var(--cream)}
+[hidden]{display:none!important}
 .cfbig{aspect-ratio:16/9;border-radius:24px;background:#222 center/cover no-repeat;cursor:zoom-in;border:2px solid var(--plum)}
 .cfth{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:12px}
 .cfth button{aspect-ratio:16/9;border-radius:12px;background:center/cover no-repeat;border:3px solid transparent;opacity:.7}
@@ -139,14 +145,14 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .lb img{max-width:100%;max-height:100%;border-radius:14px}
 @media(max-width:900px){
  .hero .wrap,.concept,.sum{grid-template-columns:1fr}
- .grid,.grid.four{grid-template-columns:1fr 1fr}
+ .grid,.grid.four,.grid.five{grid-template-columns:1fr 1fr}
  .specs{grid-template-columns:1fr 1fr}
  .steps a span{display:none}
  .top .by{display:none}
  .flv button span{display:none}.flv button{padding:8px}
  .sec-h p{margin-left:0}
 }
-@media(max-width:560px){.grid,.grid.four{grid-template-columns:1fr}.stage{height:70vh}.wrap{padding:0 16px}}
+@media(max-width:560px){.grid,.grid.four,.grid.five{grid-template-columns:1fr}.opts{display:flex;flex-direction:column;border-radius:22px}.stage{height:70vh}.wrap{padding:0 16px}}
 </style>
 </head>
 <body>
@@ -165,7 +171,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 
 <header class="hero"><div class="wrap">
   <div>
-    <div class="kicker">Modern Saudi Crunch · CG product films · Round 02</div>
+    <div class="kicker">Modern Saudi Crunch · CG product films · Round 03</div>
     <h1>Four flavours. <em>One crunch.</em></h1>
     <p>One link, the whole process. Spin the pack, look at the concept frames, read the boards for each film, play the animatics, then tell us what you think, frame by frame. This page updates every time we move a step forward.</p>
   </div>
@@ -176,7 +182,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
     </div>
     <div class="meta">
       <div><b>Range</b><span>Potato Chips × 4</span></div>
-      <div><b>Films</b><span>4 × 6 sec + 1 × 15 sec</span></div>
+      <div><b>Films</b><span>4 × 8 sec + 1 × 15 sec</span></div>
       <div><b>Technique</b><span>Full CG, no live action</span></div>
       <div><b>Updated</b><span>04 Oct 2026</span></div>
     </div>
@@ -220,12 +226,27 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 <section id="sb-sec"><div class="wrap">
   <div class="sec-h">
     <div><div class="n">STEP 03</div><h2>Storyboards.</h2></div>
-    <p>Black and white sketch pass. Composition, action and rhythm only. Pick a film to see its frames.</p>
+    <p>Black and white sketch pass, in two routes. Pick an option, then a film, to see its frames.</p>
   </div>
-  <div class="concept">
+  <div class="opts" id="optA"></div>
+  <div class="concept optnote" data-o="B">
     <div class="card fill">
-      <h3>One structure, four flavours</h3>
-      <p>Every 6 second film follows the same four beats so the range reads as one family: the ingredient hits, the chip takes the flavour, the pack arrives, the pack shot lands with the tagline. Only the action changes with the flavour.</p>
+      <h3>Option B: the pack comes first</h3>
+      <p>Built on your sequence. Every 8 second film opens on the closed pack, the pack opens, the flavour bursts out, everything returns into the pack, and we end on the pack again with the tagline. The product is on screen at the start and at the end.</p>
+    </div>
+    <div class="card">
+      <h3>The 15 second film</h3>
+      <ul>
+        <li>Opens on the four closed packs together.</li>
+        <li>Each pack opens for a 2.5 second flavour burst.</li>
+        <li>Everything returns to the packs. Line-up, logo and <b class="ar" style="font-weight:800">مررره يمي</b>.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="concept optnote" data-o="A" hidden>
+    <div class="card fill">
+      <h3>Option A: the ingredient comes first</h3>
+      <p>Our first route, kept for comparison. Every 6 second film starts on the ingredient, then the chip takes the flavour, the pack arrives and the pack shot lands with the tagline. The pack is only seen in the second half.</p>
     </div>
     <div class="card">
       <h3>The 15 second film</h3>
@@ -245,6 +266,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
     <div><div class="n" style="color:#7ff3ee">STEP 04</div><h2>Animatic.</h2></div>
     <p>The boards cut to time with camera moves and a rough crunch track, so you can judge pace before anything is rendered.</p>
   </div>
+  <div class="opts dark" id="optB"></div>
   <div class="tabs dark" id="tabsB"></div>
   <div class="player" id="player">
     <div class="sh" id="shA"></div><div class="sh" id="shB"></div>
@@ -431,7 +453,7 @@ setCF('all');
 $('#cfbig').onclick=()=>{$('#lb img').src=cfu(cfc);$('#lb').classList.add('show')};
 
 /* ---------- storyboards ---------- */
-const FILMS=[
+const FILMS_A=[
  {id:'cheese',name:'French Cheese',len:'6s',col:'#F7931D',fr:[
   {t:'The drop',d:'A wedge of cheese slams into frame. Cubes bounce up around it.',sfx:'Heavy thud.',s:1.2},
   {t:'Hero chip',d:'One chip flies through a cloud of cheese powder and picks up the flavour.',sfx:'Whoosh.',s:1.6},
@@ -460,19 +482,41 @@ const FILMS=[
   {t:'Tomato Ketchup',d:'Ketchup pack breaks through a ketchup splash.',sfx:'Splash. Crunch.',s:2.5},
   {t:'The line-up',d:'All four packs land in a row with their ingredients. Logo and tagline: مررره يمي.',sfx:'Four hits. Logo sting.',s:3.5}]}
 ];
+const mkB=(id,name,col,ing,open,burst,back)=>({id,name,len:'8s',col,fr:[
+  {i:'b-'+id+'-1',t:'Pack first',d:'The closed pack lands, front and centre. We see the product before anything happens.',sfx:'Soft thud.',s:1.4},
+  {i:'b-'+id+'-2',t:'It opens',d:open,sfx:'Rip. Crunch wave.',s:1.2},
+  {i:'b-'+id+'-3',t:'The flavour bursts out',d:burst,sfx:'Whoosh. Crunches.',s:2.2},
+  {i:'b-'+id+'-4',t:'Back into the pack',d:back,sfx:'Reverse swirl.',s:1.4},
+  {i:id+'-4',t:'Pack shot',d:'The pack closes and settles with '+ing+'. Logo and tagline: مررره يمي.',sfx:'Final crunch. Logo sting.',s:1.8}]});
+const FILMS_B=[
+ mkB('cheese','French Cheese','#F7931D','cheese and chips','The top seal tears open on its own. Chips and cheese cubes pop out.','Chips, cheese wedges and cubes fountain out and fill the frame around one hero chip.','Everything spirals back down into the pack.'),
+ mkB('chili','Chili','#D91F33','chilies and chips','The top seal tears open on its own. Chips and chili flakes pop out with heat.','Chips, whole chilies and a storm of flakes fountain out around one hero chip.','Chips, chilies and flakes spiral back down into the pack.'),
+ mkB('salt','Himalayan Salt','#E587A2','the salt bowl and chips','The top seal tears open on its own. Chips and salt crystals pop out.','Chips, pink salt crystals and the wooden spoon fountain out around one hero chip.','Chips and crystals spiral back down into the pack.'),
+ mkB('ketchup','Tomato Ketchup','#2484C6','ketchup, tomatoes and chips','The top seal tears open on its own. Chips and a few ketchup drops pop out.','Chips, two tomatoes and a single ketchup ribbon rise out around one hero chip.','Chips, tomatoes and the ribbon spiral back down into the pack.'),
+ {id:'mix',name:'All four',len:'15s',col:'#713258',fr:[
+  {i:'b-mix-1',t:'Four packs first',d:'All four closed packs land in a row. Product first.',sfx:'Four soft thuds.',s:1.5},
+  {i:'b-cheese-3',t:'French Cheese',d:'The cheese pack opens and its flavour bursts out.',sfx:'Rip. Crunch.',s:2.5},
+  {i:'b-chili-3',t:'Chili',d:'The chili pack opens and its flavour bursts out.',sfx:'Rip. Crunch.',s:2.5},
+  {i:'b-salt-3',t:'Himalayan Salt',d:'The salt pack opens and its flavour bursts out.',sfx:'Rip. Crunch.',s:2.5},
+  {i:'b-ketchup-3',t:'Tomato Ketchup',d:'The ketchup pack opens and its flavour bursts out.',sfx:'Rip. Crunch.',s:2.5},
+  {i:'b-mix-6',t:'The line-up',d:'Everything returns to the packs. Four packs with their ingredients. Logo and tagline: مررره يمي.',sfx:'Reverse swirl. Logo sting.',s:3.5}]}
+];
+FILMS_A.forEach(F=>F.fr.forEach((f,i)=>f.i=(F.id==='mix'&&i===5)?'b-mix-6':F.id+'-'+(i+1)));
+const OPTS={B:{name:'Option B · Pack first',films:FILMS_B},A:{name:'Option A · Ingredient first',films:FILMS_A}};
+let opt='B',FILMS=OPTS.B.films;
 let film=FILMS[0];
-const img=i=>A+'sb-'+film.id+'-'+(i+1)+'.webp';
-const LS='yummis-fb-r2';let FB={};try{FB=JSON.parse(localStorage.getItem(LS)||'{}')}catch(e){}
+const img=i=>A+'sb-'+film.fr[i].i+'.webp';
+const LS='yummis-fb-r3';let FB={};try{FB=JSON.parse(localStorage.getItem(LS)||'{}')}catch(e){}
 const save=()=>{try{localStorage.setItem(LS,JSON.stringify(FB))}catch(e){}summary()};
 function summary(){
-  const L=[];FILMS.forEach(F=>F.fr.forEach((f,i)=>{const x=FB[F.id+i];if(!x||(!x.s&&!x.n))return;L.push(`${F.name} ${F.len} · Frame ${i+1} · ${f.t}: ${x.s==='ok'?'APPROVED':x.s==='ch'?'CHANGE':''}${x.n?' — '+x.n:''}`)}));
-  const txt=L.length?'Yummis films · Round 02 feedback\n\n'+L.join('\n'):'No feedback yet. Use the buttons under each storyboard frame.';
-  $('#sum').textContent=txt;$('#mail').href='mailto:amr.sabry.designer@gmail.com?subject='+encodeURIComponent('Yummis films · Round 02 feedback')+'&body='+encodeURIComponent(txt);
+  const L=[];Object.keys(OPTS).forEach(o=>OPTS[o].films.forEach(F=>F.fr.forEach((f,i)=>{const x=FB[o+F.id+i];if(!x||(!x.s&&!x.n))return;L.push(`Option ${o} · ${F.name} ${F.len} · Frame ${i+1} · ${f.t}: ${x.s==='ok'?'APPROVED':x.s==='ch'?'CHANGE':''}${x.n?' — '+x.n:''}`)})));
+  const txt=L.length?'Yummis films · Round 03 feedback\n\n'+L.join('\n'):'No feedback yet. Use the buttons under each storyboard frame.';
+  $('#sum').textContent=txt;$('#mail').href='mailto:amr.sabry.designer@gmail.com?subject='+encodeURIComponent('Yummis films · Round 03 feedback')+'&body='+encodeURIComponent(txt);
 }
 function grid(){
-  const G=$('#grid');G.innerHTML='';G.classList.toggle('four',film.fr.length===4);
+  const G=$('#grid');G.innerHTML='';G.classList.toggle('four',film.fr.length===4);G.classList.toggle('five',film.fr.length===5);
   film.fr.forEach((f,i)=>{
-    const k=film.id+i,el=document.createElement('div');el.className='fr';
+    const k=opt+film.id+i,el=document.createElement('div');el.className='fr';
     el.innerHTML=`<div class="im" style="background-image:url(${img(i)})"><span class="no">${String(i+1).padStart(2,'0')}</span><span class="du">${f.s.toFixed(1)}s</span></div>
     <div class="tx"><b>${f.t}</b><small>${f.d}</small><div class="sfx">SFX · ${f.sfx}</div></div>
     <div class="fb"><button class="ok">Approve</button><button class="ch">Change</button><textarea placeholder="What should change in this frame?"></textarea></div>`;
@@ -541,9 +585,11 @@ function setFilm(F){
   shs[0].style.backgroundImage=`url(${img(0)})`;shs[0].style.opacity=1;
   $('#cap').textContent='01 · '+F.fr[0].t;$('#capsfx').textContent=F.name+' · '+F.len;$('#tc').textContent='00:00 / '+fmt(total);$('#big').style.display='flex';$('#pp').textContent='Play';
 }
-['#tabsA','#tabsB'].forEach(id=>FILMS.forEach(F=>{const b=document.createElement('button');b.dataset.f=F.id;b.innerHTML=`<i style="background:${F.col}"></i>${F.name} · ${F.len}`;b.onclick=()=>setFilm(F);$(id).appendChild(b)}));
-setFilm(FILMS[0]);summary();
-window.__ani={play,stop,seek,setFilm,FILMS};
+function tabs(){['#tabsA','#tabsB'].forEach(id=>{$(id).innerHTML='';FILMS.forEach(F=>{const b=document.createElement('button');b.dataset.f=F.id;b.innerHTML=`<i style="background:${F.col}"></i>${F.name} · ${F.len}`;b.onclick=()=>setFilm(F);$(id).appendChild(b)})})}
+function setOpt(o){opt=o;FILMS=OPTS[o].films;document.querySelectorAll('.opts button').forEach(b=>b.classList.toggle('on',b.dataset.o===o));document.querySelectorAll('.optnote').forEach(e=>e.hidden=e.dataset.o!==o);tabs();setFilm(FILMS[0])}
+['#optA','#optB'].forEach(id=>Object.keys(OPTS).forEach(o=>{const b=document.createElement('button');b.dataset.o=o;b.textContent=OPTS[o].name;b.onclick=()=>setOpt(o);$(id).appendChild(b)}));
+setOpt('B');summary();
+window.__ani={play,stop,seek,setFilm,setOpt,OPTS};
 </script>
 </body>
 </html>
