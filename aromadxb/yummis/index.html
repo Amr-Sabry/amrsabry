@@ -171,7 +171,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 
 <header class="hero"><div class="wrap">
   <div>
-    <div class="kicker">Modern Saudi Crunch · CG product films · Round 03</div>
+    <div class="kicker">Modern Saudi Crunch · CG product films · Round 04</div>
     <h1>Four flavours. <em>One crunch.</em></h1>
     <p>One link, the whole process. Spin the pack, look at the concept frames, read the boards for each film, play the animatics, then tell us what you think, frame by frame. This page updates every time we move a step forward.</p>
   </div>
@@ -226,19 +226,19 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 <section id="sb-sec"><div class="wrap">
   <div class="sec-h">
     <div><div class="n">STEP 03</div><h2>Storyboards.</h2></div>
-    <p>Black and white sketch pass, in two routes. Pick an option, then a film, to see its frames.</p>
+    <p>Black and white sketch pass. Composition, action and rhythm only. Pick a film to see its frames.</p>
   </div>
-  <div class="opts" id="optA"></div>
+  <div class="opts" id="optA" hidden></div>
   <div class="concept optnote" data-o="B">
     <div class="card fill">
-      <h3>Option B: the pack comes first</h3>
-      <p>Built on your sequence. Every 8 second film opens on the closed pack, the pack opens, the flavour bursts out, everything returns into the pack, and we end on the pack again with the tagline. The product is on screen at the start and at the end.</p>
+      <h3>The pack comes first</h3>
+      <p>Built on your sequence. Every 8 second film opens on the closed pack, the pack opens, the flavour bursts out, the hero chip snaps cleanly in two with no crumbs, everything returns into the pack, and we end on the pack again with the tagline.</p>
     </div>
     <div class="card">
       <h3>The 15 second film</h3>
       <ul>
         <li>Opens on the four closed packs together.</li>
-        <li>Each pack opens for a 2.5 second flavour burst.</li>
+        <li>Each pack opens for a 2.2 second flavour burst, then one clean chip snap.</li>
         <li>Everything returns to the packs. Line-up, logo and <b class="ar" style="font-weight:800">مررره يمي</b>.</li>
       </ul>
     </div>
@@ -266,7 +266,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
     <div><div class="n" style="color:#7ff3ee">STEP 04</div><h2>Animatic.</h2></div>
     <p>The boards cut to time with camera moves and a rough crunch track, so you can judge pace before anything is rendered.</p>
   </div>
-  <div class="opts dark" id="optB"></div>
+  <div class="opts dark" id="optB" hidden></div>
   <div class="tabs dark" id="tabsB"></div>
   <div class="player" id="player">
     <div class="sh" id="shA"></div><div class="sh" id="shB"></div>
@@ -483,38 +483,40 @@ const FILMS_A=[
   {t:'The line-up',d:'All four packs land in a row with their ingredients. Logo and tagline: مررره يمي.',sfx:'Four hits. Logo sting.',s:3.5}]}
 ];
 const mkB=(id,name,col,ing,open,burst,back)=>({id,name,len:'8s',col,fr:[
-  {i:'b-'+id+'-1',t:'Pack first',d:'The closed pack lands, front and centre. We see the product before anything happens.',sfx:'Soft thud.',s:1.4},
-  {i:'b-'+id+'-2',t:'It opens',d:open,sfx:'Rip. Crunch wave.',s:1.2},
-  {i:'b-'+id+'-3',t:'The flavour bursts out',d:burst,sfx:'Whoosh. Crunches.',s:2.2},
-  {i:'b-'+id+'-4',t:'Back into the pack',d:back,sfx:'Reverse swirl.',s:1.4},
-  {i:id+'-4',t:'Pack shot',d:'The pack closes and settles with '+ing+'. Logo and tagline: مررره يمي.',sfx:'Final crunch. Logo sting.',s:1.8}]});
+  {i:'b-'+id+'-1',t:'Pack first',d:'The closed pack lands, front and centre. We see the product before anything happens.',sfx:'Soft thud.',s:1.2},
+  {i:'b-'+id+'-2',t:'It opens',d:open,sfx:'Rip. Crunch wave.',s:1.0},
+  {i:'b-'+id+'-3',t:'The flavour bursts out',d:burst,sfx:'Whoosh. Crunches.',s:1.8},
+  {i:'b-'+id+'-5',t:'The clean snap',d:'Macro. The hero chip snaps into two equal halves. A clean break, not a single crumb: proof of the quality.',sfx:'One sharp, clean snap.',s:1.4},
+  {i:'b-'+id+'-4',t:'Back into the pack',d:back,sfx:'Reverse swirl.',s:1.2},
+  {i:id+'-4',t:'Pack shot',d:'The pack closes and settles with '+ing+'. Logo and tagline: مررره يمي.',sfx:'Final crunch. Logo sting.',s:1.4}]});
 const FILMS_B=[
  mkB('cheese','French Cheese','#F7931D','cheese and chips','The top seal tears open on its own. Chips and cheese cubes pop out.','Chips, cheese wedges and cubes fountain out and fill the frame around one hero chip.','Everything spirals back down into the pack.'),
  mkB('chili','Chili','#D91F33','chilies and chips','The top seal tears open on its own. Chips and chili flakes pop out with heat.','Chips, whole chilies and a storm of flakes fountain out around one hero chip.','Chips, chilies and flakes spiral back down into the pack.'),
  mkB('salt','Himalayan Salt','#E587A2','the salt bowl and chips','The top seal tears open on its own. Chips and salt crystals pop out.','Chips, pink salt crystals and the wooden spoon fountain out around one hero chip.','Chips and crystals spiral back down into the pack.'),
  mkB('ketchup','Tomato Ketchup','#2484C6','ketchup, tomatoes and chips','The top seal tears open on its own. Chips and a few ketchup drops pop out.','Chips, two tomatoes and a single ketchup ribbon rise out around one hero chip.','Chips, tomatoes and the ribbon spiral back down into the pack.'),
  {id:'mix',name:'All four',len:'15s',col:'#713258',fr:[
-  {i:'b-mix-1',t:'Four packs first',d:'All four closed packs land in a row. Product first.',sfx:'Four soft thuds.',s:1.5},
-  {i:'b-cheese-3',t:'French Cheese',d:'The cheese pack opens and its flavour bursts out.',sfx:'Rip. Crunch.',s:2.5},
-  {i:'b-chili-3',t:'Chili',d:'The chili pack opens and its flavour bursts out.',sfx:'Rip. Crunch.',s:2.5},
-  {i:'b-salt-3',t:'Himalayan Salt',d:'The salt pack opens and its flavour bursts out.',sfx:'Rip. Crunch.',s:2.5},
-  {i:'b-ketchup-3',t:'Tomato Ketchup',d:'The ketchup pack opens and its flavour bursts out.',sfx:'Rip. Crunch.',s:2.5},
-  {i:'b-mix-6',t:'The line-up',d:'Everything returns to the packs. Four packs with their ingredients. Logo and tagline: مررره يمي.',sfx:'Reverse swirl. Logo sting.',s:3.5}]}
+  {i:'b-mix-1',t:'Four packs first',d:'All four closed packs land in a row. Product first.',sfx:'Four soft thuds.',s:1.3},
+  {i:'b-cheese-3',t:'French Cheese',d:'The cheese pack opens and its flavour bursts out.',sfx:'Rip. Crunch.',s:2.2},
+  {i:'b-chili-3',t:'Chili',d:'The chili pack opens and its flavour bursts out.',sfx:'Rip. Crunch.',s:2.2},
+  {i:'b-salt-3',t:'Himalayan Salt',d:'The salt pack opens and its flavour bursts out.',sfx:'Rip. Crunch.',s:2.2},
+  {i:'b-ketchup-3',t:'Tomato Ketchup',d:'The ketchup pack opens and its flavour bursts out.',sfx:'Rip. Crunch.',s:2.2},
+  {i:'b-mix-5',t:'The clean snap',d:'Macro. One chip snaps into two equal halves. A clean break, not a single crumb: proof of the quality.',sfx:'One sharp, clean snap.',s:1.6},
+  {i:'b-mix-6',t:'The line-up',d:'Everything returns to the packs. Four packs with their ingredients. Logo and tagline: مررره يمي.',sfx:'Reverse swirl. Logo sting.',s:3.3}]}
 ];
 FILMS_A.forEach(F=>F.fr.forEach((f,i)=>f.i=(F.id==='mix'&&i===5)?'b-mix-6':F.id+'-'+(i+1)));
-const OPTS={B:{name:'Option B · Pack first',films:FILMS_B},A:{name:'Option A · Ingredient first',films:FILMS_A}};
+const OPTS={B:{name:'Pack first',films:FILMS_B}};
 let opt='B',FILMS=OPTS.B.films;
 let film=FILMS[0];
 const img=i=>A+'sb-'+film.fr[i].i+'.webp';
-const LS='yummis-fb-r3';let FB={};try{FB=JSON.parse(localStorage.getItem(LS)||'{}')}catch(e){}
+const LS='yummis-fb-r4';let FB={};try{FB=JSON.parse(localStorage.getItem(LS)||'{}')}catch(e){}
 const save=()=>{try{localStorage.setItem(LS,JSON.stringify(FB))}catch(e){}summary()};
 function summary(){
-  const L=[];Object.keys(OPTS).forEach(o=>OPTS[o].films.forEach(F=>F.fr.forEach((f,i)=>{const x=FB[o+F.id+i];if(!x||(!x.s&&!x.n))return;L.push(`Option ${o} · ${F.name} ${F.len} · Frame ${i+1} · ${f.t}: ${x.s==='ok'?'APPROVED':x.s==='ch'?'CHANGE':''}${x.n?' — '+x.n:''}`)})));
-  const txt=L.length?'Yummis films · Round 03 feedback\n\n'+L.join('\n'):'No feedback yet. Use the buttons under each storyboard frame.';
-  $('#sum').textContent=txt;$('#mail').href='mailto:amr.sabry.designer@gmail.com?subject='+encodeURIComponent('Yummis films · Round 03 feedback')+'&body='+encodeURIComponent(txt);
+  const L=[];Object.keys(OPTS).forEach(o=>OPTS[o].films.forEach(F=>F.fr.forEach((f,i)=>{const x=FB[o+F.id+i];if(!x||(!x.s&&!x.n))return;L.push(`${F.name} ${F.len} · Frame ${i+1} · ${f.t}: ${x.s==='ok'?'APPROVED':x.s==='ch'?'CHANGE':''}${x.n?' — '+x.n:''}`)})));
+  const txt=L.length?'Yummis films · Round 04 feedback\n\n'+L.join('\n'):'No feedback yet. Use the buttons under each storyboard frame.';
+  $('#sum').textContent=txt;$('#mail').href='mailto:amr.sabry.designer@gmail.com?subject='+encodeURIComponent('Yummis films · Round 04 feedback')+'&body='+encodeURIComponent(txt);
 }
 function grid(){
-  const G=$('#grid');G.innerHTML='';G.classList.toggle('four',film.fr.length===4);G.classList.toggle('five',film.fr.length===5);
+  const G=$('#grid');G.innerHTML='';G.classList.toggle('four',film.fr.length===4);G.classList.toggle('five',false);
   film.fr.forEach((f,i)=>{
     const k=opt+film.id+i,el=document.createElement('div');el.className='fr';
     el.innerHTML=`<div class="im" style="background-image:url(${img(i)})"><span class="no">${String(i+1).padStart(2,'0')}</span><span class="du">${f.s.toFixed(1)}s</span></div>
@@ -547,8 +549,8 @@ function noise(dur,freq,gain,type='bandpass'){
 }
 function thump(){if(!sound)return;ac();const o=AC.createOscillator(),g=AC.createGain();o.frequency.setValueAtTime(120,AC.currentTime);o.frequency.exponentialRampToValueAtTime(38,AC.currentTime+.35);g.gain.setValueAtTime(.7,AC.currentTime);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+.45);o.connect(g).connect(AC.destination);o.start();o.stop(AC.currentTime+.5)}
 function sfx(i){const n=film.fr.length;
-  if(film.id==='mix'){if(i===0)noise(.8,900,.2,'lowpass');else if(i===n-1){[0,.3,.6,.9].forEach(d=>setTimeout(()=>playing&&thump(),d*1000));setTimeout(()=>playing&&noise(.3,3200,.8),1300)}else{thump();setTimeout(()=>playing&&noise(.3,3200,.8),700)}return}
-  if(i===0)thump();else if(i===1)noise(.9,800,.18,'lowpass');else if(i===2){noise(.35,3000,.8);thump()}else{noise(.3,3200,.9);setTimeout(()=>playing&&thump(),500)}
+  if(film.id==='mix'){if(i===0)noise(.8,900,.2,'lowpass');else if(film.fr[i].t==='The clean snap'){noise(.07,4200,1,'highpass')}else if(i===n-1){[0,.3,.6,.9].forEach(d=>setTimeout(()=>playing&&thump(),d*1000));setTimeout(()=>playing&&noise(.3,3200,.8),1300)}else{thump();setTimeout(()=>playing&&noise(.3,3200,.8),700)}return}
+  const t=film.fr[i].t;if(t==='Pack first')thump();else if(t==='It opens'){noise(.4,2600,.6);thump()}else if(t==='The clean snap')noise(.07,4200,1,'highpass');else if(t==='Back into the pack')noise(.9,800,.18,'lowpass');else if(t==='Pack shot'){noise(.3,3200,.9);setTimeout(()=>playing&&thump(),500)}else{noise(.9,1200,.2);setTimeout(()=>playing&&noise(.25,3200,.7),500)}
 }
 function show(i){
   ai=i;layer^=1;const el=shs[layer],old=shs[layer^1],m=MOVES[i%MOVES.length],d=film.fr[i].s;
