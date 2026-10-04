@@ -101,7 +101,7 @@ h1, h2, h3, p { margin: 0; }
 #log .tag { font: normal 600 11px/1.5 var(--body); color: var(--teal); border: 1px solid var(--line); padding: 0 5px; flex: none; }
 #log span { min-width: 0; overflow-wrap: anywhere; }
 
-#pipe { list-style: none; margin: 4px 0 8px; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; counter-reset: step; }
+#pipe { list-style: none; margin: 4px 0 8px; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; counter-reset: step; }
 #pipe li { counter-increment: step; position: relative; background: var(--panel-2); border: 1px solid var(--line); padding: 10px 4px 8px; display: grid; justify-items: center; gap: 2px; text-align: center; min-width: 0; }
 #pipe li::before { content: counter(step); position: absolute; top: 3px; inset-inline-start: 5px; font: 800 16px/1 var(--display); color: var(--accent); }
 #pipe strong { font: 600 13px/1.3 var(--body); } #pipe span { font-size: 12px; color: var(--muted); line-height: 1.3; }
@@ -123,10 +123,11 @@ ul.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .quest { background: var(--panel-2); border: 1px solid var(--line); border-inline-start: 4px solid var(--line); padding: 9px 11px; display: grid; gap: 4px; }
 .quest.done { border-inline-start-color: var(--good); } .quest.active { border-inline-start-color: var(--accent); } .quest.blocked { border-inline-start-color: var(--bad); } .quest.todo { border-inline-start-color: var(--gold); }
 .quest.locked { opacity: .62; } .quest.live { border-inline-start-color: var(--accent); } .quest.stale { border-inline-start-color: var(--gold); }
-.mini-wrap { border: 1px solid var(--line); background: #0a1216; margin-block: 4px 2px; }
-.mini { display: block; width: 100%; height: auto; aspect-ratio: 128 / 50; }
-.mini-cap { display: flex; gap: 7px; align-items: baseline; padding: 5px 8px 6px; border-top: 1px solid var(--line); font-size: 12.5px; line-height: 1.45; min-height: 3.6em; background: var(--panel); }
-.mini-cap b { color: var(--gold); font-weight: 600; flex: none; } .mini-cap span { min-width: 0; }
+.mini-wrap { position: relative; border: 1px solid var(--line); background: #0a1216; margin-block: 4px 2px; display: grid; justify-items: center; }
+.mini-talk { height: 46px; width: 100%; }
+.mini-bub { position: absolute; top: 5px; left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 10px); background: var(--text); color: #0a1216; border: 2px solid #0a1216; font: 600 12px/1.35 var(--body); padding: 2px 7px; text-align: center; --tail: 0px; z-index: 1; }
+.mini-bub::after { content: ''; position: absolute; top: 100%; left: calc(50% + var(--tail) - 3px); width: 6px; height: 7px; background: var(--text); border: 2px solid #0a1216; border-top: 0; }
+.mini { display: block; width: min(100%, 236px); height: auto; aspect-ratio: 128 / 40; }
 .btn.tiny { white-space: nowrap; }
 .q-sub { font-size: 12.5px; color: var(--teal); line-height: 1.4; }
 .track { display: flex; gap: 3px; margin-top: 5px; } .track i { flex: 1; height: 8px; background: #1d3840; } .track i.past { background: var(--teal); } .track i.now { background: var(--accent); box-shadow: 0 -3px 0 var(--accent); }
@@ -148,13 +149,20 @@ ul.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .pill { font: 600 11px/1 var(--body); padding: 4px 7px; border: 1px solid; white-space: nowrap; flex: none; }
 .pill.done { color: var(--good); } .pill.active { color: #fff; background: var(--accent); border-color: var(--accent); } .pill.blocked { color: var(--bad); } .pill.todo { color: var(--muted); } .pill.stale { color: var(--gold); } .pill.locked { color: var(--muted); letter-spacing: .06em; }
 .bar { display: flex; gap: 2px; } .bar i { width: 7px; height: 8px; background: #1d3840; } .bar i.on { background: var(--gold); }
-.team { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-.agent { position: relative; background: var(--panel-2); border: 1px solid var(--line); padding: 8px 4px 7px; display: grid; justify-items: center; gap: 1px; text-align: center; min-width: 0; }
+.team { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.agent { position: relative; background: var(--panel-2); border: 1px solid var(--line); padding: 7px 2px 6px; display: grid; justify-items: center; gap: 1px; text-align: center; min-width: 0; }
 .agent:hover { border-color: var(--teal); } .agent.p1 { border-color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
 .agent canvas { margin-bottom: 4px; }
-.a-name { font-size: 11px; color: var(--muted); line-height: 1.2; } .agent strong { font: 600 14px/1.25 var(--body); }
-.a-cls { font: 600 13px/1.1 var(--display); letter-spacing: .06em; color: var(--teal); direction: ltr; }
+.agent strong { font: 600 12px/1.25 var(--body); overflow-wrap: anywhere; }
+.a-cls { font: 600 11px/1.1 var(--display); letter-spacing: .06em; color: var(--teal); direction: ltr; }
 .a-p1 { position: absolute; top: 4px; inset-inline-start: 4px; background: var(--gold); color: #1a1200; font: 800 14px/1 var(--display); padding: 2px 4px 1px; }
+.load { display: flex; align-items: center; gap: 8px; background: var(--panel-2); border: 1px solid var(--line); padding: 6px 8px; }
+.load.top { border-color: var(--accent); } .load.low { opacity: .8; }
+.l-rank { font: 800 20px/1 var(--display); color: var(--muted); width: 1.1em; text-align: center; flex: none; } .load.top .l-rank { color: var(--accent); }
+.l-mid { flex: 1; min-width: 0; display: grid; gap: 3px; } .l-head { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; } .l-head strong { font: 600 13.5px/1.3 var(--body); }
+.l-tags { display: flex; flex-wrap: wrap; gap: 3px; font-size: 11.5px; color: var(--muted); } .tag { font: normal 600 11px/1.5 var(--body); color: var(--teal); border: 1px solid var(--line); padding: 0 5px; }
+.l-time { display: grid; justify-items: center; flex: none; min-width: 58px; } .l-time b { font: 800 24px/.9 var(--display); color: var(--gold); } .l-time span { font-size: 10.5px; color: var(--muted); line-height: 1.2; } .l-time em { font: normal 10.5px/1.3 var(--body); color: var(--teal); text-align: center; }
+.fine { font-size: 12px; color: var(--muted); line-height: 1.55; }
 .ach { display: flex; align-items: center; gap: 10px; background: var(--panel-2); border: 1px solid var(--line); padding: 8px 10px; }
 .ach h3 { font: 600 14px/1.3 var(--body); } .ach p { font-size: 12px; color: var(--muted); line-height: 1.45; } .ach > div { min-width: 0; margin-inline-end: auto; }
 .ach:not(.on) h3 { color: var(--muted); } .ach.on { border-color: #6b5320; }
@@ -197,7 +205,7 @@ dialog::backdrop { background: rgba(4, 8, 10, .74); }
 @media (max-width: 560px) {
   .titleblock h1 { font-size: 26px; } .brand img { height: 40px; } .dxb-tag { font-size: 21px; }
   .hud { padding: 10px; } .worlds { width: 100%; } .worlds button { flex: 1; }
-  #pipe { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  #pipe { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .meter .v { font-size: 22px; } .btn.quiet { margin-inline-start: 0; }
   .c-head { align-items: flex-start; } .c-head canvas { width: 96px !important; height: 120px !important; }
 }
@@ -273,6 +281,9 @@ dialog::backdrop { background: rgba(4, 8, 10, .74); }
         </details>
       </div>
       <div class="panel" role="tabpanel" id="p-team" hidden>
+        <div class="sec-h"><h2>WORKLOAD</h2><span id="loadSum"></span></div>
+        <ol class="list" id="loadList"></ol>
+        <p class="fine" id="loadNote"></p>
         <div class="sec-h"><h2>CHARACTER SELECT</h2><span>اختار الـ Agent بتاعك</span></div>
         <div class="team" id="teamGrid"></div>
       </div>
@@ -305,12 +316,17 @@ dialog::backdrop { background: rgba(4, 8, 10, .74); }
 "use strict";
 /* ===== Studio data: worlds, agents, quests, copy ===== */
 const AGENTS = [
+  { id:'cre', role:'الكريتيف', cls:'CREATIVE', lvl:21, shirt:'#101114', pants:'#16181c',
+    stats:{قهوة:85, صبر:55, تركيز:70, سرعة:90},
+    move:'فكرة!', moveDesc:'بيطلّع عشر أفكار قبل ما القهوة تبرد.',
+    weak:'«عايزين حاجة زي إعلان كذا بالظبط».',
+    lines:['عندي فكرة.','لأ استنى. عندي أحسن.','الفكرة بسيطة. التنفيذ هو اللي صعب.','مين قال لازم تبقى كده؟'] },
   { id:'eng', role:'المهندس', cls:'ENGINEER', lvl:14, shirt:'#f08a1c', pants:'#2b3a4a',
     stats:{قهوة:60, صبر:85, تركيز:90, سرعة:55},
     move:'طوبة طوبة', moveDesc:'بيبني صفحة كاملة قبل ما الشاي يبرد.',
     weak:'حد يشيل عمود من غير ما يقوله.',
     lines:['ببني الصفحة طوبة طوبة.','مين شال العمود ده؟!','السيرفر واقف على رجليه.. بالعافية.','الأساس سليم. الباقي تشطيب.'] },
-  { id:'des', role:'المصمم', cls:'DESIGNER', lvl:20, shirt:'#16181c', pants:'#16181c',
+  { id:'des', role:'المصمم', cls:'DESIGNER', lvl:20, shirt:'#e9efe9', pants:'#16181c',
     stats:{قهوة:75, صبر:30, تركيز:95, سرعة:70},
     move:'بيكسل بيرفكت', moveDesc:'بيلمح بيكسل مايل من آخر الأوضة.',
     weak:'جملة «ممكن نكبّر اللوجو؟»',
@@ -413,9 +429,9 @@ const PROJECTS = [
     talk:[[['dev','369 موديل في الخريطة. مين عدّهم؟'],['qa','أنا. وهراجعهم كلهم.']],[['des','الخريطة مفيهاش أسود. ولا نقطة.'],['col','أخيراً حد فاهم.']],[['eng','موديل الخريطة لازم على مقاس الموقع الحقيقي.'],['dev','مش من الخيال، عارف.']]] },
   { id:'huna', tag:'هنا مصر', title:'هنا مصر', sub:'', stages:BRAND, at:null, updated:null, agents:[],
     note:'الفكرة اتغيّرت. مستني البريف الجديد من عمرو عشان المرحلة تتكتب صح.',
-    cast:['boss','des'],
-    scene:[['des','هنا مصر بقت على فكرة جديدة.','go','shake',''],['boss','والبريف الجديد لسه ماوصلش الاستوديو.','no','',''],['des','يبقى مانكتبش حاجة من دماغنا.','no','',''],['boss','صح. نستنى عمرو.','shout','jump','?']],
-    talk:[[['des','هنا مصر فكرتها اتغيّرت.'],['boss','مستنيين البريف الجديد من عمرو.']]] },
+    cast:['cre','boss','des'],
+    scene:[['cre','هنا مصر بقت على فكرة جديدة.','idea','shake',''],['boss','والبريف الجديد لسه ماوصلش الاستوديو.','no','',''],['des','يبقى مانكتبش حاجة من دماغنا.','no','',''],['boss','صح. نستنى عمرو.','shout','jump','?']],
+    talk:[[['cre','هنا مصر فكرتها اتغيّرت.'],['des','وأنا مستني البريف عشان أبدأ.']],[['des','هنا مصر فكرتها اتغيّرت.'],['boss','مستنيين البريف الجديد من عمرو.']]] },
   { id:'npd', tag:'NPD', title:'أفلام NPD', sub:'11 فيلم مؤكد · حوالي 50 دقيقة', stages:FILM, at:1, updated:'22 سبتمبر', agents:['edt','boss'],
     note:'آخر حاجة مسجّلة: السكوب اتحدد على القايمة الرسمية، وفيه فيديو مستني تأكيد.',
     cast:['boss','edt','dlv'],
@@ -423,19 +439,19 @@ const PROJECTS = [
     talk:[[['edt','أفلام NPD: 11 فيلم وخمسين دقيقة. مين هينام؟'],['rnd','أنا.']],[['boss','فيلم NPD اللي مستني تأكيد.. اتأكد؟'],['dlv','لسه. واقف على السكوتر.']]] },
   { id:'fab', tag:'FAB', title:'FAB — Salary Transfer', sub:'صور الحملة + 5 أفلام · إنتاج AI', stages:FILM, at:2, updated:'13 أغسطس', agents:['col','des'],
     note:'آخر حاجة مسجّلة: بايبل الكاست واللبس، وبرومبتات اللوكيشنز.',
-    cast:['des','col','boss'],
-    scene:[['des','بايبل الكاست واللبس جاهز. كل شخصية بزواياها.','go','glow',''],['col','واللوكيشنز الخمسة فاضيين من غير ناس. ريفرنس نضيف.','go','','5'],['boss','الإضاءة من المكان نفسه. مفيش لمعة إعلانات.','shout','glow',''],['des','نفس بلوك الاستايل في آخر كل برومبت. حملة واحدة.','work','',''],['col','ألوان غنية بس هادية. فاهمك.','cheer','jump','']],
-    talk:[[['col','لوكيشنز FAB الخمسة لازم يبانوا حملة واحدة.'],['des','نفس بلوك الاستايل في كل برومبت.']],[['des','بايبل كاست FAB: 32 زاوية للبطلة.'],['qa','وأنا هراجع الـ 32.']]] },
+    cast:['cre','des','col','boss'],
+    scene:[['cre','الفكرة: حياة يومية راقية. من غير لمعة.','idea','glow',''],['des','بايبل الكاست واللبس جاهز. كل شخصية بزواياها.','go','glow',''],['col','واللوكيشنز الخمسة فاضيين من غير ناس. ريفرنس نضيف.','go','','5'],['boss','الإضاءة من المكان نفسه. مفيش لمعة إعلانات.','shout','glow',''],['des','نفس بلوك الاستايل في آخر كل برومبت. حملة واحدة.','work','',''],['col','ألوان غنية بس هادية. فاهمك.','cheer','jump','']],
+    talk:[[['cre','FAB فكرتها حياة يومية راقية.'],['col','من غير لمعة. حفظتها.']],[['col','لوكيشنز FAB الخمسة لازم يبانوا حملة واحدة.'],['des','نفس بلوك الاستايل في كل برومبت.']],[['des','بايبل كاست FAB: 32 زاوية للبطلة.'],['qa','وأنا هراجع الـ 32.']]] },
   { id:'fairy', tag:'Fairy', title:'Fairy — Mercury TVC', sub:'فيلم AI على ستوري بورد الوكالة', stages:FILM, at:2, updated:'9 أغسطس', agents:['boss','des'],
     note:'آخر حاجة مسجّلة: برومبتات اللقطات، النسخة التالتة (سينماتيك).',
-    cast:['boss','des','qa','col'],
-    scene:[['boss','فريم 11 طلع قوي. الباقي يبقى زيه.','shout','','11'],['des','بلوك السينماتوجرافي بتاعه اتحط في كل الفريمات.','go','glow',''],['qa','والكتابة على العبوة؟ دي بتبوظ في التوليد.','go','big',''],['des','عندنا رندر العبوة بكتابة سليمة. بيترفق مع كل لقطة.','cheer','glow',''],['col','فليرز دافية والأزرق مخفف.','jump','spin',''],['boss','يبان متصوّر. مش متولّد.','shout','','CUT!']],
-    talk:[[['boss','فريم 11 في Fairy طلع قوي. عايز الباقي زيه.'],['col','فليرز دافية وأزرق مخفف. حاضر.']],[['edt','جبل الأطباق في مطبخ Fairy ده مين هيغسله؟'],['rnd','مش أنا.']],[['qa','كتابة عبوة Fairy سليمة في كل لقطة؟'],['des','برندر العبوة المرفق. سليمة.']]] },
+    cast:['cre','boss','des','qa','col'],
+    scene:[['cre','الافتتاحية مطبخ معتم وجبال أطباق. والمشكلة تبان شيك.','idea','shake',''],['boss','فريم 11 طلع قوي. الباقي يبقى زيه.','shout','','11'],['des','بلوك السينماتوجرافي بتاعه اتحط في كل الفريمات.','go','glow',''],['qa','والكتابة على العبوة؟ دي بتبوظ في التوليد.','go','big',''],['des','عندنا رندر العبوة بكتابة سليمة. بيترفق مع كل لقطة.','cheer','glow',''],['col','فليرز دافية والأزرق مخفف.','jump','spin',''],['boss','يبان متصوّر. مش متولّد.','shout','','CUT!']],
+    talk:[[['cre','افتتاحية Fairy: مطبخ معتم وجبال أطباق.'],['boss','شيك. مش كئيبة.']],[['boss','فريم 11 في Fairy طلع قوي. عايز الباقي زيه.'],['col','فليرز دافية وأزرق مخفف. حاضر.']],[['edt','جبل الأطباق في مطبخ Fairy ده مين هيغسله؟'],['rnd','مش أنا.']],[['qa','كتابة عبوة Fairy سليمة في كل لقطة؟'],['des','برندر العبوة المرفق. سليمة.']]] },
   { id:'salam', tag:'Salam', title:'Salam — SOHO', sub:'4 إعلانات + 12 نسخة + فيلم دقيقة · AI', stages:FILM, at:1, updated:'6 أغسطس', agents:['des','qa'],
     note:'آخر حاجة مسجّلة: شيتات الـ 8 شخصيات (V5) وجدول الـ CPS المضغوط.',
-    cast:['des','qa','col'],
-    scene:[['des','8 شخصيات لأربع إعلانات. مفيش اتنين شبه بعض.','go','glow','8'],['qa','هعدّهم. وهبص على كل وش.','go','big',''],['col','البنات كلهم في درجات الأخضر. حتى المناكير.','jump','',''],['des','والجلد طبيعي بمسامه. مفيش بلاستيك.','work','',''],['qa','ومفيش ولا لوجو على الهدوم؟','no','',''],['des','ولا لوجو. دي النسخة الخامسة يا راجل.','cheer','jump','V5']],
-    talk:[[['des','شخصيات Salam التمانية: مفيش اتنين شبه بعض.'],['qa','هعدّهم.']],[['col','الأخضر في كل حاجة في Salam. حتى المناكير.'],['des','خصوصاً المناكير.']]] },
+    cast:['cre','des','qa','col'],
+    scene:[['cre','أربع إعلانات. كل إعلان بولد وبنت.','idea','glow','4'],['des','8 شخصيات لأربع إعلانات. مفيش اتنين شبه بعض.','go','glow','8'],['qa','هعدّهم. وهبص على كل وش.','go','big',''],['col','البنات كلهم في درجات الأخضر. حتى المناكير.','jump','',''],['des','والجلد طبيعي بمسامه. مفيش بلاستيك.','work','',''],['qa','ومفيش ولا لوجو على الهدوم؟','no','',''],['des','ولا لوجو. دي النسخة الخامسة يا راجل.','cheer','jump','V5']],
+    talk:[[['cre','Salam: كل إعلان بشخصيتين، ولد وبنت.'],['des','يعني 8 شيتات. عارف.']],[['des','شخصيات Salam التمانية: مفيش اتنين شبه بعض.'],['qa','هعدّهم.']],[['col','الأخضر في كل حاجة في Salam. حتى المناكير.'],['des','خصوصاً المناكير.']]] },
   { id:'chipsy', tag:'Chipsy', title:'Chipsy — Yummy', sub:'', stages:FILM, at:null, live:true, updated:'4 أكتوبر', agents:['edt','col'],
     note:'شغّال دلوقتي. المرحلة بالتفصيل لسه ماتسجّلتش.',
     cast:['dlv','rnd','edt'],
@@ -444,6 +460,20 @@ const PROJECTS = [
 ];
 const projStatus = (p) => p.at == null ? (p.live ? 'live' : 'todo') : (p.fresh ? 'active' : 'stale');
 const projPct = (p) => p.at == null ? 0 : Math.round((p.at + .5) / p.stages.length * 100);
+
+/* Claude's logged working time per agent, in minutes. The log starts on 4 Oct 2026 with the build of this dashboard;
+   time spent in other chats is not counted. Figures are rounded estimates of how the session's time was split. */
+const WORKLOG = [
+  { a:'eng', m:35, what:'بناء الاستوديو ومحرك المشاهد' },
+  { a:'dev', m:30, what:'قايمة المشاريع، الراديو، مشاهد الكروت، وإصلاح الأعطال' },
+  { a:'des', m:25, what:'اللوجو، الواجهة، شكل الـ Agents، والبروبس' },
+  { a:'cre', m:20, what:'أفكار اللعبة وكتابة حوارات المشاريع' },
+  { a:'dlv', m:20, what:'الرفع على amrsabry.com' },
+  { a:'qa',  m:15, what:'الاختبارات والسكرين شوت قبل كل نشر' },
+];
+const WORKLOG_FROM = '4 أكتوبر';
+const agentMin = (id) => WORKLOG.filter(w => w.a === id).reduce((n, w) => n + w.m, 0);
+const agentProjects = (id) => PROJECTS.filter(p => p.cast.includes(id));
 
 const STATUS = {
   stale:  { label:'محتاج تحديث', cls:'stale' },
@@ -525,11 +555,13 @@ function pline(c, x0, y0, x1, y1) {
 function disc(c, cx, cy, r) { for (let y = -r; y <= r; y++) { const w = Math.round(Math.sqrt(r * r - y * y)); R(c, cx - w, cy + y, w * 2 + 1, 1); } }
 
 /* ================= AMR SABRY — the one character, nine jobs ================= */
-const SKIN = '#e2a876', SKIN_S = '#cf925f', HAIR = '#241a17', STUB = '#8f6648', DARK = '#161214';
+const SKIN = '#e0ab80', SKIN_S = '#c9905f', HAIR = '#151113', BEARD = '#1e1719', STUB = BEARD, DARK = '#0c0b0d', LENS = '#f3d9bd';
 
+/* The base look, shared by every agent: tall swept-up black hair, black rectangular glasses, a full dark beard.
+   Roles are told apart by outfit and what they carry, so the face stays the same. */
 function drawAmr(cx, fy, d, o = {}) {
   const bob = o.bob | 0, hy = fy - 23 + bob, ty = fy - 12 + bob, f = o.frame | 0, id = d.id;
-  const face = o.face || 0;
+  const face = o.face || 0, ey = hy + 5;
   // legs
   if (!o.sit) {
     let l = 4, r = 4;
@@ -540,8 +572,10 @@ function drawAmr(cx, fy, d, o = {}) {
   if (id === 'dlv' && !o.ride) { R(ACCENT, cx - 9, ty - 1, 4, 7); R(PAPER, cx - 8, ty + 1, 2, 2); }
   // torso
   R(d.shirt, cx - 4, ty, 8, 7);
+  if (id === 'cre') { R('#2b2e35', cx - 4, ty, 2, 7); R('#2b2e35', cx + 2, ty, 2, 7); R('#3a3e47', cx - 2, ty + 1, 1, 3); R('#3a3e47', cx + 1, ty + 1, 1, 3); }
   if (id === 'eng') { R('#ffd23f', cx - 4, ty, 2, 7); R('#ffd23f', cx + 2, ty, 2, 7); R(PAPER, cx - 4, ty + 4, 8, 1); }
-  if (id === 'dev') { R(PAPER, cx - 2, ty + 1, 1, 2); R(PAPER, cx + 1, ty + 1, 1, 2); R('#175357', cx - 3, ty + 4, 6, 2); }
+  if (id === 'des') { R('#16181c', cx - 4, ty + 1, 8, 1); R('#16181c', cx - 4, ty + 3, 8, 1); R('#16181c', cx - 4, ty + 5, 8, 1); }
+  if (id === 'dev') { R(d.shirt, cx - 5, ty - 1, 10, 1); R(PAPER, cx - 2, ty + 1, 1, 2); R(PAPER, cx + 1, ty + 1, 1, 2); R('#175357', cx - 3, ty + 4, 6, 2); }
   if (id === 'edt') { R(PAPER, cx - 1, ty + 2, 1, 3); R(PAPER, cx, ty + 3, 1, 1); }
   if (id === 'col') { R('#ff8a3c', cx, ty, 4, 7); }
   if (id === 'rnd') { R(PAPER, cx - 4, ty + 1, 8, 1); R(PAPER, cx - 4, ty + 3, 8, 1); R(PAPER, cx - 4, ty + 5, 8, 1); }
@@ -549,18 +583,17 @@ function drawAmr(cx, fy, d, o = {}) {
   if (id === 'dlv') { R(PAPER, cx, ty, 1, 7); }
   if (id === 'boss') { R(ACCENT, cx - 4, ty, 8, 2); R(ACCENT, cx + 1, ty + 2, 2, 3); R('#b32d16', cx + 1, ty + 5, 2, 1); }
   // arms
+  const sleeve = id === 'cre' ? '#2b2e35' : id === 'des' ? '#16181c' : d.shirt;
   if (o.type) {
     const a = f & 1;
-    R(d.shirt, cx - 6, ty, 2, 4 - a); R(SKIN, cx - 6, ty + 4 - a, 2, 1);
-    R(d.shirt, cx + 4, ty, 2, 3 + a); R(SKIN, cx + 4, ty + 3 + a, 2, 1);
+    R(sleeve, cx - 6, ty, 2, 4 - a); R(SKIN, cx - 6, ty + 4 - a, 2, 1);
+    R(sleeve, cx + 4, ty, 2, 3 + a); R(SKIN, cx + 4, ty + 3 + a, 2, 1);
   } else if (o.cheer) {
-    R(d.shirt, cx - 7, ty - 3, 2, 5); R(SKIN, cx - 7, ty - 4, 2, 1);
-    R(d.shirt, cx + 5, ty - 3, 2, 5); R(SKIN, cx + 5, ty - 4, 2, 1);
+    R(sleeve, cx - 7, ty - 3, 2, 5); R(SKIN, cx - 7, ty - 4, 2, 1);
+    R(sleeve, cx + 5, ty - 3, 2, 5); R(SKIN, cx + 5, ty - 4, 2, 1);
   } else {
-    const sw = o.walk ? (f & 1 ? 1 : -1) : 0;
-    R(d.shirt, cx - 6, ty, 2, 5 + (sw > 0 ? 0 : 0)); R(SKIN, cx - 6, ty + 5, 2, 1);
-    R(d.shirt, cx + 4, ty, 2, 5); R(SKIN, cx + 4, ty + 5, 2, 1);
-    if (id === 'col') R('#ff8a3c', cx + 4, ty, 2, 5);
+    R(sleeve, cx - 6, ty, 2, 5); R(SKIN, cx - 6, ty + 5, 2, 1);
+    R(id === 'col' ? '#ff8a3c' : sleeve, cx + 4, ty, 2, 5); R(SKIN, cx + 4, ty + 5, 2, 1);
   }
   if (id === 'boss' && !o.cheer) { const my = ty + 1 - (o.shout ? 3 : 0); R('#30343c', cx + 6, my + 2, 2, 2); R(PAPER, cx + 8, my + 1, 2, 4); R(PAPER, cx + 10, my, 2, 6); R(ACCENT, cx + 12, my - 1, 1, 8); }
   if (id === 'qa' && !o.cheer) {
@@ -568,30 +601,31 @@ function drawAmr(cx, fy, d, o = {}) {
     R('#cfd8dc', mx, my, 4, 1); R('#cfd8dc', mx, my + 3, 4, 1); R('#cfd8dc', mx - 1, my + 1, 1, 2); R('#cfd8dc', mx + 4, my + 1, 1, 2);
     R('#9fe8ff', mx, my + 1, 4, 2); R(PAPER, mx, my + 1, 1, 1); R('#7a5a3a', mx + 4, my + 4, 1, 2);
   }
-  // head
-  R(SKIN, cx - 5, hy + 1, 10, 10); R(SKIN, cx - 6, hy + 2, 12, 8); R(SKIN_S, cx + 5, hy + 3, 1, 5);
-  // stubble + mouth
-  R(STUB, cx - 6, hy + 7, 1, 3); R(STUB, cx + 5, hy + 7, 1, 3); R(STUB, cx - 5, hy + 8, 10, 2); R(STUB, cx - 4, hy + 10, 8, 1);
-  if (o.sleep) R('#5a2f2a', cx - 1, hy + 9, 2, 1); else if (o.cheer || o.happy) { R('#5a2f2a', cx - 2, hy + 8, 4, 1); R(PAPER, cx - 1, hy + 8, 2, 1); } else R('#5a2f2a', cx - 2 + face, hy + 9, 3, 1);
-  // hair
-  R(HAIR, cx - 5, hy, 10, 3); R(HAIR, cx - 6, hy + 1, 12, 2); R(HAIR, cx - 6, hy + 3, 1, 3); R(HAIR, cx + 5, hy + 3, 1, 3); R(HAIR, cx - 1, hy + 3, 4, 1);
-  // eyes
-  const ey = hy + 5;
-  if (o.sleep || o.blink) { R(DARK, cx - 4 + face, ey + 1, 2, 1); R(DARK, cx + 2 + face, ey + 1, 2, 1); }
-  else { R(HAIR, cx - 4 + face, ey - 1, 2, 1); R(HAIR, cx + 2 + face, ey - 1, 2, 1); R(DARK, cx - 3 + face, ey, 1, 2); R(DARK, cx + 2 + face, ey, 1, 2); }
-  // headgear
+  // turtleneck / collar
+  if (id === 'cre') R('#101114', cx - 3, ty - 1, 6, 1);
+  // head + ears
+  R(SKIN, cx - 5, hy + 1, 10, 10); R(SKIN, cx - 6, hy + 2, 12, 8); R(SKIN, cx - 7, hy + 5, 1, 2); R(SKIN, cx + 6, hy + 5, 1, 2); R(SKIN_S, cx - 1, hy + 7, 2, 1);
+  // beard: full and dark, joined to the sideburns
+  R(BEARD, cx - 6, hy + 7, 1, 3); R(BEARD, cx + 5, hy + 7, 1, 3); R(BEARD, cx - 5, hy + 8, 10, 2); R(BEARD, cx - 4, hy + 10, 8, 1);
+  if (o.sleep) R('#b9796c', cx - 1, hy + 9, 2, 1); else if (o.cheer || o.happy) R(PAPER, cx - 2, hy + 9, 4, 1); else R('#c98a7a', cx - 1 + face, hy + 9, 3, 1);
+  // hair: tall, swept up
+  R(HAIR, cx - 3, hy - 3, 7, 1); R(HAIR, cx - 5, hy - 2, 11, 2); R(HAIR, cx - 6, hy, 12, 3); R(HAIR, cx - 7, hy, 1, 3); R(HAIR, cx + 6, hy, 1, 2); R(HAIR, cx - 6, hy + 3, 1, 4); R(HAIR, cx + 5, hy + 3, 1, 4); R('#2a2226', cx - 2, hy - 2, 4, 1);
+  // glasses: black rectangular frames
+  const lensL = id === 'col' ? '#2fd3c4' : id === 'boss' ? '#1b1e24' : LENS, lensR = id === 'col' ? '#ff8a3c' : id === 'boss' ? '#1b1e24' : LENS;
+  R(DARK, cx - 6, ey - 1, 12, 1); R(DARK, cx - 6, ey, 1, 2); R(DARK, cx + 5, ey, 1, 2); R(DARK, cx - 1, ey, 2, 1);
+  R(lensL, cx - 5, ey, 4, 2); R(lensR, cx + 1, ey, 4, 2);
+  if (id !== 'boss') {
+    if (o.sleep || o.blink) { R(DARK, cx - 4 + face, ey + 1, 2, 1); R(DARK, cx + 2 + face, ey + 1, 2, 1); }
+    else { R(DARK, cx - 3 + face, ey, 1, 2); R(DARK, cx + 2 + face, ey, 1, 2); }
+    if (id !== 'col') { R('#bfe0f5', cx - 5, ey, 1, 1); R('#bfe0f5', cx + 1, ey, 1, 1); }
+  } else { R('#4a5f6b', cx - 5, ey, 1, 1); R('#4a5f6b', cx + 1, ey, 1, 1); }
+  // what each role wears on its head
   switch (id) {
-    case 'eng': R('#ffd23f', cx - 6, hy - 1, 12, 4); R('#ffd23f', cx - 7, hy + 3, 14, 1); R('#e0a800', cx - 1, hy - 2, 2, 5); break;
-    case 'des': R('#b3261a', cx - 6, hy - 1, 12, 3); R('#b3261a', cx - 8, hy + 1, 5, 2); R('#b3261a', cx, hy - 2, 1, 1); R('#ffd23f', cx + 6, hy + 2, 1, 4); break;
-    case 'dev': R(d.shirt, cx - 7, hy - 1, 14, 3); R(d.shirt, cx - 7, hy + 2, 2, 9); R(d.shirt, cx + 5, hy + 2, 2, 9);
-      if (!o.sleep) { R(DARK, cx - 5, ey, 10, 1); R('#bfefff', cx - 4, ey, 2, 2); R('#bfefff', cx + 2, ey, 2, 2); R(DARK, cx - 3 + face, ey + 1, 1, 1); R(DARK, cx + 2 + face, ey + 1, 1, 1); } break;
-    case 'edt': R('#30343c', cx - 6, hy - 1, 12, 1); R('#30343c', cx - 7, hy, 1, 3); R('#30343c', cx + 6, hy, 1, 3); R(ACCENT, cx - 8, hy + 3, 2, 5); R(ACCENT, cx + 6, hy + 3, 2, 5); break;
-    case 'col': R('#2fd3c4', cx - 5, ey, 4, 2); R('#ff8a3c', cx + 1, ey, 4, 2); R(DARK, cx - 1, ey, 2, 1); R(PAPER, cx - 5, ey, 1, 1); R(PAPER, cx + 1, ey, 1, 1); break;
-    case 'rnd': R('#5d8fd0', cx - 6, hy - 1, 12, 3); R('#5d8fd0', cx + 1, hy - 3, 5, 2); R('#5d8fd0', cx + 6, hy - 2, 2, 4); R(PAPER, cx + 7, hy + 2, 2, 2); R(PAPER, cx - 6, hy + 1, 12, 1); break;
-    case 'qa': R('#7a5a3a', cx - 6, hy - 1, 12, 3); R('#5a4630', cx - 8, hy + 2, 16, 1); R('#5a4630', cx - 2, hy - 2, 4, 1); break;
-    case 'dlv': R('#d83a2e', cx - 6, hy - 2, 12, 5); R(PAPER, cx - 6, hy, 12, 1); R('#22303a', cx - 6, hy + 3, 12, 1); break;
-    case 'boss': R(DARK, cx - 5, ey, 10, 2); R(DARK, cx - 6, ey, 12, 1); R('#4a5f6b', cx - 4, ey, 1, 1); R('#4a5f6b', cx + 2, ey, 1, 1);
-      R('#16181c', cx - 6, hy - 1, 12, 4); R('#16181c', cx - 5, hy - 2, 10, 1); R('#2a2f3a', cx - 7, hy + 3, 14, 1); R(ACCENT, cx - 1, hy, 2, 2); break;
+    case 'eng': R('#ffd23f', cx - 6, hy - 3, 12, 5); R('#ffd23f', cx - 7, hy + 2, 14, 1); R('#e0a800', cx - 1, hy - 4, 2, 6); break;
+    case 'des': R('#ffd23f', cx + 6, hy + 1, 1, 5); R('#d83a2e', cx + 6, hy, 1, 1); break;
+    case 'edt': R('#30343c', cx - 6, hy - 3, 12, 1); R('#30343c', cx - 7, hy - 2, 1, 5); R('#30343c', cx + 6, hy - 2, 1, 5); R(ACCENT, cx - 8, hy + 3, 2, 5); R(ACCENT, cx + 6, hy + 3, 2, 5); break;
+    case 'rnd': R('#5d8fd0', cx - 6, hy - 3, 12, 5); R('#5d8fd0', cx + 1, hy - 5, 5, 2); R('#5d8fd0', cx + 6, hy - 4, 2, 4); R(PAPER, cx + 7, hy, 2, 2); R(PAPER, cx - 6, hy + 1, 12, 1); break;
+    case 'dlv': R('#d83a2e', cx - 6, hy - 3, 12, 6); R(PAPER, cx - 6, hy - 1, 12, 1); R('#22303a', cx - 6, hy + 2, 12, 1); break;
   }
 }
 
@@ -915,6 +949,7 @@ function initAgents() {
     else if (d.id === 'rnd') { a.home = { x: 331, y: 193, sit: true }; a.state = 'sleep'; }
     else if (d.id === 'qa') { a.home = { x: 192, y: 206, sit: false }; a.state = 'roam'; a.wait = 2; }
     else if (d.id === 'dlv') { a.home = { x: 268, y: 208, sit: false }; a.state = 'idle'; }
+    else if (d.id === 'cre') { a.home = { x: 158, y: 205, sit: false }; a.state = 'think'; a.wait = 1; }
     a.x = a.home.x; a.y = a.home.y;
     sim.agents[d.id] = a;
   });
@@ -953,6 +988,9 @@ function update(dt) {
     stepAgent(a, dt);
     if (a.wait > 0) { a.wait -= dt; if (a.wait <= 0 && a.after) { const f = a.after; a.after = null; f(); } }
     if (a.id === sim.p1) return;
+    if (a.state === 'think' && !a.moving && a.wait <= 0) {   // the creative paces by the board and gets ideas
+      if (Math.random() < .45) { a.idea = sim.t + 2.4; a.wait = 2.8; beep(980, .04); } else go(a, [{ x: 150 + Math.random() * 16, y: 205 }], () => { a.wait = 2 + Math.random() * 3; });
+    }
     if (a.state === 'roam' && !a.moving && a.wait <= 0) {
       const s = pick(QA_STOPS); go(a, [{ x: s.x, y: s.y }], () => { a.wait = 2.5 + Math.random() * 2.5; });
     }
@@ -1044,7 +1082,8 @@ function draw() {
     const fx = inScene && a.fx && a.fx.until > t ? a.fx.type : null, jy = fx === 'jump' ? Math.round(Math.abs(Math.sin(t * 9)) * 5) : 0;
     const o = { sit, sleep: asleep || fx === 'sleep', type: (a.state === 'work' && home) || fx === 'work', walk: a.moving, frame: Math.floor(t * (a.moving ? 7 : 6 * speed)), face: fx === 'no' ? (Math.floor(t * 5) & 1 ? 1 : -1) : a.face,
       blink: ((t + a.blinkAt) % 4) < .14, bob: party ? (Math.floor(t * 8 + a.x) & 1 ? -2 : 0) : speaking ? (Math.floor(t * 6) & 1 ? -1 : 0) : (a.moving ? Math.floor(t * 7) & 1 : 0), cheer: party || fx === 'cheer', happy: sim.boost > 0 || speaking, shout: a.shout > t };
-    const dr = { y: a.y, d: () => drawAmr(a.x, a.y - jy, a.def, o) }; L.push(dr); if (inScene) focus.push(dr);
+    const bulb = a.idea > t || fx === 'idea';
+    const dr = { y: a.y, d: () => { drawAmr(a.x, a.y - jy, a.def, o); if (bulb) drawBulb(a.x, a.y - 30, Math.floor(t * 5) & 1 || (a.idea - t) < 1.6); } }; L.push(dr); if (inScene) focus.push(dr);
     sim.hits.push({ kind: 'agent', id: a.id, x0: a.x - 9, x1: a.x + 9, y0: a.y - 27, y1: a.y + 1, z: a.y });
   });
   L.sort((a, b) => a.y - b.y).forEach(e => e.d());
@@ -1149,8 +1188,8 @@ function pushLog(id, text, tag) {
 }
 
 /* ---------- project scenes: the cast walks to the middle of the floor and talks it through ---------- */
-const SPOT = { x: 196, y: 213 }, MARKS = [[-30, -2], [30, -2], [-54, 0], [54, 0]];
-const defaultState = (id) => id === 'qa' ? 'roam' : id === 'rnd' ? 'sleep' : id === 'dlv' ? 'idle' : 'work';
+const SPOT = { x: 196, y: 213 }, MARKS = [[-30, -2], [30, -2], [-54, 0], [54, 0], [-78, -1]];
+const defaultState = (id) => id === 'qa' ? 'roam' : id === 'rnd' ? 'sleep' : id === 'dlv' ? 'idle' : id === 'cre' ? 'think' : 'work';
 function outPath(a) { const h = a.home; if (!h.sit || Math.abs(a.x - h.x) > 1 || Math.abs(a.y - h.y) > 1 || a.id === 'rnd') return []; if (a.id === 'boss') return [{ x: 146, y: 194 }, { x: 146, y: 207 }]; return [{ x: h.x + 22, y: h.y }, { x: h.x + 22, y: 166 }]; }
 function homePath(a) { const h = a.home; if (!h.sit || a.id === 'rnd') return [{ x: h.x, y: h.y }]; if (a.id === 'boss') return [{ x: 146, y: 207 }, { x: 146, y: 194 }, { x: h.x, y: h.y }]; return [{ x: h.x + 22, y: 166 }, { x: h.x + 22, y: h.y }, { x: h.x, y: h.y }]; }
 function startScene(pid) {
@@ -1177,7 +1216,7 @@ function doAct(s, who, act, pfx, pop) {
     const prev = s.near[side]; if (prev && prev !== a) { const pm = s.mark[prev.id]; go(prev, [{ x: pm.x, y: pm.y }], () => { prev.face = pm.x < SPOT.x ? 1 : -1; }); }
     s.near[side] = a; a.fx = { type: 'work', until: t + 99 }; go(a, [{ x: SPOT.x + (side === 'L' ? -17 : 17), y: SPOT.y - 1 }], () => { a.face = side === 'L' ? 1 : -1; });
   } else if (act === 'shout') { a.shout = t + 2.4; a.fx = { type: 'jump', until: t + .7 }; }
-  else a.fx = { type: act, until: t + (act === 'sleep' ? 99 : 2.6) };
+  else a.fx = { type: act, until: t + (act === 'sleep' ? 99 : act === 'idea' ? 3.4 : 2.6) };
 }
 function updateScene(dt) {
   const s = sim.scene; if (!s) return; s.timer += dt;
@@ -1223,7 +1262,7 @@ function petCat() {
 function partyTime() { sim.party = 7; unlock('konami'); pushLog(null, 'حد دخّل الكود السري. الشغل وقف.'); jingle([523, 523, 784, 784, 880, 880, 784]); }
 function setP1(id) {
   const prev = sim.p1 && sim.agents[sim.p1];
-  if (prev) { prev.moved = false; const h = prev.home; go(prev, [{ x: h.x, y: h.y }], () => { prev.state = prev.id === 'qa' ? 'roam' : prev.id === 'rnd' ? 'sleep' : prev.id === 'dlv' ? 'idle' : 'work'; }); }
+  if (prev) { prev.moved = false; const h = prev.home; go(prev, [{ x: h.x, y: h.y }], () => { prev.state = defaultState(prev.id); }); }
   sim.p1 = id; store.set('p1', id);
   if (id) { const a = sim.agents[id]; a.state = 'player'; a.path = []; a.after = null; a.wait = 0; a.moved = true; if (a.home.sit) go(a, [{ x: a.x + 22, y: a.y }, { x: a.x + 22, y: Math.max(168, a.y + 14) }]); unlock('p1'); say(a, 'أنا معاك. وريني الطريق.', 2400); $('#hint').textContent = 'بتلعب بـ' + a.def.role + '. دوس على الأرض أو استخدم الأسهم عشان يتحرك.'; }
   else $('#hint').textContent = HINT;
@@ -1268,18 +1307,24 @@ const LINE_T = 3.6;
 let minis = [];
 const miniSeen = window.IntersectionObserver ? new IntersectionObserver(es => es.forEach(e => { e.target._on = e.isIntersecting; })) : null;
 function miniScene(p) {
-  const wrap = el('div', 'mini-wrap'), c = document.createElement('canvas'), cap = el('p', 'mini-cap'); c.width = 128 * 3; c.height = 50 * 3; c.className = 'mini'; c._on = true;
+  const wrap = el('div', 'mini-wrap'), talk = el('div', 'mini-talk'), bub = el('p', 'mini-bub'), c = document.createElement('canvas'); c.width = 128 * 3; c.height = 40 * 3; c.className = 'mini'; c._on = true;
   c.setAttribute('role', 'img'); c.setAttribute('aria-label', 'مشهد متحرك: ' + p.cast.map(id => AGENTS.find(a => a.id === id).role).join('، '));
-  wrap.appendChild(c); wrap.appendChild(cap); minis.push({ c, x: c.getContext('2d'), p, cap, idx: -1 }); if (miniSeen) miniSeen.observe(c); return wrap;
+  talk.appendChild(bub); wrap.appendChild(talk); wrap.appendChild(c); minis.push({ c, x: c.getContext('2d'), p, bub, wrap, idx: -1, sx: 64 }); if (miniSeen) miniSeen.observe(c); return wrap;
 }
+function placeMiniBubble(m) {
+  const cw = m.c.clientWidth; if (!cw) return false; const W = m.wrap.clientWidth, sx = m.c.offsetLeft + m.sx / 128 * cw, bw = m.bub.offsetWidth;
+  const left = Math.max(bw / 2 + 3, Math.min(W - bw / 2 - 3, sx)); m.bub.style.left = left + 'px'; m.bub.style.setProperty('--tail', Math.round(sx - left) + 'px'); return true;
+}
+let miniTick = 0;
 function drawMinis(t) {
-  const OFF = [-23, 23, -42, 42, -58], FY = 46;
+  const OFF = [-23, 23, -42, 42, -58], FY = 37; miniTick++;
   minis.forEach((m, mi) => {
     if (!m.c.isConnected) return;
     const p = m.p, tt = t + mi * 1.3, idx = Math.floor(tt / LINE_T) % p.scene.length, ph = (tt % LINE_T) / LINE_T, [who, text, act, pfx, pop] = p.scene[idx];
-    if (idx !== m.idx) { m.idx = idx; m.cap.textContent = ''; m.cap.appendChild(el('b', null, AGENTS.find(a => a.id === who).role)); m.cap.appendChild(el('span', null, text)); }
+    if (idx !== m.idx) { m.idx = idx; m.bub.textContent = text; m.sx = 64 + OFF[p.cast.indexOf(who)]; m.placed = placeMiniBubble(m); }
+    else if (!m.placed || miniTick % 45 === 0) m.placed = placeMiniBubble(m);
     if (!m.c._on) return;
-    g = m.x; g.setTransform(3, 0, 0, 3, 0, 0); g.imageSmoothingEnabled = false; g.save(); g.translate(0, 4); drawBackdrop(p.id, tt); g.restore(); R('#0a1216', 0, 0, 128, 4);
+    g = m.x; g.setTransform(3, 0, 0, 3, 0, 0); g.imageSmoothingEnabled = false; g.save(); g.translate(0, -6); drawBackdrop(p.id, tt); g.restore();
     const list = [{ y: FY + 1.5, d: () => drawPropFx(p.id, 64, FY + 1, tt, ph > .1 && ph < .9 ? pfx : '') }];
     p.cast.forEach((id, k) => {
       const d = AGENTS.find(a => a.id === id), on = id === who, side = OFF[k] < 0 ? 1 : -1; let x = 64 + OFF[k], y = FY - (k > 1 ? 1 : 0);
@@ -1290,16 +1335,16 @@ function drawMinis(t) {
         if (act === 'go') { const gp = ph < .22 ? ph / .22 : ph > .86 ? (1 - ph) / .14 : 1; x += side * Math.round(gp * 9); o.walk = ph < .22 || ph > .86; o.type = !o.walk; }
         else if (act === 'work') o.type = true;
         else if (act === 'cheer') o.cheer = true;
-        else if (act === 'jump') y -= Math.round(Math.abs(Math.sin(tt * 9)) * 4);
+        else if (act === 'jump') y -= Math.round(Math.abs(Math.sin(tt * 9)) * 3);
         else if (act === 'no') o.face = Math.floor(tt * 5) & 1 ? 1 : -1;
         else if (act === 'sleep') o.sleep = true;
         else if (act === 'shout') { o.shout = true; if (ph < .2) y -= 2; }
-        else if (act === 'idea') { bulb = true; if (ph < .3) y -= Math.round(Math.abs(Math.sin(tt * 9)) * 3); }
+        else if (act === 'idea') { bulb = true; if (ph < .3) y -= Math.round(Math.abs(Math.sin(tt * 9)) * 2); }
       }
-      list.push({ y, d: () => { drawAmr(x, y, d, o); if (bulb) drawBulb(x, y - 30, Math.floor(tt * 4) & 1 || ph > .3); else if (on && !o.sleep) drawTalkDots(x, y - 28, tt); if (o.sleep && Math.floor(tt * 2) & 1) ptext('Z', x + 6, y - 28, '#9fc4e8'); } });
+      list.push({ y, d: () => { drawAmr(x, y, d, o); if (bulb) drawBulb(x + 9, y - 22, Math.floor(tt * 4) & 1 || ph > .3); if (o.sleep && Math.floor(tt * 2) & 1) ptext('Z', x + 7, y - 24, '#9fc4e8'); } });
     });
     list.sort((a, b) => a.y - b.y).forEach(e => e.d());
-    if (pop && ph < .75) ptext(pop, 64 - ptextW(pop) / 2, FY - 30 - Math.round(ph * 10), GOLD);
+    if (pop && ph < .75) ptext(pop, 64 - ptextW(pop) / 2, 3 + Math.round((1 - ph) * 3), GOLD);
   });
 }
 function playScene(id) { startScene(id); $('#stage').scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' }); }
@@ -1327,11 +1372,30 @@ function renderQuests() {
   const cl = $('#choreList'); cl.textContent = ''; const done = w.quests.filter(q => q.status === 'done').length; $('#choreSum').textContent = done + '/' + w.quests.length;
   w.quests.forEach(q => { const li = el('li', 'chore'), t = el('div'); t.appendChild(el('h3', null, q.title)); t.appendChild(el('p', null, q.note)); li.appendChild(t); li.appendChild(el('span', 'pill ' + STATUS[q.status].cls, STATUS[q.status].label)); cl.appendChild(li); });
 }
+const fmtMin = (m) => m ? (m >= 60 ? (Math.round(m / 6) / 10) + ' ساعة' : m + ' دقيقة') : 'لسه ولا دقيقة';
 function renderTeam() {
+  // workload: who is on which projects, who is busiest, who is idle
+  const rows = AGENTS.map(d => ({ d, ps: agentProjects(d.id), m: agentMin(d.id) })).sort((a, b) => b.ps.length - a.ps.length || b.m - a.m);
+  const max = rows[0].ps.length, min = rows[rows.length - 1].ps.length, list = $('#loadList'); list.textContent = '';
+  const top = rows.filter(r => r.ps.length === max), low = rows.filter(r => r.ps.length === min), noTime = rows.filter(r => !r.m);
+  $('#loadSum').textContent = 'الأكتر مشغول: ' + top.map(r => r.d.role).join(' و') + ' (' + max + ' مشاريع)';
+  rows.forEach((r, k) => {
+    const li = el('li', 'load' + (r.ps.length === max ? ' top' : r.ps.length === min ? ' low' : '')), b = el('button', 'crewbtn'); b.type = 'button'; b.appendChild(headCanvas(r.d, 2)); b.addEventListener('click', () => openCard(r.d.id));
+    li.appendChild(el('span', 'l-rank', String(k + 1))); li.appendChild(b);
+    const mid = el('div', 'l-mid'), hd = el('div', 'l-head'); hd.appendChild(el('strong', null, r.d.role));
+    if (r.ps.length === max) hd.appendChild(el('span', 'pill active', 'الأكتر مشغول')); else if (r.ps.length === 0) hd.appendChild(el('span', 'pill locked', 'مابيعملش حاجة')); else if (r.ps.length === min) hd.appendChild(el('span', 'pill todo', 'الأقل شغل'));
+    mid.appendChild(hd);
+    const bar = el('div', 'bar'); for (let i = 0; i < max; i++) bar.appendChild(el('i', i < r.ps.length ? 'on' : '')); bar.setAttribute('role', 'img'); bar.setAttribute('aria-label', r.ps.length + ' مشاريع'); mid.appendChild(bar);
+    const tags = el('p', 'l-tags'); r.ps.forEach(p => tags.appendChild(el('i', 'tag', p.tag))); if (!r.ps.length) tags.textContent = 'مفيش مشاريع'; mid.appendChild(tags); li.appendChild(mid);
+    const tm = el('div', 'l-time'); tm.appendChild(el('b', null, String(r.ps.length))); tm.appendChild(el('span', null, 'مشاريع')); tm.appendChild(el('em', null, fmtMin(r.m))); li.appendChild(tm);
+    list.appendChild(li);
+  });
+  $('#loadNote').textContent = (min === 0 ? 'اللي مابيعملش حاجة: ' : 'مفيش حد فاضي خالص. الأقل شغل: ') + low.map(r => r.d.role).join(' و') + (min ? ' (' + (min === 1 ? 'مشروع واحد' : min + ' مشاريع') + ')' : '') + '. '
+    + 'وقت كلود المسجّل بدأ ' + WORKLOG_FROM + ' وبيحسب شغل الداشبورد ده بس' + (noTime.length ? '؛ لسه ماسجّلوش وقت: ' + noTime.map(r => r.d.role).join('، ') + '.' : '.');
   const grid = $('#teamGrid'); grid.textContent = '';
   AGENTS.forEach(d => {
-    const b = el('button', 'agent' + (sim.p1 === d.id ? ' p1' : '')); b.type = 'button'; b.appendChild(avatarCanvas(d, 3));
-    b.appendChild(el('span', 'a-name', 'عمرو صبري')); b.appendChild(el('strong', null, d.role)); b.appendChild(el('span', 'a-cls', d.cls + ' · LV' + d.lvl));
+    const b = el('button', 'agent' + (sim.p1 === d.id ? ' p1' : '')); b.type = 'button'; b.appendChild(avatarCanvas(d, 2));
+    b.appendChild(el('strong', null, d.role)); b.appendChild(el('span', 'a-cls', d.cls));
     if (sim.p1 === d.id) b.appendChild(el('span', 'a-p1', 'P1'));
     b.addEventListener('click', () => { openCard(d.id); beep(700); }); grid.appendChild(b);
   });
@@ -1356,7 +1420,7 @@ function openCard(id) {
   const st = el('dl', 'stats'); Object.entries(d.stats).forEach(([k, v]) => { st.appendChild(el('dt', null, k)); const dd = el('dd'), bar = el('div', 'bar'); for (let i = 0; i < 10; i++) bar.appendChild(el('i', i < Math.round(v / 10) ? 'on' : '')); dd.appendChild(bar); dd.appendChild(el('span', null, v)); st.appendChild(dd); });
   body.appendChild(st);
   const mv = el('div', 'c-rows'); [['الضربة القاضية', d.move + ' — ' + d.moveDesc], ['نقطة ضعفه', d.weak]].forEach(([k, v]) => { const r = el('p'); r.appendChild(el('b', null, k)); r.appendChild(el('span', null, v)); mv.appendChild(r); });
-  const mine = PROJECTS.filter(q => q.agents.includes(id)); const r = el('p'); r.appendChild(el('b', null, 'شغّال على')); r.appendChild(el('span', null, mine.length ? mine.map(q => q.title).join('، ') : 'ولا حاجة. مستني بروجكت.')); mv.appendChild(r);
+  const mine = agentProjects(id); const hr = el('p'); hr.appendChild(el('b', null, 'وقت كلود المسجّل')); hr.appendChild(el('span', null, fmtMin(agentMin(id)) + (agentMin(id) ? ' — ' + WORKLOG.filter(w => w.a === id).map(w => w.what).join('، ') : ''))); mv.appendChild(hr); const r = el('p'); r.appendChild(el('b', null, 'شغّال على')); r.appendChild(el('span', null, mine.length ? mine.map(q => q.title).join('، ') : 'ولا حاجة. مستني بروجكت.')); mv.appendChild(r);
   body.appendChild(mv);
   const act = el('div', 'c-act'), play = el('button', 'btn primary', sim.p1 === id ? 'رجّعه مكتبه' : 'العب بيه'); play.type = 'button';
   play.addEventListener('click', () => { setP1(sim.p1 === id ? null : id); $('#card').close(); cv.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); });
@@ -1366,7 +1430,7 @@ function openCard(id) {
 }
 $('#card').addEventListener('click', (e) => { if (e.target === $('#card')) $('#card').close(); });
 
-const PIPE = [['eng', 'يبني الصفحة'], ['des', 'يلبّسها'], ['dev', 'يشغّلها'], ['qa', 'يرفضها مرة'], ['boss', 'يقول كات'], ['dlv', 'يوصّل اللينك']];
+const PIPE = [['cre', 'يطلّع الفكرة'], ['eng', 'يبني الصفحة'], ['des', 'يلبّسها'], ['dev', 'يشغّلها'], ['qa', 'يرفضها مرة'], ['boss', 'يقول كات'], ['dlv', 'يوصّل اللينك']];
 function renderPipe() {
   const ol = $('#pipe'); ol.textContent = '';
   PIPE.forEach(([id, verb]) => { const d = AGENTS.find(a => a.id === id), li = el('li'), b = el('button', 'crewbtn'); b.type = 'button'; b.appendChild(headCanvas(d, 3)); b.addEventListener('click', () => openCard(id)); li.appendChild(b); li.appendChild(el('strong', null, d.role)); li.appendChild(el('span', null, verb)); ol.appendChild(li); });
