@@ -674,14 +674,41 @@ window.__ani={play,stop,seek,setFilm,setOpt,OPTS};
       else if(kind==='frown'){ px(19,17,col); px(26,17,col); for(c=20;c<=25;c++) px(c,16,col); }
       else if(kind==='o'){ for(c=21;c<=24;c++){ px(c,14,col); px(c,17,col); } px(21,15,col); px(21,16,col); px(24,15,col); px(24,16,col); }
       else if(kind==='wave'){ for(c=18;c<=27;c++) px(c,16-(c%4<2?1:0),col); } }
+    /* context screens: what the cursor is on decides what the LED shows (set by window.__amCtx) */
+    var CW={'3d':'DRAG','img':'ZOOM','play':'PLAY','btn':'CLICK','note':'WRITE'}, HOT='#ef6a3c';
+    function ctxDraw(C,tick,col,dim){ var c,r,i,a,k;
+      if(C==='3d'){            // orbit ring with a travelling marker around "360"
+        for(i=0;i<40;i++){ a=i/40*6.2832; px(22+Math.round(17*Math.cos(a)),9+Math.round(6*Math.sin(a)),dim); }
+        a=tick/24*6.2832; for(k=0;k<3;k++){ var b=a-k*.22; px(22+Math.round(17*Math.cos(b)),9+Math.round(6*Math.sin(b)),k?col:HOT); px(22+Math.round(17*Math.cos(b)),10+Math.round(6*Math.sin(b)),k?col:HOT); }
+        text('360',17,7,col);
+      } else if(C==='img'){    // picture frame with sun and hills, plus a pulsing magnifier
+        for(c=6;c<=30;c++){ px(c,2,col); px(c,16,col); } for(r=2;r<=16;r++){ px(6,r,col); px(30,r,col); }
+        px(25,5,HOT); px(26,5,HOT); px(25,6,HOT); px(26,6,HOT);
+        for(k=0;k<7;k++) for(c=14-k;c<=14+k;c++) if(c>6&&c<30) px(c,8+k,dim);
+        for(k=0;k<4;k++) for(c=24-k;c<=24+k;c++) if(c<30) px(c,11+k,col);
+        k=tick%10<5?0:1; for(i=0;i<16;i++){ a=i/16*6.2832; px(38+Math.round((3+k)*Math.cos(a)),8+Math.round((3+k)*Math.sin(a)),HOT); }
+        px(37,8,HOT); px(38,8,HOT); px(39,8,HOT); px(38,7,HOT); px(38,9,HOT); for(i=0;i<4;i++) px(41+k+i,11+k+i,HOT);
+      } else if(C==='play'){   // play triangle and a live equaliser
+        for(r=0;r<=12;r++){ k=r<=6?r:12-r; for(c=0;c<=k*1.6;c++) px(7+c,3+r,HOT); }
+        for(i=0;i<7;i++){ k=2+((tick*3+i*5+((tick+i)%3)*2)%10); for(r=0;r<k;r++) px(24+i*3,15-r,i%2?col:dim), px(25+i*3,15-r,i%2?col:dim); }
+        for(c=6;c<=44;c++) px(c,17,'rgba(255,230,207,.25)'); k=6+(tick%39); px(k,17,col); px(k+1,17,col);
+      } else if(C==='btn'){    // pointer arrow with a click ripple
+        var A=['1','11','111','1111','11111','111111','1111111','1111','11 11','1  11','    11','    11'];
+        for(r=0;r<A.length;r++) for(c=0;c<A[r].length;c++) if(A[r][c]==='1') px(20+c,4+r,col);
+        k=tick%8; if(k<6){ for(i=0;i<20;i++){ a=i/20*6.2832; px(20+Math.round((2+k)*1.6*Math.cos(a)),4+Math.round((2+k)*.9*Math.sin(a)),k<3?HOT:dim); } }
+      } else if(C==='note'){   // lines being typed with a blinking caret
+        var LEN=[26,20,30], t=tick%60, done=0;
+        for(i=0;i<3;i++){ k=Math.max(0,Math.min(LEN[i],t-done)); for(c=0;c<k;c++) px(8+c,4+i*5,i===1?dim:col); if(k<LEN[i]&&k>=0&&t>=done){ if(tick%4<2){ px(8+k,3+i*5,HOT); px(8+k,4+i*5,HOT); px(8+k,5+i*5,HOT); } break; } done+=LEN[i]; }
+      }
+    }
     function two(n){ return (n<10?'0':'')+n; }
     function face(mood,lx,ly,blink,tick,pct){
-      var d=new Date(), clk=two(d.getHours())+':'+two(d.getMinutes()), s=mood+lx+ly+blink+clk+pct+(mood==='dizzy'||mood==='sleepy'?tick:''); if(s===sig) return; sig=s; ox=0; oy=0;
+      var d=new Date(), clk=two(d.getHours())+':'+two(d.getMinutes()), C=(mood==='idle'&&window.__amCtx)||'', s=mood+lx+ly+blink+clk+pct+(mood==='dizzy'||mood==='sleepy'?tick:'')+(C?C+tick:''); if(s===sig) return; sig=s; ox=0; oy=0;
       fx.fillStyle='#050302'; fx.fillRect(0,0,fc.width,fc.height);
       var r,c; for(r=0;r<ROWS;r++) for(c=0;c<COLS;c++) px(c,r,'rgba(255,230,207,.045)');
       var col=COL[mood]||WARM, L=9, R=29, dim='rgba(79,179,176,.95)';
       for(c=0;c<4;c++) for(r=0;r<=c+1;r++) px(3+c*2,6-r,dim);
-      text(WORD[mood]||'HELLO',13,2,dim); text(clk,COLS-22,2,dim);
+      text(C?(CW[C]||'LOOK'):(WORD[mood]||'HELLO'),13,2,dim); text(clk,COLS-22,2,dim);
       for(c=2;c<COLS-2;c++) px(c,8,'rgba(79,179,176,.28)');
       ox=8; oy=7;
       if(mood==='happy'){ eyeHappy(L,col); eyeHappy(R,col); mouth('big',col); }
@@ -689,6 +716,7 @@ window.__ani={play,stop,seek,setFilm,setOpt,OPTS};
       else if(mood==='dizzy'){ eyeSpin(L,col,tick%12); eyeSpin(R,col,(tick+6)%12); mouth('wave',col); }
       else if(mood==='sleepy'){ eyeLine(L,col); eyeLine(R,col); mouth('flat',col); text('Z',40+(tick%3),1-(tick%3),col); }
       else if(mood==='wow'){ eyeOpen(L-1,lx,ly,col,blink?2:10,10); eyeOpen(R-1,lx,ly,col,blink?2:10,10); mouth('o',col); }
+      else if(C){ ctxDraw(C,tick,col,dim); }
       else { var h=blink?2:8; eyeOpen(L,lx,ly,col,h); eyeOpen(R,lx,ly,col,h); mouth('smile',col); }
       ox=0; oy=0; var n=Math.round(pct*16); for(c=0;c<16;c++) px(16+c*2,25,c<n?'#ef6a3c':'rgba(239,106,60,.22)');   // bottom row: how far down the page you are
       ftex.needsUpdate=true;
@@ -762,7 +790,15 @@ window.__ani={play,stop,seek,setFilm,setOpt,OPTS};
   var fine=true;
   var w=null,cx=0,cy=0,tx=0,ty=0,has=false,last=0,lt=performance.now();
   function find(){var d=document.body.children;for(var i=d.length-1;i>=0;i--){if(d[i].style&&d[i].style.zIndex==='2147483000')return d[i]}return null}
-  function mv(e){if(!e.isTrusted||e.pointerType==='touch')return;tx=e.clientX;ty=e.clientY;has=true;last=performance.now()}
+  function ctx(x,y){var el=document.elementFromPoint(x,y);if(!el||!el.closest)return '';
+    if(el.closest('#player,.ctl'))return 'play';
+    if(el.closest('#cfth,#cfbig,.fr .im,#lb'))return 'img';
+    if(el.closest('textarea,#sum'))return 'note';
+    if(el.closest('button,a'))return 'btn';
+    if(el.closest('#stage'))return '3d';
+    return ''}
+  function mv(e){if(!e.isTrusted)return;window.__amCtx=ctx(e.clientX,e.clientY);if(e.pointerType==='touch')return;tx=e.clientX;ty=e.clientY;has=true;last=performance.now()}
+  addEventListener('scroll',function(){if(has)window.__amCtx=ctx(tx,ty)},{passive:true});
   addEventListener('pointermove',mv,{passive:true});addEventListener('mousemove',mv,{passive:true});
   function design(){var ids=['#stage','#cfbig','#grid','#player','#sum'],best=null,bd=1e9,mid=innerHeight/2;
     ids.forEach(function(q){var el=document.querySelector(q);if(!el)return;var r=el.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight)return;var d=Math.abs((r.top+r.bottom)/2-mid);if(d<bd){bd=d;best=r}});
