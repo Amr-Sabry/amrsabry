@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Amr Clone Studio</title>
+<style>
+/* layout: stage (camera + mesh) on one side, director + coverage on the other; one screen */
+:root{--bg:#07100f;--panel:#0e1b1a;--line:#1d3432;--fg:#e6f2ef;--dim:#7fa39d;--teal:#2fd6c3;--amber:#ff9d3c;--bad:#ff5a5a;color-scheme:dark;
+--ui:"Segoe UI",Tahoma,"Noto Sans Arabic",sans-serif;--mono:Consolas,"Cascadia Mono",monospace}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 var(--ui);padding:14px 16px}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:12px}
+h1{font-size:19px;margin:0;letter-spacing:.5px}h1 b{color:var(--amber)}
+.sp{flex:1}
+button{font:inherit;background:var(--teal);color:#032320;border:0;border-radius:6px;padding:8px 14px;font-weight:700;cursor:pointer}
+button.ghost{background:transparent;color:var(--fg);border:1px solid var(--line);font-weight:400}
+button:disabled{opacity:.4;cursor:default}
+button:focus-visible,input:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+main{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;min-width:0}
+.card h2{font-size:12px;color:var(--dim);margin:0 0 8px;font-weight:600;letter-spacing:1px}
+.stage{position:relative;aspect-ratio:4/3;background:#000;border-radius:8px;overflow:hidden}
+.stage video,.stage canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.stage video{opacity:.55}
+.stage .msg{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px;color:var(--dim)}
+.code{font:12px/1.6 var(--mono);direction:ltr;text-align:left;color:var(--teal);background:#040a09;border-radius:6px;padding:8px;margin-top:8px;white-space:pre-wrap;word-break:break-all;min-height:62px}
+.mission{font-size:21px;font-weight:700;line-height:1.45;color:var(--amber);min-height:62px}
+.why{color:var(--dim);font-size:13px;margin-top:4px;min-height:20px}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;width:0;background:var(--teal);transition:width .3s}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.score{font:700 30px var(--mono);color:var(--teal)}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:6px}
+.kv{font-size:12px;color:var(--dim)}.kv b{display:block;font:700 17px var(--mono);color:var(--fg);direction:ltr;text-align:right}
+#pose{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;direction:ltr;max-width:230px}
+#pose i{aspect-ratio:1;background:var(--line);border-radius:3px}
+#pose i.on{outline:2px solid var(--amber)}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{font-size:12px;padding:3px 8px;border-radius:20px;border:1px solid var(--line);color:var(--dim)}
+.chip.ok{background:#12423c;color:var(--teal);border-color:var(--teal)}
+.two{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:start}
+@media(max-width:520px){.two{grid-template-columns:1fr}}
+input[type=password],input[type=text]{font:13px var(--mono);background:#040a09;color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:7px;min-width:0;flex:1;direction:ltr}
+#log{font-size:13px;max-height:150px;overflow:auto;margin-top:8px;display:flex;flex-direction:column;gap:6px}
+#log div{border-inline-start:2px solid var(--line);padding-inline-start:8px}
+#log .c{border-color:var(--amber)}
+small{color:var(--dim)}
+.err{color:var(--bad)}
+</style>
+</head>
+<body>
+<header>
+  <h1>AMR <b>CLONE</b> STUDIO</h1>
+  <small id="sess"></small>
+  <span class="sp"></span>
+  <span>اكتمال الكلون <span class="score" id="score">0%</span></span>
+  <button id="start">شغّل الكاميرا والمايك</button>
+</header>
+<main>
+  <section class="card">
+    <h2>السكان الحي</h2>
+    <div class="stage">
+      <video id="v" playsinline muted></video><canvas id="cv"></canvas>
+      <div class="msg" id="msg">اضغط «شغّل الكاميرا والمايك». كل التحليل بيحصل على جهازك، مفيش صورة ولا صوت بيتبعت لأي حتة.</div>
+    </div>
+    <div class="code" id="code">— face/voice code —</div>
+    <div class="grid3">
+      <div class="kv">طبقة الصوت<b id="kF0">–</b></div>
+      <div class="kv">مدى النبرة<b id="kRange">–</b></div>
+      <div class="kv">وقت الكلام<b id="kTalk">0s</b></div>
+      <div class="kv">رمشة/دقيقة<b id="kBlink">–</b></div>
+      <div class="kv">ميل الابتسامة<b id="kAsym">–</b></div>
+      <div class="kv">فريمات متسجلة<b id="kFrames">0</b></div>
+    </div>
+    <div class="row">
+      <button class="ghost" id="clip" disabled>سجّل لقطة فيديو ١٠ث</button>
+      <button class="ghost" id="exp">نزّل ملف الكلون (JSON)</button>
+      <button class="ghost" id="copy">انسخ التقرير للولو</button>
+      <button class="ghost" id="reset">امسح وابدأ من الأول</button>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:14px;min-width:0">
+    <div class="card">
+      <h2>المخرج بيقولك</h2>
+      <div class="mission" id="mis">شغّل الكاميرا وأنا هقولك تعمل إيه.</div>
+      <div class="why" id="why"></div>
+      <div class="bar"><i id="mbar"></i></div>
+      <div class="row">
+        <button class="ghost" id="next">اللي بعده</button>
+        <button class="ghost" id="done" hidden>خلّصتها</button>
+        <label><input type="checkbox" id="tts" checked> انطق التعليمات</label>
+      </div>
+    </div>
+    <div class="card">
+      <h2>التغطية</h2>
+      <div class="two">
+        <div><small>زوايا الراس (النقطة البرتقالي = إنت دلوقتي)</small><div id="pose" style="margin-top:6px"></div></div>
+        <div><small>التعابير</small><div class="chips" id="exprs" style="margin-top:6px"></div>
+             <small style="display:block;margin-top:8px">الصوت</small><div class="chips" id="voices" style="margin-top:6px"></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>التوصيل بـ CLAUDE</h2>
+      <div class="row" style="margin-top:0">
+        <input type="password" id="key" placeholder="Anthropic API key (sk-ant-…)" autocomplete="off">
+        <input type="text" id="model" value="claude-sonnet-4-5" style="flex:0 1 170px">
+      </div>
+      <div class="row">
+        <button id="ask">خلّي Claude يوجّهني</button>
+        <label><input type="checkbox" id="auto"> أوتوبايلوت (يوجّه بعد كل مهمة)</label>
+      </div>
+      <small>بيتبعت أرقام بس (إحصائيات التعابير والصوت والنص المنطوق) — مفيش صور. من غير مفتاح، المخرج المحلي شغال لوحده.</small>
+      <div id="log"></div>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+const $=id=>document.getElementById(id);
+const YB=7,PB=5,CELL_NEED=12,HOLD=18;
+const EXPR=[
+ ['smile','ابتسامة واسعة','ابتسم ابتسامة واسعة بسنانك وثبّتها',['mouthSmileLeft','mouthSmileRight'],.55],
+ ['browUp','حواجب فوق','ارفع حواجبك لفوق كأنك متفاجئ',['browInnerUp','browOuterUpLeft','browOuterUpRight'],.5],
+ ['browDown','تكشيرة','كشّر ونزّل حواجبك كأنك متضايق',['browDownLeft','browDownRight'],.45],
+ ['jaw','بق مفتوح','افتح بقك على الآخر',['jawOpen'],.6],
+ ['pucker','زمّ الشفايف','زمّ شفايفك لقدام كأنك بتصفّر',['mouthPucker'],.6],
+ ['funnel','حرف «أو»','قول «أوووو» وطوّلها',['mouthFunnel'],.4],
+ ['squint','تضييق العين','ضيّق عينيك كأنك بتبص في الشمس',['eyeSquintLeft','eyeSquintRight'],.5],
+ ['wide','عين مبرّقة','برّق عينيك على الآخر',['eyeWideLeft','eyeWideRight'],.4],
+ ['sad','زعل','نزّل أطراف بقك لتحت كأنك زعلان',['mouthFrownLeft','mouthFrownRight'],.35],
+ ['sneer','قرف','كرمش مناخيرك كأنك شامم ريحة وحشة',['noseSneerLeft','noseSneerRight'],.4],
+ ['press','شفايف مضمومة','اضغط شفايفك على بعض جامد',['mouthPressLeft','mouthPressRight'],.4],
+ ['mouthL','بق ناحية','حرّك بقك كله ناحية واحدة',['mouthLeft'],.4],
+ ['mouthR','بق الناحية التانية','حرّك بقك كله الناحية التانية',['mouthRight'],.4],
+ ['blinkL','غمزة','اغمز بعين واحدة وثبّتها',['eyeBlinkLeft'],.6,'eyeBlinkRight'],
+ ['blinkR','غمزة بالعين التانية','اغمز بالعين التانية',['eyeBlinkRight'],.6,'eyeBlinkLeft'],
+];
+const LINES=[
+ ['calm','هدوء','بهدوء وثقة قول: «أنا مش مستعجل. الحاجة الصح بتاخد وقتها، وأنا عارف أنا رايح فين.»'],
+ ['joy','حماس','بحماس وفرحة قول: «يا جماعة اللقطة دي طلعت تحفة! هو ده اللي كنا بندوّر عليه من الصبح!»'],
+ ['anger','غضب','بغضب مكتوم قول: «أنا قلت الكلام ده مية مرة. مش هعيده تاني. اللي غلط يتصلّح دلوقتي.»'],
+ ['sarcasm','سخرية','بسخرية قول: «آه طبعاً، ما هو الديدلاين بكرة والبريف لسه جاي النهارده. عادي جداً.»'],
+ ['whisper','همس','بصوت واطي قريب من الهمس قول: «تعالى أقولك سر محدش يعرفه غيري وغيرك.»'],
+ ['free','كلام حر','احكيلي في دقيقة عن آخر مشروع اشتغلت عليه — بطريقتك العادية من غير تمثيل.',20],
+];
+const fresh=()=>({v:1,sessions:0,frames:0,bs:{},pose:Array(YB*PB).fill(0),hold:{},lines:{},
+  voice:{talk:0,sil:0,pauses:0,f0:Array(68).fill(0),db:Array(60).fill(0)},blinks:0,faceSec:0,words:0,text:''});
+let P=fresh();
+try{const s=localStorage.getItem('amr_clone');if(s){const o=JSON.parse(s);if(o.v===1)P=Object.assign(fresh(),o)}}catch(e){}
+const save=()=>{try{localStorage.setItem('amr_clone',JSON.stringify(P))}catch(e){}};
+let timeline=[],live={},cur=null,custom=null,speaking=false,running=false,stream=null;
+
+/* ---------- coverage + missions ---------- */
+function pct(h,q){const t=h.reduce((a,b)=>a+b,0);if(!t)return null;let c=0;for(let i=0;i<h.length;i++){c+=h[i];if(c>=t*q)return i}return h.length-1}
+function voiceStats(){const v=P.voice,lo=pct(v.f0,.05),hi=pct(v.f0,.95),md=pct(v.f0,.5);
+  const f=i=>60+i*5; const dl=pct(v.db,.1),dh=pct(v.db,.9);
+  return {median:md==null?null:f(md),low:lo==null?null:f(lo),high:hi==null?null:f(hi),
+    semis:lo==null?0:12*Math.log2(f(hi)/f(lo)),dyn:dl==null?0:dh-dl,talk:v.talk,pauses:v.pauses,
+    speechRatio:v.talk/(v.talk+v.sil||1)}}
+function missions(){const m=[];
+  const mid=Math.floor(PB/2);let h=0,all=0;
+  for(let p=0;p<PB;p++)for(let y=0;y<YB;y++){const ok=P.pose[p*YB+y]>=CELL_NEED;if(ok)all++;if(p===mid&&ok)h++}
+  let vert=0;for(let p=0;p<PB;p++)if(P.pose[p*YB+3]>=CELL_NEED)vert++;
+  m.push({id:'poseH',g:'pose',t:'بص للكاميرا ولف راسك ببطء يمين وشمال لحد الآخر، لحد ما الصف اللي في نص الخريطة يتملى',p:h/YB});
+  m.push({id:'poseV',g:'pose',t:'ارفع دقنك لفوق ببطء وبعدين نزّلها لتحت، لحد ما العمود اللي في النص يتملى',p:vert/PB});
+  m.push({id:'poseAll',g:'pose',t:'لف راسك في دايرة واسعة ببطء — عايزين نملى كل خانات الخريطة، خصوصاً الأركان',p:all/(YB*PB)});
+  for(const e of EXPR)m.push({id:e[0],g:'expr',label:e[1],t:e[2],p:Math.min(1,(P.hold[e[0]]||0)/HOLD)});
+  const vs=voiceStats();
+  m.push({id:'talk',g:'voice',label:'دقيقتين كلام',t:'اتكلم معايا عادي عن أي حاجة — محتاج دقيقتين كلام متواصل عشان أقرا نبرتك',p:Math.min(1,vs.talk/120)});
+  m.push({id:'range',g:'voice',label:'مدى النبرة',t:'قول «آآآه» من أوطى طبقة تقدر عليها واطلع بيها لأعلى طبقة، وكررها',p:Math.min(1,vs.semis/14)});
+  m.push({id:'dyn',g:'voice',label:'عالي وواطي',t:'عدّ من ١ لـ ١٠: ابدأ بهمس وعلّي صوتك تدريجياً لحد ما تزعّق',p:Math.min(1,vs.dyn/24)});
+  for(const l of LINES)m.push({id:'ln_'+l[0],g:'voice',label:l[1],t:l[2],p:Math.min(1,(P.lines[l[0]]||0)/(l[3]||5))});
+  return m}
+function score(ms){const g={pose:[],expr:[],voice:[]};ms.forEach(x=>g[x.g].push(x.p));const a=x=>x.reduce((s,v)=>s+v,0)/x.length;
+  return Math.round((a(g.pose)*.3+a(g.expr)*.35+a(g.voice)*.35)*100)}
+let rot=0;
+function pickLocal(){const ms=missions().filter(x=>x.p<1);if(!ms.length)return null;
+  const order=['pose','expr','voice'];for(let k=0;k<3;k++){const g=order[(rot+k)%3];const c=ms.filter(x=>x.g===g&&x.id!==cur);if(c.length){rot=(rot+k+1)%3;return c[0]}}
+  return ms[0]}
+function setMission(m,why){custom=null;cur=m?m.id:null;$('done').hidden=true;
+  $('mis').textContent=m?m.t:'خلصنا كل المهام الأساسية 👌 نزّل ملف الكلون أو خلّي Claude يطلب لقطات أدق.';$('why').textContent=why||'';if(m)say(m.t)}
+function setCustom(t,why){custom=t;cur=null;$('done').hidden=false;$('mis').textContent=t;$('why').textContent=why||'';$('mbar').style.width='0';say(t)}
+function say(t){if(!$('tts').checked||!('speechSynthesis' in window))return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='ar-SA';u.rate=1;
+  const vs=speechSynthesis.getVoices().filter(v=>v.lang.startsWith('ar'));const male=vs.find(v=>/male|maged|naayf|tarik|hamed|shakir/i.test(v.name)&&!/female/i.test(v.name));if(male||vs[0])u.voice=male||vs[0];
+  u.onstart=()=>speaking=true;u.onend=u.onerror=()=>speaking=false;speechSynthesis.speak(u)}catch(e){}}
+
+/* ---------- UI ---------- */
+const poseEl=$('pose');for(let i=0;i<YB*PB;i++)poseEl.appendChild(document.createElement('i'));
+let lastAuto=0;
+function render(){const ms=missions();$('score').textContent=score(ms)+'%';
+  [...poseEl.children].forEach((el,i)=>{const f=Math.min(1,P.pose[i]/CELL_NEED);el.style.background=f?`rgba(47,214,195,${.2+.8*f})`:'';el.classList.toggle('on',live.cell===i)});
+  const chips=(g,el)=>{el.innerHTML='';ms.filter(x=>x.g===g).forEach(x=>{const c=document.createElement('span');c.className='chip'+(x.p>=1?' ok':'');c.textContent=x.label+(x.p>0&&x.p<1?' '+Math.round(x.p*100)+'%':'');el.appendChild(c)})};
+  chips('expr',$('exprs'));chips('voice',$('voices'));
+  const vs=voiceStats();$('kF0').textContent=live.f0?Math.round(live.f0)+' Hz':(vs.median?'~'+vs.median+' Hz':'–');
+  $('kRange').textContent=vs.semis?vs.semis.toFixed(1)+' st':'–';$('kTalk').textContent=Math.round(vs.talk)+'s';
+  $('kBlink').textContent=P.faceSec>20?(P.blinks/(P.faceSec/60)).toFixed(0):'–';
+  const sl=P.bs.mouthSmileLeft,sr=P.bs.mouthSmileRight;$('kAsym').textContent=sl&&sl.n?((sl.s-sr.s)/sl.n*100).toFixed(1)+'%':'–';
+  $('kFrames').textContent=P.frames;$('sess').textContent='جلسة رقم '+P.sessions;
+  if(cur){const m=ms.find(x=>x.id===cur);if(m){$('mbar').style.width=(m.p*100)+'%';
+    if(m.p>=1&&running){if($('auto').checked&&$('key').value&&Date.now()-lastAuto>20000){lastAuto=Date.now();cur=null;askClaude('خلّص مهمة '+m.id)}else setMission(pickLocal(),'تمام، اتسجلت ✔')}}}}
+setInterval(()=>{render();if(running)save()},700);
+
+/* ---------- face ---------- */
+let fl=null,blinkOn=false,lastT=0,lastSample=0;
+const cv=$('cv'),cx=cv.getContext('2d'),vid=$('v');
+function onFace(res,now){const dt=Math.min(.1,(now-lastT)/1000||0);lastT=now;
+  cx.clearRect(0,0,cv.width,cv.height);
+  if(!res.faceLandmarks||!res.faceLandmarks.length){live.face=false;return}
+  live.face=true;P.faceSec+=dt;P.frames++;
+  cx.fillStyle='#2fd6c3';for(const p of res.faceLandmarks[0])cx.fillRect(p.x*cv.width-1,p.y*cv.height-1,2,2);
+  const b={};for(const c of res.faceBlendshapes[0].categories){b[c.categoryName]=c.score;
+    const s=P.bs[c.categoryName]||(P.bs[c.categoryName]={n:0,s:0,q:0,mx:0});s.n++;s.s+=c.score;s.q+=c.score*c.score;if(c.score>s.mx)s.mx=c.score}
+  const m=res.facialTransformationMatrixes[0].data,D=180/Math.PI;
+  const yaw=Math.atan2(m[8],m[10])*D,pitch=Math.asin(Math.max(-1,Math.min(1,-m[9])))*D,roll=Math.atan2(m[1],m[5])*D;
+  const yi=Math.max(0,Math.min(YB-1,Math.floor((yaw+42)/12))),pi=Math.max(0,Math.min(PB-1,Math.floor((pitch+30)/12)));
+  live.cell=pi*YB+yi;P.pose[live.cell]++;
+  for(const e of EXPR){const v=e[3].reduce((a,k)=>a+(b[k]||0),0)/e[3].length;if(v>=e[4]&&(!e[5]||(b[e[5]]||0)<.35))P.hold[e[0]]=(P.hold[e[0]]||0)+1}
+  const bl=((b.eyeBlinkLeft||0)+(b.eyeBlinkRight||0))/2;if(bl>.5&&!blinkOn){blinkOn=true;P.blinks++}else if(bl<.3)blinkOn=false;
+  const top=Object.entries(b).filter(x=>x[0]!=='_neutral'&&x[1]>.25).sort((a,c)=>c[1]-a[1]).slice(0,5);
+  live.pose=[yaw,pitch,roll];live.top=top;
+  const f=n=>(n>=0?'+':'-')+String(Math.abs(Math.round(n))).padStart(2,'0');
+  $('code').textContent=`HEAD Y${f(yaw)} P${f(pitch)} R${f(roll)}\nFACE ${top.map(x=>x[0]+'.'+Math.round(x[1]*100)).join(' ')||'neutral'}\nVOICE ${live.f0?Math.round(live.f0)+'Hz':'--'} ${live.db!=null?Math.round(live.db)+'dB':''} ${live.voiced?'●':'○'}`;
+  if(now-lastSample>100&&timeline.length<18000){lastSample=now;const o={t:Math.round(now),h:[yaw,pitch,roll].map(x=>+x.toFixed(1)),f0:live.f0?Math.round(live.f0):0,db:live.db!=null?Math.round(live.db):null,b:{}};
+    for(const k in b)if(b[k]>.05&&k!=='_neutral')o.b[k]=+b[k].toFixed(2);timeline.push(o)}}
+function loop(){if(!running)return;if(vid.readyState>=2&&fl){if(cv.width!==vid.videoWidth){cv.width=vid.videoWidth;cv.height=vid.videoHeight}
+  const now=performance.now();try{onFace(fl.detectForVideo(vid,now),now)}catch(e){}}requestAnimationFrame(loop)}
+
+/* ---------- voice ---------- */
+let an,buf,silRun=0,wasTalk=false;
+function pitchOf(b,sr){let n=b.length,best=0,bl=0;const lo=Math.floor(sr/400),hi=Math.floor(sr/65);let e0=0;for(let i=0;i<n;i++)e0+=b[i]*b[i];
+  for(let l=lo;l<=hi;l++){let s=0;for(let i=0;i<n-l;i++)s+=b[i]*b[i+l];if(s>best){best=s;bl=l}}return best/e0>.45?sr/bl:0}
+function voiceTick(){if(!running)return;an.getFloatTimeDomainData(buf);let s=0;for(const x of buf)s+=x*x;const rms=Math.sqrt(s/buf.length),db=20*Math.log10(rms+1e-7),dt=.05;
+  live.db=db;const voiced=db>-42&&!speaking;live.voiced=voiced;live.f0=0;
+  if(voiced){const f0=pitchOf(buf,an.context.sampleRate);if(f0){live.f0=f0;P.voice.f0[Math.max(0,Math.min(67,Math.round((f0-60)/5)))]++}
+    P.voice.db[Math.max(0,Math.min(59,Math.round(db+60)))]++;P.voice.talk+=dt;if(!wasTalk&&silRun>.4&&silRun<4)P.voice.pauses++;silRun=0;wasTalk=true;
+    if(cur&&cur.startsWith('ln_')){const k=cur.slice(3);P.lines[k]=(P.lines[k]||0)+dt}}
+  else if(!speaking){P.voice.sil+=dt;silRun+=dt;wasTalk=false}
+  setTimeout(voiceTick,50)}
+function startSR(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;try{const r=new SR();r.lang='ar-EG';r.continuous=true;
+  r.onresult=e=>{for(let i=e.resultIndex;i<e.results.length;i++)if(e.results[i].isFinal&&!speaking){const t=e.results[i][0].transcript.trim();P.words+=t.split(/\s+/).length;P.text=(P.text+' '+t).slice(-1500)}};
+  r.onend=()=>{if(running)try{r.start()}catch(e){}};r.start()}catch(e){}}
+
+/* ---------- start ---------- */
+$('start').onclick=async()=>{const b=$('start');b.disabled=true;$('msg').textContent='بحمّل موديل الوش…';
+  try{stream=await navigator.mediaDevices.getUserMedia({video:{width:960,height:720},audio:{echoCancellation:true,noiseSuppression:false}});
+    vid.srcObject=stream;await vid.play();
+    const mp=await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs');
+    const fs=await mp.FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');
+    fl=await mp.FaceLandmarker.createFromOptions(fs,{baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',delegate:'GPU'},runningMode:'VIDEO',numFaces:1,outputFaceBlendshapes:true,outputFacialTransformationMatrixes:true});
+    const ac=new AudioContext();an=ac.createAnalyser();an.fftSize=2048;buf=new Float32Array(2048);ac.createMediaStreamSource(stream).connect(an);
+    running=true;P.sessions++;$('msg').hidden=true;b.textContent='شغّال ●';$('clip').disabled=false;loop();voiceTick();startSR();setMission(pickLocal(),'أول مهمة');
+  }catch(e){b.disabled=false;$('msg').innerHTML='<span class="err">مقدرتش أشغّل: '+(e.message||e)+'</span><br><small>افتح الملف في Chrome واسمح بالكاميرا والمايك. لو رفض من ملف محلي، شغّله من localhost.</small>'}};
+$('next').onclick=()=>setMission(pickLocal(),'');
+$('done').onclick=()=>{custom=null;if($('auto').checked&&$('key').value)askClaude('خلّص المهمة الحرة');else setMission(pickLocal(),'')};
+$('reset').onclick=()=>{const b=$('reset');if(b.dataset.c){P=fresh();timeline=[];save();delete b.dataset.c;b.textContent='امسح وابدأ من الأول'}else{b.dataset.c=1;b.textContent='متأكد؟ اضغط تاني';setTimeout(()=>{delete b.dataset.c;b.textContent='امسح وابدأ من الأول'},3000)}};
+
+/* ---------- export ---------- */
+function summary(){const bs={};for(const k in P.bs){const s=P.bs[k];if(k==='_neutral'||!s.n)continue;const mean=s.s/s.n;bs[k]={mean:+mean.toFixed(3),sd:+Math.sqrt(Math.max(0,s.q/s.n-mean*mean)).toFixed(3),max:+s.mx.toFixed(2)}}
+  const vs=voiceStats();return {score:score(missions()),sessions:P.sessions,faceSeconds:Math.round(P.faceSec),blinksPerMin:P.faceSec>20?+(P.blinks/(P.faceSec/60)).toFixed(1):null,
+    poseCoverage:P.pose.map(x=>Math.min(1,+(x/CELL_NEED).toFixed(2))),poseGrid:`${YB} yaw x ${PB} pitch`,blendshapes:bs,
+    voice:{medianHz:vs.median,lowHz:vs.low,highHz:vs.high,rangeSemitones:+vs.semis.toFixed(1),dynamicRangeDb:vs.dyn,talkSeconds:Math.round(vs.talk),pauses:vs.pauses,speechRatio:+vs.speechRatio.toFixed(2),
+      wordsPerMin:vs.talk>20&&P.words?Math.round(P.words/(vs.talk/60)):null},
+    missions:missions().map(x=>({id:x.id,progress:+x.p.toFixed(2)})),recentTranscript:P.text.slice(-600)}}
+function dl(name,blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5000)}
+$('exp').onclick=()=>dl('amr-clone-'+Date.now()+'.json',new Blob([JSON.stringify({profile:summary(),timeline})],{type:'application/json'}));
+$('copy').onclick=async()=>{const t=JSON.stringify(summary());try{await navigator.clipboard.writeText(t);$('copy').textContent='اتنسخ ✔'}catch(e){$('code').textContent=t}};
+$('clip').onclick=()=>{const b=$('clip');try{const r=new MediaRecorder(stream),ch=[];r.ondataavailable=e=>ch.push(e.data);
+  r.onstop=()=>{dl('amr-clip-'+(cur||'free')+'-'+Date.now()+'.webm',new Blob(ch,{type:r.mimeType}));b.disabled=false;b.textContent='سجّل لقطة فيديو ١٠ث'};
+  r.start();b.disabled=true;b.textContent='بيسجّل… ●';setTimeout(()=>r.stop(),10000)}catch(e){b.textContent='التسجيل مش مدعوم'}};
+
+/* ---------- Claude director ---------- */
+try{$('key').value=sessionStorage.getItem('amr_key')||''}catch(e){}
+const hist=[];
+function log(t,c){const d=document.createElement('div');d.textContent=t;if(c)d.className='c';$('log').prepend(d)}
+async function askClaude(note){const key=$('key').value.trim();if(!key){log('حط الـ API key الأول، أو استخدم «انسخ التقرير للولو» والصقه في الشات.');return}
+  try{sessionStorage.setItem('amr_key',key)}catch(e){}
+  const sys=`أنت مخرج ومدرب أداء بتبني "كلون رقمي" لعمرو صبري (كريتف دايركتور مصري). بيوصلك تقرير أرقام من برنامج بيقرا وشه (MediaPipe blendshapes + زوايا الراس) وصوته (pitch/energy/pauses/transcript). عندك الصلاحية الكاملة توجّهه يعمل إيه عشان الكلون يكمل ويبقى أدق: تعابير ناقصة، زوايا، نبرات، جمل يقولها، مشاهد قصيرة يمثّلها، أو ملاحظات على أدائه. اتكلم مصري، مباشر وقصير. رد JSON فقط بالشكل: {"say":"تعليق قصير على اللي شفته في الأرقام","mission_id":"id من قائمة missions لو عايز مهمة جاهزة أو null","custom":"تعليمات حرة لو مش هتختار mission_id أو null","insight":"ملاحظة واحدة عن بصمته المميزة (اختياري)"}`;
+  hist.push({role:'user',content:(note?note+'\n':'')+JSON.stringify(summary())});if(hist.length>6)hist.splice(0,2);
+  $('ask').disabled=true;try{const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:$('model').value.trim(),max_tokens:500,system:sys,messages:hist})});
+    const j=await r.json();if(!r.ok)throw new Error(j.error&&j.error.message||r.status);
+    const txt=j.content.map(c=>c.text||'').join('');hist.push({role:'assistant',content:txt});
+    const o=JSON.parse(txt.slice(txt.indexOf('{'),txt.lastIndexOf('}')+1));
+    log('Claude: '+o.say+(o.insight?' — '+o.insight:''),1);
+    const m=o.mission_id&&missions().find(x=>x.id===o.mission_id);
+    if(m)setMission(m,o.say);else if(o.custom)setCustom(o.custom,o.say);
+  }catch(e){hist.pop();log('خطأ في الاتصال: '+e.message)}finally{$('ask').disabled=false}}
+$('ask').onclick=()=>askClaude();
+render();
+</script>
+</body>
+</html>
