@@ -14,7 +14,7 @@
 (function(){
   var M = 'Aroma' + 'Mascot';
   if (new URLSearchParams(location.search).has('kiosk')) { window[M] = {say: function(){}}; window.AromaNotes = {}; return; }
-  window.AROMA_NOTES = {room: 'egymap', endpoint: '', push: '#app',
+  window.AROMA_NOTES = {room: 'egymap', endpoint: '/api/notes', push: '#app',
     arabic: function(){ var h = document.documentElement.getAttribute('data-lang'), b = document.getElementById('bLang'); return h ? h !== 'en' : (!b || /EN/i.test(b.textContent)); },
     ready: function(){ var c = document.getElementById('gl'); return !!c && (c.width !== 300 || c.height !== 150); },
     hidden: function(){ var b = document.getElementById('bShow'); return !!b && b.getAttribute('aria-pressed') === 'true'; },
@@ -890,7 +890,7 @@ html[data-lang="en"] #bLang{font-family:"Noto Kufi Arabic","IBM Plex Sans Arabic
 })();
 </script>
 
-<script src="/r/hub/aroma-notes.js?v=bb22901411" defer></script>
+<script src="/r/hub/aroma-notes.js?v=392875ba77" defer></script>
 <script>
 /* Aroma Hub mascot ("the doorman") — drop-in for any project page.
    A floating 3D head shaped like the Aroma logo block, with an LED pixel screen for a face and two
