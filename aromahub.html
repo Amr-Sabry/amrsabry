@@ -239,6 +239,61 @@ a.room-item:hover{color:var(--aroma)}
 .js .rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1);transition-delay:calc(var(--d,0)*90ms)}
 .js .rv.in{opacity:1;transform:none}
 
+/* steps zigzag: one step on screen at a time, the text and the doorman trade sides on every step */
+.js-pin .steps-pin .list{position:relative;overflow:hidden}
+.js-pin .step{position:absolute;left:0;right:0;top:50%;grid-template-columns:1fr;gap:10px;padding:0 clamp(22px,5vw,84px);border:0;opacity:0;pointer-events:none;transform:translateY(-50%) translateX(40px);transition:opacity .3s,transform .7s cubic-bezier(.2,.8,.2,1)}
+.js-pin .steps-pin.flip .step{transform:translateY(-50%) translateX(-40px)}
+.js-pin .step.on,.js-pin .steps-pin.flip .step.on{opacity:1;background:none;pointer-events:auto;transform:translateY(-50%);transition-delay:.25s}
+.js-pin .step .n{grid-row:auto;font-size:clamp(54px,8vw,124px)}
+.js-pin .step h3{font-size:clamp(19px,2.6vw,38px);align-self:auto}
+.js-pin .step p{font-size:clamp(15px,1.35vw,19px)}
+.js-pin .step::before{top:8%;bottom:8%}
+@media (min-width:901px){
+  .js-pin .steps-pin .stage,.js-pin .steps-pin .list{transition:transform .9s cubic-bezier(.7,0,.2,1)}
+  .js-pin .steps-pin.flip .stage{transform:translateX(140%)}
+  .js-pin .steps-pin.flip .list{transform:translateX(-71.4286%);border-inline-start-color:transparent;box-shadow:1px 0 0 var(--line)}
+}
+@media (max-width:900px){
+  .js-pin .steps-pin .stage .m3{inset:0 42% 0 0;transition:inset .8s cubic-bezier(.7,0,.2,1)}
+  .js-pin .steps-pin.flip .stage .m3{inset:0 0 0 42%}
+  .js-pin .stage-n{left:74%;transition:left .8s cubic-bezier(.7,0,.2,1);font-size:clamp(70px,24vw,150px)}
+  .js-pin .steps-pin.flip .stage-n{left:26%}
+  .js-pin .steps-pin.flip .step{text-align:right}
+  .js-pin .steps-pin.flip .step p{margin-inline-start:auto}
+  .js-pin .steps-pin.flip .step::before{left:auto;right:0}
+}
+
+/* the group: two studios behind the same door */
+.hs-head{grid-column:1 / -1;display:flex;flex-direction:column;gap:12px;padding-block:clamp(26px,4vw,56px)}
+.hs-head h2{font-family:var(--display);font-weight:400;font-size:clamp(24px,4.4vw,62px);line-height:1.04;letter-spacing:.02em;margin:0;text-transform:uppercase}
+.hs-head h2 em{font-style:normal;color:var(--aroma)}
+.house{--ac:var(--aroma);--mx:50%;--my:40%;grid-column:span 6;display:flex;flex-direction:column;gap:14px;min-height:clamp(430px,62vh,640px);padding:clamp(20px,2.6vw,38px);text-decoration:none;overflow:hidden;isolation:isolate;background:var(--cell);transition:background .4s}
+.house.b{--ac:#e3102a}.house.b .hs-go{color:#fff}
+.house .tag::before{background:var(--ac)}
+.hs-glow{position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.5;transition:opacity .4s;background:radial-gradient(420px circle at var(--mx) var(--my),color-mix(in srgb,var(--ac) 30%,transparent),transparent 70%)}
+.house:hover .hs-glow,.house.here .hs-glow{opacity:1}
+.hs-bg{position:absolute;z-index:-1;left:0;bottom:-.16em;white-space:nowrap;pointer-events:none;font-family:var(--display);font-size:clamp(110px,19vw,300px);line-height:1;color:transparent;-webkit-text-stroke:1px var(--line-2);transform:translateX(calc(var(--sx,0)*1px));transition:-webkit-text-stroke-color .4s;will-change:transform}
+.house:hover .hs-bg,.house.here .hs-bg{-webkit-text-stroke-color:var(--ac)}
+.perch{position:absolute;right:clamp(14px,3vw,44px);top:clamp(14px,3vw,40px);width:clamp(96px,13vw,190px);aspect-ratio:1;pointer-events:none}
+.hs-say{position:absolute;right:clamp(14px,3vw,44px);top:calc(clamp(14px,3vw,40px) + clamp(96px,13vw,190px) + 6px);font-family:var(--display);font-size:9px;letter-spacing:.14em;color:var(--aroma-ink);background:var(--text);padding:8px 11px;white-space:nowrap;clip-path:polygon(10px 0,100% 0,100% 100%,0 100%,0 10px);opacity:0;transform:translateY(-8px);transition:opacity .25s,transform .25s;pointer-events:none}
+.has3d .house.here .hs-say{opacity:1;transform:none;transition-delay:.45s}
+.house h3{font-family:var(--display);font-weight:400;font-size:clamp(24px,3.3vw,48px);line-height:1.05;letter-spacing:.03em;text-transform:uppercase;margin:auto 0 0;max-width:calc(100% - clamp(110px,15vw,220px))}
+.house h3 small{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--ac);margin-bottom:10px}
+.house p{margin:0;color:var(--muted);max-width:44ch}
+.hs-rot{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;border-block:1px solid var(--line);padding-block:11px;overflow:hidden}
+.hs-rot b{font-weight:400;color:var(--muted);flex:none}
+.hs-rot i{font-style:normal;color:var(--text);display:inline-block;white-space:nowrap}
+.hs-rot i.sw{animation:hsw .5s cubic-bezier(.2,.8,.2,1)}
+@keyframes hsw{from{opacity:0;transform:translateY(110%)}to{opacity:1;transform:none}}
+.hs-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.hs-stats div{display:flex;flex-direction:column;gap:4px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.hs-stats b{font-family:var(--display);font-weight:400;font-size:clamp(20px,2.7vw,38px);line-height:1;letter-spacing:.02em;color:var(--text);font-variant-numeric:tabular-nums}
+.hs-go{display:flex;justify-content:space-between;align-items:center;gap:12px;font-family:var(--display);font-size:clamp(11px,1.05vw,14px);letter-spacing:.14em;text-transform:uppercase;background:var(--ac);color:var(--aroma-ink);padding:14px 16px;clip-path:polygon(0 0,100% 0,100% 100%,12px 100%,0 calc(100% - 12px))}
+.hs-go i{font-style:normal;display:inline-block;transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.house:hover .hs-go i,.house:focus-visible .hs-go i{transform:translate(5px,-5px)}
+.house:focus-visible{outline:2px solid var(--ac);outline-offset:-2px}
+@media (max-width:900px){ .house .tag{margin-bottom:108px} .house h3{max-width:none} .house{min-height:440px} .hs-bg{font-size:34vw} }
+
 @media (max-width:900px){
   .rules{grid-template-columns:repeat(4,1fr)}
   .rules i:nth-child(n+5){display:none}
@@ -263,7 +318,7 @@ a.room-item:hover{color:var(--aroma)}
   .foot .cell:last-child{text-align:left}
 }
 @media (prefers-reduced-motion:reduce){
-  .dot,.ticker-run,.shake,.m-float,.m-shadow,.m-flame,.m-ant,.yes .m-float,.no .m-head,.busy .m-scan,.s2 .m-al,.s2 .m-ar,.s3 .m-rays,.s3 .m-float{animation:none}
+  .hs-rot i.sw,.dot,.ticker-run,.shake,.m-float,.m-shadow,.m-flame,.m-ant,.yes .m-float,.no .m-head,.busy .m-scan,.s2 .m-al,.s2 .m-ar,.s3 .m-rays,.s3 .m-float{animation:none}
   .m-arm,.m-head,.m-pupil,.m-eye{transition:none}
   .js .rv{opacity:1;transform:none;transition:none}
   .go::after{display:none}
@@ -382,6 +437,33 @@ a.room-item:hover{color:var(--aroma)}
     </div>
   </div>
 
+
+  <section class="houses" id="houses" aria-labelledby="h-houses">
+    <div class="row"><div class="cell hs-head rv"><div class="tag">The group</div><h2 id="h-houses">Two studios.<br><em>One</em> door.</h2></div></div>
+    <div class="row">
+      <a class="cell house rv" style="--d:0" href="https://www.aromastudios.com/" target="_blank" rel="noopener" data-say="SHOOTING? THIS WAY.">
+        <div class="hs-glow" aria-hidden="true"></div><div class="hs-bg" aria-hidden="true">AROMA</div>
+        <div class="perch" aria-hidden="true"></div><div class="hs-say" aria-hidden="true">SHOOTING? THIS WAY.</div>
+        <div class="tag">01 · Production</div>
+        <h3><small>CAIRO · DUBAI · RIYADH</small>Aroma Studios</h3>
+        <p>Premium series and films, and full production services for international shoots in Egypt.</p>
+        <div class="hs-rot"><b>On the slate</b><i data-words="Line production|Permits &amp; locations|Crews &amp; talent|Equipment &amp; stages|Co-production|Distribution &amp; sales">Line production</i></div>
+        <div class="hs-stats"><div><b data-n="50" data-s="+">50+</b>Regional titles</div><div><b data-n="75">75</b>Shoot days, one feature</div><div><b data-n="3">3</b>Cities</div></div>
+        <div class="hs-go"><span>aromastudios.com</span><i aria-hidden="true">↗</i></div>
+      </a>
+      <a class="cell house b rv" style="--d:1" href="https://www.ao3studios.com/" target="_blank" rel="noopener" data-say="PIXELS? OVER HERE.">
+        <div class="hs-glow" aria-hidden="true"></div><div class="hs-bg" aria-hidden="true">AO3</div>
+        <div class="perch" aria-hidden="true"></div><div class="hs-say" aria-hidden="true">PIXELS? OVER HERE.</div>
+        <div class="tag">02 · VFX &amp; post</div>
+        <h3><small>AN AROMA COMPANY · SINCE 2008</small>AO3 Studios</h3>
+        <p>Visual effects, colour and finishing for the region's films and series, under one supervisor.</p>
+        <div class="hs-rot"><b>In the pipeline</b><i data-words="VFX &amp; CG|Post production|Colour|Titles &amp; design|Branding|AI &amp; new tech">VFX &amp; CG</i></div>
+        <div class="hs-stats"><div><b data-n="339" data-s="+">339+</b>Titles finished</div><div><b data-n="190" data-s="+">190+</b>Colour grades</div><div><b data-n="90" data-s="+">90+</b>VFX shows</div></div>
+        <div class="hs-go"><span>ao3studios.com</span><i aria-hidden="true">↗</i></div>
+      </a>
+    </div>
+  </section>
+
   <section class="row cities" aria-label="Studio local time">
     <div class="cell rv" style="--d:0">
       <div class="tag t2">CH 01 · Dubai Media City</div>
@@ -414,7 +496,7 @@ a.room-item:hover{color:var(--aroma)}
   'use strict';
   /* Rooms are stored encrypted. Each entry is AES-GCM ciphertext of {t:title,u:url}; the AES key is
      PBKDF2(id + key). Without the right pair nothing here can be read, including which projects exist. */
-  var VAULT={"s":"UvKGZktAUGVOKQB6+ctO/w==","n":310000,"e":[["Msr+3I2jDvE4ZtT1","5BASL+enNQisqI0TEdApbYqrQgBThnmHS1PgxezTSvlFNOPlyilWaK4eZOlcbMLw9JtNt4UwezjAIdqAnantrjx2Y/sSQSRI03OQiqvwbChQU/pZf9D+gXD8iQIO99T52sOaC1aW/RdvseVMcDwF4WsEus47ya3/kNtwMhGsIeJeSp0UCfvvxfh1T7jZSRwNbxi/DnUZTSuwv7hmWFnajHwAZfF/XSb7mseGWw6zeFg="],["Vn2BCuZfM4v8e6K4","zUbH/ooC52hjP1B13RurYVk5JiuzivfXDcmZHBmrV1e1NNCBsqCu3Jsaq1ndk48DQf6RsAOnQ5dpEACRvuGNrO2678MsuwshzLXgpd75yClKXNHPTUbxKxN75J7DG0bGpak4ueCm+dAjpWZbOzRCe9iAG5B5h68pGwvqflBNlMMRg+ctpoAPvxxnHYqBdRl9rq6biNOzbzCLAChg98uwPnsktPftjMEgcjZ2xeODfac="],["YUHqtvV4MfPvJq/o","qPCoVEOsz3qyXcuURi2MBZqRW7hVzvTXyabOhaQD4ZFHM88PaPXpHWQUNsQc5CKbPIq4ZIuVCgwI6Pk4rOs9tYOzxSoZsiMNpD5f/ZsGeZa8YMGJJxsfsXnYmRTzEDSIoh8GEBtjWyapxPn7802QVNih2RdpsJTm3cuspTDwqeBTtFDmOriIInE5c/SXhOp1KeD17cq1gIMO63VylSeM8PnfdPrZfr9QbmcOXj+HTgY="],["qW0pCAJYqWfpTyCv","BQVUFL/apeAY/puAUUwwB3XiypUF9wPlZWKUC5E4AnTCwRgsI89qVdZT26hTgVllf6ulxeE1h1msGkXepbar+Mjc9OQLBuBKBy0zPGaihz5iG6GFuGRAcdytn15l18T5qwOB86vkKYTdVFA0SxqCsR0+Bt04r3VTSYQUe5Ms50tkuFH+JB+slbCyYH+2YjQTUhdrbEslgeWVlxmoarN2TTICsT71pi2Bd/6T9/Ku0lQ="],["0PtQMyosxa6tVGt0","DhtOyp+vXrD41Qk7S1ZyQHKUObOZKfFT0e8EatmLqa5UkVB7SXTj6tFpIPkg6kC7P2WUj9XmTxxfbKrOWuWtFZF13yZa+peMUa/fuT64JqgasHt+m+Ij+SOhe8F7pDFsLRV3MeZW9UZTbbSzgo+sJKSU8yfgkjazydmZkY8B8B5rLGi0CvgGZ2QPDq5dzuCFSqxgKKs8323F23vNaoFsnFhO3G5VryIF6j33kYi0Jhc="],["rpqrOei2u61NpNPL","nQKscLlEueRYwTHTf+RtJPS8Mfn+4GPyzn+pHW73XF74PStPW3M2+Y6MGKvRw18T6o05bmhiwQdEXOCHwrb/LN+i7QNh33QTeZgCsLyFuWNJCuF6G8/VlqFc/wnorH87tlR5Eu5hO9GZYEFH9mw9G0zglsf+k5Mfq83YLd6mE8qg55qQP08s00j1haOt4kwZnwTamgQdr2gvm2bs0gqonR+B1Q1U347m8GU+KfatiyE="],["QiInbpFE2x0MVAd7","VOBlYYn+qw/IVlkcotOTd5HHur9WWWuKtXqufqLjZAporzaZ8Kx+2NOeCplKuTD94RM69sUCKNnPemjuAhzdhN1UxAv2vGxHkZm56s+NwnQFrqoHrouyGqbUlBD0CvliIrk2jhUSnkV2aHMVVamwdr4tYCKf6e7pIVPm0ys+ptrTMhXfRT9kFCg60S9K+7NjyJ4HFJH2VOo9mvrWWeN9ItUErW4XWO3lQ2uhIvmLJuE="],["WzbKQwdb2WpkSQ9B","dReCImJZa7HLsoPPX5V13qvnaWFmU/2VnTD4LLCylI+QjSCzimZDA42hNmGn+I5hmeYCTHTwp6MA6VKw36+U1DgjD/5KbZiIbrKvhcS5+CJacyaqY+F5uuiN9W1o+e+YJmm7igz4a/z7U4IvB0cVYa9J6XPcT7ebxUkBBtkqf69pfixA8HcOvj0XbW6ez4oXsklngeGbhMxE9Xcs3XnMh+AYPt7mIBpA0WWOGLfEmqI="]]};
+  var VAULT={"s":"UvKGZktAUGVOKQB6+ctO/w==","n":310000,"e":[["3w5GA066nFpCKXLl","T0HIJqUsV9g9Z29qit4/K+durfKHfWlwvpz8IWIjsWhOciC13kmj/a51c+Wv5mlx0HQTcY31v6ml/JrW1B+Lr3w9Nvu4GLO6fi5Ian67sH7PSaCuRkKL2omG9SyZRvwa/Tl7bwj8/ikJZAbfvKhLscbI12JUiHxfxU8BEtaKWnPpolIpMt6qH3Q0H+NU7MrT8Kiwdvn4FWtx86p6F+ZMn8SvIJoVndT7J38ILjB6MEA="],["o/2Nze0yMR0wJ299","C+KpsubMDIg2B6i+utHNl6yhVaWUE0zPUsNIueeIgFODK63E9ZDaSjWMqL8gWwq6+c3fMvaa3Fyszc+/mbyCNz/Bt02smcdwaO+gko95Wnm175+3nXut3jEmjZL7BZLywHNF+V9G8RpvR6EDRoMALgwS52vtz785MRNZQJd2i5D2zEWaizAHuAlEcxXXozLcqsnD8bUpI1WlzaV7NHh4R+hS2g/7pBoMBdpVLSwP040="],["7smmfZkYOfDIA9an","p+a/x0vgs69iLKt2njCXKKMtsyPOs/bJY5C0Ffq8BFBFw820HixKoXz7B9Z7yUj/jSNj+lCjXar8D3RbQn2rhIc5kBbOzwMKGHq1TGuB5eoKpwKZhQ6vvwYoC41QVxJwtQbyURnVU50gZcevkfDMljSKTAhuj397ee9lB7P2KdwMPtUck+ymu3lzMGYwWBDKK6XJQZR/g8ZoX/cT+xVXZd/EBvSEwGZmoQNDN989pQU="],["x0w4MrpRl5luKfon","jTUQJzPaBS4LLXlXp0CCUkKsonHviYl8T2MvWBjYgtv4bSjPO3J22Oq7ppGBIYKcpKE3pLvnM5csNbLuCTDA9EKUyHl4SL/l5EKm1rKbJidbKNG/BVW1DjyWdZPyRDBtrLxIxiyP4nKb4NvVFMC9Y2I9EO0oRb3l2+33Eb4+t1XyLSF8QQ8NoOk6dP0WcX8ZB+Y9v3Xyg5NVLsZVINYDtMmxlJIhy0AVI1cx5bM7v+Q="],["M02tyorxdgnHGk1h","Qw2Uw495wNSNrUgfU5nUkywzG9df37xPjmWBjX5Od0JckYitnHFq8bgGXC0TO65w3fjdu11JigCpO7lHAVs70hdA0e6NIvLNjjM2u3IJ1+YiEWpn+6xdPmjTyG4swbqPoJtKJqnfBv1BGOJKrClvBdR9f46Bv8BIJVga7KYU1IOTbGKalS934Mf11fuX4CMQp6ikNOEXUH+ndoLHmbMd29A5tIgHB8fsZYEXCeBUhus="],["v0JQl/2VNPxJ6FWd","k7VbZfM0yTONHujt6n7pbCVRvBqL8mtIvsDJpf+hezqCqEd3Y15nSvtfrKjp2YEAMmDWpS3D4Vg68gDDv4XrADEALuhMUN4WioJVBAZx71q+ooEhia/hb0ubUA01rTrfVP25hz8UmRGJZ7FQSKUXW0YwRj19KsdFM79vjrkz6Dtrn4YQDjF4rSlaI/woDRusnLDrPfiWsHaV2kNEZVr/4DAcedYCU9UZBbS1MpCSs84="],["9lXXmddH1fyum/TB","EgUPhyPlOl/NifxNCIzJOXJ30ctrqfZqen8gUWkVmaZjRUdAGm8/oK5ELlr529KQ6KtCzObUlauquicWNsn5Efxvs9Ab0a67VZFRshcLuVAe3u5WlNPzhoOhwAdnb56owPyqKpWuu8/MR1DiLEcECdZn2gia+OvLyzAxCee1XLB7eOaeK6k1611ZP2P2Pj7EAH5r5QJy0HrMjShSQwsAH2dQnYc8vkQVJicS4lUFjrg="],["53kB0nod8ZIx+0ld","G+6v3pEEWuAxg30pK9HpShxUqhZX5F4dDYVWQR9O/IKeg5s+8lGSbe5mNrdRxOnIuHDCC8r1+QYjm3gm/iY0GkNDf343n62Mp5yvWpo97mgO/CUx9KHH5ymr29BKdZ5ht0DsHm3hTCgAyOTbHpFFvJqA/+lNXd9x6A0uDOI5cnL9updVVAS7EHqx7/3wCH2z1AwCGrKvSKEONC4Q96J0uGbt5eHc9lsq6zoGCw+DmjE="]]};
   // the live vault is a small file next to the rooms, so access can change without rebuilding this page
   try{ fetch('/r/_vault.json',{cache:'no-store'}).then(function(r){ return r.ok?r.json():null; }).then(function(j){ if(j&&j.e&&j.s) VAULT=j; }).catch(function(){}); }catch(e){}
 
@@ -603,7 +685,7 @@ a.room-item:hover{color:var(--aroma)}
       s3:{h:[[-1.6,2.35,.1],[1.6,2.35,.1]],rays:1,hop:1}
     };
     var st={pose:'idle',t0:0,key:0,blink:0,keyS:0,kbS:0,rayS:0,mx:0,my:0,tx:0,ty:0,x:0,y:0,s:1,init:false}, UP=new T.Vector3(0,-1,0), v=new T.Vector3(), clock=new T.Clock(), W=1,H=1;
-    var elHome=$('m3home'), elStage=$('m3stage'), elSteps=$('steps');
+    var elHome=$('m3home'), elStage=$('m3stage'), elSteps=$('steps'), dockEl=null;
 
     function resize(){ W=window.innerWidth; H=window.innerHeight; renderer.setSize(W,H,false); cam.aspect=W/H; cam.updateProjectionMatrix(); }
     resize(); window.addEventListener('resize',function(){ setTimeout(resize,60); });
@@ -612,9 +694,10 @@ a.room-item:hover{color:var(--aroma)}
     // where on the page he should be right now: the hero cell, the steps stage, or docked in the corner
     function anchor(){
       var sr=elSteps.getBoundingClientRect(), r=elStage.getBoundingClientRect();
-      if(sr.top<H*.55&&r.bottom>H*.74){ return {x:r.left+r.width/2,y:r.top+r.height*.5,w:Math.min(r.width*.74,r.height*.9,470)}; }
+      if(sr.top<H*.55&&sr.bottom>H*.74){ return {x:r.left+r.width/2,y:r.top+r.height*.5,w:Math.min(r.width*.74,r.height*.9,470)}; }
       r=elHome.getBoundingClientRect();
       if(r.bottom>H*.42){ return {x:r.left+r.width/2,y:r.top+r.height*.5,w:Math.min(r.width*.66,r.height*1.1,520)}; }
+      if(dockEl){ r=dockEl.getBoundingClientRect(); if(r.top>56&&r.bottom<H-10) return {x:r.left+r.width/2,y:r.top+r.height/2,w:r.width}; }
       var small=W<700;
       if(st.moved&&!small){ return {x:Math.max(100,Math.min(W-100,st.cx+130)),y:Math.max(150,Math.min(H-90,st.cy+30)),w:170}; }   // free sections: he tags along with the cursor
       return {x:W-(small?70:120),y:H-(small?78:110),w:small?104:170};
@@ -680,7 +763,8 @@ a.room-item:hover{color:var(--aroma)}
     return {
       pose:function(p){ if(!POSE[p]) p='idle'; if(p!==st.pose){ st.pose=p; st.t0=clock.elapsedTime; } },
       key:function(f){ st.key=f; },
-      home:function(){}
+      home:function(){},
+      dock:function(el,p){ if(el===dockEl) return; dockEl=el; if(el){ st.pose=p||'pk'; st.t0=clock.elapsedTime; } else if(st.pose==='pk'||st.pose==='yes'){ st.pose='idle'; st.t0=clock.elapsedTime; } }
     };
   })();
 
@@ -802,12 +886,12 @@ a.room-item:hover{color:var(--aroma)}
 
   /* ---------- pinned steps: scroll position picks the step, the doorman acts it ---------- */
   (function(){
-    var wrap=$('steps'), items=[].slice.call(wrap.querySelectorAll('.step')), prog=wrap.querySelector('.prog i'), cur=-1;
+    var wrap=$('steps'), pin=wrap.querySelector('.steps-pin'), items=[].slice.call(wrap.querySelectorAll('.step')), prog=wrap.querySelector('.prog i'), cur=-1;
     var SAY=['HERE IS YOUR KEY.','TYPE IT IN.','ROOM OPEN.'], stepPose='s1', onStage=false;
     root.classList.add('js-pin');
     function set(i){
       if(i===cur) return; cur=i;
-      items.forEach(function(el,k){ el.classList.toggle('on',k===i); });
+      items.forEach(function(el,k){ el.classList.toggle('on',k===i); }); pin.classList.toggle('flip',i===1);
       stageM.className='stage-m s'+(i+1); $('stageN').textContent='0'+(i+1); $('stageSay').textContent=SAY[i]; stepPose='s'+(i+1); if(M3&&onStage) M3.pose(stepPose);
     }
     function onScroll(){
@@ -817,6 +901,40 @@ a.room-item:hover{color:var(--aroma)}
       if(now!==onStage){ onStage=now; if(M3){ M3.home(now?$('m3stage'):$('m3home')); if(now) M3.pose(stepPose); else rest(); } }
     }
     window.addEventListener('scroll',onScroll,{passive:true}); window.addEventListener('resize',onScroll); onScroll();
+  })();
+
+
+  /* ---------- the group: the doorman hops between the two studios ---------- */
+  (function(){
+    var sec=$('houses'); if(!sec) return;
+    var hs=[].slice.call(sec.querySelectorAll('.house')), hover=null, cur=null;
+    function pick(){
+      if(hover) return hover;
+      var H=window.innerHeight, best=null, bd=1e9;
+      hs.forEach(function(h){ var r=h.getBoundingClientRect(); if(r.bottom<H*.3||r.top>H*.7) return; var d=Math.abs((r.top+r.bottom)/2-H/2); if(d<bd-1){ bd=d; best=h; } });
+      if(best&&window.innerWidth>900){ var r=sec.getBoundingClientRect(), p=(H*.5-r.top)/r.height; best=hs[p>.62?1:0]; }   // side by side: scrolling walks him from the first to the second
+      return best;
+    }
+    function upd(){
+      var h=pick();
+      hs.forEach(function(x){ var r=x.getBoundingClientRect(); x.style.setProperty('--sx',((r.top-window.innerHeight*.5)*-.12).toFixed(1)); });
+      if(h===cur) return; cur=h;
+      hs.forEach(function(x){ x.classList.toggle('here',x===h); });
+      if(M3&&M3.dock) M3.dock(h?h.querySelector('.perch'):null,'yes');
+    }
+    hs.forEach(function(h){
+      h.addEventListener('pointerenter',function(e){ if(e.pointerType==='mouse'){ hover=h; upd(); } });
+      h.addEventListener('pointerleave',function(){ hover=null; upd(); });
+      h.addEventListener('pointermove',function(e){ var r=h.getBoundingClientRect(); h.style.setProperty('--mx',(e.clientX-r.left).toFixed(0)+'px'); h.style.setProperty('--my',(e.clientY-r.top).toFixed(0)+'px'); },{passive:true});
+      // services roll past one at a time
+      var el=h.querySelector('.hs-rot i'), words=el.getAttribute('data-words').split('|'), k=0;
+      setInterval(function(){ var r=h.getBoundingClientRect(); if(document.hidden||r.bottom<0||r.top>window.innerHeight) return; k=(k+1)%words.length; el.textContent=words[k]; el.classList.remove('sw'); void el.offsetWidth; el.classList.add('sw'); },1900+hs.indexOf(h)*350);
+    });
+    // the numbers count up the first time they are seen
+    var nums=[].slice.call(sec.querySelectorAll('.hs-stats b'));
+    function count(b){ var n=+b.getAttribute('data-n'), s=b.getAttribute('data-s')||'', t0=performance.now(), D=1300; (function f(now){ var p=Math.min(1,(now-t0)/D), e=1-Math.pow(1-p,3); b.textContent=Math.round(n*e)+s; if(p<1) requestAnimationFrame(f); })(t0); }
+    if('IntersectionObserver' in window){ var io2=new IntersectionObserver(function(en){ en.forEach(function(e){ if(e.isIntersecting){ count(e.target); io2.unobserve(e.target); } }); },{threshold:.6}); nums.forEach(function(b){ io2.observe(b); }); }
+    window.addEventListener('scroll',upd,{passive:true}); window.addEventListener('resize',upd); upd();
   })();
 
   /* ---------- scroll reveal with a timed fallback ---------- */
