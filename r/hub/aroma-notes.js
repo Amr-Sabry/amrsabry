@@ -304,7 +304,9 @@
     try{ localStorage.setItem('aroma-notes-name',name); }catch(e){}
     busy=true; go.disabled=true; go.textContent=t.sending; S.msg.textContent=''; fly(nearField(go)); quip(pick('sending'),'dizzy',60000); clearInterval(busyT); busyT=setInterval(function(){ if(busy) mood('dizzy'); },2600);
     var flat=flatten(), meta={room:C.room||'',name:name,when:S.when,page:location.pathname,general:general,pins:pins,context:S.ctx,view:{w:S.w,h:S.h,dpr:W.devicePixelRatio||1,lang:isAr()?'ar':'en'}};
-    flat.toBlob(function(blob){
+    /* one comment has to fit in a single upload: a very large picture is packed a little harder */
+    function pack(q,cb){ flat.toBlob(function(b){ if(b&&b.size>3600000&&q>.5) pack(q-.16,cb); else cb(b); },'image/jpeg',q); }
+    pack(.86,function(blob){
       function done(ok,trial){ busy=false; clearInterval(busyT); if(!S) return;
         if(!ok){ go.disabled=false; go.textContent=t.send; S.msg.textContent=t.fail; quip(pick('fail'),'sad',4200); return; }
         S.sent=true; STEP.forEach(function(e){ e.classList.remove('an-on'); e.classList.add('an-did'); }); flash(t.sentBub,6000);
@@ -316,8 +318,8 @@
       if(!blob){ done(false); return; }
       if(!C.endpoint){ W.AromaNotes.last={meta:meta,image:blob}; done(true,true); return; }
       var fd=new FormData(); fd.append('meta',JSON.stringify(meta)); fd.append('image',blob,'frame.jpg');
-      fetch(C.endpoint,{method:'POST',body:fd}).then(function(r){ done(r.ok); },function(){ done(false); });
-    },'image/jpeg',.86);
+      fetch(C.endpoint,{method:'POST',body:fd}).then(function(r){ var ok=r.ok; r.text().then(function(){ done(ok); },function(){ done(ok); }); },function(){ done(false); });
+    });
   }
 
   /* ---------- start a comment ---------- */
