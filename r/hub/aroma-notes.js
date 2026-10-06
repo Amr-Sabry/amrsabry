@@ -21,16 +21,20 @@
   'use strict';
   if(window.AromaNotes) return;
   var C=window.AROMA_NOTES||{}, D=document, W=window, H2I=W.htmlToImage;
-  var SMALL=W.innerWidth<760, BAR=SMALL?52:62, SIZE=SMALL?104:128;
+  var SMALL=W.innerWidth<760, BAR=SMALL?52:62, SIZE=SMALL?104:128, SLOT_TOP=Math.round((BAR-SIZE)/2+3), FLY=SMALL?1.2:1.35;
   var TXT={
     ar:{lead:'عندك ملاحظة؟', btn:'سيب تعليق', s1:'اضغط «سيب تعليق»', s2:'علّم على اللقطة', s3:'اكتب ملاحظتك وابعت', hide:'اخفِ الشريط', tab:'تعليق', dev:'بجهّز اللقطة كاملة…', title:'تعليق على اللقطة',
         hint:'اضغط على أي مكان في الصورة عشان تحط علامة، واكتب ملاحظتك عليها.', general:'ملاحظة عامة', generalPh:'أي كلام عام عن اللقطة دي (اختياري)…', name:'الاسم', namePh:'اسمك',
         ph:'اكتب ملاحظتك على العلامة دي…', send:'ابعت التعليق', cancel:'إلغاء', del:'امسح العلامة', empty:'اكتب ملاحظة واحدة على الأقل قبل الإرسال.', needName:'اكتب اسمك عشان نعرف التعليق من مين.',
-        sending:'ببعت…', sent:'وصلت. شكرًا، هنراجعها.', sentBub:'وصلت. شكرًا.', fail:'التعليق ما اتبعتش. جرّب تاني.', test:'وضع تجربة: التعليق ما اتبعتش لحد. دي الصورة اللي هتوصل.', dl:'نزّل الصورة', close:'تمام', none:'لسه مفيش علامات.'},
+        sending:'ببعت…', sent:'وصلت. شكرًا، هنراجعها.', sentBub:'وصلت. شكرًا.', fail:'التعليق ما اتبعتش. جرّب تاني.', test:'وضع تجربة: التعليق ما اتبعتش لحد. دي الصورة اللي هتوصل.', dl:'نزّل الصورة', close:'تمام', none:'لسه مفيش علامات.',
+        q:{open:['حط علامة على أي حتة','فين الملاحظة؟ علّم عليها'], pin:['هنا؟ تمام','علّمت عليها','شايفها','ماشي، ودي كمان'], write:['بكتب وراك…','سامعك، كمّل','أيوه…'], ok:['تمام','وصلت الفكرة','مظبوط'], big:['ملاحظة دسمة','تفاصيل حلوة'],
+           del:['اتمسحت','ولا كأنها كانت'], row:['دي؟','العلامة دي'], gen:['كلام عام؟ قول','على اللقطة كلها'], name:['اسمك إيه؟'], hi:'أهلًا يا ', send:['جاهز؟ ابعت','يلا نبعت'], cancel:['هتمشي؟','متأكد؟'], empty:['اكتب ملاحظة الأول'], sending:['ببعت…'], sent:['وصلت. شكرًا'], fail:['ما اتبعتش. جرّب تاني']}},
     en:{lead:'Got a note?', btn:'Leave a comment', s1:'Press “Leave a comment”', s2:'Mark the frame', s3:'Write your note and send', hide:'Hide this strip', tab:'Comment', dev:'Developing the full frame…', title:'Comment on this frame',
         hint:'Click anywhere on the picture to drop a mark, then write your note on it.', general:'General note', generalPh:'Anything about this frame as a whole (optional)…', name:'Name', namePh:'Your name',
         ph:'Write your note for this mark…', send:'Send comment', cancel:'Cancel', del:'Remove mark', empty:'Write at least one note before sending.', needName:'Add your name so we know who this is from.',
-        sending:'Sending…', sent:'Received. Thank you, we will review it.', sentBub:'Got it. Thanks.', fail:'The comment was not sent. Please try again.', test:'Trial mode: this comment was not sent to anyone. This is the picture that would arrive.', dl:'Download picture', close:'Done', none:'No marks yet.'}
+        sending:'Sending…', sent:'Received. Thank you, we will review it.', sentBub:'Got it. Thanks.', fail:'The comment was not sent. Please try again.', test:'Trial mode: this comment was not sent to anyone. This is the picture that would arrive.', dl:'Download picture', close:'Done', none:'No marks yet.',
+        q:{open:['Drop a mark anywhere','Where is the note? Mark it'], pin:['Here? Got it','Marked','I see it','And that one too'], write:['Taking it down…','Go on','Mm-hm…'], ok:['Got it','Clear','Noted'], big:['That is a proper note','Nice detail'],
+           del:['Gone','Like it never happened'], row:['This one?','That mark'], gen:['Something general? Go on','About the whole frame'], name:['Your name?'], hi:'Hello, ', send:['Ready? Send it','Let us send'], cancel:['Leaving?','Sure?'], empty:['Write a note first'], sending:['Sending…'], sent:['Received. Thanks'], fail:['Not sent. Try again']}}
   };
   function isAr(){ try{ if(typeof C.arabic==='function') return !!C.arabic(); }catch(e){} return (D.documentElement.dir||'')==='rtl'||/^ar/i.test(D.documentElement.lang||''); }
   function L(){ return isAr()?TXT.ar:TXT.en; }
@@ -57,7 +61,11 @@
   +'#an-root .an-btn:focus-visible,#an-root .an-hide:focus-visible,#an-root .an-tab:focus-visible{outline:2px solid var(--an-ink);outline-offset:3px}'
   +'#an-root .an-x:focus-visible,#an-root .an-go:focus-visible,#an-root .an-no:focus-visible{outline:2px solid var(--an-or);outline-offset:3px}'
   +'#an-root .an-hide{flex:none;width:34px;height:34px;border-radius:50%;background:rgba(26,9,3,.12);border:0;color:var(--an-ink);font:400 20px/1 sans-serif;cursor:pointer}#an-root .an-hide:hover{background:rgba(26,9,3,.24)}'
-  +'#an-root .an-slot{position:absolute;left:0;top:'+Math.round((BAR-SIZE)/2+3)+'px;width:'+SIZE+'px;height:'+SIZE+'px;cursor:pointer;transition:transform 1s cubic-bezier(.55,.05,.2,1);filter:drop-shadow(0 4px 5px rgba(60,18,0,.5));will-change:transform}'
+  +'#an-root .an-slot{position:absolute;left:0;top:'+SLOT_TOP+'px;width:'+SIZE+'px;height:'+SIZE+'px;cursor:pointer;transition:transform 1s cubic-bezier(.55,.05,.2,1);filter:drop-shadow(0 4px 5px rgba(60,18,0,.5));will-change:transform}'
+  +'#an-root .an-slot.an-fly{pointer-events:none;transition:transform .62s cubic-bezier(.3,.9,.25,1.1)}'
+  +'#an-root .an-slot>div[aria-hidden]{transition:transform .5s cubic-bezier(.3,.9,.25,1.1)}#an-root .an-slot.an-fly>div[aria-hidden]{transform:scale('+FLY+')}#an-root .an-slot canvas{transition:transform .28s}'
+  +'#an-root .an-say{position:absolute;left:50%;bottom:92%;z-index:2;transform:translate(-50%,6px);max-width:min(240px,70vw);padding:5px 11px 6px;background:var(--an-cream);color:#180703;font:700 13.5px/1.35 inherit;font-family:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;clip-path:polygon(0 0,100% 0,100% 100%,9px 100%,0 calc(100% - 9px));opacity:0;transition:opacity .22s,transform .22s;pointer-events:none}'
+  +'#an-root .an-say.an-show{opacity:1;transform:translate(-50%,0)}'
   +'#an-root .an-tab{position:fixed;top:0;z-index:2147483300;left:50%;transform:translateX(-50%);height:30px;padding:0 14px;background:linear-gradient(180deg,var(--an-or),var(--an-or2));color:var(--an-ink);border:0;font:700 13.5px/30px inherit;font-family:inherit;cursor:pointer;clip-path:polygon(0 0,100% 0,100% 100%,9px 100%,0 calc(100% - 9px));transition:transform .35s}'
   +'#an-root .an-tab.an-off{transform:translate(-50%,-120%)}'
   /* the comment sheet */
@@ -99,7 +107,7 @@
   +'@media (max-width:1040px){#an-root .an-step:not(.an-on) span{display:none}#an-root .an-step:not(.an-on) .an-seat{display:none}#an-root .an-arrow{width:8px}}'
   +'@media (max-width:759px){#an-root .an-steps{justify-content:flex-start}#an-root .an-step:not(.an-on){display:none}#an-root .an-arrow{display:none}#an-root .an-step{font-size:13px;padding:0 8px}#an-root .an-seat{width:70px}#an-root .an-btn{padding:8px 12px;font-size:14px}#an-root .an-bar{gap:6px;padding:0 8px}'
   +'#an-root .an-modal{flex-direction:column;padding:10px;gap:10px}#an-root .an-side{width:auto;max-height:52vh}#an-root .an-stage{min-height:30vh}}'
-  +'@media (prefers-reduced-motion:reduce){#an-root .an-pin{animation:none}#an-root .an-bar,#an-root .an-slot,#an-root .an-step,#an-root .an-btn,#an-root .an-tab{transition:none}}';
+  +'@media (prefers-reduced-motion:reduce){#an-root .an-pin{animation:none}#an-root .an-bar,#an-root .an-slot,#an-root .an-slot.an-fly,#an-root .an-slot>div[aria-hidden],#an-root .an-slot canvas,#an-root .an-say,#an-root .an-step,#an-root .an-btn,#an-root .an-tab{transition:none}}';
   var st=el('style'); st.textContent=css; D.head.appendChild(st);
 
   /* ---------- the strip ---------- */
@@ -118,7 +126,35 @@
 
   /* the mascot walks to the step he is explaining */
   var cur=-1, MOODS=['happy','wow','happy'];
-  function place(){ if(cur<0) return; var s=STEP[cur].firstChild.getBoundingClientRect(), b=bar.getBoundingClientRect(); if(!s.width&&STEP[cur].offsetParent===null) return; slot.style.transform='translateX('+Math.round(s.left+s.width/2-b.left-SIZE/2)+'px)'; }
+  /* While a comment is open he leaves the strip: flyTo() says where on screen he should be standing right now
+     (next to a mark, or beside the field being used), and place() keeps him there as things move. */
+  var flyTo=null, here=null, face=null, say=el('div','an-say'), sayT=0, tiltT=0, lookHold=0, gazeAt=0, QI={};
+  slot.appendChild(say);
+  function moveTo(x,y){ var m=SIZE*FLY/2, vw=W.innerWidth, vh=W.innerHeight, half=Math.min(120,vw*.35), off=0;
+    x=Math.max(m*.75,Math.min(vw-m*.75,x)); y=Math.max(BAR+92,Math.min(vh-m*.6,y));
+    if(x-half<6) off=6-(x-half); else if(x+half>vw-6) off=(vw-6)-(x+half); say.style.marginLeft=Math.round(off)+'px';
+    if(here&&Math.abs(here[0]-x)<1&&Math.abs(here[1]-y)<1) return;
+    if(face&&here&&Math.abs(x-here[0])>50){ face.style.transform='rotate('+(x>here[0]?9:-9)+'deg)'; clearTimeout(tiltT); tiltT=setTimeout(function(){ face.style.transform=''; },400); }   /* he leans into the move */
+    here=[x,y]; slot.style.transform='translate('+Math.round(x-SIZE/2)+'px,'+Math.round(y-SIZE/2-SLOT_TOP)+'px)'; }
+  function place(){
+    if(flyTo){ var p=null; try{ p=flyTo(); }catch(e){} if(p){ moveTo(p[0],p[1]); return; } }
+    here=null; if(cur<0) return; var s=STEP[cur].firstChild.getBoundingClientRect(), b=bar.getBoundingClientRect(); if(!s.width&&STEP[cur].offsetParent===null) return; slot.style.transform='translate('+Math.round(s.left+s.width/2-b.left-SIZE/2)+'px,0)'; }
+  function fly(f){ flyTo=f; slot.classList.toggle('an-fly',!!f); if(!f){ say.classList.remove('an-show'); clearTimeout(sayT); } place(); }
+  function pick(k){ var a=L().q[k]; QI[k]=((QI[k]==null?-1:QI[k])+1)%a.length; return a[QI[k]]; }
+  /* a short line over his head, and the face that goes with it */
+  function quip(text,m,ms){ if(m) mood(m); if(!flyTo||!mascot) return; say.textContent=text||''; say.dir=isAr()?'rtl':'ltr'; say.classList.toggle('an-show',!!text); clearTimeout(sayT); if(text) sayT=setTimeout(function(){ say.classList.remove('an-show'); },ms||2400); }
+  /* His eyes follow the pointer he is told about on window. Point them at a spot on screen (x,y), and hold them there for a moment. */
+  function lookAt(x,y,hold){ if(!mascot) return; var r=slot.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2, fx=here?here[0]:cx, fy=here?here[1]:cy, dx=x-fx, dy=y-fy, d=Math.sqrt(dx*dx+dy*dy)||1, k=Math.min(1,d/80);
+    lookHold=Date.now()+(hold||1500); try{ W.dispatchEvent(new PointerEvent('pointermove',{clientX:cx+dx/d*460*k,clientY:cy+dy/d*370*k})); }catch(e){} }
+  function lookEl(e,hold){ if(!e) return; var r=e.getBoundingClientRect(); if(r.width||r.height) lookAt(r.left+r.width/2,r.top+r.height/2,hold); }
+  function gaze(e){ var n=Date.now(); if(!mascot||n<lookHold||n-gazeAt<60) return; gazeAt=n; try{ W.dispatchEvent(new PointerEvent('pointermove',{clientX:e.clientX,clientY:e.clientY})); }catch(x){} }
+  /* where to stand: beside a mark, on the side with more picture, a little above it (below when there is no room) */
+  function nearPin(p){ return function(){ var r=p.dot.getBoundingClientRect(), pr=S.pic.getBoundingClientRect(), px=r.left+r.width/2, py=r.top+r.height/2, m=SIZE*FLY/2, sx=(px-pr.left<pr.width/2)?1:-1, y=py-m*.5;
+    if(y<BAR+92) y=py+m*.85; return [px+sx*(m*.94+23),y]; }; }
+  /* ...or at the edge of the notes column, level with the field in use */
+  function nearField(f){ return function(){ var s=S.side.getBoundingClientRect(), g=S.stage.getBoundingClientRect(), r=f.getBoundingClientRect(), m=SIZE*FLY/2, y=r.top+r.height/2;
+    if(g.left>=s.right-2) return [s.right+m*.78,y]; if(g.right<=s.left+2) return [s.left-m*.78,y];
+    return [isAr()?s.left+m*.8:s.right-m*.8,s.top-m*.2]; }; }
   function setStep(n,quiet){ if(n===cur){ place(); return; } cur=n; STEP.forEach(function(e,k){ e.classList.toggle('an-on',k===n); e.classList.toggle('an-did',k<n); }); place(); if(!quiet) mood(MOODS[n]); }
   var hover=-1, tourT=0;
   function tour(){ if(S||collapsed||bar.classList.contains('an-off')||hover>=0||D.hidden) return; setStep((cur+1)%3); }
@@ -132,7 +168,7 @@
     if(!mascot){ if(++tries<60) setTimeout(adopt,150); return; }
     if(mascot.firstChild&&mascot.firstChild.tagName==='DIV') mascot.firstChild.style.display='none';
     mascot.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';
-    slot.appendChild(mascot); slot.style.display=''; place();
+    slot.appendChild(mascot); face=mascot.querySelector('canvas'); slot.style.display=''; place();
   }
 
   /* make room: the page moves down by the height of the strip, and back when the strip goes away */
@@ -192,9 +228,9 @@
 
   /* ---------- the comment sheet ---------- */
   var modal=el('div','an-modal'); modal.hidden=true; modal.setAttribute('role','dialog'); modal.setAttribute('aria-modal','true'); root.appendChild(modal);
-  ['keydown','keyup','keypress','wheel','pointerdown','pointerup','pointermove','mousedown','mouseup','click','dblclick','touchstart','touchmove','touchend','contextmenu'].forEach(function(t){ modal.addEventListener(t,function(e){ e.stopPropagation(); if(t==='keydown'&&e.key==='Escape'&&!busy) close(); }); });
-  var S=null, busy=false;
-  function close(){ modal.hidden=true; modal.textContent=''; if(S&&S.url) URL.revokeObjectURL(S.url); S=null; btn.disabled=false; setStep(0,true); sync(); }
+  ['keydown','keyup','keypress','wheel','pointerdown','pointerup','pointermove','mousedown','mouseup','click','dblclick','touchstart','touchmove','touchend','contextmenu'].forEach(function(t){ modal.addEventListener(t,function(e){ e.stopPropagation(); if(t==='pointermove') gaze(e); if(t==='keydown'&&e.key==='Escape'&&!busy) close(); }); });
+  var S=null, busy=false, typeT=0, busyT=0, okAt=0;
+  function close(){ modal.hidden=true; modal.textContent=''; if(S&&S.url) URL.revokeObjectURL(S.url); clearTimeout(typeT); clearInterval(busyT); S=null; btn.disabled=false; fly(null); setStep(0,true); sync(); }
   function setPic(canvas){ if(!S) return; S.canvas=canvas; canvas.toBlob(function(b){ if(!S||!b) return; if(S.url) URL.revokeObjectURL(S.url); S.url=URL.createObjectURL(b); S.img.src=S.url; },'image/jpeg',.92); }
   function fit(){ if(!S) return; var a=S.w/S.h, bw=S.stage.clientWidth, bh=S.stage.clientHeight; if(!bw||!bh) return; var w=Math.min(bw,bh*a); S.pic.style.width=Math.floor(w)+'px'; S.pic.style.height=Math.floor(w/a)+'px'; }
   function progress(){ if(!S||S.sent) return; var wrote=S.pins.length>0||(S.ga&&S.ga.value.trim()); setStep(wrote?2:1); }
@@ -215,20 +251,38 @@
     modal.appendChild(stage); modal.appendChild(side);
     S.stage=stage; S.pic=pic; S.img=img; S.dev=dev; S.list=list; S.none=none; S.msg=msg; S.side=side; S.ga=ga;
     function renum(){ S.pins.forEach(function(p,i){ p.dot.textContent=i+1; p.num.textContent=i+1; }); none.style.display=S.pins.length?'none':''; progress(); }
-    ga.addEventListener('input',progress);
+    /* he reads along: eyes on the words while they are typed, then back to the mark with a nod when the typing stops */
+    function typing(f,p){ var v=f.value; lookEl(f,1400);
+      if(!f._an){ f._an=1; if(v.trim()) quip(pick('write'),null,1700); }
+      if(v.length>110&&f._an<2){ f._an=2; quip(pick('big'),'wow',2200); }
+      clearTimeout(typeT); typeT=setTimeout(function(){ if(!S||S.sent||!f.value.trim()||D.activeElement!==f) return; if(p) lookEl(p.dot,1800); if(Date.now()-okAt>6000){ okAt=Date.now(); quip(pick('ok'),'happy',1700); } },1100); }
+    function rest(){ return S.pins.length?nearPin(S.pins[S.pins.length-1]):nearField(h); }
+    ga.addEventListener('input',function(){ progress(); typing(ga,null); });
+    ga.addEventListener('focus',function(){ ga._an=0; fly(nearField(ga)); if(!ga.value.trim()) quip(pick('gen'),null,2200); });
+    ni.addEventListener('focus',function(){ fly(nearField(ni)); if(!ni.value.trim()) quip(pick('name'),'wow',2200); });
+    ni.addEventListener('input',function(){ lookEl(ni,1400); });
+    ni.addEventListener('change',function(){ var n=ni.value.trim().split(/\s+/)[0].slice(0,16); if(n) quip(t.q.hi+n,'happy',2400); });
+    go.addEventListener('pointerenter',function(){ if(busy||S.sent) return; fly(nearField(go)); quip(pick('send'),'wow',2000); });
+    go.addEventListener('focus',function(){ if(busy||S.sent) return; fly(nearField(go)); });
+    no.addEventListener('pointerenter',function(){ if(busy||S.sent) return; fly(nearField(no)); quip(pick('cancel'),'sad',1800); });
     pic.addEventListener('click',function(e){
       if(busy||S.sent) return; var r=pic.getBoundingClientRect(); var p={x:Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)),y:Math.max(0,Math.min(1,(e.clientY-r.top)/r.height))};
       p.dot=el('div','an-pin'); p.dot.style.left=(p.x*100)+'%'; p.dot.style.top=(p.y*100)+'%'; pic.appendChild(p.dot);
       p.row=el('div','an-row'); p.num=el('div','an-n'); p.ta=el('textarea'); p.ta.rows=2; p.ta.placeholder=t.ph; p.ta.setAttribute('aria-label',t.ph);
       var x=el('button','an-x','×'); x.type='button'; x.title=t.del; x.setAttribute('aria-label',t.del);
-      x.addEventListener('click',function(){ S.pins.splice(S.pins.indexOf(p),1); p.dot.remove(); p.row.remove(); renum(); });
-      p.ta.addEventListener('focus',function(){ p.dot.classList.add('an-hot'); }); p.ta.addEventListener('blur',function(){ p.dot.classList.remove('an-hot'); });
+      x.addEventListener('click',function(){ S.pins.splice(S.pins.indexOf(p),1); p.dot.remove(); p.row.remove(); renum(); fly(rest()); quip(pick('del'),'sad',2000); });
+      p.ta.addEventListener('focus',function(){ p.ta._an=0; p.dot.classList.add('an-hot'); fly(nearPin(p)); setTimeout(function(){ if(S&&D.activeElement===p.ta) lookEl(p.dot,1600); },640); });
+      p.ta.addEventListener('blur',function(){ p.dot.classList.remove('an-hot'); });
+      p.ta.addEventListener('input',function(){ progress(); typing(p.ta,p); });
+      p.row.addEventListener('pointerenter',function(){ if(busy||S.sent||D.activeElement===p.ta) return; p.dot.classList.add('an-hot'); fly(nearPin(p)); quip(pick('row'),null,1500); });
+      p.row.addEventListener('pointerleave',function(){ if(D.activeElement!==p.ta) p.dot.classList.remove('an-hot'); });
       p.row.appendChild(p.num); p.row.appendChild(p.ta); p.row.appendChild(x); list.appendChild(p.row); S.pins.push(p); renum(); msg.textContent='';
-      p.ta.focus(); list.scrollTop=list.scrollHeight;
+      p.ta.focus(); list.scrollTop=list.scrollHeight; quip(pick('pin'),'happy',2000);
     });
     no.addEventListener('click',function(){ if(!busy) close(); });
     go.addEventListener('click',function(){ send(go,ga,ni); });
-    modal.hidden=false; btn.disabled=true; setStep(1); fit();
+    modal.hidden=false; btn.disabled=true; setStep(1); fit(); S.rest=rest;
+    fly(nearField(h)); setTimeout(function(){ if(S&&!S.pins.length&&!S.sent) quip(pick('open'),'wow',3600); },750);
     setPic(quick(shots,pr,y0));
     full(shots,pr,y0).then(function(c){ if(!S) return; if(!blank(c)) setPic(c); dev.remove(); },function(){ if(S) dev.remove(); });
   }
@@ -245,19 +299,19 @@
   function send(go,ga,ni){
     if(busy||!S) return; var t=L(), name=ni.value.trim(), general=ga.value.trim();
     var pins=S.pins.map(function(p,i){ return {n:i+1,x:+p.x.toFixed(4),y:+p.y.toFixed(4),text:p.ta.value.trim()}; });
-    if(!general&&!pins.some(function(p){ return p.text; })){ S.msg.textContent=t.empty; mood('sad'); return; }
+    if(!general&&!pins.some(function(p){ return p.text; })){ S.msg.textContent=t.empty; quip(pick('empty'),'sad',2600); return; }
     if(!name){ S.msg.textContent=t.needName; ni.focus(); return; }
     try{ localStorage.setItem('aroma-notes-name',name); }catch(e){}
-    busy=true; go.disabled=true; go.textContent=t.sending; S.msg.textContent='';
+    busy=true; go.disabled=true; go.textContent=t.sending; S.msg.textContent=''; fly(nearField(go)); quip(pick('sending'),'dizzy',60000); clearInterval(busyT); busyT=setInterval(function(){ if(busy) mood('dizzy'); },2600);
     var flat=flatten(), meta={room:C.room||'',name:name,when:S.when,page:location.pathname,general:general,pins:pins,context:S.ctx,view:{w:S.w,h:S.h,dpr:W.devicePixelRatio||1,lang:isAr()?'ar':'en'}};
     flat.toBlob(function(blob){
-      function done(ok,trial){ busy=false; if(!S) return;
-        if(!ok){ go.disabled=false; go.textContent=t.send; S.msg.textContent=t.fail; mood('sad'); return; }
-        S.sent=true; STEP.forEach(function(e){ e.classList.remove('an-on'); e.classList.add('an-did'); }); flash(t.sentBub,6000); mood('happy');
+      function done(ok,trial){ busy=false; clearInterval(busyT); if(!S) return;
+        if(!ok){ go.disabled=false; go.textContent=t.send; S.msg.textContent=t.fail; quip(pick('fail'),'sad',4200); return; }
+        S.sent=true; STEP.forEach(function(e){ e.classList.remove('an-on'); e.classList.add('an-did'); }); flash(t.sentBub,6000);
         var side=S.side; side.textContent=''; var d=el('div','an-done'); d.appendChild(el('p','an-big',trial?t.test:t.sent));
         if(trial){ var a=el('a',null,t.dl); a.href=URL.createObjectURL(blob); a.download='aroma-comment-'+(C.room||'room')+'.jpg'; d.appendChild(a); S.img.src=a.href; S.pins.forEach(function(p){ p.dot.remove(); }); }
         var ul=el('ul','an-sum'); pins.forEach(function(q){ if(!q.text) return; var li=el('li'); li.appendChild(el('span','an-n',String(q.n))); li.appendChild(el('span',null,q.text)); ul.appendChild(li); }); if(general){ var lg=el('li'); lg.appendChild(el('span')); lg.appendChild(el('span',null,general)); ul.appendChild(lg); } if(ul.firstChild) d.appendChild(ul);
-        var ok2=el('button','an-go',t.close); ok2.type='button'; ok2.addEventListener('click',close); d.appendChild(ok2); side.appendChild(d); ok2.focus();
+        var ok2=el('button','an-go',t.close); ok2.type='button'; ok2.addEventListener('click',close); d.appendChild(ok2); side.appendChild(d); ok2.focus(); fly(nearField(d.firstChild)); quip(pick('sent'),'happy',5200);
       }
       if(!blob){ done(false); return; }
       if(!C.endpoint){ W.AromaNotes.last={meta:meta,image:blob}; done(true,true); return; }
