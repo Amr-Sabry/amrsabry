@@ -12,15 +12,17 @@ export default function middleware(request) {
   const url = new URL(request.url);
   const host = (request.headers.get('host') || '').toLowerCase().split(':')[0];
   const path = url.pathname.replace(/\/+$/, '') || '/';
+  if (path === '/package.json' || path === '/package-lock.json') return notFound();   // build files, not pages
 
   if (HUB_HOSTS.includes(host)) {
     if (path === '/') return rewrite(request, '/aromahub');
     if (path === '/admin') return rewrite(request, '/aromahub-admin');
     if (path === '/aromahub' || path === '/aromahub-admin') return;
     if (path.startsWith('/r/')) return;                       // rooms and their assets
+    if (path === '/api/notes') return;                        // comments left on rooms (api/notes.js)
     const m = path.match(/^\/([a-z0-9][a-z0-9-]{1,40})$/);    // open project pages: /<project> is r/<project>.html
     if (m) return rewrite(request, '/r/' + (ALIAS[m[1]] || m[1]));
     return notFound();
   }
-  if (path === '/aromahub' || path === '/aromahub.html' || path === '/aromahub-admin' || path === '/aromahub-admin.html' || path.startsWith('/r/')) return notFound();
+  if (path === '/aromahub' || path === '/aromahub.html' || path === '/aromahub-admin' || path === '/aromahub-admin.html' || path.startsWith('/r/') || path === '/api' || path.startsWith('/api/')) return notFound();
 }
