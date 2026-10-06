@@ -2,7 +2,7 @@
 // Every other host is left exactly as it was, except that the hub's pages are not served there.
 const HUB_HOSTS = ['aromahub.studio', 'www.aromahub.studio'];
 // Friendly addresses for rooms that were published under a random slug.
-const ALIAS = { yummis: '4spd88sciw6fss8jpdw3vx' };
+const ALIAS = { yummis: '4spd88sciw6fss8jpdw3vx', egymap: 'tin5cbfttzvdu6uujdc6wb' };
 const notFound = () =>
   new Response('Not found', { status: 404, headers: { 'content-type': 'text/plain; charset=utf-8' } });
 const rewrite = (request, to) =>
