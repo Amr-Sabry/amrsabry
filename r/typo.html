@@ -1316,12 +1316,12 @@ var FONTS=[
  ['Reem Kufi','Arabic','Reem+Kufi:wght@400..700'],['Marhey','Arabic','Marhey:wght@300..700'],['Lemonada','Arabic','Lemonada:wght@300..700'],['Lalezar','Arabic','Lalezar'],['Rakkas','Arabic','Rakkas'],['Aref Ruqaa','Arabic','Aref+Ruqaa:wght@400;700'],['Amiri','Arabic','Amiri:wght@400;700'],
  ['Anybody','English','Anybody:wdth,wght@50..150,100..900'],['Montserrat','English','Montserrat:wght@100..900'],['Unbounded','English','Unbounded:wght@200..900'],['Archivo Black','English','Archivo+Black'],['Bebas Neue','English','Bebas+Neue'],['Oswald','English','Oswald:wght@200..700'],
  ['Syne','English','Syne:wght@400..800'],['Poppins','English','Poppins:wght@100;200;300;400;500;600;700;800;900'],['Playfair Display','English','Playfair+Display:wght@400..900'],['DM Serif Display','English','DM+Serif+Display'],['JetBrains Mono','English','JetBrains+Mono:wght@100..800'],['Permanent Marker','English','Permanent+Marker']];
-var DEF={text:'عنوان الحلقة\nEpisode Title',move:'mask',font:'Alexandria',weight:900,size:170,leading:1.25,tracking:0,color:'#ffffff',accent:'#EF4122',outline:0,olColor:'#000000',olOnly:false,grad:false,color2:'#EF4122',gradAngle:90,shadow:0,shOn:false,shColor:'#000000',shOp:60,shBlur:18,shDist:10,shAngle:90,x:.5,y:.5,align:'c',dur:3,inDur:1,outDur:.6,outOn:true,ease:'auto',stagger:50,fontRev:0,mp:{}};
+var DEF={text:'عنوان الحلقة\nEpisode Title',move:'mask',font:'Alexandria',weight:900,size:170,leading:1.25,tracking:0,color:'#ffffff',accent:'#EF4122',outline:0,olColor:'#000000',olOnly:false,grad:false,color2:'#EF4122',gradAngle:90,shadow:0,shOn:false,shColor:'#000000',shOp:60,shBlur:18,shDist:10,shAngle:90,fxv:2,x:.5,y:.5,align:'c',dur:3,inDur:1,outDur:.6,outOn:true,ease:'auto',stagger:50,fontRev:0,mp:{}};
 var P=Object.assign({},DEF), SKEY='aromaTypo.v1';
 try{var sv=JSON.parse(localStorage.getItem(SKEY)||'null'); if(sv&&typeof sv==='object') Object.keys(DEF).forEach(function(k){ if(typeof sv[k]===typeof DEF[k]) P[k]=sv[k]; });}catch(e){}
-/* settings saved before Outline and Shadow had their own controls: an outline was always hollow, a shadow was one amount */
-try{ if(sv&&typeof sv==='object'){ if(sv.outline>0&&typeof sv.olOnly!=='boolean') P.olOnly=true; if(sv.shadow>0&&typeof sv.shOn!=='boolean'){P.shOn=true; P.shBlur=Math.round(sv.shadow*.5); P.shDist=Math.round(sv.shadow*.12); P.shOp=Math.round(Math.min(.85,.35+sv.shadow/200)*100); P.shAngle=90;} } }catch(e){}
-P.shadow=0; if(!MOVE_BY[P.move]) P.move='mask'; P.fontRev=0; if(!P.mp||typeof P.mp!=='object'||Array.isArray(P.mp)||P.mp===DEF.mp) P.mp={};
+/* settings saved before Outline and Shadow had their own controls: the outline now sits round the fill unless Outline Only is switched on; a shadow was one amount */
+try{ if(sv&&typeof sv==='object'){ if(sv.fxv!==2) P.olOnly=false; if(sv.shadow>0&&typeof sv.shOn!=='boolean'){P.shOn=true; P.shBlur=Math.round(sv.shadow*.5); P.shDist=Math.round(sv.shadow*.12); P.shOp=Math.round(Math.min(.85,.35+sv.shadow/200)*100); P.shAngle=90;} } }catch(e){}
+P.shadow=0; P.fxv=2; if(!MOVE_BY[P.move]) P.move='mask'; P.fontRev=0; if(!P.mp||typeof P.mp!=='object'||Array.isArray(P.mp)||P.mp===DEF.mp) P.mp={};
 var saveT=0; function persist(){clearTimeout(saveT); saveT=setTimeout(function(){try{localStorage.setItem(SKEY,JSON.stringify(P));}catch(e){}},300);}
 
 /* brand */
