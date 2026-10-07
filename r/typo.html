@@ -429,6 +429,10 @@ var CUSTOM={
      var moving=(pr.i>0&&pr.i<1)||(pr.o>0&&pr.o<1); if(!v.pen||!moving) return;
      var head=pr.o>0?b:a, hx=l.rtl?x+w*(1-head):x+w*head, hy=l.yc+Math.sin(env.t*34+i*2)*L.lh*.28*v.wobble/100, r=em*v.size/100;
      g.save(); g.shadowColor='transparent'; g.fillStyle=P.accent; g.beginPath(); g.arc(hx,hy,r,0,6.2832); g.fill(); g.restore();});},
+ weightwave:function(g,L,env,P,M,K,v){var U=L.letters, n=U.length, rk=ranks('fwd',n), o=styleOf(P), lo=Math.min(v.min,v.max), hi=Math.max(v.min,v.max);
+   U.forEach(function(u,i){var pr=prog(env,P,M,rk[i],n); if(pr.i<=0||pr.o>=1) return; var c=u.cl[0], k=(Math.sin(env.t*v.speed-i*v.len)+1)/2, w=Math.round(lerp(lo,hi,k)/10)*10;
+     g.save(); g.globalAlpha*=clamp(pr.i*2.5)*(1-pr.o); g.font=fontW(P,w); g.direction=c.line.rtl?'rtl':'ltr'; g.textAlign='center';
+     ink(g,P,c.draw,c.cx,c.base+(1-EASE.outCubic(pr.i))*P.size*.22+EASE.inCubic(pr.o)*P.size*.22,o); g.restore();});},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -482,6 +486,8 @@ var MOVES=[
  {id:'extrude',name:'Extrude',cat:'FX',custom:'extrude',ease:'outBack',uses:{stagger:0,ease:1,accent:1},params:[PR('depth','Depth',4,60,1,20,'%'),PR('angle','Angle',0,360,1,52,'°'),PR('swing','Swing',0,100,1,35,'%')]},
  {id:'neon',name:'Neon Sign',cat:'FX',custom:'neon',uses:{stagger:0,ease:0,accent:1},params:[PR('glow','Glow',20,220,5,100,'%'),PR('flicker','Flicker',0,100,1,40,'%'),PT('core','White Core (Fill Color)',true)]},
 {id:'writeon',name:'Write-On',cat:'Reveal',custom:'writeon',stagger:.45,uses:{stagger:1,ease:0,accent:1},params:[PT('pen','Pen',true),PR('size','Pen Size',2,20,.5,7,'%'),PR('wobble','Hand Wobble',0,100,1,60,'%')]},
+{id:'weightwave',name:'Weight Wave',cat:'Loop',custom:'weightwave',stagger:.5,uses:{stagger:1,ease:0,accent:0},note:'الحركة دي بتبان مع الفونتات الـ Variable زي Alexandria و Cairo و Anybody و Montserrat.',
+  params:[PR('min','Light Weight',100,900,50,200,''),PR('max','Bold Weight',100,900,50,900,''),PR('speed','Speed',.5,12,.1,4,''),PR('len','Wave Length',.1,2,.05,.6,'')]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
