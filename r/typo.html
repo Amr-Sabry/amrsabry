@@ -638,6 +638,11 @@ var CUSTOM={
      if(revealing){sx.globalCompositeOperation='destination-in'; sx.fillStyle='#000'; if(rtl) sx.fillRect(0,-R*2,W*3,R*4); else sx.fillRect(-W*3,-R*2,W*3,R*4);}
      if(tt<1){sx.globalCompositeOperation='source-atop'; var gr=sx.createLinearGradient(-bw/2,0,bw/2,0); gr.addColorStop(0,rgba(col,0)); gr.addColorStop(.5,rgba(col,.95)); gr.addColorStop(1,rgba(col,0)); sx.fillStyle=gr; sx.fillRect(-bw/2,-R*2,bw,R*4);}});
    put(g,c,al);},
+ gwipe:function(g,L,env,P,M,K,v){var io=IO(env,easeOf(P,M)), em=P.size, rtl=L.lines[0].rtl, deg=v.auto&&rtl?180-v.angle:v.angle, ang=deg*Math.PI/180, co=Math.cos(ang), si=Math.sin(ang), R=(Math.abs(co)*L.w+Math.abs(si)*L.h)/2+em*.3, soft=Math.max(2,R*2*v.soft/100);
+   if(io.pi>=1&&io.po<=0){drawAll(g,P,L,styleOf(P)); return;}
+   var c=textLayer(g,P,K,L,'gw'), s=c.g; s.save(); s.setTransform(K,0,0,K,0,0); s.globalCompositeOperation='destination-in';
+   function mask(f0,f1,a0,a1){var gr=s.createLinearGradient(L.cx+co*f0,L.cy+si*f0,L.cx+co*f1,L.cy+si*f1); gr.addColorStop(0,'rgba(0,0,0,'+a0+')'); gr.addColorStop(1,'rgba(0,0,0,'+a1+')'); s.fillStyle=gr; s.fillRect(0,0,W,H);}
+   var f=lerp(-R,R+soft,io.ei); mask(f-soft,f,1,0); if(io.po>0){var f2=lerp(-R-soft,R,EASE.inOutCubic(io.po)); mask(f2,f2+soft,0,1);} s.restore(); put(g,c,1);},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -720,6 +725,7 @@ var MOVES=[
 {id:'tiles',name:'Tile Flip',cat:'Reveal',custom:'tiles',uses:{stagger:0,ease:0,accent:1},params:[PR('size','Tile Size',10,80,1,34,'%'),PS('order','Order',[['center','From Center'],['read','Reading Direction'],['diag','Diagonal'],['rand','Random']],'center'),PT('accent','Accent Tiles',true)]},
 {id:'chroma',name:'Chromatic Split',cat:'FX',custom:'chroma',ease:'outExpo',uses:{stagger:0,ease:1,accent:0},params:[PR('dist','Split',2,60,1,18,'%'),PR('hold','Fringe While Holding',0,30,1,6,''),PS('dir','Direction',[['h','Horizontal'],['v','Vertical'],['d','Diagonal']],'h'),PT('jitter','Jitter',true)]},
 {id:'shine',name:'Shine Sweep',cat:'FX',custom:'shine',uses:{stagger:0,ease:0,accent:1},params:[PR('width','Band Width',10,150,5,55,'%'),PR('angle','Angle',-60,60,1,-22,'°'),PR('every','Repeat Every',.6,6,.1,1.6,'s'),PS('color','Light',[['accent','Accent'],['white','White']],'accent')]},
+{id:'gwipe',name:'Gradient Wipe',cat:'Reveal',custom:'gwipe',ease:'inOutCubic',uses:{stagger:0,ease:1,accent:0},params:[PR('angle','Angle',0,360,5,0,'°'),PR('soft','Feather',0,100,1,35,'%'),PT('auto','Follow Reading Direction',true)]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
