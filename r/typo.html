@@ -566,6 +566,11 @@ var CUSTOM={
    U.forEach(function(u,i){var pr=prog(env,P,M,rk[i],n); if(pr.i<=0||pr.o>=1) return; var lvl=clamp((.5+.5*Math.sin(t*2.1+i*1.7))*.3+(.5+.5*Math.sin(t*3.7+i*.6+2))*.2+noise1(t*1.6+i*9.1,3)*.65), on=EASE.outBack(pr.i)*(1-EASE.inCubic(pr.o)), by=u.line.base;
      if(v.bars){var bw=(u.x1-u.x0)*.72, bh=L.asc*1.25*lvl*clamp(pr.i)*(1-pr.o); g.save(); g.shadowColor='transparent'; g.fillStyle=P.accent; g.fillRect(u.cx-bw/2,by-bh,bw,bh+L.desc*.35); g.restore();}
      g.save(); g.globalAlpha*=clamp(pr.i*5); g.translate(u.cx,by); g.scale(1,Math.max(.001,(1+(lvl-.35)*amp*1.6)*on)); g.translate(-u.cx,-by); drawUnit(g,P,u,o); g.restore();});},
+ windowfx:function(g,L,env,P,M,K,v){var io=IO(env), em=P.size, sw=Math.max(3,em*v.width/100), ang=v.angle*Math.PI/180, off=((env.t*v.speed*em)%(sw*2)+sw*2)%(sw*2), fill=lerp(1,.5,io.ei)+io.eo*.5; if(io.a<=.003) return;
+   var c=layer(g,P,K,'win',function(s){drawAll(s,P,L,styleOf(P,{color:P.color})); s.globalCompositeOperation='source-atop'; s.fillStyle=P.accent; s.translate(L.cx,L.cy); s.rotate(ang); var R=Math.hypot(L.w,L.h)/2+em, x, y, k;
+     if(v.pattern==='checker'){for(y=-R-sw*2+off,k=0;y<R;y+=sw,k++) for(x=-R-sw*2+off+(k%2?sw:0);x<R;x+=sw*2) s.fillRect(x,y,sw*fill*2*.5+.5,sw+.5);}
+     else {var f=v.pattern==='thin'?fill*.5:fill; for(x=-R-sw*2+off;x<R;x+=sw*2) s.fillRect(x,-R,sw*2*f,R*2);}});
+   put(g,c,io.a);},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -637,6 +642,7 @@ var MOVES=[
 {id:'scribble',name:'Scribble',cat:'Graphic',custom:'scribble',uses:{stagger:0,ease:0,accent:1},params:[PS('shape','Shape',[['circle','Circle'],['underline','Underline'],['box','Box']],'circle'),PR('thick','Thickness',1,12,.5,4,'%'),PR('rough','Roughness',0,200,5,100,'%'),PR('pad','Padding',0,80,1,30,'%'),PT('boil','Boil (Alive Line)',false),PR('seed','Pattern',1,30,1,3,'')]},
 {id:'curtain',name:'Curtain',cat:'Reveal',custom:'curtain',stagger:.3,ease:'outExpo',uses:{stagger:1,ease:1,accent:1},params:[PS('axis','Opens',[['h','Sideways'],['v','Up & Down']],'h'),PT('panels','Curtain Panels',true),PT('perline','Per Line',false)]},
 {id:'eq',name:'Equalizer',cat:'Loop',custom:'eq',stagger:.5,uses:{stagger:1,ease:0,accent:1},params:[PR('amp','Amount',10,200,5,80,'%'),PR('speed','Speed',.2,6,.1,2.2,'×'),PT('bars','Level Bars',false)]},
+{id:'window',name:'Window',cat:'FX',custom:'windowfx',uses:{stagger:0,ease:0,accent:1},params:[PR('width','Stripe Width',4,80,1,22,'%'),PR('angle','Angle',-90,90,1,-35,'°'),PR('speed','Speed',-6,6,.1,1.2,'×'),PS('pattern','Pattern',[['stripes','Stripes'],['thin','Thin Lines'],['checker','Checker']],'stripes')]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
