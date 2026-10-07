@@ -1392,6 +1392,7 @@ function swatches(parent,id,label,key,cols){var f=el('div','f',parent); el('span
 (function build(){
   var s=el('section','sec',ctl), lh=el('div','r',s); s.id='secLines'; el('span','lab',lh,'Lines'); UI.lnCount=el('span','lab',lh,''); UI.lnList=el('div','lns',s); UI.lnList.id='lnList';
   var la=el('div','lnacts',s), ad=el('button','ghost',la,'+ Add Line'), du=el('button','ghost',la,'Duplicate'); ad.type='button'; ad.id='lnAdd'; du.type='button'; du.id='lnDup'; ad.addEventListener('click',function(){addLine(sel,true);}); du.addEventListener('click',function(){addLine(sel,true,true);});
+  var sp=el('button','ghost',s,'Split Rows Into Lines'); sp.type='button'; sp.id='lnSplit'; sp.hidden=true; sp.title='This line holds several rows. Make each row a line of its own.'; sp.addEventListener('click',splitSel);
   el('p','hint',s,'كل سطر Layer لوحده. دوس على السطر يتعلّم، وكل اللي تحت (الحركة والتوقيت والخط واللون والمكان) بيبقى بتاعه هو. Enter بيضيف سطر جديد، و Shift + Enter بينزل صف جوه نفس السطر.');
   s=el('section','sec',ctl); var mh=el('div','r',s); UI.moveTitle=el('span','lab',mh,'Move'); UI.moveReset=el('button','ghost',mh,'Reset'); UI.moveReset.type='button'; UI.moveReset.style.cssText='padding:5px 9px;font-size:11px'; UI.moveReset.addEventListener('click',function(){delete P.mp[P.move]; buildMoveUI(); onChange('mp');}); UI.moveBox=el('div','mbox',s);
   s=sec('Timing');
@@ -1426,14 +1427,14 @@ function swatches(parent,id,label,key,cols){var f=el('div','f',parent); el('span
 function buildLines(){var box=UI.lnList; box.textContent='';
   LINES.forEach(function(Q,i){var r=el('div','ln',box), nb=el('button','n',r,String(i+1)), ip=el('textarea','',r), mv=el('button','mv',r,''), x=el('button','x',r,'×'); nb.type='button'; nb.setAttribute('aria-label','Select line '+(i+1)); mv.type='button'; x.type='button'; x.setAttribute('aria-label','Remove line '+(i+1));
     ip.rows=1; ip.dir='auto'; ip.spellcheck=false; ip.value=Q.text; ip.placeholder='اكتب السطر هنا'; ip.setAttribute('aria-label','Line '+(i+1)+' text');
-    nb.addEventListener('click',function(){selectLine(i);}); ip.addEventListener('focus',function(){selectLine(i);}); ip.addEventListener('input',function(){LINES[i].text=ip.value.replace(/\r/g,''); fitRow(ip); onChange('text');});
+    nb.addEventListener('click',function(){selectLine(i);}); ip.addEventListener('focus',function(){selectLine(i);}); ip.addEventListener('input',function(){LINES[i].text=ip.value.replace(/\r/g,''); fitRow(ip); onChange('text'); syncLines();});
     ip.addEventListener('keydown',function(e){ if(e.isComposing) return; var one=ip.value.indexOf('\n')<0; if(e.key==='Enter'&&!e.shiftKey){e.preventDefault(); addLine(i,true);} else if(e.key==='Backspace'&&!ip.value&&LINES.length>1){e.preventDefault(); removeLine(i,true);} else if(e.key==='ArrowUp'&&i>0&&one){e.preventDefault(); focusLine(i-1);} else if(e.key==='ArrowDown'&&i<LINES.length-1&&one){e.preventDefault(); focusLine(i+1);} });
     mv.addEventListener('click',function(){selectLine(i); var t=tiles.filter(function(t){return t.M.id===P.move;})[0]; if(t){ if(t.b.hidden){cat='All'; $('#mSearch').value=''; Array.prototype.forEach.call($('#mCats').children,function(c,k){c.setAttribute('aria-pressed',String(k===0));}); filterTiles();} t.b.scrollIntoView({block:'center',behavior:reduce?'auto':'smooth'}); }});
     x.addEventListener('click',function(){removeLine(i);}); });
   syncLines();}
 function syncLines(){var box=UI.lnList; if(!box) return; if(box.children.length!==LINES.length){buildLines(); return;}
   Array.prototype.forEach.call(box.children,function(r,i){var Q=LINES[i], ip=r.querySelector('textarea'), mv=r.querySelector('.mv'), M=MOVE_BY[Q.move]; r.setAttribute('aria-selected',String(i===sel)); if(document.activeElement!==ip&&ip.value!==Q.text) ip.value=Q.text; fitRow(ip); mv.textContent=M.num; mv.title='Line '+(i+1)+' · '+M.num+' · '+M.name; r.querySelector('.x').disabled=LINES.length<2;});
-  UI.lnCount.textContent=LINES.length+' / '+MAXL; $('#lnAdd').disabled=$('#lnDup').disabled=LINES.length>=MAXL; var many=LINES.length>1; if(UI.posSeg){UI.posSeg.hidden=!many; UI.copyRow.hidden=!many;} }
+  UI.lnCount.textContent=LINES.length+' / '+MAXL; $('#lnAdd').disabled=$('#lnDup').disabled=LINES.length>=MAXL; var rws=P.text.split('\n').filter(function(r){return r.trim();}).length; $('#lnSplit').hidden=!(rws>1&&LINES.length+rws-1<=MAXL); var many=LINES.length>1; if(UI.posSeg){UI.posSeg.hidden=!many; UI.copyRow.hidden=!many;} }
 function fitRow(ip){ip.style.height='auto'; ip.style.height=Math.max(20,ip.scrollHeight)+'px';}
 function focusLine(i){var r=UI.lnList.children[i], ip=r&&r.querySelector('textarea'); if(ip){ip.focus(); try{ip.setSelectionRange(ip.value.length,ip.value.length);}catch(e){}} }
 function selectLine(i){i=clamp(i,0,LINES.length-1); if(i===sel&&P===LINES[i]){flashSel(); return;} sel=i; P=LINES[i]; refreshAll(); flashSel(); hook('line',i);}
@@ -1441,6 +1442,8 @@ function selectLine(i){i=clamp(i,0,LINES.length-1); if(i===sel&&P===LINES[i]){fl
 function addLine(after,focus,copy){ if(LINES.length>=MAXL) return; var src=LINES[after], q=mkLine(src); if(!copy) q.text=''; var rows=copy?q.text.split('\n').length:1; q.y=src.text.trim()?(layout(src).bot+rows*q.size*q.leading/2)/H:src.y+src.size*src.leading/H; q.delay=Math.min(Math.round((src.delay+.15)*20)/20,Math.max(0,src.dur-1));
   LINES.splice(after+1,0,q); sel=after+1; P=q; buildLines(); refreshAll(); flashSel(); if(focus) focusLine(sel); hook('line-add',sel);}
 function removeLine(i,focus){ if(LINES.length<2) return; LINES.splice(i,1); if(sel>i||sel>=LINES.length||(sel===i&&i>0)) sel=Math.max(0,sel-1); P=LINES[sel]; buildLines(); refreshAll(); flashSel(); if(focus) focusLine(sel); hook('line-remove',i);}
+/* a line that holds several rows -> one line per row */
+function splitSel(){var parts=splitRows(mkLine(P)); if(parts.length<2) return; var d0=P.delay; parts.forEach(function(q,i){q.delay=Math.min(Math.round((d0+i*.15)*20)/20,Math.max(0,q.dur-1));}); Array.prototype.splice.apply(LINES,[sel,1].concat(parts)); P=LINES[sel]; buildLines(); refreshAll(); flashSel(); hook('line-split');}
 function copyTo(keys,mp){LINES.forEach(function(q){ if(q===P) return; keys.forEach(function(k){q[k]=P[k];}); if(mp) q.mp=JSON.parse(JSON.stringify(P.mp)); }); LCACHE.clear(); syncLines(); dirty(true); persist(); hook('copy-all');}
 function groupBox(){var a=Infinity,b=-Infinity,ha=0,hb=0; LINES.forEach(function(q){ if(!q.text.trim()) return; var L=layout(q); if(L.top<a){a=L.top; ha=L.h;} if(L.bot>b){b=L.bot; hb=L.h;} }); return a===Infinity?null:{top:a,bot:b,ha:ha,hb:hb};}
 /* All Lines: the title moves as one block. Top and bottom put its first / last line where a single line would sit. */
