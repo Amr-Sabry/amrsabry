@@ -450,6 +450,12 @@ var CUSTOM={
        function half(up,s,k){g.save(); g.beginPath(); g.rect(x-2,up?top-2:mid,w+4,hk/2+2); g.clip(); if(k!=null){g.translate(0,mid); g.scale(1,Math.max(.001,k)); g.translate(0,-mid); g.fillStyle=P.accent; g.fillRect(x,top,w,hk);} glyph(s,true); g.restore();}
        if(done){half(true,cur); half(false,cur);} else {half(true,cur); half(false,prev); if(f<.5) half(true,prev,1-2*f); else half(false,cur,2*f-1);}
        g.fillStyle='rgba(0,0,0,.42)'; g.fillRect(x,mid-Math.max(1,em*.012),w,Math.max(2,em*.024)); g.restore();});});},
+ scatter:function(g,L,env,P,M,K,v){var U=unitsOf(L,v.by), n=U.length, rk=ranks('rand',n,v.seed), o=styleOf(P), far=Math.max(W,H)*.55*v.spread/100;
+   U.forEach(function(u,i){var pr=prog(env,P,M,rk[i],n); if(pr.i<=0) return; var h1=hash(i*7.1+v.seed), h2=hash(i*3.7+v.seed*2.3), h3=hash(i*11.3+v.seed*.7), ang=h1*6.2832, k=1-EASE.outExpo(pr.i);
+     var st={a:clamp(pr.i*4),dx:Math.cos(ang)*far*(.5+h2)*k,dy:Math.sin(ang)*far*(.5+h2)*k,r:(h3-.5)*2*v.spin*Math.PI/180*k,s:1+k*h2*1.6};
+     if(pr.o>0){var q=pr.o; if(v.gravity){var a2=Math.atan2(u.cy-L.cy-P.size*.6,u.cx-L.cx)+(h1-.5)*.9, F=W*.42*(.6+h2); st.dx+=Math.cos(a2)*F*q; st.dy+=Math.sin(a2)*F*q-H*.25*q+H*1.5*q*q; st.r+=(h3-.5)*9*q; st.a*=1-q*q*q;}
+       else {var e2=EASE.inCubic(q); st.dx+=Math.cos(ang+2.2)*far*(.5+h2)*e2; st.dy+=Math.sin(ang+2.2)*far*(.5+h2)*e2; st.r-=(h3-.5)*2*v.spin*Math.PI/180*e2; st.a*=1-e2;}}
+     withState(g,u,st,K,function(){drawUnit(g,P,u,o);});});},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -506,6 +512,7 @@ var MOVES=[
 {id:'weightwave',name:'Weight Wave',cat:'Loop',custom:'weightwave',stagger:.5,uses:{stagger:1,ease:0,accent:0},note:'الحركة دي بتبان مع الفونتات الـ Variable زي Alexandria و Cairo و Anybody و Montserrat.',
   params:[PR('min','Light Weight',100,900,50,200,''),PR('max','Bold Weight',100,900,50,900,''),PR('speed','Speed',.5,12,.1,4,''),PR('len','Wave Length',.1,2,.05,.6,'')]},
 {id:'flap',name:'Split-Flap',cat:'Type',custom:'flap',uses:{stagger:0,ease:0,accent:1},params:[PT('plate','Plates',true),PR('flips','Flips',2,30,1,8,''),PR('round','Corner Radius',0,30,1,10,'%')]},
+{id:'scatter',name:'Scatter',cat:'Bounce',custom:'scatter',stagger:.45,uses:{stagger:1,ease:0,accent:0},params:[PR('spread','Spread',20,200,5,100,'%'),PR('spin','Spin',0,360,5,140,'°'),BY('letter',['letter','word']),PR('seed','Pattern',1,30,1,5,''),PT('gravity','Explode Out With Gravity',true)]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
