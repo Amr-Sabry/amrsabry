@@ -821,6 +821,19 @@ var CUSTOM={
    var far=Math.hypot(L.w/2,L.h/2)+1, rtl=L.lines[0].rtl, ta=clamp((p-.8)/.2);
    g.save(); g.shadowColor='transparent'; g.fillStyle=P.color; g.beginPath(); pts.forEach(function(q){var dn=v.order==='center'?Math.hypot(q[0]-L.cx,q[1]-L.cy)/far:(v.order==='read'?(rtl?L.x1-q[0]:q[0]-L.x0)/Math.max(1,L.w):hash(q[0]*.37+q[1]*.11)), e=EASE.outCubic(clamp((p*1.15-dn*.5)/.5)), r=cell*.5*Math.sqrt(q[2])*e*(1+e*.45); if(r<.3) return; g.moveTo(q[0]+r,q[1]); g.arc(q[0],q[1],r,0,6.2832);}); g.fill(); g.restore();
    if(ta>0){g.save(); g.globalAlpha*=ta; drawAll(g,P,L,o); g.restore();}},
+ crt:function(g,L,env,P,M,K,v){var io=IO(env), em=P.size, o=styleOf(P), sx, sy, fl=0, G=v.glow/100;
+   if(io.po>0){var q=io.po; if(q>=1) return; sy=Math.max(.012,1-EASE.outExpo(clamp(q/.45))); sx=q<.45?1:Math.max(0,1-EASE.inCubic((q-.45)/.55));}
+   else {var p=io.pi; if(p<=0) return; sx=EASE.outExpo(clamp(p/.35)); sy=p<.3?.012:Math.max(.012,elasticEase(.25)(clamp((p-.3)/.7))); fl=p>.3&&p<.65?1-(p-.3)/.35:0;}
+   if(sy<.08){g.save(); g.shadowColor=P.accent; g.shadowBlur=em*.25*G*K; g.shadowOffsetX=0; g.shadowOffsetY=0; g.fillStyle=P.color; var lw=(L.w+em*.2)*sx, th=Math.max(3,em*.035); g.fillRect(L.cx-lw/2,L.cy-th/2,lw,th); g.restore(); return;}
+   g.save(); if(v.flick&&(io.pi<1||io.po>0)) g.globalAlpha*=.72+.28*hash(Math.floor(env.t*30)); g.translate(L.cx,L.cy); g.scale(Math.max(.001,sx),sy); g.translate(-L.cx,-L.cy);
+   if(G>0&&fl>0){g.shadowColor=P.accent; g.shadowBlur=em*.3*G*fl*K; g.shadowOffsetX=0; g.shadowOffsetY=0;} drawAll(g,P,L,o); g.restore();},
+ countdown:function(g,L,env,P,M,K,v){var io=IO(env), em=P.size, o=styleOf(P), N=Math.round(v.from), cT=env.Ti*.85, slot=cT/N, t=env.t;
+   if(t<cT){var k=Math.floor(t/slot), f=t/slot-k, str=String(N-k), ar=v.digits==='ar'||(v.digits==='auto'&&L.lines[0].rtl); if(ar) str=str.replace(/\d/g,function(d){return '٠١٢٣٤٥٦٧٨٩'[d];});
+     var sz=Math.min(H*.5,em*1.7), sc=lerp(1.5,1,EASE.outExpo(clamp(f/.35)))*(1-.25*EASE.inCubic(clamp((f-.7)/.3))), al=clamp(f*8)*(1-clamp((f-.8)/.2));
+     g.save(); g.globalAlpha*=al; g.translate(L.cx,L.cy); g.scale(sc,sc); g.font=fontW(P,P.weight,sz); g.textAlign='center'; g.textBaseline='middle'; g.direction='ltr'; g.fillStyle=v.accent?P.accent:P.color; g.fillText(str,0,sz*.04); g.restore();
+     if(v.ring){var R=sz*.78; g.save(); g.shadowColor='transparent'; g.globalAlpha*=al; g.strokeStyle=P.color; g.lineWidth=Math.max(2,em*.018); g.beginPath(); g.arc(L.cx,L.cy,R,0,6.2832); g.stroke(); g.lineWidth=Math.max(3,em*.05); g.strokeStyle=P.accent; g.beginPath(); g.arc(L.cx,L.cy,R,-1.5708,-1.5708+f*6.2832); g.stroke(); g.restore();}
+     return;}
+   var p=clamp((t-cT)/Math.max(.05,env.Ti-cT)), s2=lerp(1.35,1,EASE.outExpo(p))*(1-io.eo*.2); g.save(); g.globalAlpha*=clamp(p*4)*(1-io.eo); g.translate(L.cx,L.cy); g.scale(s2,s2); g.translate(-L.cx,-L.cy); drawAll(g,P,L,o); g.restore();},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -931,6 +944,8 @@ var MOVES=[
 {id:'melt',name:'Melt',cat:'Warp',custom:'melt',uses:{stagger:0,ease:0,accent:0},params:[PR('amount','Amount',20,300,5,100,'%'),PR('drips','Drip Width',5,120,1,30,'%'),PS('dir','Melt',[['down','Downward'],['up','Upward']],'down')]},
 {id:'vapor',name:'Vapor',cat:'Soft',custom:'vapor',uses:{stagger:0,ease:0,accent:0},params:[PR('amount','Turbulence',0,300,5,100,'%'),PR('rise','Rise',0,200,5,60,'%'),PR('blur','Blur',0,200,5,100,'%')]},
 {id:'halftone',name:'Halftone',cat:'Particles',custom:'halftone',uses:{stagger:0,ease:0,accent:0},params:[PR('cell','Dot Size',3,20,.5,7,'%'),PR('angle','Screen Angle',0,90,5,45,'°'),PS('order','Grow From',[['center','Center'],['read','Reading Direction'],['rand','Random']],'center')]},
+{id:'crt',name:'CRT On',cat:'FX',custom:'crt',uses:{stagger:0,ease:0,accent:1},params:[PR('glow','Glow',0,200,5,100,'%'),PT('flick','Flicker',true)]},
+{id:'countdown',name:'Countdown',cat:'Type',custom:'countdown',uses:{stagger:0,ease:0,accent:1},note:'العدّ بياخد وقت الـ In. طوّل الـ In عشان كل رقم ياخد وقته.',params:[PR('from','Count From',1,10,1,3,''),PT('ring','Leader Ring',true),PT('accent','Accent Numbers',true),PS('digits','Digits',[['auto','Auto'],['en','123'],['ar','١٢٣']],'auto')]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
