@@ -538,6 +538,20 @@ var CUSTOM={
      if(v.from==='sides') dx=(alt?1:-1)*(1-e)*W*.75; else if(v.from==='bottom') dy=(1-e)*H*.6; else sc=Math.max(.001,e);
      g.save(); g.globalAlpha*=clamp(pr.i*5); g.translate(u.cx+dx,u.cy+dy); g.rotate(rot*(2-Math.min(1,e))); g.scale(Math.max(.001,sc*(1-q)),sc); g.translate(-u.cx,-u.cy);
      g.fillStyle=bg; g.fillRect(x,y,w,h); g.shadowColor='transparent'; drawUnit(g,P,u,{color:fg,fill:true}); g.restore();});},
+ scribble:function(g,L,env,P,M,K,v){var io=IO(env), em=P.size, o=styleOf(P), ta=clamp(io.pi/.3)*(1-io.eo);
+   if(ta>.003){g.save(); g.globalAlpha*=ta; g.translate(0,(1-EASE.outCubic(clamp(io.pi/.35)))*em*.15); drawAll(g,P,L,o); g.restore();}
+   var a=EASE.inOutCubic(clamp((io.pi-.25)/.75)), b=EASE.inOutCubic(clamp(io.po/.6)); if(a<=b) return;
+   var seed=v.seed+(v.boil?Math.floor(env.t*8)*7.7:0), R=v.rough/100, pts=[], pad=em*v.pad/100, i, N, t, rtl=L.lines[0].rtl;
+   function nz(x,k){return (noise1(x,seed+k)-.5)*2;}
+   if(v.shape==='circle'){var rx=L.w/2*1.2+pad, ry=L.h/2*1.22+pad*.6; N=160; for(i=0;i<=N;i++){t=i/N; var ang=-2.4+t*6.2832*1.22, gr=.94+t*.1+nz(t*5,1)*.07*R; pts.push([L.cx+Math.cos(ang)*rx*gr+nz(t*9,2)*em*.03*R,L.cy+Math.sin(ang)*ry*gr+nz(t*9,3)*em*.03*R]);}}
+   else if(v.shape==='box'){var bx0=L.x0-pad, bx1=L.x1+pad, by0=L.top-pad*.4, by1=L.bot+pad*.4, C=[[bx0,by0],[bx1,by0],[bx1,by1],[bx0,by1],[bx0,by0],[bx1,by0]]; C=C.map(function(c,k){return [c[0]+nz(k*3.1,4)*em*.07*R,c[1]+nz(k*3.1,5)*em*.07*R];});
+     for(var sd=0;sd<5;sd++){var n2=sd===4?10:34; for(i=0;i<n2;i++){t=i/34; pts.push([lerp(C[sd][0],C[sd+1][0],t)+nz(sd*7+t*4,6)*em*.025*R,lerp(C[sd][1],C[sd+1][1],t)+nz(sd*7+t*4,7)*em*.025*R]);}}}
+   else {var xs=rtl?L.x1+pad*.4:L.x0-pad*.4, xe=rtl?L.x0-pad*.4:L.x1+pad*.4, uy=L.bot+em*.02+pad*.15; N=70;
+     for(i=0;i<=N;i++){t=i/N; pts.push([lerp(xs,xe,t),uy+nz(t*6,1)*em*.035*R+Math.sin(t*3.14)*em*.03]);}
+     for(i=1;i<=N*.7;i++){t=i/N; pts.push([lerp(xe,xs,t),uy+em*.1+nz(t*6,2)*em*.035*R-Math.sin(t*3.14)*em*.02]);}}
+   var m=pts.length-1, i0=b*m, i1=a*m; function at(f){var k=Math.min(m-1,Math.floor(f)), r=f-k; return [lerp(pts[k][0],pts[k+1][0],r),lerp(pts[k][1],pts[k+1][1],r)];}
+   g.save(); g.strokeStyle=P.accent; g.lineWidth=Math.max(2,em*v.thick/100); g.lineCap='round'; g.lineJoin='round'; g.beginPath(); var p0=at(i0); g.moveTo(p0[0],p0[1]);
+   for(i=Math.floor(i0)+1;i<i1;i++) g.lineTo(pts[i][0],pts[i][1]); var p1=at(i1); g.lineTo(p1[0],p1[1]); g.stroke(); g.restore();},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -606,6 +620,7 @@ var MOVES=[
 {id:'orbit',name:'Orbit',cat:'Basic',custom:'orbit',stagger:.5,uses:{stagger:1,ease:0,accent:0},params:[PR('turns','Turns',.25,3,.05,1,''),PR('radius','Orbit Radius',10,120,1,55,'%'),PT('spin','Rotate Letters',false),BY('letter',['letter','word'])]},
 {id:'stamp',name:'Rubber Stamp',cat:'Graphic',custom:'stamp',uses:{stagger:0,ease:0,accent:1},params:[PR('angle','Angle',-25,25,.5,-7,'°'),PR('pad','Padding',10,80,1,34,'%'),PR('border','Border',1,12,.5,5,'%'),PR('grunge','Ink Wear',0,100,1,45,'%'),PT('double','Double Border',true),PT('mono','One Ink Color',true)]},
 {id:'blocks',name:'Color Blocks',cat:'Graphic',custom:'blocks',stagger:.5,uses:{stagger:1,ease:0,accent:1},params:[PR('pad','Padding',4,50,1,16,'%'),PR('tilt','Tilt',0,12,.5,3,'°'),PS('from','Come From',[['sides','Sides'],['bottom','Bottom'],['pop','Pop']],'sides'),BY('word',['word','line'])]},
+{id:'scribble',name:'Scribble',cat:'Graphic',custom:'scribble',uses:{stagger:0,ease:0,accent:1},params:[PS('shape','Shape',[['circle','Circle'],['underline','Underline'],['box','Box']],'circle'),PR('thick','Thickness',1,12,.5,4,'%'),PR('rough','Roughness',0,200,5,100,'%'),PR('pad','Padding',0,80,1,30,'%'),PT('boil','Boil (Alive Line)',false),PR('seed','Pattern',1,30,1,3,'')]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
