@@ -489,12 +489,14 @@ function movPNG(frames,fps,w,h){var ts=fps*100, delta=100, n=frames.length, dur=
   var stbl=atom('stbl',stsd,stts,stsc,atom('stsz',sz),atom('stco',co));
   var moov=atom('moov',mvhd,atom('trak',tkhd,atom('mdia',mdhd,hdlr1,atom('minf',vmhd,hdlr2,dinf,stbl))));
   return new Blob([ftyp,mh].concat(frames,[moov]),{type:'video/quicktime'});}
+/* give the page a breath without a timer: timers are throttled to once a minute in a background tab, a message is not */
+function breathe(){return new Promise(function(res){var c=new MessageChannel(); c.port1.onmessage=function(){c.port1.close(); res();}; c.port2.postMessage(0);});}
 /* render every frame of P; onProgress(done,total); returns [Uint8Array] of PNGs */
 /* straight RGBA -> RGB matted on black (what After Effects calls Premultiplied). Edges then look right even where alpha is ignored. */
 function premultiply(g){var im=g.getImageData(0,0,W,H), d=im.data, n=d.length, a; for(var i=3;i<n;i+=4){a=d[i]; if(a===0||a===255) continue; d[i-3]=(d[i-3]*a+127)/255|0; d[i-2]=(d[i-2]*a+127)/255|0; d[i-1]=(d[i-1]*a+127)/255|0;} g.putImageData(im,0,0);}
 async function renderFrames(P,fps,onProgress,isCancelled,premult){var T=timing(P), n=Math.max(1,Math.round(T.D*fps)), cv=document.createElement('canvas'); cv.width=W; cv.height=H; var g=cv.getContext('2d',{willReadFrequently:!!premult}), out=[];
   for(var f=0;f<n;f++){ if(isCancelled&&isCancelled()) return null; g.setTransform(1,0,0,1,0,0); g.clearRect(0,0,W,H); render(g,f/fps,P,1); if(premult) premultiply(g);
-    var blob=await new Promise(function(res){cv.toBlob(res,'image/png');}); out.push(new Uint8Array(await blob.arrayBuffer())); if(onProgress) onProgress(f+1,n); if(f%4===3) await new Promise(function(r){setTimeout(r,0);}); }
+    var blob=await new Promise(function(res){cv.toBlob(res,'image/png');}); out.push(new Uint8Array(await blob.arrayBuffer())); if(onProgress) onProgress(f+1,n); if(f%4===3) await breathe(); }
   return out;}
 function pad5(n){return ('0000'+n).slice(-5);}
 function buildZip(frames,name){return zipStore(frames.map(function(u,i){return {name:name+'/'+name+'_'+pad5(i+1)+'.png',u8:u};}));}
@@ -691,7 +693,7 @@ $('#rStart').addEventListener('click',async function(){ if(rBusy) return; rBusy=
   try{ if(document.fonts&&document.fonts.ready) await document.fonts.ready;
     var pro=fmtSel==='mov'&&canProRes, span=pro?35:100; var frames=await renderFrames(P,fps,function(d,n){hook('render-progress',d/n*span/100); $('#rFill').style.width=(d/n*span)+'%'; $('#rCount').textContent='FRAME '+('00'+d).slice(-3)+' / '+('00'+n).slice(-3);},function(){return rCancel;},pro&&alphaMode==='pm');
     if(!frames){$('#rState').textContent='Cancelled'; $('#rFill').style.width='0'; hook('render-cancel');}
-    else { $('#rState').textContent='Packing'; await new Promise(function(r){setTimeout(r,30);});
+    else { $('#rState').textContent='Packing'; await breathe();
       if(pro){ $('#rState').textContent='Loading Encoder'; encoding=true; hook('encode-load'); try{ await ffLoad(); $('#rState').textContent='Encoding ProRes'; hook('encode'); rBlob=await movProRes(frames,fps,function(q){hook('render-progress',.35+q*.65); $('#rFill').style.width=(35+q*65)+'%';}); rFileName=name+'.mov'; } finally{ encoding=false; } }
       else if(fmtSel==='mov'){rBlob=movPNG(frames,fps,W,H); rFileName=name+'.mov';} else {rBlob=buildZip(frames,name); rFileName=name+'_png.zip';}
       $('#rFill').style.width='100%';
@@ -889,7 +891,7 @@ function drawIcon(name,col,k,blink){ var f=ICONS[name]; if(!f) return false; ox=
 
     var clock=new T.Clock();
     (function frame(){
-      requestAnimationFrame(frame); if(document.hidden) return;
+      requestAnimationFrame(frame); if(document.hidden) return; if(window.AromaMascot.fx.slow&&((frame.n=(frame.n||0)+1)%4)){ clock.getDelta(); return; }
       var dt=Math.min(.05,clock.getDelta()), t=clock.elapsedTime, now=performance.now(), k=1-Math.pow(.0009,dt), i;
       if(st.until&&now>st.until){ st.until=0; st.mood='idle'; }
       if(st.mood==='idle'&&now-st.lastMove>14000&&now-st.lastSay>14000){ say('لسه معايا؟ أنا مستنيك','sleepy',5000); }
@@ -1017,7 +1019,7 @@ Asst=(function(){
     yaw+=((tg?tg.side*.42:0)-yaw)*(1-Math.pow(.01,dt));
     fx.x=pos.x; fx.y=pos.y; fx.size=pos.s; fx.rz=Math.max(-.5,Math.min(.5,-pos.vx/2400)); fx.rx=Math.max(-.32,Math.min(.32,pos.vy/3000)); fx.ry=yaw+spin; fx.sy=1+Math.min(.1,sp/11000); fx.sx=1-Math.min(.06,sp/18000);
     fx.hand=tg&&sp<160?(tg.side>0?[[-1.55,-.7,.25],[1.98,.18+Math.sin(now/170)*.1,.55]]:[[-1.98,.18+Math.sin(now/170)*.1,.55],[1.55,-.7,.25]]):null; fx.click=!tg;
-    fx.prog=renderProg!=null?renderProg:clamp(time/timing(P).D);
+    fx.prog=renderProg!=null?renderProg:clamp(time/timing(P).D); fx.slow=renderProg!=null&&renderProg<1;
     if(now>fxUntil){fx.icon=null; fx.word=issue?'CHECK':(MOVE_BY[P.move].name.replace(/[^A-Za-z0-9 ]/g,'').slice(0,9));}
     var n=Math.min(typed.full.length,Math.floor((now-typed.t)/15)); if(n!==typed.n){typed.n=n; sayEl.textContent=typed.full.slice(0,n);}
     if(line.text&&now>line.until){line={text:'',until:0,prio:0}; setText(defaultText());}
