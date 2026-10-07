@@ -834,6 +834,10 @@ var CUSTOM={
      if(v.ring){var R=sz*.78; g.save(); g.shadowColor='transparent'; g.globalAlpha*=al; g.strokeStyle=P.color; g.lineWidth=Math.max(2,em*.018); g.beginPath(); g.arc(L.cx,L.cy,R,0,6.2832); g.stroke(); g.lineWidth=Math.max(3,em*.05); g.strokeStyle=P.accent; g.beginPath(); g.arc(L.cx,L.cy,R,-1.5708,-1.5708+f*6.2832); g.stroke(); g.restore();}
      return;}
    var p=clamp((t-cT)/Math.max(.05,env.Ti-cT)), s2=lerp(1.35,1,EASE.outExpo(p))*(1-io.eo*.2); g.save(); g.globalAlpha*=clamp(p*4)*(1-io.eo); g.translate(L.cx,L.cy); g.scale(s2,s2); g.translate(-L.cx,-L.cy); drawAll(g,P,L,o); g.restore();},
+ clock:function(g,L,env,P,M,K,v){var io=IO(env,easeOf(P,M)), em=P.size, o=styleOf(P), R=Math.hypot(L.w/2,L.h/2)+em, a0=(v.start-90)*Math.PI/180, d=v.dir==='ccw'?-1:1, two=v.mode==='double', sweep=two?Math.PI:Math.PI*2, a=io.ei*sweep, b=EASE.inOutCubic(io.po)*sweep; if(a<=b) return;
+   function wedge(s0,s1){g.moveTo(L.cx,L.cy); g.arc(L.cx,L.cy,R,s0,s1,d<0); g.closePath();}
+   if(a-b>=sweep-.0005) drawAll(g,P,L,o); else {g.save(); g.beginPath(); wedge(a0+d*b,a0+d*a); if(two) wedge(a0+Math.PI+d*b,a0+Math.PI+d*a); g.clip(); drawAll(g,P,L,o); g.restore();}
+   if(v.hand&&((io.pi>0&&io.pi<1)||(io.po>0&&io.po<1))){var ha=a0+d*(io.po>0?b:a), co=Math.cos(ha)*R*.9, si=Math.sin(ha)*R*.9; g.save(); g.shadowColor='transparent'; g.strokeStyle=P.accent; g.lineWidth=Math.max(2,em*.03); g.lineCap='round'; g.beginPath(); g.moveTo(two?L.cx-co:L.cx,two?L.cy-si:L.cy); g.lineTo(L.cx+co,L.cy+si); g.stroke(); g.restore();}},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -946,6 +950,7 @@ var MOVES=[
 {id:'halftone',name:'Halftone',cat:'Particles',custom:'halftone',uses:{stagger:0,ease:0,accent:0},params:[PR('cell','Dot Size',3,20,.5,7,'%'),PR('angle','Screen Angle',0,90,5,45,'°'),PS('order','Grow From',[['center','Center'],['read','Reading Direction'],['rand','Random']],'center')]},
 {id:'crt',name:'CRT On',cat:'FX',custom:'crt',uses:{stagger:0,ease:0,accent:1},params:[PR('glow','Glow',0,200,5,100,'%'),PT('flick','Flicker',true)]},
 {id:'countdown',name:'Countdown',cat:'Type',custom:'countdown',uses:{stagger:0,ease:0,accent:1},note:'العدّ بياخد وقت الـ In. طوّل الـ In عشان كل رقم ياخد وقته.',params:[PR('from','Count From',1,10,1,3,''),PT('ring','Leader Ring',true),PT('accent','Accent Numbers',true),PS('digits','Digits',[['auto','Auto'],['en','123'],['ar','١٢٣']],'auto')]},
+{id:'clock',name:'Clock Wipe',cat:'Reveal',custom:'clock',ease:'inOutCubic',uses:{stagger:0,ease:1,accent:1},params:[PR('start','Start Angle',0,360,5,0,'°'),PS('dir','Direction',[['cw','Clockwise'],['ccw','Counter-Clockwise']],'cw'),PS('mode','Wipe',[['single','Single'],['double','Double']],'single'),PT('hand','Show Hand',true)]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
