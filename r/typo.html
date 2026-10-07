@@ -690,6 +690,12 @@ var CUSTOM={
      if(v.dir==='right'){var x=rtl?x1-bw*f:x0+bw*f; g.moveTo(x,y0-em*.15); g.lineTo(x,y1+em*.15);} else {var y=v.dir==='up'?y1-bh*f:y0+bh*f; g.moveTo(x0-em*.1,y); g.lineTo(x1+em*.1,y);}
      g.stroke(); g.stroke(); g.shadowColor='transparent'; g.strokeStyle='#fff'; g.lineWidth=Math.max(1,em*.007); g.stroke(); g.restore();}
    if(io.pi>0&&io.pi<1) beam(a,false); if(io.po>0&&io.po<1) beam(b,true);},
+ ripple:function(g,L,env,P,M,K,v){var io=IO(env,EASE.outCubic), em=P.size, o=styleOf(P), k=Math.max(1-io.ei,io.eo)+v.hold/100*.25*io.a, amp=em*v.amp/100*k; if(io.a<=.003) return;
+   if(amp<.3){g.save(); g.globalAlpha*=io.a; drawAll(g,P,L,o); g.restore(); return;}
+   var c=textLayer(g,P,K,L,'rip'), st=2, wl=em*v.len/100, ph=env.t*v.speed, m=em*.5+amp;
+   var d=layer(g,P,K,'rip2',function(s){ if(v.axis==='rows'){for(var y=Math.max(0,Math.floor(L.top-m));y<Math.min(H,L.bot+m);y+=st){var dx=Math.sin(y/wl*6.2832-ph)*amp*(.65+.35*Math.sin(y/wl*2.1+ph*.7)); s.drawImage(c,0,y*K,c.width,st*K,dx,y,W,st);}}
+     else {for(var x=Math.max(0,Math.floor(L.x0-m));x<Math.min(W,L.x1+m);x+=st){var dy=Math.sin(x/wl*6.2832-ph)*amp*(.65+.35*Math.sin(x/wl*2.1+ph*.7)); s.drawImage(c,x*K,0,st*K,c.height,x,dy,st,H);}}});
+   put(g,d,io.a);},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -782,6 +788,7 @@ var MOVES=[
 {id:'domino',name:'Domino',cat:'Bounce',custom:'domino',stagger:.65,uses:{stagger:1,ease:0,accent:0},params:[PR('angle','Angle',20,110,1,88,'°'),BY('letter',['letter','word'])]},
 {id:'fold',name:'Paper Fold',cat:'Reveal',custom:'fold',stagger:.3,uses:{stagger:1,ease:0,accent:0},params:[PR('folds','Folds',2,8,1,3,''),PS('axis','Unfold',[['h','Downward'],['v','Sideways']],'h'),BY('all',['all','line']),PT('shade','Shading',true)]},
 {id:'scan',name:'Laser Scan',cat:'FX',custom:'scan',uses:{stagger:0,ease:0,accent:1},params:[PS('dir','Scan',[['down','Top → Bottom'],['up','Bottom → Top'],['right','Reading Direction']],'down'),PR('glow','Glow',0,200,5,100,'%'),PT('trace','Hot Edge',true)]},
+{id:'ripple',name:'Ripple',cat:'Warp',custom:'ripple',uses:{stagger:0,ease:0,accent:0},params:[PR('amp','Amount',2,60,1,16,'%'),PR('len','Wave Length',10,200,5,60,'%'),PR('speed','Speed',0,20,.5,7,''),PR('hold','Ripple While Holding',0,100,1,0,'%'),PS('axis','Waves',[['rows','Sideways'],['cols','Up & Down']],'rows')]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
