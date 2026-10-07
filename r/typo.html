@@ -632,6 +632,12 @@ var CUSTOM={
    var c=layer(g,P,K,'chr',function(s){var parts=dark?[[-1,'#ff0044'],[1,'#00e5ff'],[0,P.color]]:[[-1,'rgb('+c3[0]+',0,0)'],[0,'rgb(0,'+c3[1]+',0)'],[1,'rgb(0,0,'+c3[2]+')']]; if(!dark) s.globalCompositeOperation='lighter';
      parts.forEach(function(q){s.save(); s.translate(q[0]*(dx+jit),q[0]*dy); drawAll(s,P,L,styleOf(P,{color:q[1]})); s.restore();});});
    put(g,c,io.a);},
+ shine:function(g,L,env,P,M,K,v){var io=IO(env), em=P.size, ang=v.angle*Math.PI/180, bw=em*v.width/100, R=L.h/2+em, span=L.w+R*2*Math.abs(Math.tan(ang))+bw*2, rtl=L.lines[0].rtl, revealing=env.t<env.Ti;
+   var tt=revealing?env.t/env.Ti:((env.t-env.Ti)%v.every)/Math.min(v.every,Math.max(.5,env.Ti)), s=EASE.inOutCubic(clamp(tt)), x=((rtl?1-s:s)-.5)*span, col=v.color==='white'?'#ffffff':P.accent, al=1-io.eo; if(al<=.003) return;
+   var c=layer(g,P,K,'shn',function(sx){drawAll(sx,P,L,styleOf(P)); sx.translate(L.cx+x,L.cy); sx.transform(1,0,Math.tan(ang),1,0,0);
+     if(revealing){sx.globalCompositeOperation='destination-in'; sx.fillStyle='#000'; if(rtl) sx.fillRect(0,-R*2,W*3,R*4); else sx.fillRect(-W*3,-R*2,W*3,R*4);}
+     if(tt<1){sx.globalCompositeOperation='source-atop'; var gr=sx.createLinearGradient(-bw/2,0,bw/2,0); gr.addColorStop(0,rgba(col,0)); gr.addColorStop(.5,rgba(col,.95)); gr.addColorStop(1,rgba(col,0)); sx.fillStyle=gr; sx.fillRect(-bw/2,-R*2,bw,R*4);}});
+   put(g,c,al);},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -713,6 +719,7 @@ var MOVES=[
 {id:'autocorrect',name:'Autocorrect',cat:'Type',custom:'autocorrect',uses:{stagger:0,ease:0,accent:1},params:[PT('cursor','Cursor',true),PR('seed','Which Mistake',1,8,1,1,'')]},
 {id:'tiles',name:'Tile Flip',cat:'Reveal',custom:'tiles',uses:{stagger:0,ease:0,accent:1},params:[PR('size','Tile Size',10,80,1,34,'%'),PS('order','Order',[['center','From Center'],['read','Reading Direction'],['diag','Diagonal'],['rand','Random']],'center'),PT('accent','Accent Tiles',true)]},
 {id:'chroma',name:'Chromatic Split',cat:'FX',custom:'chroma',ease:'outExpo',uses:{stagger:0,ease:1,accent:0},params:[PR('dist','Split',2,60,1,18,'%'),PR('hold','Fringe While Holding',0,30,1,6,''),PS('dir','Direction',[['h','Horizontal'],['v','Vertical'],['d','Diagonal']],'h'),PT('jitter','Jitter',true)]},
+{id:'shine',name:'Shine Sweep',cat:'FX',custom:'shine',uses:{stagger:0,ease:0,accent:1},params:[PR('width','Band Width',10,150,5,55,'%'),PR('angle','Angle',-60,60,1,-22,'°'),PR('every','Repeat Every',.6,6,.1,1.6,'s'),PS('color','Light',[['accent','Accent'],['white','White']],'accent')]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
