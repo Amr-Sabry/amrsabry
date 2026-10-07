@@ -726,6 +726,12 @@ var CUSTOM={
      else if(active&&v.style==='color') drawUnit(g,P,u,{color:P.accent,fill:true});
      else {drawUnit(g,P,u,o); if(active&&v.style==='under'){g.shadowColor='transparent'; g.fillStyle=P.accent; g.fillRect(u.x0,ln.base+L.desc*.5,u.x1-u.x0,Math.max(3,em*.06));}}
      g.restore();});},
+ brackets:function(g,L,env,P,M,K,v){var io=IO(env,EASE.outBack), em=P.size, o=styleOf(P), e=io.ei*(1-io.eo), pad=em*v.pad/100, br=v.breathe?Math.sin(env.t*3.2)*em*.035*clamp(io.pi*2-1):0, hw=(L.w/2+pad)*e+br, hh=(L.h/2+pad*.45)*(.25+.75*e)+br*.5, cl=em*v.len/100*Math.min(1,e*1.5), ta=clamp((io.pi-.2)/.4)*(1-io.eo);
+   if(ta>.003){g.save(); g.globalAlpha*=ta; g.beginPath(); g.rect(L.cx-Math.max(0,hw),L.cy-hh-em,Math.max(0,hw)*2,hh*2+em*2); g.clip(); drawAll(g,P,L,o); g.restore();}
+   if(e<=.003) return; g.save(); g.shadowColor='transparent'; g.strokeStyle=P.accent; g.lineWidth=Math.max(2,em*v.thick/100); g.lineCap='square'; g.lineJoin='miter'; g.globalAlpha*=clamp(io.pi*6)*(1-io.eo); g.beginPath();
+   if(v.style==='square') [-1,1].forEach(function(sx){var x=L.cx+sx*hw; g.moveTo(x-sx*cl*.5,L.cy-hh); g.lineTo(x,L.cy-hh); g.lineTo(x,L.cy+hh); g.lineTo(x-sx*cl*.5,L.cy+hh);});
+   else [-1,1].forEach(function(sx){[-1,1].forEach(function(sy){var x=L.cx+sx*hw, y=L.cy+sy*hh; g.moveTo(x-sx*cl,y); g.lineTo(x,y); g.lineTo(x,y-sy*cl);});});
+   g.stroke(); g.restore();},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -821,6 +827,7 @@ var MOVES=[
 {id:'ripple',name:'Ripple',cat:'Warp',custom:'ripple',uses:{stagger:0,ease:0,accent:0},params:[PR('amp','Amount',2,60,1,16,'%'),PR('len','Wave Length',10,200,5,60,'%'),PR('speed','Speed',0,20,.5,7,''),PR('hold','Ripple While Holding',0,100,1,0,'%'),PS('axis','Waves',[['rows','Sideways'],['cols','Up & Down']],'rows')]},
 {id:'karaoke',name:'Karaoke',cat:'Type',custom:'karaoke',uses:{stagger:0,ease:0,accent:1},note:'التلوين ماشي كلمة كلمة على طول مدة الـ Hold كلها.',params:[PS('base','Before',[['dim','Dim'],['outline','Outline']],'dim'),PT('accent','Accent Fill',true),PS('mode','Fill',[['smooth','Smooth'],['word','Word By Word']],'smooth')]},
 {id:'captions',name:'Captions',cat:'Type',custom:'captions',uses:{stagger:0,ease:0,accent:1},note:'الكلمات بتتوزع بالتساوي على مدة الـ Hold. طوّل الـ Duration عشان الإيقاع يهدى.',params:[PS('style','Active Word',[['box','Box'],['color','Accent Color'],['under','Underline']],'box'),PR('pad','Box Padding',0,40,1,10,'%'),PR('round','Corner Radius',0,100,1,30,'%'),PT('hide','Hide Upcoming Words',true)]},
+{id:'brackets',name:'Brackets',cat:'Graphic',custom:'brackets',uses:{stagger:0,ease:0,accent:1},params:[PS('style','Style',[['corners','Corners'],['square','[ Brackets ]']],'corners'),PR('len','Corner Length',5,80,1,28,'%'),PR('thick','Thickness',1,10,.5,3,'%'),PR('pad','Padding',0,80,1,30,'%'),PT('breathe','Breathe',true)]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
