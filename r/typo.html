@@ -674,6 +674,14 @@ var CUSTOM={
    U.forEach(function(u,i){var pr=prog(env,P,M,rk[i],n); if(pr.i<=0||pr.o>=1) return; var rtl=u.line.rtl, dir=rtl?-1:1, base=u.line.base, th=-dir*A*(1-EASE.outBack(pr.i)), px=rtl?u.x1:u.x0;
      if(pr.o>0){th=dir*A*bz(pr.o); px=rtl?u.x0:u.x1;}
      g.save(); g.globalAlpha*=clamp(pr.i*5)*(1-clamp((pr.o-.7)/.3)); g.translate(px,base); g.rotate(th); g.translate(-px,-base); drawUnit(g,P,u,o); g.restore();});},
+ fold:function(g,L,env,P,M,K,v){var o=styleOf(P), em=P.size, N=Math.round(v.folds), list=v.by==='line'?L.lineUnits:L.all, n=list.length, vert=v.axis==='v';
+   list.forEach(function(u,i){var pr=prog(env,P,M,i,n); if(pr.i<=0||pr.o>=1) return; var ln=u.line, pad=em*.3, x=u.x0-pad, w=u.x1-u.x0+pad*2, y=(ln?ln.top:L.top)-em*.04, h=(ln?L.lh:L.h)+em*.08, p=pr.o>0?1-EASE.inCubic(pr.o):pr.i, rtl=(ln||L.lines[0]).rtl;
+     for(var k=0;k<N;k++){var q=clamp(p*N-k); if(q<=0) break; var e=EASE.outCubic(q);
+       g.save(); if(!vert){var py=y+k*h/N; g.translate(0,py); g.scale(1,Math.max(.001,e)); g.translate(0,-py); g.beginPath(); g.rect(x-em,py-(k?0:em),w+em*2,h/N+(k===N-1?em:.6)+(k?0:em));}
+       else {var pw=w/N, px=rtl?x+w-k*pw:x+k*pw; g.translate(px,0); g.scale(Math.max(.001,e),1); g.translate(-px,0); g.beginPath(); g.rect(rtl?px-pw-(k===N-1?em:.6):px-(k?0:em),y-em,pw+(k===N-1?em:.6)+(k?0:em),h+em*2);}
+       g.clip(); drawUnit(g,P,u,o);
+       if(v.shade&&q<1){g.shadowColor='transparent'; g.globalCompositeOperation='source-atop'; g.fillStyle='rgba(0,0,0,'+((1-e)*.6).toFixed(3)+')'; g.fillRect(x-em*2,y-em*2,w+em*4,h+em*4);}
+       g.restore();}});},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -764,6 +772,7 @@ var MOVES=[
 {id:'stretch',name:'Stretch',cat:'Basic',custom:'stretch',stagger:.6,ease:'outExpo',uses:{stagger:1,ease:1,accent:0},params:[PR('tall','Stretch',1.5,12,.1,6,'×'),PS('anchor','Anchor',[['base','Baseline'],['center','Center'],['top','Top']],'base'),BY('letter'),ORDER]},
 {id:'pendulum',name:'Pendulum',cat:'Bounce',custom:'pendulum',stagger:.5,uses:{stagger:1,ease:0,accent:1},params:[PR('angle','Swing',5,90,1,38,'°'),PR('len','String Length',.3,5,.1,1.6,'×'),PR('damp','Damping',.5,8,.1,2.4,''),PT('strings','Show Strings',true),BY('letter',['letter','word'])]},
 {id:'domino',name:'Domino',cat:'Bounce',custom:'domino',stagger:.65,uses:{stagger:1,ease:0,accent:0},params:[PR('angle','Angle',20,110,1,88,'°'),BY('letter',['letter','word'])]},
+{id:'fold',name:'Paper Fold',cat:'Reveal',custom:'fold',stagger:.3,uses:{stagger:1,ease:0,accent:0},params:[PR('folds','Folds',2,8,1,3,''),PS('axis','Unfold',[['h','Downward'],['v','Sideways']],'h'),BY('all',['all','line']),PT('shade','Shading',true)]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
