@@ -787,6 +787,12 @@ var CUSTOM={
    var spread=EASE.outBack(clamp(p/.55)), kap=k0*(1-EASE.inOutCubic(clamp((p-.45)/.55))), al=clamp(p*4);
    L.lines.forEach(function(l){L.letters.forEach(function(u){ if(u.line!==l) return; var d=(u.cx-l.cx)*spread, x=l.cx+d, y=0, rot=0; if(kap>1e-6){var a=d*kap; x=l.cx+Math.sin(a)/kap; y=up*(1-Math.cos(a))/kap; rot=up*a;}
      withState(g,u,{a:al,dx:x-u.cx,dy:y,r:rot},K,function(){drawUnit(g,P,u,o);});});});},
+ twist:function(g,L,env,P,M,K,v){var io=IO(env,EASE.inOutCubic), o=styleOf(P), em=P.size; if(io.pi<=0||io.po>=1) return; if(io.pi>=1&&io.po<=0){drawAll(g,P,L,o); return;}
+   var c=textLayer(g,P,K,L,'twA'), cb=v.back?textLayer(g,P,K,L,'twB',{color:P.accent,fill:true}):c, wd=v.width/100, fi=io.ei*(1+wd), fo=EASE.inOutCubic(io.po)*(1+wd), st=2, T=Math.round(v.turns)*Math.PI;
+   var d=layer(g,P,K,'twC',function(s){L.lines.forEach(function(l){ if(!l.cl.length) return; var xa=l.x0-em*.3, xb=l.x1+em*.3, top=l.top-em*.1, h=L.lh+em*.2;
+     for(var x=Math.max(0,Math.floor(xa));x<Math.min(W,xb);x+=st){var u=(x-xa)/(xb-xa); if(l.rtl) u=1-u; var ph=clamp((fi-u)/wd), po=io.po>0?clamp((fo-u)/wd):0, al=clamp(ph*4)*(1-clamp((po-.7)/.3)); if(al<=.01) continue;
+       var ang=(1-ph)*T+po*T, sy=Math.cos(ang); if(Math.abs(sy)<.02) continue; s.save(); s.globalAlpha=al*(.55+.45*Math.abs(sy)); s.translate(0,l.yc); s.scale(1,sy); s.drawImage(sy<0?cb:c,x*K,top*K,st*K,h*K,x,top-l.yc,st+.4,h); s.restore();}});});
+   put(g,d,1);},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -891,6 +897,7 @@ var MOVES=[
 {id:'knockout',name:'Knockout Box',cat:'Graphic',custom:'knockout',stagger:.3,ease:'outExpo',uses:{stagger:1,ease:1,accent:0},note:'لون البلوك هو الـ Fill، والحروف نفسها شفافة بيبان منها الفيديو اللي تحت.',params:[PR('pad','Padding',5,80,1,26,'%'),PR('round','Corner Radius',0,100,1,0,'%'),PS('from','Block In',[['wipe','Wipe'],['scale','Scale'],['drop','Drop']],'wipe'),PT('perline','Block Per Line',false)]},
 {id:'shatter',name:'Shatter',cat:'FX',custom:'shatter',uses:{stagger:0,ease:0,accent:0},params:[PR('size','Piece Size',15,120,1,45,'%'),PR('force','Force',20,300,5,100,'%'),PS('origin','Impact',[['center','Center'],['top','Top'],['bottom','Bottom']],'center'),PT('grav','Gravity',true),PR('seed','Pattern',1,30,1,2,'')]},
 {id:'fan',name:'Card Fan',cat:'Bounce',custom:'fan',uses:{stagger:0,ease:0,accent:0},params:[PR('curve','Arc',20,300,5,120,'%'),PT('up','Smile Arc',false)]},
+{id:'twist',name:'Ribbon Twist',cat:'Warp',custom:'twist',uses:{stagger:0,ease:0,accent:1},params:[PR('turns','Half Turns',1,8,1,3,''),PR('width','Twist Width',10,100,1,45,'%'),PT('back','Accent Back Face',true)]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
