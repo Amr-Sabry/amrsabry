@@ -1526,15 +1526,19 @@ function tyMoveUI(s,L){var P=L.P;
   if(TYX.state==='loading'){el('p','hint',s,'بحمّل حركات الـ Typo… ثواني.'); return null;}
   if(TYX.state==='error'){el('p','hint',s,'حركات الـ Typo ما اتحمّلتش: '+TYX.err+'. النص شغال دلوقتي بحركة الـ Tracker.'); var rb=el('button','ghost',s,'Try Again'); rb.type='button'; rb.id='btnTyRetry'; rb.addEventListener('click',function(){tyUse(L,true); refreshAll();}); return null;}
   if(!tyOK()) return null;
-  var T=TYX.T, f=el('div','f',s), lb=el('label','lab',f,'Animation · '+T.MOVES.length+' Moves'), ms=el('select','',f), cats={}; ms.id='fTyMove'; lb.htmlFor='fTyMove';
+  var T=TYX.T, CQ=L.ty.q&&L.ty.q.kind==='comp'&&T.COMPS&&T.COMPS[L.ty.q.comp];
+  /* a ready-made component of the Typo tool (a big number, a chart...): it is drawn as it was built there, so there is no move to pick here */
+  if(CQ){var cf=el('div','f',s); el('span','lab',cf,'Component · '+(CQ.name||L.ty.q.comp)); el('p','hint',cf,'ده Component جاي من الـ Typo زي ما هو. عدّل أرقامه وكلامه هناك ودوس Import تاني. عشان ترجع لحركة عادية اختار سطر نص من القايمة تحت أو اختار Tracker.'); tyFrom(s,L); return {uses:{stagger:0,ease:0}};}
+  var f=el('div','f',s), lb=el('label','lab',f,'Animation · '+T.MOVES.length+' Moves'), ms=el('select','',f), cats={}; ms.id='fTyMove'; lb.htmlFor='fTyMove';
   T.MOVES.forEach(function(M){var og=cats[M.cat]; if(!og){og=cats[M.cat]=el('optgroup','',ms); og.label=M.cat;} var o=el('option','',og,(M.num?M.num+' · ':'')+M.name); o.value=M.id;});
   ms.value=L.ty.move; ms.addEventListener('change',function(){L.ty.move=ms.value; delete L.ty.bad; buildInspector(); seekSoft(layerSpan(L).a); setPlaying(true);});
-  var M=tyParams(s,L), tl=tyTitle(), box=el('div','f',s); el('span','lab',box,'From The Typo Tool');
+  var M=tyParams(s,L); tyFrom(s,L); return M;}
+/* the Import row: the layers of the title that is open in the Typo tool */
+function tyFrom(s,L){var tl=tyTitle(), box=el('div','f',s); el('span','lab',box,'From The Typo Tool');
   if(tl&&tl.lines.length){var row=el('div','two',box), pick=el('select','',row); pick.id='fTyLine'; pick.setAttribute('aria-label','Line of the Typo title'); tl.lines.forEach(function(q,k){var o=el('option','',pick,(k+1)+' · '+q.text.replace(/\s+/g,' ').slice(0,26)); o.value=String(k);}); pick.value=String(Math.min(tl.lines.length-1,Math.max(0,tl.sel)));
     var ib=el('button','ghost',row,'Import'); ib.type='button'; ib.id='btnTyImport'; ib.addEventListener('click',function(){var now=tyTitle(), q=now&&now.lines[+pick.value]; if(!q) return; tyImport(L,q); refreshAll(); seekSoft(layerSpan(L).a); setPlaying(true);});
     el('p','hint',box,'Import بياخد النص والشكل والحركة وإعداداتها من السطر اللي شغال عليه في الـ Typo. مكان النص والـ Track والماسكات بتوع الـ Layer بيفضلوا زي ما هما.');}
-  else el('p','hint',box,'مفيش عنوان محفوظ في الـ Typo على المتصفح ده. افتح الـ Typo من زرار Tools، ظبّط السطر، وارجع دوس Import.');
-  return M;}
+  else el('p','hint',box,'مفيش عنوان محفوظ في الـ Typo على المتصفح ده. افتح الـ Typo من زرار Tools، ظبّط السطر، وارجع دوس Import.');}
 
 /* ================= Aroma Typo Tracker: clip, trackers, text layers, monitor, export ================= */
 var $=function(s){return document.querySelector(s);};
