@@ -596,6 +596,13 @@ var CUSTOM={
    var c=textLayer(g,P,K,L,'pixA'), bw=Math.max(2,Math.round(b*K)), sw=Math.ceil(c.width/bw), sh=Math.ceil(c.height/bw), sm=scratch(c.width,c.height,'pixS'), s=sm.g;
    s.setTransform(1,0,0,1,0,0); s.globalAlpha=1; s.clearRect(0,0,sw+2,sh+2); s.imageSmoothingEnabled=true; s.drawImage(c,0,0,c.width,c.height,0,0,c.width/bw,c.height/bw);
    g.save(); g.setTransform(1,0,0,1,0,0); g.imageSmoothingEnabled=false; g.globalAlpha*=io.a; g.drawImage(sm,0,0,sw,sh,0,0,sw*bw,sh*bw); g.shadowColor='transparent'; g.drawImage(sm,0,0,sw,sh,0,0,sw*bw,sh*bw); g.restore();},
+ burst:function(g,L,env,P,M,K,v){var io=IO(env), em=P.size, o=styleOf(P), t=env.t, hit=Math.min(.1,env.Ti*.15), p=clamp((t-hit)/Math.max(.25,Math.min(.9,env.Ti)-hit)), sc=t<hit?0:elasticEase(.45)(clamp((t-hit)/Math.min(.8,env.Ti))), R=H*v.radius/100, N=Math.round(v.rays), e=EASE.outExpo(p);
+   if(p>0&&p<1){g.save(); g.shadowColor='transparent'; g.strokeStyle=P.accent; g.lineCap='round'; g.lineWidth=Math.max(2,em*.055*(1-p)); g.beginPath();
+     for(var i=0;i<N;i++){var a=i/N*6.2832+(hash(i*3.1)-.5)*.3, len=R*(.45+hash(i*7.7)*.55), r1=len*e, r0=Math.min(r1,len*EASE.outExpo(clamp(p*1.5-.3))), ex=L.w*.5+em*.25, ey=L.h*.5+em*.1;
+       g.moveTo(L.cx+Math.cos(a)*(ex+r0),L.cy+Math.sin(a)*(ey+r0)); g.lineTo(L.cx+Math.cos(a)*(ex+r1),L.cy+Math.sin(a)*(ey+r1));} g.stroke();
+     if(v.ring){g.lineWidth=Math.max(1,em*.07*(1-p)); g.globalAlpha*=1-p; g.beginPath(); g.ellipse(L.cx,L.cy,L.w*.5+R*.75*e,L.h*.5+R*.75*e,0,0,6.2832); g.stroke();}
+     g.restore();}
+   var q=EASE.inCubic(io.po); if(sc>0&&q<1){g.save(); g.globalAlpha*=1-q; g.translate(L.cx,L.cy); g.scale(sc*(1-q*.4),sc*(1-q*.4)); g.translate(-L.cx,-L.cy); drawAll(g,P,L,o); g.restore();}},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -673,6 +680,7 @@ var MOVES=[
 {id:'crawl',name:'Crawl',cat:'Warp',custom:'crawl',uses:{stagger:0,ease:0,accent:0},note:'في وضع Pass Through النص بيعدّي من تحت لفوق على طول الـ Duration كلها. خلّي الـ Perspective صفر لو عايزها Credits Roll عادية.',
   params:[PS('mode','Mode',[['pass','Pass Through'],['stop','Stop At Position']],'pass'),PR('tilt','Perspective',0,100,1,55,'%')]},
 {id:'pixelate',name:'Pixelate',cat:'Warp',custom:'pixelate',uses:{stagger:0,ease:0,accent:0},params:[PR('block','Start Block',8,160,2,64,'px'),PT('snap','Stepped',true)]},
+{id:'burst',name:'Radial Burst',cat:'Graphic',custom:'burst',uses:{stagger:0,ease:0,accent:1},params:[PR('rays','Rays',6,40,1,16,''),PR('radius','Reach',10,80,1,32,'%'),PT('ring','Ring',true)]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
