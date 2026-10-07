@@ -682,6 +682,14 @@ var CUSTOM={
        g.clip(); drawUnit(g,P,u,o);
        if(v.shade&&q<1){g.shadowColor='transparent'; g.globalCompositeOperation='source-atop'; g.fillStyle='rgba(0,0,0,'+((1-e)*.6).toFixed(3)+')'; g.fillRect(x-em*2,y-em*2,w+em*4,h+em*4);}
        g.restore();}});},
+ scan:function(g,L,env,P,M,K,v){var io=IO(env,EASE.inOutCubic), o=styleOf(P), em=P.size, x0=L.x0-em*.4, x1=L.x1+em*.4, y0=L.top-em*.12, y1=L.bot+em*.12, rtl=L.lines[0].rtl, a=io.ei, b=EASE.inOutCubic(io.po), bw=x1-x0, bh=y1-y0; if(a<=b) return;
+   function span(f0,f1){g.beginPath(); if(v.dir==='right') g.rect(rtl?x1-bw*f1:x0+bw*f0,y0-em,bw*(f1-f0),bh+em*2); else if(v.dir==='up') g.rect(x0-em,y1-bh*f1,bw+em*2,bh*(f1-f0)); else g.rect(x0-em,y0+bh*f0,bw+em*2,bh*(f1-f0));}
+   g.save(); span(b,a); g.clip(); drawAll(g,P,L,o); g.restore();
+   function beam(f,back){var hot=em*.14/(v.dir==='right'?bw:bh); if(v.trace){g.save(); g.shadowColor='transparent'; if(back) span(f,Math.min(1,f+hot)); else span(Math.max(0,f-hot),f); g.clip(); drawAll(g,P,L,{color:P.accent,fill:true}); g.restore();}
+     g.save(); g.shadowColor=P.accent; g.shadowBlur=em*.22*v.glow/100*K; g.shadowOffsetX=0; g.shadowOffsetY=0; g.strokeStyle=P.accent; g.lineWidth=Math.max(2,em*.022); g.beginPath();
+     if(v.dir==='right'){var x=rtl?x1-bw*f:x0+bw*f; g.moveTo(x,y0-em*.15); g.lineTo(x,y1+em*.15);} else {var y=v.dir==='up'?y1-bh*f:y0+bh*f; g.moveTo(x0-em*.1,y); g.lineTo(x1+em*.1,y);}
+     g.stroke(); g.stroke(); g.shadowColor='transparent'; g.strokeStyle='#fff'; g.lineWidth=Math.max(1,em*.007); g.stroke(); g.restore();}
+   if(io.pi>0&&io.pi<1) beam(a,false); if(io.po>0&&io.po<1) beam(b,true);},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -773,6 +781,7 @@ var MOVES=[
 {id:'pendulum',name:'Pendulum',cat:'Bounce',custom:'pendulum',stagger:.5,uses:{stagger:1,ease:0,accent:1},params:[PR('angle','Swing',5,90,1,38,'°'),PR('len','String Length',.3,5,.1,1.6,'×'),PR('damp','Damping',.5,8,.1,2.4,''),PT('strings','Show Strings',true),BY('letter',['letter','word'])]},
 {id:'domino',name:'Domino',cat:'Bounce',custom:'domino',stagger:.65,uses:{stagger:1,ease:0,accent:0},params:[PR('angle','Angle',20,110,1,88,'°'),BY('letter',['letter','word'])]},
 {id:'fold',name:'Paper Fold',cat:'Reveal',custom:'fold',stagger:.3,uses:{stagger:1,ease:0,accent:0},params:[PR('folds','Folds',2,8,1,3,''),PS('axis','Unfold',[['h','Downward'],['v','Sideways']],'h'),BY('all',['all','line']),PT('shade','Shading',true)]},
+{id:'scan',name:'Laser Scan',cat:'FX',custom:'scan',uses:{stagger:0,ease:0,accent:1},params:[PS('dir','Scan',[['down','Top → Bottom'],['up','Bottom → Top'],['right','Reading Direction']],'down'),PR('glow','Glow',0,200,5,100,'%'),PT('trace','Hot Edge',true)]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
