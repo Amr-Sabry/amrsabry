@@ -793,6 +793,12 @@ var CUSTOM={
      for(var x=Math.max(0,Math.floor(xa));x<Math.min(W,xb);x+=st){var u=(x-xa)/(xb-xa); if(l.rtl) u=1-u; var ph=clamp((fi-u)/wd), po=io.po>0?clamp((fo-u)/wd):0, al=clamp(ph*4)*(1-clamp((po-.7)/.3)); if(al<=.01) continue;
        var ang=(1-ph)*T+po*T, sy=Math.cos(ang); if(Math.abs(sy)<.02) continue; s.save(); s.globalAlpha=al*(.55+.45*Math.abs(sy)); s.translate(0,l.yc); s.scale(1,sy); s.drawImage(sy<0?cb:c,x*K,top*K,st*K,h*K,x,top-l.yc,st+.4,h); s.restore();}});});
    put(g,d,1);},
+ drum:function(g,L,env,P,M,K,v){var o=styleOf(P), em=P.size, list=L.lineUnits, n=list.length, dir=v.dir==='up'?1:-1;
+   list.forEach(function(u,i){var pr=prog(env,P,M,i,n); if(pr.i<=0||pr.o>=1) return; var l=u.line, R=L.lh*v.radius/100, rot=dir*(1-EASE.outBack(pr.i))*(Math.PI*.5+v.spins*6.2832)-dir*EASE.inCubic(pr.o)*(Math.PI*.5+v.spins*3.1416);
+     if(Math.abs(rot)<.003){drawUnit(g,P,u,o); return;}
+     var c=layer(g,P,K,'drA',function(s){drawUnit(s,P,u,o);}), hh=L.lh/2+em*.12, st=2, sarc=R*rot, Re=R/Math.max(.03,Math.min(1,Math.abs(rot)/.8));
+     var d=layer(g,P,K,'drB',function(s){for(var y=-hh;y<hh;y+=st){var th=(y+sarc)/Re, tn=Math.atan2(Math.sin(th),Math.cos(th)), co=Math.cos(tn); if(co<=.03) continue; var y1=Re*Math.sin(tn), y2=Re*Math.sin(tn+st/Re); s.globalAlpha=Math.min(1,co*1.7); s.drawImage(c,0,(l.yc+y)*K,c.width,st*K,0,l.yc+y1,W,(y2-y1)+.6);}});
+     put(g,d,clamp(pr.i*4));});},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -898,6 +904,7 @@ var MOVES=[
 {id:'shatter',name:'Shatter',cat:'FX',custom:'shatter',uses:{stagger:0,ease:0,accent:0},params:[PR('size','Piece Size',15,120,1,45,'%'),PR('force','Force',20,300,5,100,'%'),PS('origin','Impact',[['center','Center'],['top','Top'],['bottom','Bottom']],'center'),PT('grav','Gravity',true),PR('seed','Pattern',1,30,1,2,'')]},
 {id:'fan',name:'Card Fan',cat:'Bounce',custom:'fan',uses:{stagger:0,ease:0,accent:0},params:[PR('curve','Arc',20,300,5,120,'%'),PT('up','Smile Arc',false)]},
 {id:'twist',name:'Ribbon Twist',cat:'Warp',custom:'twist',uses:{stagger:0,ease:0,accent:1},params:[PR('turns','Half Turns',1,8,1,3,''),PR('width','Twist Width',10,100,1,45,'%'),PT('back','Accent Back Face',true)]},
+{id:'drum',name:'Drum Roll',cat:'Warp',custom:'drum',stagger:.35,uses:{stagger:1,ease:0,accent:0},params:[PR('radius','Drum Size',60,400,5,140,'%'),PR('spins','Extra Spins',0,3,.25,0,''),PS('dir','Roll',[['up','Upward'],['down','Downward']],'up')]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
