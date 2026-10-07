@@ -517,6 +517,10 @@ var CUSTOM={
        if(sq) g.rect(gx-r,gy-r,r*2,r*2); else {g.moveTo(gx+r,gy); g.arc(gx,gy,r,0,6.2832);}}
      g.fill();}
    g.restore();},
+ orbit:function(g,L,env,P,M,K,v){var U=unitsOf(L,v.by), n=U.length, rk=ranks('fwd',n), o=styleOf(P), R=H*v.radius/100, T=v.turns*6.2832;
+   U.forEach(function(u,i){var pr=prog(env,P,M,rk[i],n); if(pr.i<=0||pr.o>=1) return; var ki=1-EASE.outQuint(pr.i), ko=EASE.inCubic(pr.o), k=ki+ko, d=-T*ki+T*ko, vx=u.cx-L.cx, vy=u.cy-L.cy, a0=Math.hypot(vx,vy)>4?Math.atan2(vy,vx):i*2.4, co=Math.cos(d), si=Math.sin(d);
+     var x=L.cx+vx*co-vy*si+Math.cos(a0+d)*R*k, y=L.cy+vx*si+vy*co+Math.sin(a0+d)*R*k*.6;
+     withState(g,u,{a:clamp(pr.i*4)*(1-ko*ko),dx:x-u.cx,dy:y-u.cy,r:v.spin?d:0,s:1-.45*Math.min(1,k)},K,function(){drawUnit(g,P,u,o);});});},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -582,6 +586,7 @@ var MOVES=[
 {id:'slot',name:'Slot Reel',cat:'Type',custom:'slot',stagger:.5,uses:{stagger:1,ease:0,accent:1},params:[PR('spins','Spins',3,30,1,10,''),PS('set','Characters',[['auto','Auto'],['letters','Letters'],['numbers','Numbers'],['symbols','Symbols']],'auto'),PT('accent','Accent While Spinning',true)]},
 {id:'jelly',name:'Jelly',cat:'Bounce',custom:'jelly',stagger:.55,uses:{stagger:1,ease:0,accent:0},params:[PR('bounce','Bounciness',0,100,1,70,'%'),PR('wobble','Keep Wobbling',0,100,1,35,'%'),BY('letter'),ORDER]},
 {id:'dotmatrix',name:'Dot Matrix',cat:'Particles',custom:'dotmatrix',uses:{stagger:0,ease:0,accent:1},params:[PR('pitch','Dot Pitch',3,14,.5,6,'%'),PR('wave','Wave',0,100,1,60,'%'),PR('speed','Wave Speed',0,12,.1,4,''),PT('panel','Show Panel',true),PS('shape','Shape',[['circle','Round LEDs'],['square','Square Pixels']],'circle')]},
+{id:'orbit',name:'Orbit',cat:'Basic',custom:'orbit',stagger:.5,uses:{stagger:1,ease:0,accent:0},params:[PR('turns','Turns',.25,3,.05,1,''),PR('radius','Orbit Radius',10,120,1,55,'%'),PT('spin','Rotate Letters',false),BY('letter',['letter','word'])]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
