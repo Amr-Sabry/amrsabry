@@ -995,6 +995,15 @@ var CUSTOM={
    if(v.ring){var R=tot/2+em*.3, cy=w.line.yc, rcx=S.x+tot/2, ang=(sec%1)*6.2832-1.5708; g.save(); g.shadowColor='transparent'; g.lineCap='round'; g.lineWidth=Math.max(2,em*.03); g.globalAlpha*=.25; g.strokeStyle=P.color; g.beginPath(); g.arc(rcx,cy,R,0,6.2832); g.stroke(); g.restore();
      g.save(); g.shadowColor='transparent'; g.lineCap='round'; g.lineWidth=Math.max(3,em*.045); g.strokeStyle=P.accent; g.beginPath(); g.arc(rcx,cy,R,ang-1.2,ang); g.stroke(); g.fillStyle=P.accent; g.beginPath(); g.arc(rcx+Math.cos(ang)*R,cy+Math.sin(ang)*R,em*.045,0,6.2832); g.fill(); g.restore();}
    g.restore();},
+ gauge:function(g,L,env,P,M,K,v){var io=IO(env), o=styleOf(P), em=P.size, N=numInfo(P.text), a=io.a, L2=L, frac=1, ga=g.globalAlpha, PI=Math.PI; if(a<=.003) return;
+   if(N){L2=layout(P,N.pre+fmtNum(N.src,lerp(0,N.val,EASE.outCubic(clamp(io.pi/.9))))+N.post); frac=clamp(N.val/Math.max(1e-6,v.max));}
+   var R=em*1.6*v.size/100, cx=L.cx, cy=L.top-em*.12, th=Math.max(3,em*v.thick/100), open=EASE.outExpo(clamp(io.pi/.35))*(1-io.eo), fe=frac*EASE.outCubic(clamp(io.pi/.9)), ne=frac*EASE.outBack(clamp(io.pi/.9));
+   if(open>.002){g.save(); g.shadowColor='transparent'; g.lineWidth=th; g.globalAlpha=ga*a*.25; g.strokeStyle=P.color; g.beginPath(); g.arc(cx,cy,R,PI,PI+PI*open); g.stroke();
+     if(fe>.001){g.globalAlpha=ga*a; g.strokeStyle=P.accent; g.beginPath(); g.arc(cx,cy,R,PI,PI+PI*Math.min(fe,open)); g.stroke();}
+     if(v.ticks){g.globalAlpha=ga*a*.7; g.strokeStyle=P.color; g.lineWidth=Math.max(1.5,em*.014); g.beginPath(); for(var i=0;i<=10;i++){ if(i/10>open) break; var ta=PI+PI*i/10, r0=R-th/2-em*.06, r1=r0-em*(i%5?.07:.14); g.moveTo(cx+Math.cos(ta)*r0,cy+Math.sin(ta)*r0); g.lineTo(cx+Math.cos(ta)*r1,cy+Math.sin(ta)*r1);} g.stroke();}
+     if(v.needle){var na=PI+PI*Math.max(0,Math.min(1.04,ne))*open; g.globalAlpha=ga*a; g.lineCap='round'; g.strokeStyle=P.color; g.lineWidth=Math.max(2,em*.035); g.beginPath(); g.moveTo(cx,cy); g.lineTo(cx+Math.cos(na)*R*.8,cy+Math.sin(na)*R*.8); g.stroke(); g.fillStyle=P.accent; g.beginPath(); g.arc(cx,cy,em*.07,0,6.2832); g.fill();}
+     g.restore();}
+   g.save(); g.globalAlpha=ga*a; drawAll(g,P,L2,o); g.restore();},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -1127,6 +1136,7 @@ var MOVES=[
 {id:'timeclock',name:'Time',cat:'Numbers',custom:'timeclock',sample:'09:30',need:/[0-9٠-٩]{1,2}[:.٫][0-9٠-٩]{2}/,uses:{stagger:0,ease:0,accent:1},note:'اكتب الوقت زي 09:30 أو 01:45:20 والعقارب بتلف لحد ما توصله.',params:[PS('from','Start From',[['zero','00:00'],['hour','One Hour Before'],['min','10 Minutes Before']],'hour'),PT('blink','Blinking Colon',true),PT('clock','Show Clock',true)]},
 {id:'stopwatch',name:'Stopwatch',cat:'Numbers',custom:'stopwatch',sample:'00:00.00',uses:{stagger:0,ease:0,accent:1},note:'العدّاد بيشتغل على طول مدة الـ Hold. في وضع Stop At The Text Value بيقف على الوقت اللي مكتوب في النص.',
   params:[PS('mode','Mode',[['up','Count Up'],['down','Count Down From The Text'],['to','Stop At The Text Value']],'up'),PS('fmt','Format',[['mmsscc','00:00.00'],['sscc','00.00'],['mmss','00:00'],['hhmmss','00:00:00']],'mmsscc'),PR('speed','Speed',.1,60,.1,1,'×'),PT('ring','Lap Ring',false)]},
+{id:'gauge',name:'Gauge',cat:'Numbers',custom:'gauge',sample:'72',uses:{stagger:0,ease:0,accent:1},params:[{k:'max',label:'Max Value',type:'num',def:100},PR('size','Dial Size',60,300,5,130,'%'),PR('thick','Thickness',2,30,.5,10,'%'),PT('needle','Needle',true),PT('ticks','Ticks',true)]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
