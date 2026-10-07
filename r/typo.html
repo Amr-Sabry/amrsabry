@@ -239,7 +239,8 @@ function arClusters(word){var cs=Array.from(word),out=[];
     if(c==='ل'){var j=i+1,m=''; while(j<cs.length&&isMark(cs[j])){m+=cs[j];j++;}
       if(j<cs.length&&'اأإآٱ'.indexOf(cs[j])>=0){var k=j+1,m2=''; while(k<cs.length&&isMark(cs[k])){m2+=cs[k];k++;} out.push(c+m+cs[j]+m2); i=k-1; continue;}}
     out.push(c);}
-  return out;}
+  var mg=[]; out.forEach(function(c){var dg=/^[0-9٠-٩.,٬٫:\/%٪]+$/.test(c); if(dg&&mg.length&&mg[mg.length-1].d) mg[mg.length-1].s+=c; else mg.push({s:c,d:dg});});
+  return mg.map(function(x){return x.s;});}
 function baseOf(cl,last){var b=Array.from(cl).filter(function(c){return !isMark(c);}); return last?b[b.length-1]:b[0];}
 function joinsFwd(cl){var b=baseOf(cl,true); return !!b&&isArL(b)&&NOFWD.indexOf(b)<0;}
 function joinsBack(cl){var b=baseOf(cl,false); return !!b&&isArL(b)&&b!=='ء';}
@@ -382,6 +383,22 @@ function splitDots(P,K,L){var key='_nq'+K.toFixed(3)+'|'+P.color+'|'+P.outline, 
   body.getContext('2d').putImageData(new ImageData(bd,w,h),0,0); out.body=body;
   out.dots.sort(function(a,b){ if(a.line!==b.line) return a.line-b.line; return L.lines[a.line].rtl?b.cx-a.cx:a.cx-b.cx; }); return out;}
 function tintSprite(dt,col){var t=dt.tint[col]; if(t) return t; t=document.createElement('canvas'); t.width=dt.cv.width; t.height=dt.cv.height; var g2=t.getContext('2d'); g2.drawImage(dt.cv,0,0); g2.globalCompositeOperation='source-in'; g2.fillStyle=col; g2.fillRect(0,0,t.width,t.height); dt.tint[col]=t; return t;}
+/* ---- numbers: the first number in the text, the word it sits in, and the text laid out again with something else in its place ---- */
+var NUMRE=/[0-9٠-٩][0-9٠-٩.,٬٫]*/, AR_D='٠١٢٣٤٥٦٧٨٩';
+function numInfo(text){var m=NUMRE.exec(text); if(!m) return null; var core=m[0].replace(/[.,٬٫]+$/,''), val=parseNum(core); if(isNaN(val)) return null; return {src:core,val:val,ar:/[٠-٩]/.test(core),pre:text.slice(0,m.index),post:text.slice(m.index+core.length)};}
+function tokIndex(pre){var rows=pre.replace(/\r/g,'').split('\n'), row=rows[rows.length-1], n=row.split(/\s+/).filter(Boolean).length; return {line:rows.length-1,word:/\S$/.test(row)?n-1:n};}
+function wordAt(L2,ix){var l=L2.lines[ix.line]; return (l&&l.words[ix.word])||null;}
+function toDigits(s,ar){return ar?String(s).replace(/\d/g,function(d){return AR_D[d];}):String(s);}
+function drawWordsExcept(g,P,L2,skip,o){L2.lines.forEach(function(l){l.words.forEach(function(w){ if(w!==skip) drawWord(g,P,w,o); });});}
+function digitW(g,ar){var mx=0; for(var d=0;d<10;d++) mx=Math.max(mx,g.measureText(ar?AR_D[d]:String(d)).width); return mx;}
+function fadeAll(g,P,L,a){g.save(); g.globalAlpha*=a; drawAll(g,P,L,styleOf(P)); g.restore();}
+var UNITS={m2:['m²','م²'],m:['m','م'],cm:['cm','سم'],km:['km','كم'],km2:['km²','كم²'],ft2:['ft²','قدم²'],kg:['kg','كجم'],ton:['t','طن'],l:['L','لتر'],c:['°C','°م'],kmh:['km/h','كم/س'],pct:['%','٪'],x:['×','×'],plus:['+','+'],k:['K','ألف'],mil:['M','مليون'],bil:['B','مليار'],usd:['$','$'],egp:['EGP','ج.م'],aed:['AED','د.إ'],sar:['SAR','ر.س']};
+/* the widest digit of the current font, so a changing number can sit in fixed slots: [char, width] */
+function wideDigit(g,ar){var mx=0, ch=ar?AR_D[0]:'0'; g.save(); g.direction='ltr'; for(var d=0;d<10;d++){var c=ar?AR_D[d]:String(d), w=g.measureText(c).width; if(w>mx){mx=w; ch=c;}} g.restore(); return [ch,mx];}
+/* lay the text out with `str` in place of the number at [i, i+len), as if every digit were the widest one; returns the layout, the word and where the digits start */
+function slotLayout(g,P,i,len,str,ar){var wd=wideDigit(g,ar), ph=str.replace(/[0-9٠-٩]/g,wd[0]), pre=P.text.slice(0,i), L2=layout(P,pre+ph+P.text.slice(i+len)), w=wordAt(L2,tokIndex(pre)); if(!w) return {L:L2,w:null};
+  g.save(); g.direction='ltr'; var at=w.text.indexOf(ph), A=at>0?w.text.slice(0,at):'', x=w.x0+(A?g.measureText(A).width:0); g.restore(); return {L:L2,w:w,x:x,dw:wd[1],A:A,B:at>=0?w.text.slice(at+ph.length):''};}
+function drawSlots(g,P,S,str,o,hide){var x=S.x, w=S.w; g.direction='ltr'; if(S.A){g.textAlign='left'; ink(g,P,S.A,w.x0,w.base,o);} Array.from(str).forEach(function(ch,k){var dg=/[0-9٠-٩]/.test(ch), cw=dg?S.dw:g.measureText(ch).width; if(!(hide&&hide(ch,k))){g.textAlign='center'; ink(g,P,ch,x+cw/2,w.base,o);} x+=cw;}); if(S.B){g.textAlign='left'; ink(g,P,S.B,x,w.base,o);} return x;}
 
 /* ---- custom moves: fn(g, layout, env, P, move, canvasScale, v = this move's settings) ---- */
 var CUSTOM={
@@ -853,10 +870,11 @@ var CUSTOM={
    g.restore();
    var bar=EASE.outExpo(clamp(io.pi/.4))*(1-EASE.inCubic(clamp((io.po-.55)/.45))), ba=v.keep?1:(io.po>0?clamp(io.po/.1):1-clamp((io.pi-.88)/.12)); if(bar<=.002||ba<=.003) return;
    var hh=(L.h/2+em*.02)*bar; g.save(); g.shadowColor='transparent'; g.globalAlpha*=ba; g.fillStyle=P.accent; g.fillRect(bx,L.cy-hh,th,hh*2); g.restore();},
- drift:function(g,L,env,P,M,K,v){var em=P.size, o=styleOf(P), p=env.t/env.D, d=v.dir==='out'?-1:1, sc=1+d*v.zoom/100*(p-.5), fin=clamp(env.t/Math.max(.2,env.Ti)), fo=env.To>0?clamp((env.t-env.tOut)/env.To):0, al=EASE.inOutCubic(fin)*(1-EASE.inOutCubic(fo)), tr=v.track/100*(p-.5)*d*1.4; if(al<=.003) return;
-   g.save(); g.globalAlpha*=al; var bl=Math.max(1-fin,fo); if(v.blur>0&&bl>.01) g.filter='blur('+(bl*em*.08*v.blur/100*K).toFixed(2)+'px)'; g.translate(L.cx,L.cy); g.scale(sc,sc); g.translate(-L.cx,-L.cy);
-   L.lines.forEach(function(l){ if(!l.cl.length) return; if(l.rtl||Math.abs(tr)<.001){l.words.forEach(function(w){drawWord(g,P,w,o);}); return;} l.cl.forEach(function(c){g.save(); g.translate((c.cx-l.cx)*tr,0); drawCl(g,P,c,o); g.restore();});});
-   g.restore();},
+ drift:function(g,L,env,P,M,K,v){var em=P.size, o=styleOf(P), p=env.t/env.D, d=v.dir==='out'?-1:1, sc=1+d*v.zoom/100*(p-.5), fin=clamp(env.t/Math.max(.2,env.Ti)), fo=env.To>0?clamp((env.t-env.tOut)/env.To):0, al=EASE.inOutCubic(fin)*(1-EASE.inOutCubic(fo)), tr=v.track/100*(p-.5)*d*1.4, bl=Math.max(1-fin,fo); if(al<=.003) return;
+   function draw(s){s.translate(L.cx,L.cy); s.scale(sc,sc); s.translate(-L.cx,-L.cy); L.lines.forEach(function(l){ if(!l.cl.length) return; if(l.rtl||Math.abs(tr)<.001){l.words.forEach(function(w){drawWord(s,P,w,o);}); return;} l.cl.forEach(function(c){s.save(); s.translate((c.cx-l.cx)*tr,0); drawCl(s,P,c,o); s.restore();});});}
+   if(!(v.blur>0&&bl>.01)){g.save(); g.globalAlpha*=al; draw(g); g.restore(); return;}
+   /* one blur for the whole frame instead of one per word */
+   var c=layer(g,P,K,'drf',draw); g.save(); g.setTransform(1,0,0,1,0,0); g.globalAlpha*=al; g.filter='blur('+(bl*em*.08*v.blur/100*K).toFixed(2)+'px)'; g.drawImage(c,0,0); g.restore();},
  rays:function(g,L,env,P,M,K,v){var io=IO(env,EASE.outCubic), em=P.size, o=styleOf(P), al=io.a; if(al<=.003) return;
    var N=16, len=v.length/100*(.25+.75*io.ei)*(1-io.eo*.6)*(1+.12*Math.sin(env.t*2.3)), ox=L.cx+Math.sin(env.t*1.4)*L.w*.45*v.drift/100, oy=L.cy+(v.from==='below'?L.h*.9:(v.from==='above'?-L.h*.9:0));
    /* the rays are soft, so they are built at a third of the size and scaled back up */
@@ -910,6 +928,18 @@ var CUSTOM={
        if(ar){ if(jq<1){g.save(); g.globalAlpha*=1-jq; g.direction='rtl'; g.textAlign='center'; ink(g,P,c.s,c.cx,c.base,o); g.restore();} if(jq>0){g.save(); g.globalAlpha*=jq; drawCl(g,P,c,o); g.restore();} } else drawCl(g,P,c,o);
        g.restore();});
      g.restore();});});},
+ odometer:function(g,L,env,P,M,K,v){var io=IO(env), o=styleOf(P), em=P.size, N=numInfo(P.text), a=io.a; if(a<=.003) return; var w=N&&wordAt(L,tokIndex(N.pre)); if(!w){fadeAll(g,P,L,a); return;}
+   g.save(); g.globalAlpha*=a; drawWordsExcept(g,P,L,w,o);
+   var tok=w.text, at=tok.indexOf(N.src), A=tok.slice(0,at), B=tok.slice(at+N.src.length), rt=w.line.rtl&&!/[A-Za-z]/.test(tok);
+   g.direction='ltr'; var wn=g.measureText(N.src).width; g.direction=rt?'rtl':'ltr'; var wa=A?g.measureText(A).width:0, wb=B?g.measureText(B).width:0, xn=rt?w.x0+wb:w.x0+wa; g.textAlign='left';
+   if(A) ink(g,P,A,rt?xn+wn:w.x0,w.base,o); if(B) ink(g,P,B,rt?w.x0:xn+wn,w.base,o);
+   g.direction='ltr'; var ds=Array.from(N.src), nd=ds.filter(function(c){return /[0-9٠-٩]/.test(c);}).length, k=0, rowH=L.lh, dir=v.dir==='down'?-1:1, x=xn;
+   g.beginPath(); g.rect(w.x0-em*.2,w.line.yc-rowH*.5,(w.x1-w.x0)+em*.4,rowH); g.clip();
+   ds.forEach(function(ch){var cw=g.measureText(ch).width, ar=AR_D.indexOf(ch)>=0, di=ar?AR_D.indexOf(ch):'0123456789'.indexOf(ch); if(di<0){g.textAlign='left'; ink(g,P,ch,x,w.base,o); x+=cw; return;}
+     var e=EASE.outQuint(clamp((io.pi-k*.07)/Math.max(.25,1-(nd-1)*.07))), pos=(di+10*Math.round(v.spins))*e+io.eo*3, c0=Math.floor(pos), f=pos-c0, mv=(e<1||io.po>0)&&v.accent; g.textAlign='center';
+     for(var q=0;q<2;q++){ if(q&&f<.002) break; var dg=((c0+q)%10+10)%10; ink(g,P,ar?AR_D[dg]:String(dg),x+cw/2,w.base+(q-f)*rowH*dir,mv?{color:P.accent,fill:true}:o);}
+     x+=cw; k++;});
+   g.restore();},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -949,7 +979,7 @@ var MOVES=[
   cfg:function(v){return {unit:v.by,from:{dy:.5,a:0},loop:function(u,i,n,t){return {dy:Math.sin(t*v.speed-i*v.len)*v.amp/100};}};}},
  {id:'typewriter',name:'Typewriter',cat:'Type',custom:'typewriter',uses:{stagger:0,ease:0,accent:1},params:[BY('letter',['letter','word']),PT('cursor','Cursor',true),PS('shape','Cursor Shape',[['bar','Bar  |'],['block','Block  █'],['under','Underscore  _']],'bar')]},
  {id:'scramble',name:'Scramble',cat:'Type',custom:'scramble',stagger:.7,uses:{stagger:1,ease:0,accent:1},params:[PR('speed','Shuffle Speed',4,40,1,18,'/s'),PS('set','Characters',[['auto','Auto'],['letters','Letters'],['numbers','Numbers'],['symbols','Symbols']],'auto'),PT('accent','Accent Color',true)]},
- {id:'counter',name:'Counter',cat:'Type',custom:'counter',sample:'2026',uses:{stagger:0,ease:0,accent:0},params:[{k:'from',label:'Start From',type:'num',def:0},PS('ease','Count Curve',[['smooth','Smooth'],['linear','Linear'],['snap','Fast Then Settle']],'smooth')]},
+ {id:'counter',name:'Counter',cat:'Numbers',custom:'counter',sample:'2026',uses:{stagger:0,ease:0,accent:0},params:[{k:'from',label:'Start From',type:'num',def:0},PS('ease','Count Curve',[['smooth','Smooth'],['linear','Linear'],['snap','Fast Then Settle']],'smooth')]},
  {id:'beat',name:'Beat Punch',cat:'Type',custom:'beat',uses:{stagger:0,ease:0,accent:1},params:[PR('group','Words Per Beat',1,4,1,1,''),PR('punch','Punch Scale',1,4,.05,1.9,'×'),PR('hold','Hold Scale',.6,2.5,.05,1.25,'×'),PT('alt','Alternate Accent',true)]},
  {id:'tracking',name:'Tracking · Kashida',cat:'Soft',custom:'tracking',ease:'outExpo',uses:{stagger:0,ease:1,accent:0},params:[PR('spread','Spread (English)',.2,3,.05,1.3,'×'),PR('kashida','Kashida Length (عربي)',2,24,1,10,''),PT('blur','Blur',true)]},
  {id:'smear',name:'Motion Smear',cat:'Basic',custom:'smear',stagger:.25,uses:{stagger:1,ease:0,accent:1},params:[PS('dir','Direction',[['alt','Alternate Lines'],['left','From Left'],['right','From Right']],'alt'),PR('trail','Trail',0,10,1,5,''),PR('skew','Skew',0,45,1,28,'°')]},
@@ -1033,6 +1063,7 @@ var MOVES=[
 {id:'anagram',name:'Anagram',cat:'Type',custom:'anagram',uses:{stagger:0,ease:0,accent:0},params:[PR('seed','Pattern',1,30,1,4,''),PR('arc','Jump Height',0,150,5,60,'%'),BY('letter',['letter','word'])]},
 {id:'nuqat',name:'Nuqat Drop · نقط',cat:'Arabic',custom:'nuqat',sample:'نقطة فوق الحرف',need:/[بتثجخذزشضظغفقنيةأإؤئij;:!?؟]/,uses:{stagger:0,ease:0,accent:1},note:'جسم الحروف بيظهر الأول، وبعدين النقط والهمزات والتشكيل بتنزل عليه. بتشتغل كمان على نقطة الـ i والـ j.',params:[PR('height','Drop Height',20,400,5,150,'%'),PR('bounce','Bounce',0,100,1,70,'%'),PT('accent','Accent Dots',false)]},
 {id:'join',name:'Letter Join · تشبيك',cat:'Arabic',custom:'join',sample:'حروف بتتشبّك',need:/[؀-ۿ]/,uses:{stagger:0,ease:0,accent:0},note:'في العربي الحروف بتبدأ منفصلة وبتتشبك في بعض. في الإنجليزي بتتلم على بعض.',params:[PR('spread','Spread',20,400,5,140,'%'),PR('lift','Stagger Lift',0,100,1,25,'%'),PT('snap','Snap Pulse',true)]},
+{id:'odometer',name:'Odometer',cat:'Numbers',custom:'odometer',sample:'2,450',uses:{stagger:0,ease:0,accent:1},params:[PR('spins','Extra Spins',0,5,1,1,''),PS('dir','Roll',[['up','Up'],['down','Down']],'up'),PT('accent','Accent While Rolling',false)]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
@@ -1536,7 +1567,7 @@ Asst=(function(){
     var mx=W*.07,my=H*.08,dx=0,dy=0; if(L.x0<mx) dx=mx-L.x0; else if(L.x1>W-mx) dx=W-mx-L.x1; if(L.top<my) dy=my-L.top; else if(L.bot>H-my) dy=H-my-L.bot; P.x+=dx/W; P.y+=dy/H;}
   function inspect(){var M=MOVE_BY[P.move], txt=P.text.trim();
     if(!txt) return {id:'empty',text:'الشاشة فاضية.. اكتب حاجة الأول يا فنان',icon:'what',mood:'sleepy'};
-    if(M.id==='counter'&&!/[0-9٠-٩]/.test(txt)) return {id:'counter',text:'الـ Counter عايز رقم يعدّ عليه.. أحطلك 2026؟',fix:'حط رقم',icon:'slot',run:function(){P.text=P.text.replace(/\s+$/,'')+' 2026';}};
+    if(M.cat==='Numbers'&&!(M.need||/[0-9٠-٩]/).test(txt)) return {id:'counter',text:'الحركة دي عايزة رقم تشتغل عليه.. أحطلك '+(M.sample||'2026')+'؟',fix:'حط رقم',icon:'slot',run:function(){P.text=(P.text.replace(/\s+$/,'')+' '+(M.sample||'2026')).trim();}};
     if(M.id==='beat'&&txt.split(/\s+/).length<2) return {id:'beat',text:'الـ Beat Punch بيخبط كلمة كلمة.. اكتب أكتر من كلمة',icon:'eq'};
     var L=layout(P), mx=W*.05, my=H*.05, out=L.x0<0||L.x1>W||L.top<0||L.bot>H, near=!out&&(L.x0<mx||L.x1>W-mx||L.top<my||L.bot>H-my);
     if(out) return {id:'out',text:'النص خارج من الكادر.. ألمّه لك؟',fix:'لمّ النص',icon:'size',mood:'sad',run:fitText};
@@ -1552,10 +1583,10 @@ Asst=(function(){
 
   /* ---- job 2: suggest a move that fits the text ---- */
   var SUG=['جرّب دي.. {n}','إيه رأيك في {n}؟','{n}.. دي من المفضلين عندي','حاسس إن {n} لايقة على النص ده','خد عندك.. {n}'];
-  var CAT_ICON={Reveal:'eye',Basic:'play',Bounce:'spring',Soft:'cloud',Loop:'wave',Type:'type',FX:'bolt',Warp:'cube',Graphic:'shapes',Particles:'dots',Arabic:'pen'};
-  var CAT_LINE={Reveal:'دخلة شيك.. بتكشف واحدة واحدة',Basic:'السهل الممتنع',Bounce:'بتنطّ زي الكورة',Soft:'ناعمة وهادية',Loop:'دي بتفضل تتحرك طول ما هي واقفة',Type:'كتابة على أصولها',FX:'دي بقى بتاعة الشو',Warp:'دي بتلوي الكتابة نفسها',Graphic:'كتابة ومعاها جرافيك',Particles:'حبّة حبّة لحد ما تبقى كلمة',Arabic:'دي معمولة للعربي مخصوص'};
+  var CAT_ICON={Reveal:'eye',Basic:'play',Bounce:'spring',Soft:'cloud',Loop:'wave',Type:'type',FX:'bolt',Warp:'cube',Graphic:'shapes',Particles:'dots',Arabic:'pen',Numbers:'slot'};
+  var CAT_LINE={Reveal:'دخلة شيك.. بتكشف واحدة واحدة',Basic:'السهل الممتنع',Bounce:'بتنطّ زي الكورة',Soft:'ناعمة وهادية',Loop:'دي بتفضل تتحرك طول ما هي واقفة',Type:'كتابة على أصولها',FX:'دي بقى بتاعة الشو',Warp:'دي بتلوي الكتابة نفسها',Graphic:'كتابة ومعاها جرافيك',Particles:'حبّة حبّة لحد ما تبقى كلمة',Arabic:'دي معمولة للعربي مخصوص',Numbers:'أرقام بتتحرك بوحداتها'};
   function tileOf(M){for(var i=0;i<tiles.length;i++) if(tiles[i].M===M) return tiles[i]; return null;}
-  function suggest(){stopTour(); var txt=P.text.trim(), words=txt.split(/\s+/).length, pool=MOVES.filter(function(m){return m.id!==P.move&&recent.indexOf(m.id)<0&&!(m.id==='counter'&&!/[0-9٠-٩]/.test(txt))&&!(m.id==='beat'&&words<2);});
+  function suggest(){stopTour(); var txt=P.text.trim(), words=txt.split(/\s+/).length, pool=MOVES.filter(function(m){return m.id!==P.move&&recent.indexOf(m.id)<0&&!(m.cat==='Numbers'&&!(m.need||/[0-9٠-٩]/).test(txt))&&!(m.id==='beat'&&words<2);});
     if(!pool.length){recent=[]; pool=MOVES.filter(function(m){return m.id!==P.move;});} var M=pick(pool); recent.push(M.id); if(recent.length>12) recent.shift();
     P.move=M.id; markTile(); buildMoveUI(); time=0; playing=!reduce; syncPlay(); dirty(); persist(); var t=tileOf(M); if(t&&wide()){ if(t.b.hidden){cat='All'; $('#mSearch').value=''; Array.prototype.forEach.call($('#mCats').children,function(x){x.setAttribute('aria-pressed',String(x.textContent==='All'));}); filterTiles();} t.b.scrollIntoView({block:'nearest'}); }
     speak(pick(SUG).replace('{n}',M.name),'wow',{word:'TRY',icon:CAT_ICON[M.cat]||'play',at:t&&t.b,fly:1900,ms:3400,spin:1}); check(); }
