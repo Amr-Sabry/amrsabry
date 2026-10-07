@@ -719,6 +719,13 @@ var CUSTOM={
    g.save(); g.globalAlpha=ga*a*(v.base==='dim'?.3:1); drawAll(g,P,L,v.base==='outline'?{stroke:Math.max(1.5,em*.02),color:P.color}:o); g.restore();
    g.save(); g.globalAlpha=ga*a; g.beginPath(); var any=false; U.forEach(function(u,i){var f=v.mode==='word'?(pos>i?1:0):clamp(pos-i); if(f<=0) return; any=true; var w=u.x1-u.x0, ln=u.line, pad=em*.05; g.rect(ln.rtl?u.x1-w*f-(f>=1?pad:0):u.x0-pad,ln.top,w*f+pad*(f>=1?2:1),L.lh);});
    if(any){g.clip(); drawAll(g,P,L,styleOf(P,{color:v.accent?P.accent:P.color,fill:v.base==='outline'}));} g.restore();},
+ captions:function(g,L,env,P,M,K,v){var io=IO(env), em=P.size, o=styleOf(P), U=L.words, n=U.length; if(!n) return; var T1=(env.To>0?env.tOut:env.D)-.1, slot=Math.max(.08,T1/n), idx=Math.min(n-1,Math.floor(env.t/slot)), lt=env.t-idx*slot, done=env.t>=T1, al=1-io.eo, ga=g.globalAlpha; if(al<=.003) return;
+   U.forEach(function(u,i){var active=i===idx&&!done, shown=i<=idx; if(!shown&&v.hide) return; var ln=u.line, pop=active?1+.16*(1-EASE.outCubic(clamp(lt/.16))):1;
+     g.save(); g.globalAlpha=ga*al*(shown?1:.28); g.translate(u.cx,u.cy); g.scale(pop,pop); g.translate(-u.cx,-u.cy);
+     if(active&&v.style==='box'){var pad=em*v.pad/100, bh=(L.asc+L.desc)*.88; g.save(); g.shadowColor='transparent'; g.fillStyle=P.accent; rrect(g,u.x0-pad,ln.yc-bh/2,u.x1-u.x0+pad*2,bh,bh*v.round/200); g.fill(); g.restore(); drawUnit(g,P,u,{color:P.color,fill:true});}
+     else if(active&&v.style==='color') drawUnit(g,P,u,{color:P.accent,fill:true});
+     else {drawUnit(g,P,u,o); if(active&&v.style==='under'){g.shadowColor='transparent'; g.fillStyle=P.accent; g.fillRect(u.x0,ln.base+L.desc*.5,u.x1-u.x0,Math.max(3,em*.06));}}
+     g.restore();});},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -813,6 +820,7 @@ var MOVES=[
 {id:'scan',name:'Laser Scan',cat:'FX',custom:'scan',uses:{stagger:0,ease:0,accent:1},params:[PS('dir','Scan',[['down','Top → Bottom'],['up','Bottom → Top'],['right','Reading Direction']],'down'),PR('glow','Glow',0,200,5,100,'%'),PT('trace','Hot Edge',true)]},
 {id:'ripple',name:'Ripple',cat:'Warp',custom:'ripple',uses:{stagger:0,ease:0,accent:0},params:[PR('amp','Amount',2,60,1,16,'%'),PR('len','Wave Length',10,200,5,60,'%'),PR('speed','Speed',0,20,.5,7,''),PR('hold','Ripple While Holding',0,100,1,0,'%'),PS('axis','Waves',[['rows','Sideways'],['cols','Up & Down']],'rows')]},
 {id:'karaoke',name:'Karaoke',cat:'Type',custom:'karaoke',uses:{stagger:0,ease:0,accent:1},note:'التلوين ماشي كلمة كلمة على طول مدة الـ Hold كلها.',params:[PS('base','Before',[['dim','Dim'],['outline','Outline']],'dim'),PT('accent','Accent Fill',true),PS('mode','Fill',[['smooth','Smooth'],['word','Word By Word']],'smooth')]},
+{id:'captions',name:'Captions',cat:'Type',custom:'captions',uses:{stagger:0,ease:0,accent:1},note:'الكلمات بتتوزع بالتساوي على مدة الـ Hold. طوّل الـ Duration عشان الإيقاع يهدى.',params:[PS('style','Active Word',[['box','Box'],['color','Accent Color'],['under','Underline']],'box'),PR('pad','Box Padding',0,40,1,10,'%'),PR('round','Corner Radius',0,100,1,30,'%'),PT('hide','Hide Upcoming Words',true)]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
