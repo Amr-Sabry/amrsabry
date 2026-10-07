@@ -507,6 +507,16 @@ var CUSTOM={
  jelly:function(g,L,env,P,M,K,v){var U=unitsOf(L,v.by), n=U.length, rk=ranks(v.order,n), o=styleOf(P), E=elasticEase(v.bounce/100);
    U.forEach(function(u,i){var pr=prog(env,P,M,rk[i],n); if(pr.i<=0||pr.o>=1) return; var sy=E(pr.i)*(1+v.wobble/100*Math.sin(env.t*7-i*.9)*.13*clamp(pr.i*2-1))*(1-EASE.inCubic(pr.o)), sx=1+(1-Math.min(1.5,sy))*.55, by=(u.line||L.lines[0]).base+L.desc*.25;
      g.save(); g.globalAlpha*=clamp(pr.i*6); g.translate(u.cx,by); g.scale(Math.max(.05,sx),Math.max(.001,sy)); g.translate(-u.cx,-by); drawUnit(g,P,u,o); g.restore();});},
+ dotmatrix:function(g,L,env,P,M,K,v){var io=IO(env), em=P.size, pitch=Math.max(4,Math.round(em*v.pitch/100)), A=textAlpha(L,P), rtl=L.lines[0].rtl, sq=v.shape==='square';
+   var x0=Math.floor((L.x0-em*.25)/pitch)*pitch, x1=L.x1+em*.25, y0=Math.floor((L.top-em*.05)/pitch)*pitch, y1=L.bot+em*.05, r0=pitch*.43, sp=x1-x0||1, pa=clamp(io.pi*4)*(1-io.eo);
+   g.save(); g.shadowColor='transparent';
+   for(var pass=0;pass<2;pass++){ if(!pass&&!v.panel) continue; g.fillStyle=pass?P.color:P.accent; g.globalAlpha=pass?1:.3*pa; g.beginPath();
+     for(var gy=y0;gy<y1;gy+=pitch) for(var gx=x0;gx<x1;gx+=pitch){var on=A.at(gx,gy)>110, u=(gx-x0)/sp, h=hash(gx*.131+gy*.717); if(rtl) u=1-u;
+       var lit=on&&io.pi*1.3>u+h*.28&&!(io.po>0&&h<io.po*1.15); if(pass!==(lit?1:0)) continue;
+       var r=lit?r0*(1-(.5-.5*Math.sin(gx/pitch*.45-env.t*v.speed+gy/pitch*.35))*.55*v.wave/100):r0*.4;
+       if(sq) g.rect(gx-r,gy-r,r*2,r*2); else {g.moveTo(gx+r,gy); g.arc(gx,gy,r,0,6.2832);}}
+     g.fill();}
+   g.restore();},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -571,6 +581,7 @@ var MOVES=[
 {id:'ticker',name:'Ticker',cat:'Loop',custom:'ticker',uses:{stagger:0,ease:0,accent:1},params:[PR('speed','Speed',.2,8,.1,1.6,'×'),PS('sep','Separator',[['•','Dot •'],['—','Dash —'],['+','Plus +'],['/','Slash /'],['none','None']],'•'),PT('plate','Band',true),PT('alt','Alternate Direction',true),PR('tilt','Tilt',-15,15,.5,0,'°')]},
 {id:'slot',name:'Slot Reel',cat:'Type',custom:'slot',stagger:.5,uses:{stagger:1,ease:0,accent:1},params:[PR('spins','Spins',3,30,1,10,''),PS('set','Characters',[['auto','Auto'],['letters','Letters'],['numbers','Numbers'],['symbols','Symbols']],'auto'),PT('accent','Accent While Spinning',true)]},
 {id:'jelly',name:'Jelly',cat:'Bounce',custom:'jelly',stagger:.55,uses:{stagger:1,ease:0,accent:0},params:[PR('bounce','Bounciness',0,100,1,70,'%'),PR('wobble','Keep Wobbling',0,100,1,35,'%'),BY('letter'),ORDER]},
+{id:'dotmatrix',name:'Dot Matrix',cat:'Particles',custom:'dotmatrix',uses:{stagger:0,ease:0,accent:1},params:[PR('pitch','Dot Pitch',3,14,.5,6,'%'),PR('wave','Wave',0,100,1,60,'%'),PR('speed','Wave Speed',0,12,.1,4,''),PT('panel','Show Panel',true),PS('shape','Shape',[['circle','Round LEDs'],['square','Square Pixels']],'circle')]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
