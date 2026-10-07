@@ -647,6 +647,11 @@ var CUSTOM={
    U.forEach(function(u,i){var pr=prog(env,P,M,rk[i],n); if(pr.i<=0||pr.o>=1) return; var w=u.words[0], d=EASE.inOutCubic(clamp(pr.i/.75))*(1-EASE.inOutCubic(pr.o)), f=v.fill?clamp((pr.i-.6)/.4)*(1-clamp(pr.o*2.5)):0, sa=(v.keep||!v.fill)?1:1-f*(pr.o>0?0:1);
      if(f>.003){g.save(); g.globalAlpha*=f; drawWord(g,P,w,o); g.restore();}
      if(sa>.003&&d>0){g.save(); g.shadowColor='transparent'; g.globalAlpha*=sa; g.setLineDash([len,len*1.05]); g.lineDashOffset=len*(1-d); g.lineCap='round'; drawWord(g,P,w,{stroke:lw,color:v.accent?P.accent:P.color}); g.restore();}});},
+ blinds:function(g,L,env,P,M,K,v){var o=styleOf(P), em=P.size, N=Math.round(v.slats), hz=v.axis==='h', x0=L.x0-em*.3, y0=L.top-em*.05, w=L.w+em*.6, h=L.h+em*.1, rk=ranks(v.order,N,5), E=easeOf(P,M), io=IO(env), cen=v.grow==='center';
+   if(io.pi>=1&&io.po<=0){drawAll(g,P,L,o); return;}
+   g.save(); g.beginPath(); for(var i=0;i<N;i++){var pr=prog(env,P,M,rk[i],N), e=E(pr.i)*(1-EASE.inCubic(pr.o)); if(e<=.001) continue;
+     if(hz){var sh=h/N; g.rect(x0-em,y0+i*sh+(cen?sh*(1-e)/2:0),w+em*2,sh*e+(e>=1?.6:0));} else {var sw=w/N; g.rect(x0+i*sw+(cen?sw*(1-e)/2:0),y0-em,sw*e+(e>=1?.6:0),h+em*2);}}
+   g.clip(); drawAll(g,P,L,o); g.restore();},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -731,6 +736,7 @@ var MOVES=[
 {id:'shine',name:'Shine Sweep',cat:'FX',custom:'shine',uses:{stagger:0,ease:0,accent:1},params:[PR('width','Band Width',10,150,5,55,'%'),PR('angle','Angle',-60,60,1,-22,'°'),PR('every','Repeat Every',.6,6,.1,1.6,'s'),PS('color','Light',[['accent','Accent'],['white','White']],'accent')]},
 {id:'gwipe',name:'Gradient Wipe',cat:'Reveal',custom:'gwipe',ease:'inOutCubic',uses:{stagger:0,ease:1,accent:0},params:[PR('angle','Angle',0,360,5,0,'°'),PR('soft','Feather',0,100,1,35,'%'),PT('auto','Follow Reading Direction',true)]},
 {id:'outlinedraw',name:'Outline Draw',cat:'Reveal',custom:'outlinedraw',stagger:.4,uses:{stagger:1,ease:0,accent:1},params:[PR('stroke','Stroke',.5,8,.1,2,'%'),PR('len','Draw Length',2,30,.5,9,'×'),PT('fill','Fill After',true),PT('keep','Keep Outline',false),PT('accent','Accent Stroke',true)]},
+{id:'blinds',name:'Blinds',cat:'Reveal',custom:'blinds',stagger:.5,ease:'outExpo',uses:{stagger:1,ease:1,accent:0},params:[PR('slats','Slats',3,40,1,12,''),PS('axis','Slats',[['h','Horizontal'],['v','Vertical']],'h'),ORDER,PS('grow','Open From',[['edge','Edge'],['center','Center']],'edge')]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
