@@ -591,6 +591,11 @@ var CUSTOM={
    var d=layer(g,P,K,'crB',function(s){for(var yd=Math.max(0,Math.ceil(yh)+2);yd<H;yd+=st){var u=(yd-yh)/(H-yh), u2=(yd+st-yh)/(H-yh), ys=(1-kap*(1/u-1))*H, ys2=(1-kap*(1/u2-1))*H; if(ys2<=0) continue; ys=Math.max(0,ys); if(ys2-ys<.02) continue;
      s.globalAlpha=Math.min(1,ys/H*5); s.drawImage(c,0,ys*K,c.width,Math.max(1,(ys2-ys)*K),W/2-W/2*u,yd,W*u,st+.6);}});
    put(g,d,1);},
+ pixelate:function(g,L,env,P,M,K,v){var io=IO(env,EASE.outCubic), k=Math.max(1-io.ei,io.eo), o=styleOf(P), b=v.block*Math.pow(k,1.3); if(v.snap&&b>1) b=Math.pow(2,Math.round(Math.log(b)/Math.LN2)); if(io.a<=.003) return;
+   if(b<=1.6){g.save(); g.globalAlpha*=io.a; drawAll(g,P,L,o); g.restore(); return;}
+   var c=textLayer(g,P,K,L,'pixA'), bw=Math.max(2,Math.round(b*K)), sw=Math.ceil(c.width/bw), sh=Math.ceil(c.height/bw), sm=scratch(c.width,c.height,'pixS'), s=sm.g;
+   s.setTransform(1,0,0,1,0,0); s.globalAlpha=1; s.clearRect(0,0,sw+2,sh+2); s.imageSmoothingEnabled=true; s.drawImage(c,0,0,c.width,c.height,0,0,c.width/bw,c.height/bw);
+   g.save(); g.setTransform(1,0,0,1,0,0); g.imageSmoothingEnabled=false; g.globalAlpha*=io.a; g.drawImage(sm,0,0,sw,sh,0,0,sw*bw,sh*bw); g.shadowColor='transparent'; g.drawImage(sm,0,0,sw,sh,0,0,sw*bw,sh*bw); g.restore();},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -667,6 +672,7 @@ var MOVES=[
 {id:'boil',name:'Boil',cat:'Loop',custom:'boil',stagger:.6,uses:{stagger:1,ease:0,accent:1},params:[PR('amount','Amount',10,300,5,100,'%'),PR('fps','Frame Rate',4,16,1,8,'fps'),PT('sketch','Sketch Outline',true)]},
 {id:'crawl',name:'Crawl',cat:'Warp',custom:'crawl',uses:{stagger:0,ease:0,accent:0},note:'في وضع Pass Through النص بيعدّي من تحت لفوق على طول الـ Duration كلها. خلّي الـ Perspective صفر لو عايزها Credits Roll عادية.',
   params:[PS('mode','Mode',[['pass','Pass Through'],['stop','Stop At Position']],'pass'),PR('tilt','Perspective',0,100,1,55,'%')]},
+{id:'pixelate',name:'Pixelate',cat:'Warp',custom:'pixelate',uses:{stagger:0,ease:0,accent:0},params:[PR('block','Start Block',8,160,2,64,'px'),PT('snap','Stepped',true)]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
