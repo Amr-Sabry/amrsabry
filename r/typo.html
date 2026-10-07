@@ -578,6 +578,11 @@ var CUSTOM={
    g.save(); g.shadowColor='transparent'; g.globalAlpha=ga*ba*.3; g.fillStyle=P.color; g.fillRect(bx,by,bw,th); g.globalAlpha=ga*ba; g.fillStyle=P.accent; g.fillRect(rtl?bx+bw*(1-p):bx,by,bw*p,th);
    if(v.pct){var n=String(Math.round(p*100)), ar=/[٠-٩]/.test(P.text); if(ar) n=n.replace(/\d/g,function(d){return '٠١٢٣٤٥٦٧٨٩'[d];}); g.font=fontW(P,700,em*.3); g.direction='ltr'; g.textAlign=rtl?'left':'right'; g.fillStyle=P.color; g.fillText(n+(ar?'٪':'%'),rtl?bx:bx+bw,by+th+em*.36);}
    g.restore();},
+ boil:function(g,L,env,P,M,K,v){var U=[], o=styleOf(P), em=P.size, fr=Math.floor(env.t*v.fps), A=v.amount/100, env2=Object.assign({},env,{t:fr/v.fps});
+   L.lines.forEach(function(l){(l.rtl?L.words:L.letters).forEach(function(u){ if(u.line===l) U.push(u); });}); var n=U.length, rk=ranks('rand',n,3);
+   function pass(seed,st,k){U.forEach(function(u,i){var pr=prog(env2,P,M,rk[i],n); if(pr.i<=0||pr.o>0) return; function h(q){return hash(i*3.17+fr*7.31+seed+q)-.5;}
+     withState(g,u,{a:1,dx:h(1)*em*.04*A*k,dy:h(2)*em*.04*A*k,r:h(3)*.07*A*k,s:1+h(4)*.05*A*k},K,function(){drawUnit(g,P,u,st);});});}
+   if(v.sketch){g.save(); g.shadowColor='transparent'; pass(40,{stroke:Math.max(1.5,em*.014),color:P.accent},2.2); g.restore();} pass(0,o,1);},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -651,6 +656,7 @@ var MOVES=[
 {id:'eq',name:'Equalizer',cat:'Loop',custom:'eq',stagger:.5,uses:{stagger:1,ease:0,accent:1},params:[PR('amp','Amount',10,200,5,80,'%'),PR('speed','Speed',.2,6,.1,2.2,'×'),PT('bars','Level Bars',false)]},
 {id:'window',name:'Window',cat:'FX',custom:'windowfx',uses:{stagger:0,ease:0,accent:1},params:[PR('width','Stripe Width',4,80,1,22,'%'),PR('angle','Angle',-90,90,1,-35,'°'),PR('speed','Speed',-6,6,.1,1.2,'×'),PS('pattern','Pattern',[['stripes','Stripes'],['thin','Thin Lines'],['checker','Checker']],'stripes')]},
 {id:'progress',name:'Progress Load',cat:'Type',custom:'progress',uses:{stagger:0,ease:0,accent:1},params:[PT('pct','Show Percent',true),PR('thick','Bar Thickness',1,20,.5,5,'%'),PS('after','When Done',[['hide','Bar Hides'],['stay','Bar Stays']],'hide')]},
+{id:'boil',name:'Boil',cat:'Loop',custom:'boil',stagger:.6,uses:{stagger:1,ease:0,accent:1},params:[PR('amount','Amount',10,300,5,100,'%'),PR('fps','Frame Rate',4,16,1,8,'fps'),PT('sketch','Sketch Outline',true)]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
