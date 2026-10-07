@@ -670,6 +670,10 @@ var CUSTOM={
      if(q>0){g.translate(0,q*q*H*.9); g.translate(u.cx,u.cy); g.rotate((hash(i*3.3)-.5)*2.4*q); g.translate(-u.cx,-u.cy);}
      else {g.translate(px,py); g.rotate(th); g.translate(-px,-py); var sa=Math.min(1,Math.exp(-tau*v.damp)*6); if(v.strings&&sa>.01){g.save(); g.shadowColor='transparent'; g.globalAlpha*=sa; g.strokeStyle=P.accent; g.lineWidth=Math.max(1.5,em*.012); g.beginPath(); g.moveTo(px,py); g.lineTo(px,top+em*.06); g.stroke(); g.restore();}}
      drawUnit(g,P,u,o); g.restore();});},
+ domino:function(g,L,env,P,M,K,v){var U=unitsOf(L,v.by), n=U.length, rk=ranks('fwd',n), o=styleOf(P), A=v.angle*Math.PI/180, bz=bounceEase(.6);
+   U.forEach(function(u,i){var pr=prog(env,P,M,rk[i],n); if(pr.i<=0||pr.o>=1) return; var rtl=u.line.rtl, dir=rtl?-1:1, base=u.line.base, th=-dir*A*(1-EASE.outBack(pr.i)), px=rtl?u.x1:u.x0;
+     if(pr.o>0){th=dir*A*bz(pr.o); px=rtl?u.x0:u.x1;}
+     g.save(); g.globalAlpha*=clamp(pr.i*5)*(1-clamp((pr.o-.7)/.3)); g.translate(px,base); g.rotate(th); g.translate(-px,-base); drawUnit(g,P,u,o); g.restore();});},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -759,6 +763,7 @@ var MOVES=[
 {id:'iris',name:'Iris',cat:'Reveal',custom:'iris',ease:'outExpo',uses:{stagger:0,ease:1,accent:1},params:[PS('shape','Shape',[['circle','Circle'],['diamond','Diamond'],['square','Square']],'circle'),PS('origin','From',[['center','Center'],['start','Start'],['end','End']],'center'),PR('ring','Ring',0,12,.5,4,'%')]},
 {id:'stretch',name:'Stretch',cat:'Basic',custom:'stretch',stagger:.6,ease:'outExpo',uses:{stagger:1,ease:1,accent:0},params:[PR('tall','Stretch',1.5,12,.1,6,'×'),PS('anchor','Anchor',[['base','Baseline'],['center','Center'],['top','Top']],'base'),BY('letter'),ORDER]},
 {id:'pendulum',name:'Pendulum',cat:'Bounce',custom:'pendulum',stagger:.5,uses:{stagger:1,ease:0,accent:1},params:[PR('angle','Swing',5,90,1,38,'°'),PR('len','String Length',.3,5,.1,1.6,'×'),PR('damp','Damping',.5,8,.1,2.4,''),PT('strings','Show Strings',true),BY('letter',['letter','word'])]},
+{id:'domino',name:'Domino',cat:'Bounce',custom:'domino',stagger:.65,uses:{stagger:1,ease:0,accent:0},params:[PR('angle','Angle',20,110,1,88,'°'),BY('letter',['letter','word'])]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
