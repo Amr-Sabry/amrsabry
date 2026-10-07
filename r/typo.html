@@ -873,6 +873,15 @@ var CUSTOM={
    for(var k=Math.max(0,Math.floor((env.t-life)*rate));k<=k1;k++){var age=(env.t-k/rate)/life; if(age<0||age>1) continue; var p=pts[Math.floor(hash(k*1.73+.5)*n)], u=(p[0]-L.x0)/Math.max(1,L.w); if(rtl) u=1-u; if(u>a+.04) continue;
      var s=em*v.size/100*(.45+hash(k*3.1))*Math.sin(age*Math.PI), rot=hash(k*5.3)*1.57+age*1.5; g.beginPath(); for(var q=0;q<8;q++){var rr=q%2?s*.16:s, an=rot+q*.7854, x=p[0]+Math.cos(an)*rr, y=p[1]+Math.sin(an)*rr; if(q) g.lineTo(x,y); else g.moveTo(x,y);} g.closePath(); g.fill();}
    g.restore();},
+ blueprint:function(g,L,env,P,M,K,v){var io=IO(env), em=P.size, o=styleOf(P), lw=Math.max(1,em*v.line/100), p=io.pi, q=io.po, rtl=L.lines[0].rtl, ga0=g.globalAlpha, gp=EASE.inOutCubic(clamp(p/.45)), gA=q>0?(v.keep?1-q:0):(v.keep?1:1-clamp((p-.85)/.15));
+   if(gA>.003&&gp>0){g.save(); g.shadowColor='transparent'; g.globalAlpha=ga0*gA*.9; g.strokeStyle=P.accent; g.fillStyle=P.accent; g.lineWidth=lw; var ext=em*.5, xa=L.x0-ext, xb=L.x1+ext, wd=(xb-xa)*gp, cap=g.measureText('H').actualBoundingBoxAscent||L.asc*.7, dsc=g.measureText('p').actualBoundingBoxDescent||L.desc*.6, vp=EASE.inOutCubic(clamp((p-.2)/.4));
+     function hline(y,dash){g.beginPath(); g.setLineDash(dash?[lw*5,lw*4]:[]); if(rtl){g.moveTo(xb,y); g.lineTo(xb-wd,y);} else {g.moveTo(xa,y); g.lineTo(xa+wd,y);} g.stroke();}
+     L.lines.forEach(function(l){ if(!l.cl.length) return; hline(l.base,false); hline(l.base-cap,true); hline(l.base+dsc,true); g.setLineDash([]); if(vp>0) l.words.forEach(function(w){[w.x0,w.x1].forEach(function(x){var top=l.base-cap-em*.12, bot=l.base+dsc+em*.12; g.beginPath(); g.moveTo(x,top); g.lineTo(x,top+(bot-top)*vp); g.stroke();});});});
+     if(v.dims&&p>.3){g.setLineDash([]); g.globalAlpha=ga0*gA*clamp((p-.3)/.2); g.font='500 '+Math.max(14,em*.1)+'px "JetBrains Mono",ui-monospace,Menlo,monospace'; g.direction='ltr'; g.textAlign=rtl?'right':'left'; g.textBaseline='alphabetic'; g.fillText(Math.round(L.w)+' × '+Math.round(P.size)+' PX',rtl?L.x1:L.x0,L.lines[0].base-cap-em*.2);}
+     g.restore();}
+   var sa=clamp((p-.3)/.25)*(1-clamp((p-.6)/.3))*(1-q), fa=clamp((p-.55)/.35)*(1-EASE.inCubic(q));
+   if(sa>.003){g.save(); g.shadowColor='transparent'; g.globalAlpha=ga0*sa; drawAll(g,P,L,{stroke:lw*1.2,color:P.accent}); g.restore();}
+   if(fa>.003){g.save(); g.globalAlpha=ga0*fa; drawAll(g,P,L,o); g.restore();}},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -991,6 +1000,7 @@ var MOVES=[
 {id:'drift',name:'Cinematic Drift',cat:'Soft',custom:'drift',uses:{stagger:0,ease:0,accent:0},note:'حركة مستمرة على طول الـ Duration كلها، والـ In والـ Out هنا Fade هادي.',params:[PR('zoom','Zoom',0,40,1,10,'%'),PR('track','Tracking Drift (English)',0,100,1,30,'%'),PS('dir','Direction',[['in','Push In'],['out','Pull Out']],'in'),PR('blur','Blur On Fade',0,200,5,60,'%')]},
 {id:'rays',name:'Light Rays',cat:'FX',custom:'rays',uses:{stagger:0,ease:0,accent:1},params:[PR('length','Ray Length',10,150,5,60,'%'),PR('drift','Light Movement',0,300,5,100,'%'),PS('from','Light',[['behind','Behind'],['below','Below'],['above','Above']],'behind'),PT('accent','Accent Light',true)]},
 {id:'sparkle',name:'Sparkle',cat:'FX',custom:'sparkle',uses:{stagger:0,ease:0,accent:1},params:[PR('count','Sparkles / Second',2,60,1,18,''),PR('size','Size',5,60,1,32,'%'),PS('color','Color',[['accent','Accent'],['white','White'],['fill','Fill']],'accent')]},
+{id:'blueprint',name:'Blueprint',cat:'Graphic',custom:'blueprint',uses:{stagger:0,ease:0,accent:1},params:[PT('keep','Keep Guides',false),PT('dims','Show Dimensions',true),PR('line','Line Weight',.3,3,.1,1,'%')]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
