@@ -474,6 +474,10 @@ var CUSTOM={
          function py(y){var dy=y-ay, sc=f/(f+Math.abs(dy)*si*(v.pivot==='center'?(dy<0?1:-1):1)); return [ay+dy*co*sc,sc];}
          for(var y=y0;y<y1;y+=st){var a2=py(y), b2=py(y+st); if(a2[1]<=0||b2[1]<=0||a2[1]>6) continue; var dh=b2[0]-a2[0]; s.drawImage(c,x0*K,y*K,w*K,st*K,cx-(cx-x0)*a2[1],a2[0],w*a2[1],dh+(dh>0?.7:-.7));}} });
      put(g,d,al);});},
+ pathride:function(g,L,env,P,M,K,v){var U=unitsOf(L,v.by), n=U.length, rk=ranks('fwd',n), o=styleOf(P), em=P.size, wl=em*v.len, amp=em*v.amp/100;
+   function yAt(d){return amp*Math.sin(d/wl*6.2832)*Math.min(1,Math.abs(d)/(wl*.5));}
+   U.forEach(function(u,i){var pr=prog(env,P,M,rk[i],n); if(pr.i<=0||pr.o>=1) return; var dir=u.line.rtl?-1:1, d=dir*(1-EASE.outQuint(pr.i))*W*.95-dir*EASE.inCubic(pr.o)*W*.95;
+     withState(g,u,{a:clamp(pr.i*6)*(1-pr.o*pr.o*pr.o),dx:d,dy:yAt(d),r:v.rot?Math.atan((yAt(d+2)-yAt(d-2))/4):0},K,function(){drawUnit(g,P,u,o);});});},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -533,6 +537,7 @@ var MOVES=[
 {id:'scatter',name:'Scatter',cat:'Bounce',custom:'scatter',stagger:.45,uses:{stagger:1,ease:0,accent:0},params:[PR('spread','Spread',20,200,5,100,'%'),PR('spin','Spin',0,360,5,140,'°'),BY('letter',['letter','word']),PR('seed','Pattern',1,30,1,5,''),PT('gravity','Explode Out With Gravity',true)]},
 {id:'liquid',name:'Liquid',cat:'Warp',custom:'liquid',uses:{stagger:0,ease:0,accent:0},params:[PR('goo','Gooeyness',20,200,5,100,'%'),PR('pull','Pull To Center',0,100,1,70,'%')]},
 {id:'swing3d',name:'3D Swing',cat:'Warp',custom:'swing3d',stagger:.4,ease:'outBack',uses:{stagger:1,ease:1,accent:0},params:[PS('axis','Axis',[['y','Door (Vertical Axis)'],['x','Stand Up (Horizontal Axis)']],'y'),PS('pivot','Pivot',[['start','Start Edge'],['center','Center'],['end','End Edge']],'start'),PR('angle','Start Angle',20,90,1,86,'°'),PR('persp','Perspective',0,100,1,65,'%'),BY('all',['all','line'])]},
+{id:'pathride',name:'Path Ride',cat:'Basic',custom:'pathride',stagger:.6,uses:{stagger:1,ease:0,accent:0},params:[PR('amp','Wave Height',5,120,1,45,'%'),PR('len','Wave Length',1,8,.1,3,'×'),PT('rot','Follow The Curve',true),BY('letter',['letter','word'])]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
