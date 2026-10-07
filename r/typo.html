@@ -175,6 +175,9 @@ textarea:focus,select:focus,.inp:focus{border-color:var(--accent);outline:0}
         <button type="button" data-fmt="mov" id="fmtMain" aria-pressed="true"><b id="fmtMainT">ProRes 4444</b><small id="fmtMainD">ملف MOV واحد بـ Alpha، بيفتح في QuickTime و Premiere و DaVinci و Final Cut</small></button>
         <button type="button" data-fmt="zip" aria-pressed="false"><b>PNG Sequence</b><small>فريمات PNG شفافة في ZIP، بتفتح في أي برنامج</small></button>
       </div></div>
+    <div class="f" id="alphaRow"><span class="lab">Alpha</span>
+      <div class="seg" id="segAlpha"><button type="button" data-a="pm" aria-pressed="true">Premultiplied</button><button type="button" data-a="st" aria-pressed="false">Straight</button></div>
+      <p class="note">Premultiplied (على أسود) هو الـ default بتاع After Effects، والحواف بتطلع ناعمة في أي برنامج. لو ظهر خط غامق حوالين الحروف فوق فيديو فاتح، اختار Straight.</p></div>
     <div class="two">
       <div class="f"><label class="lab" for="rFps">Frame Rate</label><select id="rFps"><option>24</option><option selected>25</option><option>30</option><option>50</option><option>60</option></select></div>
       <div class="f"><label class="lab" for="rName">File Name</label><input class="inp" id="rName" type="text" value="typo_title_01" spellcheck="false"></div>
@@ -428,8 +431,10 @@ function movPNG(frames,fps,w,h){var ts=fps*100, delta=100, n=frames.length, dur=
   var moov=atom('moov',mvhd,atom('trak',tkhd,atom('mdia',mdhd,hdlr1,atom('minf',vmhd,hdlr2,dinf,stbl))));
   return new Blob([ftyp,mh].concat(frames,[moov]),{type:'video/quicktime'});}
 /* render every frame of P; onProgress(done,total); returns [Uint8Array] of PNGs */
-async function renderFrames(P,fps,onProgress,isCancelled){var T=timing(P), n=Math.max(1,Math.round(T.D*fps)), cv=document.createElement('canvas'); cv.width=W; cv.height=H; var g=cv.getContext('2d'), out=[];
-  for(var f=0;f<n;f++){ if(isCancelled&&isCancelled()) return null; g.setTransform(1,0,0,1,0,0); g.clearRect(0,0,W,H); render(g,f/fps,P,1);
+/* straight RGBA -> RGB matted on black (what After Effects calls Premultiplied). Edges then look right even where alpha is ignored. */
+function premultiply(g){var im=g.getImageData(0,0,W,H), d=im.data, n=d.length, a; for(var i=3;i<n;i+=4){a=d[i]; if(a===0||a===255) continue; d[i-3]=(d[i-3]*a+127)/255|0; d[i-2]=(d[i-2]*a+127)/255|0; d[i-1]=(d[i-1]*a+127)/255|0;} g.putImageData(im,0,0);}
+async function renderFrames(P,fps,onProgress,isCancelled,premult){var T=timing(P), n=Math.max(1,Math.round(T.D*fps)), cv=document.createElement('canvas'); cv.width=W; cv.height=H; var g=cv.getContext('2d',{willReadFrequently:!!premult}), out=[];
+  for(var f=0;f<n;f++){ if(isCancelled&&isCancelled()) return null; g.setTransform(1,0,0,1,0,0); g.clearRect(0,0,W,H); render(g,f/fps,P,1); if(premult) premultiply(g);
     var blob=await new Promise(function(res){cv.toBlob(res,'image/png');}); out.push(new Uint8Array(await blob.arrayBuffer())); if(onProgress) onProgress(f+1,n); if(f%4===3) await new Promise(function(r){setTimeout(r,0);}); }
   return out;}
 function pad5(n){return ('0000'+n).slice(-5);}
@@ -457,7 +462,7 @@ async function movProRes(frames,fps,onProgress){var w=await ffLoad(), n=frames.l
       if(d.type==='log'&&onProgress){var m=/frame=\s*(\d+)/.exec(d.data&&d.data.message||''); if(m) onProgress(Math.min(1,parseInt(m[1],10)/n));}
       else if(d.type==='done'){ if(d.ret===0&&d.out) res(new Blob([d.out],{type:'video/quicktime'})); else rej(new Error('ffmpeg exit '+d.ret)); }
       else if(d.type==='error') rej(new Error(d.message)); };
-    w.postMessage({type:'encode',frames:frames,args:['-framerate',String(fps),'-i','f_%05d.png','-c:v','prores_ks','-profile:v','4444','-pix_fmt','yuva444p10le','-vendor','apl0','-r',String(fps),'out.mov']});});}
+    w.postMessage({type:'encode',frames:frames,args:['-framerate',String(fps),'-i','f_%05d.png','-vf','scale=in_range=pc:out_range=tv:out_color_matrix=bt709,format=yuva444p10le','-c:v','prores_ks','-profile:v','4444','-pix_fmt','yuva444p10le','-alpha_bits','16','-vendor','apl0','-color_primaries','bt709','-color_trc','bt709','-colorspace','bt709','-color_range','tv','-movflags','+write_colr','-r',String(fps),'out.mov']});});}
 
 /* ================= interface ================= */
 var $=function(s){return document.querySelector(s);};
@@ -575,13 +580,15 @@ var fmtSel='mov', rBusy=false, rCancel=false, rBlob=null, rFileName='', dlNS=nul
 if(!canProRes){$('#fmtMainT').textContent='MOV · Alpha'; $('#fmtMainD').textContent='ملف QuickTime بـ PNG codec. الـ ProRes 4444 متاح في نسخة Aroma Hub';}
 if(inViewer) window.claude.use('downloads').then(function(ns){dlNS=ns;},function(){});
 var DL_OK=/\.(gif|png|jpe?g|webp|mp4|webm|txt|json|md|docx|pptx|epub|csv|ttf|html|svg|pdf|xlsx|zip)$/i;
-function note(s){$('#rNote').textContent=s;}
+var alphaMode='pm'; function note(s){$('#rNote').textContent=s;}
+function syncAlphaRow(){$('#alphaRow').hidden=!(canProRes&&fmtSel==='mov');}
+Array.prototype.forEach.call($('#segAlpha').children,function(b){b.addEventListener('click',function(){ if(rBusy) return; alphaMode=b.dataset.a; Array.prototype.forEach.call($('#segAlpha').children,function(x){x.setAttribute('aria-pressed',String(x===b));});});});
 function frameInfo(){var fps=+$('#rFps').value, n=Math.round(timing(P).D*fps); $('#rCount').textContent='FRAME 000 / '+('00'+n).slice(-3); $('#specFps').textContent=fps;}
-function openDlg(){ $('#scrim').hidden=false; $('#rFile').hidden=true; $('#rFill').style.width='0'; $('#rState').textContent='Ready'; $('#rStart').hidden=false; $('#rStart').textContent='Start Render'; frameInfo();
+function openDlg(){ $('#scrim').hidden=false; $('#rFile').hidden=true; $('#rFill').style.width='0'; $('#rState').textContent='Ready'; $('#rStart').hidden=false; $('#rStart').textContent='Start Render'; frameInfo(); syncAlphaRow();
   note(inViewer?'في نسخة المراجعة دي ملف الـ MOV بينزل جوه ZIP. على Aroma Hub بينزل ProRes 4444 مباشرة.':'الخلفية شفافة (Alpha) والمقاس 1920 × 1080. أول Render بـ ProRes بيحمّل الـ Encoder مرة واحدة (حوالي 30 MB).'); $('#rStart').focus(); }
 function closeDlg(){ if(rBusy){rCancel=true; if(encoding) ffAbort(); return;} $('#scrim').hidden=true; $('#btnRender').focus(); }
 $('#btnRender').addEventListener('click',openDlg); $('#rClose').addEventListener('click',closeDlg); $('#rFps').addEventListener('change',frameInfo);
-Array.prototype.forEach.call($('#fmt').children,function(b){b.addEventListener('click',function(){ if(rBusy) return; fmtSel=b.dataset.fmt; Array.prototype.forEach.call($('#fmt').children,function(x){x.setAttribute('aria-pressed',String(x===b));});});});
+Array.prototype.forEach.call($('#fmt').children,function(b){b.addEventListener('click',function(){ if(rBusy) return; fmtSel=b.dataset.fmt; Array.prototype.forEach.call($('#fmt').children,function(x){x.setAttribute('aria-pressed',String(x===b));}); syncAlphaRow();});});
 async function saveFile(){ if(!rBlob) return; var name=rFileName, blob=rBlob;
   if(inViewer){ if(!dlNS){note('التحميل مش متاح في العرض ده. افتح الصفحة من Aroma Hub.'); return;}
     if(!DL_OK.test(name)){var u8=new Uint8Array(await blob.arrayBuffer()); blob=zipStore([{name:name,u8:u8}]); name=name.replace(/\.[^.]+$/,'')+'_mov.zip';}
@@ -592,13 +599,13 @@ $('#rSave').addEventListener('click',saveFile);
 $('#rStart').addEventListener('click',async function(){ if(rBusy) return; rBusy=true; rCancel=false; rBlob=null; $('#rFile').hidden=true; var fps=+$('#rFps').value, name=($('#rName').value.trim()||'typo_title').replace(/[^\w\-]+/g,'_'), wasPlaying=playing; playing=false; syncPlay();
   $('#rStart').hidden=true; $('#rClose').textContent='Cancel'; $('#rState').textContent='Rendering'; masc('ثواني.. بطبخ الفريمات','dizzy');
   try{ if(document.fonts&&document.fonts.ready) await document.fonts.ready;
-    var pro=fmtSel==='mov'&&canProRes, span=pro?35:100; var frames=await renderFrames(P,fps,function(d,n){$('#rFill').style.width=(d/n*span)+'%'; $('#rCount').textContent='FRAME '+('00'+d).slice(-3)+' / '+('00'+n).slice(-3);},function(){return rCancel;});
+    var pro=fmtSel==='mov'&&canProRes, span=pro?35:100; var frames=await renderFrames(P,fps,function(d,n){$('#rFill').style.width=(d/n*span)+'%'; $('#rCount').textContent='FRAME '+('00'+d).slice(-3)+' / '+('00'+n).slice(-3);},function(){return rCancel;},pro&&alphaMode==='pm');
     if(!frames){$('#rState').textContent='Cancelled'; $('#rFill').style.width='0';}
     else { $('#rState').textContent='Packing'; await new Promise(function(r){setTimeout(r,30);});
       if(pro){ $('#rState').textContent='Loading Encoder'; encoding=true; try{ await ffLoad(); $('#rState').textContent='Encoding ProRes'; rBlob=await movProRes(frames,fps,function(q){$('#rFill').style.width=(35+q*65)+'%';}); rFileName=name+'.mov'; } finally{ encoding=false; } }
       else if(fmtSel==='mov'){rBlob=movPNG(frames,fps,W,H); rFileName=name+'.mov';} else {rBlob=buildZip(frames,name); rFileName=name+'_png.zip';}
       $('#rFill').style.width='100%';
-      $('#rState').textContent='Done'; $('#rFileName').textContent=rFileName+' · '+(rBlob.size/1048576).toFixed(1)+' MB · '+frames.length+' frames'; $('#rFile').hidden=false; $('#rSave').focus(); masc('الملف جاهز.. Alpha نضيف','wow'); }
+      $('#rState').textContent='Done'; $('#rFileName').textContent=rFileName+' · '+(rBlob.size/1048576).toFixed(1)+' MB · '+frames.length+' frames'+(pro?' · '+(alphaMode==='pm'?'Premultiplied':'Straight'):''); $('#rFile').hidden=false; $('#rSave').focus(); masc('الملف جاهز.. Alpha نضيف','wow'); }
   }catch(err){ if(rCancel){$('#rState').textContent='Cancelled'; $('#rFill').style.width='0';} else {console.error(err); $('#rState').textContent='Error'; note('الـ ProRes Encoder ما اشتغلش ('+(err&&err.message||err)+'). جرّب تاني، أو اختار PNG Sequence.');} }
   rBusy=false; $('#rClose').textContent='Close'; $('#rStart').hidden=false; $('#rStart').textContent='Render Again'; if(rCancel){rCancel=false;} playing=wasPlaying; syncPlay(); dirty(); });
 
