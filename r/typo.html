@@ -462,6 +462,18 @@ var CUSTOM={
    var c=scratch(a.width,a.height,'pxliq'), s=c.g; s.setTransform(1,0,0,1,0,0); s.globalAlpha=1; s.globalCompositeOperation='source-over'; s.clearRect(0,0,c.width,c.height); s.filter='blur('+(blur*K).toFixed(2)+'px)'; s.drawImage(a,0,0); s.filter='none';
    var m=em*1.2+blur*3; alphaThreshold(c,K,L.x0-m,L.top-m,L.x1+m,L.bot+m,118,Math.max(2.5,7*K));
    put(g,c,Math.min(1,io.a*1.5)); if(k<.18){g.save(); g.globalAlpha*=1-k/.18; drawAll(g,P,L,o); g.restore();}},
+ swing3d:function(g,L,env,P,M,K,v){var E=easeOf(P,M), o=styleOf(P), list=v.by==='line'?L.lineUnits:L.all, n=list.length, f=W*(2.4-1.9*v.persp/100), A=v.angle*Math.PI/180;
+   list.forEach(function(u,i){var pr=prog(env,P,M,i,n); if(pr.i<=0||pr.o>=1) return; var th=(1-E(pr.i))*A-EASE.inCubic(pr.o)*A, al=clamp(pr.i*3)*(1-pr.o*pr.o);
+     if(Math.abs(th)<.003){g.save(); g.globalAlpha*=al; drawUnit(g,P,u,o); g.restore(); return;}
+     var c=layer(g,P,K,'sw1',function(s){drawUnit(s,P,u,o);}), pad=P.size*.45, ln=u.line, x0=u.x0-pad, x1=u.x1+pad, y0=(ln?ln.top:L.top)-pad, y1=(ln?ln.bot:L.bot)+pad, rtl=(ln||L.lines[0]).rtl, co=Math.cos(th), si=Math.sin(th), st=2;
+     var d=layer(g,P,K,'sw2',function(s){ s.imageSmoothingQuality='high';
+       if(v.axis==='y'){var ax=v.pivot==='center'?u.cx:((v.pivot==='start')===!rtl?u.x0:u.x1), cy=(y0+y1)/2, h=y1-y0;
+         function px(x){var dx=x-ax, sc=f/(f+dx*si*(rtl?-1:1)); return [ax+dx*co*sc,sc];}
+         for(var x=x0;x<x1;x+=st){var a=px(x), b=px(x+st); if(a[1]<=0||b[1]<=0||a[1]>6) continue; var dw=b[0]-a[0]; s.drawImage(c,x*K,y0*K,st*K,h*K,a[0],cy-h/2*a[1],dw+(dw>0?.7:-.7),h*a[1]);}}
+       else {var ay=v.pivot==='center'?(y0+y1)/2:(v.pivot==='start'?y1-pad:y0+pad), w=x1-x0, cx=u.cx;
+         function py(y){var dy=y-ay, sc=f/(f+Math.abs(dy)*si*(v.pivot==='center'?(dy<0?1:-1):1)); return [ay+dy*co*sc,sc];}
+         for(var y=y0;y<y1;y+=st){var a2=py(y), b2=py(y+st); if(a2[1]<=0||b2[1]<=0||a2[1]>6) continue; var dh=b2[0]-a2[0]; s.drawImage(c,x0*K,y*K,w*K,st*K,cx-(cx-x0)*a2[1],a2[0],w*a2[1],dh+(dh>0?.7:-.7));}} });
+     put(g,d,al);});},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -520,6 +532,7 @@ var MOVES=[
 {id:'flap',name:'Split-Flap',cat:'Type',custom:'flap',uses:{stagger:0,ease:0,accent:1},params:[PT('plate','Plates',true),PR('flips','Flips',2,30,1,8,''),PR('round','Corner Radius',0,30,1,10,'%')]},
 {id:'scatter',name:'Scatter',cat:'Bounce',custom:'scatter',stagger:.45,uses:{stagger:1,ease:0,accent:0},params:[PR('spread','Spread',20,200,5,100,'%'),PR('spin','Spin',0,360,5,140,'°'),BY('letter',['letter','word']),PR('seed','Pattern',1,30,1,5,''),PT('gravity','Explode Out With Gravity',true)]},
 {id:'liquid',name:'Liquid',cat:'Warp',custom:'liquid',uses:{stagger:0,ease:0,accent:0},params:[PR('goo','Gooeyness',20,200,5,100,'%'),PR('pull','Pull To Center',0,100,1,70,'%')]},
+{id:'swing3d',name:'3D Swing',cat:'Warp',custom:'swing3d',stagger:.4,ease:'outBack',uses:{stagger:1,ease:1,accent:0},params:[PS('axis','Axis',[['y','Door (Vertical Axis)'],['x','Stand Up (Horizontal Axis)']],'y'),PS('pivot','Pivot',[['start','Start Edge'],['center','Center'],['end','End Edge']],'start'),PR('angle','Start Angle',20,90,1,86,'°'),PR('persp','Perspective',0,100,1,65,'%'),BY('all',['all','line'])]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
