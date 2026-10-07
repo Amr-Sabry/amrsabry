@@ -643,6 +643,10 @@ var CUSTOM={
    var c=textLayer(g,P,K,L,'gw'), s=c.g; s.save(); s.setTransform(K,0,0,K,0,0); s.globalCompositeOperation='destination-in';
    function mask(f0,f1,a0,a1){var gr=s.createLinearGradient(L.cx+co*f0,L.cy+si*f0,L.cx+co*f1,L.cy+si*f1); gr.addColorStop(0,'rgba(0,0,0,'+a0+')'); gr.addColorStop(1,'rgba(0,0,0,'+a1+')'); s.fillStyle=gr; s.fillRect(0,0,W,H);}
    var f=lerp(-R,R+soft,io.ei); mask(f-soft,f,1,0); if(io.po>0){var f2=lerp(-R-soft,R,EASE.inOutCubic(io.po)); mask(f2,f2+soft,0,1);} s.restore(); put(g,c,1);},
+ outlinedraw:function(g,L,env,P,M,K,v){var U=L.words, n=U.length, rk=ranks('fwd',n), em=P.size, lw=Math.max(1,em*v.stroke/100), len=em*v.len, o=styleOf(P);
+   U.forEach(function(u,i){var pr=prog(env,P,M,rk[i],n); if(pr.i<=0||pr.o>=1) return; var w=u.words[0], d=EASE.inOutCubic(clamp(pr.i/.75))*(1-EASE.inOutCubic(pr.o)), f=v.fill?clamp((pr.i-.6)/.4)*(1-clamp(pr.o*2.5)):0, sa=(v.keep||!v.fill)?1:1-f*(pr.o>0?0:1);
+     if(f>.003){g.save(); g.globalAlpha*=f; drawWord(g,P,w,o); g.restore();}
+     if(sa>.003&&d>0){g.save(); g.shadowColor='transparent'; g.globalAlpha*=sa; g.setLineDash([len,len*1.05]); g.lineDashOffset=len*(1-d); g.lineCap='round'; drawWord(g,P,w,{stroke:lw,color:v.accent?P.accent:P.color}); g.restore();}});},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -726,6 +730,7 @@ var MOVES=[
 {id:'chroma',name:'Chromatic Split',cat:'FX',custom:'chroma',ease:'outExpo',uses:{stagger:0,ease:1,accent:0},params:[PR('dist','Split',2,60,1,18,'%'),PR('hold','Fringe While Holding',0,30,1,6,''),PS('dir','Direction',[['h','Horizontal'],['v','Vertical'],['d','Diagonal']],'h'),PT('jitter','Jitter',true)]},
 {id:'shine',name:'Shine Sweep',cat:'FX',custom:'shine',uses:{stagger:0,ease:0,accent:1},params:[PR('width','Band Width',10,150,5,55,'%'),PR('angle','Angle',-60,60,1,-22,'°'),PR('every','Repeat Every',.6,6,.1,1.6,'s'),PS('color','Light',[['accent','Accent'],['white','White']],'accent')]},
 {id:'gwipe',name:'Gradient Wipe',cat:'Reveal',custom:'gwipe',ease:'inOutCubic',uses:{stagger:0,ease:1,accent:0},params:[PR('angle','Angle',0,360,5,0,'°'),PR('soft','Feather',0,100,1,35,'%'),PT('auto','Follow Reading Direction',true)]},
+{id:'outlinedraw',name:'Outline Draw',cat:'Reveal',custom:'outlinedraw',stagger:.4,uses:{stagger:1,ease:0,accent:1},params:[PR('stroke','Stroke',.5,8,.1,2,'%'),PR('len','Draw Length',2,30,.5,9,'×'),PT('fill','Fill After',true),PT('keep','Keep Outline',false),PT('accent','Accent Stroke',true)]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
