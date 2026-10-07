@@ -732,6 +732,11 @@ var CUSTOM={
    if(v.style==='square') [-1,1].forEach(function(sx){var x=L.cx+sx*hw; g.moveTo(x-sx*cl*.5,L.cy-hh); g.lineTo(x,L.cy-hh); g.lineTo(x,L.cy+hh); g.lineTo(x-sx*cl*.5,L.cy+hh);});
    else [-1,1].forEach(function(sx){[-1,1].forEach(function(sy){var x=L.cx+sx*hw, y=L.cy+sy*hh; g.moveTo(x-sx*cl,y); g.lineTo(x,y); g.lineTo(x,y-sy*cl);});});
    g.stroke(); g.restore();},
+ rails:function(g,L,env,P,M,K,v){var io=IO(env), em=P.size, o=styleOf(P), th=Math.max(2,em*v.thick/100), w=L.w*v.width/100+em*.2;
+   var p1=EASE.inOutCubic(clamp(io.pi/.4)), p2=EASE.outExpo(clamp((io.pi-.35)/.65)), q1=EASE.inOutCubic(clamp(io.po/.55)), q2=EASE.inOutCubic(clamp((io.po-.5)/.5)), open=p2*(1-q1), len=p1*(1-q2), hh=(L.h/2+em*.06)*open;
+   if(open>.002){g.save(); g.beginPath(); g.rect(L.cx-W,L.cy-hh,W*2,hh*2); g.clip(); drawAll(g,P,L,o); g.restore();}
+   var la=v.keep?1:(io.po>0?clamp(io.po/.12):1-clamp((io.pi-.85)/.15)); if(len<=.002||la<=.003) return;
+   g.save(); g.shadowColor='transparent'; g.globalAlpha*=la; g.fillStyle=P.accent; var lw=w*len; g.fillRect(L.cx-lw/2,L.cy-hh-th,lw,th); g.fillRect(L.cx-lw/2,L.cy+hh,lw,th); g.restore();},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -828,6 +833,7 @@ var MOVES=[
 {id:'karaoke',name:'Karaoke',cat:'Type',custom:'karaoke',uses:{stagger:0,ease:0,accent:1},note:'التلوين ماشي كلمة كلمة على طول مدة الـ Hold كلها.',params:[PS('base','Before',[['dim','Dim'],['outline','Outline']],'dim'),PT('accent','Accent Fill',true),PS('mode','Fill',[['smooth','Smooth'],['word','Word By Word']],'smooth')]},
 {id:'captions',name:'Captions',cat:'Type',custom:'captions',uses:{stagger:0,ease:0,accent:1},note:'الكلمات بتتوزع بالتساوي على مدة الـ Hold. طوّل الـ Duration عشان الإيقاع يهدى.',params:[PS('style','Active Word',[['box','Box'],['color','Accent Color'],['under','Underline']],'box'),PR('pad','Box Padding',0,40,1,10,'%'),PR('round','Corner Radius',0,100,1,30,'%'),PT('hide','Hide Upcoming Words',true)]},
 {id:'brackets',name:'Brackets',cat:'Graphic',custom:'brackets',uses:{stagger:0,ease:0,accent:1},params:[PS('style','Style',[['corners','Corners'],['square','[ Brackets ]']],'corners'),PR('len','Corner Length',5,80,1,28,'%'),PR('thick','Thickness',1,10,.5,3,'%'),PR('pad','Padding',0,80,1,30,'%'),PT('breathe','Breathe',true)]},
+{id:'rails',name:'Split Rails',cat:'Reveal',custom:'rails',uses:{stagger:0,ease:0,accent:1},params:[PR('thick','Line Thickness',.5,10,.5,2.5,'%'),PR('width','Line Width',40,160,1,104,'%'),PT('keep','Keep Lines',true)]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
