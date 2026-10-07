@@ -504,6 +504,9 @@ var CUSTOM={
        if(k===0) drawCl(g,P,c,o); else {var ch=pool[Math.floor(hash(i*17.3+k*3.1)*pool.length)], str=(ar&&c.jp?ZWJ:'')+ch+(ar&&c.jn?ZWJ:''); g.globalAlpha*=.9; g.direction=l.rtl?'rtl':'ltr'; g.textAlign='center'; ink(g,P,str,c.cx,c.base,v.accent?{color:P.accent,fill:true}:o);}
        g.restore();}
      g.restore();});},
+ jelly:function(g,L,env,P,M,K,v){var U=unitsOf(L,v.by), n=U.length, rk=ranks(v.order,n), o=styleOf(P), E=elasticEase(v.bounce/100);
+   U.forEach(function(u,i){var pr=prog(env,P,M,rk[i],n); if(pr.i<=0||pr.o>=1) return; var sy=E(pr.i)*(1+v.wobble/100*Math.sin(env.t*7-i*.9)*.13*clamp(pr.i*2-1))*(1-EASE.inCubic(pr.o)), sx=1+(1-Math.min(1.5,sy))*.55, by=(u.line||L.lines[0]).base+L.desc*.25;
+     g.save(); g.globalAlpha*=clamp(pr.i*6); g.translate(u.cx,by); g.scale(Math.max(.05,sx),Math.max(.001,sy)); g.translate(-u.cx,-by); drawUnit(g,P,u,o); g.restore();});},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -567,6 +570,7 @@ var MOVES=[
 {id:'particles',name:'Particles',cat:'Particles',custom:'particles',uses:{stagger:0,ease:0,accent:0},params:[PR('grain','Grain',2,12,.5,4.5,'%'),PR('size','Particle Size',30,140,5,85,'%'),PS('from','Come From',[['random','Everywhere'],['below','Below'],['sides','Both Sides'],['center','Center']],'random'),PS('shape','Shape',[['square','Squares'],['circle','Dots']],'square'),PT('keep','Stay As Particles',false)]},
 {id:'ticker',name:'Ticker',cat:'Loop',custom:'ticker',uses:{stagger:0,ease:0,accent:1},params:[PR('speed','Speed',.2,8,.1,1.6,'×'),PS('sep','Separator',[['•','Dot •'],['—','Dash —'],['+','Plus +'],['/','Slash /'],['none','None']],'•'),PT('plate','Band',true),PT('alt','Alternate Direction',true),PR('tilt','Tilt',-15,15,.5,0,'°')]},
 {id:'slot',name:'Slot Reel',cat:'Type',custom:'slot',stagger:.5,uses:{stagger:1,ease:0,accent:1},params:[PR('spins','Spins',3,30,1,10,''),PS('set','Characters',[['auto','Auto'],['letters','Letters'],['numbers','Numbers'],['symbols','Symbols']],'auto'),PT('accent','Accent While Spinning',true)]},
+{id:'jelly',name:'Jelly',cat:'Bounce',custom:'jelly',stagger:.55,uses:{stagger:1,ease:0,accent:0},params:[PR('bounce','Bounciness',0,100,1,70,'%'),PR('wobble','Keep Wobbling',0,100,1,35,'%'),BY('letter'),ORDER]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
