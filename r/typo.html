@@ -901,6 +901,15 @@ var CUSTOM={
    s.globalAlpha=clamp(io.pi/.3); s.drawImage(S.body,S.x,S.y+(1-EASE.outCubic(clamp(io.pi/.4)))*em*.18*K);
    var n=S.dots.length, bz=bounceEase(v.bounce/100); S.dots.forEach(function(dt,i){var p=clamp((io.pi-(.3+(n>1?i/(n-1):0)*.45))/.25); if(p<=0) return; s.globalAlpha=clamp(p*5); s.drawImage(v.accent?tintSprite(dt,P.accent):dt.cv,dt.x,dt.y-(1-bz(p))*em*v.height/100*K);});
    s.globalAlpha=1; put(g,c,al);},
+ join:function(g,L,env,P,M,K,v){var o=styleOf(P), em=P.size, io=IO(env), p=io.po>0?1-EASE.inOutCubic(io.po):io.pi; if(p<=0) return;
+   var al=clamp(p/.2), k=1-EASE.inOutCubic(clamp((p-.1)/.7)), jq=clamp((p-.72)/.14), snap=v.snap?1+.06*Math.sin(clamp((p-.8)/.2)*Math.PI):1, sp=v.spread/100;
+   L.lines.forEach(function(l){l.words.forEach(function(w){var ar=l.rtl&&hasAr(w.text);
+     g.save(); g.globalAlpha*=al; g.translate(w.cx,w.yc); g.scale(snap,snap); g.translate(-w.cx,-w.yc);
+     if(k<=.001&&(!ar||jq>=1)){drawWord(g,P,w,o); g.restore(); return;}
+     w.cl.forEach(function(c,i){g.save(); g.translate((c.cx-w.cx)*sp*k,(i%2?1:-1)*em*v.lift/100*k);
+       if(ar){ if(jq<1){g.save(); g.globalAlpha*=1-jq; g.direction='rtl'; g.textAlign='center'; ink(g,P,c.s,c.cx,c.base,o); g.restore();} if(jq>0){g.save(); g.globalAlpha*=jq; drawCl(g,P,c,o); g.restore();} } else drawCl(g,P,c,o);
+       g.restore();});
+     g.restore();});});},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -1023,6 +1032,7 @@ var MOVES=[
 {id:'tbox',name:'Transform Box',cat:'Graphic',custom:'tbox',uses:{stagger:0,ease:0,accent:1},params:[PR('from','Start Scale',10,90,1,35,'%'),PT('cursor','Show Cursor',true)]},
 {id:'anagram',name:'Anagram',cat:'Type',custom:'anagram',uses:{stagger:0,ease:0,accent:0},params:[PR('seed','Pattern',1,30,1,4,''),PR('arc','Jump Height',0,150,5,60,'%'),BY('letter',['letter','word'])]},
 {id:'nuqat',name:'Nuqat Drop · نقط',cat:'Arabic',custom:'nuqat',sample:'نقطة فوق الحرف',need:/[بتثجخذزشضظغفقنيةأإؤئij;:!?؟]/,uses:{stagger:0,ease:0,accent:1},note:'جسم الحروف بيظهر الأول، وبعدين النقط والهمزات والتشكيل بتنزل عليه. بتشتغل كمان على نقطة الـ i والـ j.',params:[PR('height','Drop Height',20,400,5,150,'%'),PR('bounce','Bounce',0,100,1,70,'%'),PT('accent','Accent Dots',false)]},
+{id:'join',name:'Letter Join · تشبيك',cat:'Arabic',custom:'join',sample:'حروف بتتشبّك',need:/[؀-ۿ]/,uses:{stagger:0,ease:0,accent:0},note:'في العربي الحروف بتبدأ منفصلة وبتتشبك في بعض. في الإنجليزي بتتلم على بعض.',params:[PR('spread','Spread',20,400,5,140,'%'),PR('lift','Stagger Lift',0,100,1,25,'%'),PT('snap','Snap Pulse',true)]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
@@ -1557,7 +1567,7 @@ Asst=(function(){
     tour=steps.map(function(s){return setTimeout(function(){s[3].ms=4000; s[3].prio=2; speak(s[1],s[2],s[3]);},s[0]);}); tour.push(setTimeout(function(){stopTour(); lastAct=performance.now(); check(true);},17400)); }
 
   /* ---- reactions to what the user does ---- */
-  var TIPS=['عارف إنك تقدر ترفع فونت البراند من Upload Font؟','دوس Space عشان تشغّل وتوقف الـ Preview','وقّف الماوس على أي Move وهتشوفها بتتحرك على نصّك','جرّب Safe Area قبل الـ Render عشان تتأكد من الحواف','كل Move ليها إعداداتها.. بص على قسم Move فوق','اسحب النص في الـ Preview وحطه مكان ما تحب','الخلفية Video بتوريك النص هيبان إزاي فوق لقطة'];
+  var TIPS=['كل Move ليها رقم ثابت.. اكتب الرقم في الـ Search وهتلاقيها','فيه 100 Move.. جرّب الفلتر فوق: Warp و Particles و Graphic و Arabic','عارف إنك تقدر ترفع فونت البراند من Upload Font؟','دوس Space عشان تشغّل وتوقف الـ Preview','وقّف الماوس على أي Move وهتشوفها بتتحرك على نصّك','جرّب Safe Area قبل الـ Render عشان تتأكد من الحواف','كل Move ليها إعداداتها.. بص على قسم Move فوق','اسحب النص في الـ Preview وحطه مكان ما تحب','الخلفية Video بتوريك النص هيبان إزاي فوق لقطة'];
   var tipI=Math.floor(Math.random()*TIPS.length);
   function on(name,d){lastAct=performance.now(); if(name!=='change'||d!=='pos') { if(tour&&name!=='render-progress') stopTour(); }
     if(name==='change'){check();
