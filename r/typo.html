@@ -532,6 +532,12 @@ var CUSTOM={
        for(k=0;k<N;k++){var bx=x-lw+hash(k*1.71)*(w+lw*2), by=y-lw+hash(k*2.93+5)*(h+lw*2), r=em*(.004+.03*Math.pow(hash(k*3.37+1),3)); s.moveTo(bx+r,by); s.arc(bx,by,r,0,6.2832);} s.fill();
        s.lineWidth=Math.max(1,em*.008); s.strokeStyle='#000'; s.beginPath(); for(k=0;k<Math.round(6*v.grunge/100);k++){var sx=x+hash(k*9.1+2)*w, sy=y+hash(k*4.7+8)*h, a=hash(k*6.3)*3.14; s.moveTo(sx,sy); s.lineTo(sx+Math.cos(a)*em*.6,sy+Math.sin(a)*em*.25);} s.stroke();}});
    put(g,c,al);},
+ blocks:function(g,L,env,P,M,K,v){var U=v.by==='line'?L.lineUnits:L.words, n=U.length, rk=ranks('fwd',n), em=P.size, bh=L.asc+L.desc;
+   U.forEach(function(u,i){var pr=prog(env,P,M,rk[i],n); if(pr.i<=0||pr.o>=1) return; var alt=i%2, bg=alt?P.color:P.accent, fg=alt?P.accent:P.color, pad=em*v.pad/100, ln=u.line, x=u.x0-pad, y=ln.yc-bh*.5-pad*.2, w=u.x1-u.x0+pad*2, h=bh+pad*.4;
+     var e=EASE.outBack(pr.i), q=EASE.inCubic(pr.o), dx=0, dy=0, sc=1, rot=(alt?1:-1)*v.tilt*Math.PI/180*(hash(i*3.3)*.6+.4);
+     if(v.from==='sides') dx=(alt?1:-1)*(1-e)*W*.75; else if(v.from==='bottom') dy=(1-e)*H*.6; else sc=Math.max(.001,e);
+     g.save(); g.globalAlpha*=clamp(pr.i*5); g.translate(u.cx+dx,u.cy+dy); g.rotate(rot*(2-Math.min(1,e))); g.scale(Math.max(.001,sc*(1-q)),sc); g.translate(-u.cx,-u.cy);
+     g.fillStyle=bg; g.fillRect(x,y,w,h); g.shadowColor='transparent'; drawUnit(g,P,u,{color:fg,fill:true}); g.restore();});},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -599,6 +605,7 @@ var MOVES=[
 {id:'dotmatrix',name:'Dot Matrix',cat:'Particles',custom:'dotmatrix',uses:{stagger:0,ease:0,accent:1},params:[PR('pitch','Dot Pitch',3,14,.5,6,'%'),PR('wave','Wave',0,100,1,60,'%'),PR('speed','Wave Speed',0,12,.1,4,''),PT('panel','Show Panel',true),PS('shape','Shape',[['circle','Round LEDs'],['square','Square Pixels']],'circle')]},
 {id:'orbit',name:'Orbit',cat:'Basic',custom:'orbit',stagger:.5,uses:{stagger:1,ease:0,accent:0},params:[PR('turns','Turns',.25,3,.05,1,''),PR('radius','Orbit Radius',10,120,1,55,'%'),PT('spin','Rotate Letters',false),BY('letter',['letter','word'])]},
 {id:'stamp',name:'Rubber Stamp',cat:'Graphic',custom:'stamp',uses:{stagger:0,ease:0,accent:1},params:[PR('angle','Angle',-25,25,.5,-7,'°'),PR('pad','Padding',10,80,1,34,'%'),PR('border','Border',1,12,.5,5,'%'),PR('grunge','Ink Wear',0,100,1,45,'%'),PT('double','Double Border',true),PT('mono','One Ink Color',true)]},
+{id:'blocks',name:'Color Blocks',cat:'Graphic',custom:'blocks',stagger:.5,uses:{stagger:1,ease:0,accent:1},params:[PR('pad','Padding',4,50,1,16,'%'),PR('tilt','Tilt',0,12,.5,3,'°'),PS('from','Come From',[['sides','Sides'],['bottom','Bottom'],['pop','Pop']],'sides'),BY('word',['word','line'])]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
