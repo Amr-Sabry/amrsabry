@@ -947,6 +947,17 @@ var CUSTOM={
    if(v.track){g.globalAlpha=ga*a*.25; g.strokeStyle=P.color; g.beginPath(); g.arc(L2.cx,L2.cy,R,0,6.2832); g.stroke();}
    if(a1>a0+.001){g.globalAlpha=ga*(io.po>0?1:clamp(io.pi*6)); g.strokeStyle=P.accent; g.beginPath(); g.arc(L2.cx,L2.cy,R,a0,a1); g.stroke();}
    g.restore(); g.save(); g.globalAlpha=ga*a; drawAll(g,P,L2,o); g.restore();},
+ pctbar:function(g,L,env,P,M,K,v){var io=IO(env,EASE.outCubic), o=styleOf(P), em=P.size, N=numInfo(P.text), a=io.a, L2=L, frac=io.ei, ga=g.globalAlpha; if(a<=.003) return;
+   if(N){var cur=lerp(0,N.val,io.ei), sign=v.sign&&!/^\s*[%٪]/.test(N.post)?(N.ar?'٪':'%'):''; L2=layout(P,N.pre+fmtNum(N.src,cur)+sign+N.post); frac=clamp(cur/100);}
+   g.save(); g.globalAlpha=ga*a; drawAll(g,P,L2,o); g.restore();
+   var bw=Math.max(L.w,em*3)*v.width/100, th=Math.max(3,em*v.thick/100), by=L2.bot+em*.1, rtl=L2.lines[0].rtl, op=EASE.outExpo(clamp(io.pi/.3))*(1-io.eo), tw=bw*op, bx=rtl?L2.cx+bw/2-tw:L2.cx-bw/2; if(tw<=.5) return;
+   function seg(f0,f1){var s=Math.min(f0,op), e=Math.min(f1,op); return e>s?[rtl?L2.cx+bw/2-bw*e:L2.cx-bw/2+bw*s,bw*(e-s)]:null;}
+   g.save(); g.shadowColor='transparent';
+   if(v.style==='blocks'){for(var i=0;i<10;i++){var q=seg(i/10+.006,(i+1)/10-.006); if(!q) continue; var fl=clamp(frac*10-i); g.globalAlpha=ga*a*.25; g.fillStyle=P.color; g.fillRect(q[0],by,q[1],th); if(fl>0){g.globalAlpha=ga*a*fl; g.fillStyle=P.accent; g.fillRect(q[0],by,q[1],th);}}}
+   else if(v.style==='ticks'){g.globalAlpha=ga*a*.7; g.fillStyle=P.color; var lw=Math.max(1.5,em*.012); g.fillRect(bx,by+th,tw,lw); for(var t=0;t<=20;t++){var f=t/20; if(f>op) break; var x=rtl?L2.cx+bw/2-bw*f:L2.cx-bw/2+bw*f, hh=t%10===0?th:(t%5===0?th*.7:th*.4); g.fillRect(x-lw/2,by+th-hh,lw,hh);}
+     var mx=rtl?L2.cx+bw/2-bw*frac:L2.cx-bw/2+bw*frac; g.globalAlpha=ga*a; g.fillStyle=P.accent; g.beginPath(); g.moveTo(mx,by+th+lw); g.lineTo(mx-th*.5,by+th*2+lw); g.lineTo(mx+th*.5,by+th*2+lw); g.closePath(); g.fill(); g.fillRect(mx-lw,by-th*.15,lw*2,th*1.15);}
+   else {g.globalAlpha=ga*a*.25; g.fillStyle=P.color; g.fillRect(bx,by,tw,th); var q2=seg(0,frac); if(q2){g.globalAlpha=ga*a; g.fillStyle=P.accent; g.fillRect(q2[0],by,q2[1],th);}}
+   g.restore();},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -1072,6 +1083,7 @@ var MOVES=[
 {id:'join',name:'Letter Join · تشبيك',cat:'Arabic',custom:'join',sample:'حروف بتتشبّك',need:/[؀-ۿ]/,uses:{stagger:0,ease:0,accent:0},note:'في العربي الحروف بتبدأ منفصلة وبتتشبك في بعض. في الإنجليزي بتتلم على بعض.',params:[PR('spread','Spread',20,400,5,140,'%'),PR('lift','Stagger Lift',0,100,1,25,'%'),PT('snap','Snap Pulse',true)]},
 {id:'odometer',name:'Odometer',cat:'Numbers',custom:'odometer',sample:'2,450',uses:{stagger:0,ease:0,accent:1},params:[PR('spins','Extra Spins',0,5,1,1,''),PS('dir','Roll',[['up','Up'],['down','Down']],'up'),PT('accent','Accent While Rolling',false)]},
 {id:'pctring',name:'Percent Ring',cat:'Numbers',custom:'pctring',sample:'75',uses:{stagger:0,ease:0,accent:1},params:[PR('thick','Ring Thickness',1,20,.5,6,'%'),PR('pad','Padding',0,100,1,30,'%'),PT('track','Show Track',true),PT('sign','Add % Sign',true)]},
+{id:'pctbar',name:'Percent Bar',cat:'Numbers',custom:'pctbar',sample:'75',uses:{stagger:0,ease:0,accent:1},params:[PS('style','Style',[['bar','Bar'],['blocks','10 Blocks'],['ticks','Ruler']],'bar'),PR('thick','Thickness',1,25,.5,7,'%'),PR('width','Bar Width',50,300,5,100,'%'),PT('sign','Add % Sign',true)]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
