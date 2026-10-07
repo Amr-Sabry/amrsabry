@@ -652,6 +652,11 @@ var CUSTOM={
    g.save(); g.beginPath(); for(var i=0;i<N;i++){var pr=prog(env,P,M,rk[i],N), e=E(pr.i)*(1-EASE.inCubic(pr.o)); if(e<=.001) continue;
      if(hz){var sh=h/N; g.rect(x0-em,y0+i*sh+(cen?sh*(1-e)/2:0),w+em*2,sh*e+(e>=1?.6:0));} else {var sw=w/N; g.rect(x0+i*sw+(cen?sw*(1-e)/2:0),y0-em,sw*e+(e>=1?.6:0),h+em*2);}}
    g.clip(); drawAll(g,P,L,o); g.restore();},
+ dissolve:function(g,L,env,P,M,K,v){var io=IO(env), o=styleOf(P), em=P.size; if(io.pi>=1&&io.po<=0){drawAll(g,P,L,o); return;}
+   var m=em*.35, bw=L.w+m*2, bh=L.h+m*2, cell=Math.max(1,Math.round(v.cell),Math.ceil(bw/512),Math.ceil(bh/256)), x0=Math.floor(L.x0-m), y0=Math.floor(L.top-m), cols=Math.ceil(bw/cell), rows=Math.ceil(bh/cell), rtl=L.lines[0].rtl, bias=v.bias/100, p=(io.po>0?1-io.po:io.pi)*1.2, sw=v.soft?.22:.0001;
+   var sm=scratch(512,256,'pxdis'), im=sm.g.createImageData(cols,rows), d=im.data, r, c, k=3; for(r=0;r<rows;r++) for(c=0;c<cols;c++,k+=4){var u=cols>1?c/(cols-1):0; if(rtl) u=1-u; d[k]=255*clamp((p-(hash(c*12.9898+r*78.233)*(1-bias)+u*bias)*1)/sw);}
+   sm.g.putImageData(im,0,0);
+   var cv=textLayer(g,P,K,L,'dis'), s=cv.g; s.save(); s.setTransform(K,0,0,K,0,0); s.globalCompositeOperation='destination-in'; s.imageSmoothingEnabled=!!v.soft; s.drawImage(sm,0,0,cols,rows,x0,y0,cols*cell,rows*cell); s.restore(); put(g,cv,1);},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -737,6 +742,7 @@ var MOVES=[
 {id:'gwipe',name:'Gradient Wipe',cat:'Reveal',custom:'gwipe',ease:'inOutCubic',uses:{stagger:0,ease:1,accent:0},params:[PR('angle','Angle',0,360,5,0,'°'),PR('soft','Feather',0,100,1,35,'%'),PT('auto','Follow Reading Direction',true)]},
 {id:'outlinedraw',name:'Outline Draw',cat:'Reveal',custom:'outlinedraw',stagger:.4,uses:{stagger:1,ease:0,accent:1},params:[PR('stroke','Stroke',.5,8,.1,2,'%'),PR('len','Draw Length',2,30,.5,9,'×'),PT('fill','Fill After',true),PT('keep','Keep Outline',false),PT('accent','Accent Stroke',true)]},
 {id:'blinds',name:'Blinds',cat:'Reveal',custom:'blinds',stagger:.5,ease:'outExpo',uses:{stagger:1,ease:1,accent:0},params:[PR('slats','Slats',3,40,1,12,''),PS('axis','Slats',[['h','Horizontal'],['v','Vertical']],'h'),ORDER,PS('grow','Open From',[['edge','Edge'],['center','Center']],'edge')]},
+{id:'dissolve',name:'Dissolve',cat:'Soft',custom:'dissolve',uses:{stagger:0,ease:0,accent:0},params:[PR('cell','Grain',2,40,1,6,'px'),PR('bias','Direction Bias',0,100,1,35,'%'),PT('soft','Soft Edges',false)]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
