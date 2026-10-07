@@ -958,6 +958,12 @@ var CUSTOM={
      var mx=rtl?L2.cx+bw/2-bw*frac:L2.cx-bw/2+bw*frac; g.globalAlpha=ga*a; g.fillStyle=P.accent; g.beginPath(); g.moveTo(mx,by+th+lw); g.lineTo(mx-th*.5,by+th*2+lw); g.lineTo(mx+th*.5,by+th*2+lw); g.closePath(); g.fill(); g.fillRect(mx-lw,by-th*.15,lw*2,th*1.15);}
    else {g.globalAlpha=ga*a*.25; g.fillStyle=P.color; g.fillRect(bx,by,tw,th); var q2=seg(0,frac); if(q2){g.globalAlpha=ga*a; g.fillStyle=P.accent; g.fillRect(q2[0],by,q2[1],th);}}
    g.restore();},
+ units:function(g,L,env,P,M,K,v){var io=IO(env), o=styleOf(P), em=P.size, N=numInfo(P.text), a=io.a; if(a<=.003) return; if(!N){fadeAll(g,P,L,a); return;}
+   var ar=v.lang==='ar'||(v.lang==='auto'&&(N.ar||hasAr(P.text))), us=(UNITS[v.unit]||UNITS.m2)[ar?1:0], prefix=/^[$€£]$/.test(us)&&!ar, num=fmtNum(N.src,lerp(v.from,N.val,EASE.outCubic(clamp(io.pi/.85))));
+   var L2=layout(P,prefix?N.pre+us+num+N.post:N.pre+num+' '+us+N.post), ix=tokIndex(N.pre), uw=prefix?null:wordAt(L2,{line:ix.line,word:ix.word+1});
+   g.save(); g.globalAlpha*=a; g.translate(0,(1-EASE.outExpo(clamp(env.t/.5)))*em*.2); drawWordsExcept(g,P,L2,uw,o);
+   if(uw){var p=clamp((io.pi-.4)/.4); if(p>0){var e=EASE.outBack(p)*v.usize/100, ax=uw.line.rtl?uw.x1:uw.x0; g.globalAlpha*=clamp(p*4); g.translate(ax,uw.base); g.scale(e,e); g.translate(-ax,-uw.base); drawWord(g,P,uw,v.accent?{color:P.accent,fill:true}:o);}}
+   g.restore();},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -1084,6 +1090,8 @@ var MOVES=[
 {id:'odometer',name:'Odometer',cat:'Numbers',custom:'odometer',sample:'2,450',uses:{stagger:0,ease:0,accent:1},params:[PR('spins','Extra Spins',0,5,1,1,''),PS('dir','Roll',[['up','Up'],['down','Down']],'up'),PT('accent','Accent While Rolling',false)]},
 {id:'pctring',name:'Percent Ring',cat:'Numbers',custom:'pctring',sample:'75',uses:{stagger:0,ease:0,accent:1},params:[PR('thick','Ring Thickness',1,20,.5,6,'%'),PR('pad','Padding',0,100,1,30,'%'),PT('track','Show Track',true),PT('sign','Add % Sign',true)]},
 {id:'pctbar',name:'Percent Bar',cat:'Numbers',custom:'pctbar',sample:'75',uses:{stagger:0,ease:0,accent:1},params:[PS('style','Style',[['bar','Bar'],['blocks','10 Blocks'],['ticks','Ruler']],'bar'),PR('thick','Thickness',1,25,.5,7,'%'),PR('width','Bar Width',50,300,5,100,'%'),PT('sign','Add % Sign',true)]},
+{id:'units',name:'Units · م²',cat:'Numbers',custom:'units',sample:'250',uses:{stagger:0,ease:0,accent:1},note:'اكتب الرقم بس، والوحدة بتتحط لوحدها من القايمة: عربي لو النص عربي، وإنجليزي لو النص إنجليزي.',
+  params:[PS('unit','Unit',[['m2','m²  ·  م²'],['m','m  ·  م'],['cm','cm  ·  سم'],['km','km  ·  كم'],['km2','km²  ·  كم²'],['ft2','ft²  ·  قدم²'],['kg','kg  ·  كجم'],['ton','t  ·  طن'],['l','L  ·  لتر'],['c','°C  ·  °م'],['kmh','km/h  ·  كم/س'],['pct','%  ·  ٪'],['x','×'],['plus','+'],['k','K  ·  ألف'],['mil','M  ·  مليون'],['bil','B  ·  مليار'],['usd','$'],['egp','EGP  ·  ج.م'],['aed','AED  ·  د.إ'],['sar','SAR  ·  ر.س']],'m2'),PR('usize','Unit Size',40,100,5,70,'%'),PT('accent','Accent Unit',true),PS('lang','Unit Language',[['auto','Auto'],['en','English'],['ar','عربي']],'auto'),{k:'from',label:'Start From',type:'num',def:0}]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
