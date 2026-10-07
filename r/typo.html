@@ -282,14 +282,19 @@ var SOFT={c:null,g:null}, AR_MULTI=/[\u0621-\u064A\u0671-\u06D3\u0640][\s\S]*[\u
 function softInk(g,str,x,y,lw,paint){var cv=g.canvas, T=g.getTransform(), m=g.measureText(str), pad=(lw||0)+3, xs=[x-m.actualBoundingBoxLeft-pad,x+m.actualBoundingBoxRight+pad], ys=[y-m.actualBoundingBoxAscent-pad,y+m.actualBoundingBoxDescent+pad], X0=1e9,Y0=1e9,X1=-1e9,Y1=-1e9;
   xs.forEach(function(px){ys.forEach(function(py){var X=T.a*px+T.c*py+T.e, Y=T.b*px+T.d*py+T.f; X0=Math.min(X0,X); X1=Math.max(X1,X); Y0=Math.min(Y0,Y); Y1=Math.max(Y1,Y);});});
   X0=Math.max(0,Math.floor(X0)); Y0=Math.max(0,Math.floor(Y0)); X1=Math.min(cv.width,Math.ceil(X1)); Y1=Math.min(cv.height,Math.ceil(Y1)); if(X1<=X0||Y1<=Y0) return;
-  var c=SOFT.c; if(!c||c.width<cv.width||c.height<cv.height){c=SOFT.c=document.createElement('canvas'); c.width=Math.max(cv.width,c?c.width:0); c.height=Math.max(cv.height,c?c.height:0); SOFT.g=c.getContext('2d');}
+  var c=SOFT.c; if(!c||c.width<cv.width||c.height<cv.height){var ow=c?c.width:0, oh=c?c.height:0; c=SOFT.c=document.createElement('canvas'); c._lay=1; c.width=Math.max(cv.width,ow); c.height=Math.max(cv.height,oh); SOFT.g=c.getContext('2d');}
   var q=SOFT.g; q.setTransform(1,0,0,1,0,0); q.clearRect(X0,Y0,X1-X0,Y1-Y0); q.setTransform(T); q.font=g.font; q.direction=g.direction; q.textAlign=g.textAlign; q.textBaseline=g.textBaseline; q.lineJoin='round'; q.globalAlpha=1; q.globalCompositeOperation='source-over';
   paint(q); g.save(); g.setTransform(1,0,0,1,0,0); g.drawImage(c,X0,Y0,X1-X0,Y1-Y0,X0,Y0,X1-X0,Y1-Y0); g.restore();}
-function ink(g,P,str,x,y,o){var soft=g.globalAlpha<.999&&str.length>1&&AR_MULTI.test(str);
+/* PASS.mode: 0 = draw everything. When the text has an outline behind its fill, the move is drawn three times and put together:
+   'text' = the letters only, 'ol' = the letters' outlines only, 'gfx' = everything that is not letters (plates, bars, particles). */
+var PASS={mode:0,busy:0}, INK={grad:null}, MASK_OPS={'destination-in':1,'destination-out':1,'source-in':1,'source-atop':1,'destination-atop':1,'source-out':1};
+function outerStroke(q,str,x,y,lw,col){q.lineWidth=lw*2; q.strokeStyle=col; q.strokeText(str,x,y); q.globalCompositeOperation='destination-out'; q.fillStyle='#000'; q.fillText(str,x,y); q.globalCompositeOperation='source-over';}
+function ink(g,P,str,x,y,o){g=g.__raw||g; var m=PASS.mode;
+  if(m&&!MASK_OPS[g.globalCompositeOperation]){ if(m==='gfx') return; if(m==='ol'){ if(!(o&&o.stroke)) softInk(g,str,x,y,P.outline,function(q){outerStroke(q,str,x,y,P.outline,P.olColor);}); return; } }
   /* an outline is drawn at double width and its inside is then removed with the letter's own shape: what is left runs round the outside only, with none of the
      lines a font's overlapping parts (and the joins) would otherwise show inside the letters */
-  if(o&&o.stroke){var sc=o.color||P.color, lw=o.stroke; softInk(g,str,x,y,lw,function(q){q.lineWidth=lw*2; q.strokeStyle=sc; q.strokeText(str,x,y); q.globalCompositeOperation='destination-out'; q.fillStyle='#000'; q.fillText(str,x,y); q.globalCompositeOperation='source-over';});}
-  else {var fc=(o&&o.color)||P.color; if(soft) softInk(g,str,x,y,0,function(q){q.fillStyle=fc; q.fillText(str,x,y);}); else {g.fillStyle=fc; g.fillText(str,x,y);}} }
+  if(o&&o.stroke){var sc=o.color||INK.grad||P.color, lw=o.stroke; softInk(g,str,x,y,lw,function(q){outerStroke(q,str,x,y,lw,sc);}); return;}
+  var fc=(o&&o.color)||INK.grad||P.color; if(g.globalAlpha<.999&&str.length>1&&AR_MULTI.test(str)) softInk(g,str,x,y,0,function(q){q.fillStyle=fc; q.fillText(str,x,y);}); else {g.fillStyle=fc; g.fillText(str,x,y);} }
 /* the height band the joining stroke lives in, from the font's own kashida glyph */
 var JBAND={};
 function joinBand(g,P){var k=g.font+'|'+(P.fontRev||0), b=JBAND[k]; if(b) return b; MG.font=g.font; var m=MG.measureText('\u0640'), a=m.actualBoundingBoxAscent||0, d=m.actualBoundingBoxDescent||0, em=P.size, ok=(a+d)>em*.02&&(a+d)<em*.6;
@@ -298,18 +303,19 @@ function joinBand(g,P){var k=g.font+'|'+(P.fontRev||0), b=JBAND[k]; if(b) return
    neighbours meet without overlapping. An outline also loses the cap it would draw across the join. A blurred letter is left whole: its halo has to spread. */
 function drawCl(g,P,c,o){var rtl=c.line.rtl, x=rtl?c.x1:c.x0; g.direction=rtl?'rtl':'ltr'; g.textAlign=rtl?'right':'left';
   if(c.jp||c.jn){var T=g.getTransform(), flat=Math.abs(T.b)<1e-6&&Math.abs(T.c)<1e-6&&T.a>0;
-    if((flat||g.globalAlpha<.999)&&g.filter==='none'){var B=joinBand(g,P), lw=(o&&o.stroke)||0, y0=c.base-B.a-B.pad-lw, hh=B.a+B.d+B.pad*2+lw*2, big=P.size*4, xr=c.x1, xl=c.x0;
+    if((flat||g.globalAlpha<.999)&&g.filter==='none'){var B=joinBand(g,P), lw=(o&&o.stroke)||(PASS.mode==='ol'?P.outline:0), y0=c.base-B.a-B.pad-lw, hh=B.a+B.d+B.pad*2+lw*2, big=P.size*4, xr=c.x1, xl=c.x0;
       if(flat){xr=(Math.round(T.a*xr+T.e)-T.e)/T.a; xl=(Math.round(T.a*xl+T.e)-T.e)/T.a;}
       g.save(); g.beginPath(); g.rect(-1e5,-1e5,2e5,2e5); if(c.jp) g.rect(xr,y0,big,hh); if(c.jn) g.rect(xl-big,y0,big,hh);
       if(lw&&B.ok){var cy=c.base-B.a+lw/2, chh=B.a+B.d-lw; if(chh>0){ if(c.jp) g.rect(xr-lw/2-.5,cy,lw/2+.5,chh); if(c.jn) g.rect(xl,cy,lw/2+.5,chh); } }
       g.clip('evenodd'); ink(g,P,c.draw,x,c.base,o); g.restore(); return;}}
   ink(g,P,c.draw,x,c.base,o);}
-function drawWord(g,P,w,o){var rtl=w.line.rtl; if((!rtl&&P.tracking)||(rtl&&o&&o.stroke&&w.cl.length>1&&hasAr(w.text))){w.cl.forEach(function(c){drawCl(g,P,c,o);}); return;} g.direction=rtl?'rtl':'ltr'; g.textAlign=rtl?'right':'left'; ink(g,P,w.text,rtl?w.x1:w.x0,w.base,o);}
+function drawWord(g,P,w,o){var rtl=w.line.rtl; if((!rtl&&P.tracking)||(rtl&&((o&&o.stroke)||PASS.mode==='ol')&&w.cl.length>1&&hasAr(w.text))){w.cl.forEach(function(c){drawCl(g,P,c,o);}); return;} g.direction=rtl?'rtl':'ltr'; g.textAlign=rtl?'right':'left'; ink(g,P,w.text,rtl?w.x1:w.x0,w.base,o);}
 function drawUnit(g,P,u,o){ if(u.words&&u.whole) u.words.forEach(function(w){drawWord(g,P,w,o);}); else if(u.lines) u.lines.forEach(function(l){l.words.forEach(function(w){drawWord(g,P,w,o);});}); else if(u.words) u.words.forEach(function(w){drawWord(g,P,w,o);}); else u.cl.forEach(function(c){drawCl(g,P,c,o);}); }
 function drawAll(g,P,L,o){L.lines.forEach(function(l){l.words.forEach(function(w){drawWord(g,P,w,o);});});}
 function setup(g,P,K){g.font=fontStr(P); g.textBaseline='alphabetic'; g.shadowColor='transparent'; g.shadowBlur=0; g.shadowOffsetX=0; g.shadowOffsetY=0;
-  if(P.shadow>0){g.shadowColor='rgba(0,0,0,'+Math.min(.85,.35+P.shadow/200)+')'; g.shadowBlur=P.shadow*.5*K; g.shadowOffsetY=P.shadow*.12*K;}}
-function styleOf(P,o){ if(P.outline>0&&!(o&&o.fill)) return Object.assign({stroke:P.outline},o||{}); return o; }
+}
+/* Outline Only = hollow letters (the outline takes the text colour). Outline with fill is put together in render(). */
+function styleOf(P,o){ if(P.outline>0&&P.olOnly&&!(o&&o.fill)) return Object.assign({stroke:P.outline},o||{}); return o; }
 /* st: {a,dx,dy,s,sx,sy,r,blur,skew} offsets in px, r in rad */
 function withState(g,u,st,K,fn){ if(st.a<=.003) return; g.save(); g.globalAlpha*=Math.min(1,st.a);
   g.translate(u.cx+(st.dx||0),u.cy+(st.dy||0)); if(st.r) g.rotate(st.r); if(st.skew) g.transform(1,0,Math.tan(st.skew),1,0,0);
@@ -360,10 +366,27 @@ function fmtNum(src,v){var ar=/[٠-٩]/.test(src), dec=(src.split(/[.٫]/)[1]||'
 function parseNum(s){return parseFloat(s.replace(/[٠-٩]/g,function(d){return '٠١٢٣٤٥٦٧٨٩'.indexOf(d);}).replace(/[,٬]/g,'').replace('٫','.'));}
 function blockFade(g,env,fn){var a=clamp(env.t/Math.min(.35,env.Ti))*(env.To>0?1-clamp((env.t-env.tOut)/env.To):1); if(a<=.003) return; g.save(); g.globalAlpha*=a; fn(); g.restore();}
 
+/* a stand-in for a canvas context during the 'text' / 'ol' / 'gfx' passes: it lets through only the kind of drawing that pass is for.
+   Masking operations (destination-in and friends) always go through, so reveals and cut-outs behave the same in every pass. */
+function passCtx(raw){ if(raw._px) return raw._px; var fc={};
+  function wrap(k,v){return function(){var m=PASS.mode;
+    if(m){ if(k==='drawImage'){ if(m!=='gfx'){var src=arguments[0]; if(!(src&&(src._lay||src.g))) return;} }
+      else if(k==='fillText'||k==='strokeText'){ if(m!=='text') return; }
+      else if(m!=='gfx'&&!MASK_OPS[raw.globalCompositeOperation]) return; }
+    return v.apply(raw,arguments);};}
+  var GUARD={fill:1,stroke:1,fillRect:1,strokeRect:1,drawImage:1,fillText:1,strokeText:1};
+  var p=new Proxy(raw,{get:function(t,k){ if(k==='__raw') return t; var v=t[k]; if(typeof v==='function') return fc[k]||(fc[k]=GUARD[k]?wrap(k,v):v.bind(t)); return v;}, set:function(t,k,v){t[k]=v; return true;}});
+  raw._px=p; return p;}
+var FXL={};
+function fxCanvas(name,w,h){var k=name+w+'x'+h, c=FXL[k]; if(!c){c=document.createElement('canvas'); c.width=w; c.height=h; c._lay=1; c._raw=c.getContext('2d'); FXL[k]=c;} return c;}
+/* the fill gradient runs across the whole block of text, at any angle; letters carry their part of it while they move */
+function gradFor(P,L){ if(!P.grad||!L.lines.length) return null; var a=(P.gradAngle||0)*Math.PI/180, dx=Math.cos(a), dy=Math.sin(a), top=L.lines[0].base-L.asc, bot=L.lines[L.lines.length-1].base+L.desc, cx=L.cx, cy=(top+bot)/2, h=Math.abs(dx)*L.w/2+Math.abs(dy)*(bot-top)/2; if(!(h>0)) return null;
+  var gr=MG.createLinearGradient(cx-dx*h,cy-dy*h,cx+dx*h,cy+dy*h); try{gr.addColorStop(0,P.color); gr.addColorStop(1,P.color2);}catch(e){return null;} return gr;}
+
 /* ---- shared helpers for the layer / pixel moves (everything is in 1920-space; K is the target's scale) ---- */
 function IO(env,E){var pi=clamp(env.t/env.Ti), po=env.To>0?clamp((env.t-env.tOut)/env.To):0; return {pi:pi,po:po,ei:(E||EASE.outExpo)(pi),eo:EASE.inCubic(po),a:clamp(env.t/Math.min(.3,env.Ti))*(1-po)};}
 var POOL={};
-function scratch(w,h,slot){w=Math.max(1,Math.round(w)); h=Math.max(1,Math.round(h)); var k=w+'x'+h+'/'+(slot||0), c=POOL[k]; if(!c){c=document.createElement('canvas'); c.width=w; c.height=h; c.g=c.getContext('2d',{willReadFrequently:/^px/.test(String(slot))}); POOL[k]=c;} return c;}
+function scratch(w,h,slot){w=Math.max(1,Math.round(w)); h=Math.max(1,Math.round(h)); var k=w+'x'+h+'/'+(slot||0), c=POOL[k]; if(!c){c=document.createElement('canvas'); c.width=w; c.height=h; c._raw=c.getContext('2d',{willReadFrequently:/^px/.test(String(slot))}); c.g=c._raw; POOL[k]=c;} c.g=PASS.mode?passCtx(c._raw):c._raw; return c;}
 function prep(s,P){s.font=fontStr(P); s.textBaseline='alphabetic'; s.shadowColor='transparent'; s.shadowBlur=0; s.shadowOffsetX=0; s.shadowOffsetY=0; s.filter='none'; s.globalAlpha=1; s.globalCompositeOperation='source-over';}
 /* draw into an offscreen layer the size of the target, then put() it: shadow, alpha and composite tricks apply to the whole result */
 function layer(g,P,K,slot,fn){var c=scratch(g.canvas.width,g.canvas.height,slot), s=c.g; s.setTransform(1,0,0,1,0,0); s.globalCompositeOperation='source-over'; s.globalAlpha=1; s.filter='none'; s.clearRect(0,0,c.width,c.height); s.setTransform(K,0,0,K,0,0); s.save(); prep(s,P); fn(s,c); s.restore(); return c;}
@@ -1178,7 +1201,23 @@ var MOVES=[
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
 /* draw one frame of P at time t (seconds). K = scale of the target canvas vs 1920 (for blur / shadow). */
 function render(g,t,P,K){K=K||1; var M0=MOVE_BY[P.move]||MOVES[0], v=mvals(M0,P), M=M0.cfg?Object.assign({},M0,M0.cfg(v,P)):M0, L=layout(P), T=timing(P), env={t:clamp(t,0,T.D),D:T.D,Ti:T.Ti,To:T.To,tOut:T.tOut};
-  g.save(); setup(g,P,K); g.globalAlpha=1; g.filter='none'; if(M.custom) CUSTOM[M.custom](g,L,env,P,M,K,v); else generic(g,L,env,P,M,K); g.restore();}
+  function draw(c){c.save(); setup(c,P,K); c.globalAlpha=1; c.filter='none'; try{ if(M.custom) CUSTOM[M.custom](c,L,env,P,M,K,v); else generic(c,L,env,P,M,K); } finally {c.restore();} }
+  var ol=P.outline>0&&!P.olOnly, sh=!!P.shOn&&P.shOp>0, grad=gradFor(P,L);
+  if(PASS.busy||(!ol&&!sh)){var keep=INK.grad; INK.grad=grad; try{draw(g);} finally {INK.grad=keep;} return;}
+  /* outline and shadow belong to the finished picture, not to each letter: the frame is drawn on spare canvases and put together here */
+  PASS.busy=1; INK.grad=grad;
+  try{var cv=g.canvas, w=cv.width, h=cv.height, T=g.getTransform(), C=fxCanvas('C',w,h), c=C._raw;
+    var fresh=function(X){var x=X._raw; x.setTransform(1,0,0,1,0,0); x.globalAlpha=1; x.globalCompositeOperation='source-over'; x.filter='none'; x.clearRect(0,0,w,h); x.setTransform(T); return x;};
+    fresh(C);
+    if(ol){var A=fxCanvas('A',w,h), S=fxCanvas('S',w,h), a=fresh(A), s=fresh(S);
+      PASS.mode='text'; draw(passCtx(a)); PASS.mode='ol'; draw(passCtx(s)); PASS.mode='gfx'; draw(passCtx(c)); PASS.mode=0;
+      s.setTransform(1,0,0,1,0,0); s.globalCompositeOperation='destination-out'; s.drawImage(A,0,0); s.globalCompositeOperation='source-over';
+      c.setTransform(1,0,0,1,0,0); c.drawImage(S,0,0); c.drawImage(A,0,0);}
+    else draw(c);
+    g.save(); g.setTransform(1,0,0,1,0,0); g.globalAlpha=1; g.filter='none';
+    if(sh){var an=(P.shAngle||0)*Math.PI/180, kd=Math.sqrt(Math.abs(T.a*T.d-T.b*T.c))||1; g.shadowColor=rgba(P.shColor,(P.shOp/100).toFixed(3)); g.shadowBlur=P.shBlur*kd; g.shadowOffsetX=Math.cos(an)*P.shDist*kd; g.shadowOffsetY=Math.sin(an)*P.shDist*kd;}
+    g.drawImage(C,0,0); g.restore();
+  } finally {PASS.mode=0; PASS.busy=0; INK.grad=null;}}
 
 /* ================= export: PNG frames -> ZIP (store) or QuickTime MOV (PNG codec, RGBA) ================= */
 var CRCT=(function(){var t=new Uint32Array(256); for(var n=0;n<256;n++){var c=n; for(var k=0;k<8;k++) c=c&1?0xEDB88320^(c>>>1):c>>>1; t[n]=c>>>0;} return t;})();
@@ -1277,10 +1316,12 @@ var FONTS=[
  ['Reem Kufi','Arabic','Reem+Kufi:wght@400..700'],['Marhey','Arabic','Marhey:wght@300..700'],['Lemonada','Arabic','Lemonada:wght@300..700'],['Lalezar','Arabic','Lalezar'],['Rakkas','Arabic','Rakkas'],['Aref Ruqaa','Arabic','Aref+Ruqaa:wght@400;700'],['Amiri','Arabic','Amiri:wght@400;700'],
  ['Anybody','English','Anybody:wdth,wght@50..150,100..900'],['Montserrat','English','Montserrat:wght@100..900'],['Unbounded','English','Unbounded:wght@200..900'],['Archivo Black','English','Archivo+Black'],['Bebas Neue','English','Bebas+Neue'],['Oswald','English','Oswald:wght@200..700'],
  ['Syne','English','Syne:wght@400..800'],['Poppins','English','Poppins:wght@100;200;300;400;500;600;700;800;900'],['Playfair Display','English','Playfair+Display:wght@400..900'],['DM Serif Display','English','DM+Serif+Display'],['JetBrains Mono','English','JetBrains+Mono:wght@100..800'],['Permanent Marker','English','Permanent+Marker']];
-var DEF={text:'عنوان الحلقة\nEpisode Title',move:'mask',font:'Alexandria',weight:900,size:170,leading:1.25,tracking:0,color:'#ffffff',accent:'#EF4122',outline:0,shadow:0,x:.5,y:.5,align:'c',dur:3,inDur:1,outDur:.6,outOn:true,ease:'auto',stagger:50,fontRev:0,mp:{}};
+var DEF={text:'عنوان الحلقة\nEpisode Title',move:'mask',font:'Alexandria',weight:900,size:170,leading:1.25,tracking:0,color:'#ffffff',accent:'#EF4122',outline:0,olColor:'#000000',olOnly:false,grad:false,color2:'#EF4122',gradAngle:90,shadow:0,shOn:false,shColor:'#000000',shOp:60,shBlur:18,shDist:10,shAngle:90,x:.5,y:.5,align:'c',dur:3,inDur:1,outDur:.6,outOn:true,ease:'auto',stagger:50,fontRev:0,mp:{}};
 var P=Object.assign({},DEF), SKEY='aromaTypo.v1';
 try{var sv=JSON.parse(localStorage.getItem(SKEY)||'null'); if(sv&&typeof sv==='object') Object.keys(DEF).forEach(function(k){ if(typeof sv[k]===typeof DEF[k]) P[k]=sv[k]; });}catch(e){}
-if(!MOVE_BY[P.move]) P.move='mask'; P.fontRev=0; if(!P.mp||typeof P.mp!=='object'||Array.isArray(P.mp)||P.mp===DEF.mp) P.mp={};
+/* settings saved before Outline and Shadow had their own controls: an outline was always hollow, a shadow was one amount */
+try{ if(sv&&typeof sv==='object'){ if(sv.outline>0&&typeof sv.olOnly!=='boolean') P.olOnly=true; if(sv.shadow>0&&typeof sv.shOn!=='boolean'){P.shOn=true; P.shBlur=Math.round(sv.shadow*.5); P.shDist=Math.round(sv.shadow*.12); P.shOp=Math.round(Math.min(.85,.35+sv.shadow/200)*100); P.shAngle=90;} } }catch(e){}
+P.shadow=0; if(!MOVE_BY[P.move]) P.move='mask'; P.fontRev=0; if(!P.mp||typeof P.mp!=='object'||Array.isArray(P.mp)||P.mp===DEF.mp) P.mp={};
 var saveT=0; function persist(){clearTimeout(saveT); saveT=setTimeout(function(){try{localStorage.setItem(SKEY,JSON.stringify(P));}catch(e){}},300);}
 
 /* brand */
@@ -1324,6 +1365,10 @@ function swatches(parent,id,label,key,cols){var f=el('div','f',parent); el('span
   var ci=el('input','',w); ci.type='color'; ci.id=id; ci.setAttribute('aria-label',label+' custom'); var hx=el('span','hex',w);
   function sync(){bs.forEach(function(b,k){b.setAttribute('aria-pressed',String(cols[k].toLowerCase()===P[key].toLowerCase()));}); ci.value=P[key]; hx.textContent=P[key].toUpperCase();}
   ci.addEventListener('input',function(){P[key]=ci.value; sync(); onChange(key);}); sync(); UI[key]={set:sync}; return f;}
+function toggleCtl(parent,id,label,key){var f=el('div','f',parent), r=el('div','r',f); el('span','lab',r,label); var sw=el('button','switch',r); sw.type='button'; sw.id=id; sw.setAttribute('aria-label',label);
+  function sync(){sw.setAttribute('aria-pressed',String(!!P[key]));} sw.addEventListener('click',function(){P[key]=!P[key]; sync(); onChange(key);}); sync(); UI[key]={set:sync}; return f;}
+/* the extra controls of Gradient, Outline and Shadow show only while that effect is on */
+function syncFx(){ if(UI.gradBox) UI.gradBox.hidden=!P.grad; if(UI.olBox) UI.olBox.hidden=!(P.outline>0); if(UI.shBox) UI.shBox.hidden=!P.shOn; }
 (function build(){
   var s=sec('Text'), ta=el('textarea','',s); ta.id='fText'; ta.dir='auto'; ta.spellcheck=false; ta.setAttribute('aria-label','Text'); ta.value=P.text; ta.addEventListener('input',function(){P.text=ta.value; onChange('text');});
   el('p','hint',s,'كل سطر جديد = سطر في الفيديو. عربي أو English أو الاتنين.');
@@ -1345,7 +1390,11 @@ function swatches(parent,id,label,key,cols){var f=el('div','f',parent); el('span
   t=el('div','two',s); slider(t,'fLead','Line Height',.8,2.2,.05,'leading',function(v){return v.toFixed(2);}); slider(t,'fTrack','Tracking',-60,400,5,'tracking',function(v){return String(Math.round(v));});
   s=sec('Color');
   swatches(s,'fColor','Fill','color',['#ffffff','#000000','#EF4122','#f0f0ef']); UI.accF=swatches(s,'fAccent','Accent','accent',['#EF4122','#ffffff','#000000','#FFD400']);
-  t=el('div','two',s); slider(t,'fOutline','Outline',0,24,1,'outline',function(v){return v?Math.round(v)+' px':'Off';}); slider(t,'fShadow','Shadow',0,100,1,'shadow',function(v){return v?String(Math.round(v)):'Off';});
+  toggleCtl(s,'fGrad','Gradient','grad'); UI.gradBox=el('div','mbox',s); swatches(UI.gradBox,'fColor2','Gradient To','color2',['#EF4122','#FFD400','#ffffff','#000000']); slider(UI.gradBox,'fGradAngle','Gradient Angle',0,360,5,'gradAngle',function(v){return Math.round(v)+'°';});
+  s=sec('Outline'); slider(s,'fOutline','Width',0,40,1,'outline',function(v){return v?Math.round(v)+' px':'Off';}); UI.olBox=el('div','mbox',s); swatches(UI.olBox,'fOlColor','Color','olColor',['#000000','#ffffff','#EF4122','#FFD400']); toggleCtl(UI.olBox,'fOlOnly','Outline Only (No Fill)','olOnly');
+  s=sec('Shadow'); toggleCtl(s,'fShOn','Drop Shadow','shOn'); UI.shBox=el('div','mbox',s); swatches(UI.shBox,'fShColor','Color','shColor',['#000000','#ffffff','#EF4122','#FFD400']);
+  t=el('div','two',UI.shBox); slider(t,'fShOp','Opacity',0,100,1,'shOp',function(v){return Math.round(v)+'%';}); slider(t,'fShBlur','Softness',0,120,1,'shBlur',function(v){return Math.round(v)+' px';});
+  t=el('div','two',UI.shBox); slider(t,'fShDist','Distance',0,150,1,'shDist',function(v){return Math.round(v)+' px';}); slider(t,'fShAngle','Angle',0,360,5,'shAngle',function(v){return Math.round(v)+'°';}); syncFx();
   s=sec('Position'); var af=el('div','f',s); el('span','lab',af,'Align'); var asg=el('div','seg',af); asg.id='fAlign'; UI.alignBtns=[];
   [['l','Left'],['c','Center'],['r','Right']].forEach(function(o){var b=el('button','',asg,o[1]); b.type='button'; b.addEventListener('click',function(){setAlign(o[0]);}); UI.alignBtns.push({b:b,v:o[0]});});
   var pw=el('div','r',s), pg=el('div','pos',pw); UI.posBtns=[];
@@ -1355,7 +1404,7 @@ function swatches(parent,id,label,key,cols){var f=el('div','f',parent); el('span
 /* Align changes how the lines sit against each other; the block itself stays where it is */
 function setAlign(a){ if(a===P.align) return; var L=layout(P); P.x=(a==='l'?L.x0:(a==='r'?L.x1:L.cx))/W; P.align=a; onChange('pos'); }
 function refreshPos(){ if(UI.alignBtns) UI.alignBtns.forEach(function(o){o.b.setAttribute('aria-pressed',String(o.v===P.align));});UI.posBtns.forEach(function(o){o.b.setAttribute('aria-pressed',String(Math.abs(o.x-P.x)<.005&&Math.abs(o.y-P.y)<.005));}); UI.posVal.textContent='X '+Math.round(P.x*W)+' · Y '+Math.round(P.y*H);}
-function refreshAll(){Object.keys(UI).forEach(function(k){ if(UI[k]&&UI[k].set) UI[k].set(); }); $('#fText').value=P.text; $('#fEase').value=P.ease; $('#fOutOn').setAttribute('aria-pressed',String(P.outOn)); UI.fontSel.value=P.font; refreshPos(); markTile(); buildMoveUI(); dirty(true); persist();}
+function refreshAll(){Object.keys(UI).forEach(function(k){ if(UI[k]&&UI[k].set) UI[k].set(); }); syncFx(); $('#fText').value=P.text; $('#fEase').value=P.ease; $('#fOutOn').setAttribute('aria-pressed',String(P.outOn)); UI.fontSel.value=P.font; refreshPos(); markTile(); buildMoveUI(); dirty(true); persist();}
 
 /* ---- moves bin: every tile is the real move drawn with the current first line ---- */
 var grid=$('#mGrid'), tiles=[], cat='All', TW=288, TH=162;
@@ -1363,7 +1412,7 @@ var grid=$('#mGrid'), tiles=[], cat='All', TW=288, TH=162;
 var IO_T=('IntersectionObserver' in window)?new IntersectionObserver(function(es){es.forEach(function(e){var t=e.target._t; if(!t) return; t.vis=e.isIntersecting; if(t.vis&&t.stale) paintTile(t);});},{root:grid,rootMargin:'200px 0px'}):null;
 function paintTile(t){t.stale=false; t.q=thumbP(t.M); if(!t.hover) drawTile(t,t.q.inDur*.62);}
 function thumbP(M){var line=(P.text.split('\n').filter(function(l){return l.trim();})[0]||'Aroma').trim(); if(M.sample&&!(M.need||/[0-9٠-٩]/).test(line)) line=M.sample; if(Array.from(line).length>16) line=Array.from(line).slice(0,16).join('').trim();
-  var q=Object.assign({},P,{text:line,x:.5,y:.5,align:'c',size:300,tracking:0,shadow:0,outline:0,move:M.id,dur:2.6,inDur:1,outDur:.5,outOn:true,stagger:50,ease:'auto',color:P.color==='#000000'?'#ffffff':P.color,accent:P.accent==='#000000'?'#EF4122':P.accent});
+  var q=Object.assign({},P,{text:line,x:.5,y:.5,align:'c',size:300,tracking:0,shadow:0,shOn:false,outline:0,move:M.id,dur:2.6,inDur:1,outDur:.5,outOn:true,stagger:50,ease:'auto',color:P.color==='#000000'?'#ffffff':P.color,accent:P.accent==='#000000'?'#EF4122':P.accent});
   MG.font=fontStr(q); MG.direction=hasAr(line)?'rtl':'ltr'; var w=MG.measureText(line).width||1; q.size=Math.max(60,Math.min(420,Math.round(300*W*.74/w))); return q;}
 function drawTile(t,time){ if(!t.q) return; var g=t.g, k=TW/W; g.setTransform(1,0,0,1,0,0); g.clearRect(0,0,TW,TH); g.setTransform(k,0,0,k,0,0); try{render(g,time,t.q,k);}catch(e){} }
 function buildTiles(){var cats=['All']; MOVES.forEach(function(m){ if(cats.indexOf(m.cat)<0) cats.push(m.cat); }); var cw=$('#mCats');
@@ -1381,7 +1430,7 @@ var thumbT=0; function refreshThumbs(){clearTimeout(thumbT); thumbT=setTimeout(f
 var cv=$('#cv'), g=cv.getContext('2d'), time=0, playing=true, loop=true, last=0, need=true, reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 if(reduce){playing=false; time=Math.min(P.dur*.5,P.inDur);}
 function dirty(thumbs){need=true; if(thumbs) refreshThumbs();}
-function onChange(key){ if(key==='text'||key==='color'||key==='accent'||key==='weight'||key==='mp') refreshThumbs(); if(key==='mp') UI.moveReset.hidden=!(P.mp[P.move]&&Object.keys(P.mp[P.move]).length); if(key==='pos') refreshPos(); if(key==='weight') useFont(P.font); dirty(); persist(); hook('change',key); }
+function onChange(key){ syncFx(); if(key==='text'||key==='color'||key==='accent'||key==='weight'||key==='mp'||key==='grad'||key==='color2'||key==='gradAngle') refreshThumbs(); if(key==='mp') UI.moveReset.hidden=!(P.mp[P.move]&&Object.keys(P.mp[P.move]).length); if(key==='pos') refreshPos(); if(key==='weight') useFont(P.font); dirty(); persist(); hook('change',key); }
 function tc(t,fps){var f=Math.floor(t*fps+1e-6), s=Math.floor(f/fps), ff=f%fps; return ('0'+Math.floor(s/60)).slice(-2)+':'+('0'+s%60).slice(-2)+':'+('0'+ff).slice(-2);}
 function syncPlay(){$('#btnPlay').setAttribute('aria-pressed',String(playing));}
 function tick(now){now=now||performance.now(); var dt=Math.min(.1,(now-last)/1000); last=now; var D=timing(P).D;
@@ -1719,7 +1768,7 @@ Asst=(function(){
       else if(d==='color'||d==='accent'){ if(String(P[d]).toLowerCase()==='#ef4122') quip('org','برتقاني Aroma.. اختيار موفق','happy',{icon:'heart',word:'AROMA'}); else quip('col','اللون ده لايق','happy',{icon:'star',word:'COLOR'}); }
       else if(d==='dur'){ if(P.dur>8) quip('long','طويلة شوية.. خلّي بالك الناس بتزهق','sleepy',{icon:'hour',word:'LONG'}); }
       else if(d==='outline'){ if(P.outline>0) quip('outl','Outline.. ستايل','happy',{icon:'pen',word:'OUTLINE'}); }
-      else if(d==='shadow'){ if(P.shadow>0) quip('shad','الـ Shadow بينفع فوق الفيديو الفاتح','happy',{icon:'bulb',word:'SHADOW'}); }
+      else if(d==='shOn'){ if(P.shOn) quip('shad','الـ Shadow بينفع فوق الفيديو الفاتح','happy',{icon:'bulb',word:'SHADOW'}); }
       else if(d==='text') quip('text','بكتب معاك.. كمّل','happy',{icon:'type',word:'TEXT'});
       else if(d==='mp') quip('mp','أيوه كده.. ظبّطها على مزاجك','happy',{icon:'target',word:'TUNE'});
       else if(d==='pos') quip('pos','تمام.. مكان مظبوط','happy',{icon:'target',word:'PLACE'}); }
