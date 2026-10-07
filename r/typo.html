@@ -275,9 +275,36 @@ function layout(P,textOverride){var text=textOverride==null?P.text:textOverride;
   if(LCACHE.size>120) LCACHE.clear(); LCACHE.set(key,L); return L;}
 
 /* ---- drawing ---- */
-function ink(g,P,str,x,y,o){ if(o&&o.stroke){g.lineWidth=o.stroke; g.lineJoin='round'; g.strokeStyle=o.color||P.color; g.strokeText(str,x,y);} else {g.fillStyle=(o&&o.color)||P.color; g.fillText(str,x,y);} }
-function drawCl(g,P,c,o){g.direction=c.line.rtl?'rtl':'ltr'; g.textAlign=c.line.rtl?'right':'left'; ink(g,P,c.draw,c.line.rtl?c.x1:c.x0,c.base,o);}
-function drawWord(g,P,w,o){var rtl=w.line.rtl; if(!rtl&&P.tracking){w.cl.forEach(function(c){drawCl(g,P,c,o);}); return;} g.direction=rtl?'rtl':'ltr'; g.textAlign=rtl?'right':'left'; ink(g,P,w.text,rtl?w.x1:w.x0,w.base,o);}
+/* Joined Arabic glyphs overlap a little at every join, and the canvas blends each glyph on its own. At full opacity that is invisible;
+   at less than full opacity the overlap is counted twice and shows as a lighter tick at every join (worst on a kashida).
+   So a string with more than one joined glyph is painted solid on a spare canvas first, and that is blended once. */
+var SOFT={c:null,g:null}, AR_MULTI=/[\u0621-\u064A\u0671-\u06D3\u0640][\s\S]*[\u0621-\u064A\u0671-\u06D3\u0640]/;
+function softInk(g,str,x,y,lw,paint){var cv=g.canvas, T=g.getTransform(), m=g.measureText(str), pad=(lw||0)+3, xs=[x-m.actualBoundingBoxLeft-pad,x+m.actualBoundingBoxRight+pad], ys=[y-m.actualBoundingBoxAscent-pad,y+m.actualBoundingBoxDescent+pad], X0=1e9,Y0=1e9,X1=-1e9,Y1=-1e9;
+  xs.forEach(function(px){ys.forEach(function(py){var X=T.a*px+T.c*py+T.e, Y=T.b*px+T.d*py+T.f; X0=Math.min(X0,X); X1=Math.max(X1,X); Y0=Math.min(Y0,Y); Y1=Math.max(Y1,Y);});});
+  X0=Math.max(0,Math.floor(X0)); Y0=Math.max(0,Math.floor(Y0)); X1=Math.min(cv.width,Math.ceil(X1)); Y1=Math.min(cv.height,Math.ceil(Y1)); if(X1<=X0||Y1<=Y0) return;
+  var c=SOFT.c; if(!c||c.width<cv.width||c.height<cv.height){c=SOFT.c=document.createElement('canvas'); c.width=Math.max(cv.width,c?c.width:0); c.height=Math.max(cv.height,c?c.height:0); SOFT.g=c.getContext('2d');}
+  var q=SOFT.g; q.setTransform(1,0,0,1,0,0); q.clearRect(X0,Y0,X1-X0,Y1-Y0); q.setTransform(T); q.font=g.font; q.direction=g.direction; q.textAlign=g.textAlign; q.textBaseline=g.textBaseline; q.lineJoin='round'; q.globalAlpha=1; q.globalCompositeOperation='source-over';
+  paint(q); g.save(); g.setTransform(1,0,0,1,0,0); g.drawImage(c,X0,Y0,X1-X0,Y1-Y0,X0,Y0,X1-X0,Y1-Y0); g.restore();}
+function ink(g,P,str,x,y,o){var soft=g.globalAlpha<.999&&str.length>1&&AR_MULTI.test(str);
+  /* an outline is drawn at double width and its inside is then removed with the letter's own shape: what is left runs round the outside only, with none of the
+     lines a font's overlapping parts (and the joins) would otherwise show inside the letters */
+  if(o&&o.stroke){var sc=o.color||P.color, lw=o.stroke; softInk(g,str,x,y,lw,function(q){q.lineWidth=lw*2; q.strokeStyle=sc; q.strokeText(str,x,y); q.globalCompositeOperation='destination-out'; q.fillStyle='#000'; q.fillText(str,x,y); q.globalCompositeOperation='source-over';});}
+  else {var fc=(o&&o.color)||P.color; if(soft) softInk(g,str,x,y,0,function(q){q.fillStyle=fc; q.fillText(str,x,y);}); else {g.fillStyle=fc; g.fillText(str,x,y);}} }
+/* the height band the joining stroke lives in, from the font's own kashida glyph */
+var JBAND={};
+function joinBand(g,P){var k=g.font+'|'+(P.fontRev||0), b=JBAND[k]; if(b) return b; MG.font=g.font; var m=MG.measureText('\u0640'), a=m.actualBoundingBoxAscent||0, d=m.actualBoundingBoxDescent||0, em=P.size, ok=(a+d)>em*.02&&(a+d)<em*.6;
+  if(!ok){a=em*.3; d=em*.1;} b=JBAND[k]={a:a,d:d,pad:em*.05,ok:ok}; return b;}
+/* one letter of a joined word: its join stub is cut exactly at the letter's own edge (on a whole pixel when the letter is not rotated), so two
+   neighbours meet without overlapping. An outline also loses the cap it would draw across the join. A blurred letter is left whole: its halo has to spread. */
+function drawCl(g,P,c,o){var rtl=c.line.rtl, x=rtl?c.x1:c.x0; g.direction=rtl?'rtl':'ltr'; g.textAlign=rtl?'right':'left';
+  if(c.jp||c.jn){var T=g.getTransform(), flat=Math.abs(T.b)<1e-6&&Math.abs(T.c)<1e-6&&T.a>0;
+    if((flat||g.globalAlpha<.999)&&g.filter==='none'){var B=joinBand(g,P), lw=(o&&o.stroke)||0, y0=c.base-B.a-B.pad-lw, hh=B.a+B.d+B.pad*2+lw*2, big=P.size*4, xr=c.x1, xl=c.x0;
+      if(flat){xr=(Math.round(T.a*xr+T.e)-T.e)/T.a; xl=(Math.round(T.a*xl+T.e)-T.e)/T.a;}
+      g.save(); g.beginPath(); g.rect(-1e5,-1e5,2e5,2e5); if(c.jp) g.rect(xr,y0,big,hh); if(c.jn) g.rect(xl-big,y0,big,hh);
+      if(lw&&B.ok){var cy=c.base-B.a+lw/2, chh=B.a+B.d-lw; if(chh>0){ if(c.jp) g.rect(xr-lw/2-.5,cy,lw/2+.5,chh); if(c.jn) g.rect(xl,cy,lw/2+.5,chh); } }
+      g.clip('evenodd'); ink(g,P,c.draw,x,c.base,o); g.restore(); return;}}
+  ink(g,P,c.draw,x,c.base,o);}
+function drawWord(g,P,w,o){var rtl=w.line.rtl; if((!rtl&&P.tracking)||(rtl&&o&&o.stroke&&w.cl.length>1&&hasAr(w.text))){w.cl.forEach(function(c){drawCl(g,P,c,o);}); return;} g.direction=rtl?'rtl':'ltr'; g.textAlign=rtl?'right':'left'; ink(g,P,w.text,rtl?w.x1:w.x0,w.base,o);}
 function drawUnit(g,P,u,o){ if(u.words&&u.whole) u.words.forEach(function(w){drawWord(g,P,w,o);}); else if(u.lines) u.lines.forEach(function(l){l.words.forEach(function(w){drawWord(g,P,w,o);});}); else if(u.words) u.words.forEach(function(w){drawWord(g,P,w,o);}); else u.cl.forEach(function(c){drawCl(g,P,c,o);}); }
 function drawAll(g,P,L,o){L.lines.forEach(function(l){l.words.forEach(function(w){drawWord(g,P,w,o);});});}
 function setup(g,P,K){g.font=fontStr(P); g.textBaseline='alphabetic'; g.shadowColor='transparent'; g.shadowBlur=0; g.shadowOffsetX=0; g.shadowOffsetY=0;
@@ -358,6 +385,7 @@ function noise1(x,seed){var i=Math.floor(x), f=x-i, u=f*f*(3-2*f); return lerp(h
 /* hard-edge the alpha of a layer inside a 1920-space box: a blur followed by this gives the "goo" look */
 function alphaThreshold(c,K,x0,y0,x1,y1,mid,steep){var X0=Math.max(0,Math.floor(x0*K)), Y0=Math.max(0,Math.floor(y0*K)), X1=Math.min(c.width,Math.ceil(x1*K)), Y1=Math.min(c.height,Math.ceil(y1*K)); if(X1<=X0||Y1<=Y0) return;
   var im=c.g.getImageData(X0,Y0,X1-X0,Y1-Y0), d=im.data, lo=mid-128/steep, hi=mid+128/steep, a; for(var i=3;i<d.length;i+=4){a=d[i]; if(a) d[i]=a<=lo?0:(a>=hi?255:Math.round((a-mid)*steep+128));} c.g.putImageData(im,X0,Y0);}
+var WW_ADV=new Map();
 function fontW(P,w,size){return (P.italic?'italic ':'')+w+' '+(size||P.size)+'px "'+P.font+'","Alexandria","Anybody","Montserrat",sans-serif';}
 /* a line's cells in reading order: its letters, with null where a space is */
 function lineCells(l){var out=[]; l.words.forEach(function(w,i){ if(i) out.push(null); w.cl.forEach(function(c){out.push(c);}); }); return out;}
@@ -416,7 +444,7 @@ var CUSTOM={
    var x0=Infinity,x1=-Infinity,y0=Infinity,y1=-Infinity; grp.forEach(function(u){x0=Math.min(x0,u.x0); x1=Math.max(x1,u.x1); y0=Math.min(y0,u.cy); y1=Math.max(y1,u.cy);});
    var p=EASE.outExpo(clamp(lt/Math.min(.28,slot*.6))), s=lerp(v.punch,v.hold,p), a=clamp(lt/.05)*(i===n-1&&env.To>0?1-clamp((env.t-env.tOut)/env.To):1), col=styleOf(P,{color:v.alt&&i%2?P.accent:P.color});
    g.save(); g.globalAlpha*=a; g.translate(P.x*W,P.y*H); g.scale(s,s); g.translate(-(x0+x1)/2,-(y0+y1)/2); grp.forEach(function(u){drawWord(g,P,u.words[0],col);}); g.restore();},
- tracking:function(g,L,env,P,M,K,v){var E=easeOf(P,M), pi=E(clamp(env.t/env.Ti)), po=env.To>0?EASE.inCubic(clamp((env.t-env.tOut)/env.To)):0, k=(1-pi)+po, a=clamp(env.t/(env.Ti*.5))*(1-po), o=styleOf(P);
+ tracking:function(g,L,env,P,M,K,v){var E=easeOf(P,M), pi=E(clamp(env.t/env.Ti)), po=env.To>0?EASE.inCubic(clamp((env.t-env.tOut)/env.To)):0, k=(1-pi)+po, a=v.fade?clamp(env.t/(env.Ti*.5))*(1-po):1, o=styleOf(P);
    g.save(); g.globalAlpha*=a; if(v.blur&&k>.01) g.filter='blur('+(k*P.size*.12*K).toFixed(2)+'px)';
    L.lines.forEach(function(l){ if(!l.cl.length) return;
      if(l.rtl){var n=Math.round(k*v.kashida), txt=l.text; if(n>0){txt=l.text.split(/(\s+)/).map(function(tok){ if(!hasAr(tok)) return tok; var cl=arClusters(tok), at=-1; for(var i=cl.length-2;i>=0;i--){ if(joinsFwd(cl[i])&&joinsBack(cl[i+1])){at=i;break;} } if(at<0) return tok; cl[at]+=new Array(n+1).join('ـ'); return cl.join('');}).join('');}
@@ -468,10 +496,18 @@ var CUSTOM={
      var moving=(pr.i>0&&pr.i<1)||(pr.o>0&&pr.o<1); if(!v.pen||!moving) return;
      var head=pr.o>0?b:a, hx=l.rtl?x+w*(1-head):x+w*head, hy=l.yc+Math.sin(env.t*34+i*2)*L.lh*.28*v.wobble/100, r=em*v.size/100;
      g.save(); g.shadowColor='transparent'; g.fillStyle=P.accent; g.beginPath(); g.arc(hx,hy,r,0,6.2832); g.fill(); g.restore();});},
- weightwave:function(g,L,env,P,M,K,v){var U=L.letters, n=U.length, rk=ranks('fwd',n), o=styleOf(P), lo=Math.min(v.min,v.max), hi=Math.max(v.min,v.max);
-   U.forEach(function(u,i){var pr=prog(env,P,M,rk[i],n); if(pr.i<=0||pr.o>=1) return; var c=u.cl[0], k=(Math.sin(env.t*v.speed-i*v.len)+1)/2, w=Math.round(lerp(lo,hi,k)/10)*10;
-     g.save(); g.globalAlpha*=clamp(pr.i*2.5)*(1-pr.o); g.font=fontW(P,w); g.direction=c.line.rtl?'rtl':'ltr'; g.textAlign='center';
-     ink(g,P,c.draw,c.cx,c.base+(1-EASE.outCubic(pr.i))*P.size*.22+EASE.inCubic(pr.o)*P.size*.22,o); g.restore();});},
+ weightwave:function(g,L,env,P,M,K,v){var n=L.letters.length, rk=ranks('fwd',n), o=styleOf(P), lo=Math.min(v.min,v.max), hi=Math.max(v.min,v.max), idx=0, rev=P.fontRev||0;
+   /* every letter is set at its own weight, so the line is re-set each frame from each letter's own width: letters stay joined (Arabic) and evenly spaced (Latin) */
+   function adv(f,c,rtl){var key=rev+'|'+f+'|'+c.draw, w=WW_ADV.get(key); if(w==null){MG.font=f; MG.direction=rtl?'rtl':'ltr'; w=MG.measureText(c.draw).width; if(WW_ADV.size>6000) WW_ADV.clear(); WW_ADV.set(key,w);} return w;}
+   L.lines.forEach(function(l){ if(!l.cl.length) return; var rtl=l.rtl, f0=fontW(P,P.weight), items=[], tot=0;
+     l.cl.forEach(function(c,j){var i=idx++, k=(Math.sin(env.t*v.speed-i*v.len)+1)/2, w=Math.round(lerp(lo,hi,k)/10)*10, f=fontW(P,w), a0=adv(f0,c,rtl), a=a0>0?(c.x1-c.x0)*adv(f,c,rtl)/a0:c.x1-c.x0, gap=0;
+       if(j){var p=l.cl[j-1]; gap=rtl?p.x0-c.x1:c.x0-p.x1; if(gap<.5&&!(P.tracking&&!rtl)) gap=0;}
+       items.push({c:c,i:i,f:f,a:a,gap:gap}); tot+=a+gap;});
+     var left=P.align==='l'?l.x0:(P.align==='r'?l.x1-tot:l.cx-tot/2), x=rtl?left+tot:left;
+     items.forEach(function(it){var c=it.c, pr=prog(env,P,M,rk[it.i],n), at; if(rtl){x-=it.gap; at=x; x-=it.a;} else {x+=it.gap; at=x; x+=it.a;}
+       if(pr.i<=0||pr.o>=1) return;
+       g.save(); g.globalAlpha*=clamp(pr.i*2.5)*(1-pr.o); g.font=it.f; g.direction=rtl?'rtl':'ltr'; g.textAlign=rtl?'right':'left';
+       ink(g,P,c.draw,at,c.base+(1-EASE.outCubic(pr.i))*P.size*.22+EASE.inCubic(pr.o)*P.size*.22,o); g.restore();});});},
  flap:function(g,L,env,P,M,K,v){var em=P.size, o=styleOf(P), hh=(L.asc+L.desc)*1.02;
    L.lines.forEach(function(l){var cells=lineCells(l), n=cells.length; if(!n) return;
      var cw=em*.84, gap=em*.07, tot=n*cw+(n-1)*gap, kf=Math.min(1,W*.94/tot); cw*=kf; gap*=kf; tot*=kf;
@@ -1045,7 +1081,7 @@ var MOVES=[
  {id:'scramble',name:'Scramble',cat:'Type',custom:'scramble',stagger:.7,uses:{stagger:1,ease:0,accent:1},params:[PR('speed','Shuffle Speed',4,40,1,18,'/s'),PS('set','Characters',[['auto','Auto'],['letters','Letters'],['numbers','Numbers'],['symbols','Symbols']],'auto'),PT('accent','Accent Color',true)]},
  {id:'counter',name:'Counter',cat:'Numbers',custom:'counter',sample:'2026',uses:{stagger:0,ease:0,accent:0},params:[{k:'from',label:'Start From',type:'num',def:0},PS('ease','Count Curve',[['smooth','Smooth'],['linear','Linear'],['snap','Fast Then Settle']],'smooth')]},
  {id:'beat',name:'Beat Punch',cat:'Type',custom:'beat',uses:{stagger:0,ease:0,accent:1},params:[PR('group','Words Per Beat',1,4,1,1,''),PR('punch','Punch Scale',1,4,.05,1.9,'×'),PR('hold','Hold Scale',.6,2.5,.05,1.25,'×'),PT('alt','Alternate Accent',true)]},
- {id:'tracking',name:'Tracking · Kashida',cat:'Soft',custom:'tracking',ease:'outExpo',uses:{stagger:0,ease:1,accent:0},params:[PR('spread','Spread (English)',.2,3,.05,1.3,'×'),PR('kashida','Kashida Length (عربي)',2,24,1,10,''),PT('blur','Blur',true)]},
+ {id:'tracking',name:'Tracking · Kashida',cat:'Soft',custom:'tracking',ease:'outExpo',uses:{stagger:0,ease:1,accent:0},params:[PR('spread','Spread (English)',.2,3,.05,1.3,'×'),PR('kashida','Kashida Length (عربي)',2,24,1,10,''),PT('fade','Fade In / Out',true),PT('blur','Blur',true)]},
  {id:'smear',name:'Motion Smear',cat:'Basic',custom:'smear',stagger:.25,uses:{stagger:1,ease:0,accent:1},params:[PS('dir','Direction',[['alt','Alternate Lines'],['left','From Left'],['right','From Right']],'alt'),PR('trail','Trail',0,10,1,5,''),PR('skew','Skew',0,45,1,28,'°')]},
  {id:'glitch',name:'Glitch',cat:'FX',custom:'glitch',uses:{stagger:0,ease:0,accent:1},params:[PR('amount','Intensity',10,250,5,100,'%'),PR('slices','Slices',3,24,1,9,''),PR('rate','Speed',6,30,1,24,'/s'),PT('hold','Random Glitches While Holding',true)]},
  {id:'slice',name:'Slice Shift',cat:'FX',custom:'slice',stagger:.5,ease:'outExpo',uses:{stagger:1,ease:1,accent:1},params:[PR('slices','Slices',2,14,1,6,''),PR('dist','Distance',20,150,5,90,'%'),PT('accent','Accent Slices',true)]},
@@ -1310,11 +1346,15 @@ function swatches(parent,id,label,key,cols){var f=el('div','f',parent); el('span
   s=sec('Color');
   swatches(s,'fColor','Fill','color',['#ffffff','#000000','#EF4122','#f0f0ef']); UI.accF=swatches(s,'fAccent','Accent','accent',['#EF4122','#ffffff','#000000','#FFD400']);
   t=el('div','two',s); slider(t,'fOutline','Outline',0,24,1,'outline',function(v){return v?Math.round(v)+' px':'Off';}); slider(t,'fShadow','Shadow',0,100,1,'shadow',function(v){return v?String(Math.round(v)):'Off';});
-  s=sec('Position'); var pw=el('div','r',s), pg=el('div','pos',pw); UI.posBtns=[];
+  s=sec('Position'); var af=el('div','f',s); el('span','lab',af,'Align'); var asg=el('div','seg',af); asg.id='fAlign'; UI.alignBtns=[];
+  [['l','Left'],['c','Center'],['r','Right']].forEach(function(o){var b=el('button','',asg,o[1]); b.type='button'; b.addEventListener('click',function(){setAlign(o[0]);}); UI.alignBtns.push({b:b,v:o[0]});});
+  var pw=el('div','r',s), pg=el('div','pos',pw); UI.posBtns=[];
   [.14,.5,.86].forEach(function(y,yi){[.08,.5,.92].forEach(function(x,xi){var b=el('button','',pg); b.type='button'; b.setAttribute('aria-label','Position '+['top','middle','bottom'][yi]+' '+['left','center','right'][xi]); b.addEventListener('click',function(){P.x=x; P.y=y; P.align=['l','c','r'][xi]; onChange('pos');}); UI.posBtns.push({b:b,x:x,y:y});});});
   var pv=el('span','val',pw); UI.posVal=pv; var rs=el('button','ghost',s,'Reset All'); rs.type='button'; rs.addEventListener('click',function(){var keepText=P.text; Object.assign(P,DEF,{text:keepText,mp:{}}); refreshAll(); useFont(P.font); hook('reset');});
 })();
-function refreshPos(){UI.posBtns.forEach(function(o){o.b.setAttribute('aria-pressed',String(Math.abs(o.x-P.x)<.005&&Math.abs(o.y-P.y)<.005));}); UI.posVal.textContent='X '+Math.round(P.x*W)+' · Y '+Math.round(P.y*H);}
+/* Align changes how the lines sit against each other; the block itself stays where it is */
+function setAlign(a){ if(a===P.align) return; var L=layout(P); P.x=(a==='l'?L.x0:(a==='r'?L.x1:L.cx))/W; P.align=a; onChange('pos'); }
+function refreshPos(){ if(UI.alignBtns) UI.alignBtns.forEach(function(o){o.b.setAttribute('aria-pressed',String(o.v===P.align));});UI.posBtns.forEach(function(o){o.b.setAttribute('aria-pressed',String(Math.abs(o.x-P.x)<.005&&Math.abs(o.y-P.y)<.005));}); UI.posVal.textContent='X '+Math.round(P.x*W)+' · Y '+Math.round(P.y*H);}
 function refreshAll(){Object.keys(UI).forEach(function(k){ if(UI[k]&&UI[k].set) UI[k].set(); }); $('#fText').value=P.text; $('#fEase').value=P.ease; $('#fOutOn').setAttribute('aria-pressed',String(P.outOn)); UI.fontSel.value=P.font; refreshPos(); markTile(); buildMoveUI(); dirty(true); persist();}
 
 /* ---- moves bin: every tile is the real move drawn with the current first line ---- */
