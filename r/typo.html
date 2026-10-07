@@ -58,31 +58,6 @@ button.spec:hover{border-color:var(--line2);color:var(--fg)}
 .selbox.on{opacity:1}
 .selbox b{position:absolute;left:-1px;bottom:100%;background:var(--accent);color:var(--accent-ink);font:700 10px/1 var(--mono);padding:3px 5px;border-radius:3px 3px 0 0}
 .selbox.hov{border:1px solid rgba(255,255,255,.5);mix-blend-mode:difference}
-.ln textarea[readonly]{cursor:pointer;color:#d8d4cf}
-.ln[data-kind="comp"] .mv{color:var(--accent);border-color:var(--accent)}
-.cf{display:flex;flex-direction:column;gap:10px}
-.pts{display:flex;flex-direction:column;gap:5px}
-.pt{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.75fr) minmax(0,.75fr) minmax(0,1.15fr) 24px;gap:4px;align-items:center}
-.pt input{width:100%;min-width:0;background:var(--raise);border:1px solid var(--line);border-radius:6px;padding:7px 6px;font:600 12px/1.2 var(--ar);text-align:center}
-.pt input:focus{border-color:var(--accent);outline:0}
-.pt span{font:400 9px/1 var(--mono);letter-spacing:.08em;color:var(--mute);text-align:center;text-transform:uppercase}
-.pt button{width:24px;height:24px;border:0;background:transparent;color:var(--mute);font:400 16px/1 var(--ui);border-radius:6px;padding:0}
-.pt button:hover:not(:disabled){background:var(--line);color:var(--fg)}.pt button:disabled{opacity:.25;cursor:default}
-#mGrid.off .tile{opacity:.32}
-.ptabs{display:flex;margin:14px 16px 0}.ptabs button{flex:1}
-.moves[data-tab="proj"] .hd,.moves[data-tab="proj"] .grid{display:none}
-.moves:not([data-tab="proj"]) .pjp{display:none}
-.pjp{flex:1;min-height:0;overflow:auto;padding:14px 16px 18px;display:flex;flex-direction:column;gap:14px}
-.pjp h3{margin:0;font:700 18px/1.1 var(--mono);letter-spacing:.16em;display:flex;align-items:center;gap:10px}
-.pjp h3 i{display:flex;gap:4px}.pjp h3 i b{width:14px;height:14px;border-radius:50%;border:1px solid var(--line2);display:block}
-.pjp .pgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.pjp .lab{display:block}
-.pjp .acts2{display:flex;flex-direction:column;gap:8px}
-.pjm-i{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px 10px;align-items:center;padding:12px;border-radius:7px;color:var(--fg);border:0;background:transparent;width:100%;text-align:left;cursor:pointer}
-.pjm-i:hover,.pjm-i:focus-visible{background:rgba(255,255,255,.06)}
-.pjm-i b{font:700 12px/1 var(--mono);letter-spacing:.18em}.pjm-i small{grid-column:1/-1;font:500 12px/1.5 var(--ar);color:var(--mute);direction:rtl;text-align:right}
-.pjm-i[aria-current="true"] b{color:var(--accent)}
-@media (max-width:900px){.pjp{flex:none;overflow:visible}.pjp .pgrid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}}
 .spec{margin-left:auto;font:400 11px/1 var(--mono);letter-spacing:.12em;color:var(--mute);border:1px solid var(--line);border-radius:99px;padding:8px 12px;white-space:nowrap}
 .cta{border:0;border-radius:8px;background:var(--accent);color:var(--accent-ink);font:700 14px/1 var(--ui);padding:11px 22px;flex:none}
 .cta:hover{filter:brightness(1.1)}
@@ -232,19 +207,16 @@ input[type=number].inp{font:400 13px/1 var(--mono)}
   document.addEventListener('pointerdown',function(e){ if(!m.hidden&&!m.contains(e.target)&&!b.contains(e.target)) set(false); });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!m.hidden){set(false); b.focus();} });
 })();</script></div><!--aroma-tools-menu-->
-    <div class="atm" id="pjm"><button class="atm-b" id="pjB" type="button" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg><span id="pjName">Projects</span></button><div class="atm-m" id="pjM" role="menu" hidden></div></div>
     <button class="spec" id="btnOut" type="button" title="Output: Size · Frame Rate · Alpha">1920 × 1080 · 25 FPS · ALPHA</button>
     <button class="cta" id="btnRender" type="button">Render</button>
   </header>
-  <aside class="moves" id="mAside" aria-label="Moves" data-tab="moves">
-    <div class="seg ptabs" id="pTabs" hidden><button type="button" data-t="moves" aria-pressed="true">Moves</button><button type="button" data-t="proj" id="pTabP" aria-pressed="false">Project</button></div>
+  <aside class="moves" aria-label="Moves">
     <div class="hd">
       <div class="row"><span class="lab">Moves</span><span class="lab" id="mCount"></span></div>
       <input class="search" id="mSearch" type="search" placeholder="Search name or number" aria-label="Search moves">
       <div class="chips" id="mCats"></div>
     </div>
     <div class="grid" id="mGrid"></div>
-    <div class="pjp" id="pjPanel"></div>
   </aside>
   <main class="stage">
     <div class="vpwrap"><div class="vp" id="vp" data-bg="checker">
@@ -1321,128 +1293,6 @@ function render(g,t,P,K){K=K||1; var T=timing(P), env={t:clamp(t,0,T.D),D:T.D,Ti
     g.drawImage(C,0,0); g.restore();
   } finally {PASS.mode=0; PASS.busy=0; INK.grad=null;}}
 
-/* ================= components: a layer that is a finished graphic (number + text + shapes) with fields to fill =================
-   A component layer is a line object with kind:'comp', comp:<id> and f:{field values}. It shares everything a text line has:
-   place (x, y = its centre), Size (170 = designed size), Fill = text colour, Accent = brand colour, Font, timing, outline, shadow.
-   Each component:  fields (what the team types), geo(P) (its measured layout), box(P) (where it rests), draw(g,P,env,K). */
-function cFields(P){var C=COMPS[P.comp], o={}; if(!C) return o; C.fields.forEach(function(f){var v=P.f?P.f[f.k]:undefined; o[f.k]=(v===undefined||v===null||typeof v!==typeof f.def||(Array.isArray(f.def)&&!Array.isArray(v)))?f.def:v;}); return o;}
-function cW(P,str,w,px){ if(!str) return 0; MG.font=fontW(P,w,px); MG.direction=hasAr(str)?'rtl':'ltr'; return MG.measureText(str).width;}
-/* one string; al says which point of the string x is: 'l' | 'c' | 'r' */
-function cText(g,P,str,x,y,w,px,col,al){ if(!str) return; g.font=fontW(P,w,px); g.direction=hasAr(str)?'rtl':'ltr'; g.textAlign=al==='l'?'left':(al==='r'?'right':'center'); g.textBaseline='alphabetic'; ink(g,P,str,x,y,{color:col}); }
-function cPhase(env){var pi=clamp(env.t/env.Ti), po=env.To>0?clamp((env.t-env.tOut)/env.To):0; return {pi:pi,po:po,sub:function(a,b,E){return (E||EASE.outExpo)(clamp((pi-a)/(b-a)));}};}
-/* the numbers inside a string, counted up from zero to what was typed (keeps decimals, separators, Arabic digits) */
-function cCount(str,p){ if(p>=1) return str; return String(str).replace(/[0-9٠-٩][0-9٠-٩.,٬٫]*/g,function(mm){var core=mm.replace(/[.,٬٫]+$/,''), tail=mm.slice(core.length), val=parseNum(core); return isNaN(val)?mm:fmtNum(core,val*p)+tail;});}
-/* text that rises into a window */
-function cRise(g,p,x,y,w,h,fn){ if(p<=0) return; g.save(); if(p<1){g.beginPath(); g.rect(x,y,w,h); g.clip(); g.translate(0,(1-p)*h);} fn(); g.restore(); }
-function cWipe(g,x,y,w,h,fn){ if(w<=0||h<=0) return; g.save(); g.beginPath(); g.rect(x,y,w,h); g.clip(); fn(); g.restore(); }
-/* stroke the first p of a path of known length */
-function cTrace(g,len,p,lw,col){ if(p<=0) return; g.save(); g.lineWidth=lw; g.strokeStyle=col; g.lineJoin='round'; g.lineCap='butt'; if(p<1){g.setLineDash([len*p,len*1.05]);} g.stroke(); g.restore(); }
-function cPoly(g,pts,close){g.beginPath(); pts.forEach(function(p,i){ if(i) g.lineTo(p[0],p[1]); else g.moveTo(p[0],p[1]); }); if(close) g.closePath(); var L=0; for(var i=1;i<pts.length;i++) L+=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]); if(close) L+=Math.hypot(pts[0][0]-pts[pts.length-1][0],pts[0][1]-pts[pts.length-1][1]); return L;}
-function cShade(hex,k){var c=rgbOf(hex); return 'rgb('+Math.round(c[0]*k)+','+Math.round(c[1]*k)+','+Math.round(c[2]*k)+')';}
-/* the whole component leaves as one piece: it fades and sinks a little */
-function cOut(g,P,K,po,fn){ if(po<=0){fn(g); return;} if(po>=1) return; var e=EASE.inCubic(po), c=layer(g,P,K,'cmpout',function(s){s.translate(0,e*P.size*.14); fn(s);}); put(g,c,1-e); }
-var C_INK='#15120a', C_PLATE='#464646', C_EDGE='#8a8a8a';
-function cBox(P){var C=COMPS[P.comp]; if(!C) return {x0:P.x*W,x1:P.x*W,top:P.y*H,bot:P.y*H,w:0,h:0}; var G=C.geo(P,cFields(P)); return {x0:G.x0,x1:G.x0+G.w,top:G.y0,bot:G.y0+G.h,w:G.w,h:G.h};}
-
-/* ---- 1. Big Number: a huge number with its unit tag, a side label and two lines of text beside it ---- */
-COMPS.bignum={name:'Big Number',icon:'num',
- fields:[{k:'num',label:'Number',type:'text',def:'150'},{k:'unit',label:'Unit Tag',type:'text',def:'مليار دولار'},{k:'side',label:'Side Label',type:'text',def:'استثمارات تجاوزت'},{k:'l1',label:'Text · Row 1',type:'text',def:'في البنية التحتية'},{k:'l2',label:'Text · Row 2',type:'text',def:'الرقمية منذ 2019'}],
- geo:function(P,F){var s=P.size/170, nf=200*s, nw=cW(P,F.num,900,nf), cap=nf*.72, lf=62*s, lw=Math.max(cW(P,F.l1,300,lf),cW(P,F.l2,300,lf)), gap=lw?26*s:0, sf=20*s, sw=F.side?sf*1.5+10*s:0, w=lw+gap+nw+sw, h=Math.max(cap,(F.l2?2:1)*76*s), x0=P.x*W-w/2, y0=P.y*H-h/2;
-   return {s:s,x0:x0,y0:y0,w:w,h:h,nf:nf,nw:nw,cap:cap,lf:lf,lw:lw,sf:sf,xT:x0+lw,xN:x0+lw+gap,cy:P.y*H};},
- draw:function(g,P,env,K){var F=cFields(P), G=this.geo(P,F), ph=cPhase(env), s=G.s, gold=P.accent, cy=G.cy;
-   cOut(g,P,K,ph.po,function(g){
-     var yN=cy+G.cap/2, pn=ph.sub(0,.5), cnt=EASE.outCubic(clamp(ph.pi/.85));
-     cRise(g,pn,G.xN-10*s,cy-G.cap/2-G.nf*.12,G.nw+20*s,G.cap+G.nf*.2,function(){cText(g,P,cCount(F.num,cnt),G.xN+G.nw/2,yN,900,G.nf,gold,'c');});
-     var two=!!F.l2, y1=two?cy-10*s:cy+G.lf*.34, y2=cy+66*s;
-     cRise(g,ph.sub(.15,.65),G.x0-10*s,y1-G.lf*1.05,G.lw+20*s,G.lf*1.5,function(){cText(g,P,F.l1,G.xT,y1,300,G.lf,P.color,'r');});
-     if(two) cRise(g,ph.sub(.28,.78),G.x0-10*s,y2-G.lf*1.05,G.lw+20*s,G.lf*1.5,function(){cText(g,P,F.l2,G.xT,y2,300,G.lf,P.color,'r');});
-     if(F.unit){var pt=ph.sub(.42,.8,EASE.outBack), uf=15*s, uw=cW(P,F.unit,800,uf)+16*s, uh=uf*1.75, ux=G.xN+G.nw*.37, uy=cy-G.cap/2+G.cap*.07; if(pt>0){g.save(); g.translate(ux+uw/2,uy+uh/2); g.scale(pt,pt); g.fillStyle=gold; g.fillRect(-uw/2,-uh/2,uw,uh); cText(g,P,F.unit,0,uf*.36,800,uf,C_INK,'c'); g.restore();}}
-     if(F.side){var ps=ph.sub(.5,.95,EASE.outCubic); if(ps>0){g.save(); g.globalAlpha*=ps; g.translate(G.xN+G.nw+14*s+G.sf*.7,cy+(1-ps)*20*s); g.rotate(-Math.PI/2); cText(g,P,F.side,0,G.sf*.36,700,G.sf,P.color,'c'); g.restore();}}
-   });}};
-
-/* ---- 2. Stat Box: a number in a cut-corner box, a small tab over it, and a striped brand panel with two rows of text ---- */
-COMPS.statbox={name:'Stat Box',icon:'box',
- fields:[{k:'pre',label:'Tab',type:'text',def:'أكثر من'},{k:'num',label:'Number',type:'text',def:'90'},{k:'unit',label:'Unit',type:'text',def:'%'},{k:'l1',label:'Text · Row 1',type:'text',def:'من حركة البيانات الدولية'},{k:'l2',label:'Text · Row 2',type:'text',def:'تعبر عبر مصر'}],
- geo:function(P,F){var s=P.size/170, nf=96*s, uf=56*s, nw=cW(P,F.num,900,nf), uw=F.unit?cW(P,F.unit,900,uf)+5*s:0, bw=nw+uw+52*s, bh=140*s, tf=40*s, tw=Math.max(cW(P,F.l1,800,tf),cW(P,F.l2,800,tf)), pw=tw?tw+64*s:0, th=F.pre?46*s:0, pf=30*s, slant=42*s, tabw=F.pre?Math.max(bw+70*s,cW(P,F.pre,300,pf)+70*s+slant):0, w=Math.max(pw+bw,tabw), h=th+bh, x0=P.x*W-w/2, y0=P.y*H-h/2;
-   return {s:s,x0:x0,y0:y0,w:w,h:h,nf:nf,uf:uf,nw:nw,uw:uw,bw:bw,bh:bh,tf:tf,pw:pw,th:th,pf:pf,slant:slant,tabw:tabw,xr:x0+w,by:y0+th};},
- draw:function(g,P,env,K){var F=cFields(P), G=this.geo(P,F), ph=cPhase(env), s=G.s, gold=P.accent, xr=G.xr, by=G.by, bx=xr-G.bw, px=bx-G.pw, lw=Math.max(1.5,2*s);
-   cOut(g,P,K,ph.po,function(g){
-     /* the striped panel opens away from the number box */
-     var pp=ph.sub(.15,.62); if(G.pw&&pp>0) cWipe(g,bx-G.pw*pp,by,G.pw*pp,G.bh,function(){g.fillStyle=cShade(gold,.52); g.fillRect(px,by,G.pw,G.bh); g.fillStyle=cShade(gold,.43); for(var y=by+1*s;y<by+G.bh;y+=4.2*s) g.fillRect(px,y,G.pw,1.6*s);});
-     var two=!!F.l2, y1=two?by+G.bh/2-9*s:by+G.bh/2+G.tf*.34, y2=by+G.bh/2+43*s, tx=bx-32*s;
-     cRise(g,ph.sub(.35,.8),px,y1-G.tf*1.05,G.pw,G.tf*1.5,function(){cText(g,P,F.l1,tx,y1,800,G.tf,P.color,'r');});
-     if(two) cRise(g,ph.sub(.45,.9),px,y2-G.tf*1.05,G.pw,G.tf*1.5,function(){cText(g,P,F.l2,tx,y2,800,G.tf,P.color,'r');});
-     /* the number box: outline with the bottom-right corner cut */
-     var cut=24*s, L=cPoly(g,[[bx,by],[xr,by],[xr,by+G.bh-cut],[xr-cut,by+G.bh],[bx,by+G.bh]],true); cTrace(g,L,ph.sub(0,.5,EASE.inOutCubic),lw,C_EDGE);
-     var pn=clamp(ph.pi/.3), cnt=EASE.outCubic(clamp((ph.pi-.05)/.8)), nx=bx+(G.bw-G.nw-G.uw)/2, ny=by+G.bh/2+G.nf*.36;
-     if(pn>0){g.save(); g.globalAlpha*=pn; cText(g,P,cCount(F.num,cnt),nx+G.nw/2,ny,900,G.nf,P.color,'c'); if(F.unit) cText(g,P,F.unit,nx+G.nw+5*s,ny,900,G.uf,P.color,'l'); g.restore();}
-     /* the tab rises out of the box */
-     if(G.th){var pt=ph.sub(.3,.7); if(pt>0) cWipe(g,xr-G.tabw-2*s,by-G.th-2*s,G.tabw+4*s,G.th+2*s,function(){g.translate(0,(1-pt)*G.th); var Lt=cPoly(g,[[xr-G.tabw+G.slant,by-G.th],[xr,by-G.th],[xr,by],[xr-G.tabw,by]],true); cTrace(g,Lt,1,lw,C_EDGE); cText(g,P,F.pre,xr-(G.tabw-G.slant*.5)/2,by-G.th/2+G.pf*.34,300,G.pf,P.color,'c');});}
-   });}};
-
-/* ---- 3. Framed Number: a big number sitting on the top edge of a rounded frame, two small words beside it, a caption inside ---- */
-COMPS.framenum={name:'Framed Number',icon:'frame',
- fields:[{k:'pre',label:'Word Before',type:'text',def:'أكثر'},{k:'num',label:'Number',type:'text',def:'280'},{k:'post',label:'Word After',type:'text',def:'من'},{k:'l1',label:'Caption · Row 1',type:'text',def:'مركز تعهيد لشركات عالمية'},{k:'l2',label:'Caption · Row 2',type:'text',def:'في مصر'}],
- geo:function(P,F){var s=P.size/170, nf=190*s, nw=cW(P,F.num,900,nf), cap=nf*.72, cf=46*s, cw=Math.max(cW(P,F.l1,800,cf),cW(P,F.l2,800,cf)), wf=30*s, prw=cW(P,F.pre,300,wf), pow=cW(P,F.post,300,wf), side=Math.max(prw,pow,60*s)+70*s, fw=Math.max(650*s,cw+110*s,nw+side*2+60*s), fh=(F.l2?216:160)*s, h=cap/2+fh, x0=P.x*W-fw/2, y0=P.y*H-h/2;
-   return {s:s,x0:x0,y0:y0,w:fw,h:h,nf:nf,nw:nw,cap:cap,cf:cf,wf:wf,fh:fh,fy:y0+cap/2,cx:P.x*W,side:side};},
- draw:function(g,P,env,K){var F=cFields(P), G=this.geo(P,F), ph=cPhase(env), s=G.s, gold=P.accent, cx=G.cx, fy=G.fy, x0=G.x0, x1=G.x0+G.w, yb=fy+G.fh, r=28*s, lw=Math.max(1.2,1.6*s);
-   cOut(g,P,K,ph.po,function(g){
-     /* frame: starts at the right of the number, runs round, ends at its left */
-     var gapL=cx-G.nw/2-18*s, gapR=cx+G.nw/2+18*s, k=.5523*r;
-     g.beginPath(); g.moveTo(gapR,fy); g.lineTo(x1-r,fy); g.bezierCurveTo(x1-r+k,fy,x1,fy+r-k,x1,fy+r); g.lineTo(x1,yb-r); g.bezierCurveTo(x1,yb-r+k,x1-r+k,yb,x1-r,yb); g.lineTo(x0+r,yb); g.bezierCurveTo(x0+r-k,yb,x0,yb-r+k,x0,yb-r); g.lineTo(x0,fy+r); g.bezierCurveTo(x0,fy+r-k,x0+r-k,fy,x0+r,fy); g.lineTo(gapL,fy);
-     var Lf=(x1-r-gapR)+(gapL-x0-r)+2*(G.fh-2*r)+(G.w-2*r)+Math.PI*2*r; cTrace(g,Lf,ph.sub(.1,.75,EASE.inOutCubic),lw,'#6e6e6e');
-     /* gold ticks on the top and bottom edges */
-     var pt=ph.sub(.5,.9), tx=G.nw/2+G.side*.5+18*s, tw=62*s*pt; if(pt>0){g.fillStyle=gold; [[cx+tx,fy],[cx-tx,fy],[cx+tx,yb],[cx-tx,yb]].forEach(function(p){g.fillRect(p[0]-tw/2,p[1]-1.6*s,tw,3.2*s);});}
-     var pw=ph.sub(.3,.75,EASE.outCubic); if(pw>0){g.save(); g.globalAlpha*=pw; cText(g,P,F.pre,cx+tx,fy-16*s+(1-pw)*14*s,300,G.wf,P.color,'c'); cText(g,P,F.post,cx-tx,fy-16*s+(1-pw)*14*s,300,G.wf,P.color,'c'); g.restore();}
-     var pn=ph.sub(0,.5,EASE.outBack), cnt=EASE.outCubic(clamp(ph.pi/.85)); if(pn>0){g.save(); g.globalAlpha*=clamp(ph.pi/.18); g.translate(cx,fy); g.scale(.55+.45*pn,.55+.45*pn); cText(g,P,cCount(F.num,cnt),0,G.cap/2,900,G.nf,gold,'c'); g.restore();}
-     var two=!!F.l2, top=fy+G.cap/2, mid=(top+yb)/2-4*s, y1=two?mid-6*s:mid+G.cf*.34, y2=mid+56*s;
-     cRise(g,ph.sub(.35,.8),x0,y1-G.cf*1.05,G.w,G.cf*1.5,function(){cText(g,P,F.l1,cx,y1,800,G.cf,P.color,'c');});
-     if(two) cRise(g,ph.sub(.45,.9),x0,y2-G.cf*1.05,G.w,G.cf*1.5,function(){cText(g,P,F.l2,cx,y2,800,G.cf,P.color,'c');});
-   });}};
-
-/* ---- 4. Label Plate: a header tab, a big brand-colour word on a plate, a footer strip ---- */
-COMPS.plate={name:'Label Plate',icon:'box',
- fields:[{k:'head',label:'Header',type:'text',def:'قطاع الاتصالات وتكنولوجيا المعلومات'},{k:'big',label:'Big Word',type:'text',def:'الأعلى نموًا'},{k:'foot',label:'Footer',type:'text',def:'للعام السادس على التوالي'}],
- geo:function(P,F){var s=P.size/170, bf=84*s, hf=23*s, ff=27*s, cut=46*s, inset=52*s, pad=38*s, w=Math.max(cW(P,F.big,900,bf)+pad*2,cW(P,F.head,300,hf)+pad*2+cut,cW(P,F.foot,300,ff)+pad*2+cut+inset,380*s), hh=F.head?52*s:0, mh=118*s, fh=F.foot?52*s:0, h=hh+mh+fh, x0=P.x*W-w/2, y0=P.y*H-h/2;
-   return {s:s,x0:x0,y0:y0,w:w,h:h,bf:bf,hf:hf,ff:ff,cut:cut,inset:inset,hh:hh,mh:mh,fh:fh,my:y0+hh,cx:P.x*W};},
- draw:function(g,P,env,K){var F=cFields(P), G=this.geo(P,F), ph=cPhase(env), s=G.s, x0=G.x0, x1=G.x0+G.w, my=G.my, cx=G.cx, lw=Math.max(1.2,1.5*s);
-   cOut(g,P,K,ph.po,function(g){
-     /* header slides up from behind the plate, footer slides down from it */
-     if(G.hh){var p1=ph.sub(.35,.78); if(p1>0) cWipe(g,x0-2*s,my-G.hh-2*s,G.w+4*s,G.hh+2*s,function(){g.translate(0,(1-p1)*G.hh); var L=cPoly(g,[[x0,my-G.hh],[x1-G.cut,my-G.hh],[x1,my],[x0,my]],true); cTrace(g,L,1,lw,C_EDGE); cText(g,P,F.head,x0+(G.w-G.cut*.5)/2,my-G.hh/2+G.hf*.34,300,G.hf,P.color,'c');});}
-     if(G.fh){var p2=ph.sub(.45,.88), fy=my+G.mh; if(p2>0) cWipe(g,x0,fy,G.w,G.fh+2*s,function(){g.translate(0,-(1-p2)*G.fh); cPoly(g,[[x0+G.inset,fy],[x1,fy],[x1,fy+G.fh],[x0+G.inset+G.cut,fy+G.fh]],true); g.fillStyle=C_PLATE; g.fill(); cText(g,P,F.foot,(x0+G.inset+G.cut*.5+x1)/2,fy+G.fh/2+G.ff*.34,300,G.ff,P.color,'c');});}
-     /* the plate opens from its middle */
-     var pm=ph.sub(0,.5); if(pm>0) cWipe(g,cx-G.w/2*pm,my,G.w*pm,G.mh,function(){g.fillStyle=C_PLATE; g.fillRect(x0,my,G.w,G.mh); g.strokeStyle='#777'; g.lineWidth=lw; g.strokeRect(x0+lw/2,my+lw/2,G.w-lw,G.mh-lw);});
-     var yb=my+G.mh/2+G.bf*.33; cRise(g,ph.sub(.2,.68),x0,my,G.w,G.mh,function(){cText(g,P,F.big,cx,yb,900,G.bf,P.accent,'c');});
-   });}};
-
-/* ---- 5. Line Chart: a card with a title, a line through the points, a value bubble on each point ---- */
-COMPS.linechart={name:'Line Chart',icon:'chart',
- fields:[{k:'t1',label:'Title · Light Row',type:'text',def:'استثمارات تراخيص'},{k:'t2',label:'Title · Bold Row',type:'text',def:'المحمول والترددات'},{k:'note',label:'Small Note',type:'text',def:'(بالنقد الأجنبي)'},
-   {k:'pts',label:'Points',type:'points',def:[{x:'2016',v:'1.1',l:'1.1',u:'مليار دولار'},{x:'2021-2022',v:'0.805',l:'805',u:'مليون دولار'},{x:'2025-2026',v:'4.1',l:'4.1',u:'مليار دولار'}]},
-   {k:'lead',label:'Line Starts From The Corner',type:'toggle',def:true}],
- geo:function(P,F){var s=P.size/170, n=Math.max(1,F.pts.length), w=Math.max(710,360+n*118)*s, h=638*s, x0=P.x*W-w/2, y0=P.y*H-h/2; return {s:s,x0:x0,y0:y0,w:w,h:h};},
- draw:function(g,P,env,K){var F=cFields(P), G=this.geo(P,F), ph=cPhase(env), s=G.s, x0=G.x0, y0=G.y0, w=G.w, h=G.h, gold=P.accent, pts=F.pts.slice(0,8), n=pts.length;
-   var vals=pts.map(function(p){var v=parseNum(String(p.v||p.l||'0')); return isNaN(v)?0:v;}), vmax=Math.max.apply(null,vals.concat([1e-9])), vmin=Math.min.apply(null,vals.concat([0])), yZ=y0+h-118*s, yT=y0+273*s;
-   var xa=x0+w*.24, xb=x0+w*.752, P2=pts.map(function(p,i){return [n>1?lerp(xa,xb,i/(n-1)):(xa+xb)/2, lerp(yZ,yT,(vals[i]-Math.min(0,vmin))/((vmax-Math.min(0,vmin))||1))];});
-   var path=(F.lead?[[x0+w*.11,y0+h-60*s]]:[]).concat(P2), cum=[0]; for(var i=1;i<path.length;i++) cum.push(cum[i-1]+Math.hypot(path[i][0]-path[i-1][0],path[i][1]-path[i-1][1])); var total=cum[cum.length-1]||1, off=F.lead?1:0;
-   cOut(g,P,K,ph.po,function(g){
-     rrect(g,x0,y0,w,h,34*s); cTrace(g,2*(w+h)-8*34*s+2*Math.PI*34*s,ph.sub(0,.45,EASE.inOutCubic),Math.max(1.2,1.6*s),'#5a5a5a');
-     var xr=x0+w-54*s, f1=30*s, f2=40*s, f3=18*s, yt1=y0+78*s, yt2=y0+132*s;
-     cRise(g,ph.sub(.08,.5),x0,yt1-f1*1.05,w,f1*1.5,function(){cText(g,P,F.t1,xr,yt1,300,f1,P.color,'r');});
-     cRise(g,ph.sub(.16,.58),x0,yt2-f2*1.05,w,f2*1.5,function(){cText(g,P,F.t2,xr,yt2,800,f2,P.color,'r'); if(F.note) cText(g,P,F.note,xr-cW(P,F.t2,800,f2)-12*s,yt2-2*s,300,f3,P.color,'r');});
-     /* the line draws itself; each dot, bubble and label arrives when the line reaches its point */
-     var dv=total*1.2*EASE.inOutCubic(clamp((ph.pi-.22)/.7)), d=Math.min(dv,total), lwd=6*s; /* dv runs a little past the end so the last point gets its turn too */
-     if(d>0&&path.length>1){g.save(); g.beginPath(); g.moveTo(path[0][0],path[0][1]); for(var i=1;i<path.length;i++){ if(d>=cum[i]) g.lineTo(path[i][0],path[i][1]); else {var k=(d-cum[i-1])/((cum[i]-cum[i-1])||1); g.lineTo(lerp(path[i-1][0],path[i][0],k),lerp(path[i-1][1],path[i][1],k)); break;} } g.lineWidth=lwd; g.lineJoin='round'; g.lineCap='round'; g.strokeStyle=P.color; g.stroke(); g.restore();}
-     var lf=24*s, ly=y0+h-42*s;
-     P2.forEach(function(pt,i){var at=cum[i+off], q=path.length>1?clamp((dv-at)/(total*.16+1)):clamp((ph.pi-.3)/.4), e=EASE.outBack(q), p=pts[i];
-       var pl=ph.sub(.2+i*.08,.6+i*.08,EASE.outCubic); if(pl>0&&p.x){g.save(); g.globalAlpha*=pl; cText(g,P,String(p.x),pt[0],ly,800,lf,P.color,'c'); g.restore();}
-       if(q<=0) return;
-       g.fillStyle=P.color; g.beginPath(); g.arc(pt[0],pt[1],6.5*s*Math.min(1,e),0,Math.PI*2); g.fill();
-       var bf=32*s, uf=10.5*s, lab=cCount(String(p.l||p.v||''),EASE.outCubic(q)), bw=Math.max(cW(P,String(p.l||p.v||''),900,bf)+22*s,cW(P,p.u,800,uf)+18*s,66*s), bh=(p.u?58:46)*s, tip=pt[1]-15*s, bx=clamp(pt[0],x0+bw/2+8*s,x0+w-bw/2-8*s);
-       g.save(); g.translate(pt[0],tip); g.scale(e,e); g.translate(-pt[0],-tip); g.fillStyle=gold; rrect(g,bx-bw/2,tip-10*s-bh,bw,bh,14*s); g.fill(); g.beginPath(); g.moveTo(pt[0]-9*s,tip-10.5*s); g.lineTo(pt[0]+9*s,tip-10.5*s); g.lineTo(pt[0],tip); g.closePath(); g.fill();
-       cText(g,P,lab,bx,tip-10*s-bh+(p.u?bf*.98:bf*1.08),900,bf,C_INK,'c'); if(p.u) cText(g,P,p.u,bx,tip-10*s-9*s,800,uf,C_INK,'c'); g.restore();});
-   });}};
-
 /* ================= export: PNG frames -> ZIP (store) or QuickTime MOV (PNG codec, RGBA) ================= */
 var CRCT=(function(){var t=new Uint32Array(256); for(var n=0;n<256;n++){var c=n; for(var k=0;k<8;k++) c=c&1?0xEDB88320^(c>>>1):c>>>1; t[n]=c>>>0;} return t;})();
 function crc32(u8){var c=0xFFFFFFFF; for(var i=0;i<u8.length;i++) c=CRCT[(c^u8[i])&255]^(c>>>8); return (c^0xFFFFFFFF)>>>0;}
@@ -1542,19 +1392,15 @@ var FONTS=[
  ['Reem Kufi','Arabic','Reem+Kufi:wght@400..700'],['Marhey','Arabic','Marhey:wght@300..700'],['Lemonada','Arabic','Lemonada:wght@300..700'],['Lalezar','Arabic','Lalezar'],['Rakkas','Arabic','Rakkas'],['Aref Ruqaa','Arabic','Aref+Ruqaa:wght@400;700'],['Amiri','Arabic','Amiri:wght@400;700'],
  ['Anybody','English','Anybody:wdth,wght@50..150,100..900'],['Montserrat','English','Montserrat:wght@100..900'],['Unbounded','English','Unbounded:wght@200..900'],['Archivo Black','English','Archivo+Black'],['Bebas Neue','English','Bebas+Neue'],['Oswald','English','Oswald:wght@200..700'],
  ['Syne','English','Syne:wght@400..800'],['Poppins','English','Poppins:wght@100;200;300;400;500;600;700;800;900'],['Playfair Display','English','Playfair+Display:wght@400..900'],['DM Serif Display','English','DM+Serif+Display'],['JetBrains Mono','English','JetBrains+Mono:wght@100..800'],['Permanent Marker','English','Permanent+Marker']];
-var DEF={text:'عنوان الحلقة\nEpisode Title',move:'mask',font:'Alexandria',weight:900,size:170,leading:1.25,tracking:0,color:'#ffffff',accent:'#EF4122',outline:0,olColor:'#000000',olOnly:false,grad:false,color2:'#EF4122',gradAngle:90,shadow:0,shOn:false,shColor:'#000000',shOp:60,shBlur:18,shDist:10,shAngle:90,fxv:2,x:.5,y:.5,align:'c',dur:3,inDur:1,outDur:.6,outOn:true,ease:'auto',stagger:50,delay:0,kind:'text',comp:'',f:{},fontRev:0,mp:{}};
+var DEF={text:'عنوان الحلقة\nEpisode Title',move:'mask',font:'Alexandria',weight:900,size:170,leading:1.25,tracking:0,color:'#ffffff',accent:'#EF4122',outline:0,olColor:'#000000',olOnly:false,grad:false,color2:'#EF4122',gradAngle:90,shadow:0,shOn:false,shColor:'#000000',shOp:60,shBlur:18,shDist:10,shAngle:90,fxv:2,x:.5,y:.5,align:'c',dur:3,inDur:1,outDur:.6,outOn:true,ease:'auto',stagger:50,delay:0,fontRev:0,mp:{}};
 /* ---- lines: the title is a list of lines, each one a layer with its own text, move, timing, type, colour and position. P is always the selected one. ---- */
-var SKEY='aromaTypo.v2', SKEY1='aromaTypo.v1', MAXL=24, LINES=[], sel=0, P=null, posMode='line';
+var SKEY='aromaTypo.v2', SKEY1='aromaTypo.v1', MAXL=12, LINES=[], sel=0, P=null, posMode='line';
 var STYLE_K=['font','weight','size','leading','tracking','color','accent','outline','olColor','olOnly','grad','color2','gradAngle','shOn','shColor','shOp','shBlur','shDist','shAngle'], MOVE_K=['move','inDur','outDur','outOn','ease','stagger'];
 function mkLine(src){var q=Object.assign({},DEF); if(src&&typeof src==='object') Object.keys(DEF).forEach(function(k){ if(typeof src[k]===typeof DEF[k]) q[k]=src[k]; });
   /* settings saved before Outline and Shadow had their own controls: the outline now sits round the fill unless Outline Only is on; a shadow was one amount */
   if(src&&typeof src==='object'){ if(src.fxv!==2) q.olOnly=false; if(src.shadow>0&&typeof src.shOn!=='boolean'){q.shOn=true; q.shBlur=Math.round(src.shadow*.5); q.shDist=Math.round(src.shadow*.12); q.shOp=Math.round(Math.min(.85,.35+src.shadow/200)*100); q.shAngle=90;} }
   q.shadow=0; q.fxv=2;
-  if(!MOVE_BY[q.move]) q.move='mask'; q.fontRev=0; q.mp=(q.mp&&typeof q.mp==='object'&&!Array.isArray(q.mp))?JSON.parse(JSON.stringify(q.mp)):{}; q.text=String(q.text).replace(/\r/g,''); try{q.f=(q.f&&typeof q.f==='object'&&!Array.isArray(q.f))?JSON.parse(JSON.stringify(q.f)):{};}catch(e){q.f={};} if(q.kind!=='comp'||!COMPS[q.comp]){q.kind='text'; q.comp=''; q.f={};} else q.text=compLabel(q); return q;}
-/* what a component is called in the list: its name and the value that matters most */
-function compLabel(q){var C=COMPS[q.comp], F=cFields(q), main=F.num||F.big||F.t2||''; return C.name+(main?' · '+main+(F.unit&&F.unit.length<3?F.unit:''):'');}
-/* where a layer rests on the frame, whatever it is */
-function boxOf(Q){ if(Q.kind==='comp') return cBox(Q); var L=layout(Q); return {x0:L.x0,x1:L.x1,top:L.top,bot:L.bot,w:L.w,h:L.h}; }
+  if(!MOVE_BY[q.move]) q.move='mask'; q.fontRev=0; q.mp=(q.mp&&typeof q.mp==='object'&&!Array.isArray(q.mp))?JSON.parse(JSON.stringify(q.mp)):{}; q.text=String(q.text).replace(/\r/g,''); return q;}
 /* one block of text with several rows (how it was before) -> one line per row, stacked where the rows were, each starting a beat after the one above */
 function splitRows(q){var rows=q.text.split('\n').map(function(r){return r.trim();}).filter(Boolean), n=rows.length; if(n<2){q.text=rows[0]||''; return [q];}
   return rows.slice(0,MAXL).map(function(r,i){var c=mkLine(q); c.text=r; c.y=q.y+((i-(n-1)/2)*q.size*q.leading)/H; c.delay=Math.min(Math.round(i*15)/100,Math.max(0,q.dur-1)); return c;});}
@@ -1606,22 +1452,7 @@ function rangeCtl(parent,id,label,min,max,step,get,set,fmt){var f=el('div','f',p
 function slider(parent,id,label,min,max,step,key,fmt){var f=rangeCtl(parent,id,label,min,max,step,function(){return P[key];},function(x){P[key]=x; onChange(key);},fmt); UI[key]={set:f._set}; return f;}
 /* the selected move's own controls */
 function fmtStep(p){var dec=(String(p.step).split('.')[1]||'').length; return function(x){return x.toFixed(dec)+(p.unit==='°'||p.unit==='%'||p.unit==='×'?p.unit:(p.unit?' '+p.unit:''));};}
-/* the fields of the selected component: what the team types when the data changes */
-function setField(k,v){ if(!P.f) P.f={}; P.f[k]=v; P.text=compLabel(P); syncLines(); placeSel(); dirty(); persist(); hook('change','comp'); }
-function buildCompUI(){var C=COMPS[P.comp], F=cFields(P), box=UI.compBox; box.textContent=''; UI.compTitle.textContent=(LINES.length>1?'Layer '+(sel+1)+' · ':'')+C.name;
-  C.fields.forEach(function(fd){var id='cf_'+fd.k, f=el('div','f',box);
-    if(fd.type==='toggle'){var r=el('div','r',f); el('span','lab',r,fd.label); var sw=el('button','switch',r); sw.type='button'; sw.id=id; sw.setAttribute('aria-label',fd.label); sw.setAttribute('aria-pressed',String(!!F[fd.k])); sw.addEventListener('click',function(){var on=sw.getAttribute('aria-pressed')!=='true'; sw.setAttribute('aria-pressed',String(on)); setField(fd.k,on);}); return;}
-    if(fd.type==='points'){el('span','lab',f,fd.label); var tb=el('div','pts',f); tb.id=id;
-      var draw=function(){var pts=cFields(P)[fd.k]; tb.textContent=''; var hd=el('div','pt',tb); ['Label','Plot','Shown','Unit',''].forEach(function(t){el('span','',hd,t);});
-        pts.forEach(function(pt,i){var row=el('div','pt',tb); ['x','v','l','u'].forEach(function(key){var ip=el('input','',row); ip.type='text'; ip.dir='auto'; ip.value=pt[key]==null?'':pt[key]; ip.setAttribute('aria-label','Point '+(i+1)+' '+key); ip.addEventListener('input',function(){var a=JSON.parse(JSON.stringify(cFields(P)[fd.k])); a[i][key]=ip.value; setField(fd.k,a);});});
-          var x=el('button','',row,'×'); x.type='button'; x.setAttribute('aria-label','Remove point '+(i+1)); x.disabled=pts.length<2; x.addEventListener('click',function(){var a=JSON.parse(JSON.stringify(cFields(P)[fd.k])); a.splice(i,1); setField(fd.k,a); draw();});});
-        var ad=el('button','ghost',tb); ad.type='button'; icoLabel(ad,'plus','Add Point'); ad.disabled=pts.length>=8; ad.addEventListener('click',function(){var a=JSON.parse(JSON.stringify(cFields(P)[fd.k])), last=a[a.length-1]||{x:'',v:'1',l:'1',u:''}; a.push({x:'',v:last.v,l:last.l,u:last.u}); setField(fd.k,a); draw();});};
-      draw(); el('p','hint',f,'Label: اللي بيتكتب تحت النقطة. Plot: الرقم اللي بيحدد ارتفاعها (كله بنفس الوحدة). Shown: اللي بيتكتب في البالونة. Unit: الوحدة تحته.'); return;}
-    var lb=el('label','lab',f,fd.label), ip=el('input','inp',f); ip.type='text'; ip.id=id; ip.dir='auto'; ip.spellcheck=false; ip.autocomplete='off'; lb.htmlFor=id; ip.value=F[fd.k]; ip.addEventListener('input',function(){setField(fd.k,ip.value);});});
-  el('p','hint',box,'غيّر البيانات هنا والحركة بتتظبط لوحدها. الحجم من Size، واللون الأساسي من Accent، ولون الكتابة من Fill.');}
-function buildMoveUI(){var isC=P.kind==='comp'; if(UI.compSec){UI.compSec.hidden=!isC; UI.moveSec.hidden=isC; $('#mGrid').classList.toggle('off',isC); if(UI.alignF) UI.alignF.hidden=isC;}
-  if(isC){buildCompUI(); UI.esGrid.hidden=true; UI.accF.hidden=false; return;}
-  var M=MOVE_BY[P.move], box=UI.moveBox, v=mvals(M,P); box.textContent=''; UI.moveTitle.textContent=(LINES.length>1?'Layer '+(sel+1)+' · ':'')+'Move · '+M.num+' · '+M.name;
+function buildMoveUI(){var M=MOVE_BY[P.move], box=UI.moveBox, v=mvals(M,P); box.textContent=''; UI.moveTitle.textContent=(LINES.length>1?'Line '+(sel+1)+' · ':'')+'Move · '+M.num+' · '+M.name;
   function put(k,x){ if(!P.mp[M.id]) P.mp[M.id]={}; P.mp[M.id][k]=x; onChange('mp'); }
   var pend=[], grid=null;
   (M.params||[]).forEach(function(p){var id='mp_'+M.id+'_'+p.k;
@@ -1645,16 +1476,15 @@ function toggleCtl(parent,id,label,key){var f=el('div','f',parent), r=el('div','
 /* the extra controls of Gradient, Outline and Shadow show only while that effect is on */
 function syncFx(){ if(UI.gradBox) UI.gradBox.hidden=!P.grad; if(UI.olBox) UI.olBox.hidden=!(P.outline>0); if(UI.shBox) UI.shBox.hidden=!P.shOn; }
 (function build(){
-  var s=el('section','sec',ctl); s.id='secLines'; s.dataset.sec='Lines'; UI.lnCount=secHead(s,'Lines','Layers'); UI.lnList=el('div','lns',s); UI.lnList.id='lnList';
-  var la=el('div','lnacts',s), ad=el('button','ghost',la), du=el('button','ghost',la); ad.type='button'; ad.id='lnAdd'; du.type='button'; du.id='lnDup'; icoLabel(ad,'plus','Add Text'); icoLabel(du,'copy','Duplicate');
+  var s=el('section','sec',ctl); s.id='secLines'; s.dataset.sec='Lines'; UI.lnCount=secHead(s,'Lines','Lines'); UI.lnList=el('div','lns',s); UI.lnList.id='lnList';
+  var la=el('div','lnacts',s), ad=el('button','ghost',la), du=el('button','ghost',la); ad.type='button'; ad.id='lnAdd'; du.type='button'; du.id='lnDup'; icoLabel(ad,'plus','Add Line'); icoLabel(du,'copy','Duplicate');
   UI.lnUp=icoBtn(la,'ghost ib','up','Move Up (Draws Behind)',function(){moveLine(-1);}); UI.lnDown=icoBtn(la,'ghost ib','down','Move Down (Draws In Front)',function(){moveLine(1);}); ad.addEventListener('click',function(){addLine(sel,true);}); du.addEventListener('click',function(){addLine(sel,true,true);});
-  var sp=el('button','ghost',s); sp.type='button'; sp.id='lnSplit'; icoLabel(sp,'split','Split Rows Into Layers'); sp.hidden=true; sp.title='This line holds several rows. Make each row a line of its own.'; sp.addEventListener('click',splitSel);
-  el('p','hint',s,'كل سطر أو مكوّن Layer لوحده. دوس عليه يتعلّم، وكل اللي تحت (الحركة والتوقيت والخط واللون والمكان) بيبقى بتاعه هو. Enter بيضيف سطر جديد، و Shift + Enter بينزل صف جوه نفس السطر.');
-  s=el('section','sec',ctl); s.dataset.sec='Component'; s.id='secComp'; UI.compSec=s; UI.compTitle=secHead(s,'Component','Component'); UI.compBox=el('div','cf',s); s.hidden=true;
+  var sp=el('button','ghost',s); sp.type='button'; sp.id='lnSplit'; icoLabel(sp,'split','Split Rows Into Lines'); sp.hidden=true; sp.title='This line holds several rows. Make each row a line of its own.'; sp.addEventListener('click',splitSel);
+  el('p','hint',s,'كل سطر Layer لوحده. دوس على السطر يتعلّم، وكل اللي تحت (الحركة والتوقيت والخط واللون والمكان) بيبقى بتاعه هو. Enter بيضيف سطر جديد، و Shift + Enter بينزل صف جوه نفس السطر.');
   s=el('section','sec',ctl); s.dataset.sec='Move'; s.id='secMove'; UI.moveSec=s; UI.moveTitle=secHead(s,'Move','Move'); UI.moveBox=el('div','mbox',s); UI.moveReset=el('button','ghost mini',s); UI.moveReset.type='button'; icoLabel(UI.moveReset,'reset','Reset Move'); UI.moveReset.addEventListener('click',function(){delete P.mp[P.move]; buildMoveUI(); onChange('mp');});
   s=sec('Timing');
-  slider(s,'fDur','Duration · All Layers',.5,12,.1,'dur',function(v){return v.toFixed(1)+' s';});
-  slider(s,'fDelay','Start At · This Layer',0,8,.05,'delay',function(v){return v?v.toFixed(2)+' s':'0 s';});
+  slider(s,'fDur','Duration · All Lines',.5,12,.1,'dur',function(v){return v.toFixed(1)+' s';});
+  slider(s,'fDelay','Start At · This Line',0,8,.05,'delay',function(v){return v?v.toFixed(2)+' s':'0 s';});
   var t=el('div','two',s); slider(t,'fIn','In',.2,4,.1,'inDur',function(v){return v.toFixed(1)+' s';}); slider(t,'fOut','Out',.2,4,.1,'outDur',function(v){return v.toFixed(1)+' s';});
   var r=el('div','f',s), rr=el('div','r',r); el('span','lab',rr,'Animate Out'); var sw=el('button','switch',rr); sw.type='button'; sw.id='fOutOn'; sw.setAttribute('aria-label','Animate Out'); sw.setAttribute('aria-pressed',String(P.outOn)); sw.addEventListener('click',function(){P.outOn=!P.outOn; sw.setAttribute('aria-pressed',String(P.outOn)); onChange('outOn');});
   t=el('div','two',s); UI.esGrid=t; var f=el('div','f',t), lb=el('label','lab',f,'Easing'), se=el('select','',f); UI.easeF=f; se.id='fEase'; lb.htmlFor='fEase'; Object.keys(EASE_NAMES).forEach(function(k){var o=el('option','',se,EASE_NAMES[k]); o.value=k;}); se.value=P.ease; se.addEventListener('change',function(){P.ease=se.value; onChange('ease');});
@@ -1678,47 +1508,47 @@ function syncFx(){ if(UI.gradBox) UI.gradBox.hidden=!P.grad; if(UI.olBox) UI.olB
   s=sec('Position'); var af=el('div','f',s); UI.alignF=af; el('span','lab',af,'Align'); var asg=el('div','seg icons',af); asg.id='fAlign'; UI.alignBtns=[];
   [['l','Align Left','all'],['c','Align Center','alc'],['r','Align Right','alr']].forEach(function(o){var b=icoBtn(asg,'',o[2],o[1],function(){setAlign(o[0]);}); UI.alignBtns.push({b:b,v:o[0]});});
   var ps=el('div','seg',s); ps.id='segPos'; ps.style.display='flex'; UI.posSeg=ps;
-  [['line','This Layer'],['all','All Layers']].forEach(function(o){var b=el('button','',ps,o[1]); b.type='button'; b.style.flex='1'; b.setAttribute('aria-pressed',String(o[0]===posMode)); b.addEventListener('click',function(){posMode=o[0]; Array.prototype.forEach.call(ps.children,function(x){x.setAttribute('aria-pressed',String(x===b));});});});
+  [['line','This Line'],['all','All Lines']].forEach(function(o){var b=el('button','',ps,o[1]); b.type='button'; b.style.flex='1'; b.setAttribute('aria-pressed',String(o[0]===posMode)); b.addEventListener('click',function(){posMode=o[0]; Array.prototype.forEach.call(ps.children,function(x){x.setAttribute('aria-pressed',String(x===b));});});});
   var pw=el('div','r',s), pg=el('div','pos',pw); UI.posBtns=[];
   [.14,.5,.86].forEach(function(y,yi){[.08,.5,.92].forEach(function(x,xi){var b=el('button','',pg); b.type='button'; b.setAttribute('aria-label','Position '+['top','middle','bottom'][yi]+' '+['left','center','right'][xi]); b.addEventListener('click',function(){placeAt(x,y,['l','c','r'][xi]); onChange('pos');}); UI.posBtns.push({b:b,x:x,y:y});});});
-  var pv=el('span','val',pw); UI.posVal=pv; el('p','hint',s,'اسحب أي Layer على الشاشة تحركه. مع Shift بتحرك الكل مع بعض.');
-  var ca=el('div','lnacts',s), c1=el('button','ghost',ca,'Move → All Text'), c2=el('button','ghost',ca,'Style → All Layers'); UI.copyRow=ca; c1.type='button'; c2.type='button'; c1.title='Give every line this line\'s move and timing'; c2.title='Give every line this line\'s font, size and colours';
+  var pv=el('span','val',pw); UI.posVal=pv; el('p','hint',s,'اسحب أي سطر على الشاشة تحركه. مع Shift بتحرك كل السطور مع بعض.');
+  var ca=el('div','lnacts',s), c1=el('button','ghost',ca,'Move → All Lines'), c2=el('button','ghost',ca,'Style → All Lines'); UI.copyRow=ca; c1.type='button'; c2.type='button'; c1.title='Give every line this line\'s move and timing'; c2.title='Give every line this line\'s font, size and colours';
   c1.addEventListener('click',function(){copyTo(MOVE_K,true);}); c2.addEventListener('click',function(){copyTo(STYLE_K,false);});
-  var rs=el('button','ghost',s); rs.type='button'; icoLabel(rs,'reset','Reset Layer'); rs.addEventListener('click',function(){Object.assign(P,DEF,{text:P.text,mp:{},x:P.x,y:P.y,align:P.align,dur:P.dur,delay:P.delay,kind:P.kind,comp:P.comp,f:P.f,fontRev:P.fontRev}); refreshAll(); useFont(P.font); hook('reset');});
+  var rs=el('button','ghost',s); rs.type='button'; icoLabel(rs,'reset','Reset Line'); rs.addEventListener('click',function(){Object.assign(P,DEF,{text:P.text,mp:{},x:P.x,y:P.y,align:P.align,dur:P.dur,delay:P.delay}); refreshAll(); useFont(P.font); hook('reset');});
 })();
 /* ---- lines ---- */
 function buildLines(){var box=UI.lnList; box.textContent='';
   LINES.forEach(function(Q,i){var r=el('div','ln',box), nb=el('button','n',r,String(i+1)), ip=el('textarea','',r), mv=el('button','mv',r,''), x=el('button','x',r,'×'); nb.type='button'; nb.setAttribute('aria-label','Select line '+(i+1)); mv.type='button'; x.type='button'; x.setAttribute('aria-label','Remove line '+(i+1));
-    ip.rows=1; ip.dir='auto'; ip.spellcheck=false; ip.value=Q.text; ip.placeholder='اكتب السطر هنا'; if(Q.kind==='comp'){ip.readOnly=true; ip.dir='ltr'; r.dataset.kind='comp';} ip.setAttribute('aria-label','Line '+(i+1)+' text');
+    ip.rows=1; ip.dir='auto'; ip.spellcheck=false; ip.value=Q.text; ip.placeholder='اكتب السطر هنا'; ip.setAttribute('aria-label','Line '+(i+1)+' text');
     nb.addEventListener('click',function(){selectLine(i);}); ip.addEventListener('focus',function(){selectLine(i);}); ip.addEventListener('input',function(){LINES[i].text=ip.value.replace(/\r/g,''); fitRow(ip); onChange('text'); syncLines();});
-    ip.addEventListener('keydown',function(e){ if(e.isComposing) return; var one=ip.value.indexOf('\n')<0; if(e.key==='Enter'&&!e.shiftKey){e.preventDefault(); addLine(i,true);} else if((e.key==='Backspace'||e.key==='Delete')&&ip.readOnly&&LINES.length>1){e.preventDefault(); removeLine(i,true);} else if(e.key==='Backspace'&&!ip.value&&LINES.length>1){e.preventDefault(); removeLine(i,true);} else if(e.key==='ArrowUp'&&i>0&&one){e.preventDefault(); focusLine(i-1);} else if(e.key==='ArrowDown'&&i<LINES.length-1&&one){e.preventDefault(); focusLine(i+1);} });
-    mv.addEventListener('click',function(){selectLine(i); if(P.kind==='comp'){ if(UI.compSec) UI.compSec.scrollIntoView({block:'nearest'}); return; } var t=tiles.filter(function(t){return t.M.id===P.move;})[0]; if(t){ if(t.b.hidden){cat='All'; $('#mSearch').value=''; Array.prototype.forEach.call($('#mCats').children,function(c,k){c.setAttribute('aria-pressed',String(k===0));}); filterTiles();} t.b.scrollIntoView({block:'center',behavior:reduce?'auto':'smooth'}); }});
+    ip.addEventListener('keydown',function(e){ if(e.isComposing) return; var one=ip.value.indexOf('\n')<0; if(e.key==='Enter'&&!e.shiftKey){e.preventDefault(); addLine(i,true);} else if(e.key==='Backspace'&&!ip.value&&LINES.length>1){e.preventDefault(); removeLine(i,true);} else if(e.key==='ArrowUp'&&i>0&&one){e.preventDefault(); focusLine(i-1);} else if(e.key==='ArrowDown'&&i<LINES.length-1&&one){e.preventDefault(); focusLine(i+1);} });
+    mv.addEventListener('click',function(){selectLine(i); var t=tiles.filter(function(t){return t.M.id===P.move;})[0]; if(t){ if(t.b.hidden){cat='All'; $('#mSearch').value=''; Array.prototype.forEach.call($('#mCats').children,function(c,k){c.setAttribute('aria-pressed',String(k===0));}); filterTiles();} t.b.scrollIntoView({block:'center',behavior:reduce?'auto':'smooth'}); }});
     ip.addEventListener('paste',function(e){var t=((e.clipboardData||window.clipboardData).getData('text')||'').replace(/\r/g,''); if(t.indexOf('\n')<0) return; var rows=t.split('\n').filter(function(r){return r.trim();}); if(rows.length<2) return; e.preventDefault();
       LINES[i].text=(LINES[i].text||'')+rows[0].trim(); var at=i; rows.slice(1).forEach(function(r){ if(LINES.length>=MAXL) return; addLine(at,false,false,r.trim()); at++; }); buildLines(); refreshAll();});
     x.addEventListener('click',function(){removeLine(i);}); });
   syncLines();}
 function syncLines(){var box=UI.lnList; if(!box) return; if(box.children.length!==LINES.length){buildLines(); return;}
-  Array.prototype.forEach.call(box.children,function(r,i){var Q=LINES[i], ip=r.querySelector('textarea'), mv=r.querySelector('.mv'), M=MOVE_BY[Q.move]; r.setAttribute('aria-selected',String(i===sel)); if(document.activeElement!==ip&&ip.value!==Q.text) ip.value=Q.text; fitRow(ip); if(Q.kind==='comp'){mv.innerHTML=ico(COMPS[Q.comp].icon||'box'); mv.title='Layer '+(i+1)+' · '+COMPS[Q.comp].name;} else {mv.textContent=M.num; mv.title='Layer '+(i+1)+' · '+M.num+' · '+M.name;} r.querySelector('.x').disabled=LINES.length<2;});
-  UI.lnCount.textContent='Layers · '+LINES.length+' / '+MAXL; $('#lnAdd').disabled=$('#lnDup').disabled=LINES.length>=MAXL; var rws=P.text.split('\n').filter(function(r){return r.trim();}).length; $('#lnSplit').hidden=!(rws>1&&LINES.length+rws-1<=MAXL); if(UI.lnUp){UI.lnUp.disabled=sel<=0; UI.lnDown.disabled=sel>=LINES.length-1;} var many=LINES.length>1; if(UI.posSeg){UI.posSeg.hidden=!many; UI.copyRow.hidden=!many;} }
+  Array.prototype.forEach.call(box.children,function(r,i){var Q=LINES[i], ip=r.querySelector('textarea'), mv=r.querySelector('.mv'), M=MOVE_BY[Q.move]; r.setAttribute('aria-selected',String(i===sel)); if(document.activeElement!==ip&&ip.value!==Q.text) ip.value=Q.text; fitRow(ip); mv.textContent=M.num; mv.title='Line '+(i+1)+' · '+M.num+' · '+M.name; r.querySelector('.x').disabled=LINES.length<2;});
+  UI.lnCount.textContent='Lines · '+LINES.length+' / '+MAXL; $('#lnAdd').disabled=$('#lnDup').disabled=LINES.length>=MAXL; var rws=P.text.split('\n').filter(function(r){return r.trim();}).length; $('#lnSplit').hidden=!(rws>1&&LINES.length+rws-1<=MAXL); if(UI.lnUp){UI.lnUp.disabled=sel<=0; UI.lnDown.disabled=sel>=LINES.length-1;} var many=LINES.length>1; if(UI.posSeg){UI.posSeg.hidden=!many; UI.copyRow.hidden=!many;} }
 function fitRow(ip){ip.style.height='auto'; ip.style.height=Math.max(20,ip.scrollHeight)+'px';}
 function focusLine(i){var r=UI.lnList.children[i], ip=r&&r.querySelector('textarea'); if(ip){ip.focus(); try{ip.setSelectionRange(ip.value.length,ip.value.length);}catch(e){}} }
 function selectLine(i){i=clamp(i,0,LINES.length-1); if(i===sel&&P===LINES[i]){flashSel(); return;} sel=i; P=LINES[i]; refreshAll(); flashSel(); hook('line',i);}
 /* a new line takes the look of the one it comes from, sits under it and starts a beat later */
-function addLine(after,focus,copy,text){ if(LINES.length>=MAXL) return; var src=LINES[after], q=mkLine(src); if(!copy){q.kind='text'; q.comp=''; q.f={}; q.text=text||'';} var rows=copy?q.text.split('\n').length:1, sb=src.text.trim()?boxOf(src):null; q.y=sb?(q.kind==='comp'?src.y+(sb.h+24)/H:(sb.bot+rows*q.size*q.leading/2)/H):src.y+src.size*src.leading/H; q.delay=Math.min(Math.round((src.delay+.15)*20)/20,Math.max(0,src.dur-1));
+function addLine(after,focus,copy,text){ if(LINES.length>=MAXL) return; var src=LINES[after], q=mkLine(src); if(!copy) q.text=text||''; var rows=copy?q.text.split('\n').length:1; q.y=src.text.trim()?(layout(src).bot+rows*q.size*q.leading/2)/H:src.y+src.size*src.leading/H; q.delay=Math.min(Math.round((src.delay+.15)*20)/20,Math.max(0,src.dur-1));
   LINES.splice(after+1,0,q); sel=after+1; P=q; if(text) return; buildLines(); refreshAll(); flashSel(); if(focus) focusLine(sel); hook('line-add',sel);}
 function removeLine(i,focus){ if(LINES.length<2) return; LINES.splice(i,1); if(sel>i||sel>=LINES.length||(sel===i&&i>0)) sel=Math.max(0,sel-1); P=LINES[sel]; buildLines(); refreshAll(); flashSel(); if(focus) focusLine(sel); hook('line-remove',i);}
 /* a line that holds several rows -> one line per row */
 function splitSel(){var parts=splitRows(mkLine(P)); if(parts.length<2) return; var d0=P.delay; parts.forEach(function(q,i){q.delay=Math.min(Math.round((d0+i*.15)*20)/20,Math.max(0,q.dur-1));}); Array.prototype.splice.apply(LINES,[sel,1].concat(parts)); P=LINES[sel]; buildLines(); refreshAll(); flashSel(); hook('line-split');}
 /* the list order is the drawing order: the last line is in front */
 function moveLine(d){var j=sel+d; if(j<0||j>=LINES.length) return; var t=LINES[sel]; LINES[sel]=LINES[j]; LINES[j]=t; sel=j; buildLines(); placeSel(); dirty(); persist(); hook('line-move');}
-function copyTo(keys,mp){LINES.forEach(function(q){ if(q===P||(mp&&q.kind==='comp')) return; keys.forEach(function(k){q[k]=P[k];}); if(mp) q.mp=JSON.parse(JSON.stringify(P.mp)); }); LCACHE.clear(); syncLines(); dirty(true); persist(); hook('copy-all');}
-function groupBox(){var a=Infinity,b=-Infinity,ha=0,hb=0; LINES.forEach(function(q){ if(!q.text.trim()) return; var L=boxOf(q); if(L.top<a){a=L.top; ha=L.h;} if(L.bot>b){b=L.bot; hb=L.h;} }); return a===Infinity?null:{top:a,bot:b,ha:ha,hb:hb};}
+function copyTo(keys,mp){LINES.forEach(function(q){ if(q===P) return; keys.forEach(function(k){q[k]=P[k];}); if(mp) q.mp=JSON.parse(JSON.stringify(P.mp)); }); LCACHE.clear(); syncLines(); dirty(true); persist(); hook('copy-all');}
+function groupBox(){var a=Infinity,b=-Infinity,ha=0,hb=0; LINES.forEach(function(q){ if(!q.text.trim()) return; var L=layout(q); if(L.top<a){a=L.top; ha=L.h;} if(L.bot>b){b=L.bot; hb=L.h;} }); return a===Infinity?null:{top:a,bot:b,ha:ha,hb:hb};}
 /* All Lines: the title moves as one block. Top and bottom put its first / last line where a single line would sit. */
 function placeAt(x,y,al){var gb=posMode==='all'&&LINES.length>1?groupBox():null; if(gb){var dy=(y<.3?y*H-gb.ha/2-gb.top:(y>.7?y*H+gb.hb/2-gb.bot:y*H-(gb.top+gb.bot)/2))/H; LINES.forEach(function(q){q.y+=dy; q.x=x; q.align=al;});} else {P.x=x; P.y=y; P.align=al;} }
-function lineHit(px,py){function inside(Q){ if(!Q.text.trim()) return false; var L=boxOf(Q), pad=Q.kind==='comp'?0:Q.size*.12; return px>=L.x0-pad&&px<=L.x1+pad&&py>=L.top&&py<=L.bot;} if(inside(P)) return sel; for(var i=LINES.length-1;i>=0;i--) if(inside(LINES[i])) return i; return -1;}
+function lineHit(px,py){function inside(Q){ if(!Q.text.trim()) return false; var L=layout(Q), pad=Q.size*.12; return px>=L.x0-pad&&px<=L.x1+pad&&py>=L.top&&py<=L.bot;} if(inside(P)) return sel; for(var i=LINES.length-1;i>=0;i--) if(inside(LINES[i])) return i; return -1;}
 /* the selected line is boxed on the monitor (an overlay, never in the render) */
 var selT=0, vpIn=false, dragging=false;
-function placeBox(b,Q){var L=boxOf(Q), pad=Q.kind==='comp'?10:Q.size*.1; b.style.left=((L.x0-pad)/W*100)+'%'; b.style.top=(L.top/H*100)+'%'; b.style.width=((L.w+pad*2)/W*100)+'%'; b.style.height=(L.h/H*100)+'%';}
+function placeBox(b,Q){var L=layout(Q), pad=Q.size*.1; b.style.left=((L.x0-pad)/W*100)+'%'; b.style.top=(L.top/H*100)+'%'; b.style.width=((L.w+pad*2)/W*100)+'%'; b.style.height=(L.h/H*100)+'%';}
 function placeSel(){var b=$('#selBox'); if(!b||!P) return; placeBox(b,P); $('#selTag').textContent=String(sel+1);}
 function flashSel(ms){var b=$('#selBox'); if(!b) return; placeSel(); b.classList.toggle('on',LINES.length>1||dragging); clearTimeout(selT); if(!vpIn&&!dragging) selT=setTimeout(function(){b.classList.remove('on');},ms||1800);}
 /* Align changes how the rows sit against each other; the block itself stays where it is */
@@ -1739,13 +1569,13 @@ function drawTile(t,time){ if(!t.q) return; var g=t.g, k=TW/1920; g.setTransform
 function buildTiles(){var cats=['All']; MOVES.forEach(function(m){ if(cats.indexOf(m.cat)<0) cats.push(m.cat); }); var cw=$('#mCats');
   cats.forEach(function(c){var b=el('button','chip',cw,c); b.type='button'; b.setAttribute('aria-pressed',String(c===cat)); b.addEventListener('click',function(){cat=c; Array.prototype.forEach.call(cw.children,function(x){x.setAttribute('aria-pressed',String(x===b));}); filterTiles();});});
   MOVES.forEach(function(M){var b=el('button','tile',grid); b.type='button'; var cv=el('canvas','',b); cv.width=TW; cv.height=TH; var nm=el('span','',b); el('b','',nm,M.num); nm.appendChild(document.createTextNode(M.name)); b.title=M.num+' · '+M.name; var t={M:M,b:b,g:cv.getContext('2d'),q:null,hover:false,t0:0,vis:!IO_T,stale:true}; b._t=t; if(IO_T) IO_T.observe(b); tiles.push(t);
-    b.addEventListener('click',function(){ if(P.kind==='comp'){$('#mSay').textContent='الحركات دي للنص. المكوّن ليه حركته الجاهزة، وبياناته من Component على اليمين.'; return;} P.move=M.id; markTile(); buildMoveUI(); time=0; playing=true; syncPlay(); dirty(); persist(); hook('move',M);});
+    b.addEventListener('click',function(){P.move=M.id; markTile(); buildMoveUI(); time=0; playing=true; syncPlay(); dirty(); persist(); hook('move',M);});
     function on(){t.hover=true; t.t0=performance.now(); if(!t.q) t.q=thumbP(t.M); kick();} function off(){t.hover=false; if(t.q) drawTile(t,t.q.inDur*.62);}
     b.addEventListener('pointerenter',on); b.addEventListener('pointerleave',off); b.addEventListener('focus',on); b.addEventListener('blur',off);});
   $('#mCount').textContent=String(MOVES.length); $('#mSearch').addEventListener('input',filterTiles);}
 function filterTiles(){var q=$('#mSearch').value.trim().toLowerCase().replace(/[٠-٩]/g,function(d){return '٠١٢٣٤٥٦٧٨٩'.indexOf(d);}), n=/^#?\d+$/.test(q)?parseInt(q.replace('#',''),10):0; tiles.forEach(function(t){t.b.hidden=!((cat==='All'||t.M.cat===cat)&&(!q||(n?t.M.no===n:t.M.name.toLowerCase().indexOf(q)>=0)));});}
 function markTile(){tiles.forEach(function(t){t.b.setAttribute('aria-pressed',String(t.M.id===P.move));}); syncLines();}
-var thumbT=0; function refreshThumbs(){clearTimeout(thumbT); thumbT=setTimeout(function(){tiles.forEach(function(t){ if(t.vis) paintTile(t); else t.stale=true; }); ptiles.forEach(function(t){ if(!t.hover) drawTile(t,t.q.inDur+.6); });},140);}
+var thumbT=0; function refreshThumbs(){clearTimeout(thumbT); thumbT=setTimeout(function(){tiles.forEach(function(t){ if(t.vis) paintTile(t); else t.stale=true; });},140);}
 
 /* ---- monitor ---- */
 var cv=$('#cv'), g=cv.getContext('2d'), time=0, playing=true, loop=true, last=0, need=true, reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1757,7 +1587,7 @@ function syncPlay(){$('#btnPlay').setAttribute('aria-pressed',String(playing));}
 function tick(now){now=now||performance.now(); var dt=Math.min(.1,(now-last)/1000); last=now; var D=timing(P).D;
   if(playing){time+=dt; if(time>=D){ if(loop) time=time%D; else {time=D; playing=false; syncPlay();} } need=true;}
   if(need){need=false; g.setTransform(1,0,0,1,0,0); g.clearRect(0,0,W,H); try{renderAll(g,time,1);}catch(e){console.error(e);} var sc=$('#scrub'), p=time/D; sc.value=Math.round(p*1000); sc.style.setProperty('--p',(p*100)+'%'); $('#time').textContent=tc(time,OUT.fps)+' / '+tc(D,OUT.fps);}
-  var anyHover=false; tiles.forEach(function(t){ if(t.hover&&t.q){anyHover=true; drawTile(t,((now-t.t0)/1000)%(t.q.dur+.25));} }); ptiles.forEach(function(t){ if(t.hover&&t.q){anyHover=true; drawTile(t,((now-t.t0)/1000)%(t.q.dur+.25));} });
+  var anyHover=false; tiles.forEach(function(t){ if(t.hover&&t.q){anyHover=true; drawTile(t,((now-t.t0)/1000)%(t.q.dur+.25));} });
   if(playing||anyHover||need) requestAnimationFrame(tick); else running=false;}
 var running=false; function kick(){ if(!running){running=true; last=performance.now(); requestAnimationFrame(tick);} }
 var _dirty=dirty; dirty=function(th){_dirty(th); kick();};
@@ -1841,65 +1671,12 @@ function openOut(){ if(rBusy) return; $('#scrimO').hidden=false; syncOut(); $('#
 function closeOut(){ $('#scrimO').hidden=true; if(!$('#scrim').hidden) $('#rStart').focus(); else $('#btnOut').focus(); hook('out-close'); }
 applyOut(false,true);
 
-/* ---- projects ---- */
-var PROJECTS=[
- {id:'npd',name:'NPD',tip:'تايبو وأرقام ورسوم بيانية بهوية المشروع: أسود ودهبي وأبيض',
-  brand:{color:'#ffffff',accent:'#DBC373',font:'Alexandria',bg:'black'},
-  templates:[{comp:'bignum'},{comp:'statbox'},{comp:'framenum'},{comp:'plate'},{comp:'linechart'},
-   {text:'عنوان بخط تقيل',name:'Text · Bold',weight:800,move:'mask'},{text:'سطر بخط خفيف',name:'Text · Light',weight:300,move:'fade'}]}];
-var PKEY='aromaTypo.proj', PJ=null, ptiles=[];
-try{var pid=localStorage.getItem(PKEY); PROJECTS.forEach(function(p){ if(p.id===pid) PJ=p; });}catch(e){}
-function mkFromTpl(tp,br){var o={color:br.color,accent:br.accent,font:br.font,dur:LINES[0].dur,x:.5,y:.5,align:'c',delay:0};
-  if(tp.comp) Object.assign(o,{kind:'comp',comp:tp.comp,f:tp.f||{},text:'c',size:170,weight:900,inDur:1.6,outDur:.6,outOn:true}); else Object.assign(o,{kind:'text',text:tp.text,weight:tp.weight,move:tp.move,size:110,inDur:1,outDur:.6});
-  return mkLine(o);}
-/* add a project template as a new layer. A title that is still the untouched starter text is replaced by it. */
-function addTemplate(tp){ if(!PJ) return; var q=mkFromTpl(tp,PJ.brand), fresh=LINES.every(function(l){return l.kind!=='comp'&&DEF.text.split('\n').indexOf(l.text)>=0;});
-  if(q.kind==='comp'){var b=cBox(q), k=Math.min(1,W*.9/Math.max(1,b.w),H*.88/Math.max(1,b.h)); if(k<1) q.size=Math.floor(q.size*k);}
-  if(fresh){LINES.length=0; LINES.push(q); sel=0;} else { if(LINES.length>=MAXL){$('#mSay').textContent='وصلت لأقصى عدد Layers ('+MAXL+'). امسح واحد الأول.'; return;} LINES.splice(sel+1,0,q); sel=sel+1; }
-  P=q; if(q.kind==='text') useFont(q.font); buildLines(); refreshAll(); flashSel(2600); time=0; playing=!reduce; syncPlay(); dirty(); hook('template',tp.comp||'text');}
-function brandTo(all){ if(!PJ) return; (all?LINES:[P]).forEach(function(q){q.color=PJ.brand.color; q.accent=PJ.brand.accent; q.font=PJ.brand.font;}); LCACHE.clear(); useFont(PJ.brand.font); refreshAll(); hook('brand');}
-function saveBlob(blob,name){ if(inViewer){ if(dlNS) dlNS.save({filename:name,data:blob}).catch(function(){}); return; } var a=document.createElement('a'), url=URL.createObjectURL(blob); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){URL.revokeObjectURL(url);},20000);}
-/* a title as a small file, to hand to a teammate or keep: the layers and the output settings */
-function saveTitle(){var name=((PJ?PJ.id+'_':'')+(LINES[0].kind==='comp'?LINES[0].comp:'title')).replace(/[^\w\-]+/g,'_'); saveBlob(new Blob([JSON.stringify({app:'aroma-typo',v:1,project:PJ?PJ.id:'',out:OUT,lines:LINES},null,1)],{type:'application/json'}),name+'.typo.json'); hook('title-save');}
-function openTitle(file){file.text().then(function(t){var d=JSON.parse(t); if(!d||d.app!=='aroma-typo'||!Array.isArray(d.lines)||!d.lines.length) throw new Error('not a title'); LINES.length=0; d.lines.slice(0,MAXL).forEach(function(l){LINES.push(mkLine(l));}); LINES.forEach(function(q){q.dur=LINES[0].dur;}); sel=0; P=LINES[0];
-    if(d.out&&okSide(d.out.w)&&okSide(d.out.h)){OUT.w=d.out.w; OUT.h=d.out.h; if(FPS_LIST.indexOf(d.out.fps)>=0) OUT.fps=d.out.fps; if(/^(pm|st|off)$/.test(d.out.alpha)) OUT.alpha=d.out.alpha; if(/^#[0-9a-f]{6}$/i.test(d.out.bg)) OUT.bg=d.out.bg; applyOut(false);}
-    if(d.project) PROJECTS.forEach(function(p){ if(p.id===d.project&&p!==PJ) setProject(p); });
-    LINES.map(function(q){return q.font;}).filter(function(f,i,a){return a.indexOf(f)===i;}).forEach(function(f){useFont(f);}); buildLines(); refreshAll(); time=0; dirty(true); $('#mSay').textContent='الملف اتفتح: '+LINES.length+' Layer.'; hook('title-open');}).catch(function(){$('#mSay').textContent='الملف ده مش ملف Typo سليم.';});}
-function buildProjectPanel(){var box=$('#pjPanel'); box.textContent=''; ptiles=[]; if(!PJ) return; var br=PJ.brand;
-  var h=el('h3','',box); h.appendChild(document.createTextNode(PJ.name)); var sw=el('i','',h); [br.accent,br.color,'#000000'].forEach(function(c){el('b','',sw).style.background=c;});
-  el('p','hint',box,'مكوّنات المشروع جاهزة بألوانه. دوس على أي واحد يتضاف Layer، وبعدها غيّر بياناته من Component على اليمين.');
-  el('span','lab',box,'Templates'); var gr=el('div','pgrid',box);
-  PJ.templates.forEach(function(tp){var b=el('button','tile',gr), cv=el('canvas','',b); b.type='button'; cv.width=TW; cv.height=TH; var nm=el('span','',b,tp.comp?COMPS[tp.comp].name:tp.name); b.title='Add '+nm.textContent;
-    var q=in169(function(){var q=mkFromTpl(tp,br); q.dur=3.4; if(q.kind==='comp'){var bx=cBox(q), k=Math.min(1920*.86/Math.max(1,bx.w),1080*.8/Math.max(1,bx.h)); q.size=170*k;} else {MG.font=fontStr(q); MG.direction='rtl'; q.size=Math.max(60,Math.min(300,Math.round(q.size*1920*.7/(MG.measureText(q.text).width||1))));} return q;});
-    var t={b:b,g:cv.getContext('2d'),q:q,hover:false,t0:0}; ptiles.push(t); drawTile(t,q.inDur+.6);
-    function on(){t.hover=true; t.t0=performance.now(); kick();} function off(){t.hover=false; drawTile(t,q.inDur+.6);}
-    b.addEventListener('pointerenter',on); b.addEventListener('pointerleave',off); b.addEventListener('focus',on); b.addEventListener('blur',off); b.addEventListener('click',function(){addTemplate(tp);});});
-  el('span','lab',box,'Brand'); var a2=el('div','acts2',box), b1=el('button','ghost',a2), b2=el('button','ghost',a2); b1.type='button'; b2.type='button'; icoLabel(b1,'paint','Brand → This Layer'); icoLabel(b2,'paint','Brand → All Layers'); b1.addEventListener('click',function(){brandTo(false);}); b2.addEventListener('click',function(){brandTo(true);});
-  el('span','lab',box,'Title File'); var a3=el('div','acts2',box), s1=el('button','ghost',a3), s2=el('button','ghost',a3), fi=el('input','',a3); s1.type='button'; s2.type='button'; s1.id='pjSave'; s2.id='pjOpen'; icoLabel(s1,'save','Save Title File'); icoLabel(s2,'open','Open Title File'); fi.type='file'; fi.accept='.json,application/json'; fi.hidden=true; fi.id='pjFile'; fi.setAttribute('aria-label','Open title file');
-  s1.addEventListener('click',saveTitle); s2.addEventListener('click',function(){fi.click();}); fi.addEventListener('change',function(){var f=fi.files&&fi.files[0]; if(f) openTitle(f); fi.value='';});
-  el('p','hint',box,'Save بينزّل الـ Layers والمقاس في ملف صغير. ابعته لزميلك يفتحه بـ Open ويكمّل عليه أو يغيّر الأرقام ويعمل Render.');}
-function setTab(t){$('#mAside').dataset.tab=t; Array.prototype.forEach.call($('#pTabs').children,function(b){b.setAttribute('aria-pressed',String(b.dataset.t===t));}); if(t==='proj') ptiles.forEach(function(x){drawTile(x,x.q.inDur+.6);});}
-function setProject(p,quiet){PJ=p||null; try{ if(PJ) localStorage.setItem(PKEY,PJ.id); else localStorage.removeItem(PKEY);}catch(e){} $('#pjName').textContent=PJ?PJ.name:'Projects'; $('#pTabs').hidden=!PJ; $('#pTabP').textContent=PJ?PJ.name:'Project';
-  Array.prototype.forEach.call($('#pjM').children,function(b){b.setAttribute('aria-current',String((b.dataset.id||'')===(PJ?PJ.id:'')));}); buildProjectPanel(); setTab(PJ?'proj':'moves');
-  if(PJ&&!quiet&&PJ.brand.bg&&OUT.alpha!=='off'){var bb=$('#segBg').querySelector('[data-bg="'+PJ.brand.bg+'"]'); if(bb) bb.click();} if(!quiet) hook('project',PJ?PJ.id:''); }
-(function(){var m=$('#pjM'), b=$('#pjB');
-  function item(p){var it=el('button','pjm-i',m); it.type='button'; it.setAttribute('role','menuitem'); it.dataset.id=p?p.id:''; el('b','',it,p?p.name:'NO PROJECT'); if(p){var tg=el('span','atm-tag',it,p.templates.length+' TEMPLATES');} el('small','',it,p?p.tip:'الأداة زي ما هي: حركات الكتابة بس'); it.addEventListener('click',function(){set(false); setProject(p);});}
-  PROJECTS.forEach(item); item(null);
-  function set(o){m.hidden=!o; b.setAttribute('aria-expanded',String(o)); if(o){var f=m.querySelector('button'); if(f) f.focus();}}
-  b.addEventListener('click',function(e){e.stopPropagation(); set(m.hidden);});
-  document.addEventListener('pointerdown',function(e){ if(!m.hidden&&!m.contains(e.target)&&!b.contains(e.target)) set(false); });
-  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!m.hidden){set(false); b.focus();} });
-  Array.prototype.forEach.call($('#pTabs').children,function(x){x.addEventListener('click',function(){setTab(x.dataset.t);});});
-  setProject(PJ,true);})();
-
-(function(){var t=document.getElementById('atmB'); if(!t) return; var w=t.parentNode; w.hidden=true; if(typeof fetch!=='function') return; fetch('/tracker',{method:'HEAD',cache:'no-store'}).then(function(r){ if(r.ok) w.hidden=false; }).catch(function(){});})();
-
 /* boot */
 buildTiles(); markTile(); buildMoveUI(); refreshPos(); refreshThumbs(); kick();
 LINES.map(function(q){return q.font;}).filter(function(f,i,a){return a.indexOf(f)===i;}).forEach(function(f){useFont(f);}); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(function(){LCACHE.clear(); LINES.forEach(function(q){q.fontRev=(q.fontRev||0)+1;}); dirty(true);});
 /* a font file that arrives later (another weight, another script) redraws everything that was drawn with a stand-in */
 if(document.fonts&&document.fonts.addEventListener) document.fonts.addEventListener('loadingdone',function(){LINES.forEach(function(q){q.fontRev=(q.fontRev||0)+1;}); LCACHE.clear(); dirty(true);});
-window.__typoTool={inkOld:function(v){INK_OLD=!!v;},COMPS:COMPS,PROJECTS:PROJECTS,setProject:setProject,addTemplate:addTemplate,cBox:cBox,OUT:OUT,setOut:setOut,frame:function(){return [W,H];},layout:layout,tiles:tiles,mvals:mvals,MOVE_BY:MOVE_BY,movProRes:movProRes,render:render,renderAll:renderAll,selectLine:selectLine,addLine:addLine,removeLine:removeLine,renderFrames:renderFrames,movPNG:movPNG,buildZip:buildZip,zipStore:zipStore,MOVES:MOVES,refresh:refreshAll,timing:timing};
+window.__typoTool={inkOld:function(v){INK_OLD=!!v;},OUT:OUT,setOut:setOut,frame:function(){return [W,H];},layout:layout,tiles:tiles,mvals:mvals,MOVE_BY:MOVE_BY,movProRes:movProRes,render:render,renderAll:renderAll,selectLine:selectLine,addLine:addLine,removeLine:removeLine,renderFrames:renderFrames,movPNG:movPNG,buildZip:buildZip,zipStore:zipStore,MOVES:MOVES,refresh:refreshAll,timing:timing};
 Object.defineProperty(window.__typoTool,'P',{get:function(){return P;}}); Object.defineProperty(window.__typoTool,'LINES',{get:function(){return LINES;}}); Object.defineProperty(window.__typoTool,'sel',{get:function(){return sel;}});
 
 /* Aroma Hub mascot ("the doorman") — drop-in for any project page.
@@ -2139,8 +1916,7 @@ Asst=(function(){
     var mx=W*.07,my=H*.08,dx=0,dy=0; if(L.x0<mx) dx=mx-L.x0; else if(L.x1>W-mx) dx=W-mx-L.x1; if(L.top<my) dy=my-L.top; else if(L.bot>H-my) dy=H-my-L.bot; P.x+=dx/W; P.y+=dy/H;}
   function inspect(){var keep=P, order=[sel], any=LINES.some(function(q){return q.text.trim();}), res=null; LINES.forEach(function(q,i){ if(i!==sel) order.push(i); });
     try{ for(var k=0;k<order.length&&!res;k++){var i=order[k]; P=LINES[i]; if(any&&!P.text.trim()) continue; var r=inspect1(); if(!r) continue; if(LINES.length>1&&r.id!=='empty') r.text='السطر '+(i+1)+': '+r.text; r.id+='@'+i; if(r.run) r.run=(function(run,i){return function(){selectLine(i); run();};})(r.run,i); res=r; } } finally{P=keep;} return res;}
-  function inspect1(){ if(P.kind==='comp'){var B=cBox(P); if(B.x0<0||B.x1>W||B.top<0||B.bot>H) return {id:'out',text:'المكوّن خارج من الكادر.. ألمّه لك؟',fix:'لمّه',icon:'size',mood:'sad',run:function(){var b=cBox(P), k=Math.min(1,W*.9/Math.max(1,b.w),H*.9/Math.max(1,b.h)); if(k<1) P.size=Math.max(30,Math.floor(P.size*k)); b=cBox(P); var mx=W*.04,my=H*.05; if(b.x0<mx) P.x+=(mx-b.x0)/W; else if(b.x1>W-mx) P.x-=(b.x1-(W-mx))/W; if(b.top<my) P.y+=(my-b.top)/H; else if(b.bot>H-my) P.y-=(b.bot-(H-my))/H;}}; return null;}
-    var M=MOVE_BY[P.move], txt=P.text.trim();
+  function inspect1(){var M=MOVE_BY[P.move], txt=P.text.trim();
     if(!txt) return {id:'empty',text:'الشاشة فاضية.. اكتب حاجة الأول يا فنان',icon:'what',mood:'sleepy'};
     if(M.cat==='Numbers'&&!(M.need||/[0-9٠-٩]/).test(txt)) return {id:'counter',text:'الحركة دي عايزة رقم تشتغل عليه.. أحطلك '+(M.sample||'2026')+'؟',fix:'حط رقم',icon:'slot',run:function(){P.text=(P.text.replace(/\s+$/,'')+' '+(M.sample||'2026')).trim();}};
     if(M.id==='beat'&&txt.split(/\s+/).length<2) return {id:'beat',text:'الـ Beat Punch بيخبط كلمة كلمة.. اكتب أكتر من كلمة',icon:'eq'};
@@ -2173,7 +1949,7 @@ Asst=(function(){
     tour=steps.map(function(s){return setTimeout(function(){s[3].ms=4000; s[3].prio=2; speak(s[1],s[2],s[3]);},s[0]);}); tour.push(setTimeout(function(){stopTour(); lastAct=performance.now(); check(true);},17400)); }
 
   /* ---- reactions to what the user does ---- */
-  var TIPS=['كل سطر Layer لوحده.. دوس عليه واختارله حركته وخطه ولونه','من Projects فوق اختار المشروع.. هتلاقي مكوّناته جاهزة: أرقام وبوكسات ورسم بياني','كل Move ليها رقم ثابت.. اكتب الرقم في الـ Search وهتلاقيها','دوس على المقاس اللي فوق تغيّر الـ Ratio والـ FPS والـ Alpha.. Reels و Square و غيرهم','فيه أكتر من 100 Move.. جرّب الفلتر فوق: Warp و Particles و Graphic و Arabic','عارف إنك تقدر ترفع فونت البراند من Upload Font؟','دوس Space عشان تشغّل وتوقف الـ Preview','وقّف الماوس على أي Move وهتشوفها بتتحرك على نصّك','جرّب Safe Area قبل الـ Render عشان تتأكد من الحواف','كل Move ليها إعداداتها.. بص على قسم Move فوق','اسحب النص في الـ Preview وحطه مكان ما تحب','الخلفية Video بتوريك النص هيبان إزاي فوق لقطة'];
+  var TIPS=['كل سطر Layer لوحده.. دوس عليه واختارله حركته وخطه ولونه','كل Move ليها رقم ثابت.. اكتب الرقم في الـ Search وهتلاقيها','دوس على المقاس اللي فوق تغيّر الـ Ratio والـ FPS والـ Alpha.. Reels و Square و غيرهم','فيه أكتر من 100 Move.. جرّب الفلتر فوق: Warp و Particles و Graphic و Arabic','عارف إنك تقدر ترفع فونت البراند من Upload Font؟','دوس Space عشان تشغّل وتوقف الـ Preview','وقّف الماوس على أي Move وهتشوفها بتتحرك على نصّك','جرّب Safe Area قبل الـ Render عشان تتأكد من الحواف','كل Move ليها إعداداتها.. بص على قسم Move فوق','اسحب النص في الـ Preview وحطه مكان ما تحب','الخلفية Video بتوريك النص هيبان إزاي فوق لقطة'];
   var tipI=Math.floor(Math.random()*TIPS.length);
   function on(name,d){lastAct=performance.now(); if(name!=='change'||d!=='pos') { if(tour&&name!=='render-progress') stopTour(); }
     if(name==='change'){check();
