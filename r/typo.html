@@ -857,6 +857,15 @@ var CUSTOM={
    g.save(); g.globalAlpha*=al; var bl=Math.max(1-fin,fo); if(v.blur>0&&bl>.01) g.filter='blur('+(bl*em*.08*v.blur/100*K).toFixed(2)+'px)'; g.translate(L.cx,L.cy); g.scale(sc,sc); g.translate(-L.cx,-L.cy);
    L.lines.forEach(function(l){ if(!l.cl.length) return; if(l.rtl||Math.abs(tr)<.001){l.words.forEach(function(w){drawWord(g,P,w,o);}); return;} l.cl.forEach(function(c){g.save(); g.translate((c.cx-l.cx)*tr,0); drawCl(g,P,c,o); g.restore();});});
    g.restore();},
+ rays:function(g,L,env,P,M,K,v){var io=IO(env,EASE.outCubic), em=P.size, o=styleOf(P), al=io.a; if(al<=.003) return;
+   var N=16, len=v.length/100*(.25+.75*io.ei)*(1-io.eo*.6)*(1+.12*Math.sin(env.t*2.3)), ox=L.cx+Math.sin(env.t*1.4)*L.w*.45*v.drift/100, oy=L.cy+(v.from==='below'?L.h*.9:(v.from==='above'?-L.h*.9:0));
+   /* the rays are soft, so they are built at a third of the size and scaled back up */
+   var c=textLayer(g,P,K,L,'ryA',{color:v.accent?P.accent:P.color,fill:true}), q=1/3, sw=Math.ceil(c.width*q), sh=Math.ceil(c.height*q), a=scratch(sw,sh,'ryS'), b=scratch(sw,sh,'ryT'), s=a.g, t=b.g, k=K*q;
+   s.setTransform(1,0,0,1,0,0); s.globalAlpha=1; s.globalCompositeOperation='source-over'; s.clearRect(0,0,sw,sh); s.drawImage(c,0,0,c.width,c.height,0,0,sw,sh);
+   t.setTransform(1,0,0,1,0,0); t.globalCompositeOperation='source-over'; t.globalAlpha=1; t.clearRect(0,0,sw,sh); t.globalCompositeOperation='lighter';
+   for(var i=1;i<=N;i++){var sc=1+len*i/N*1.2; t.globalAlpha=.22*(1-i/(N+1)); t.setTransform(sc,0,0,sc,k*(ox-ox*sc),k*(oy-oy*sc)); t.drawImage(a,0,0);}
+   g.save(); g.shadowColor='transparent'; g.setTransform(1,0,0,1,0,0); g.globalAlpha*=al; g.imageSmoothingEnabled=true; g.drawImage(b,0,0,sw,sh,0,0,sw/q,sh/q); g.restore();
+   g.save(); g.globalAlpha*=al; drawAll(g,P,L,o); g.restore();},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -973,6 +982,7 @@ var MOVES=[
 {id:'stripes',name:'Stripe Wipe',cat:'Reveal',custom:'stripes',stagger:.5,ease:'inOutCubic',uses:{stagger:1,ease:1,accent:1},params:[PR('bars','Bars',2,16,1,6,''),PR('angle','Slant',-45,45,1,-20,'°'),PR('width','Bar Width',5,80,1,30,'%'),ORDER]},
 {id:'sidebar',name:'Side Bar Slide',cat:'Reveal',custom:'sidebar',stagger:.35,uses:{stagger:1,ease:0,accent:1},params:[PR('thick','Bar Thickness',1,20,.5,5,'%'),PR('gap','Gap',5,80,1,22,'%'),PS('side','Bar Side',[['start','Reading Start'],['end','Reading End']],'start'),PT('keep','Keep Bar',true)]},
 {id:'drift',name:'Cinematic Drift',cat:'Soft',custom:'drift',uses:{stagger:0,ease:0,accent:0},note:'حركة مستمرة على طول الـ Duration كلها، والـ In والـ Out هنا Fade هادي.',params:[PR('zoom','Zoom',0,40,1,10,'%'),PR('track','Tracking Drift (English)',0,100,1,30,'%'),PS('dir','Direction',[['in','Push In'],['out','Pull Out']],'in'),PR('blur','Blur On Fade',0,200,5,60,'%')]},
+{id:'rays',name:'Light Rays',cat:'FX',custom:'rays',uses:{stagger:0,ease:0,accent:1},params:[PR('length','Ray Length',10,150,5,60,'%'),PR('drift','Light Movement',0,300,5,100,'%'),PS('from','Light',[['behind','Behind'],['below','Below'],['above','Above']],'behind'),PT('accent','Accent Light',true)]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
