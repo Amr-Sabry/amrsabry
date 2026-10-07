@@ -889,6 +889,13 @@ var CUSTOM={
    [[0,0],[.5,0],[1,0],[0,.5],[1,.5],[0,1],[.5,1],[1,1]].forEach(function(c){var hx=x+w*c[0], hy=y+h*c[1]; g.fillStyle='#fff'; g.fillRect(hx-hs/2,hy-hs/2,hs,hs); g.strokeRect(hx-hs/2,hy-hs/2,hs,hs);});
    if(v.cursor){var cs=em*.22; g.translate((rtl?x:x+w)+hs*.2,y+h+hs*.2); g.fillStyle='#fff'; g.strokeStyle='#000'; g.lineWidth=Math.max(1.5,em*.012); g.lineJoin='round'; g.beginPath(); g.moveTo(0,0); g.lineTo(0,cs); g.lineTo(cs*.27,cs*.76); g.lineTo(cs*.47,cs*1.18); g.lineTo(cs*.62,cs*1.1); g.lineTo(cs*.43,cs*.7); g.lineTo(cs*.74,cs*.7); g.closePath(); g.fill(); g.stroke();}
    g.restore();},
+ anagram:function(g,L,env,P,M,K,v){var o=styleOf(P), em=P.size, io=IO(env), al=clamp(io.pi/.15)*(1-io.eo); if(al<=.003) return;
+   L.lines.forEach(function(l){ if(!l.cl.length) return; var words=v.by==='word'&&l.words.length>1, U=(words?L.words:L.letters).filter(function(u){return u.line===l;}), n=U.length; if(!n) return;
+     var idx=U.map(function(_,i){return i;}).sort(function(a,b){return hash(a*3.7+v.seed+l.i*11)-hash(b*3.7+v.seed+l.i*11);}), slot=[]; idx.forEach(function(u,s){slot[u]=s;});
+     U.forEach(function(u,i){var s=slot[i], from=U[s], p=EASE.inOutCubic(clamp((io.pi-(.2+i/n*.45))/.35)), dx=(from.cx-u.cx)*(1-p), arc=s===i?0:-Math.sin(p*Math.PI)*em*v.arc/100*(i%2?1:-1), c=u.cl[0], iso=!words&&l.rtl&&hasAr(c.s)&&p<1;
+       g.save(); g.globalAlpha*=al; g.translate(dx,arc);
+       if(!iso) drawUnit(g,P,u,o); else {var a2=clamp((p-.8)/.2); if(a2<1){g.save(); g.globalAlpha*=1-a2; g.direction='rtl'; g.textAlign='center'; ink(g,P,c.s,c.cx,c.base,o); g.restore();} if(a2>0){g.save(); g.globalAlpha*=a2; drawUnit(g,P,u,o); g.restore();}}
+       g.restore();});});},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -1009,6 +1016,7 @@ var MOVES=[
 {id:'sparkle',name:'Sparkle',cat:'FX',custom:'sparkle',uses:{stagger:0,ease:0,accent:1},params:[PR('count','Sparkles / Second',2,60,1,18,''),PR('size','Size',5,60,1,32,'%'),PS('color','Color',[['accent','Accent'],['white','White'],['fill','Fill']],'accent')]},
 {id:'blueprint',name:'Blueprint',cat:'Graphic',custom:'blueprint',uses:{stagger:0,ease:0,accent:1},params:[PT('keep','Keep Guides',false),PT('dims','Show Dimensions',true),PR('line','Line Weight',.3,3,.1,1,'%')]},
 {id:'tbox',name:'Transform Box',cat:'Graphic',custom:'tbox',uses:{stagger:0,ease:0,accent:1},params:[PR('from','Start Scale',10,90,1,35,'%'),PT('cursor','Show Cursor',true)]},
+{id:'anagram',name:'Anagram',cat:'Type',custom:'anagram',uses:{stagger:0,ease:0,accent:0},params:[PR('seed','Pattern',1,30,1,4,''),PR('arc','Jump Height',0,150,5,60,'%'),BY('letter',['letter','word'])]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
