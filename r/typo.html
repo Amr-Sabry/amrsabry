@@ -896,6 +896,11 @@ var CUSTOM={
        g.save(); g.globalAlpha*=al; g.translate(dx,arc);
        if(!iso) drawUnit(g,P,u,o); else {var a2=clamp((p-.8)/.2); if(a2<1){g.save(); g.globalAlpha*=1-a2; g.direction='rtl'; g.textAlign='center'; ink(g,P,c.s,c.cx,c.base,o); g.restore();} if(a2>0){g.save(); g.globalAlpha*=a2; drawUnit(g,P,u,o); g.restore();}}
        g.restore();});});},
+ nuqat:function(g,L,env,P,M,K,v){var io=IO(env), em=P.size, al=1-io.eo; if(io.pi<=0||al<=.003) return; var S=splitDots(P,K,L); if(!S.body){g.save(); g.globalAlpha*=al*clamp(io.pi/.3); drawAll(g,P,L,styleOf(P)); g.restore(); return;}
+   var c=scratch(g.canvas.width,g.canvas.height,'nqO'), s=c.g; s.setTransform(1,0,0,1,0,0); s.globalCompositeOperation='source-over'; s.clearRect(0,0,c.width,c.height);
+   s.globalAlpha=clamp(io.pi/.3); s.drawImage(S.body,S.x,S.y+(1-EASE.outCubic(clamp(io.pi/.4)))*em*.18*K);
+   var n=S.dots.length, bz=bounceEase(v.bounce/100); S.dots.forEach(function(dt,i){var p=clamp((io.pi-(.3+(n>1?i/(n-1):0)*.45))/.25); if(p<=0) return; s.globalAlpha=clamp(p*5); s.drawImage(v.accent?tintSprite(dt,P.accent):dt.cv,dt.x,dt.y-(1-bz(p))*em*v.height/100*K);});
+   s.globalAlpha=1; put(g,c,al);},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -1017,6 +1022,7 @@ var MOVES=[
 {id:'blueprint',name:'Blueprint',cat:'Graphic',custom:'blueprint',uses:{stagger:0,ease:0,accent:1},params:[PT('keep','Keep Guides',false),PT('dims','Show Dimensions',true),PR('line','Line Weight',.3,3,.1,1,'%')]},
 {id:'tbox',name:'Transform Box',cat:'Graphic',custom:'tbox',uses:{stagger:0,ease:0,accent:1},params:[PR('from','Start Scale',10,90,1,35,'%'),PT('cursor','Show Cursor',true)]},
 {id:'anagram',name:'Anagram',cat:'Type',custom:'anagram',uses:{stagger:0,ease:0,accent:0},params:[PR('seed','Pattern',1,30,1,4,''),PR('arc','Jump Height',0,150,5,60,'%'),BY('letter',['letter','word'])]},
+{id:'nuqat',name:'Nuqat Drop · نقط',cat:'Arabic',custom:'nuqat',sample:'نقطة فوق الحرف',need:/[بتثجخذزشضظغفقنيةأإؤئij;:!?؟]/,uses:{stagger:0,ease:0,accent:1},note:'جسم الحروف بيظهر الأول، وبعدين النقط والهمزات والتشكيل بتنزل عليه. بتشتغل كمان على نقطة الـ i والـ j.',params:[PR('height','Drop Height',20,400,5,150,'%'),PR('bounce','Bounce',0,100,1,70,'%'),PT('accent','Accent Dots',false)]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
