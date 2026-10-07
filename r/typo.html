@@ -495,6 +495,15 @@ var CUSTOM={
      if(v.plate){g.fillStyle=P.accent; g.fillRect(-W*.3,y-bh/2,W*1.6,bh);} g.shadowColor='transparent'; g.beginPath(); g.rect(-W*.3,y-bh/2,W*1.6,bh); g.clip();
      g.textAlign='left'; for(var x=-W*.3-tw+off;x<W*1.3;x+=tw) ink(g,P,txt,x,l.base,v.plate?{color:P.color,fill:true}:o);
      g.restore();});},
+ slot:function(g,L,env,P,M,K,v){var U=L.letters, n=U.length, rk=ranks('fwd',n), o=styleOf(P), em=P.size, rowH=L.lh, N=Math.round(v.spins);
+   function back(p){var c=1.15; return 1+(c+1)*Math.pow(p-1,3)+c*Math.pow(p-1,2);}
+   U.forEach(function(u,i){var pr=prog(env,P,M,rk[i],n); if(pr.i<=0||pr.o>=1) return; var c=u.cl[0], l=c.line, ar=l.rtl&&hasAr(c.s), dig=/[0-9٠-٩]/.test(c.s), pool=v.set==='auto'?(ar?POOL_AR:(dig?POOLS.numbers:POOLS.letters)):(ar&&v.set==='letters'?POOL_AR:POOLS[v.set]);
+     var pos=(1-back(pr.i))*N-EASE.inCubic(pr.o)*1.6, k0=Math.floor(pos), pad=em*.5;
+     g.save(); g.beginPath(); g.rect(l.x0-pad,l.yc-rowH*.5,l.w+pad*2,rowH); g.clip();
+     for(var k=k0;k<=k0+1;k++){ if(k<0||k>N) continue; var y=-(pos-k)*rowH; g.save(); g.translate(0,y);
+       if(k===0) drawCl(g,P,c,o); else {var ch=pool[Math.floor(hash(i*17.3+k*3.1)*pool.length)], str=(ar&&c.jp?ZWJ:'')+ch+(ar&&c.jn?ZWJ:''); g.globalAlpha*=.9; g.direction=l.rtl?'rtl':'ltr'; g.textAlign='center'; ink(g,P,str,c.cx,c.base,v.accent?{color:P.accent,fill:true}:o);}
+       g.restore();}
+     g.restore();});},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -557,6 +566,7 @@ var MOVES=[
 {id:'pathride',name:'Path Ride',cat:'Basic',custom:'pathride',stagger:.6,uses:{stagger:1,ease:0,accent:0},params:[PR('amp','Wave Height',5,120,1,45,'%'),PR('len','Wave Length',1,8,.1,3,'×'),PT('rot','Follow The Curve',true),BY('letter',['letter','word'])]},
 {id:'particles',name:'Particles',cat:'Particles',custom:'particles',uses:{stagger:0,ease:0,accent:0},params:[PR('grain','Grain',2,12,.5,4.5,'%'),PR('size','Particle Size',30,140,5,85,'%'),PS('from','Come From',[['random','Everywhere'],['below','Below'],['sides','Both Sides'],['center','Center']],'random'),PS('shape','Shape',[['square','Squares'],['circle','Dots']],'square'),PT('keep','Stay As Particles',false)]},
 {id:'ticker',name:'Ticker',cat:'Loop',custom:'ticker',uses:{stagger:0,ease:0,accent:1},params:[PR('speed','Speed',.2,8,.1,1.6,'×'),PS('sep','Separator',[['•','Dot •'],['—','Dash —'],['+','Plus +'],['/','Slash /'],['none','None']],'•'),PT('plate','Band',true),PT('alt','Alternate Direction',true),PR('tilt','Tilt',-15,15,.5,0,'°')]},
+{id:'slot',name:'Slot Reel',cat:'Type',custom:'slot',stagger:.5,uses:{stagger:1,ease:0,accent:1},params:[PR('spins','Spins',3,30,1,10,''),PS('set','Characters',[['auto','Auto'],['letters','Letters'],['numbers','Numbers'],['symbols','Symbols']],'auto'),PT('accent','Accent While Spinning',true)]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
