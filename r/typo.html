@@ -811,6 +811,10 @@ var CUSTOM={
      for(var x=Math.max(0,Math.floor(l.x0-em*.3));x<Math.min(W,l.x1+em*.3);x+=st){var dr=Math.pow(noise1(x/dw,7+l.i),2.2)*.8+noise1(x/(dw*.37),3)*.2, sy=1+dr*k*A*5, al=clamp(1-k*(1.15-dr*.6)); if(al<=.01) continue; s.globalAlpha=al;
        if(up) s.drawImage(c,x*K,top*K,st*K,h*K,x,top+h-h*sy,st+.4,h*sy); else s.drawImage(c,x*K,top*K,st*K,h*K,x,top,st+.4,h*sy);}});});
    put(g,d,1);},
+ vapor:function(g,L,env,P,M,K,v){var io=IO(env,EASE.outCubic), em=P.size, o=styleOf(P), k=io.po>0?EASE.inCubic(io.po):1-io.ei; if(io.pi<=0||k>=1) return; if(k<.003){drawAll(g,P,L,o); return;}
+   var c=textLayer(g,P,K,L,'vaA'), st=3, A=v.amount/100, rise=em*v.rise/100*k, wl=em*.9, ph=env.t*3.2;
+   var d=layer(g,P,K,'vaB',function(s){for(var y=Math.max(0,Math.floor(L.top-em*.4));y<Math.min(H,L.bot+em*.4);y+=st){var hgt=clamp((L.bot-y)/Math.max(1,L.h)), amp=em*.5*A*k*(.35+hgt), dx=Math.sin(y/wl*6.2832+ph)*amp+Math.sin(y/(wl*.41)*6.2832-ph*1.7)*amp*.4; s.drawImage(c,0,y*K,c.width,st*K,dx,y-rise*(.4+hgt),W,st+.6);}});
+   g.save(); g.setTransform(1,0,0,1,0,0); g.globalAlpha*=1-k; if(v.blur>0) g.filter='blur('+(em*.16*v.blur/100*k*K).toFixed(2)+'px)'; g.drawImage(d,0,0); g.restore();},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -919,6 +923,7 @@ var MOVES=[
 {id:'drum',name:'Drum Roll',cat:'Warp',custom:'drum',stagger:.35,uses:{stagger:1,ease:0,accent:0},params:[PR('radius','Drum Size',60,400,5,140,'%'),PR('spins','Extra Spins',0,3,.25,0,''),PS('dir','Roll',[['up','Upward'],['down','Downward']],'up')]},
 {id:'flag',name:'Flag',cat:'Loop',custom:'flag',uses:{stagger:0,ease:0,accent:0},params:[PR('amp','Wave Height',2,60,1,14,'%'),PR('len','Wave Length',50,600,10,260,'%'),PR('speed','Speed',0,20,.5,6,''),PT('pin','Pin The Start Edge',true),PT('shade','Cloth Shading',true)]},
 {id:'melt',name:'Melt',cat:'Warp',custom:'melt',uses:{stagger:0,ease:0,accent:0},params:[PR('amount','Amount',20,300,5,100,'%'),PR('drips','Drip Width',5,120,1,30,'%'),PS('dir','Melt',[['down','Downward'],['up','Upward']],'down')]},
+{id:'vapor',name:'Vapor',cat:'Soft',custom:'vapor',uses:{stagger:0,ease:0,accent:0},params:[PR('amount','Turbulence',0,300,5,100,'%'),PR('rise','Rise',0,200,5,60,'%'),PR('blur','Blur',0,200,5,100,'%')]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
