@@ -757,6 +757,12 @@ var CUSTOM={
      var am=l.rtl?(v.amp-1)*.4:v.amp-1, sc=U.map(function(u,i){var d=(i-c0)/w; return 1+am*Math.exp(-d*d);}), tot=0, i; for(i=0;i<n;i++){tot+=(U[i].x1-U[i].x0)*sc[i]; if(i<n-1) tot+=l.rtl?U[i].x0-U[i+1].x1:U[i+1].x0-U[i].x1;}
      var x=l.rtl?l.cx+tot/2:l.cx-tot/2; for(i=0;i<n;i++){var u=U[i], uw=(u.x1-u.x0)*sc[i], cx=l.rtl?x-uw/2:x+uw/2; g.save(); g.globalAlpha*=al; g.translate(cx,l.base+rise); g.scale(sc[i],sc[i]); g.translate(-u.cx,-l.base); drawUnit(g,P,u,o); g.restore();
        var gap=i<n-1?(l.rtl?u.x0-U[i+1].x1:U[i+1].x0-u.x1):0; x+=(l.rtl?-1:1)*(uw+gap);}});},
+ ball:function(g,L,env,P,M,K,v){var U=unitsOf(L,v.by), n=U.length, o=styleOf(P), em=P.size, io=IO(env); if(!n) return; var hop=env.Ti/(n+1), r=em*v.size/100, hgt=em*v.height/100, ga=g.globalAlpha;
+   U.forEach(function(u,i){var dt=env.t-(i+1)*hop; if(dt<0) return; var sq=1-.24*Math.exp(-dt*13)*Math.cos(dt*30), by=u.line.base; g.save(); g.globalAlpha=ga*(1-io.eo); g.translate(u.cx,by+io.eo*em*.3); g.scale(2-sq,sq); g.translate(-u.cx,-by); drawUnit(g,P,u,o); g.restore();});
+   var seg=Math.floor(env.t/hop), f=env.t/hop-seg; if(seg>n) return; function top(u){return [u.cx,u.line.yc-L.asc*.5-r];}
+   var a, b, al=1; if(seg===0){b=top(U[0]); a=[b[0]+(U[0].line.rtl?1:-1)*em*1.6,b[1]-hgt*.3]; al=clamp(f*3);} else if(seg>=n){a=top(U[n-1]); b=[a[0]+(U[n-1].line.rtl?-1:1)*em*2.2,a[1]-hgt*.2]; al=1-f;} else {a=top(U[seg-1]); b=top(U[seg]);}
+   var x=lerp(a[0],b[0],f), y=lerp(a[1],b[1],f)-hgt*4*f*(1-f), land=Math.max(0,1-Math.min(f,1-f)*9);
+   g.save(); g.shadowColor='transparent'; g.globalAlpha=ga*al; g.fillStyle=P.accent; g.beginPath(); g.ellipse(x,y+r*land*.25,r*(1+land*.25),r*(1-land*.25),0,0,6.2832); g.fill(); g.restore();},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -857,6 +863,7 @@ var MOVES=[
 {id:'matrix',name:'Matrix Rain',cat:'FX',custom:'matrix',stagger:.7,uses:{stagger:1,ease:0,accent:1},params:[PR('trail','Trail Length',2,14,1,7,''),PR('rate','Shuffle Speed',4,30,1,14,'/s'),PS('set','Characters',[['auto','Auto'],['letters','Letters'],['numbers','Numbers'],['symbols','Symbols']],'auto')]},
 {id:'stutter',name:'Stutter',cat:'FX',custom:'stutter',uses:{stagger:0,ease:0,accent:1},params:[PR('fps','Frame Rate',4,15,1,8,'fps'),PR('chaos','Amount',10,200,5,100,'%'),PT('styles','Style Flashes',true)]},
 {id:'magnify',name:'Magnify Wave',cat:'Loop',custom:'magnify',uses:{stagger:0,ease:0,accent:0},params:[PR('amp','Magnify',1.1,3,.05,1.7,'×'),PR('width','Bump Width',.5,6,.1,1.6,''),PR('speed','Speed',.5,20,.5,6,''),PS('pass','Run',[['loop','Keep Looping'],['once','Once (On In)']],'loop')]},
+{id:'ball',name:'Bouncing Ball',cat:'Bounce',custom:'ball',uses:{stagger:0,ease:0,accent:1},params:[BY('word',['word','letter']),PR('size','Ball Size',4,30,1,11,'%'),PR('height','Bounce Height',20,200,5,80,'%')]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
