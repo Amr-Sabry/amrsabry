@@ -603,6 +603,19 @@ var CUSTOM={
      if(v.ring){g.lineWidth=Math.max(1,em*.07*(1-p)); g.globalAlpha*=1-p; g.beginPath(); g.ellipse(L.cx,L.cy,L.w*.5+R*.75*e,L.h*.5+R*.75*e,0,0,6.2832); g.stroke();}
      g.restore();}
    var q=EASE.inCubic(io.po); if(sc>0&&q<1){g.save(); g.globalAlpha*=1-q; g.translate(L.cx,L.cy); g.scale(sc*(1-q*.4),sc*(1-q*.4)); g.translate(-L.cx,-L.cy); drawAll(g,P,L,o); g.restore();}},
+ autocorrect:function(g,L,env,P,M,K,v){var o=styleOf(P), em=P.size, io=IO(env), pi=io.pi, best=null, bi=-1, L2=L;
+   L.words.forEach(function(u,i){var w=u.words[0]; if(w.cl.length>=3&&(!best||w.cl.length>best.cl.length)){best=w; bi=i;}});
+   if(best){var rows=P.text.replace(/\r/g,'').split('\n'), li=best.line.i, toks=rows[li].split(/(\s+)/), wi=best.line.words.indexOf(best), seen=-1;
+     toks=toks.map(function(tk){ if(tk===''||/^\s+$/.test(tk)) return tk; seen++; if(seen!==wi) return tk; var cl=best.line.rtl&&hasAr(tk)?arClusters(tk):Array.from(tk), m=cl.length, j=(Math.floor(m/2)-1+Math.round(v.seed)-1)%(m-1), tries=0; while(cl[j]===cl[j+1]&&tries<m){j=(j+1)%(m-1); tries++;} var x=cl[j]; cl[j]=cl[j+1]; cl[j+1]=x; return cl.join('');});
+     rows[li]=toks.join(''); L2=layout(P,rows.join('\n')); if(L2.words.length!==L.words.length) L2=L;}
+   var n=L2.letters.length, nC=L.letters.length, fixed=pi>=.72||!best, cur=null, typing=false;
+   if(io.po>0){var k=Math.ceil((1-io.po)*nC); typedLetters(g,P,L,k,o); cur=k>0?L.letters[k-1]:null; typing=true;}
+   else if(!fixed){var k2=Math.floor(clamp(pi/.55)*n+.001); typedLetters(g,P,L2,k2,o); cur=L2.letters[Math.max(0,Math.min(n,k2)-1)]; typing=pi<.55; if(k2===0) cur=null;
+     if(pi>.55&&L2!==L){var w2=L2.words[bi].words[0], sp=clamp((pi-.55)/.1), x0=w2.x0, x1=w2.x0+(w2.x1-w2.x0)*sp; if(w2.line.rtl){x0=w2.x1-(w2.x1-w2.x0)*sp; x1=w2.x1;}
+       g.save(); g.shadowColor='transparent'; g.strokeStyle=P.accent; g.lineWidth=Math.max(2,em*.035); g.lineJoin='round'; g.beginPath(); for(var x=x0;x<=x1;x+=em*.02){var y=w2.base+L.desc*.62+Math.sin((x-w2.x0)/(em*.05))*em*.035; if(x===x0) g.moveTo(x,y); else g.lineTo(x,y);} g.stroke(); g.restore();}}
+   else {var pop=clamp((pi-.72)/.16); L.words.forEach(function(u,i){ if(i!==bi||pop>=1){drawUnit(g,P,u,o); return;} var s=1+.14*(1-EASE.outCubic(pop)); xf(g,u.cx,u.cy,s,s,0,function(){drawUnit(g,P,u,{color:P.accent,fill:true});});}); cur=pi<.9&&best?{cl:best.cl,x0:best.x0,x1:best.x1,cy:best.yc,line:best.line}:L.letters[nC-1]; typing=pi<.9;}
+   if(!v.cursor||!cur) return; if(!(typing||Math.floor(env.t*2.4)%2===0)) return; var rtl=cur.line.rtl, cx=rtl?cur.x0:cur.x1, gap=em*.05, cw=Math.max(4,em*.055), top=cur.cy-L.asc*.52, hh=(L.asc+L.desc)*.74;
+   g.save(); g.shadowColor='transparent'; g.fillStyle=P.accent; g.fillRect(rtl?cx-cw-gap:cx+gap,top,cw,hh); g.restore();},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -681,6 +694,7 @@ var MOVES=[
   params:[PS('mode','Mode',[['pass','Pass Through'],['stop','Stop At Position']],'pass'),PR('tilt','Perspective',0,100,1,55,'%')]},
 {id:'pixelate',name:'Pixelate',cat:'Warp',custom:'pixelate',uses:{stagger:0,ease:0,accent:0},params:[PR('block','Start Block',8,160,2,64,'px'),PT('snap','Stepped',true)]},
 {id:'burst',name:'Radial Burst',cat:'Graphic',custom:'burst',uses:{stagger:0,ease:0,accent:1},params:[PR('rays','Rays',6,40,1,16,''),PR('radius','Reach',10,80,1,32,'%'),PT('ring','Ring',true)]},
+{id:'autocorrect',name:'Autocorrect',cat:'Type',custom:'autocorrect',uses:{stagger:0,ease:0,accent:1},params:[PT('cursor','Cursor',true),PR('seed','Which Mistake',1,8,1,1,'')]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
