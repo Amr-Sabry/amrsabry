@@ -1493,7 +1493,10 @@ function tyFont(P){ if(!tyOK()||!P) return; var name=P.font, f=fontEntry(name), 
 function tyFace(name,buf){TYX.faces[name]=buf; if(!tyOK()) return; try{var ff=new TYX.win.FontFace(name,buf.slice(0)); ff.load().then(function(){TYX.doc.fonts.add(ff); LCACHE.clear(); redraw();},function(){});}catch(e){}}
 function tyMove(L){var T=TYX.T; return T.MOVE_BY[L.ty.move]||T.MOVES[0];}
 /* the layer as the Typo engine wants it: this layer's own text, look, place and timing, with the Typo move and that move's settings */
-function tyP(L,dur){var P=L.P; return Object.assign({},L.ty.q||{},{text:P.text,font:P.font,weight:P.weight,size:P.size,leading:P.leading,tracking:P.tracking,color:P.color,accent:P.accent,outline:P.outline,shadow:P.shadow,x:P.x,y:P.y,align:P.align,
+function tyP(L,dur){var P=L.P, q0=L.ty.q||{}, sh={};
+  /* a newer Typo engine has its own shadow settings: unless they came with an imported line, the tracker's one Shadow amount is turned into them the way the Typo tool does it */
+  if(typeof q0.shOn!=='boolean'&&P.shadow>0) sh={shOn:true,shColor:'#000000',shAngle:90,shBlur:Math.round(P.shadow*.5),shDist:Math.round(P.shadow*.12),shOp:Math.round(Math.min(.85,.35+P.shadow/200)*100)};
+  return Object.assign({},q0,sh,{text:P.text,font:P.font,weight:P.weight,size:P.size,leading:P.leading,tracking:P.tracking,color:P.color,accent:P.accent,outline:P.outline,shadow:P.shadow,x:P.x,y:P.y,align:P.align,
   dur:dur,inDur:P.inDur,outDur:P.outDur,outOn:P.outOn,ease:P.ease,stagger:P.stagger,delay:0,fontRev:P.fontRev||0,move:L.ty.move,mp:L.ty.mp||{}});}
 /* draws the layer through the Typo engine. false = not drawn (engine not there yet, or it failed): the caller draws with the tracker's own move */
 function tyPaint(gx,L,lt){ if(!tyOn(L)) return false; if(TYX.state==='idle'){tyLoad().then(function(){refreshAll(); redraw();},function(){refreshAll();});} if(!tyOK()) return false;
