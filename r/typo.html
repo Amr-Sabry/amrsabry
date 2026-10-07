@@ -433,6 +433,23 @@ var CUSTOM={
    U.forEach(function(u,i){var pr=prog(env,P,M,rk[i],n); if(pr.i<=0||pr.o>=1) return; var c=u.cl[0], k=(Math.sin(env.t*v.speed-i*v.len)+1)/2, w=Math.round(lerp(lo,hi,k)/10)*10;
      g.save(); g.globalAlpha*=clamp(pr.i*2.5)*(1-pr.o); g.font=fontW(P,w); g.direction=c.line.rtl?'rtl':'ltr'; g.textAlign='center';
      ink(g,P,c.draw,c.cx,c.base+(1-EASE.outCubic(pr.i))*P.size*.22+EASE.inCubic(pr.o)*P.size*.22,o); g.restore();});},
+ flap:function(g,L,env,P,M,K,v){var em=P.size, o=styleOf(P), hh=(L.asc+L.desc)*1.02;
+   L.lines.forEach(function(l){var cells=lineCells(l), n=cells.length; if(!n) return;
+     var cw=em*.84, gap=em*.07, tot=n*cw+(n-1)*gap, kf=Math.min(1,W*.94/tot); cw*=kf; gap*=kf; tot*=kf;
+     var hk=hh*(v.plate?kf:1), xs=P.align==='l'?l.x0:(P.align==='r'?l.x1-tot:l.cx-tot/2), nMax=v.flips+(n-1)*2, sd=env.Ti/nMax, top=l.yc-hk/2, mid=l.yc;
+     cells.forEach(function(c,i){ if(!c&&!v.plate) return; var steps=v.flips+i*2, si=Math.floor(env.t/sd), f=env.t/sd-si, done=si>=steps;
+       var ar=c&&l.rtl&&hasAr(c.s), dig=c&&/[0-9٠-٩]/.test(c.s), pool=ar?POOL_AR:(dig?POOLS.numbers:POOLS.letters), base=c?Array.from(c.s).filter(function(x){return !isMark(x);})[0]:'', ti=c?pool.indexOf(base.toUpperCase()):-1; if(c&&ti<0) ti=Math.floor(hash(i*5.3)*pool.length);
+       function ch(k){ if(!c) return ''; if(k>=steps) return c.s; var p=pool[(((ti-(steps-k))%pool.length)+pool.length)%pool.length]; return (base!==base.toUpperCase()||ar||dig)?(ar||dig?p:p.toLowerCase()):p; }
+       var po=prog(env,P,{stagger:.6},i,n).o, appear=clamp((env.t-i*sd*.35)/(sd*2.2)), sy=EASE.outBack(appear)*(1-EASE.inCubic(po)); if(sy<=.01) return;
+       var x=v.plate?(l.rtl?xs+tot-(i+1)*cw-i*gap:xs+i*(cw+gap)):(c.x0), w=v.plate?cw:(c.x1-c.x0), cx=x+w/2;
+       function glyph(s,settled){ if(!s) return; if(!v.plate&&settled){drawCl(g,P,c,o); return;} g.save(); if(v.plate){g.translate(cx,mid); g.scale(kf,kf); g.translate(0,-mid);} else g.translate(cx,0); g.direction=ar?'rtl':'ltr'; g.textAlign='center'; ink(g,P,s,0,l.base,v.plate?{color:P.color,fill:true}:o); g.restore(); }
+       g.save(); g.translate(0,mid); g.scale(1,sy); g.translate(0,-mid);
+       if(!v.plate){ var q=done?1:Math.abs(1-2*f); g.translate(0,mid); g.scale(1,Math.max(.02,q)); g.translate(0,-mid); glyph(done?ch(steps):(f<.5?ch(si):ch(si+1)),done); g.restore(); return; }
+       var r=cw*v.round/100; g.fillStyle=P.accent; rrect(g,x,top,w,hk,r); g.fill();
+       var cur=ch(done?steps:si+1), prev=ch(si);
+       function half(up,s,k){g.save(); g.beginPath(); g.rect(x-2,up?top-2:mid,w+4,hk/2+2); g.clip(); if(k!=null){g.translate(0,mid); g.scale(1,Math.max(.001,k)); g.translate(0,-mid); g.fillStyle=P.accent; g.fillRect(x,top,w,hk);} glyph(s,true); g.restore();}
+       if(done){half(true,cur); half(false,cur);} else {half(true,cur); half(false,prev); if(f<.5) half(true,prev,1-2*f); else half(false,cur,2*f-1);}
+       g.fillStyle='rgba(0,0,0,.42)'; g.fillRect(x,mid-Math.max(1,em*.012),w,Math.max(2,em*.024)); g.restore();});});},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -488,6 +505,7 @@ var MOVES=[
 {id:'writeon',name:'Write-On',cat:'Reveal',custom:'writeon',stagger:.45,uses:{stagger:1,ease:0,accent:1},params:[PT('pen','Pen',true),PR('size','Pen Size',2,20,.5,7,'%'),PR('wobble','Hand Wobble',0,100,1,60,'%')]},
 {id:'weightwave',name:'Weight Wave',cat:'Loop',custom:'weightwave',stagger:.5,uses:{stagger:1,ease:0,accent:0},note:'الحركة دي بتبان مع الفونتات الـ Variable زي Alexandria و Cairo و Anybody و Montserrat.',
   params:[PR('min','Light Weight',100,900,50,200,''),PR('max','Bold Weight',100,900,50,900,''),PR('speed','Speed',.5,12,.1,4,''),PR('len','Wave Length',.1,2,.05,.6,'')]},
+{id:'flap',name:'Split-Flap',cat:'Type',custom:'flap',uses:{stagger:0,ease:0,accent:1},params:[PT('plate','Plates',true),PR('flips','Flips',2,30,1,8,''),PR('round','Corner Radius',0,30,1,10,'%')]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
