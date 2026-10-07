@@ -562,6 +562,10 @@ var CUSTOM={
      if(open>0){g.save(); g.beginPath(); if(hz) g.rect(cx-w/2*open,y-em,w*open,h+em*2); else g.rect(x-em,cy-h/2*open,w+em*2,h*open); g.clip(); drawUnit(g,P,u,o); g.restore();}
      var half=(hz?w:h)/2, a0=half*Math.min(1,open), a1=half*cover; if(a1<=a0) return;
      g.save(); g.shadowColor='transparent'; g.fillStyle=P.accent; if(hz){g.fillRect(cx+a0,y,a1-a0,h); g.fillRect(cx-a1,y,a1-a0,h);} else {g.fillRect(x,cy+a0,w,a1-a0); g.fillRect(x,cy-a1,w,a1-a0);} g.restore();});},
+ eq:function(g,L,env,P,M,K,v){var U=L.letters, n=U.length, rk=ranks('fwd',n), o=styleOf(P), amp=v.amp/100, t=env.t*v.speed;
+   U.forEach(function(u,i){var pr=prog(env,P,M,rk[i],n); if(pr.i<=0||pr.o>=1) return; var lvl=clamp((.5+.5*Math.sin(t*2.1+i*1.7))*.3+(.5+.5*Math.sin(t*3.7+i*.6+2))*.2+noise1(t*1.6+i*9.1,3)*.65), on=EASE.outBack(pr.i)*(1-EASE.inCubic(pr.o)), by=u.line.base;
+     if(v.bars){var bw=(u.x1-u.x0)*.72, bh=L.asc*1.25*lvl*clamp(pr.i)*(1-pr.o); g.save(); g.shadowColor='transparent'; g.fillStyle=P.accent; g.fillRect(u.cx-bw/2,by-bh,bw,bh+L.desc*.35); g.restore();}
+     g.save(); g.globalAlpha*=clamp(pr.i*5); g.translate(u.cx,by); g.scale(1,Math.max(.001,(1+(lvl-.35)*amp*1.6)*on)); g.translate(-u.cx,-by); drawUnit(g,P,u,o); g.restore();});},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -632,6 +636,7 @@ var MOVES=[
 {id:'blocks',name:'Color Blocks',cat:'Graphic',custom:'blocks',stagger:.5,uses:{stagger:1,ease:0,accent:1},params:[PR('pad','Padding',4,50,1,16,'%'),PR('tilt','Tilt',0,12,.5,3,'°'),PS('from','Come From',[['sides','Sides'],['bottom','Bottom'],['pop','Pop']],'sides'),BY('word',['word','line'])]},
 {id:'scribble',name:'Scribble',cat:'Graphic',custom:'scribble',uses:{stagger:0,ease:0,accent:1},params:[PS('shape','Shape',[['circle','Circle'],['underline','Underline'],['box','Box']],'circle'),PR('thick','Thickness',1,12,.5,4,'%'),PR('rough','Roughness',0,200,5,100,'%'),PR('pad','Padding',0,80,1,30,'%'),PT('boil','Boil (Alive Line)',false),PR('seed','Pattern',1,30,1,3,'')]},
 {id:'curtain',name:'Curtain',cat:'Reveal',custom:'curtain',stagger:.3,ease:'outExpo',uses:{stagger:1,ease:1,accent:1},params:[PS('axis','Opens',[['h','Sideways'],['v','Up & Down']],'h'),PT('panels','Curtain Panels',true),PT('perline','Per Line',false)]},
+{id:'eq',name:'Equalizer',cat:'Loop',custom:'eq',stagger:.5,uses:{stagger:1,ease:0,accent:1},params:[PR('amp','Amount',10,200,5,80,'%'),PR('speed','Speed',.2,6,.1,2.2,'×'),PT('bars','Level Bars',false)]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
