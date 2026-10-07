@@ -771,6 +771,18 @@ var CUSTOM={
      else {s.beginPath(); s.rect(rtl?x+w*(1-e):x+w*q,y-2,Math.max(0,w*(e-q)),h+4); s.clip();}
      rrect(s,x,y,w,h,rad); s.fill(); s.globalCompositeOperation='destination-out'; drawUnit(s,P,u,{color:'#000',fill:true}); s.restore();});});
    put(g,c,1);},
+ shatter:function(g,L,env,P,M,K,v){var io=IO(env), o=styleOf(P), em=P.size; if(io.pi<=0||io.po>=1) return; if(io.pi>=1&&io.po<=0){drawAll(g,P,L,o); return;}
+   var c=textLayer(g,P,K,L,'shA'), cs=Math.max(20,em*v.size/100), x0=L.x0-em*.25, y0=L.top-em*.05, bw=L.w+em*.5, bh=L.h+em*.1, cols=Math.max(1,Math.round(bw/cs)), rows=Math.max(1,Math.round(bh/cs)), cw=bw/cols, ch=bh/rows, F=v.force/100;
+   function pt(i,j){return [x0+i*cw+((i>0&&i<cols)?(hash(i*12.7+j*4.1+v.seed)-.5)*cw*.7:0),y0+j*ch+((j>0&&j<rows)?(hash(i*3.3+j*17.9+v.seed)-.5)*ch*.7:0)];}
+   var ox=L.cx, oy=v.origin==='top'?L.top-em*.5:(v.origin==='bottom'?L.bot+em*.5:L.cy), far=Math.hypot(bw/2,bh)+1;
+   var d=layer(g,P,K,'shB',function(s){for(var j=0;j<rows;j++) for(var i=0;i<cols;i++){var A=pt(i,j), B=pt(i+1,j), C=pt(i+1,j+1), D=pt(i,j+1), flip=hash(i*5.1+j*9.7+v.seed)>.5, tris=flip?[[A,B,C],[A,C,D]]:[[A,B,D],[B,C,D]];
+     tris.forEach(function(t,ti){var cx=(t[0][0]+t[1][0]+t[2][0])/3, cy=(t[0][1]+t[1][1]+t[2][1])/3, id=(j*cols+i)*2+ti, h1=hash(id*1.37+v.seed), h2=hash(id*2.91+1), h3=hash(id*4.53+2), dn=Math.min(1,Math.hypot(cx-ox,cy-oy)/far), dir=Math.atan2(cy-oy,cx-ox)+(h1-.5)*.9, dist=em*(1.5+h2*4)*F, dx, dy, rot, sc=1, al;
+       if(io.po>0){var q=clamp((io.po-dn*.3)/.7); dx=Math.cos(dir)*dist*2.2*q; dy=Math.sin(dir)*dist*2.2*q+(v.grav?q*q*H*.55:0); rot=(h3-.5)*6*q; al=1-q*q;}
+       else {var kk=1-EASE.outExpo(clamp((io.pi-dn*.35)/.65)); dx=Math.cos(dir)*dist*1.6*kk; dy=Math.sin(dir)*dist*1.6*kk; rot=(h3-.5)*4*kk; sc=1+kk*h2*.7; al=1-kk*kk*kk;}
+       if(al<=.01) return; var bx=Math.min(t[0][0],t[1][0],t[2][0])-1, by=Math.min(t[0][1],t[1][1],t[2][1])-1, bx1=Math.max(t[0][0],t[1][0],t[2][0])+1, by1=Math.max(t[0][1],t[1][1],t[2][1])+1;
+       s.save(); s.globalAlpha=al; s.translate(cx+dx,cy+dy); s.rotate(rot); s.scale(sc,sc); s.translate(-cx,-cy); s.beginPath(); s.moveTo(t[0][0],t[0][1]); s.lineTo(t[1][0],t[1][1]); s.lineTo(t[2][0],t[2][1]); s.closePath(); s.clip();
+       var sx=Math.max(0,bx*K), sy=Math.max(0,by*K), sw=Math.min(c.width,bx1*K)-sx, sh=Math.min(c.height,by1*K)-sy; if(sw>0&&sh>0) s.drawImage(c,sx,sy,sw,sh,sx/K,sy/K,sw/K,sh/K); s.restore();});}});
+   put(g,d,1);},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -873,6 +885,7 @@ var MOVES=[
 {id:'magnify',name:'Magnify Wave',cat:'Loop',custom:'magnify',uses:{stagger:0,ease:0,accent:0},params:[PR('amp','Magnify',1.1,3,.05,1.7,'×'),PR('width','Bump Width',.5,6,.1,1.6,''),PR('speed','Speed',.5,20,.5,6,''),PS('pass','Run',[['loop','Keep Looping'],['once','Once (On In)']],'loop')]},
 {id:'ball',name:'Bouncing Ball',cat:'Bounce',custom:'ball',uses:{stagger:0,ease:0,accent:1},params:[BY('word',['word','letter']),PR('size','Ball Size',4,30,1,11,'%'),PR('height','Bounce Height',20,200,5,80,'%')]},
 {id:'knockout',name:'Knockout Box',cat:'Graphic',custom:'knockout',stagger:.3,ease:'outExpo',uses:{stagger:1,ease:1,accent:0},note:'لون البلوك هو الـ Fill، والحروف نفسها شفافة بيبان منها الفيديو اللي تحت.',params:[PR('pad','Padding',5,80,1,26,'%'),PR('round','Corner Radius',0,100,1,0,'%'),PS('from','Block In',[['wipe','Wipe'],['scale','Scale'],['drop','Drop']],'wipe'),PT('perline','Block Per Line',false)]},
+{id:'shatter',name:'Shatter',cat:'FX',custom:'shatter',uses:{stagger:0,ease:0,accent:0},params:[PR('size','Piece Size',15,120,1,45,'%'),PR('force','Force',20,300,5,100,'%'),PS('origin','Impact',[['center','Center'],['top','Top'],['bottom','Bottom']],'center'),PT('grav','Gravity',true),PR('seed','Pattern',1,30,1,2,'')]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
