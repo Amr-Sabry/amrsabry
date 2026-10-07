@@ -571,6 +571,13 @@ var CUSTOM={
      if(v.pattern==='checker'){for(y=-R-sw*2+off,k=0;y<R;y+=sw,k++) for(x=-R-sw*2+off+(k%2?sw:0);x<R;x+=sw*2) s.fillRect(x,y,sw*fill*2*.5+.5,sw+.5);}
      else {var f=v.pattern==='thin'?fill*.5:fill; for(x=-R-sw*2+off;x<R;x+=sw*2) s.fillRect(x,-R,sw*2*f,R*2);}});
    put(g,c,io.a);},
+ progress:function(g,L,env,P,M,K,v){var io=IO(env), em=P.size, p=EASE.inOutCubic(clamp(io.pi/.86)), done=clamp((io.pi-.86)/.14), rtl=L.lines[0].rtl, o=styleOf(P), a=io.a, ga=g.globalAlpha; if(a<=.003) return;
+   g.save(); g.globalAlpha=ga*a*.26; drawAll(g,P,L,o); g.restore();
+   var pad=em*.2; g.save(); g.globalAlpha=ga*a; g.beginPath(); L.lines.forEach(function(l){ if(!l.cl.length) return; var x=l.x0-pad, w=l.w+pad*2; g.rect(l.rtl?x+w*(1-p):x,l.top-(l.i?0:em),w*p,L.lh+(l.i?0:em)+(l.i===L.lines.length-1?em:0)); }); g.clip(); drawAll(g,P,L,o); g.restore();
+   var ba=a*(v.after==='hide'?1-EASE.inOutCubic(done):1); if(ba<=.003) return; var th=Math.max(3,em*v.thick/100), by=L.bot+em*.1, bw=L.w, bx=L.x0;
+   g.save(); g.shadowColor='transparent'; g.globalAlpha=ga*ba*.3; g.fillStyle=P.color; g.fillRect(bx,by,bw,th); g.globalAlpha=ga*ba; g.fillStyle=P.accent; g.fillRect(rtl?bx+bw*(1-p):bx,by,bw*p,th);
+   if(v.pct){var n=String(Math.round(p*100)), ar=/[٠-٩]/.test(P.text); if(ar) n=n.replace(/\d/g,function(d){return '٠١٢٣٤٥٦٧٨٩'[d];}); g.font=fontW(P,700,em*.3); g.direction='ltr'; g.textAlign=rtl?'left':'right'; g.fillStyle=P.color; g.fillText(n+(ar?'٪':'%'),rtl?bx:bx+bw,by+th+em*.36);}
+   g.restore();},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -643,6 +650,7 @@ var MOVES=[
 {id:'curtain',name:'Curtain',cat:'Reveal',custom:'curtain',stagger:.3,ease:'outExpo',uses:{stagger:1,ease:1,accent:1},params:[PS('axis','Opens',[['h','Sideways'],['v','Up & Down']],'h'),PT('panels','Curtain Panels',true),PT('perline','Per Line',false)]},
 {id:'eq',name:'Equalizer',cat:'Loop',custom:'eq',stagger:.5,uses:{stagger:1,ease:0,accent:1},params:[PR('amp','Amount',10,200,5,80,'%'),PR('speed','Speed',.2,6,.1,2.2,'×'),PT('bars','Level Bars',false)]},
 {id:'window',name:'Window',cat:'FX',custom:'windowfx',uses:{stagger:0,ease:0,accent:1},params:[PR('width','Stripe Width',4,80,1,22,'%'),PR('angle','Angle',-90,90,1,-35,'°'),PR('speed','Speed',-6,6,.1,1.2,'×'),PS('pattern','Pattern',[['stripes','Stripes'],['thin','Thin Lines'],['checker','Checker']],'stripes')]},
+{id:'progress',name:'Progress Load',cat:'Type',custom:'progress',uses:{stagger:0,ease:0,accent:1},params:[PT('pct','Show Percent',true),PR('thick','Bar Thickness',1,20,.5,5,'%'),PS('after','When Done',[['hide','Bar Hides'],['stay','Bar Stays']],'hide')]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
