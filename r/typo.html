@@ -456,6 +456,12 @@ var CUSTOM={
      if(pr.o>0){var q=pr.o; if(v.gravity){var a2=Math.atan2(u.cy-L.cy-P.size*.6,u.cx-L.cx)+(h1-.5)*.9, F=W*.42*(.6+h2); st.dx+=Math.cos(a2)*F*q; st.dy+=Math.sin(a2)*F*q-H*.25*q+H*1.5*q*q; st.r+=(h3-.5)*9*q; st.a*=1-q*q*q;}
        else {var e2=EASE.inCubic(q); st.dx+=Math.cos(ang+2.2)*far*(.5+h2)*e2; st.dy+=Math.sin(ang+2.2)*far*(.5+h2)*e2; st.r-=(h3-.5)*2*v.spin*Math.PI/180*e2; st.a*=1-e2;}}
      withState(g,u,st,K,function(){drawUnit(g,P,u,o);});});},
+ liquid:function(g,L,env,P,M,K,v){var io=IO(env,EASE.inOutCubic), k=Math.max(1-io.ei,io.eo), o=styleOf(P); if(k<.004){drawAll(g,P,L,o); return;}
+   var em=P.size, blur=em*(.012+.14*v.goo/100*k), pull=k*v.pull/100;
+   var a=layer(g,P,K,'liqA',function(s){L.letters.forEach(function(u,i){s.save(); s.translate((u.line.cx-u.cx)*pull,Math.sin(env.t*3.2+i*1.3)*em*.1*k); xf(s,u.cx,u.cy,1-.25*k,1-.25*k,0,function(){drawUnit(s,P,u,o);}); s.restore();});});
+   var c=scratch(a.width,a.height,'pxliq'), s=c.g; s.setTransform(1,0,0,1,0,0); s.globalAlpha=1; s.globalCompositeOperation='source-over'; s.clearRect(0,0,c.width,c.height); s.filter='blur('+(blur*K).toFixed(2)+'px)'; s.drawImage(a,0,0); s.filter='none';
+   var m=em*1.2+blur*3; alphaThreshold(c,K,L.x0-m,L.top-m,L.x1+m,L.bot+m,118,Math.max(2.5,7*K));
+   put(g,c,Math.min(1,io.a*1.5)); if(k<.18){g.save(); g.globalAlpha*=1-k/.18; drawAll(g,P,L,o); g.restore();}},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -513,6 +519,7 @@ var MOVES=[
   params:[PR('min','Light Weight',100,900,50,200,''),PR('max','Bold Weight',100,900,50,900,''),PR('speed','Speed',.5,12,.1,4,''),PR('len','Wave Length',.1,2,.05,.6,'')]},
 {id:'flap',name:'Split-Flap',cat:'Type',custom:'flap',uses:{stagger:0,ease:0,accent:1},params:[PT('plate','Plates',true),PR('flips','Flips',2,30,1,8,''),PR('round','Corner Radius',0,30,1,10,'%')]},
 {id:'scatter',name:'Scatter',cat:'Bounce',custom:'scatter',stagger:.45,uses:{stagger:1,ease:0,accent:0},params:[PR('spread','Spread',20,200,5,100,'%'),PR('spin','Spin',0,360,5,140,'°'),BY('letter',['letter','word']),PR('seed','Pattern',1,30,1,5,''),PT('gravity','Explode Out With Gravity',true)]},
+{id:'liquid',name:'Liquid',cat:'Warp',custom:'liquid',uses:{stagger:0,ease:0,accent:0},params:[PR('goo','Gooeyness',20,200,5,100,'%'),PR('pull','Pull To Center',0,100,1,70,'%')]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
