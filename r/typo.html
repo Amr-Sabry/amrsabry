@@ -853,6 +853,10 @@ var CUSTOM={
    g.restore();
    var bar=EASE.outExpo(clamp(io.pi/.4))*(1-EASE.inCubic(clamp((io.po-.55)/.45))), ba=v.keep?1:(io.po>0?clamp(io.po/.1):1-clamp((io.pi-.88)/.12)); if(bar<=.002||ba<=.003) return;
    var hh=(L.h/2+em*.02)*bar; g.save(); g.shadowColor='transparent'; g.globalAlpha*=ba; g.fillStyle=P.accent; g.fillRect(bx,L.cy-hh,th,hh*2); g.restore();},
+ drift:function(g,L,env,P,M,K,v){var em=P.size, o=styleOf(P), p=env.t/env.D, d=v.dir==='out'?-1:1, sc=1+d*v.zoom/100*(p-.5), fin=clamp(env.t/Math.max(.2,env.Ti)), fo=env.To>0?clamp((env.t-env.tOut)/env.To):0, al=EASE.inOutCubic(fin)*(1-EASE.inOutCubic(fo)), tr=v.track/100*(p-.5)*d*1.4; if(al<=.003) return;
+   g.save(); g.globalAlpha*=al; var bl=Math.max(1-fin,fo); if(v.blur>0&&bl>.01) g.filter='blur('+(bl*em*.08*v.blur/100*K).toFixed(2)+'px)'; g.translate(L.cx,L.cy); g.scale(sc,sc); g.translate(-L.cx,-L.cy);
+   L.lines.forEach(function(l){ if(!l.cl.length) return; if(l.rtl||Math.abs(tr)<.001){l.words.forEach(function(w){drawWord(g,P,w,o);}); return;} l.cl.forEach(function(c){g.save(); g.translate((c.cx-l.cx)*tr,0); drawCl(g,P,c,o); g.restore();});});
+   g.restore();},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -968,6 +972,7 @@ var MOVES=[
 {id:'clock',name:'Clock Wipe',cat:'Reveal',custom:'clock',ease:'inOutCubic',uses:{stagger:0,ease:1,accent:1},params:[PR('start','Start Angle',0,360,5,0,'°'),PS('dir','Direction',[['cw','Clockwise'],['ccw','Counter-Clockwise']],'cw'),PS('mode','Wipe',[['single','Single'],['double','Double']],'single'),PT('hand','Show Hand',true)]},
 {id:'stripes',name:'Stripe Wipe',cat:'Reveal',custom:'stripes',stagger:.5,ease:'inOutCubic',uses:{stagger:1,ease:1,accent:1},params:[PR('bars','Bars',2,16,1,6,''),PR('angle','Slant',-45,45,1,-20,'°'),PR('width','Bar Width',5,80,1,30,'%'),ORDER]},
 {id:'sidebar',name:'Side Bar Slide',cat:'Reveal',custom:'sidebar',stagger:.35,uses:{stagger:1,ease:0,accent:1},params:[PR('thick','Bar Thickness',1,20,.5,5,'%'),PR('gap','Gap',5,80,1,22,'%'),PS('side','Bar Side',[['start','Reading Start'],['end','Reading End']],'start'),PT('keep','Keep Bar',true)]},
+{id:'drift',name:'Cinematic Drift',cat:'Soft',custom:'drift',uses:{stagger:0,ease:0,accent:0},note:'حركة مستمرة على طول الـ Duration كلها، والـ In والـ Out هنا Fade هادي.',params:[PR('zoom','Zoom',0,40,1,10,'%'),PR('track','Tracking Drift (English)',0,100,1,30,'%'),PS('dir','Direction',[['in','Push In'],['out','Pull Out']],'in'),PR('blur','Blur On Fade',0,200,5,60,'%')]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
