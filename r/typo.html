@@ -986,6 +986,15 @@ var CUSTOM={
        g.lineWidth=lw*.6; g.beginPath(); for(var t=0;t<12;t++){var ta=t/12*6.2832; g.moveTo(cx+Math.cos(ta)*R*.86,cy+Math.sin(ta)*R*.86); g.lineTo(cx+Math.cos(ta)*R*(t%3?.78:.7),cy+Math.sin(ta)*R*(t%3?.78:.7));} g.stroke();
        g.lineWidth=lw*1.2; g.beginPath(); g.moveTo(cx,cy); g.lineTo(cx+Math.cos(ha)*R*.45,cy+Math.sin(ha)*R*.45); g.stroke(); g.strokeStyle=P.accent; g.lineWidth=lw; g.beginPath(); g.moveTo(cx,cy); g.lineTo(cx+Math.cos(ma)*R*.68,cy+Math.sin(ma)*R*.68); g.stroke(); g.fillStyle=P.accent; g.beginPath(); g.arc(cx,cy,lw,0,6.2832); g.fill(); g.restore();}}
    g.restore();},
+ stopwatch:function(g,L,env,P,M,K,v){var io=IO(env), o=styleOf(P), em=P.size, m=/[0-9٠-٩][0-9٠-٩:.٫]*/.exec(P.text), a=io.a; if(a<=.003) return; if(!m){fadeAll(g,P,L,a); return;}
+   var ar=/[٠-٩]/.test(m[0]), tv=m[0].replace(/٫/g,'.').split(':').reduce(function(acc,s){return acc*60+(parseNum(s)||0);},0), run=env.To>0?env.tOut:env.D, tt=Math.min(env.t,run), sec=v.mode==='up'?tt*v.speed:(v.mode==='down'?Math.max(0,tv-tt*v.speed):tv*clamp(tt/Math.max(.3,run-.4)));
+   function p2(n){return (n<10?'0':'')+n;} var cs=Math.floor(sec*100+1e-6), cc=cs%100, s=Math.floor(cs/100), S=s%60, str=v.fmt==='sscc'?p2(s%100)+'.'+p2(cc):(v.fmt==='hhmmss'?p2(Math.floor(s/3600))+':'+p2(Math.floor(s/60)%60)+':'+p2(S):(v.fmt==='mmss'?p2(Math.floor(s/60))+':'+p2(S):p2(Math.floor(s/60))+':'+p2(S)+'.'+p2(cc)));
+   if(ar) str=toDigits(str,true).replace('.','٫'); var S=slotLayout(g,P,m.index,m[0].length,str,ar), w=S.w;
+   g.save(); g.globalAlpha*=a; g.translate(0,(1-EASE.outExpo(clamp(env.t/.5)))*em*.2); drawWordsExcept(g,P,S.L,w,o); if(!w){g.restore(); return;}
+   var xe=drawSlots(g,P,S,str,o), tot=xe-S.x-(S.B?g.measureText(S.B).width:0);
+   if(v.ring){var R=tot/2+em*.3, cy=w.line.yc, rcx=S.x+tot/2, ang=(sec%1)*6.2832-1.5708; g.save(); g.shadowColor='transparent'; g.lineCap='round'; g.lineWidth=Math.max(2,em*.03); g.globalAlpha*=.25; g.strokeStyle=P.color; g.beginPath(); g.arc(rcx,cy,R,0,6.2832); g.stroke(); g.restore();
+     g.save(); g.shadowColor='transparent'; g.lineCap='round'; g.lineWidth=Math.max(3,em*.045); g.strokeStyle=P.accent; g.beginPath(); g.arc(rcx,cy,R,ang-1.2,ang); g.stroke(); g.fillStyle=P.accent; g.beginPath(); g.arc(rcx+Math.cos(ang)*R,cy+Math.sin(ang)*R,em*.045,0,6.2832); g.fill(); g.restore();}
+   g.restore();},
 };
 
 /* ---- the moves. uses: which of the shared controls matter for this move (stagger, ease, accent) ---- */
@@ -1116,6 +1125,8 @@ var MOVES=[
   params:[PS('unit','Unit',[['m2','m²  ·  م²'],['m','m  ·  م'],['cm','cm  ·  سم'],['km','km  ·  كم'],['km2','km²  ·  كم²'],['ft2','ft²  ·  قدم²'],['kg','kg  ·  كجم'],['ton','t  ·  طن'],['l','L  ·  لتر'],['c','°C  ·  °م'],['kmh','km/h  ·  كم/س'],['pct','%  ·  ٪'],['x','×'],['plus','+'],['k','K  ·  ألف'],['mil','M  ·  مليون'],['bil','B  ·  مليار'],['usd','$'],['egp','EGP  ·  ج.م'],['aed','AED  ·  د.إ'],['sar','SAR  ·  ر.س']],'m2'),PR('usize','Unit Size',40,100,5,70,'%'),PT('accent','Accent Unit',true),PS('lang','Unit Language',[['auto','Auto'],['en','English'],['ar','عربي']],'auto'),{k:'from',label:'Start From',type:'num',def:0}]},
 {id:'fraction',name:'Fraction',cat:'Numbers',custom:'fraction',sample:'3/4',need:/[0-9٠-٩]\s*[\/⁄÷]\s*[0-9٠-٩]/,uses:{stagger:0,ease:0,accent:1},note:'اكتب الكسر بالشرطة المايلة زي 3/4 وهو بيترصّ فوق بعض.',params:[PT('count','Count The Top Number',true),PT('pie','Show Pie',false)]},
 {id:'timeclock',name:'Time',cat:'Numbers',custom:'timeclock',sample:'09:30',need:/[0-9٠-٩]{1,2}[:.٫][0-9٠-٩]{2}/,uses:{stagger:0,ease:0,accent:1},note:'اكتب الوقت زي 09:30 أو 01:45:20 والعقارب بتلف لحد ما توصله.',params:[PS('from','Start From',[['zero','00:00'],['hour','One Hour Before'],['min','10 Minutes Before']],'hour'),PT('blink','Blinking Colon',true),PT('clock','Show Clock',true)]},
+{id:'stopwatch',name:'Stopwatch',cat:'Numbers',custom:'stopwatch',sample:'00:00.00',uses:{stagger:0,ease:0,accent:1},note:'العدّاد بيشتغل على طول مدة الـ Hold. في وضع Stop At The Text Value بيقف على الوقت اللي مكتوب في النص.',
+  params:[PS('mode','Mode',[['up','Count Up'],['down','Count Down From The Text'],['to','Stop At The Text Value']],'up'),PS('fmt','Format',[['mmsscc','00:00.00'],['sscc','00.00'],['mmss','00:00'],['hhmmss','00:00:00']],'mmsscc'),PR('speed','Speed',.1,60,.1,1,'×'),PT('ring','Lap Ring',false)]},
 ];
 /* every move has a fixed number: its place in this list. New moves are only ever added at the end. */
 var MOVE_BY={}; MOVES.forEach(function(m,i){MOVE_BY[m.id]=m; m.no=i+1; m.num=(i<9?'0':'')+(i+1);});
