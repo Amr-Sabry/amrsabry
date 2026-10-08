@@ -1,0 +1,13 @@
+{
+  "name": "خريطة المشروعات الحكومية",
+  "short_name": "خريطة المشروعات",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#1f2426",
+  "theme_color": "#1f2426",
+  "icons": [{ "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
