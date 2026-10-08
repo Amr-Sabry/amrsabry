@@ -1,0 +1,1 @@
+import{c as e,l as t}from"./deterrents-D472hMpF.js";async function n(t){let n=await fetch(e(t));if(!n.ok)throw Error(`${t}: ${n.status}`);return n.json()}var r=null,i=()=>r??=n(`geo/v2/map.fine.json`);async function a(e){let[a,o]=await Promise.all([t(e),n(`geo/v2/map.json`)]);return i().catch(()=>{r=null}),{data:a,map:o}}export{a as loadAfterUnlock,i as loadFineMap};
