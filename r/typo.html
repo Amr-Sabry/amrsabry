@@ -83,6 +83,8 @@ button.spec:hover{border-color:var(--line2);color:var(--fg)}
 .pjm-i b{font:700 12px/1 var(--mono);letter-spacing:.18em}.pjm-i small{grid-column:1/-1;font:500 12px/1.5 var(--ar);color:var(--mute);direction:rtl;text-align:right}
 .pjm-i[aria-current="true"] b{color:var(--accent)}
 @media (max-width:900px){.pjp{flex:none;overflow:visible}.pjp .pgrid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}}
+.gbord{margin:10px 0 4px;padding:12px 10px 4px;border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;gap:8px}.gbord h4{margin:0;font:700 11px/1 var(--mono);letter-spacing:.14em;color:var(--accent);text-transform:uppercase}
+.seg.g3{display:grid!important;grid-template-columns:repeat(3,1fr)}.seg.g3 button{border-left:1px solid var(--line);border-top:1px solid var(--line);margin:-1px 0 0 -1px;padding:8px 4px}
 .gtree{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:9px;overflow:hidden}
 .gr{display:flex;align-items:center;gap:6px;padding:0 6px 0 0;border-top:1px solid var(--line);min-height:32px}
 .gr:first-child{border-top:0}
@@ -1473,7 +1475,7 @@ COMPS.linechart={name:'Line Chart',icon:'chart',
    Children are laid out in the flow (row / column) or placed on their parent ('abs', by an anchor), and every node can be nudged (dx, dy). */
 var GTOK={fill:function(P){return P.color;},accent:function(P){return P.accent;},black:function(){return '#000000';},white:function(){return '#ffffff';},plate:function(){return '#1c1c1c';},accentDim:function(P){return cShade(P.accent,.52);},grey:function(){return '#464646';},ink:function(){return '#15120a';},edge:function(){return '#8a8a8a';}};
 function gCol(v,P){ if(v==null||v===''||v==='none') return null; if(v.charAt(0)==='$'){var f=GTOK[v.slice(1)]; return f?f(P):null;} return v; }
-var GDEF={box:{dir:'row',gap:0,px:0,py:0,align:'center',just:'center',bg:'',stripes:false,stroke:'',sw:4,shape:'rect',r:0,cut:0,sl:0,sr:0,sk:.62,minW:0,minH:0,gapTop:'',wOf:'',wPlus:0},
+var GDEF={box:{dir:'row',gap:0,px:0,py:0,align:'center',just:'center',bg:'',stripes:false,stroke:'',sw:4,shape:'rect',r:0,cut:0,sl:0,sr:0,sk:.62,minW:0,minH:0,gapTop:'',wOf:'',wPlus:0,ban:'auto',bfrom:'auto',bdir:'ccw',bout:'trim'},
   text:{t:'',fs:34,fw:800,col:'$fill',lh:1.32,al:'c',ty:0}, num:{t:'0',u:'',fs:100,fw:900,col:'$fill',ufs:26,ufw:600,ucol:'$fill',up:'side',al:'c',ssz:.58},
   vtext:{t:'',fs:24,fw:600,col:'$fill',rot:-90}, bar:{w:62,h:3.2,col:'$accent'}, space:{w:40,h:0,wOf:'',wPlus:0}, chart:{pts:[],lead:true,cw:560,ch:330,lcol:'$fill',bcol:'$accent',tcol:'$ink',xcol:'$fill'}};
 var GCOM={hide:false,dx:0,dy:0,pos:'flow',ax:.5,ay:.5,ox:.5,oy:.5,mt:0,mr:0,mb:0,ml:0,grow:0,an:'auto',ad:'r',d0:0,dd:1};
@@ -1553,8 +1555,47 @@ function gGapPath(g,n,s,gx0,gx1){var x=n._x, y=n._y, w=n._w, h=n._h, r=gv(n,'sha
   g.beginPath(); g.moveTo(gx1,y); g.lineTo(x1-r,y); if(r) g.bezierCurveTo(x1-r+q,y,x1,y+r-q,x1,y+r); g.lineTo(x1,yb-r); if(r) g.bezierCurveTo(x1,yb-r+q,x1-r+q,yb,x1-r,yb); g.lineTo(x+r,yb); if(r) g.bezierCurveTo(x+r-q,yb,x,yb-r+q,x,yb-r); g.lineTo(x,y+r); if(r) g.bezierCurveTo(x,y+r-q,x+r-q,y,x+r,y); g.lineTo(gx0,y);
   return (x1-r-gx1)+(gx0-x-r)+2*(h-2*r)+(w-2*r)+Math.PI*2*r;}
 
+/* ---- borders: every outline draws itself in like a trim path (default) and erases itself out ----
+   Border In  (ban) : auto | draw (one pen) | draw2 (two pens from the start point) | wipe | fade | pop | none (cut on)
+   Start From (bfrom): auto | tl tc tr rc br bc bl lc  — auto is the top right corner, or the gap under the number on a framed box
+   Direction  (bdir) : ccw (right to left along the top) | cw
+   Border Out (bout) : trim (the tail chases the line away) | retract (draws itself back) | fade | wipe | group (leaves with the rest of the group) */
+var G_NOB=false;
+function gHasB(n,P){return n.type==='box'&&!!gCol(gv(n,'stroke'),P)&&gv(n,'sw')>0;}
+function gBan(n){var b=gv(n,'ban'); if(b==='auto') return gv(n,'gapTop')?'draw2':'draw'; return b;}
+/* where the named points sit along the outline, measured the way gPath / gGapPath walk it */
+function gMarks(n,s,gx,L){var x=n._x, y=n._y, w=n._w, h=n._h, sh=gv(n,'shape'), M={};
+  if(gx){var r=sh==='round'?Math.min(gv(n,'r')*s,w/2,h/2):0, q=Math.PI*r/2, a=w-2*r, b=h-2*r, s1=x+w-r-gx[1];
+    M.tc=0; M.tr=s1+q/2; M.rc=s1+q+b/2; M.br=s1+q+b+q/2; M.bc=s1+2*q+b+a/2; M.bl=s1+2*q+b+a+q/2; M.lc=s1+3*q+b+a+b/2; M.tl=s1+3.5*q+2*b+a; return M;}
+  if(sh==='round'&&!gv(n,'sl')&&!gv(n,'sr')){var r2=Math.min(gv(n,'r')*s,w/2,h/2), q2=Math.PI*r2/2, a2=w-2*r2, b2=h-2*r2;
+    M.tc=a2/2; M.tr=a2+q2/2; M.rc=a2+q2+b2/2; M.br=a2+1.5*q2+b2; M.bc=a2+2*q2+b2+a2/2; M.bl=2*a2+2.5*q2+b2; M.lc=2*a2+3*q2+1.5*b2; M.tl=L-q2/2; return M;}
+  var k=gv(n,'sk')*h, sl=gv(n,'sl'), sr=gv(n,'sr'), c=Math.min(gv(n,'cut')*s,w/2,h/2), tl=[x+(sl===1?k:0),y], bl=[x+(sl===-1?k:0),y+h], tr=[x+w-(sr===-1?k:0),y], br=[x+w-(sr===1?k:0),y+h],
+    pts=(sh==='cut'&&c>0)?[tl,tr,[br[0],br[1]-c],[br[0]-c,br[1]],bl]:[tl,tr,br,bl], cum=[0];
+  for(var i=1;i<pts.length;i++) cum.push(cum[i-1]+Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]));
+  var cb=pts.length===5?(cum[2]+cum[3])/2:cum[2], cl=cum[pts.length-1];
+  M.tl=0; M.tr=cum[1]; M.br=cb; M.bl=cl; M.tc=cum[1]/2; M.rc=(cum[1]+cb)/2; M.bc=(cb+cl)/2; M.lc=(cl+L)/2; return M;}
+/* show the stretch [st, st+a] of an outline of length L (wrapping round its start) */
+function gDash(g,L,st,a){ if(a<=.01) return false; if(a<L-.5){g.setLineDash([a,L-a]); g.lineDashOffset=((-st%L)+L)%L;} return true;}
+/* pin: how far the border has come in (0..1), pout: how far it has gone out (0..1) */
+function gBorder(g,P,n,s,pin,pout){var sc=gCol(gv(n,'stroke'),P), sw=gv(n,'sw')*s; if(!sc||!(sw>0)||pin<=0||pout>=1) return;
+  var gid=gv(n,'gapTop'), gc=gid?gFind(n,gid):null, gx=(gc&&!gv(gc,'hide')&&gc._w)?[gc._x-14*s,gc._x+gc._w+14*s]:null, bm=gBan(n), bo=gv(n,'bout'), out=pout>0, mode=out?bo:bm;
+  g.save(); var L=gx?gGapPath(g,n,s,gx[0],gx[1]):gPath(g,n,s), M=gMarks(n,s,gx,L), fr=gv(n,'bfrom'); if(fr==='auto'||M[fr]==null) fr=gx?'tc':'tr';
+  var o=M[fr], dir=gv(n,'bdir'), two=bm==='draw2', ok=true, X=n._x-sw, Y=n._y-sw, Wd=n._w+sw*2, Hd=n._h+sw*2;
+  g.lineWidth=sw; g.strokeStyle=sc; g.lineJoin='round'; g.lineCap='butt';
+  if(!out){var q=clamp(pin/.85), e=EASE.inOutCubic(q);
+    if(bm==='draw'||bm==='draw2'){var a=L*e; ok=gDash(g,L,two?o-a/2:(dir==='cw'?o:o-a),a);}
+    else if(bm==='fade') g.globalAlpha*=EASE.outCubic(pin);
+    else if(bm==='pop'){var ep=EASE.outBack(pin), cx=n._x+n._w/2, cy=n._y+n._h/2; g.translate(cx,cy); g.scale(ep,ep); g.translate(-cx,-cy); if(gx) gGapPath(g,n,s,gx[0],gx[1]); else gPath(g,n,s);}
+    else if(bm==='wipe'&&pin<1){var ew=EASE.outExpo(pin), d=gv(n,'ad'); g.beginPath(); if(d==='l') g.rect(X,Y,Wd*ew,Hd); else if(d==='t') g.rect(X,Y,Wd,Hd*ew); else if(d==='b') g.rect(X,Y+Hd*(1-ew),Wd,Hd*ew); else if(d==='c') g.rect(X+Wd*(1-ew)/2,Y,Wd*ew,Hd); else g.rect(X+Wd*(1-ew),Y,Wd*ew,Hd); g.clip(); if(gx) gGapPath(g,n,s,gx[0],gx[1]); else gPath(g,n,s);}}
+  else {var eo=EASE.inOutCubic(pout), a2=L*(1-eo);
+    if(mode==='trim'){ ok=gDash(g,L,two?o+L*eo/2:(dir==='cw'?o+L*eo:o),a2); }
+    else if(mode==='retract'){ ok=gDash(g,L,two?o-a2/2:(dir==='cw'?o:o-a2),a2); }
+    else if(mode==='fade') g.globalAlpha*=1-EASE.inCubic(pout);
+    else if(mode==='wipe'){var d2=gv(n,'ad'), k2=1-eo; g.beginPath(); if(d2==='l') g.rect(X+Wd*(1-k2),Y,Wd*k2,Hd); else if(d2==='t') g.rect(X,Y+Hd*(1-k2),Wd,Hd*k2); else if(d2==='b') g.rect(X,Y,Wd,Hd*k2); else if(d2==='c') g.rect(X+Wd*(1-k2)/2,Y,Wd*k2,Hd); else g.rect(X,Y,Wd*k2,Hd); g.clip(); if(gx) gGapPath(g,n,s,gx[0],gx[1]); else gPath(g,n,s);}}
+  if(ok) g.stroke(); g.restore();}
+
 /* ---- draw, with each node's own entrance ---- */
-function gAnimOf(n){var a=gv(n,'an'); if(a!=='auto') return a; if(n.type==='box') return gv(n,'bg')?'wipe':(gv(n,'stroke')?'draw':'none'); if(n.type==='num') return 'count'; if(n.type==='text') return 'rise'; if(n.type==='bar') return 'grow'; if(n.type==='chart') return 'chart'; return 'fade';}
+function gAnimOf(n){var a=gv(n,'an'); if(a!=='auto') return a; if(n.type==='box') return gv(n,'bg')?'wipe':'none'; if(n.type==='num') return 'count'; if(n.type==='text') return 'rise'; if(n.type==='bar') return 'grow'; if(n.type==='chart') return 'chart'; return 'fade';}
 function gDraw(g,P,env,K){var R=P.g&&P.g.root; if(!R) return; var ph=cPhase(env), st=gStepAt(P,env), G; P.g._vis=st.q<.5?st.a:st.b;
   if(st.q<=0){ gWith(P,st.a,function(){G=gLay(P); gEach(R,function(n){n._chg=null;}); gDraw2(g,P,G,ph,K);}); return; }
   /* between two steps: lay both out, slide every layer from one to the other, and swap the text and numbers that change */
@@ -1572,7 +1613,11 @@ function gMix(P,A,B,q){var eg=EASE.inOutCubic(clamp((q-.12)/.7)), ch=[];
   ch.forEach(function(n,i){n._chg.q=clamp((q-i*off)/Math.max(.2,1-om));});}
 function gDraw2(g,P,G,ph,K){var s=G.s, list=[]; gEach(G.root,function(n){ if(!gv(n,'hide')&&n.type!=='space'&&!(n.type==='box'&&!gv(n,'bg')&&!gv(n,'stroke'))) list.push(n); });
   var N=Math.max(1,list.length); list.forEach(function(n,i){var st=clamp(i/N*.6+gv(n,'d0'),0,.95), du=Math.max(.05,.42*gv(n,'dd')); n._p=clamp((ph.pi-st)/du); n._t0=st;});
-  cOut(g,P,K,ph.po,function(g){ gNode(g,P,G.root,s,ph,null); });}
+  var po=ph.po; if(po<=0){gNode(g,P,G.root,s,ph,null); return;} if(po>=1) return;
+  var own=[]; (function walk(n){ if(gv(n,'hide')) return; if(gHasB(n,P)&&gv(n,'bout')!=='group') own.push(n); (n.kids||[]).forEach(walk); })(G.root);
+  var e=EASE.inCubic(po); G_NOB=true; var c; try{ c=layer(g,P,K,'cmpout',function(sx){ if(!own.length) sx.translate(0,e*P.size*.14); gNode(sx,P,G.root,s,ph,null); }); } finally { G_NOB=false; } put(g,c,1-e);
+  /* the outlines leave on their own, one after the other */
+  own.forEach(function(n,i){gBorder(g,P,n,s,1,clamp((po-i/own.length*.25)/.75));});}
 /* old content leaves while the new one comes in: roll (up through the plate), fade, or wipe (right to left) */
 function gSwap(g,P,n,par,s,mode,D,box,fo,fi){var lq=n._chg.q, eo=EASE.inCubic(clamp(lq/.46)), ei=EASE.outCubic(clamp((lq-.5)/.5));
   g.save(); if(mode==='roll'&&par&&(gv(par,'bg')||gv(par,'stroke'))){gPath(g,par,s); g.clip();}
@@ -1590,16 +1635,16 @@ function gNumGeo(n,s,ur,below){var x=n._x,y=n._y,w=n._w,h=n._h, nfs=gv(n,'fs')*s
   if(ur) return {nx:left+numw/2,ny:base,ux:left+tot,uy:base,ual:'r'};
   return {nx:left+tot-numw/2,ny:base,ux:left+uw,uy:base-cap*.28,ual:'r'};}
 function gNode(g,P,n,s,ph,par){ if(gv(n,'hide')) return; var p=n._p==null?1:n._p, an=gAnimOf(n);
-  if(n.type==='box'){ var bg=gCol(gv(n,'bg'),P), sc=gCol(gv(n,'stroke'),P), sw=gv(n,'sw')*s;
-    if((bg||sc)&&p>0){ g.save();
-      if(an==='wipe'&&p<1){var e=EASE.outExpo(p), d=gv(n,'ad'), x=n._x-sw, y=n._y-sw, w=n._w+sw*2, h=n._h+sw*2; g.beginPath(); if(d==='l') g.rect(x,y,w*e,h); else if(d==='t') g.rect(x,y,w,h*e); else if(d==='b') g.rect(x,y+h*(1-e),w,h*e); else if(d==='c') g.rect(x+w*(1-e)/2,y,w*e,h); else g.rect(x+w*(1-e),y,w*e,h); g.clip();}
-      if(an==='fade') g.globalAlpha*=EASE.outCubic(p); if(an==='pop'){var e2=EASE.outBack(p), cx=n._x+n._w/2, cy=n._y+n._h/2; g.translate(cx,cy); g.scale(e2,e2); g.translate(-cx,-cy);}
-      if(bg){gPath(g,n,s); g.fillStyle=bg; g.fill();
-        if(gv(n,'stripes')){var c=rgbOf(bg), lum=(c[0]*.3+c[1]*.59+c[2]*.11)/255; g.save(); gPath(g,n,s); g.clip(); g.fillStyle=lum<.25?'rgba(255,255,255,.07)':'rgba(0,0,0,.16)'; for(var yy=n._y+1.2*s;yy<n._y+n._h;yy+=4*s) g.fillRect(n._x,yy,n._w,1.7*s); g.restore();}}
-      if(sc&&sw>0){var gid=gv(n,'gapTop'), gc=gid?gFind(n,gid):null, L;
-        if(gc&&!gv(gc,'hide')&&gc._w) L=gGapPath(g,n,s,gc._x-14*s,gc._x+gc._w+14*s); else L=gPath(g,n,s);
-        cTrace(g,L,an==='draw'?EASE.inOutCubic(p):1,sw,sc);}
+  if(n.type==='box'){ var bg=gCol(gv(n,'bg'),P), hb=gHasB(n,P), bm=gBan(n), pf=(hb&&bg&&/^(draw|draw2)$/.test(bm))?clamp((p-.3)/.7):p, sw=hb?gv(n,'sw')*s:0;
+    /* the fill: its own entrance; when the border draws itself, the fill comes in behind the line */
+    if(bg&&pf>0){ g.save();
+      if(an==='wipe'&&pf<1){var e=EASE.outExpo(pf), d=gv(n,'ad'), x=n._x-sw, y=n._y-sw, w=n._w+sw*2, h=n._h+sw*2; g.beginPath(); if(d==='l') g.rect(x,y,w*e,h); else if(d==='t') g.rect(x,y,w,h*e); else if(d==='b') g.rect(x,y+h*(1-e),w,h*e); else if(d==='c') g.rect(x+w*(1-e)/2,y,w*e,h); else g.rect(x+w*(1-e),y,w*e,h); g.clip();}
+      if(an==='fade'||an==='draw') g.globalAlpha*=EASE.outCubic(pf); if(an==='pop'){var e2=EASE.outBack(pf), cx=n._x+n._w/2, cy=n._y+n._h/2; g.translate(cx,cy); g.scale(e2,e2); g.translate(-cx,-cy);}
+      gPath(g,n,s); g.fillStyle=bg; g.fill();
+      if(gv(n,'stripes')){var c=rgbOf(bg), lum=(c[0]*.3+c[1]*.59+c[2]*.11)/255; g.save(); gPath(g,n,s); g.clip(); g.fillStyle=lum<.25?'rgba(255,255,255,.07)':'rgba(0,0,0,.16)'; for(var yy=n._y+1.2*s;yy<n._y+n._h;yy+=4*s) g.fillRect(n._x,yy,n._w,1.7*s); g.restore();}
       g.restore();}
+    /* the border: drawn here on the way in; on the way out it is drawn by gDraw2 with its own exit, unless it leaves with the group */
+    if(hb&&p>0&&!(G_NOB&&gv(n,'bout')!=='group')) gBorder(g,P,n,s,p,0);
     (n.kids||[]).forEach(function(k){gNode(g,P,k,s,ph,n);}); return;}
   if(p<=0) return;
   g.save(); var x=n._x, y=n._y, w=n._w, h=n._h, tm=(P.g&&P.g.tt)||'roll';
@@ -1860,6 +1905,8 @@ function slider(parent,id,label,min,max,step,key,fmt){var f=rangeCtl(parent,id,l
 /* the selected move's own controls */
 function fmtStep(p){var dec=(String(p.step).split('.')[1]||'').length; return function(x){return x.toFixed(dec)+(p.unit==='°'||p.unit==='%'||p.unit==='×'?p.unit:(p.unit?' '+p.unit:''));};}
 /* ---- groups in the inspector: the content first (what changes with the data), then the layers inside the group, then the picked layer's look ---- */
+var G_BIN=[['draw','Trim Path'],['draw2','Both Ways'],['wipe','Wipe'],['fade','Fade'],['pop','Pop'],['none','Cut']], G_BOUT=[['trim','Trim Path'],['retract','Reverse'],['fade','Fade'],['wipe','Wipe'],['group','With Group']], G_BDIR=[['ccw','Counter-Clockwise'],['cw','Clockwise']],
+  G_BFROM=[['auto','Auto'],['tr','Top Right'],['tc','Top Middle'],['tl','Top Left'],['lc','Left Middle'],['bl','Bottom Left'],['bc','Bottom Middle'],['br','Bottom Right'],['rc','Right Middle']];
 var gsel='', gstep=0, GCOLS=[['$fill','Layer Fill'],['$accent','Accent'],['$accentDim','Accent Dark'],['$white','White'],['$black','Black'],['$plate','Plate Dark'],['$grey','Grey'],['$edge','Edge Grey'],['$ink','Dark Ink'],['','None'],['#','Custom']];
 var GTYPE={box:'Plate',text:'Text',num:'Number',vtext:'Side Text',bar:'Tick',space:'Space',chart:'Chart'};
 function placeNodeBox(){var b=$('#nodeBox'); if(!b) return; var n=null; if(P&&P.kind==='group'&&gsel){var G=gLayout(P); if(G) n=gFind(G.root,gsel);} if(!n||gv(n,'hide')||!(n._w>0)){b.classList.remove('on'); return;}
@@ -1867,9 +1914,9 @@ function placeNodeBox(){var b=$('#nodeBox'); if(!b) return; var n=null; if(P&&P.
 function setNode(n,k,v,rebuild){n[k]=v; P.text=compLabel(P); syncLines(); placeSel(); dirty(); persist(); hook('change','group'); if(rebuild) buildGroupUI();}
 function gColorCtl(parent,label,n,k){var f=el('div','f',parent); el('span','lab',f,label); var r=el('div','ccol',f), se=el('select','',r), ci=el('input','',r), v=gv(n,k)||''; ci.type='color'; ci.setAttribute('aria-label',label+' custom');
   GCOLS.forEach(function(o){var op=el('option','',se,o[1]); op.value=o[0];}); var custom=v&&v.charAt(0)==='#'; se.value=custom?'#':v; ci.hidden=!custom; ci.value=custom?v:(gCol(v,P)||'#ffffff');
-  se.addEventListener('change',function(){ if(se.value==='#'){ci.hidden=false; setNode(n,k,ci.value);} else {ci.hidden=true; setNode(n,k,se.value);} }); ci.addEventListener('input',function(){setNode(n,k,ci.value);}); return f;}
+  se.addEventListener('change',function(){var had=!!gv(n,k), rb=(k==='stroke'||k==='bg'); if(se.value==='#'){ci.hidden=false; setNode(n,k,ci.value,rb&&!had);} else {ci.hidden=true; setNode(n,k,se.value,rb&&had!==!!se.value);} }); ci.addEventListener('input',function(){setNode(n,k,ci.value);}); return f;}
 function gRange(parent,label,n,k,min,max,step,fmt){return rangeCtl(parent,'gn_'+n.id+'_'+k,label,min,max,step,function(){return +gv(n,k);},function(x){setNode(n,k,x);},fmt||function(x){return String(Math.round(x*100)/100);});}
-function gSeg(parent,label,n,k,opts,rebuild){var f=el('div','f',parent); el('span','lab',f,label); var sg=el('div','seg',f); sg.style.display='flex'; opts.forEach(function(o){var b=el('button','',sg,o[1]); b.type='button'; b.style.flex='1'; b.setAttribute('aria-pressed',String(gv(n,k)===o[0])); b.addEventListener('click',function(){Array.prototype.forEach.call(sg.children,function(x){x.setAttribute('aria-pressed',String(x===b));}); setNode(n,k,o[0],rebuild);});}); return f;}
+function gSeg(parent,label,n,k,opts,rebuild,cur){var f=el('div','f',parent); el('span','lab',f,label); var sg=el('div','seg',f); sg.style.display='flex'; if(opts.length>4) sg.classList.add('g3'); var now=cur?cur():gv(n,k); opts.forEach(function(o){var b=el('button','',sg,o[1]); b.type='button'; b.style.flex='1'; b.setAttribute('aria-pressed',String(now===o[0])); b.addEventListener('click',function(){Array.prototype.forEach.call(sg.children,function(x){x.setAttribute('aria-pressed',String(x===b));}); setNode(n,k,o[0],rebuild);});}); return f;}
 function gToggle(parent,label,n,k){var f=el('div','f',parent), r=el('div','r',f); el('span','lab',r,label); var sw=el('button','switch',r); sw.type='button'; sw.setAttribute('aria-label',label); sw.setAttribute('aria-pressed',String(!!gv(n,k))); sw.addEventListener('click',function(){var on=sw.getAttribute('aria-pressed')!=='true'; sw.setAttribute('aria-pressed',String(on)); setNode(n,k,on);}); return f;}
 function gPair(parent){var t=el('div','two',parent); return t;}
 function buildGroupUI(){var box=UI.compBox; if(!box||P.kind!=='group') return; var R=P.g.root; box.textContent=''; UI.compTitle.textContent=(LINES.length>1?'Layer '+(sel+1)+' · ':'')+(P.g.name||'Group'); if(gsel&&!gFind(R,gsel)) gsel='';
@@ -1883,6 +1930,15 @@ function buildGroupUI(){var box=UI.compBox; if(!box||P.kind!=='group') return; v
   if(NS>1){ if(P.g.tx==null) P.g.tx=.9; if(!P.g.nt) P.g.nt='count'; if(!P.g.tt) P.g.tt='roll';
     rangeCtl(sb,'gStepTx','Change Time',.3,2,.05,function(){return P.g.tx;},function(x){setNode(P.g,'tx',x);},function(x){return x.toFixed(2)+' s';});
     gSeg(sb,'Number Change',P.g,'nt',[['count','Count'],['roll','Roll']]); gSeg(sb,'Text Change',P.g,'tt',[['roll','Roll'],['fade','Fade'],['wipe','Wipe']]);}
+  /* borders: how every outline in the group comes in and goes out (trim path by default) */
+  var BS=[]; gEach(R,function(m){ if(gHasB(m,P)) BS.push(m); });
+  if(BS.length){var bb=el('div','gbord',box), same=function(f){var v=f(BS[0]); return BS.every(function(m){return f(m)===v;})?v:null;};
+    el('h4','',bb,BS.length>1?'All Borders · '+BS.length:'Border');
+    var allSet=function(k,v){BS.forEach(function(m){m[k]=v;}); setNode(BS[0],k,v,true);};
+    [['Border In','ban',G_BIN,function(m){return gBan(m);}],['Border Out','bout',G_BOUT,function(m){return gv(m,'bout');}],['Direction','bdir',G_BDIR,function(m){return gv(m,'bdir');}]].forEach(function(r){
+      var f=el('div','f',bb); el('span','lab',f,r[0]); var sg=el('div','seg',f); sg.style.display='flex'; if(r[2].length>4) sg.classList.add('g3'); var cv=same(r[3]);
+      r[2].forEach(function(o){var b=el('button','',sg,o[1]); b.type='button'; b.style.flex='1'; b.setAttribute('aria-pressed',String(cv===o[0])); b.addEventListener('click',function(){allSet(r[1],o[0]);});});});
+    el('p','hint',bb,'كل البوردرز بتترسم لوحدها زي Trim Path في الافتر إفكتس وبتتمسح بنفس الطريقة وهي خارجة. تقدر تغيّر ده هنا لكل البوردرز مرة واحدة، أو لكل بوردر لوحده من الـ Layer بتاعه تحت.');}
   /* 1. content (of the step being edited) */
   var con=el('div','gcon',box); el('span','lab',con,NS>1?'Content · Step '+(gstep+1):'Content');
   var pick=function(n){ if(gsel!==n.id){gsel=n.id; placeNodeBox(); markGTree();} if(NS>1&&P.g._vis!==gstep) gJump(gstep);};
@@ -1912,8 +1968,15 @@ function buildGroupUI(){var box=UI.compBox; if(!box||P.kind!=='group') return; v
       gSeg(pb,'Left Edge',n,'sl',[[0,'Straight'],[1,'Lean /'],[-1,'Lean \\']]); gSeg(pb,'Right Edge',n,'sr',[[0,'Straight'],[1,'Lean /'],[-1,'Lean \\']]); gRange(pb,'Lean Amount',n,'sk',.1,1.4,.02);
       gSeg(pb,'Corners',n,'shape',[['rect','Square'],['round','Round'],['cut','Cut']]); t=gPair(pb); gRange(t,'Radius',n,'r',0,120,1); gRange(t,'Cut',n,'cut',0,120,1);
       gSeg(pb,'Children',n,'dir',[['row','In A Row'],['col','In A Column']],true); gSeg(pb,'Line Up',n,'just',[['start','Start'],['center','Center'],['end','End']]); gMatchCtl(pb,n,R);}
-    gSeg(pb,'Entrance',n,'an',[['auto','Auto'],['wipe','Wipe'],['draw','Draw'],['rise','Rise'],['fade','Fade'],['pop','Pop']].concat(n.type==='num'?[['count','Count']]:[]).concat([['none','None']]));
-    if(gAnimOf(n)==='wipe') gSeg(pb,'Wipe From',n,'ad',[['r','Right'],['l','Left'],['t','Top'],['b','Bottom'],['c','Middle']]);
+    if(n.type!=='box') gSeg(pb,'Entrance',n,'an',[['auto','Auto'],['wipe','Wipe'],['draw','Draw'],['rise','Rise'],['fade','Fade'],['pop','Pop']].concat(n.type==='num'?[['count','Count']]:[]).concat([['none','None']]));
+    else if(gv(n,'bg')) gSeg(pb,'Fill Entrance',n,'an',[['auto','Auto'],['wipe','Wipe'],['fade','Fade'],['pop','Pop'],['none','None']],true);
+    if(n.type==='box'&&gHasB(n,P)){var bx=el('div','gbord',pb); el('h4','',bx,'Border');
+      gSeg(bx,'Border In',n,'ban',G_BIN,true,function(){return gBan(n);});
+      if(/^draw2?$/.test(gBan(n))){var sf=el('div','f',bx); el('span','lab',sf,'Start From'); var ss=el('select','',sf); ss.setAttribute('aria-label','Border start point');
+        G_BFROM.forEach(function(o){var op=el('option','',ss,o[1]); op.value=o[0];}); ss.value=gv(n,'bfrom'); ss.addEventListener('change',function(){setNode(n,'bfrom',ss.value);});
+        if(gBan(n)==='draw') gSeg(bx,'Direction',n,'bdir',G_BDIR);}
+      gSeg(bx,'Border Out',n,'bout',G_BOUT);}
+    if(gAnimOf(n)==='wipe'||(n.type==='box'&&gHasB(n,P)&&(gBan(n)==='wipe'||gv(n,'bout')==='wipe'))) gSeg(pb,'Wipe From',n,'ad',[['r','Right'],['l','Left'],['t','Top'],['b','Bottom'],['c','Middle']]);
     t=gPair(pb); gRange(t,'Delay',n,'d0',-.5,.6,.01,function(x){return (x>0?'+':'')+Math.round(x*100)+'%';}); gRange(t,'Length',n,'dd',.2,2.5,.05,function(x){return x.toFixed(2)+'×';});
     t=gPair(pb); gRange(t,'Nudge X',n,'dx',-600,600,1,function(x){return Math.round(x)+' px';}); gRange(t,'Nudge Y',n,'dy',-400,400,1,function(x){return Math.round(x)+' px';});
     var rn=el('button','ghost mini',pb); rn.type='button'; icoLabel(rn,'reset','Reset Nudge'); rn.addEventListener('click',function(){n.dx=0; n.dy=0; setNode(n,'dx',0,true);});}
