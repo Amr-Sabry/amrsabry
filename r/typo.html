@@ -105,6 +105,7 @@ button.spec:hover{border-color:var(--line2);color:var(--fg)}
 .gcon .two input{min-width:0}
 .ccol{display:flex;gap:6px;align-items:center}.ccol select{flex:1}.ccol input[type=color]{width:34px;height:34px;border:1px solid var(--line2);border-radius:8px;background:var(--raise);padding:2px;flex:none}
 .selbox.node{border:1.5px dotted #4fb3ff;mix-blend-mode:normal}
+.hist{display:flex;gap:4px;margin-left:8px}.hist .hb{padding:7px 9px}.hist .hb svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.hist .hb:disabled{opacity:.3;cursor:default}.hist{position:relative}.htip{position:absolute;top:calc(100% + 8px);left:0;white-space:nowrap;font:400 11px/1 var(--mono);letter-spacing:.08em;color:var(--fg);background:var(--raise);border:1px solid var(--line2);border-radius:6px;padding:6px 8px;opacity:0;transform:translateY(-3px);transition:opacity .15s,transform .15s;pointer-events:none;z-index:30}.htip.on{opacity:1;transform:none}
 .spec{margin-left:auto;font:400 11px/1 var(--mono);letter-spacing:.12em;color:var(--mute);border:1px solid var(--line);border-radius:99px;padding:8px 12px;white-space:nowrap}
 .cta{border:0;border-radius:8px;background:var(--accent);color:var(--accent-ink);font:700 14px/1 var(--ui);padding:11px 22px;flex:none}
 .cta:hover{filter:brightness(1.1)}
@@ -255,6 +256,7 @@ input[type=number].inp{font:400 13px/1 var(--mono)}
   document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!m.hidden){set(false); b.focus();} });
 })();</script></div><!--aroma-tools-menu-->
     <div class="atm" id="pjm"><button class="atm-b" id="pjB" type="button" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg><span id="pjName">Projects</span></button><div class="atm-m" id="pjM" role="menu" hidden></div></div>
+    <div class="hist" role="group" aria-label="History"><button class="atm-b hb" id="btnUndo" type="button" aria-label="Undo" title="Undo (⌘Z)" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button><button class="atm-b hb" id="btnRedo" type="button" aria-label="Redo" title="Redo (⇧⌘Z)" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button><span class="htip" id="histTip" role="status" aria-live="polite"></span></div>
     <button class="spec" id="btnOut" type="button" title="Output: Size · Frame Rate · Alpha">1920 × 1080 · 25 FPS · ALPHA</button>
     <button class="cta" id="btnRender" type="button">Render</button>
   </header>
@@ -1870,7 +1872,7 @@ function in169(fn){var w=W,h=H; W=1920; H=1080; try{return fn();}finally{W=w; H=
   if(raw&&Array.isArray(raw.lines)&&raw.lines.length){LINES=raw.lines.slice(0,MAXL).map(mkLine); sel=clamp(raw.sel|0,0,LINES.length-1);}
   else {try{old=JSON.parse(localStorage.getItem(SKEY1)||'null');}catch(e){} var o1=mkLine(old); LINES=MOVE_BY[o1.move].custom?[o1]:splitRows(o1); sel=0;}
   LINES.forEach(function(q){q.dur=LINES[0].dur; if(!fontEntry(q.font)) q.font='Alexandria';}); P=LINES[sel];})();
-var saveT=0; function persist(){clearTimeout(saveT); saveT=setTimeout(function(){try{localStorage.setItem(SKEY,JSON.stringify({lines:LINES,sel:sel},gStrip));}catch(e){}},300);}
+var saveT=0; function persist(){histNote(); clearTimeout(saveT); saveT=setTimeout(function(){try{localStorage.setItem(SKEY,JSON.stringify({lines:LINES,sel:sel},gStrip));}catch(e){}},300);}
 
 /* brand */
 (function(){var b=$('#brand'); b.innerHTML='<svg viewBox="172 276 1585 201" height="15" width="118" role="img" aria-label="Aroma"><g fill="currentColor">'+AWP+'</g></svg><span>TYPO</span><span class="x">×</span><svg viewBox="0 0 318 100" height="15" width="48" role="img" aria-label="AO3"><g fill="currentColor"><polygon points="56.5,0 113,100 0,100"/><circle cx="156.6" cy="50" r="50"/><rect x="218" width="27" height="100"/><rect x="254.5" width="27" height="100"/><rect x="291" width="27" height="100"/></g></svg>';})();
@@ -2300,7 +2302,34 @@ buildTiles(); markTile(); buildMoveUI(); refreshPos(); refreshThumbs(); kick();
 LINES.map(function(q){return q.font;}).filter(function(f,i,a){return a.indexOf(f)===i;}).forEach(function(f){useFont(f);}); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(function(){LCACHE.clear(); LINES.forEach(function(q){q.fontRev=(q.fontRev||0)+1;}); dirty(true);});
 /* a font file that arrives later (another weight, another script) redraws everything that was drawn with a stand-in */
 if(document.fonts&&document.fonts.addEventListener) document.fonts.addEventListener('loadingdone',function(){LINES.forEach(function(q){q.fontRev=(q.fontRev||0)+1;}); LCACHE.clear(); dirty(true);});
-window.__typoTool={inkOld:function(v){INK_OLD=!!v;},GTPL:GTPL,gLayout:gLayout,gBox:gBox,gHit:gHit,gFind:gFind,setGsel:function(id){gsel=id||''; buildGroupUI(); placeNodeBox();},COMPS:COMPS,PROJECTS:PROJECTS,setProject:setProject,addTemplate:addTemplate,cBox:cBox,OUT:OUT,setOut:setOut,frame:function(){return [W,H];},layout:layout,tiles:tiles,mvals:mvals,MOVE_BY:MOVE_BY,movProRes:movProRes,render:render,renderAll:renderAll,selectLine:selectLine,addLine:addLine,removeLine:removeLine,renderFrames:renderFrames,movPNG:movPNG,buildZip:buildZip,zipStore:zipStore,MOVES:MOVES,refresh:refreshAll,timing:timing};
+/* ---- Undo / Redo ---- */
+var HIST={u:[],r:[],cur:null,t:0,lock:false,max:100};
+/* fontRev only marks that a font file arrived (a cache key), so it is not a change */
+function histRep(k,v){return (k.charAt(0)==='_'||k==='fontRev')?undefined:v;}
+function histSnap(){return {L:JSON.stringify(LINES,histRep),s:sel,g:gstep};}
+function histNote(){ if(!HIST||HIST.lock) return; clearTimeout(HIST.t); HIST.t=setTimeout(histCommit,450);}
+function histCommit(){ if(!HIST) return; clearTimeout(HIST.t); HIST.t=0; if(HIST.lock) return; var n=histSnap();
+  if(!HIST.cur||n.L===HIST.cur.L){HIST.cur=n; return;}   /* the first look, or only the selection moved */
+  HIST.u.push(HIST.cur); if(HIST.u.length>HIST.max) HIST.u.shift(); HIST.r.length=0; HIST.cur=n; histUI();}
+function histApply(h){HIST.lock=true;
+  try{var d=JSON.parse(h.L); if(!Array.isArray(d)||!d.length) return; var fr=LINES.reduce(function(m,q){return Math.max(m,q.fontRev||0);},0); LINES.length=0; d.slice(0,MAXL).forEach(function(l){var q=mkLine(l); q.fontRev=fr; LINES.push(q);});
+    sel=clamp(h.s|0,0,LINES.length-1); P=LINES[sel]; if(P.kind!=='group'||!gFind(P.g.root,gsel)) gsel=''; gstep=P.kind==='group'?clamp(h.g|0,0,gStepN(P)-1):0;
+    LINES.map(function(q){return q.font;}).filter(function(f,i,a){return a.indexOf(f)===i;}).forEach(function(f){useFont(f);});
+    buildLines(); refreshAll(); dirty(true);}
+  finally{HIST.lock=false;} HIST.cur=histSnap(); clearTimeout(HIST.t); HIST.t=0;}
+function histGo(back){ if(HIST.t) histCommit(); var from=back?HIST.u:HIST.r, to=back?HIST.r:HIST.u; if(!from.length){histUI(); return;}
+  to.push(HIST.cur); histApply(from.pop()); histUI();
+  hook(back?'undo':'redo'); histToast((back?'Undo':'Redo')+' · '+(back?HIST.u.length:HIST.r.length)+' left');}
+function histToast(t){var b=$('#histTip'); if(!b) return; b.textContent=t; b.classList.add('on'); clearTimeout(histToast.t); histToast.t=setTimeout(function(){b.classList.remove('on');},1100);}
+function histUI(){var u=$('#btnUndo'), r=$('#btnRedo'); if(!u) return; u.disabled=!HIST.u.length; r.disabled=!HIST.r.length;
+  u.title='Undo (⌘Z)'+(HIST.u.length?' · '+HIST.u.length+(HIST.u.length===1?' step':' steps'):''); r.title='Redo (⇧⌘Z)'+(HIST.r.length?' · '+HIST.r.length+(HIST.r.length===1?' step':' steps'):'');}
+$('#btnUndo').addEventListener('click',function(){histGo(true);}); $('#btnRedo').addEventListener('click',function(){histGo(false);});
+/* ⌘Z / Ctrl+Z, ⇧⌘Z / Ctrl+Shift+Z / Ctrl+Y. Inside a text box the box's own typing undo wins, like any design app. */
+document.addEventListener('keydown',function(e){ if(!(e.metaKey||e.ctrlKey)||e.altKey) return; var k=(e.key||'').toLowerCase(); if(k!=='z'&&k!=='y') return;
+  var t=e.target, typing=t&&(t.tagName==='TEXTAREA'||t.isContentEditable||(t.tagName==='INPUT'&&/^(text|search|number|url|email|)$/.test(t.type)));
+  if(typing||!$('#scrim').hidden||!$('#scrimO').hidden) return; e.preventDefault(); histGo(k==='z'&&!e.shiftKey);},true);
+HIST.cur=histSnap(); histUI();
+window.__typoTool={histGo:histGo,histCommit:histCommit,HIST:HIST,inkOld:function(v){INK_OLD=!!v;},GTPL:GTPL,gLayout:gLayout,gBox:gBox,gHit:gHit,gFind:gFind,setGsel:function(id){gsel=id||''; buildGroupUI(); placeNodeBox();},COMPS:COMPS,PROJECTS:PROJECTS,setProject:setProject,addTemplate:addTemplate,cBox:cBox,OUT:OUT,setOut:setOut,frame:function(){return [W,H];},layout:layout,tiles:tiles,mvals:mvals,MOVE_BY:MOVE_BY,movProRes:movProRes,render:render,renderAll:renderAll,selectLine:selectLine,addLine:addLine,removeLine:removeLine,renderFrames:renderFrames,movPNG:movPNG,buildZip:buildZip,zipStore:zipStore,MOVES:MOVES,refresh:refreshAll,timing:timing};
 Object.defineProperty(window.__typoTool,'P',{get:function(){return P;}}); Object.defineProperty(window.__typoTool,'LINES',{get:function(){return LINES;}}); Object.defineProperty(window.__typoTool,'sel',{get:function(){return sel;}});
 
 /* Aroma Hub mascot ("the doorman") — drop-in for any project page.
