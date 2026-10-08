@@ -94,6 +94,12 @@ button.spec:hover{border-color:var(--line2);color:var(--fg)}
 .gprops{display:flex;flex-direction:column;gap:12px;border:1px solid var(--line2);border-radius:10px;padding:12px}
 .gprops h4{margin:0;font:700 11px/1 var(--mono);letter-spacing:.14em;color:var(--accent);text-transform:uppercase}
 .gcon{display:flex;flex-direction:column;gap:8px}
+.gsteps{display:flex;flex-direction:column;gap:8px;border:1px solid var(--line2);border-radius:10px;padding:10px 12px}
+.gsteps .chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.gsteps .chip{min-width:34px;height:32px;border-radius:8px;border:1px solid var(--line2);background:var(--raise);color:#d8d4cf;font:700 13px/1 var(--mono)}
+.gsteps .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.gsteps .ghost.mini{height:32px}
+.gcon textarea.inp{resize:vertical;min-height:0;font:inherit;line-height:1.4;padding-top:9px;padding-bottom:9px;overflow:hidden}
 .gcon .two input{min-width:0}
 .ccol{display:flex;gap:6px;align-items:center}.ccol select{flex:1}.ccol input[type=color]{width:34px;height:34px;border:1px solid var(--line2);border-radius:8px;background:var(--raise);padding:2px;flex:none}
 .selbox.node{border:1.5px dotted #4fb3ff;mix-blend-mode:normal}
@@ -1465,11 +1471,11 @@ COMPS.linechart={name:'Line Chart',icon:'chart',
      vtext : turned text for a narrow tab.    bar : a short bar (a tick).      space : empty room.      chart : a line chart with value bubbles.
    Sizes are design pixels at Size 170 (scale 1). Colours are '$fill' (the layer's Fill), '$accent', '$black', '$white', '$plate', '$grey', '$ink', a hex, or '' for none.
    Children are laid out in the flow (row / column) or placed on their parent ('abs', by an anchor), and every node can be nudged (dx, dy). */
-var GTOK={fill:function(P){return P.color;},accent:function(P){return P.accent;},black:function(){return '#000000';},white:function(){return '#ffffff';},plate:function(){return '#1c1c1c';},grey:function(){return '#464646';},ink:function(){return '#15120a';},edge:function(){return '#8a8a8a';}};
+var GTOK={fill:function(P){return P.color;},accent:function(P){return P.accent;},black:function(){return '#000000';},white:function(){return '#ffffff';},plate:function(){return '#1c1c1c';},accentDim:function(P){return cShade(P.accent,.52);},grey:function(){return '#464646';},ink:function(){return '#15120a';},edge:function(){return '#8a8a8a';}};
 function gCol(v,P){ if(v==null||v===''||v==='none') return null; if(v.charAt(0)==='$'){var f=GTOK[v.slice(1)]; return f?f(P):null;} return v; }
-var GDEF={box:{dir:'row',gap:0,px:0,py:0,align:'center',just:'center',bg:'',stripes:false,stroke:'',sw:4,shape:'rect',r:0,cut:0,sl:0,sr:0,sk:.62,minW:0,minH:0,gapTop:''},
-  text:{t:'',fs:34,fw:800,col:'$fill',lh:1.32,al:'c',ty:0}, num:{t:'0',u:'',fs:100,fw:900,col:'$fill',ufs:26,ufw:600,ucol:'$fill',up:'side',al:'c'},
-  vtext:{t:'',fs:24,fw:600,col:'$fill',rot:-90}, bar:{w:62,h:3.2,col:'$accent'}, space:{w:40,h:0}, chart:{pts:[],lead:true,cw:560,ch:330,lcol:'$fill',bcol:'$accent',tcol:'$ink',xcol:'$fill'}};
+var GDEF={box:{dir:'row',gap:0,px:0,py:0,align:'center',just:'center',bg:'',stripes:false,stroke:'',sw:4,shape:'rect',r:0,cut:0,sl:0,sr:0,sk:.62,minW:0,minH:0,gapTop:'',wOf:'',wPlus:0},
+  text:{t:'',fs:34,fw:800,col:'$fill',lh:1.32,al:'c',ty:0}, num:{t:'0',u:'',fs:100,fw:900,col:'$fill',ufs:26,ufw:600,ucol:'$fill',up:'side',al:'c',ssz:.58},
+  vtext:{t:'',fs:24,fw:600,col:'$fill',rot:-90}, bar:{w:62,h:3.2,col:'$accent'}, space:{w:40,h:0,wOf:'',wPlus:0}, chart:{pts:[],lead:true,cw:560,ch:330,lcol:'$fill',bcol:'$accent',tcol:'$ink',xcol:'$fill'}};
 var GCOM={hide:false,dx:0,dy:0,pos:'flow',ax:.5,ay:.5,ox:.5,oy:.5,mt:0,mr:0,mb:0,ml:0,grow:0,an:'auto',ad:'r',d0:0,dd:1};
 function gv(n,k){var v=n[k]; if(v!==undefined) return v; var d=GDEF[n.type]; if(d&&d[k]!==undefined) return d[k]; return GCOM[k];}
 function gEach(n,fn,depth,parent){ if(!n) return; fn(n,depth||0,parent||null); (n.kids||[]).forEach(function(k){gEach(k,fn,(depth||0)+1,n);}); }
@@ -1479,11 +1485,12 @@ function gFind(root,id){var f=null; gEach(root,function(n){ if(n.id===id) f=n; }
 function gMeasure(n,P,s){ if(gv(n,'hide')){n._nw=n._nh=0; return;}
   var t=n.type, fs=gv(n,'fs')*s;
   if(t==='text'){var rows=String(gv(n,'t')).split('\n'), w=0; rows.forEach(function(r){w=Math.max(w,cW(P,r,gv(n,'fw'),fs));}); n._nw=w; n._nh=rows.length*fs*gv(n,'lh');}
-  else if(t==='num'){var nw=cW(P,gv(n,'t'),gv(n,'fw'),fs), cap=fs*.74, u=gv(n,'up')==='none'?'':gv(n,'u'), ufs=gv(n,'ufs')*s, uw=u?cW(P,u,gv(n,'ufw'),ufs):0;
-    n._cap=cap; n._numw=nw; n._uw=uw;
-    if(u&&gv(n,'up')==='below'){n._nw=Math.max(nw,uw); n._nh=cap*1.16+ufs*1.45;} else {n._nw=nw+(u?fs*.2+uw:0); n._nh=Math.max(cap*1.2,ufs*1.4);}}
+  else if(t==='num'){var up=gv(n,'up'), u=up==='none'?'':gv(n,'u'), ur=!!u&&up!=='below'&&!hasAr(u), nw=cW(P,gv(n,'t'),gv(n,'fw'),fs), cap=fs*.74, ufs=gUfs(n,s,ur), uw=u?cW(P,u,ur?gv(n,'fw'):gv(n,'ufw'),ufs):0;
+    n._cap=cap; n._numw=nw; n._uw=uw; n._ur=ur;
+    /* an Arabic unit sits small beside the number; a sign (%, +, $) follows it on the same line, the way it is read */
+    if(u&&up==='below'){n._nw=Math.max(nw,uw); n._nh=cap*1.16+ufs*1.45;} else if(ur){n._nw=nw+fs*.05+uw; n._nh=cap*1.2;} else {n._nw=nw+(u?fs*.2+uw:0); n._nh=Math.max(cap*1.2,ufs*1.4);}}
   else if(t==='vtext'){n._nw=fs*1.6; n._nh=cW(P,gv(n,'t'),gv(n,'fw'),fs)+fs*.6;}
-  else if(t==='bar'||t==='space'){n._nw=gv(n,'w')*s; n._nh=gv(n,'h')*s;}
+  else if(t==='bar'||t==='space'){n._nw=gv(n,'w')*s; n._nh=gv(n,'h')*s; if(t==='space') gWOf(n,s,true);}
   else if(t==='chart'){var np=(gv(n,'pts')||[]).length; n._nw=Math.max(gv(n,'cw'),150+np*150)*s; n._nh=gv(n,'ch')*s;}
   else if(t==='box'){var kids=(n.kids||[]), row=gv(n,'dir')==='row', gap=gv(n,'gap')*s, main=0, cross=0, cnt=0;
     kids.forEach(function(k){gMeasure(k,P,s); if(gv(k,'pos')==='abs'||gv(k,'hide')) return; var kw=k._nw+(gv(k,'ml')+gv(k,'mr'))*s, kh=k._nh+(gv(k,'mt')+gv(k,'mb'))*s; if(row){main+=kw; cross=Math.max(cross,kh);} else {main+=kh; cross=Math.max(cross,kw);} cnt++;});
@@ -1491,8 +1498,13 @@ function gMeasure(n,P,s){ if(gv(n,'hide')){n._nw=n._nh=0; return;}
     if(row&&gv(n,'align')==='stretch') kids.forEach(function(k){ if(k.type!=='box'||gv(k,'pos')==='abs'||gv(k,'hide')) return; var ns=(gv(k,'sl')?1:0)+(gv(k,'sr')?1:0), hh=Math.max(k._nh,cross-(gv(k,'mt')+gv(k,'mb'))*s); if(ns&&hh>k._nh){var ex=gv(k,'sk')*(hh-k._nh)*ns; k._nw+=ex; main+=ex;} });
     if(cnt>1) main+=gap*(cnt-1);
     var cw=row?main:cross, ch=row?cross:main, h=Math.max(ch+gv(n,'py')*2*s,gv(n,'minH')*s), k=gv(n,'sk')*h;
-    n._nw=Math.max(cw+gv(n,'px')*2*s+(gv(n,'sl')?k:0)+(gv(n,'sr')?k:0),gv(n,'minW')*s); n._nh=h;}
+    n._nw=Math.max(cw+gv(n,'px')*2*s+(gv(n,'sl')?k:0)+(gv(n,'sr')?k:0),gv(n,'minW')*s); n._nh=h; gWOf(n,s,false);}
   else {n._nw=n._nh=0;} }
+
+/* a plate or a space can take the width of another layer of the group (+ extra): ticks that line up under a number, a tab as wide as its box */
+var G_ROOT=null, G_WOF=false;
+function gWOf(n,s,exact){var id=gv(n,'wOf'); if(!id||!G_ROOT) return; G_WOF=true; var o=gFind(G_ROOT,id); if(!o||o===n||o._nw==null||gv(o,'hide')) return; var tw=o._nw+gv(n,'wPlus')*s; n._nw=exact?Math.max(0,tw):Math.max(n._nw,tw);}
+function gUfs(n,s,ur){return ur?gv(n,'fs')*s*gv(n,'ssz'):gv(n,'ufs')*s;}
 
 /* ---- place: where each node ends up (its parent may stretch it) ---- */
 function gPlace(n,P,s,x,y,w,h){n._x=x; n._y=y; n._w=w; n._h=h; if(n.type!=='box') { gAbs(n,P,s); return; }
@@ -1508,11 +1520,26 @@ function gPlace(n,P,s,x,y,w,h){n._x=x; n._y=y; n._w=w; n._h=h; if(n.type!=='box'
 function gAbs(n,P,s){(n.kids||[]).forEach(function(c){ if(gv(c,'pos')!=='abs'||gv(c,'hide')) return; if(c._nw==null) gMeasure(c,P,s); var cw=c._nw, ch=c._nh;
   gPlace(c,P,s,n._x+gv(c,'ax')*n._w-gv(c,'ox')*cw+gv(c,'dx')*s,n._y+gv(c,'ay')*n._h-gv(c,'oy')*ch+gv(c,'dy')*s,cw,ch);});}
 /* the whole group, laid out around the layer's place */
-function gLayout(P){var s=P.size/170, R=P.g&&P.g.root; if(!R) return null; gMeasure(R,P,s); gPlace(R,P,s,P.x*W-R._nw/2,P.y*H-R._nh/2,R._nw,R._nh); return {root:R,s:s};}
-function gBox(P){var G=gLayout(P); if(!G) return {x0:P.x*W,x1:P.x*W,top:P.y*H,bot:P.y*H,w:0,h:0}; var a=1e9,b=-1e9,c=1e9,d=-1e9;
+function gLay(P){var s=P.size/170, R=P.g&&P.g.root; if(!R) return null; G_ROOT=R; G_WOF=false; gMeasure(R,P,s); if(G_WOF) gMeasure(R,P,s); gPlace(R,P,s,P.x*W-R._nw/2,P.y*H-R._nh/2,R._nw,R._nh); return {root:R,s:s};}
+/* steps: the same group telling several achievements one after the other. Step 1 is the group itself; P.g.steps[k-1] holds step k+1's
+   text and numbers by layer id ({id:{t,u}}). Everything else (look, sizes, motion) is shared by all steps. */
+function gStepN(P){return 1+((P.g&&P.g.steps)||[]).length;}
+function gSV(P,n,k,i){ if(i>0){var st=((P.g&&P.g.steps)||[])[i-1], o=st&&st[n.id]; if(o&&o[k]!==undefined) return o[k];} return gv(n,k);}
+function gWith(P,i,fn){var st=i>0?((P.g.steps||[])[i-1]):null, sv=[]; if(st) gEach(P.g.root,function(n){var o=st[n.id]; if(!o) return; ['t','u'].forEach(function(k){ if(o[k]!==undefined){sv.push([n,k,Object.prototype.hasOwnProperty.call(n,k),n[k]]); n[k]=o[k];} });});
+  try{return fn();} finally{ for(var j=sv.length-1;j>=0;j--){var e=sv[j]; if(e[2]) e[0][e[1]]=e[3]; else delete e[0][e[1]];} }}
+/* the whole group, laid out around the layer's place, showing step i (default: the step on screen now) */
+function gLayout(P,i){ if(!P.g||!P.g.root) return null; return gWith(P,i==null?(P.g._vis|0):i,function(){return gLay(P);});}
+/* when each step shows: the entrance plays on step 1, then the time up to the exit is shared equally, with a change of tx seconds between steps */
+function gStepWin(P,env){var N=gStepN(P), T0=env.Ti, T1=Math.max(T0+.01,env.tOut), slot=(T1-T0)/N, tx=Math.min(P.g.tx==null?.9:P.g.tx,slot*.75); return {N:N,T0:T0,T1:T1,slot:slot,tx:tx};}
+function gStepAt(P,env){var S=gStepWin(P,env), t=env.t; if(S.N<2) return {a:0,b:0,q:0}; for(var i=1;i<S.N;i++){var b=S.T0+S.slot*i; if(t<b-S.tx/2) return {a:i-1,b:i-1,q:0}; if(t<b+S.tx/2) return {a:i-1,b:i,q:(t-(b-S.tx/2))/S.tx};} return {a:S.N-1,b:S.N-1,q:0};}
+/* a moment where step i rests on screen (for jumping the playhead to it) */
+function gStepRest(P,env,i){var S=gStepWin(P,env), s0=i?S.T0+S.slot*i+S.tx/2:S.T0, s1=i<S.N-1?S.T0+S.slot*(i+1)-S.tx/2:S.T1; return s0+(s1-s0)*(i?.5:.6);}
+function gBox(P,i){var G=gLayout(P,i); if(!G) return {x0:P.x*W,x1:P.x*W,top:P.y*H,bot:P.y*H,w:0,h:0}; var a=1e9,b=-1e9,c=1e9,d=-1e9;
   gEach(G.root,function(n){ if(gv(n,'hide')||n._w==null||(n._w<=0&&n._h<=0)) return; a=Math.min(a,n._x); b=Math.max(b,n._x+n._w); c=Math.min(c,n._y); d=Math.max(d,n._y+n._h);});
   if(a>b) return {x0:P.x*W,x1:P.x*W,top:P.y*H,bot:P.y*H,w:0,h:0}; return {x0:a,x1:b,top:c,bot:d,w:b-a,h:d-c};}
 /* the deepest node of the group under a point (for picking a layer inside the group on the monitor) */
+/* the largest box over all steps (to fit the group in the frame) */
+function gBoxMax(P){var B=null; for(var i=0;i<gStepN(P);i++){var b=gBox(P,i); if(!B) B=b; else {B={x0:Math.min(B.x0,b.x0),x1:Math.max(B.x1,b.x1),top:Math.min(B.top,b.top),bot:Math.max(B.bot,b.bot)}; B.w=B.x1-B.x0; B.h=B.bot-B.top;}} return B;}
 function gHit(P,px,py){var G=gLayout(P), hit=null, best=-1; if(!G) return null; gEach(G.root,function(n,d){ if(n===G.root||gv(n,'hide')||n.type==='space') return; if(px>=n._x&&px<=n._x+n._w&&py>=n._y&&py<=n._y+n._h&&d>=best){best=d; hit=n;}}); return hit;}
 
 /* ---- the outline of a plate ---- */
@@ -1528,10 +1555,41 @@ function gGapPath(g,n,s,gx0,gx1){var x=n._x, y=n._y, w=n._w, h=n._h, r=gv(n,'sha
 
 /* ---- draw, with each node's own entrance ---- */
 function gAnimOf(n){var a=gv(n,'an'); if(a!=='auto') return a; if(n.type==='box') return gv(n,'bg')?'wipe':(gv(n,'stroke')?'draw':'none'); if(n.type==='num') return 'count'; if(n.type==='text') return 'rise'; if(n.type==='bar') return 'grow'; if(n.type==='chart') return 'chart'; return 'fade';}
-function gDraw(g,P,env,K){var G=gLayout(P); if(!G) return; var s=G.s, ph=cPhase(env), list=[]; gEach(G.root,function(n){ if(!gv(n,'hide')&&n.type!=='space'&&!(n.type==='box'&&!gv(n,'bg')&&!gv(n,'stroke'))) list.push(n); });
+function gDraw(g,P,env,K){var R=P.g&&P.g.root; if(!R) return; var ph=cPhase(env), st=gStepAt(P,env), G; P.g._vis=st.q<.5?st.a:st.b;
+  if(st.q<=0){ gWith(P,st.a,function(){G=gLay(P); gEach(R,function(n){n._chg=null;}); gDraw2(g,P,G,ph,K);}); return; }
+  /* between two steps: lay both out, slide every layer from one to the other, and swap the text and numbers that change */
+  var A=gSnap(P,st.a), B=gSnap(P,st.b);
+  gWith(P,st.b,function(){G=gLay(P); gMix(P,A,B,st.q); gDraw2(g,P,G,ph,K);});}
+var G_GEO=['x','y','w','h','nw','nh','cap','numw','uw'];
+function gSnap(P,i){var S={}; gWith(P,i,function(){gLay(P); gEach(P.g.root,function(n){var o={t:gv(n,'t'),u:gv(n,'u'),ur:n._ur}; G_GEO.forEach(function(k){o[k]=n['_'+k];}); S[n.id]=o;});}); return S;}
+function gMix(P,A,B,q){var eg=EASE.inOutCubic(clamp((q-.12)/.7)), ch=[];
+  gEach(P.g.root,function(n){var a=A[n.id], b=B[n.id]; n._chg=null; if(!a||!b||gv(n,'hide')) return;
+    G_GEO.forEach(function(k){ if(a[k]!=null&&b[k]!=null&&!isNaN(a[k])&&!isNaN(b[k])) n['_'+k]=lerp(a[k],b[k],eg); });
+    if((n.type==='text'||n.type==='vtext'||n.type==='num')&&(a.t!==b.t||(n.type==='num'&&a.u!==b.u))){n._chg={t0:a.t,u0:a.u,ur0:a.ur,q:0,eg:eg}; ch.push(n);} });
+  /* the numbers change first, the words follow a beat later */
+  ch.sort(function(x,y){return (x.type==='num'?0:1)-(y.type==='num'?0:1);});
+  var off=ch.length>1?Math.min(.12,.3/(ch.length-1)):0, om=off*Math.max(0,ch.length-1);
+  ch.forEach(function(n,i){n._chg.q=clamp((q-i*off)/Math.max(.2,1-om));});}
+function gDraw2(g,P,G,ph,K){var s=G.s, list=[]; gEach(G.root,function(n){ if(!gv(n,'hide')&&n.type!=='space'&&!(n.type==='box'&&!gv(n,'bg')&&!gv(n,'stroke'))) list.push(n); });
   var N=Math.max(1,list.length); list.forEach(function(n,i){var st=clamp(i/N*.6+gv(n,'d0'),0,.95), du=Math.max(.05,.42*gv(n,'dd')); n._p=clamp((ph.pi-st)/du); n._t0=st;});
-  cOut(g,P,K,ph.po,function(g){ gNode(g,P,G.root,s,ph); });}
-function gNode(g,P,n,s,ph){ if(gv(n,'hide')) return; var p=n._p==null?1:n._p, an=gAnimOf(n);
+  cOut(g,P,K,ph.po,function(g){ gNode(g,P,G.root,s,ph,null); });}
+/* old content leaves while the new one comes in: roll (up through the plate), fade, or wipe (right to left) */
+function gSwap(g,P,n,par,s,mode,D,box,fo,fi){var lq=n._chg.q, eo=EASE.inCubic(clamp(lq/.46)), ei=EASE.outCubic(clamp((lq-.5)/.5));
+  g.save(); if(mode==='roll'&&par&&(gv(par,'bg')||gv(par,'stroke'))){gPath(g,par,s); g.clip();}
+  if(eo<1){g.save(); if(mode==='wipe'&&box){g.beginPath(); g.rect(box[0],box[1],box[2]*(1-eo),box[3]); g.clip();} else {g.globalAlpha*=1-eo; if(mode==='roll') g.translate(0,-eo*D);} fo(); g.restore();}
+  if(ei>0){g.save(); if(mode==='wipe'&&box){g.beginPath(); g.rect(box[0]+box[2]*(1-ei),box[1],box[2]*ei,box[3]); g.clip();} else {g.globalAlpha*=ei; if(mode==='roll') g.translate(0,(1-ei)*D);} fi(); g.restore();}
+  g.restore();}
+var G_NUMRE=/[0-9٠-٩][0-9٠-٩.,٬٫]*/g;
+function gNums(str){var a=[]; String(str).replace(G_NUMRE,function(mm){a.push(parseNum(mm.replace(/[.,٬٫]+$/,''))); return mm;}); return a;}
+/* the new number's text with every value part way from the old one */
+function gLerpNum(s0,s1,e){var A=gNums(s0), i=0; return String(s1).replace(G_NUMRE,function(mm){var core=mm.replace(/[.,٬٫]+$/,''), tail=mm.slice(core.length), v1=parseNum(core), v0=A[i++]; if(isNaN(v1)||v0==null||isNaN(v0)) return mm; return fmtNum(core,v0+(v1-v0)*e)+tail;});}
+/* where a number and its unit go inside the number's box */
+function gNumGeo(n,s,ur,below){var x=n._x,y=n._y,w=n._w,h=n._h, nfs=gv(n,'fs')*s, cap=n._cap||nfs*.74, ufs=gUfs(n,s,ur), al=gv(n,'al'), numw=n._numw||0, uw=n._uw||0, tot=n._nw||0;
+  if(below){var cx=al==='l'?x+tot/2:(al==='r'?x+w-tot/2:x+w/2), by=y+h/2-(n._nh||h)/2+cap*1.05; return {nx:cx,ny:by,ux:cx,uy:by+ufs*1.3,ual:'c'};}
+  var left=al==='l'?x:(al==='r'?x+w-tot:x+(w-tot)/2), base=y+h/2+cap/2;
+  if(ur) return {nx:left+numw/2,ny:base,ux:left+tot,uy:base,ual:'r'};
+  return {nx:left+tot-numw/2,ny:base,ux:left+uw,uy:base-cap*.28,ual:'r'};}
+function gNode(g,P,n,s,ph,par){ if(gv(n,'hide')) return; var p=n._p==null?1:n._p, an=gAnimOf(n);
   if(n.type==='box'){ var bg=gCol(gv(n,'bg'),P), sc=gCol(gv(n,'stroke'),P), sw=gv(n,'sw')*s;
     if((bg||sc)&&p>0){ g.save();
       if(an==='wipe'&&p<1){var e=EASE.outExpo(p), d=gv(n,'ad'), x=n._x-sw, y=n._y-sw, w=n._w+sw*2, h=n._h+sw*2; g.beginPath(); if(d==='l') g.rect(x,y,w*e,h); else if(d==='t') g.rect(x,y,w,h*e); else if(d==='b') g.rect(x,y+h*(1-e),w,h*e); else if(d==='c') g.rect(x+w*(1-e)/2,y,w*e,h); else g.rect(x+w*(1-e),y,w*e,h); g.clip();}
@@ -1542,23 +1600,33 @@ function gNode(g,P,n,s,ph){ if(gv(n,'hide')) return; var p=n._p==null?1:n._p, an
         if(gc&&!gv(gc,'hide')&&gc._w) L=gGapPath(g,n,s,gc._x-14*s,gc._x+gc._w+14*s); else L=gPath(g,n,s);
         cTrace(g,L,an==='draw'?EASE.inOutCubic(p):1,sw,sc);}
       g.restore();}
-    (n.kids||[]).forEach(function(k){gNode(g,P,k,s,ph);}); return;}
+    (n.kids||[]).forEach(function(k){gNode(g,P,k,s,ph,n);}); return;}
   if(p<=0) return;
-  g.save(); var x=n._x, y=n._y, w=n._w, h=n._h;
+  g.save(); var x=n._x, y=n._y, w=n._w, h=n._h, tm=(P.g&&P.g.tt)||'roll';
   if(an==='fade'||an==='count') g.globalAlpha*=EASE.outCubic(clamp(p*1.6));
   if(an==='pop'){var e3=.4+.6*EASE.outBack(p), cx2=x+w/2, cy2=y+h/2; g.translate(cx2,cy2); g.scale(e3,e3); g.translate(-cx2,-cy2);}
   if((an==='rise'||an==='count')&&p<1){g.beginPath(); g.rect(x-w*.2,y-h*.1,w*1.4,h*1.2); g.clip(); g.translate(0,(1-EASE.outExpo(p))*h*1.1);}
   if(an==='wipe'&&p<1){var e4=EASE.outExpo(p); g.beginPath(); g.rect(x+w*(1-e4),y-h*.2,w*e4+2,h*1.4); g.clip();}
-  if(n.type==='text'){var fs=gv(n,'fs')*s, rows=String(gv(n,'t')).split('\n'), lh=fs*gv(n,'lh'), al=gv(n,'al'), tx=al==='l'?x:(al==='r'?x+w:x+w/2), y0=y+h/2-(rows.length*lh)/2;
-    rows.forEach(function(r,i){cText(g,P,r,tx,y0+i*lh+lh/2+fs*.36+gv(n,'ty')*s,gv(n,'fw'),fs,gCol(gv(n,'col'),P),al);});}
-  else if(n.type==='num'){var nfs=gv(n,'fs')*s, cap=n._cap||nfs*.74, u=gv(n,'up')==='none'?'':gv(n,'u'), ufs=gv(n,'ufs')*s, col=gCol(gv(n,'col'),P), ucol=gCol(gv(n,'ucol'),P), txt=an==='count'?cCount(gv(n,'t'),EASE.outCubic(clamp((ph.pi-n._t0)/Math.max(.15,.92-n._t0)))):gv(n,'t'), al2=gv(n,'al');
-    if(u&&gv(n,'up')==='below'){var cxn=al2==='l'?x+n._nw/2:(al2==='r'?x+w-n._nw/2:x+w/2), by=y+h/2-n._nh/2+cap*1.05; cText(g,P,txt,cxn,by,gv(n,'fw'),nfs,col,'c'); cText(g,P,u,cxn,by+ufs*1.3,gv(n,'ufw'),ufs,ucol,'c');}
-    else {var tot=n._nw, left=al2==='l'?x:(al2==='r'?x+w-tot:x+(w-tot)/2), base=y+h/2+cap/2; cText(g,P,txt,left+tot-n._numw/2,base,gv(n,'fw'),nfs,col,'c'); if(u) cText(g,P,u,left+n._uw,base-cap*.28,gv(n,'ufw'),ufs,ucol,'r');}}
-  else if(n.type==='vtext'){var vfs=gv(n,'fs')*s; g.translate(x+w/2,y+h/2); g.rotate(gv(n,'rot')*Math.PI/180); cText(g,P,gv(n,'t'),0,vfs*.36,gv(n,'fw'),vfs,gCol(gv(n,'col'),P),'c');}
+  if(n.type==='text'){var fs=gv(n,'fs')*s, lh=fs*gv(n,'lh'), al=gv(n,'al'), tx=al==='l'?x:(al==='r'?x+w:x+w/2), fw=gv(n,'fw'), col=gCol(gv(n,'col'),P), ty=gv(n,'ty')*s,
+      blk=function(str){var rows=String(str).split('\n'), y0=y+h/2-(rows.length*lh)/2; rows.forEach(function(r,i){cText(g,P,r,tx,y0+i*lh+lh/2+fs*.36+ty,fw,fs,col,al);});};
+    if(n._chg) gSwap(g,P,n,par,s,tm,Math.max(h*.55,fs*1.2),[x-w*.06,y-h*.3,w*1.12,h*1.6],function(){blk(n._chg.t0);},function(){blk(gv(n,'t'));}); else blk(gv(n,'t'));}
+  else if(n.type==='num'){var nfs=gv(n,'fs')*s, cap=n._cap||nfs*.74, below=gv(n,'up')==='below', col=gCol(gv(n,'col'),P), ucol=gCol(gv(n,'ucol'),P), fw=gv(n,'fw'), noU=gv(n,'up')==='none', t1=gv(n,'t'), u1=noU?'':gv(n,'u'), Q=gNumGeo(n,s,n._ur,below),
+      dN=function(str){cText(g,P,str,Q.nx,Q.ny,fw,nfs,col,'c');}, dU=function(str,q,ur){ if(str) cText(g,P,str,q.ux,q.uy,ur?fw:gv(n,'ufw'),gUfs(n,s,ur),ucol,q.ual);},
+      /* while the number changes, its unit stays fixed to the number's edge as the digits grow or shrink */
+      uAt=function(lw,ur){ if(below) return Q; return ur?{ux:Q.nx+lw/2+nfs*.05,uy:Q.ny,ual:'l'}:{ux:Q.nx-lw/2-nfs*.2,uy:Q.ny-cap*.28,ual:'r'};};
+    if(!n._chg){dN(an==='count'?cCount(t1,EASE.outCubic(clamp((ph.pi-n._t0)/Math.max(.15,.92-n._t0)))):t1); dU(u1,Q,n._ur);}
+    else {var c=n._chg, lq=c.q, A0=gNums(c.t0), B1=gNums(t1), shown=t1, QA=gNumGeo(n,s,c.ur0,below); Q.nx=lerp(QA.nx,Q.nx,c.eg); Q.ny=lerp(QA.ny,Q.ny,c.eg); var cnt=((P.g&&P.g.nt)||'count')==='count'&&A0.length&&A0.length===B1.length;
+      if(c.t0===t1) dN(t1);
+      else if(cnt){var ec=EASE.inOutCubic(clamp(lq/.85)), pu=1+.06*Math.sin(Math.PI*clamp(lq/.85)), cy3=Q.ny-cap/2; shown=gLerpNum(c.t0,t1,ec); g.save(); g.translate(Q.nx,cy3); g.scale(pu,pu); g.translate(-Q.nx,-cy3); dN(shown); g.restore();}
+      else gSwap(g,P,n,par,s,'roll',cap*1.3,null,function(){dN(c.t0);},function(){dN(t1);});
+      var u0=noU?'':c.u0, lw=cW(P,c.t0===t1||cnt?shown:(lq<.5?c.t0:t1),fw,nfs);
+      if(u0===u1) dU(u1,uAt(lw,n._ur),n._ur); else gSwap(g,P,n,par,s,tm==='wipe'?'fade':tm,Math.min(gUfs(n,s,n._ur),gUfs(n,s,c.ur0))*.6,null,function(){dU(u0,uAt(lw,c.ur0),c.ur0);},function(){dU(u1,uAt(lw,n._ur),n._ur);});}}
+  else if(n.type==='vtext'){var vfs=gv(n,'fs')*s, vb=function(str){g.save(); g.translate(x+w/2,y+h/2); g.rotate(gv(n,'rot')*Math.PI/180); cText(g,P,str,0,vfs*.36,gv(n,'fw'),vfs,gCol(gv(n,'col'),P),'c'); g.restore();};
+    if(n._chg) gSwap(g,P,n,par,s,tm==='wipe'?'fade':tm,Math.min(h*.6,vfs*2),null,function(){vb(n._chg.t0);},function(){vb(gv(n,'t'));}); else vb(gv(n,'t'));}
   else if(n.type==='bar'){var e5=an==='grow'?EASE.outExpo(p):1; g.fillStyle=gCol(gv(n,'col'),P)||P.accent; g.fillRect(x+w*(1-e5)/2,y,w*e5,h);}
   else if(n.type==='chart') gChart(g,P,n,s,p);
   g.restore();
-  (n.kids||[]).forEach(function(k){gNode(g,P,k,s,ph);});}
+  (n.kids||[]).forEach(function(k){gNode(g,P,k,s,ph,n);});}
 
 /* ---- a line chart node: line through the points, a value bubble on each point, labels under them ---- */
 function gChart(g,P,n,s,p){var x0=n._x, y0=n._y, w=n._w, h=n._h, pts=(gv(n,'pts')||[]).slice(0,8), np=pts.length, lc=gCol(gv(n,'lcol'),P)||P.color, bc=gCol(gv(n,'bcol'),P)||P.accent, tc=gCol(gv(n,'tcol'),P)||'#15120a', xc=gCol(gv(n,'xcol'),P)||P.color; if(!np) return;
@@ -1603,6 +1671,25 @@ function gNum(t,u,o){return gN('num',Object.assign({t:t,u:u},o||{}));}
   GTPL.textrows={name:'Text + Number Rows',icon:'box',root:gIds(gN('box',{name:'Group',dir:'col',align:'stretch'},[
     gN('box',{name:'Upper Row',dir:'row',align:'stretch'},[TP('Upper Plate',{sl:1}),NB('Upper Box','233','مليار جنيه')]),
     gN('box',{name:'Lower Row',dir:'row',align:'stretch'},[NB('Lower Box','233','مليار جنيه'),TP('Lower Plate',{sr:1})])]))};
+  /* Framed Number: a big number on the top edge of a rounded frame, a small word and a tick on each side, the caption inside, two ticks on the bottom edge.
+     Every size follows the content: the frame grows with the caption and the number, the bottom ticks stay under the top ones. */
+  var WCOL=function(id,nm,t){return gN('box',{id:id,name:nm,dir:'col',align:'center',gap:4,mt:39},[gN('text',{id:id+'t',name:nm+' Text',t:t,fs:30,fw:300,lh:1.32}),gN('bar',{id:id+'k',name:nm+' Tick',w:62,h:3.2,col:'$accent'})]);};
+  var BCOL=function(id,nm,of){return gN('box',{id:id,name:nm,dir:'col',align:'center',wOf:of},[gN('bar',{id:id+'k',name:nm+' Tick',w:62,h:3.2,col:'$accent'})]);};
+  GTPL.framenum={name:'Framed Number',icon:'frame',root:gIds(gN('box',{name:'Group',dir:'col',align:'center'},[
+    gN('box',{id:'frame',name:'Frame',dir:'col',align:'center',shape:'round',r:28,stroke:'#6e6e6e',sw:1.6,px:55,py:0,minW:650,gapTop:'num'},[
+      gN('box',{id:'top',name:'Top Row',dir:'row',align:'start',just:'center',gap:22,mt:-84},[WCOL('wl','Word Left','من'),gNum('280','',{id:'num',name:'Number',fs:190,fw:900,col:'$accent',ufs:34,ufw:700}),WCOL('wr','Word Right','أكثر')]),
+      gN('text',{id:'cap',name:'Caption',t:'مركز تعهيد لشركات عالمية\nفي مصر',fs:46,fw:800,lh:1.22,mt:6,mb:36}),
+      gN('box',{id:'bot',name:'Bottom Ticks',dir:'row',align:'center',just:'center',gap:22,mb:-1.6},[BCOL('bl','Bottom Left','wl'),gN('space',{id:'bsp',name:'Under The Number',wOf:'num',h:3.2}),BCOL('br','Bottom Right','wr')])])])),
+    steps:[{wlt:{t:'من'},num:{t:'150',u:'مليار دولار'},wrt:{t:'أكثر'},cap:{t:'استثمارات في البنية التحتية\nالرقمية منذ 2019'}},
+           {wlt:{t:'من'},num:{t:'90',u:'%'},wrt:{t:'أكثر'},cap:{t:'من حركة البيانات الدولية\nتعبر عبر مصر'}}]};
+  /* Stat Box: a number in a cut-corner box, a slanted tab over it (as wide as the box + room for its word), a striped brand panel with the text */
+  GTPL.statbox={name:'Stat Box',icon:'box',root:gIds(gN('box',{name:'Group',dir:'col',align:'end'},[
+    gN('box',{id:'tab',name:'Tab',dir:'row',just:'center',align:'center',sl:1,sk:.9,stroke:'$edge',sw:2,px:28,py:4,minH:46,wOf:'nbox',wPlus:70,an:'wipe',ad:'b',d0:.3},[gN('text',{id:'pre',name:'Tab Text',t:'أكثر من',fs:30,fw:300,d0:.25})]),
+    gN('box',{id:'row',name:'Row',dir:'row',align:'stretch'},[
+      gN('box',{id:'panel',name:'Panel',dir:'row',just:'end',align:'center',bg:'$accentDim',stripes:true,px:32,py:18,d0:-.05},[gN('text',{id:'txt',name:'Text',t:'من حركة البيانات الدولية\nتعبر عبر مصر',fs:40,fw:800,lh:1.3,al:'r',d0:.05})]),
+      gN('box',{id:'nbox',name:'Number Box',dir:'row',just:'center',align:'center',shape:'cut',cut:24,stroke:'$edge',sw:2,px:26,minH:140,d0:-.4},[gNum('90','%',{id:'num',name:'Number',fs:96,fw:900,ssz:.58,d0:-.45})])])])),
+    steps:[{pre:{t:'أكثر من'},num:{t:'280',u:''},txt:{t:'مركز تعهيد لشركات\nعالمية في مصر'}},
+           {pre:{t:'استثمارات تجاوزت'},num:{t:'150',u:''},txt:{t:'مليار دولار في البنية التحتية\nالرقمية منذ 2019'}}]};
 })();
 function gMain(q){var m=''; gEach(q.g&&q.g.root,function(n){ if(!m&&n.type==='num'&&!gv(n,'hide')) m=gv(n,'t'); }); if(!m) gEach(q.g&&q.g.root,function(n){ if(!m&&n.type==='text'&&!gv(n,'hide')) m=gv(n,'t'); }); return m;}
 
@@ -1773,7 +1860,7 @@ function slider(parent,id,label,min,max,step,key,fmt){var f=rangeCtl(parent,id,l
 /* the selected move's own controls */
 function fmtStep(p){var dec=(String(p.step).split('.')[1]||'').length; return function(x){return x.toFixed(dec)+(p.unit==='°'||p.unit==='%'||p.unit==='×'?p.unit:(p.unit?' '+p.unit:''));};}
 /* ---- groups in the inspector: the content first (what changes with the data), then the layers inside the group, then the picked layer's look ---- */
-var gsel='', GCOLS=[['$fill','Layer Fill'],['$accent','Accent'],['$white','White'],['$black','Black'],['$plate','Plate Dark'],['$grey','Grey'],['$ink','Dark Ink'],['','None'],['#','Custom']];
+var gsel='', gstep=0, GCOLS=[['$fill','Layer Fill'],['$accent','Accent'],['$accentDim','Accent Dark'],['$white','White'],['$black','Black'],['$plate','Plate Dark'],['$grey','Grey'],['$edge','Edge Grey'],['$ink','Dark Ink'],['','None'],['#','Custom']];
 var GTYPE={box:'Plate',text:'Text',num:'Number',vtext:'Side Text',bar:'Tick',space:'Space',chart:'Chart'};
 function placeNodeBox(){var b=$('#nodeBox'); if(!b) return; var n=null; if(P&&P.kind==='group'&&gsel){var G=gLayout(P); if(G) n=gFind(G.root,gsel);} if(!n||gv(n,'hide')||!(n._w>0)){b.classList.remove('on'); return;}
   b.style.left=(n._x/W*100)+'%'; b.style.top=(n._y/H*100)+'%'; b.style.width=(n._w/W*100)+'%'; b.style.height=(Math.max(2,n._h)/H*100)+'%'; b.classList.add('on');}
@@ -1786,11 +1873,22 @@ function gSeg(parent,label,n,k,opts,rebuild){var f=el('div','f',parent); el('spa
 function gToggle(parent,label,n,k){var f=el('div','f',parent), r=el('div','r',f); el('span','lab',r,label); var sw=el('button','switch',r); sw.type='button'; sw.setAttribute('aria-label',label); sw.setAttribute('aria-pressed',String(!!gv(n,k))); sw.addEventListener('click',function(){var on=sw.getAttribute('aria-pressed')!=='true'; sw.setAttribute('aria-pressed',String(on)); setNode(n,k,on);}); return f;}
 function gPair(parent){var t=el('div','two',parent); return t;}
 function buildGroupUI(){var box=UI.compBox; if(!box||P.kind!=='group') return; var R=P.g.root; box.textContent=''; UI.compTitle.textContent=(LINES.length>1?'Layer '+(sel+1)+' · ':'')+(P.g.name||'Group'); if(gsel&&!gFind(R,gsel)) gsel='';
-  /* 1. content */
-  var con=el('div','gcon',box); el('span','lab',con,'Content');
-  gEach(R,function(n){ if(n.type==='text'||n.type==='vtext'){var f=el('div','f',con), lb=el('label','lab',f,n.name), ip=el('input','inp',f); ip.type='text'; ip.dir='auto'; ip.id='gc_'+n.id; lb.htmlFor=ip.id; ip.value=gv(n,'t'); ip.addEventListener('input',function(){setNode(n,'t',ip.value);}); ip.addEventListener('focus',function(){ if(gsel!==n.id){gsel=n.id; placeNodeBox(); markGTree();} });}
-    else if(n.type==='num'){var f2=el('div','f',con); el('span','lab',f2,n.name); var t2=el('div','two',f2), a=el('input','inp',t2), b=el('input','inp',t2); a.type=b.type='text'; a.dir=b.dir='auto'; a.id='gc_'+n.id; b.id='gc_'+n.id+'_u'; a.value=gv(n,'t'); b.value=gv(n,'u'); a.setAttribute('aria-label',n.name); b.setAttribute('aria-label',n.name+' unit'); b.placeholder='Unit';
-      a.addEventListener('input',function(){setNode(n,'t',a.value);}); b.addEventListener('input',function(){setNode(n,'u',b.value);}); [a,b].forEach(function(x){x.addEventListener('focus',function(){ if(gsel!==n.id){gsel=n.id; placeNodeBox(); markGTree();} });});}
+  /* 0. steps: one group telling several achievements in a row */
+  var NS=gStepN(P); if(gstep>=NS) gstep=NS-1; if(gstep<0) gstep=0;
+  var sb=el('div','gsteps',box); el('span','lab',sb,'Steps'); var ch=el('div','chips',sb); ch.id='gSteps';
+  for(var si=0;si<NS;si++)(function(i){var b=el('button','chip',ch,String(i+1)); b.type='button'; b.setAttribute('aria-pressed',String(i===gstep)); b.setAttribute('aria-label','Step '+(i+1)); b.title=gStepMain(P,i); b.addEventListener('click',function(){gstep=i; buildGroupUI(); gJump(i);});})(si);
+  var sa=el('button','ghost mini',ch); sa.type='button'; sa.id='gStepAdd'; icoLabel(sa,'plus','Add Step'); sa.disabled=NS>=8; sa.title='A new step, starting as a copy of step '+(gstep+1); sa.addEventListener('click',gAddStep);
+  if(NS>1){var sr=el('button','ghost mini',ch); sr.type='button'; sr.id='gStepDel'; icoLabel(sr,'trash','Remove '+(gstep+1)); sr.addEventListener('click',gRemoveStep);}
+  el('p','hint',sb,NS>1?'كل Step إنجاز: الرقم بيعدّ من القديم للجديد، والكلام بيتبدّل، والبوكسات بتتظبط على المقاس الجديد وهي بتتحرك. اختار رقم الـ Step وغيّر بياناته تحت.':'عايز تتكلم عن أكتر من إنجاز؟ دوس Add Step وغيّر البيانات، والجروب هيتنقل بينهم بأنيميشن.');
+  if(NS>1){ if(P.g.tx==null) P.g.tx=.9; if(!P.g.nt) P.g.nt='count'; if(!P.g.tt) P.g.tt='roll';
+    rangeCtl(sb,'gStepTx','Change Time',.3,2,.05,function(){return P.g.tx;},function(x){setNode(P.g,'tx',x);},function(x){return x.toFixed(2)+' s';});
+    gSeg(sb,'Number Change',P.g,'nt',[['count','Count'],['roll','Roll']]); gSeg(sb,'Text Change',P.g,'tt',[['roll','Roll'],['fade','Fade'],['wipe','Wipe']]);}
+  /* 1. content (of the step being edited) */
+  var con=el('div','gcon',box); el('span','lab',con,NS>1?'Content · Step '+(gstep+1):'Content');
+  var pick=function(n){ if(gsel!==n.id){gsel=n.id; placeNodeBox(); markGTree();} if(NS>1&&P.g._vis!==gstep) gJump(gstep);};
+  gEach(R,function(n){ if(n.type==='text'||n.type==='vtext'){var f=el('div','f',con), lb=el('label','lab',f,n.name), ip=el(n.type==='text'?'textarea':'input','inp',f); if(ip.tagName==='INPUT') ip.type='text'; else ip.rows=Math.max(1,Math.min(4,String(gSV(P,n,'t',gstep)).split('\n').length)); ip.dir='auto'; ip.id='gc_'+n.id; lb.htmlFor=ip.id; ip.value=gSV(P,n,'t',gstep); ip.addEventListener('input',function(){gSetSV(n,'t',ip.value);}); ip.addEventListener('focus',function(){pick(n);});}
+    else if(n.type==='num'){var f2=el('div','f',con); el('span','lab',f2,n.name); var t2=el('div','two',f2), a=el('input','inp',t2), b=el('input','inp',t2); a.type=b.type='text'; a.dir=b.dir='auto'; a.id='gc_'+n.id; b.id='gc_'+n.id+'_u'; a.value=gSV(P,n,'t',gstep); b.value=gSV(P,n,'u',gstep); a.setAttribute('aria-label',n.name); b.setAttribute('aria-label',n.name+' unit'); b.placeholder='Unit';
+      a.addEventListener('input',function(){gSetSV(n,'t',a.value);}); b.addEventListener('input',function(){gSetSV(n,'u',b.value);}); [a,b].forEach(function(x){x.addEventListener('focus',function(){pick(n);});});}
     else if(n.type==='chart'){gChartTable(con,n);} });
   /* 2. the layers inside the group */
   el('span','lab',box,'Layers In Group'); var tr=el('div','gtree',box); tr.id='gTree';
@@ -1804,15 +1902,16 @@ function buildGroupUI(){var box=UI.compBox; if(!box||P.kind!=='group') return; v
     if(n.type==='text'||n.type==='vtext'){t=gPair(pb); gRange(t,'Size',n,'fs',8,240,1,function(x){return Math.round(x)+' px';}); gRange(t,'Weight',n,'fw',100,900,100,function(x){return String(x);}); gColorCtl(pb,'Color',n,'col');
       if(n.type==='text') gSeg(pb,'Align',n,'al',[['l','Left'],['c','Center'],['r','Right']]); else gSeg(pb,'Turn',n,'rot',[[-90,'Up'],[90,'Down'],[0,'Flat']]);}
     if(n.type==='num'){t=gPair(pb); gRange(t,'Size',n,'fs',20,320,1,function(x){return Math.round(x)+' px';}); gRange(t,'Weight',n,'fw',100,900,100,function(x){return String(x);}); gColorCtl(pb,'Number Color',n,'col');
-      gSeg(pb,'Unit',n,'up',[['side','Beside'],['below','Below'],['none','Hidden']]); t=gPair(pb); gRange(t,'Unit Size',n,'ufs',6,120,1,function(x){return Math.round(x)+' px';}); gRange(t,'Unit Weight',n,'ufw',100,900,100,function(x){return String(x);}); gColorCtl(pb,'Unit Color',n,'ucol');}
+      gSeg(pb,'Unit',n,'up',[['side','Beside'],['below','Below'],['none','Hidden']]); t=gPair(pb); gRange(t,'Unit Size',n,'ufs',6,120,1,function(x){return Math.round(x)+' px';}); gRange(t,'Unit Weight',n,'ufw',100,900,100,function(x){return String(x);}); gRange(pb,'Sign Size (% + $)',n,'ssz',.2,1,.02,function(x){return Math.round(x*100)+'%';}); gColorCtl(pb,'Unit Color',n,'ucol');
+      el('p','hint',pb,'الوحدة العربي بتقعد صغيرة جنب الرقم، والعلامات زي % و+ بتيجي بعده على نفس السطر.');}
     if(n.type==='bar'){t=gPair(pb); gRange(t,'Width',n,'w',2,600,1); gRange(t,'Height',n,'h',1,80,.5); gColorCtl(pb,'Color',n,'col');}
-    if(n.type==='space'){t=gPair(pb); gRange(t,'Width',n,'w',0,400,1); gRange(t,'Height',n,'h',0,400,1);}
+    if(n.type==='space'){t=gPair(pb); gRange(t,'Width',n,'w',0,400,1); gRange(t,'Height',n,'h',0,400,1); gMatchCtl(pb,n,R);}
     if(n.type==='chart'){gColorCtl(pb,'Line',n,'lcol'); gColorCtl(pb,'Bubbles',n,'bcol'); gColorCtl(pb,'Bubble Text',n,'tcol'); gColorCtl(pb,'Labels',n,'xcol'); gToggle(pb,'Line Starts From The Corner',n,'lead'); t=gPair(pb); gRange(t,'Width',n,'cw',200,1600,10); gRange(t,'Height',n,'ch',120,900,10);}
     if(n.type==='box'){gColorCtl(pb,'Fill',n,'bg'); gToggle(pb,'Stripes',n,'stripes'); gColorCtl(pb,'Stroke',n,'stroke'); t=gPair(pb); gRange(t,'Stroke Width',n,'sw',0,16,.5); gRange(t,'Gap',n,'gap',-20,120,1);
       t=gPair(pb); gRange(t,'Padding X',n,'px',0,200,1); gRange(t,'Padding Y',n,'py',0,160,1); t=gPair(pb); gRange(t,'Min Width',n,'minW',0,1600,5); gRange(t,'Min Height',n,'minH',0,900,5);
       gSeg(pb,'Left Edge',n,'sl',[[0,'Straight'],[1,'Lean /'],[-1,'Lean \\']]); gSeg(pb,'Right Edge',n,'sr',[[0,'Straight'],[1,'Lean /'],[-1,'Lean \\']]); gRange(pb,'Lean Amount',n,'sk',.1,1.4,.02);
       gSeg(pb,'Corners',n,'shape',[['rect','Square'],['round','Round'],['cut','Cut']]); t=gPair(pb); gRange(t,'Radius',n,'r',0,120,1); gRange(t,'Cut',n,'cut',0,120,1);
-      gSeg(pb,'Children',n,'dir',[['row','In A Row'],['col','In A Column']],true); gSeg(pb,'Line Up',n,'just',[['start','Start'],['center','Center'],['end','End']]);}
+      gSeg(pb,'Children',n,'dir',[['row','In A Row'],['col','In A Column']],true); gSeg(pb,'Line Up',n,'just',[['start','Start'],['center','Center'],['end','End']]); gMatchCtl(pb,n,R);}
     gSeg(pb,'Entrance',n,'an',[['auto','Auto'],['wipe','Wipe'],['draw','Draw'],['rise','Rise'],['fade','Fade'],['pop','Pop']].concat(n.type==='num'?[['count','Count']]:[]).concat([['none','None']]));
     if(gAnimOf(n)==='wipe') gSeg(pb,'Wipe From',n,'ad',[['r','Right'],['l','Left'],['t','Top'],['b','Bottom'],['c','Middle']]);
     t=gPair(pb); gRange(t,'Delay',n,'d0',-.5,.6,.01,function(x){return (x>0?'+':'')+Math.round(x*100)+'%';}); gRange(t,'Length',n,'dd',.2,2.5,.05,function(x){return x.toFixed(2)+'×';});
@@ -1821,6 +1920,19 @@ function buildGroupUI(){var box=UI.compBox; if(!box||P.kind!=='group') return; v
   var rg=el('button','ghost',box); rg.type='button'; icoLabel(rg,'reset','Reset Group Design'); rg.title='Back to the template, keeping the text and numbers';
   rg.addEventListener('click',function(){var T=GTPL[P.g.tpl]; if(!T) return; var fresh=JSON.parse(JSON.stringify(T.root)); gEach(fresh,function(n){var o=gFind(R,n.id); if(o){ ['t','u','pts'].forEach(function(k){ if(o[k]!==undefined) n[k]=JSON.parse(JSON.stringify(o[k])); }); }}); P.g.root=fresh; gsel=''; setNode(P.g,'root',fresh,true);});
   placeNodeBox();}
+/* Match Width: a plate or a space as wide as another layer of the group (+ extra) */
+function gMatchCtl(pb,n,R){var f=el('div','f',pb); el('span','lab',f,'Match Width Of'); var se=el('select','',f); se.setAttribute('aria-label','Match Width Of'); var o0=el('option','',se,'Nothing'); o0.value='';
+  gEach(R,function(m){ if(m===n||m===R||m.type==='space') return; var o=el('option','',se,m.name); o.value=m.id;}); se.value=gv(n,'wOf')||''; se.addEventListener('change',function(){setNode(n,'wOf',se.value,true);});
+  if(gv(n,'wOf')) gRange(pb,'Extra Width',n,'wPlus',-200,400,1,function(x){return Math.round(x)+' px';});}
+/* steps */
+function gStepMain(P,i){var m=''; gEach(P.g.root,function(n){ if(!m&&n.type==='num'&&!gv(n,'hide')) m=gSV(P,n,'t',i)+(gSV(P,n,'u',i)||'').slice(0,12); }); return m;}
+function gSetSV(n,k,v){ if(gstep>0){var st=P.g.steps[gstep-1]; if(!st) return; (st[n.id]=st[n.id]||{})[k]=v; P.text=compLabel(P); syncLines(); placeSel(); dirty(); persist(); hook('change','group'); var c=$('#gSteps .chip[aria-pressed=true]'); if(c) c.title=gStepMain(P,gstep);} else setNode(n,k,v);}
+function gNeedDur(q){return Math.round(((q.delay||0)+q.inDur+(q.outOn?q.outDur:0)+gStepN(q)*2.2)*10)/10;}
+function gEnsureDur(){var need=Math.min(12,gNeedDur(P)); if(docDur()<need){LINES.forEach(function(q){q.dur=need;}); if(UI.dur&&UI.dur.set) UI.dur.set(); return true;} return false;}
+function gJump(i){var d=P.delay||0, D=docDur(), T=timing(Object.assign({},P,{dur:Math.max(.2,D-d)})); time=clamp(d+gStepRest(P,{t:0,D:T.D,Ti:T.Ti,To:T.To,tOut:T.tOut},i),0,D); playing=false; syncPlay(); dirty();}
+function gAddStep(){var S=P.g.steps=P.g.steps||[], o={}; gEach(P.g.root,function(n){ if(n.type==='text'||n.type==='vtext'||n.type==='num'){o[n.id]={t:gSV(P,n,'t',gstep)}; if(n.type==='num') o[n.id].u=gSV(P,n,'u',gstep);} });
+  S.splice(gstep,0,o); gstep++; var longer=gEnsureDur(); setNode(P.g,'steps',S,true); gJump(gstep); if(longer) $('#mSay').textContent='طوّلت المدة لـ '+docDur().toFixed(1)+' ثانية عشان كل إنجاز ياخد وقته.';}
+function gRemoveStep(){var S=P.g.steps||[]; if(!S.length) return; if(gstep===0){var f=S.shift(); gEach(P.g.root,function(n){var o=f[n.id]; if(!o) return; if(o.t!==undefined) n.t=o.t; if(o.u!==undefined) n.u=o.u;});} else S.splice(gstep-1,1); gstep=Math.max(0,gstep-1); setNode(P.g,'steps',S,true); gJump(gstep);}
 function markGTree(){var tr=$('#gTree'); if(!tr) return; Array.prototype.forEach.call(tr.children,function(r){r.setAttribute('aria-selected',String(r.dataset.id===gsel));});}
 /* the points of a chart layer: label, plot value, shown text, unit */
 function gChartTable(parent,n){var f=el('div','f',parent); el('span','lab',f,n.name+' · Points'); var tb=el('div','pts',f);
@@ -1925,7 +2037,7 @@ function syncLines(){var box=UI.lnList; if(!box) return; if(box.children.length!
   UI.lnCount.textContent='Layers · '+LINES.length+' / '+MAXL; $('#lnAdd').disabled=$('#lnDup').disabled=LINES.length>=MAXL; var rws=P.text.split('\n').filter(function(r){return r.trim();}).length; $('#lnSplit').hidden=!(rws>1&&LINES.length+rws-1<=MAXL); if(UI.lnUp){UI.lnUp.disabled=sel<=0; UI.lnDown.disabled=sel>=LINES.length-1;} var many=LINES.length>1; if(UI.posSeg){UI.posSeg.hidden=!many; UI.copyRow.hidden=!many;} }
 function fitRow(ip){ip.style.height='auto'; ip.style.height=Math.max(20,ip.scrollHeight)+'px';}
 function focusLine(i){var r=UI.lnList.children[i], ip=r&&r.querySelector('textarea'); if(ip){ip.focus(); try{ip.setSelectionRange(ip.value.length,ip.value.length);}catch(e){}} }
-function selectLine(i){i=clamp(i,0,LINES.length-1); if(i===sel&&P===LINES[i]){flashSel(); return;} sel=i; P=LINES[i]; gsel=''; refreshAll(); flashSel(); hook('line',i);}
+function selectLine(i){i=clamp(i,0,LINES.length-1); if(i===sel&&P===LINES[i]){flashSel(); return;} sel=i; P=LINES[i]; gsel=''; gstep=0; refreshAll(); flashSel(); hook('line',i);}
 /* a new line takes the look of the one it comes from, sits under it and starts a beat later */
 function addLine(after,focus,copy,text){ if(LINES.length>=MAXL) return; var src=LINES[after], q=mkLine(src); if(!copy){q.kind='text'; q.comp=''; q.f={}; q.g={}; q.text=text||'';} var rows=copy?q.text.split('\n').length:1, sb=src.text.trim()?boxOf(src):null; q.y=sb?(q.kind!=='text'?src.y+(sb.h+24)/H:(sb.bot+rows*q.size*q.leading/2)/H):src.y+src.size*src.leading/H; q.delay=Math.min(Math.round((src.delay+.15)*20)/20,Math.max(0,src.dur-1));
   LINES.splice(after+1,0,q); sel=after+1; P=q; if(text) return; buildLines(); refreshAll(); flashSel(); if(focus) focusLine(sel); hook('line-add',sel);}
@@ -2071,18 +2183,18 @@ applyOut(false,true);
 var PROJECTS=[
  {id:'npd',name:'NPD',tip:'تايبو وأرقام ورسوم بيانية بهوية المشروع: أسود ودهبي وأبيض',
   brand:{color:'#ffffff',accent:'#DBC373',font:'Alexandria',bg:'black'},
-  templates:[{group:'plates2'},{group:'plates3'},{group:'fromto'},{group:'textrows'},{comp:'bignum'},{comp:'statbox'},{comp:'framenum'},{comp:'plate'},{comp:'linechart'},
+  templates:[{group:'plates2'},{group:'plates3'},{group:'fromto'},{group:'textrows'},{comp:'bignum'},{group:'statbox'},{group:'framenum'},{comp:'plate'},{comp:'linechart'},
    {text:'عنوان بخط تقيل',name:'Text · Bold',weight:800,move:'mask'},{text:'سطر بخط خفيف',name:'Text · Light',weight:300,move:'fade'}]}];
 var PKEY='aromaTypo.proj', PJ=null, ptiles=[];
 try{var pid=localStorage.getItem(PKEY); PROJECTS.forEach(function(p){ if(p.id===pid) PJ=p; });}catch(e){}
 function mkFromTpl(tp,br){var o={color:br.color,accent:br.accent,font:br.font,dur:LINES[0].dur,x:.5,y:.5,align:'c',delay:0};
-  if(tp.group) Object.assign(o,{kind:'group',g:{tpl:tp.group,name:GTPL[tp.group].name,root:JSON.parse(JSON.stringify(GTPL[tp.group].root))},text:'g',size:170,weight:900,inDur:1.8,outDur:.6,outOn:true}); else if(tp.comp) Object.assign(o,{kind:'comp',comp:tp.comp,f:tp.f||{},text:'c',size:170,weight:900,inDur:1.6,outDur:.6,outOn:true}); else Object.assign(o,{kind:'text',text:tp.text,weight:tp.weight,move:tp.move,size:110,inDur:1,outDur:.6});
+  if(tp.group){var GT=GTPL[tp.group]; Object.assign(o,{kind:'group',g:{tpl:tp.group,name:GT.name,root:JSON.parse(JSON.stringify(GT.root)),steps:JSON.parse(JSON.stringify(GT.steps||[])),tx:.9,nt:'count',tt:'roll'},text:'g',size:170,weight:900,inDur:1.8,outDur:.6,outOn:true}); o.dur=Math.max(o.dur,gNeedDur(o));} else if(tp.comp) Object.assign(o,{kind:'comp',comp:tp.comp,f:tp.f||{},text:'c',size:170,weight:900,inDur:1.6,outDur:.6,outOn:true}); else Object.assign(o,{kind:'text',text:tp.text,weight:tp.weight,move:tp.move,size:110,inDur:1,outDur:.6});
   return mkLine(o);}
 /* add a project template as a new layer. A title that is still the untouched starter text is replaced by it. */
 function addTemplate(tp){ if(!PJ) return; var q=mkFromTpl(tp,PJ.brand), fresh=LINES.every(function(l){return l.kind==='text'&&DEF.text.split('\n').indexOf(l.text)>=0;});
-  if(q.kind!=='text'){var b=boxOf(q), k=Math.min(1,W*.9/Math.max(1,b.w),H*.88/Math.max(1,b.h)); if(k<1) q.size=Math.floor(q.size*k);}
+  if(q.kind!=='text'){var b=q.kind==='group'?gBoxMax(q):boxOf(q), k=Math.min(1,W*.9/Math.max(1,b.w),H*.88/Math.max(1,b.h)); if(k<1) q.size=Math.floor(q.size*k);} var qd=Math.max(q.dur,fresh?0:LINES[0].dur);
   if(fresh){LINES.length=0; LINES.push(q); sel=0;} else { if(LINES.length>=MAXL){$('#mSay').textContent='وصلت لأقصى عدد Layers ('+MAXL+'). امسح واحد الأول.'; return;} LINES.splice(sel+1,0,q); sel=sel+1; }
-  P=q; if(q.kind==='text') useFont(q.font); buildLines(); refreshAll(); flashSel(2600); time=0; playing=!reduce; syncPlay(); dirty(); hook('template',tp.comp||'text');}
+  LINES.forEach(function(l){l.dur=qd;}); P=q; gstep=0; gsel=''; if(q.kind==='text') useFont(q.font); buildLines(); refreshAll(); flashSel(2600); time=0; playing=!reduce; syncPlay(); dirty(); hook('template',tp.comp||'text');}
 function brandTo(all){ if(!PJ) return; (all?LINES:[P]).forEach(function(q){q.color=PJ.brand.color; q.accent=PJ.brand.accent; q.font=PJ.brand.font;}); LCACHE.clear(); useFont(PJ.brand.font); refreshAll(); hook('brand');}
 function saveBlob(blob,name){ if(inViewer){ if(dlNS) dlNS.save({filename:name,data:blob}).catch(function(){}); return; } var a=document.createElement('a'), url=URL.createObjectURL(blob); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){URL.revokeObjectURL(url);},20000);}
 /* a title as a small file, to hand to a teammate or keep: the layers and the output settings */
@@ -2096,7 +2208,7 @@ function buildProjectPanel(){var box=$('#pjPanel'); box.textContent=''; ptiles=[
   el('p','hint',box,'مكوّنات المشروع جاهزة بألوانه. دوس على أي واحد يتضاف Layer، وبعدها غيّر بياناته من Component على اليمين.');
   el('span','lab',box,'Templates'); var gr=el('div','pgrid',box);
   PJ.templates.forEach(function(tp){var b=el('button','tile',gr), cv=el('canvas','',b); b.type='button'; cv.width=TW; cv.height=TH; var nm=el('span','',b,tp.group?GTPL[tp.group].name:(tp.comp?COMPS[tp.comp].name:tp.name)); b.title='Add '+nm.textContent;
-    var q=in169(function(){var q=mkFromTpl(tp,br); q.dur=3.4; if(q.kind!=='text'){var bx=boxOf(q), k=Math.min(1920*.86/Math.max(1,bx.w),1080*.8/Math.max(1,bx.h)); q.size=170*k;} else {MG.font=fontStr(q); MG.direction='rtl'; q.size=Math.max(60,Math.min(300,Math.round(q.size*1920*.7/(MG.measureText(q.text).width||1))));} return q;});
+    var q=in169(function(){var q=mkFromTpl(tp,br); q.dur=q.kind==='group'&&gStepN(q)>1?gNeedDur(q):3.4; if(q.kind!=='text'){var bx=q.kind==='group'?gBoxMax(q):boxOf(q), k=Math.min(1920*.86/Math.max(1,bx.w),1080*.8/Math.max(1,bx.h)); q.size=170*k;} else {MG.font=fontStr(q); MG.direction='rtl'; q.size=Math.max(60,Math.min(300,Math.round(q.size*1920*.7/(MG.measureText(q.text).width||1))));} return q;});
     var t={b:b,g:cv.getContext('2d'),q:q,hover:false,t0:0}; ptiles.push(t); drawTile(t,q.inDur+.6);
     function on(){t.hover=true; t.t0=performance.now(); kick();} function off(){t.hover=false; drawTile(t,q.inDur+.6);}
     b.addEventListener('pointerenter',on); b.addEventListener('pointerleave',off); b.addEventListener('focus',on); b.addEventListener('blur',off); b.addEventListener('click',function(){addTemplate(tp);});});
