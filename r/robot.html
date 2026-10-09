@@ -191,6 +191,7 @@ const LOG=[
  ['10:42','٣ تعديلات: (١) البلو برينت اتعمل من جديد: رسم خطوط نضيف، واجهة أمامية بخمس مقاسات، ومقاسات قطعة واحدة في كل مرة. (٢) الحتة المايلة: الشاسيه اتقص بميل اللوجو، وعمود الوش وبورد السيرفوهات دخلوا جوه، واختبار أوتوماتيك أكد إن صفر قطع طالعة برا القشرة. (٣) مفصل الميل بقى باين: مهد أسود فيه السيرفو + كوبري U ماسك الراس من الناحيتين + لفّة كابلات ورا الرقبة.'],
  ['11:14','الوصلة اتصممت على الأحمال: كوبري ألومنيوم U ‏٣ مم + لوح عمود فقري ألومنيوم جوه الراس، و٦ مسامير حابسين أرضية القشرة بينهم، والسيرفوهات بقت 12 فولت (٣٠ كجم·سم). العمود بقى بولي كربونات داخل ٢٥ مم في الطوق بمسمار عرضي، والقاعدة Ø١٨ سم فيها ٩٢٥ جم حديد. وزرار جديد «⚖️ الأوزان والأحمال» بيحسب من المجسم: الراس ١٫٢٥ كجم، والسيرفو شغّال على ١٨٪ من قدرته، والروبوت مش بيقع غير عند ميل ٢٧°.'],
  ['11:31','نزلت الكاميرا الثري دي (OAK-D Lite) ورا الوش بـ ٣ خروم صغيرة فوق العينين، ووش تاني ورا الراس بكاميرا تانية، ورادارين حركة في القاعدة. التهوية نزلت تحت وفوق. الحساب اتحدّث لوحده: الراس بقت ١٫٤٤ كجم، والسيرفو شغّال على ٢١٪، والروبوت ٢٫٩ كجم. وخطوة السوفتوير اتكتبت من جديد: التعارف بالاسم والوش والصوت، ومين بيتكلم، وخط الرياكشنز، والخصوصية.'],
+ ['12:05','القشرة بقت مفرّغة بجد (حيطان ٢٫٤ مم، ≈ ٣٠٠ جم): فتحة الوش بجيب للزجاج، وفتحة كبيرة ورا بندخّل منها كل حاجة، و٨ أعمدة بصواميل حرارية جوه (٤ للشاسيه و٤ لحامل الوش الخلفي). البوردة بتدخل من ورا وتتربط من فتحة الوش، والإطار الخلفي بخطافين ومسمارين من تحت. ومراجعة لباقي القطع: مهد السيرفو بقى نُصّين ماسكين ودانه بـ ٤ مسامير، والودان كوبايات مفتوحة بمسمارين من جوه، والقاعدة فيها ٤ أعمدة لمسامير الغطا، ومسامير البيرينج والطبق باينة.'],
 
 ];
 
@@ -270,7 +271,7 @@ const HCY=276, TILT_Y=183.9;                               // tilt axis: in the 
 const FACE_SCREWS=[[-100,38],[100,38],[-84,-22],[100,-38],[0,40],[0,-40]];   // bottom-left one sits inside the cut corner
 const EARX=1.24*U, EARY=.02*U, EARW=.16*U, EARS=.34*U;
 const HS=.26*U, HBV=.035*U, HDP=.16*U;                  // hand: 56.2 square + 3.8 rounding, 17.3 deep
-const PIV=[135, EARY-9, 13];                            // hinge axis inside the ear (micro servo shaft, pointing down)
+const PIV=[134.8, EARY-9, 7];                           // hinge axis inside the ear (micro servo shaft, pointing down) — the whole servo fits inside the ear cup
 const HOFF=[12+HS+HBV, 0, 12+HDP/2+HBV];                // hand centre from the hinge when open
 const PITCH=3.5, CAMC=[-17.5,33];                       // LED pitch; back camera (world x — reads as the HELLO/clock gap from behind)
 const OAKY=14, OAKH=[[-37.5,OAKY],[0,OAKY],[37.5,OAKY]];   // 3D camera on the front: 3 lenses on the empty row under the status line, 75 mm stereo baseline
@@ -278,6 +279,36 @@ const holeAt=(s,[x,y],r)=>{ const h=new THREE.Path(); h.absarc(x,y,r,0,Math.PI*2
 function backFacing(g,mirrorUV){ const ix=g.index.array; for(let i=0;i<ix.length;i+=3){ const t=ix[i+1]; ix[i+1]=ix[i+2]; ix[i+2]=t; }   // a flat shape turned to face −z, outline kept in place
  const n=g.attributes.normal; for(let i=0;i<n.count;i++) n.setXYZ(i,0,0,-1); if(mirrorUV){ const uv=g.attributes.uv; for(let i=0;i<uv.count;i++) uv.setX(i,-uv.getX(i)); } return g; }
 const lensMat=()=>new THREE.MeshPhysicalMaterial({color:0x0b1020,roughness:.05,metalness:.3,clearcoat:1});
+
+/* ───────── the printed head is a real shell: 2.4 mm walls, a face window with a glass pocket, an open back ───────── */
+const T_WALL=2.4, FRONT={pocket:3,ledge:1.2,wall:4.2,gasket:1.05};
+const LEDZ=HZ-4.4, PCBF=HZ-5.25, PCBB=PCBF-1.6;             // LED tops, board front, board back (front face; the back face mirrors them)
+const OPEN=offsetPoly(HEAD,-3), INNER=offsetPoly(HEAD,HB-T_WALL), WL=offsetPoly(WIN,-FRONT.ledge);
+function sweep(rings){ const pos=[], R=rings.length, n=rings[0][0].length;     // stitch a closed loop of same-size polygons [poly, z] into one surface
+ for(let k=0;k<R;k++){ const [A,za]=rings[k], [B,zb]=rings[(k+1)%R];
+  for(let i=0;i<n;i++){ const j=(i+1)%n; pos.push(A[i][0],A[i][1],za, A[j][0],A[j][1],za, B[j][0],B[j][1],zb, A[i][0],A[i][1],za, B[j][0],B[j][1],zb, B[i][0],B[i][1],zb); } }
+ const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3)); g.computeVertexNormals(); return g; }
+function volumeOf(g){ const p=g.attributes.position.array; let v=0; for(let i=0;i<p.length;i+=9) v+=(p[i]*(p[i+4]*p[i+8]-p[i+5]*p[i+7])-p[i+1]*(p[i+3]*p[i+8]-p[i+5]*p[i+6])+p[i+2]*(p[i+3]*p[i+7]-p[i+4]*p[i+6]))/6; return Math.abs(v); }
+function shellGeo(){ const t=T_WALL, N=6, R=[], off=d=>Math.abs(d)<1e-6?HEAD:offsetPoly(HEAD,d), ri=HB-t, zf=HZ-FRONT.wall;
+ R.push([WIN,HZ]);                                                                        // window edge on the face
+ for(let k=0;k<=N;k++){ const a=k/N*Math.PI/2; R.push([off(HB*Math.sin(a)),HD/2+HB*Math.cos(a)]); }      // outer skin: front rounding
+ for(let k=N;k>=0;k--){ const a=k/N*Math.PI/2; R.push([off(HB*Math.sin(a)),-HD/2-HB*Math.cos(a)]); }     // sides, back rounding
+ R.push([OPEN,-HZ],[OPEN,-HZ+t]);                                                          // the big opening in the back
+ for(let k=0;k<=N;k++){ const a=k/N*Math.PI/2; R.push([off(ri*Math.sin(a)),-HD/2-ri*Math.cos(a)]); }     // inside, 2.4 mm in from the skin
+ const aF=Math.acos(Math.min(1,(zf-HD/2)/ri)); for(let k=N;k>=0;k--){ const a=aF+(Math.PI/2-aF)*k/N; R.push([off(ri*Math.sin(a)),HD/2+ri*Math.cos(a)]); }
+ R.push([WL,zf],[WL,HZ-FRONT.pocket],[WIN,HZ-FRONT.pocket]);                               // front wall: ledge + 3 mm glass pocket
+ return sweep(R); }
+const SHELL_GEO=shellGeo();
+function toWall(x,y){ let best=null; for(let i=0;i<INNER.length;i++){ const a=INNER[i], b=INNER[(i+1)%INNER.length], dx=b[0]-a[0], dy=b[1]-a[1], l=Math.hypot(dx,dy), nx=-dy/l, ny=dx/l;
+  const d=(a[0]-x)*nx+(a[1]-y)*ny; if(d>0&&(!best||d<best.d)) best={d,nx,ny}; } return best; }
+function wallBoss(g,x,y,z0,z1,w,zIns,mat){ const q=toWall(x,y), L=q.d+.6, b=box(L,w,z1-z0,mat); b.rotation.z=Math.atan2(q.ny,q.nx); b.position.set(x+q.nx*L/2,y+q.ny*L/2,(z0+z1)/2); b.userData.boss=true; g.add(b);
+ const ins=cyl(2.6,.8,MAT.gold(),16); ins.rotation.x=Math.PI/2; g.add(at(ins,x,y,zIns)); return b; }
+const CHASSIS_TABS=[[-104,30],[104,30],[104,-30],[-88,-27]], CARRIER_TABS=[[-70,46.5],[70,46.5],[75,-46.5],[(WIN[3][0]+WIN[4][0])/2,(WIN[3][1]+WIN[4][1])/2]];
+function roundSq(s,r,seg=5){ const h=s/2, out=[], c=[[h-r,h-r,0],[-(h-r),h-r,1],[-(h-r),-(h-r),2],[h-r,-(h-r),3]];      // rounded square, counter-clockwise, same vertex count for every size
+ c.forEach(([cx,cy,q])=>{ for(let k=0;k<=seg;k++){ const a=(q+k/seg)*Math.PI/2; out.push([cx+r*Math.cos(a),cy+r*Math.sin(a)]); } }); return out; }
+function cupGeo(S,D,R0,t){ const N=5, Rg=[], rs=(inset,rad)=>roundSq(S-2*inset,Math.max(.01,rad));     // a printed cup: rounded box open on one side, walls t
+ Rg.push([rs(0,R0),0]); for(let k=0;k<=N;k++){ const a=k/N*Math.PI/2, ins=R0*(1-Math.cos(a)); Rg.push([rs(ins,R0-ins),D-R0+R0*Math.sin(a)]); }
+ Rg.push([rs(S/2-.01,.005),D],[rs(S/2-.01,.005),D-t],[rs(t,Math.max(.4,R0-t)),D-t],[rs(t,Math.max(.4,R0-t)),0]); return sweep(Rg); }
 
 /* ───────── LED screens — the hub mascot's face, pixel for pixel ───────── */
 function led(cols,rows,pxs){ const cv=document.createElement('canvas'); cv.width=cols*pxs; cv.height=rows*pxs; const cx=cv.getContext('2d');
@@ -374,7 +405,9 @@ const SCS9=()=>{ // Feetech SCS0009 micro bus servo, origin = shaft on the top f
 
 /* base */
 part('feet',{ar:'حلقة سيليكون مانعة للانزلاق',en:'Silicone anti-slip ring Ø172 / Ø160 × 3',kind:'buy',step:3},()=>mesh(ringGeo(86,80,3),MAT.rubber()),'base',[0,-1.5,0],[0,-60,0]);
-part('base_shell',{ar:'جسم القاعدة',en:'Base shell Ø180 × 40',kind:'print',step:3,mat:'PETG أسود مطفي',g:150,h:7},()=>{const g=new THREE.Group(); g.add(mesh(ringGeo(90,87.5,40),MAT.black())); g.add(at(cyl(87.5,3,MAT.black(),72),0,-18.5,0));
+const LID_SCREWS=[16,90,164,270].map(a=>[83*Math.sin(a*Math.PI/180),83*Math.cos(a*Math.PI/180)]);
+part('base_shell',{ar:'جسم القاعدة',en:'Base shell Ø180 × 40 — 4 insert bosses for the lid',kind:'print',step:3,mat:'PETG أسود مطفي',g:160,h:7.5},()=>{const g=new THREE.Group(); g.add(mesh(ringGeo(90,87.5,40),MAT.black())); g.add(at(cyl(87.5,3,MAT.black(),72),0,-18.5,0));
+ LID_SCREWS.forEach(([x,z])=>{ g.add(at(cyl(3.6,37,MAT.black(),16),x,1.5,z)); g.add(at(cyl(2.4,.6,MAT.gold(),14),x,20.1,z)); });
  g.add(rx(at(cyl(6.5,.5,MAT.chip(),20),0,0,-90.1),Math.PI/2)); return g;},'base',[0,20,0],[0,-130,0]);
 part('weights',{ar:'أوزان حديد ×4 (≈ ٩٢٥ جم)',en:'Steel discs Ø50 × 15 ×4 (≈ 925 g)',kind:'buy',step:3},()=>{const g=new THREE.Group(); [[42,42],[-42,42],[42,-42],[-42,-42]].forEach(([x,z])=>g.add(at(cyl(25,15,MAT.steel()),x,0,z))); return g;},'base',[0,10.5,0],[0,150,0]);
 part('dc_jack',{ar:'جاك الكهربا 12 فولت',en:'Panel-mount DC jack 5.5 × 2.1 — 12 V in',kind:'buy',step:3},()=>{const g=new THREE.Group(); const b=cyl(5.5,16,MAT.plastic(),24); b.rotation.x=Math.PI/2; g.add(b); const n=mesh(ringGeo(7.5,5.5,2.5,24),MAT.metal()); n.rotation.x=Math.PI/2; n.position.z=-6; g.add(n); return g;},'base',[0,20,-85],[0,0,-90]);
@@ -387,62 +420,81 @@ cable('w_radar_b',{ar:'سلك الرادار الخلفي',en:'Back radar lead',
 part('pan_servo',{ar:'سيرفو اللف STS3215 ‏12V (ID 1)',en:'Feetech STS3215 12 V, 30 kg·cm — pan, ID 1',kind:'buy',step:4},STS,'base',[0,40,0],[0,150,0]);
 cable('w_pan',{ar:'كابل سيرفو اللف',en:'Servo bus lead',step:4},'base',[[33.8,16,0],[30,20,-10],[14,30,-19],[2,38,-19]],0xe9e6e0,1.6,[0,150,0]);
 part('base_lid',{ar:'غطا القاعدة',en:'Base lid with servo posts',kind:'print',step:4,mat:'PETG أسود مطفي',g:60,h:2.5},()=>{const g=new THREE.Group(); g.add(mesh(discHoles(90,[[0,0,11.5],[0,-19,5]],6),MAT.black()));
- [[-15,0],[37.4,0]].forEach(([x,z])=>g.add(at(cyl(2.5,10.5,MAT.black(),16),x,-8.25,z))); return g;},'base',[0,43,0],[0,110,0]);
+ [[-15,0],[37.4,0]].forEach(([x,z])=>g.add(at(cyl(2.5,10.5,MAT.black(),16),x,-8.25,z)));
+ LID_SCREWS.forEach(([x,z])=>g.add(at(cyl(2.75,1.2,MAT.steel(),12),x,3.6,z)));                  // 4 × M3 into the base inserts
+ return g;},'base',[0,43,0],[0,110,0]);
 part('bearing',{ar:'بيرينج دوّار ٣ بوصة',en:'Lazy-susan bearing 75 mm',kind:'buy',step:5},()=>{const g=new THREE.Group(); const sq=shapeOf(rect(75,75)); const hp=new THREE.Path(); hp.absarc(0,0,24,0,Math.PI*2,true); sq.holes.push(hp);
  const pg=new THREE.ExtrudeGeometry(sq,{depth:1.2,bevelEnabled:false}); pg.rotateX(-Math.PI/2);
  g.add(at(mesh(pg,MAT.metal()),0,-3.75,0)); g.add(at(mesh(pg.clone(),MAT.metal()),0,2.55,0));
- const t=mesh(new THREE.TorusGeometry(31,2.6,12,64),MAT.steel()); t.rotation.x=Math.PI/2; g.add(t); return g;},'base',[0,49.75,0],[0,80,0]);
+ const t=mesh(new THREE.TorusGeometry(31,2.6,12,64),MAT.steel()); t.rotation.x=Math.PI/2; g.add(t);
+ [[30,30],[-30,30],[30,-30],[-30,-30]].forEach(([x,z])=>g.add(at(cyl(2.75,1.2,MAT.steel(),12),x,-1.95,z)));   // 4 × M3 bottom plate → lid
+ return g;},'base',[0,49.75,0],[0,80,0]);
 /* pan */
 part('turntable',{ar:'الطبق الدوّار',en:'Turntable Ø110 + 20 mm socket for the tube, M3 cross-bolt',kind:'print',step:5,mat:'PETG أسود مطفي',g:46,h:2.2},()=>{const g=new THREE.Group(); g.add(mesh(discHoles(55,[[0,-19,5]],6),MAT.black())); g.add(at(mesh(ringGeo(16.5,12.6,20),MAT.black()),0,13,0));
+ [[0,42],[0,-42],[42,0],[-42,0]].forEach(([x,z])=>g.add(at(cyl(2.75,1.2,MAT.steel(),12),x,3.6,z)));   // 4 × M3 into the bearing's top plate
  const xb=cyl(1.5,31,MAT.steel(),10); xb.rotation.z=Math.PI/2; g.add(at(xb,0,17,7)); const xh=cyl(2.75,2,MAT.steel(),12); xh.rotation.z=Math.PI/2; g.add(at(xh,15.5,17,7)); const xn=cyl(3.1,2.4,MAT.steel(),6); xn.rotation.z=Math.PI/2; g.add(at(xn,-15.6,17,7)); g.add(at(cyl(10,7,MAT.black()),0,-6.5,0)); return g;},'pan',[0,56.5,0],[0,90,0]);
 part('stem',{ar:'العمود الشفاف (بولي كربونات)',en:'Clear polycarbonate tube Ø25 × 3 wall × 83.5 — does not shatter',kind:'buy',step:6},()=>mesh(ringGeo(12.5,9.5,83.5,48),MAT.clear()),'pan',[0,101.25,0],[0,200,0]);
 cable('braid',{ar:'الكابلات جوه العمود (شراب أسود)',en:'Power pair + servo bus in black braid',step:6},'pan',[[0,40,-19],[0,52,-19],[0,60,-16],[0,70,-6],[0,84,0],[0,122,0],[0,134,-4],[0,139,-12],[0,141,-17.5]],0x161616,4,[0,0,-120]);
-part('neck',{ar:'مهد سيرفو الميل (الرقبة)',en:'Tilt cradle — holds the tilt servo, idler pivot on the left, 25 mm collar on the tube',kind:'print',step:6,mat:'PETG أسود مطفي',g:56,h:3.4,ord:0},()=>{const g=new THREE.Group();
- g.add(box(42,60,31,MAT.black(),4));                                                        // the cradle around the servo (y 143–203)
- g.add(at(cyl(16.5,25,MAT.black()),0,-42.5,0));                                              // collar: 25 mm down the tube
+part('neck',{ar:'مهد سيرفو الميل (الرقبة) — نصّين',en:'Tilt cradle — two halves clamp the servo tabs with 4 × M3; pocket open at the top, shaft hole on the right, idler bearing on the left, 25 mm collar',kind:'print',step:6,mat:'PETG أسود مطفي',g:58,h:3.6,ord:0},()=>{const g=new THREE.Group(), M=MAT.black();
+ const B=(x0,x1,y0,y1,z0,z1)=>g.add(at(box(x1-x0,y1-y0,z1-z0,M),(x0+x1)/2,(y0+y1)/2,(z0+z1)/2));   // cradle-local: y −30 … +30 (world 143 … 203)
+ const SL=6.05, SR=8.95, F=-28.8;                                                           // split plane around the servo tabs (x 6.25 … 8.75); pocket floor
+ B(-21,-15,-30,30,-15.5,15.5);                                                              // left wall (holds the idler bearing)
+ B(-15,SL,-30,F,-6,15.5); B(-15,-8,-30,F,-15.5,-6); B(2,SL,-30,F,-15.5,-6);                // left floor, with a slot for the servo lead
+ B(SR,18,-30,F,-15.5,15.5);                                                                 // right floor
+ [[-15,SL],[SR,18]].forEach(([x0,x1])=>{ B(x0,x1,F,30,12.7,15.5); });                       // front walls
+ B(-15,-8,F,30,-15.5,-12.7); B(-8,2,-22,30,-15.5,-12.7); B(2,SL,F,30,-15.5,-12.7); B(SR,18,F,30,-15.5,-12.7);   // back walls (slot at the bottom for the lead)
+ const rw=new THREE.Shape(); rw.moveTo(-15.5,-30); rw.lineTo(15.5,-30); rw.lineTo(15.5,30); rw.lineTo(-15.5,30); rw.closePath(); holeAt(rw,[0,TILT_Y-173],7.5);
+ const rg=new THREE.ExtrudeGeometry(rw,{depth:3,bevelEnabled:false,curveSegments:24}); rg.rotateY(Math.PI/2); g.add(at(mesh(rg,M),18,0,0));   // right wall with the shaft hole
+ [[-28.8,-25],[24.4,28.4]].forEach(([y0,y1])=>{ B(2.5,SL,y0,y1,-12.7,12.7); B(SR,12.5,y0,y1,-12.7,12.7); });   // ribs that clamp the tab ends
+ [[-27,-6],[-27,6],[26.4,-6],[26.4,6]].forEach(([y,z])=>{ const s=cyl(1.5,10,MAT.steel(),10); s.rotation.z=Math.PI/2; g.add(at(s,7.5,y,z)); const h=cyl(2.75,1.6,MAT.steel(),12); h.rotation.z=Math.PI/2; g.add(at(h,1.7,y,z)); });   // 4 × M3 through rib + tab + rib
+ g.add(at(cyl(16.5,25,M),0,-42.5,0));                                                       // collar: 25 mm down the tube
  const xb=cyl(1.5,31,MAT.steel(),10); xb.rotation.z=Math.PI/2; g.add(at(xb,0,-50,7)); const xh=cyl(2.75,2,MAT.steel(),12); xh.rotation.z=Math.PI/2; g.add(at(xh,15.5,-50,7)); const xn=cyl(3.1,2.4,MAT.steel(),6); xn.rotation.z=Math.PI/2; g.add(at(xn,-15.6,-50,7));   // M3 cross-bolt through collar + tube
- const ax=TILT_Y-173, ib=cyl(6,3,MAT.dark(),24); ib.rotation.z=Math.PI/2; g.add(at(ib,-22.5,ax,0));   // idler pivot (M4 + 624 bearing)
- const sh=mesh(ringGeo(7.5,4.5,.6,32),MAT.chip()); sh.rotation.z=Math.PI/2; g.add(at(sh,21.2,ax,0));     // shaft opening
+ const ax=TILT_Y-173, ib=cyl(6,3,MAT.dark(),24); ib.rotation.z=Math.PI/2; g.add(at(ib,-22.5,ax,0));   // idler pivot (M4 + 624 bearing pressed into the left wall)
  g.add(at(cyl(6,.6,MAT.chip(),20),0,-35,-16.6)).children.at(-1).rotation.x=Math.PI/2;      // cable exit at the back of the collar
  return g;},'pan',[0,173,0],[0,170,0]);
 /* head — the hub mascot's head, unchanged on the outside */
-part('head_shell',{ar:'قشرة الراس',en:'Head shell — Aroma logo block, 253.8 × 124.2 × 109',kind:'print',step:7,mat:'PLA أحمر أروما',g:300,h:14},()=>{
- const g=new THREE.Group(); const eg=new THREE.ExtrudeGeometry(shapeOf(HEAD),{depth:HD,bevelEnabled:true,bevelThickness:HB,bevelSize:HB,bevelSegments:4,curveSegments:4}); eg.translate(0,0,-HD/2);
- g.add(mesh(eg,MAT.red()));
+part('head_shell',{ar:'قشرة الراس (مفرّغة)',en:'Head shell — hollow, 2.4 mm walls: face window with a 3 mm glass pocket, open back, 8 insert bosses inside',kind:'print',step:7,mat:'PLA أحمر أروما',g:Math.round(volumeOf(SHELL_GEO)*1.24e-3+24),h:16},()=>{
+ const g=new THREE.Group(), M=MAT.red(); g.add(mesh(SHELL_GEO,M));
+ CHASSIS_TABS.forEach(([x,y])=>wallBoss(g,x,y,33,41,8,32.9,M));                                  // 4 bosses the chassis screws onto (in front of its tabs)
+ CARRIER_TABS.forEach(([x,y])=>wallBoss(g,x,y,-PCBB+2,-PCBB+10,8,-PCBB+1.9,M));                 // 4 bosses for the back carrier
+ const ceil=.5*U+HB-T_WALL; [[-16,0],[-74,0],[-45,29],[-45,-29]].forEach(([x,z])=>{ const s=cyl(2.6,2.9,M,14); s.userData.boss=true; g.add(at(s,x,ceil-1.45,z)); });   // standoffs for the mic board
+ const fl=-(.5*U+HB-T_WALL), seat=mesh(ringGeo(22,20.4,3,48),M); seat.userData.boss=true; g.add(at(seat,78,fl+1.5,-11));     // seat for the speaker
  g.add(at(cyl(6,.6,MAT.chip(),20),-20,-.575*U-.2,-30));                                    // cable hole behind the bracket (underneath)
  for(let i=0;i<5;i++) for(let j=0;j<3;j++) g.add(at(cyl(1.4,.6,MAT.chip(),10),62+i*8,-.575*U-.2,-27+j*8));   // speaker holes
  return g; },'tilt',[0,HCY,0],[0,240,0]);
-part('chassis',{ar:'الشاسيه الداخلي',en:'Inner chassis — holds the face board, Pi and camera',kind:'print',step:7,mat:'PETG رمادي',g:80,h:4},()=>{
+part('chassis',{ar:'الشاسيه الداخلي',en:'Inner chassis — 4 screws into the shell bosses; holds the face board, 3D camera and Pi',kind:'print',step:8,ord:3,mat:'PETG رمادي',g:80,h:4},()=>{
  const s=shapeOf(clipBox(offsetPoly(HEAD,-8),-110,110,-45,45)); [[-75,15,40,40],[0,14.5,98,31],[-5,-19,40,28],[70,10,30,50]].forEach(([x,y,w,h])=>s.holes.push(pathOf(rect(w,h).map(p=>[p[0]+x,p[1]+y]))));   // the wide window in the middle is for the 3D camera
  const eg=new THREE.ExtrudeGeometry(s,{depth:3,bevelEnabled:false}); eg.translate(0,0,-1.5); const g=new THREE.Group(); g.add(mesh(eg,MAT.grey()));
- FACE_SCREWS.forEach(([x,y])=>{ const p=cyl(3,15.3,MAT.grey(),16); p.rotation.x=Math.PI/2; g.add(at(p,x,y,9.15)); });   // posts for the face board
+ const PL=PCBB-33; FACE_SCREWS.forEach(([x,y])=>{ const p=cyl(3,PL,MAT.grey(),16); p.rotation.x=Math.PI/2; g.add(at(p,x,y,1.5+PL/2)); });   // posts for the face board
  [[-29,-24.5],[29,-24.5],[-29,24.5],[29,24.5]].forEach(([x,y])=>{ const p=cyl(2.5,4.8,MAT.grey(),16); p.rotation.x=Math.PI/2; g.add(at(p,60+x,y+10,-3.9)); });   // posts for the Pi
  [[-104,30],[104,30],[104,-30]].forEach(([x,y])=>g.add(at(box(14,8,3,MAT.grey()),x,y,0)));
  const dt=box(14,8,3,MAT.grey()); dt.rotation.z=Math.atan2(41.04,43.2); g.add(at(dt,-88,-27,0));   // fourth tab on the slanted edge
- return g; },'tilt',[0,HCY,31.5],[0,0,-220]);
+ CHASSIS_TABS.forEach(([x,y])=>{ const s=cyl(2.75,1.2,MAT.steel(),12); s.rotation.x=Math.PI/2; g.add(at(s,x,y,-2.1)); });   // M3 screws into the shell's inserts
+ return g; },'tilt',[0,HCY,31.5],[0,0,-240]);
 /* face: one board of 64 × 27 LEDs in the logo's own outline, driven by a XIAO ESP32-S3 */
-part('face_led',{ar:'بوردة الوش LED (64×27 بشكل اللوجو)',en:'Custom LED face board — 64×27 WS2812B-2020, logo outline, 3 × Ø4.5 lens holes',kind:'buy',step:8},()=>{const g=new THREE.Group();
- const fs=shapeOf(WIN); OAKH.forEach(h=>holeAt(fs,h,2.25)); const sg=new THREE.ShapeGeometry(fs,16); g.add(at(mesh(sg,ledMat(FACE,[1/(2.068*U),1/(.88*U)],[.5,.5])),0,0,HZ+.3));
+part('face_led',{ar:'بوردة الوش LED (64×27 بشكل اللوجو)',en:'Custom LED face board — 64×27 WS2812B-2020, logo outline, 3 × Ø4.5 lens holes, foam gasket',kind:'buy',step:8,ord:0},()=>{const g=new THREE.Group();
+ const fs=shapeOf(WIN); OAKH.forEach(h=>holeAt(fs,h,2.25)); const sg=new THREE.ShapeGeometry(fs,16); g.add(at(mesh(sg,ledMat(FACE,[1/(2.068*U),1/(.88*U)],[.5,.5])),0,0,LEDZ));
+ const gs=shapeOf(offsetPoly(WIN,2)); gs.holes.push(pathOf(WIN)); g.add(at(mesh(new THREE.ExtrudeGeometry(gs,{depth:FRONT.gasket,bevelEnabled:false}),MAT.rubber()),0,0,PCBF));   // 1 mm foam gasket against the front wall
  const s=shapeOf(offsetPoly(WIN,2)); OAKH.forEach(h=>holeAt(s,h,2.6));
- const pcb=new THREE.ExtrudeGeometry(s,{depth:1.6,bevelEnabled:false,curveSegments:16}); g.add(at(mesh(pcb,MAT.pcbK()),0,0,HZ-6.2));
- FACE_SCREWS.forEach(([x,y])=>{ const p=cyl(2.6,2,MAT.metal(),14); p.rotation.x=Math.PI/2; g.add(at(p,x,y,HZ-7.4)); });
- g.add(at(box(14,6,4,MAT.white()),60,-38,HZ-8.4)); OAKH.forEach(([x,y],i)=>g.add(at(mesh(new THREE.CircleGeometry(i===1?2.25:2,24),lensMat()),x,y,HZ+.15))); return g;},'tilt',[0,HCY,0],[0,0,170]);
-part('xiao',{ar:'XIAO ESP32-S3 (بيسوق الـ LEDs)',en:'Seeed XIAO ESP32-S3 — LED driver',kind:'buy',step:8,ord:0},()=>{const g=new THREE.Group(); g.add(box(21,17.5,1.2,MAT.pcbB())); g.add(at(box(12,12,2.4,MAT.metal()),2,0,-1.8)); g.add(at(box(8.6,6.6,3.2,MAT.metal()),-8.4,0,-2.2)); return g;},'tilt',[-60,HCY-8,HZ-8],[0,0,200]);
-part('oak',{ar:'الكاميرا الثري دي OAK-D Lite (عمق + ذكاء اصطناعي)',en:'Luxonis OAK-D Lite — 13 MP colour + stereo depth (75 mm baseline) + on-board AI, 91 × 28 × 17.5',kind:'buy',step:8,ord:1},()=>{const g=new THREE.Group();
+ const pcb=new THREE.ExtrudeGeometry(s,{depth:1.6,bevelEnabled:false,curveSegments:16}); g.add(at(mesh(pcb,MAT.pcbK()),0,0,PCBB));
+ FACE_SCREWS.forEach(([x,y])=>{ const p=cyl(2.3,.8,MAT.chip(),14); p.rotation.x=Math.PI/2; g.add(at(p,x,y,PCBF+.4)); });   // M2.5 screws through the board into the chassis posts (put in through the window, before the glass)
+ g.add(at(box(14,6,4,MAT.white()),60,-38,HZ-8.4)); OAKH.forEach(([x,y],i)=>g.add(at(mesh(new THREE.CircleGeometry(i===1?2.25:2,24),lensMat()),x,y,LEDZ-.2))); return g;},'tilt',[0,HCY,0],[0,0,-280]);
+part('xiao',{ar:'XIAO ESP32-S3 (بيسوق الـ LEDs)',en:'Seeed XIAO ESP32-S3 — LED driver, on the back of the face board',kind:'buy',step:8,ord:1},()=>{const g=new THREE.Group(); g.add(box(21,17.5,1.2,MAT.pcbB())); g.add(at(box(12,12,2.4,MAT.metal()),2,0,-1.8)); g.add(at(box(8.6,6.6,3.2,MAT.metal()),-8.4,0,-2.2)); return g;},'tilt',[-60,HCY-8,PCBB-1.15],[0,0,-260]);
+part('oak',{ar:'الكاميرا الثري دي OAK-D Lite (عمق + ذكاء اصطناعي)',en:'Luxonis OAK-D Lite — 13 MP colour + stereo depth (75 mm baseline) + on-board AI, 91 × 28 × 17.5',kind:'buy',step:8,ord:2},()=>{const g=new THREE.Group();
  g.add(box(91,28,17.5,MAT.dark(),3));
  OAKH.forEach(([x],i)=>{ const r=i===1?4:3.3, l=cyl(r,1.6,MAT.chip(),24); l.rotation.x=Math.PI/2; g.add(at(l,x,0,8.9)); const gl=cyl(r*.62,.3,lensMat(),24); gl.rotation.x=Math.PI/2; g.add(at(gl,x,0,9.8)); });
- g.add(at(box(9,3.4,7,MAT.metal()),45.5+1.2,0,0)); return g;},'tilt',[0,HCY+OAKY,47.8-8.75],[0,0,200]);
+ g.add(at(box(9,3.4,7,MAT.metal()),45.5+1.2,0,0)); return g;},'tilt',[0,HCY+OAKY,PCBB-.3-8.75],[0,0,-240]);
 part('camera',{ar:'الكاميرا الخلفية Pi Module 3 Wide',en:'Camera Module 3 Wide — behind the back face, lens between the pixels',kind:'buy',step:16,ord:2},()=>{const g=new THREE.Group();
  g.add(box(25,24,1,MAT.pcbG())); g.add(at(box(8.5,8.5,4.5,MAT.chip()),0,2.5,2.7)); g.add(rx(at(cyl(3.6,8.5,MAT.chip(),20),0,2.5,9.2),Math.PI/2)); g.add(rx(at(cyl(2.4,.4,MAT.wire(0x26355c),20),0,2.5,13.5),Math.PI/2));
  g.add(at(box(21,4,2.4,MAT.white()),0,-10.5,-1.6)); return g;},'tilt',[CAMC[0],HCY+CAMC[1]-2.5,-(HZ-19.8)],[0,0,-200],[0,Math.PI,0]);
 cable('w_cam',{ar:'كابل الكاميرا الخلفية (Pi 5، 200 مم)',en:'Pi 5 camera FFC 22→15 pin — back camera',step:16},'tilt',[[CAMC[0],HCY+19,-(HZ-21.5)],[-14,HCY+8,-30],[0,HCY-8,-14],[40,HCY-16,4],[72,HCY-16,16],[72,HCY-14,22]],0xd8c08a,1.4,[0,0,-60]);
-part('glass',{ar:'زجاج الوش الفيميه',en:'Smoked acrylic 3 mm — logo outline, 3 × Ø4.5 lens holes',kind:'buy',step:17,sz:[223.3,95,3]},()=>{const s=shapeOf(WIN); OAKH.forEach(h=>holeAt(s,h,2.25)); const m=mesh(new THREE.ShapeGeometry(s,16),MAT.gloss()); m.position.z=HZ+.6; return m;},'tilt',[0,HCY,0],[0,0,170]);
+part('glass',{ar:'زجاج الوش الفيميه',en:'Smoked acrylic 3 mm — logo outline, 3 × Ø4.5 lens holes, sits flush in the face pocket',kind:'buy',step:17,sz:[223.3,95,3]},()=>{const s=shapeOf(WIN); OAKH.forEach(h=>holeAt(s,h,2.25)); const m=mesh(new THREE.ExtrudeGeometry(s,{depth:FRONT.pocket-.05,bevelEnabled:false,curveSegments:16}),MAT.gloss()); m.position.z=HZ-FRONT.pocket+.05; return m;},'tilt',[0,HCY,0],[0,0,170]);
 /* tilt servo + bus adapter */
 const qTilt=new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(new THREE.Vector3(0,-1,0),new THREE.Vector3(1,0,0),new THREE.Vector3(0,0,1)));
 part('tilt_servo',{ar:'سيرفو الميل STS3215 ‏12V (ID 2) جوه المهد',en:'Feetech STS3215 12 V, 30 kg·cm — tilt, ID 2, in the neck cradle',kind:'buy',step:6,ord:1},STS,'pan',[17.5,TILT_Y,0],[0,0,-130],qTilt);
-part('bus_adapter',{ar:'بورد السيرفوهات (12 فولت: اللف + الميل)',en:'Waveshare Bus Servo Adapter (A) #1 — 12 V bus for pan + tilt',kind:'buy',step:9},()=>{const g=new THREE.Group(); g.add(box(40,1.6,32,MAT.pcbB())); g.add(at(box(9,6,7,MAT.white()),-12,3.8,-12)); g.add(at(box(9,6,7,MAT.white()),0,3.8,-12)); g.add(at(box(9,3.2,7.4,MAT.metal()),14,2.4,10)); g.add(at(box(10,8,7,MAT.wire(0x2c8a3e)),-12,4.8,10)); return g;},'tilt',[-55,222,-30],[0,0,-150]);
+part('bus_adapter',{ar:'بورد السيرفوهات (12 فولت: اللف + الميل)',en:'Waveshare Bus Servo Adapter (A) #1 — 12 V bus for pan + tilt',kind:'buy',step:9},()=>{const g=new THREE.Group(); g.add(box(40,1.6,32,MAT.pcbB())); g.add(at(box(9,6,7,MAT.white()),-12,3.8,-12)); g.add(at(box(9,6,7,MAT.white()),0,3.8,-12)); g.add(at(box(9,3.2,7.4,MAT.metal()),14,2.4,10)); g.add(at(box(10,8,7,MAT.wire(0x2c8a3e)),-12,4.8,10)); return g;},'tilt',[-55,222,-28],[0,0,-150]);
 part('bus_adapter2',{ar:'بورد سيرفوهات الإيدين (5 فولت)',en:'Waveshare Bus Servo Adapter (A) #2 — 5 V bus for the hinge motors',kind:'buy',step:9},()=>{const g=new THREE.Group(); g.add(box(40,1.6,32,MAT.pcbB())); g.add(at(box(9,6,7,MAT.white()),-12,3.8,-12)); g.add(at(box(9,6,7,MAT.white()),0,3.8,-12)); g.add(at(box(9,3.2,7.4,MAT.metal()),14,2.4,10)); g.add(at(box(10,8,7,MAT.wire(0x2c8a3e)),-12,4.8,10)); return g;},'tilt',[28,222,4],[0,0,-150]);
-cable('w_bus1',{ar:'كابل السيرفو: البورد ← خرم الرقبة',en:'Servo bus: adapter → neck hole',step:9},'tilt',[[-67,229,-44],[-40,226,-42],[-26,220,-34],[-20,216,-30]],0xe9e6e0,1.6,[0,0,-150]);
+cable('w_bus1',{ar:'كابل السيرفو: البورد ← خرم الرقبة',en:'Servo bus: adapter → neck hole',step:9},'tilt',[[-67,229,-41],[-40,226,-40],[-26,220,-34],[-20,216,-30]],0xe9e6e0,1.6,[0,0,-150]);
 /* Raspberry Pi 5 — board parallel to the face, parts facing back */
 part('pi5',{ar:'Raspberry Pi 5 ‏(8GB)',en:'Raspberry Pi 5 — 8 GB (face + voice models run locally)',kind:'buy',step:10},()=>{const g=new THREE.Group();
  g.add(box(85,56,1.6,MAT.pcbG(),2.5));
@@ -467,15 +519,21 @@ cable('w_ant',{ar:'سلك لمبة الأنتينا',en:'3-wire to the WS2812 in
 part('speaker',{ar:'سماعة 40 مم 3 وات (تحت الراس)',en:'40 mm 3 W 4 Ω speaker, firing down',kind:'buy',step:12},()=>{const g=new THREE.Group(); g.add(cyl(20,3,MAT.steel(),40)); g.add(at(cyl(16,3,MAT.wire(0x2a2a2a),40,12),0,-2.5,0)); g.add(at(cyl(10,8,MAT.metal(),32),0,6.5,0)); return g;},'tilt',[78,220.5,-11],[0,-120,0]);
 cable('w_spk',{ar:'سلك السماعة → كونكتور المايك',en:'Speaker → XVF3800 JST (built-in 5 W amp)',step:12},'tilt',[[78,231,-11],[100,250,-34],[96,300,-36],[30,324,-30],[-40,328,-24],[-62,329,-17]],0xb8261a,1.1,[0,-90,0]);
 /* ears + hinge motors */
-part('ear_r',{ar:'الودن اليمين',en:'Right ear — houses the hinge motor',kind:'print',step:13,mat:'PLA غامق',g:18,h:1},()=>box(EARW,EARS,EARS,MAT.dark(),3),'tilt',[EARX,HCY+EARY,0],[130,0,0]);
-part('ear_l',{ar:'الودن الشمال',en:'Left ear — houses the hinge motor',kind:'print',step:13,mat:'PLA غامق',g:18,h:1},()=>box(EARW,EARS,EARS,MAT.dark(),3),'tilt',[-EARX,HCY+EARY,0],[-130,0,0]);
+const EAR_IN=1.1*U+HB, EAR_D=EARX+EARW/2-EAR_IN, EAR_GEO=cupGeo(EARS,EAR_D,3,1.6);    // the cup starts at the head's side and ends where the hub ear ends
+function earCup(side){ return ()=>{ const g=new THREE.Group(), M=MAT.dark(), cg=EAR_GEO.clone(); cg.rotateY(side*Math.PI/2); const c=mesh(cg,M); c.position.x=side*(EAR_IN-EARX); g.add(c);
+ const sl=box(9,9,.4,MAT.chip()); g.add(at(sl,side*(PIV[0]-EARX),PIV[1]-EARY,EARS/2+.05));                            // slot the hinge arm swings through
+ [[-12,-11],[-12,-3]].forEach(([y,z])=>{ g.add(at(cyl(2.8,EAR_D-1.6,M,14),side*(EAR_IN-EARX+(EAR_D-1.6)/2),y,z)).children.at(-1).rotation.z=Math.PI/2;   // insert bosses
+  const s=cyl(2.75,1.2,MAT.steel(),12); s.rotation.z=Math.PI/2; g.add(at(s,side*(EAR_IN-T_WALL-.6-EARX),y,z)); });     // M3 from inside the head
+ return g; }; }
+part('ear_r',{ar:'الودن اليمين',en:'Right ear — printed cup over the hinge motor, 2 × M3 from inside the head',kind:'print',step:13,mat:'PLA غامق',g:16,h:1},earCup(1),'tilt',[EARX,HCY+EARY,0],[130,0,0]);
+part('ear_l',{ar:'الودن الشمال',en:'Left ear — printed cup over the hinge motor, 2 × M3 from inside the head',kind:'print',step:13,mat:'PLA غامق',g:16,h:1},earCup(-1),'tilt',[-EARX,HCY+EARY,0],[-130,0,0]);
 const qEar=new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.PI,Math.PI/2,0,'YXZ'));
 part('ear_servo_r',{ar:'موتور مفصلة الإيد اليمين SCS0009 (ID 3)',en:'Feetech SCS0009 micro bus servo — right hinge, ID 3',kind:'buy',step:13,ord:0},SCS9,'tilt',[PIV[0],HCY+PIV[1]+5,PIV[2]],[170,0,0],qEar);
 part('ear_servo_l',{ar:'موتور مفصلة الإيد الشمال SCS0009 (ID 4)',en:'Feetech SCS0009 micro bus servo — left hinge, ID 4',kind:'buy',step:13,ord:1},SCS9,'tilt',[-PIV[0],HCY+PIV[1]+5,PIV[2]],[-170,0,0],qEar);
 cable('w_bus_ears',{ar:'كابل السيرفو: بورد الإيدين ← موتورات الودان',en:'Servo bus: adapter → both hinge motors',step:13},'tilt',[[28,228,-10],[-20,250,-36],[-60,256,-40],[-106,270,-26],[-128,284,-6],[-116,306,-38],[0,326,-40],[116,306,-38],[128,284,-6]],0xe9e6e0,1.3,[0,60,-60]);
 /* power + data */
 part('wago',{ar:'موزّع الكهربا (WAGO ×3: 12V / 5V / سالب)',en:'WAGO 221-415 ×3 — 12 V, 5 V, GND',kind:'buy',step:14},()=>{const g=new THREE.Group(); [-22,0,22].forEach((x,i)=>{ g.add(at(box(20,8,18,MAT.wire(0xd9d5cc),1),x,0,0)); for(let k=0;k<5;k++) g.add(at(box(2.6,3,8,MAT.wire([0xe8651f,0xe8b21f,0x222222][i])),x-7.5+k*3.8,5.2,-4)); }); return g;},'tilt',[-26,223.5,18],[0,-90,60]);
-part('buck',{ar:'منظّم 12 ← 5 فولت ‏10 أمبير',en:'DC-DC buck 12 V → 5 V 10 A (with heatsink)',kind:'buy',step:14,ord:0},()=>{const g=new THREE.Group(); g.add(box(58,8,30,MAT.pcbG())); g.add(at(box(58,4,30,MAT.alu()),0,6,0)); for(let i=0;i<9;i++) g.add(at(box(1.4,8,30,MAT.alu()),-26+i*6.5,12,0)); return g;},'tilt',[18,225,-30],[0,-80,-60]);
+part('buck',{ar:'منظّم 12 ← 5 فولت ‏10 أمبير',en:'DC-DC buck 12 V → 5 V 10 A (with heatsink)',kind:'buy',step:14,ord:0},()=>{const g=new THREE.Group(); g.add(box(58,8,30,MAT.pcbG())); g.add(at(box(58,4,30,MAT.alu()),0,6,0)); for(let i=0;i<9;i++) g.add(at(box(1.4,8,30,MAT.alu()),-26+i*6.5,12,0)); return g;},'tilt',[18,225,-28],[0,-80,-60]);
 cable('w_pwr_pi',{ar:'كهربا الـ Pi (USB-C)',en:'5 V → Pi USB-C pigtail (from the 5 V bank)',step:14},'tilt',[[-20,228,26],[6,232,24],[24,246,22],[32,252,20],[32,256,19.5]],0xb8261a,1.8,[0,-60,40]);
 cable('w_pwr_led',{ar:'كهربا شاشة الوش',en:'5 V → face board (thick pair)',step:14},'tilt',[[-26,227,28],[-10,229,38],[30,231,44],[60,236,46]],0xb8261a,2.2,[0,-60,40]);
 cable('w_pwr_bus',{ar:'12 فولت ← بورد السيرفوهات',en:'12 V → servo adapter #1',step:14},'tilt',[[-48,225,10],[-56,225,0],[-67,227,-14]],0xb8261a,1.6,[0,-60,40]);
@@ -506,13 +564,27 @@ part('spine',{ar:'العمود الفقري (لوح ألومنيوم جوه أر
  [[-28,-16],[0,-16],[28,-16],[-28,16],[0,16],[28,16]].forEach(([x,z])=>g.add(at(cyl(3.2,2.4,MAT.steel(),6),x,2.7,z)));   // nyloc nuts
  [-45,45].forEach(x=>g.add(at(box(8,11.7,6,MAT.alu(),1),x,7.35,31.5)));                    // struts up to the chassis
  return g;},'tilt',[0,217.8,0],[0,0,-170]);
-part('face_led_b',{ar:'بوردة الوش الخلفي LED (64×27)',en:'Second LED face board on the back — same board, mounted facing back, Ø8 camera hole',kind:'buy',step:16,ord:0},()=>{const g=new THREE.Group();
- const fs=holeAt(shapeOf(WIN),CAMC,3.5); g.add(at(mesh(backFacing(new THREE.ShapeGeometry(fs,16),true),ledMat(FACE,[1/(2.068*U),1/(.88*U)],[.5,.5])),0,0,-HZ-.3));
- const pcb=new THREE.ExtrudeGeometry(holeAt(shapeOf(offsetPoly(WIN,2)),CAMC,4),{depth:1.6,bevelEnabled:false,curveSegments:16}); g.add(at(mesh(pcb,MAT.pcbK()),0,0,-(HZ-6.2)-1.6));
- g.add(at(box(14,6,4,MAT.white()),-60,-38,-(HZ-8.4))); g.add(at(mesh(backFacing(new THREE.CircleGeometry(3.5,24)),lensMat()),CAMC[0],CAMC[1],-HZ-.15)); return g;},'tilt',[0,HCY,0],[0,0,-170]);
-part('back_frame',{ar:'إطار الوش الخلفي',en:'Back frame — holds the back board + glass, 4 × M3 into the shell',kind:'print',step:16,ord:3,mat:'PLA أحمر أروما',g:45,h:2.5},()=>{const s=shapeOf(offsetPoly(HEAD,-4)); s.holes.push(pathOf(offsetPoly(WIN,1.5)));
- const g=new THREE.ExtrudeGeometry(s,{depth:2.4,bevelEnabled:true,bevelThickness:.8,bevelSize:.8,bevelSegments:2}); g.translate(0,0,-1.2); return mesh(g,MAT.red());},'tilt',[0,HCY,-HZ-1.4],[0,0,-150]);
-part('glass_b',{ar:'زجاج الوش الخلفي الفيميه',en:'Smoked acrylic 3 mm for the back — Ø7 camera hole',kind:'buy',step:16,ord:4,sz:[223.3,95,3]},()=>{const m=mesh(backFacing(new THREE.ShapeGeometry(holeAt(shapeOf(WIN),CAMC,3.5),16)),MAT.gloss()); m.position.z=-HZ-.6; return m;},'tilt',[0,HCY,0],[0,0,-130]);
+part('back_carrier',{ar:'حامل الوش الخلفي',en:'Back carrier plate — 4 screws into the shell bosses; carries the back board and the back camera',kind:'print',step:16,ord:1,mat:'PETG رمادي',g:42,h:2},()=>{const g=new THREE.Group(), M=MAT.grey();
+ const s=shapeOf(offsetPoly(WIN,2)); s.holes.push(pathOf(rect(27,26).map(p=>[p[0]+CAMC[0],p[1]+CAMC[1]-2.5]))); [[-60,0],[60,0],[0,-20],[-40,-38],[40,38]].forEach(([x,y])=>s.holes.push(pathOf(rect(34,12).map(p=>[p[0]+x,p[1]+y]))));
+ g.add(at(mesh(new THREE.ExtrudeGeometry(s,{depth:2,bevelEnabled:false}),M),0,0,-PCBB));
+ [[-10.5,-6.25],[10.5,-6.25],[-10.5,6.25],[10.5,6.25]].forEach(([x,y])=>{ const p=cyl(2,10.4,M,12); p.rotation.x=Math.PI/2; g.add(at(p,CAMC[0]+x,CAMC[1]-2.5+y,-PCBB+2+5.2)); });   // standoffs for the back camera
+ CARRIER_TABS.forEach(([x,y])=>{ const sc=cyl(2.9,.6,MAT.steel(),12); sc.rotation.x=Math.PI/2; g.add(at(sc,x,y,-PCBB-.3)); });    // 4 countersunk M3 into the shell inserts
+ return g;},'tilt',[0,HCY,0],[0,0,-210]);
+part('face_led_b',{ar:'بوردة الوش الخلفي LED (64×27)',en:'Second LED face board on the back — same board, facing back, screwed to the carrier',kind:'buy',step:16,ord:2},()=>{const g=new THREE.Group();
+ const fs=holeAt(shapeOf(WIN),CAMC,3.5); g.add(at(mesh(backFacing(new THREE.ShapeGeometry(fs,16),true),ledMat(FACE,[1/(2.068*U),1/(.88*U)],[.5,.5])),0,0,-LEDZ));
+ const gs=shapeOf(offsetPoly(WIN,2)); gs.holes.push(pathOf(WIN)); g.add(at(mesh(new THREE.ExtrudeGeometry(gs,{depth:FRONT.gasket,bevelEnabled:false}),MAT.rubber()),0,0,-PCBF-FRONT.gasket));
+ const pcb=new THREE.ExtrudeGeometry(holeAt(shapeOf(offsetPoly(WIN,2)),CAMC,4),{depth:1.6,bevelEnabled:false,curveSegments:16}); g.add(at(mesh(pcb,MAT.pcbK()),0,0,-PCBF));
+ g.add(at(mesh(backFacing(new THREE.CircleGeometry(3.5,24)),lensMat()),CAMC[0],CAMC[1],-LEDZ+.2)); return g;},'tilt',[0,HCY,0],[0,0,-190]);
+part('glass_b',{ar:'زجاج الوش الخلفي الفيميه',en:'Smoked acrylic 3 mm for the back — Ø7 camera hole, sits flush in the frame pocket',kind:'buy',step:16,ord:4,sz:[223.3,95,3]},()=>{const m=mesh(new THREE.ExtrudeGeometry(holeAt(shapeOf(WIN),CAMC,3.5),{depth:FRONT.pocket-.05,bevelEnabled:false,curveSegments:16}),MAT.gloss()); m.position.z=-HZ; return m;},'tilt',[0,HCY,0],[0,0,-130]);
+part('back_frame',{ar:'إطار الوش الخلفي (باب الصيانة)',en:'Back frame — closes the back opening flush: 2 hooks at the top, 2 M3 screws from underneath',kind:'print',step:16,ord:5,mat:'PLA أحمر أروما',g:52,h:3},()=>{const g=new THREE.Group(), M=MAT.red(), OF=offsetPoly(HEAD,-3.3);
+ const a=shapeOf(OF); a.holes.push(pathOf(WIN)); g.add(at(mesh(new THREE.ExtrudeGeometry(a,{depth:FRONT.pocket,bevelEnabled:false}),M),0,0,-HZ));
+ const b=shapeOf(OF); b.holes.push(pathOf(WL)); g.add(at(mesh(new THREE.ExtrudeGeometry(b,{depth:FRONT.ledge,bevelEnabled:false}),M),0,0,-HZ+FRONT.pocket));
+ const zi=-(HZ-T_WALL)+.1, zh=-HZ+FRONT.wall;                                               // just inside the back wall … the frame's inner face
+ [-60,60].forEach(x=>g.add(at(box(16,8,zh-zi,M),x,53.6,(zi+zh)/2)));                       // hooks that slip under the top rim
+ const fl=-(.5*U+HB-T_WALL)+.2;
+ [-62,95].forEach(x=>{ g.add(at(box(14,OF[2][1]-fl+.4,zh-zi,M),x,(OF[2][1]+fl)/2,(zi+zh)/2)); g.add(at(box(14,2.2,15,M),x,fl+1.1,zi+7.5));   // feet down to the floor
+  const ins=cyl(2.6,.8,MAT.gold(),14); g.add(at(ins,x,fl+2.6,zi+9)); const sc=cyl(2.75,1,MAT.steel(),12); g.add(at(sc,x,-(.5*U+HB)-.5,zi+9)); });   // insert + M3 from underneath
+ return g;},'tilt',[0,HCY,0],[0,0,-150]);
 part('vents',{ar:'فتحات التهوية (تحت وفوق)',en:'Vent slots — cool air in under the head, warm air out of the top',kind:'print',step:16,ord:5},()=>{const g=new THREE.Group(); const y=.575*U;
  for(let i=0;i<6;i++){ g.add(at(box(30,.6,2.5,MAT.chip()),38,y+.1,-25+i*10)); g.add(at(box(22,.6,2.5,MAT.chip()),111,-y-.2,-25+i*10)); } return g;},'tilt',[0,HCY,0],[0,90,0]);
 /* screen hands on mirror hinges — they fold back against the head like car mirrors */
@@ -766,12 +838,12 @@ ${chips(['pan_servo','w_pan','base_lid'])}
 <li><b>قبل التركيب:</b> وصّل السيرفو ببورد السيرفوهات وشغّل سكربت الإعداد بتاعي. هيدّيله <b>ID 1</b> ويحطّه في النص (Center). من غير الخطوة دي الراس مش هتبص قدام.</li>
 <li>اربط السيرفو في العمودين اللي تحت الغطا بمسمارين M2.5، والشافت يبقى طالع من الخرم اللي في النص بالظبط.</li>
 <li>عدّي كابل السيرفو وسلكين الكهربا من <b>الخرم الصغير اللي ورا</b> في الغطا.</li>
-<li>قفّل الغطا على القاعدة بـ ٤ مسامير M3 في الصواميل الحرارية.</li></ul>
+<li>قفّل الغطا بـ ٤ مسامير M3 في <b>٤ أعمدة</b> جوه القاعدة، وفي كل عمود صامولة حرارية. الأعمدة متوزّعة بعيد عن الحديد والرادار والجاك.</li></ul>
 <div class="warn">💡 السيرفو ده بيلف الراس بس، مش شايل وزنها. الوزن على البيرينج اللي في الخطوة الجاية.</div>`},
  {n:'05',t:'البيرينج + الطبق الدوّار',ok:true,xray:true,view:[1,1,1.3],pad:1.6,body:()=>`${meta('١٥ دقيقة','مفك M3 + M2.5')}
 ${chips(['bearing','turntable'])}
 <ul><li><b>البيرينج المربع هو اللي شايل وزن الراس والرقبة كلها (≈ ${AR(kg(LD().topM))} كجم)</b>، والسيرفو وظيفته اللف بس.</li>
-<li>اربط اللوح التحتاني للبيرينج في الغطا بـ ٤ مسامير M3، والأماكن معلّمة.</li>
+<li>اربط اللوح التحتاني للبيرينج في الغطا بـ ٤ مسامير M3 في الأركان.</li>
 <li>ركّب الطبق الدوّار: البوز اللي تحته بيقعد على الهورن المعدن بتاع السيرفو، اربطه بـ ٤ مسامير M2.5، واربط اللوح الفوقاني للبيرينج بـ ٤ مسامير M3.</li>
 <li>الطبق فيه <b>جراب عمقه ٢٠ مم</b> للعمود الشفاف، ومسمار M3 بيعدّي فيهم بالعرض.</li>
 <li>عدّي الكابلات من الخرم الصغير اللي في الطبق.</li>
@@ -780,25 +852,27 @@ ${chips(['bearing','turntable'])}
  {n:'06',t:'العمود الشفاف + مهد سيرفو الميل',ok:true,xray:true,main:'neck',view:[1.1,.45,1.3],pad:1.5,body:()=>`${meta('٢٥ دقيقة','مفك M2.5 + M3 + مفتاح M4 + شنيور ٣ مم')}
 ${chips(['neck','tilt_servo','w_chain','braid','stem'])}
 <ul><li>اعمل لسيرفو الميل <b>ID 2</b> بنفس السكربت. ده كمان نسخة <b>12 فولت</b>.</li>
-<li>السيرفو بيدخل في <b>المهد الأسود</b> واقف، و<b>الشافت بتاعه طالع من الجنب اليمين</b>. ده محور الميل.</li>
-<li>في الجنب الشمال للمهد فيه <b>محور تاني</b> على نفس الخط (مسمار M4 + بيرينج 624). يعني الراس هتبقى متشالة من الناحيتين، مش من ناحية واحدة.</li>
+<li><b>المهد نُصّين:</b> السيرفو بيقعد واقف في الجيب، والشافت بتاعه طالع من <b>خرم في الحيطة اليمين</b>. والنُصّين بيتقفلوا على <b>ودان السيرفو</b> من فوق ومن تحت بـ <b>٤ مسامير M3</b> بالعرض. يعني السيرفو محبوس بين النُصّين بودانه، مش متلزّق.</li>
+<li>في الحيطة الشمال <b>بيرينج 624</b> متكبوس، ومسمار M4 على نفس خط الشافت. يعني الراس هتبقى متشالة من الناحيتين، مش من ناحية واحدة.</li>
+<li>تحت الجيب فيه <b>شق</b> بيعدّي منه سلك السيرفو لورا الطوق.</li>
 <li>العمود <b>بولي كربونات</b> (مش أكريليك) لأنه مبيتكسرش لو اتخبط. بيدخل <b>٢٥ مم</b> جوه طوق المهد، و<b>٢٠ مم</b> جوه جراب الطبق، وكل طرف ماسكه مسمار M3 بالعرض. يعني مش معتمد على الغرا.</li>
 <li>لبّس الكابلات جوه <b>الشراب الأسود</b> ودخّلها في العمود. اعمل حزّ صغير ورا في طرف العمود من فوق ومن تحت عشان الكابلات تطلع منه.</li></ul>
 <div class="warn">💡 لو حد خبط الراس من الجنب بـ ١ كجم، الضغط على العمود ≈ ${AR(n1(LD().sStem))} ميجا باسكال، والبولي كربونات بيستحمل ٦٠. يعني أمان ×${AR(Math.round(PC_YIELD/LD().sStem))}.</div>`},
  {n:'07',t:'قشرة الراس + العمود الفقري + الكوبري',ok:true,xray:true,main:'head_shell',view:[.8,.35,-1.3],pad:1.45,frame:['head_shell','head_bracket'],body:()=>`${meta('٣٠ دقيقة','كاوية للصواميل الحرارية + مفك M3 + مفتاح ٥٫٥')}
-${chips(['head_shell','spine','head_bracket','chassis'])}
+${chips(['head_shell','spine','head_bracket'])}
 <ul><li>الراس بتتبني <b>على الترابيزة</b> الأول، وفي خطوة ١٥ تنزل على الرقبة. عشان كده شايفها طايرة فوق دلوقتي.</li>
+<li><b>القشرة مفرّغة</b> بحيطان ٢٫٤ مم (≈ ${AR(PARTS.head_shell.g)} جم). قدّام فيها <b>فتحة الوش</b> وحواليها جيب عمقه ٣ مم للزجاج، وورا فيها <b>فتحة كبيرة</b> بندخّل منها كل حاجة، وبيقفلها الوش الخلفي في الآخر.</li>
+<li>جوه القشرة <b>٨ أعمدة</b> بصواميل حرارية M3: ٤ قدّام للشاسيه، و٤ ورا لحامل الوش الخلفي. وكمان ٤ رجول صغيرة في السقف لبورد المايك، وحلقة في الأرضية بتقعد فيها السماعة. ركّب الصواميل الحرارية بالكاوية قبل أي حاجة.</li>
 <li><b>العمود الفقري:</b> لوح ألومنيوم ١٠٨ × ٨٠ × ٣ مم بيتحط جوه على أرضية القشرة. <b>الكوبري U</b> (ألومنيوم ٣ مم) بيتحط تحت الأرضية من برا قصاده.</li>
-<li><b>٦ مسامير M3</b> بيعدّوا من الكوبري، في أرضية القشرة، في العمود الفقري، وبيتقفلوا بصواميل نايلون. كده أرضية القشرة محبوسة بين لوحين ألومنيوم، ووزن الراس كله (≈ ${AR(kg(LD().head.m))} كجم) بيمشي في المعدن مش في البلاستيك.</li>
-<li>من العمود الفقري طالعين <b>دعامتين</b> لفوق، ماسكين الشاسيه الرمادي. يعني الوش والـ Pi متعلقين في المعدن برضه.</li>
-<li>الشاسيه بيدخل من ورا، وحرفه الشمال التحتاني مايل بنفس ميل اللوجو فبيقعد جوه القشرة بالظبط.</li></ul>
+<li><b>٦ مسامير M3</b> بيعدّوا من الكوبري، في أرضية القشرة، في العمود الفقري، وبيتقفلوا بصواميل نايلون. كده أرضية القشرة محبوسة بين لوحين ألومنيوم، ووزن الراس كله (≈ ${AR(kg(LD().head.m))} كجم) بيمشي في المعدن مش في البلاستيك.</li></ul>
 <div class="warn">💡 الكوبري والعمود الفقري بيتقصّوا ليزر من ملف DXF أنا بعمله، والكوبري بيتني مرتين. أي ورشة ليزر ألومنيوم في دبي بتعملهم في يوم.</div>`},
- {n:'08',t:'بوردة الوش + الكاميرا الثري دي',ok:true,xray:true,main:'oak',view:[.75,.5,-1.45],pad:1.35,frame:['head_shell'],body:()=>`${meta('٢٥ دقيقة','مفك M2.5')}
-${chips(['xiao','oak','face_led'])}
-<ul><li><b>الكاميرا الثري دي OAK-D Lite:</b> فيها ٣ عدسات: واحدة ألوان في النص، واتنين على الجنبين بينهم ٧٥ مم بيحسبوا العمق، زي عينين البني آدم. جواها معالج ذكاء اصطناعي بيكشف الوشوش ويتابعها ويقيس بُعد كل واحد، والـ Pi بيستلم النتيجة بس.</li>
-<li>الكاميرا بتقعد في <b>الفتحة العريضة اللي في نص الشاسيه</b>، وعدساتها لازقة في ضهر بوردة الوش قصاد الـ ٣ خروم بالظبط.</li>
-<li><b>الـ XIAO</b> بيتركب على ضهر بوردة الوش، وهو اللي بيسوق كل الشاشات: الوشّين والإيدين (٨ خطوط بيانات مع بعض). بيكلّم الـ Pi بكابل USB واحد.</li>
-<li>البوردة بتدخل من <b>قدّام</b> في فتحة الوش، وتتربط على ٦ أعمدة الشاسيه بمسامير M2.5.</li></ul>
+ {n:'08',t:'بوردة الوش + الشاسيه + الكاميرا الثري دي',ok:true,xray:true,main:'chassis',view:[.75,.5,-1.45],pad:1.35,frame:['head_shell'],body:()=>`${meta('٣٥ دقيقة','مفك M2.5 + M3')}
+${chips(['face_led','xiao','oak','chassis'])}
+<ul><li><b>بوردة الوش</b> أكبر من فتحة الوش بـ ٢ مم من كل ناحية، فبتدخل <b>من الفتحة اللي ورا</b>، وتقعد لازقة في حيطة الوش من جوه. بينهم <b>حلقة إسفنج ١ مم</b> بتمنع النور يهرب من الجناب.</li>
+<li><b>الـ XIAO</b> بيتركب على ضهر البوردة قبل ما تدخل. هو اللي بيسوق كل الشاشات: الوشّين والإيدين (٨ خطوط بيانات مع بعض). بيكلّم الـ Pi بكابل USB واحد.</li>
+<li><b>الكاميرا الثري دي OAK-D Lite</b> بتتربط في <b>الفتحة العريضة اللي في نص الشاسيه</b> بره القشرة. فيها ٣ عدسات: واحدة ألوان في النص، واتنين على الجنبين بينهم ٧٥ مم بيحسبوا العمق. جواها معالج ذكاء اصطناعي بيكشف الوشوش ويتابعها ويقيس بُعد كل واحد.</li>
+<li>دخّل <b>الشاسيه</b> بالكاميرا من ورا لحد ما تيجي على <b>الـ ٤ أعمدة</b> اللي قدّام، واربطه بـ ٤ مسامير M3. عدسات الكاميرا هتيجي لازقة في ضهر البوردة، قصاد الـ ٣ خروم بالظبط.</li>
+<li>آخر حاجة، ومن <b>فتحة الوش</b> قبل ما الزجاج يتركب: اربط البوردة في <b>٦ أعمدة الشاسيه</b> بمسامير M2.5 سودا قصيرة.</li></ul>
 <div class="warn">⚠️ امسك البوردة من الحروف ومتحطّهاش على وشها. اللمبات صغيرة (٢ مم) وممكن تتخلع. وشيل الغطا الحامي من عدسات الكاميرا قبل ما تقفل.</div>`},
  {n:'09',t:'بوردين السيرفوهات',ok:true,xray:true,main:'bus_adapter',view:[.9,.4,-1.4],pad:1.35,frame:['head_shell'],body:()=>`${meta('١٠ دقائق','مفك M2.5')}
 ${chips(['bus_adapter','bus_adapter2','w_bus1'])}
@@ -828,7 +902,8 @@ ${chips(['speaker','w_spk'])}
 ${chips(['ear_servo_r','ear_servo_l','ear_r','ear_l','w_bus_ears'])}
 <ul><li>جوه كل ودن موتور صغير <b>SCS0009</b> الشافت بتاعه لتحت. ده المفصلة اللي بتضم الإيد وتفتحها زي مراية العربية.</li>
 <li>قبل التركيب: الموتور اليمين <b>ID 3</b> والشمال <b>ID 4</b>.</li>
-<li>الودن بتتربط على جنب الراس بمسمارين من جوه. في الركن القدّامي من برا فيه شق صغير، وده اللي دراع الإيد بيلف فيه.</li>
+<li>الودن <b>كوباية مطبوعة</b> مفتوحة ناحية الراس، والموتور بيدخل جواها كله. بتتربط على جنب الراس بـ <b>مسمارين M3 من جوه القشرة</b> في صواميل حرارية في الودن، فمفيش أي مسمار باين من برا.</li>
+<li>في الوش القدّامي للودن فيه <b>شق</b>، وده اللي دراع الإيد بيطلع منه ويلف فيه.</li>
 <li>كابل السيرفو من البورد للودن الشمال، ومنها للودن اليمين، على نفس الكابل.</li></ul>`},
  {n:'14',t:'الكهربا والتوصيلات',ok:true,xray:true,main:'buck',view:[.5,.6,-1.4],pad:1.35,frame:['head_shell'],body:()=>`${meta('٣٠ دقيقة','مفك + رباطات + ملتيميتر')}
 ${chips(['buck','wago','w_buck_in','w_buck_out','w_pwr_bus','w_pwr_bus2','w_pwr_pi','w_pwr_led','w_usb_oak','w_usb_mic','w_usb_bus','w_usb_led','w_usb_bus2'])}
@@ -847,17 +922,18 @@ ${chips(['w_loop','w_stem'])}
 <li>الكابلات اللي طالعة من ورا الطوق بتعمل <b>لفّة صغيرة</b> ورا الرقبة، وتدخل الراس من الخرم اللي في الأرضية، وتتوصّل في WAGO والبورد.</li>
 <li>ميّل الراس بإيدك ±١٥° بالراحة: الراس بتتمرجح حوالين المحور، واللفّة بتتمد وتتلم من غير ما تتشد.</li></ul>
 <div class="warn">💡 مركز ثقل الراس فوق المحور بـ ${AR(Math.round(LD().dH.y))} مم. أقصى عزم محتاجه السيرفو ≈ ${AR(n1(LD().tTilt/KGCM))} كجم·سم من ٣٠، يعني شغّال على ${AR(pct(LD().tTilt/KGCM,SERVO.sts12))}٪ بس. ✋ <b>وشيل الروبوت دايمًا من القاعدة</b>.</div>`},
- {n:'16',t:'الوش الخلفي + التهوية',ok:true,main:'face_led_b',view:[.55,.35,-1.6],pad:1.35,frame:['head_shell'],body:()=>`${meta('٢٠ دقيقة','مفك M2.5 + M3')}
-${chips(['face_led_b','camera','w_cam','back_frame','glass_b','vents'])}
-<ul><li>الوش اللي ورا هو <b>نفس بوردة الوش بالظبط</b>، متركبة وشها لورا. الـ XIAO بيبعتلها نفس الوش متقلوب، فالكلام بيتقري صح من ورا.</li>
-<li><b>الكاميرا الخلفية</b> (Camera Module 3 Wide) بتتربط ورا خرم الـ Ø8، وكابلها بيروح لكونكتور الكاميرا في الـ Pi. كده الراس بتشوف قدّام وورا، فمحتاجة تلف ٩٠° بس عشان تبص لأي حد.</li>
-<li>البوردة والزجاج بيتركبوا في <b>الإطار الخلفي الأحمر</b>، والإطار بيتقفل على القشرة بـ ٤ مسامير M3 في الصواميل الحرارية. يعني الإطار ده هو باب الصيانة.</li>
+ {n:'16',t:'الوش الخلفي + التهوية',ok:true,main:'back_frame',view:[.55,.35,-1.6],pad:1.35,frame:['head_shell'],body:()=>`${meta('٢٥ دقيقة','مفك M2.5 + M3')}
+${chips(['camera','w_cam','back_carrier','face_led_b','glass_b','back_frame','vents'])}
+<ul><li>اربط <b>الكاميرا الخلفية</b> (Camera Module 3 Wide) على ٤ رجول في <b>حامل الوش الخلفي</b>، ووصّل كابلها في كونكتور الكاميرا في الـ Pi.</li>
+<li>دخّل <b>الحامل</b> من الفتحة اللي ورا، واربطه في <b>الـ ٤ أعمدة</b> اللي ورا بـ ٤ مسامير M3 راسها غاطسة.</li>
+<li><b>بوردة الوش الخلفي</b> هي نفس بوردة الوش بالظبط، متركبة وشها لورا. بتتربط على الحامل بمسامير M2.5، وعدسة الكاميرا بتيجي في الخرم بتاعها. والـ XIAO بيبعتلها نفس الوش متقلوب، فالكلام بيتقري صح من ورا.</li>
+<li><b>الإطار الخلفي</b> هو باب الصيانة: الزجاج بيقعد في جيبه، وبيقفل الفتحة وهو في مستوى القشرة بالظبط. من فوق فيه <b>خطافين</b> بيدخلوا تحت حرف الفتحة، ومن تحت <b>مسمارين M3 من تحت الراس</b>. يعني مفيش ولا مسمار باين من ورا.</li>
 <li><b>التهوية</b> بقت تحت وفوق: الهوا البارد بيدخل من الشقوق اللي تحت الراس، ومروحة الـ Pi بتطلّعه من الشقوق اللي فوق.</li></ul>
-<div class="warn">💡 لما حد يتكلم، الوش "بيتنقل" للناحية اللي هو فيها، والوش التاني بيفضل هادي وبيبص. والراس بتلف لحد ٩٠° بس، فالكابلات مرتاحة أكتر.</div>`},
+<div class="warn">💡 عشان تفتح الراس بعد كده: فك المسمارين اللي تحت، وميّل الإطار لبرا من تحت، وشيله. كل اللي جوه بيبان من غير ما تفك حاجة تانية.</div>`},
  {n:'17',t:'الزجاج الفيميه (قدّام)',ok:true,view:[.5,.3,1.6],pad:1.35,frame:['head_shell'],body:()=>`${meta('٥ دقائق')}
 ${chips(['glass'])}
 <ul><li>الأكريليك الفيميه ٣ مم مقصوص ليزر بشكل اللوجو بالظبط، وفيه ٣ خروم Ø٤٫٥ قصاد عدسات الكاميرا الثري دي.</li>
-<li>بيدخل في فتحة الوش ويقعد في نفس مستوى القشرة، ومتثبّت بشريط دبل فيس شفاف رفيع على الحرف.</li>
+<li>بيدخل في <b>الجيب اللي عمقه ٣ مم</b> حوالين فتحة الوش، وبيقعد في نفس مستوى القشرة بالظبط. بيتثبّت بشريط دبل فيس شفاف رفيع على الحافة (١٫٢ مم) اللي في قعر الجيب.</li>
 <li>شيل الورق الحامي آخر حاجة خالص.</li>
 <li>الفيميه بيخلّي اللمبات المطفية سودا تمامًا والمنوّرة واضحة، زي شاشة الهب بالظبط.</li></ul>`},
  {n:'18',t:'الإيدين (المرايات)',ok:true,view:[.25,.35,1.6],pad:1.3,frame:['head_shell','hand_l','hand_r'],body:()=>`${meta('٢٠ دقيقة','مفك صغير')}
