@@ -144,6 +144,7 @@ const LOG=[
  ['04:48','نزلت أول نسخة: الشكل النهائي للبوّاب + فكّ المجسم.'],
  ['04:59','رجّعت الشكل زي ماسكوت الهب بالظبط: الشاشة بحافة اللوجو 64×27، والإيدين مرايات بتتضم وتتفتح.'],
  ['05:18','نزلت كل القطع الداخلية بمقاساتها الحقيقية + خطوات ٠١ لـ ٠٤ (العدة، الطباعة والبوردات، القاعدة، سيرفو اللف).'],
+ ['05:31','نزلت كل الخطوات من ٠٥ لـ ٢٠: البيرينج، العمود، الراس من جوه (الوش والكاميرا، السيرفوهات، الـ Pi، المايك، السماعة، الودان، الكهربا)، تركيب الراس، الغطا، الزجاج، الإيدين، أول تشغيل، والدماغ.'],
 
 ];
 
@@ -355,10 +356,10 @@ part('face_led',{ar:'بوردة الوش LED (64×27 بشكل اللوجو)',en:
  const pcb=new THREE.ExtrudeGeometry(s,{depth:1.6,bevelEnabled:false,curveSegments:16}); g.add(at(mesh(pcb,MAT.pcbK()),0,0,HZ-6.2));
  [[-100,38],[100,38],[-100,-38],[100,-38],[0,40],[0,-40]].forEach(([x,y])=>{ const p=cyl(2.6,2,MAT.metal(),14); p.rotation.x=Math.PI/2; g.add(at(p,x,y,HZ-7.4)); });
  g.add(at(box(14,6,4,MAT.white()),60,-38,HZ-8.4)); const ln=mesh(new THREE.CircleGeometry(3.5,24),new THREE.MeshPhysicalMaterial({color:0x0b1020,roughness:.05,metalness:.3,clearcoat:1})); g.add(at(ln,CAMC[0],CAMC[1],HZ+.15)); return g;},'tilt',[0,HCY,0],[0,0,170]);
-part('xiao',{ar:'XIAO ESP32-S3 (بيسوق الـ LEDs)',en:'Seeed XIAO ESP32-S3 — LED driver',kind:'buy',step:8},()=>{const g=new THREE.Group(); g.add(box(21,17.5,1.2,MAT.pcbB())); g.add(at(box(12,12,2.4,MAT.metal()),2,0,-1.8)); g.add(at(box(8.6,6.6,3.2,MAT.metal()),-8.4,0,-2.2)); return g;},'tilt',[-60,HCY-8,HZ-8],[0,0,-70]);
-part('camera',{ar:'كاميرا Pi Module 3 Wide (مستخبية في الوش)',en:'Camera Module 3 Wide — behind the face, lens between the pixels',kind:'buy',step:8},()=>{const g=new THREE.Group();
+part('xiao',{ar:'XIAO ESP32-S3 (بيسوق الـ LEDs)',en:'Seeed XIAO ESP32-S3 — LED driver',kind:'buy',step:8,ord:0},()=>{const g=new THREE.Group(); g.add(box(21,17.5,1.2,MAT.pcbB())); g.add(at(box(12,12,2.4,MAT.metal()),2,0,-1.8)); g.add(at(box(8.6,6.6,3.2,MAT.metal()),-8.4,0,-2.2)); return g;},'tilt',[-60,HCY-8,HZ-8],[0,0,200]);
+part('camera',{ar:'كاميرا Pi Module 3 Wide (مستخبية في الوش)',en:'Camera Module 3 Wide — behind the face, lens between the pixels',kind:'buy',step:8,ord:1},()=>{const g=new THREE.Group();
  g.add(box(25,24,1,MAT.pcbG())); g.add(at(box(8.5,8.5,4.5,MAT.chip()),0,2.5,2.7)); g.add(rx(at(cyl(3.6,8.5,MAT.chip(),20),0,2.5,9.2),Math.PI/2)); g.add(rx(at(cyl(2.4,.4,MAT.wire(0x26355c),20),0,2.5,13.5),Math.PI/2));
- g.add(at(box(21,4,2.4,MAT.white()),0,-10.5,-1.6)); return g;},'tilt',[CAMC[0],HCY+CAMC[1]-2.5,HZ-19.8],[0,0,-90]);
+ g.add(at(box(21,4,2.4,MAT.white()),0,-10.5,-1.6)); return g;},'tilt',[CAMC[0],HCY+CAMC[1]-2.5,HZ-19.8],[0,0,200]);
 cable('w_cam',{ar:'كابل الكاميرا (Pi 5، 200 مم)',en:'Pi 5 camera FFC 22→15 pin',step:10},'tilt',[[17.5,HCY+20,HZ-21.5],[24,HCY+19,29],[40,HCY+14,31.5],[60,HCY-6,27],[72,HCY-14,22]],0xd8c08a,1.4,[0,0,-60]);
 part('glass',{ar:'زجاج الوش الفيميه',en:'Smoked acrylic 3 mm — logo outline, Ø7 camera hole',kind:'buy',step:17},()=>{const s=shapeOf(WIN); const ch=new THREE.Path(); ch.absarc(CAMC[0],CAMC[1],3.5,0,Math.PI*2,true); s.holes.push(ch); const m=mesh(new THREE.ShapeGeometry(s,16),MAT.gloss()); m.position.z=HZ+.6; return m;},'tilt',[0,HCY,0],[0,0,170]);
 /* tilt servo + bus adapter */
@@ -393,8 +394,8 @@ cable('w_spk',{ar:'سلك السماعة → كونكتور المايك',en:'Sp
 part('ear_r',{ar:'الودن اليمين',en:'Right ear — houses the hinge motor',kind:'print',step:13,mat:'PLA غامق',g:18,h:1},()=>box(EARW,EARS,EARS,MAT.dark(),3),'tilt',[EARX,HCY+EARY,0],[130,0,0]);
 part('ear_l',{ar:'الودن الشمال',en:'Left ear — houses the hinge motor',kind:'print',step:13,mat:'PLA غامق',g:18,h:1},()=>box(EARW,EARS,EARS,MAT.dark(),3),'tilt',[-EARX,HCY+EARY,0],[-130,0,0]);
 const qEar=new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.PI,Math.PI/2,0,'YXZ'));
-part('ear_servo_r',{ar:'موتور مفصلة الإيد اليمين SCS0009 (ID 3)',en:'Feetech SCS0009 micro bus servo — right hinge, ID 3',kind:'buy',step:13},SCS9,'tilt',[PIV[0],HCY+PIV[1]+5,PIV[2]],[170,0,0],qEar);
-part('ear_servo_l',{ar:'موتور مفصلة الإيد الشمال SCS0009 (ID 4)',en:'Feetech SCS0009 micro bus servo — left hinge, ID 4',kind:'buy',step:13},SCS9,'tilt',[-PIV[0],HCY+PIV[1]+5,PIV[2]],[-170,0,0],qEar);
+part('ear_servo_r',{ar:'موتور مفصلة الإيد اليمين SCS0009 (ID 3)',en:'Feetech SCS0009 micro bus servo — right hinge, ID 3',kind:'buy',step:13,ord:0},SCS9,'tilt',[PIV[0],HCY+PIV[1]+5,PIV[2]],[170,0,0],qEar);
+part('ear_servo_l',{ar:'موتور مفصلة الإيد الشمال SCS0009 (ID 4)',en:'Feetech SCS0009 micro bus servo — left hinge, ID 4',kind:'buy',step:13,ord:1},SCS9,'tilt',[-PIV[0],HCY+PIV[1]+5,PIV[2]],[-170,0,0],qEar);
 cable('w_bus_ears',{ar:'كابل السيرفو: البورد ← موتورات الودان',en:'Servo bus: adapter → both hinge motors',step:13},'tilt',[[-70,228,-42],[-100,250,-44],[-120,276,-26],[-130,284,-6],[-118,304,-40],[0,324,-46],[118,304,-40],[130,284,-6]],0xe9e6e0,1.3,[0,60,-60]);
 /* power + data */
 part('wago',{ar:'موزّع الكهربا (WAGO ×2)',en:'WAGO 221-415 ×2 — 5 V and GND',kind:'buy',step:14},()=>{const g=new THREE.Group(); [0,1].forEach(i=>{ g.add(at(box(20,8,18,MAT.wire(0xd9d5cc),1),i*22,0,0)); for(let k=0;k<5;k++) g.add(at(box(2.6,3,8,MAT.wire(0xe8651f)),i*22-7.5+k*3.8,5.2,-4)); }); return g;},'tilt',[-50,221,22],[0,-90,60]);
@@ -506,32 +507,123 @@ ${chips(['pan_servo','w_pan','base_lid'])}
 <li>عدّي كابل السيرفو وسلكين الكهربا من <b>الخرم الصغير اللي ورا</b> في الغطا.</li>
 <li>قفّل الغطا على القاعدة بـ ٤ مسامير M3 في الصواميل الحرارية.</li></ul>
 <div class="warn">💡 السيرفو ده بيلف الراس بس، مش شايل وزنها. الوزن على البيرينج اللي في الخطوة الجاية.</div>`},
- {n:'05',t:'البيرينج + الطبق الدوّار',view:[1,1,1.3],pad:1.2,body:()=>``},
- {n:'06',t:'العمود الشفاف + رقبة الميل',view:[1,.5,1.4],body:()=>``},
- {n:'07',t:'قشرة الراس + الشاسيه',xray:true,view:[.8,.55,-1.3],body:()=>``},
- {n:'08',t:'بوردة الوش + الكاميرا المستخبية',xray:true,view:[1,.4,1.6],body:()=>``},
- {n:'09',t:'سيرفو الميل + بورد السيرفوهات',xray:true,view:[.9,.4,-1.4],body:()=>``},
- {n:'10',t:'Raspberry Pi 5 + التبريد',xray:true,view:[.9,.45,-1.4],body:()=>``},
- {n:'11',t:'المايكات + الأنتينا',xray:true,view:[.6,1.3,-.8],body:()=>``},
- {n:'12',t:'السماعة (تحت الراس)',xray:true,view:[.9,-.7,1],body:()=>``},
- {n:'13',t:'الودان + موتورات الإيدين',xray:true,view:[1.6,.45,.7],body:()=>``},
- {n:'14',t:'الكهربا والتوصيلات',xray:true,view:[.5,.6,-1.4],body:()=>``},
- {n:'15',t:'تركيب الراس على الرقبة',xray:true,view:[1.4,.35,1],body:()=>``},
- {n:'16',t:'الغطا الخلفي',view:[.6,.4,-1.4],body:()=>``},
- {n:'17',t:'الزجاج الفيميه',view:[.5,.3,1.6],body:()=>``},
- {n:'18',t:'الإيدين (المرايات)',view:[.25,.35,1.6],pad:1.25,body:()=>``},
- {n:'19',t:'أول تشغيل',view:[.6,.4,1.5],body:()=>``},
- {n:'20',t:'الدماغ: السوفتوير',body:()=>``},
+ {n:'05',t:'البيرينج + الطبق الدوّار',ok:true,xray:true,view:[1,1,1.3],pad:1.6,body:()=>`${meta('١٥ دقيقة','مفك M3 + M2.5')}
+${chips(['bearing','turntable'])}
+<ul><li><b>البيرينج المربع هو اللي شايل وزن الراس كلها</b>، والسيرفو وظيفته اللف بس.</li>
+<li>اربط اللوح التحتاني للبيرينج في الغطا بـ ٤ مسامير M3، والأماكن معلّمة.</li>
+<li>ركّب الطبق الدوّار: البوز اللي تحته بيقعد على الهورن المعدن بتاع السيرفو، اربطه بـ ٤ مسامير M2.5، واربط اللوح الفوقاني للبيرينج بـ ٤ مسامير M3.</li>
+<li>عدّي الكابلات من الخرم الصغير اللي في الطبق.</li>
+<li>لف الطبق بإيدك بالراحة ربع لفة يمين وشمال. لازم يلف ناعم، من غير خبط ولا تزييق.</li></ul>
+<div class="warn">⚠️ متلفّش الطبق لفة كاملة. الكابلات معمولة تستحمل ١٥٠° يمين و١٥٠° شمال بس، والسوفتوير بيمنع أكتر من كده.</div>`},
+ {n:'06',t:'العمود الشفاف + رقبة الميل',ok:true,view:[1,.5,1.4],pad:1.3,body:()=>`${meta('٢٠ دقيقة','غراء UV أو إيبوكسي')}
+${chips(['braid','stem','neck'])}
+<ul><li>لبّس سلكين الكهربا وكابل السيرفو جوه <b>الشراب الأسود</b>. ده اللي هيبان جوه العمود الشفاف زي العمود الفقري.</li>
+<li>دخّل الأنبوبة الشفافة في الجراب اللي على الطبق (١٢ مم لتحت) وثبّتها بنقطة غراء. فيه فتحة صغيرة ورا في الجراب، ومنها الكابلات بتدخل الأنبوبة.</li>
+<li>لبّس رقبة الميل فوق، و<b>لسان الرقبة لازم يبقى ناحية اليمين</b> (يمين الروبوت). ده اللي سيرفو الميل هيتربط فيه.</li>
+<li>سيب ١٥ سم كابلات طالعة فوق الرقبة، دول اللي هيدخلوا الراس.</li></ul>`},
+ {n:'07',t:'قشرة الراس + الشاسيه',ok:true,xray:true,view:[.8,.55,-1.3],pad:1.35,frame:['head_shell'],body:()=>`${meta('٢٠ دقيقة','كاوية للصواميل الحرارية + مفك')}
+${chips(['head_shell','chassis'])}
+<ul><li>الراس بتتبني <b>على الترابيزة</b> الأول، وفي خطوة ١٥ تتركب على الرقبة. عشان كده شايفها طايرة فوق دلوقتي.</li>
+<li>ركّب ٦ صواميل حرارية M3 في البوزات اللي جوه القشرة بالكاوية، وبالراحة لحد ما تبقى في مستوى البلاستيك.</li>
+<li>الشاسيه الرمادي بيدخل من ورا (الراس مفتوحة من ورا) وبيتربط في ٤ أماكن.</li>
+<li>الشاسيه ده العمود الفقري اللي جوه الراس: من قدام شايل بوردة الوش، ومن ورا شايل الـ Pi.</li></ul>
+<div class="warn">💡 القشرة شفافة في المحاكاة بس عشان تشوف اللي جوه. في الحقيقة هي حمرا وشكلها زي ماسكوت الهب بالظبط.</div>`},
+ {n:'08',t:'بوردة الوش + الكاميرا المستخبية',ok:true,xray:true,view:[1,.4,1.6],pad:1.35,frame:['head_shell'],body:()=>`${meta('٢٥ دقيقة','مفك M2.5')}
+${chips(['xiao','camera','face_led'])}
+<ul><li><b>الـ XIAO</b> بيتركب على ضهر بوردة الوش على الهيدر، وهو اللي بيسوق الـ ١٧٠٠ لمبة. بيكلّم الـ Pi بكابل USB واحد.</li>
+<li><b>الكاميرا</b> بتتربط على ضهر البوردة ورا خرم الـ Ø8 بالظبط (فوق في النص)، فالعدسة بتشوف من بين البكسلات.</li>
+<li>البوردة بتدخل من <b>قدّام</b> في فتحة الوش، وتتربط على ٦ أعمدة الشاسيه بمسامير M2.5.</li>
+<li>قبل ما تقفل: ركّب كابل الكاميرا الشريطي في الكاميرا.</li></ul>
+<div class="warn">⚠️ امسك البوردة من الحروف ومتحطّهاش على وشها. اللمبات صغيرة (٢ مم) وممكن تتخلع.</div>`},
+ {n:'09',t:'سيرفو الميل + بورد السيرفوهات',ok:true,xray:true,view:[.9,.4,-1.4],pad:1.35,frame:['head_shell'],body:()=>`${meta('١٥ دقيقة','مفك M2.5 + اللابتوب')}
+${chips(['tilt_servo','bus_adapter','w_bus1'])}
+<ul><li>قبل التركيب: اعمل للسيرفو التاني <b>ID 2</b> بنفس السكربت.</li>
+<li>سيرفو الميل بيتربط في أرضية الراس تحت الشاسيه، و<b>الهورن بتاعه ناحية اليمين</b> قصاد لسان الرقبة بالظبط.</li>
+<li>بورد السيرفوهات (Waveshare) بيتحط في الركن الشمال اللي ورا.</li>
+<li>وصّل كابل السيرفو من البورد لسيرفو الميل. سيرفو اللف هيدخل على نفس السلسلة في خطوة ١٥.</li></ul>
+<div class="warn">💡 كل السيرفوهات الأربعة (اللف والميل والإيدين) على <b>كابل واحد</b> بيلف عليهم كلهم، وكل واحد ليه رقم (ID) مختلف.</div>`},
+ {n:'10',t:'Raspberry Pi 5 + التبريد',ok:true,xray:true,view:[.9,.45,-1.4],pad:1.35,frame:['head_shell'],body:()=>`${meta('١٥ دقيقة','مفك M2.5')}
+${chips(['pi5','cooler','sdcard','w_cam'])}
+<ul><li>ركّب المروحة (Active Cooler) على الـ Pi الأول: بتتكبس في الخرمين، وكابلها بيتوصل في كونكتور FAN.</li>
+<li>دخّل كارت الـ microSD. أنا بجهّزلك ملف السيستم بالسوفتوير كله، وانت بس بتكتبه على الكارت بـ Raspberry Pi Imager.</li>
+<li>الـ Pi بيتربط على ضهر الشاسيه على ٤ أعمدة M2.5، والـ USB ناحية اليمين.</li>
+<li>وصّل كابل الكاميرا في كونكتور CAM/DISP 0 من الطرف الرفيع. الشريط بيعدّي من فتحة الشاسيه.</li></ul>
+<div class="warn">⚠️ الـ Pi 5 بيسخن. المروحة لازم تبقى متوصلة، والغطا اللي ورا فيه فتحات تهوية.</div>`},
+ {n:'11',t:'المايكات + الأنتينا',ok:true,xray:true,view:[.6,1.3,-.8],pad:1.35,frame:['head_shell'],body:()=>`${meta('١٥ دقيقة','مفك صغير')}
+${chips(['mic_array','mic_holes','antenna','w_ant'])}
+<ul><li>بورد المايك XVF3800 بيتربط تحت سقف الراس، والـ ٤ مايكات قصاد الـ ٤ خروم الصغيرة اللي فوق. الخروم دي هي بس اللي بتبان من برا.</li>
+<li>المايك ده بيعرف الصوت جاي منين (DoA)، والرقم ده هو اللي بيخلّي الراس تلف ناحية اللي بيتكلم.</li>
+<li>الأنتينا: مكعب تيل مطبوع شفاف، جواه لمبة WS2812 واحدة بتنوّر لما الروبوت بيسمع. سلكها نازل للـ XIAO.</li>
+<li>عدّي سلك الأنتينا من الخرم قبل ما تلزقها.</li></ul>`},
+ {n:'12',t:'السماعة (تحت الراس)',ok:true,xray:true,view:[.9,-.6,1],pad:1.35,frame:['head_shell'],body:()=>`${meta('١٠ دقائق','مفك صغير')}
+${chips(['speaker','w_spk'])}
+<ul><li>السماعة ٤٠ مم بتتربط في أرضية الراس ووشها لتحت. الصوت بيطلع من خروم صغيرة تحت الراس، فمش باينة من قدام.</li>
+<li>السلك بيروح لكونكتور السماعة في بورد المايك نفسه. البورد فيه أمبليفاير ٥ وات، فمش محتاجين واحد لوحده.</li>
+<li>عشان الصوت طالع من بورد المايك، الروبوت عارف هو بيقول إيه فبيشيله من اللي بيسمعه (Echo Cancellation)، يعني <b>مش هيسمع نفسه</b>.</li></ul>`},
+ {n:'13',t:'الودان + موتورات الإيدين',ok:true,xray:true,view:[1.6,.45,.7],pad:1.35,frame:['head_shell'],body:()=>`${meta('٢٠ دقيقة','مفك صغير + اللابتوب')}
+${chips(['ear_servo_r','ear_servo_l','ear_r','ear_l','w_bus_ears'])}
+<ul><li>جوه كل ودن موتور صغير <b>SCS0009</b> الشافت بتاعه لتحت. ده المفصلة اللي بتضم الإيد وتفتحها زي مراية العربية.</li>
+<li>قبل التركيب: الموتور اليمين <b>ID 3</b> والشمال <b>ID 4</b>.</li>
+<li>الودن بتتربط على جنب الراس بمسمارين من جوه. في الركن القدّامي من برا فيه شق صغير، وده اللي دراع الإيد بيلف فيه.</li>
+<li>كابل السيرفو من البورد للودن الشمال، ومنها للودن اليمين، على نفس الكابل.</li></ul>`},
+ {n:'14',t:'الكهربا والتوصيلات',ok:true,xray:true,view:[.5,.6,-1.4],pad:1.35,frame:['head_shell'],body:()=>`${meta('٣٠ دقيقة','مفك + رباطات')}
+${chips(['wago','w_pwr_pi','w_pwr_led','w_pwr_bus','w_usb_mic','w_usb_bus','w_usb_led'])}
+<ul><li><b>WAGO:</b> واحد للـ 5V (أحمر) وواحد للأرضي (أسود). منهم بتطلع ٣ خطوط: الـ Pi (USB-C)، بوردة الوش (سلك تخين)، وبورد السيرفوهات.</li>
+<li><b>USB:</b> ٣ كابلات قصيرة داخلة الـ Pi: المايك، وبورد السيرفوهات، والـ XIAO بتاع الوش.</li>
+<li>رتّب السلوك برباطات صغيرة، وبعّدها عن المروحة.</li></ul>
+<div class="warn">⚠️ الوش بيسحب لحد ٣ أمبير، فسلكه لازم يكون 18AWG ورايح على WAGO مباشرة، <b>مش من الـ Pi</b>.</div>`},
+ {n:'15',t:'تركيب الراس على الرقبة',ok:true,xray:true,view:[1.4,.35,1],pad:1.15,frame:['head_shell','neck','stem'],body:()=>`${meta('١٥ دقيقة','مفك M2.5')}
+${chips(['w_stem','w_chain'])}
+<ul><li>نزّل الراس على الرقبة، ولسان الرقبة يدخل في الشق اللي تحت الراس.</li>
+<li>اربط هورن سيرفو الميل في اللسان بـ ٤ مسامير M2.5 من الضهر المفتوح.</li>
+<li>وصّل كابلات العمود: الكهربا في WAGO، وكابل السيرفو من سيرفو الميل نازل لسيرفو اللف اللي في القاعدة.</li>
+<li>ميّل الراس بإيدك ±١٥° بالراحة، واتأكد إن مفيش حاجة بتخبط في حاجة.</li></ul>`},
+ {n:'16',t:'الغطا الخلفي',ok:true,view:[.6,.4,-1.4],pad:1.35,frame:['head_shell'],body:()=>`${meta('٥ دقائق','مفك M3')}
+${chips(['back_cover'])}
+<ul><li>الغطا الأحمر اللي ورا فيه فتحات تهوية، ومنها بيطلع هوا المروحة.</li>
+<li>بيتقفل بـ ٤ مسامير M3 في الصواميل الحرارية.</li></ul>`},
+ {n:'17',t:'الزجاج الفيميه',ok:true,view:[.5,.3,1.6],pad:1.35,frame:['head_shell'],body:()=>`${meta('٥ دقائق')}
+${chips(['glass'])}
+<ul><li>الأكريليك الفيميه ٣ مم مقصوص ليزر بشكل اللوجو بالظبط، وفيه خرم Ø7 للكاميرا.</li>
+<li>بيدخل في فتحة الوش ويقعد في نفس مستوى القشرة، ومتثبّت بشريط دبل فيس شفاف رفيع على الحرف.</li>
+<li>شيل الورق الحامي آخر حاجة خالص.</li>
+<li>الفيميه بيخلّي اللمبات المطفية سودا تمامًا والمنوّرة واضحة، زي شاشة الهب بالظبط.</li></ul>`},
+ {n:'18',t:'الإيدين (المرايات)',ok:true,view:[.25,.35,1.6],pad:1.3,frame:['head_shell','hand_l','hand_r'],body:()=>`${meta('٢٠ دقيقة','مفك صغير')}
+${chips(['hand_l','hand_r'])}
+<ul><li>كل إيد عبارة عن: بلاطة حمرا + بوردة LED 18×18 + أكريليك فيميه + دراع أسود صغير.</li>
+<li>الدراع بيتركب على شافت موتور الودن من تحت، بمسمار واحد في النص.</li>
+<li>سلك الإيد (٣ سلوك رفيعة) بيعدّي جوه الدراع لحد الودن. سيب فيه لفة صغيرة عشان المفصلة تلف ٩٠° من غير ما يتشد.</li>
+<li>بعد التركيب الإيدين بيتفتحوا لقدّام ويتضمّوا لورا على جنب الراس، زي مرايات العربية بالظبط.</li></ul>`},
+ {n:'19',t:'أول تشغيل',ok:true,view:[.6,.4,1.5],pad:1.15,frame:['head_shell','hand_l','hand_r','base_shell'],body:()=>`${meta('١٠ دقائق','الشاحن + الموبايل')}
+<ul><li>وصّل الشاحن واستنى ٢٠ ثانية: الوش هيكتب <b>BOOT</b> وبعدين يضحك.</li>
+<li>الإيدين هيتفتحوا لوحدهم، والراس هتعمل اختبار حركة: يمين، شمال، فوق، تحت.</li>
+<li>قول <b>"يا أروما"</b>: لازم الأنتينا تنوّر تيل والراس تلف ناحيتك.</li>
+<li>لو حاجة ما اشتغلتش، صوّرها فيديو وابعتهولي وأنا أتابع معاك.</li></ul>
+<div class="chips"><span class="chip">✅ الوش نوّر</span><span class="chip">✅ الإيدين اتفتحوا</span><span class="chip">✅ الراس لفّت</span><span class="chip">✅ سمع "يا أروما"</span></div>`},
+ {n:'20',t:'الدماغ: السوفتوير',ok:true,body:()=>`${meta('السوفتوير كله عليّا، وبينزل على الكارت جاهز','')}
+<p>كده الجسم خلص. ده اللي بيشتغل جوه، وكله على الـ Pi متوصل بالواي فاي:</p>
+<table class="bom"><tbody>
+<tr><td>👂 <b>بيسمع</b></td><td>المايك بيشيل الدوشة والصدى، وكلمة التنبيه <b>"يا أروما"</b> بتتعرف على الـ Pi نفسه، وبعدها الكلام بيتحوّل لنص بالمصري.</td></tr>
+<tr><td>🧠 <b>بيفكّر</b></td><td>Claude: بيعرف إنه البوّاب بتاع أروما، وعارف المشاريع والناس والاجتماع اللي شغّال.</td></tr>
+<tr><td>🗣️ <b>بيتكلم</b></td><td>ElevenLabs (اللي عندك): صوت راجل مصري ثابت ليه هو بس. الرد بياخد حوالي ١–٢ ثانية.</td></tr>
+<tr><td>👀 <b>بيبص</b></td><td>المايك بيقول الصوت جاي منين، فالراس تلف، والكاميرا تثبّت على الوش. عينيه على الشاشة بتتحرك الأول والراس بتلحقها.</td></tr>
+<tr><td>😀 <b>وشّه</b></td><td>نفس كود وش الهب بالظبط (64×27)، ونفس تعبيرات الستيكرز: صباح الفل، هموت من الضحك، فين الفايل...</td></tr>
+<tr><td>🤚 <b>إيديه</b></td><td>إشارات (👍 ❤️ ✋ Z)، والمرايات بتتفتح لما حد يدخل الأوضة وتتضم لما تفضى.</td></tr>
+<tr><td>📝 <b>الاجتماع</b></td><td>بيلخّص، ويكتب المطلوب من كل واحد، ويبعته واتساب أو إيميل. التسجيل بيكون بإذن الحاضرين.</td></tr>
+<tr><td>🌐 <b>التحكم</b></td><td>صفحة على أروما هب تغيّر منها الشخصية والصوت ووقت النوم، وتشوف آخر ملخصات.</td></tr>
+</tbody></table>
+<div class="warn">🔒 الخصوصية: لمبة الأنتينا التيل معناها إنه بيسمع دلوقتي. لما الإيدين مضمومة والوش مكتوب عليه ZZZ يبقى نايم ومش بيسجّل حاجة.</div>`},
 ];
 
 
 /* ───────── step engine ───────── */
+const ALLOK=location.search.includes('preview=all');
 const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
-let cur=0, mode='overview', EXP=0, BENCH=0, BENCH_TO=0, LEDS_ON=true, XRAY_USER=false, ALIVE=!REDUCED, bootT=-1;
+let cur=0, mode='overview', EXP=0, BENCH=0, BENCH_TO=0, benchTw=null, LEDS_ON=true, XRAY_USER=false, ALIVE=!REDUCED, bootT=-1;
 const tmpV=new THREE.Vector3();
 function moveTo(p,to,delay=0,dur=900){ p.tw={from:p.cur.clone(),to:to.clone(),t0:performance.now()+delay,dur}; }
 const exPos=p=>p.home.clone().add(p.ex);
-function stepParts(k){ return LIST.filter(p=>p.step===k&&!p.kitOnly); }
+function stepParts(k){ return LIST.filter(p=>p.step===k&&!p.kitOnly).sort((a,b)=>(a.ord??50)-(b.ord??50)); }
 const STEPOF=k=>STEPS[k]||{};
 /* where each part sits on the table for the kit / print steps */
 function kitLayout(list,z0,maxW){ const out=new Map(); let x=0,z=z0,rowD=0,row=[]; const gap=26;
@@ -558,7 +650,7 @@ function frameCam(list,dir,pad=1.18,dur=1100,which='both'){
  camTw={p0:camera.position.clone(),t0:controls.target.clone(),p1:s.center.clone().addScaledVector(d,dist),t1:s.center.clone(),s:performance.now(),dur}; }
 let camTw=null;
 function setVisibleUpTo(k){ LIST.forEach(p=>{ p.o.visible=!p.kitOnly&&p.step<=k; }); }
-function go(i){ cur=Math.max(0,Math.min(STEPS.length-1,i)); const S=STEPS[cur]; renderList(); clearLabels();
+function go(i){ cur=Math.max(0,Math.min(STEPS.length-1,i)); const S=STEPS[cur]; if(ALLOK) S.ok=true; renderList(); clearLabels();
  $('#cNum').textContent=S.n; $('#cTitle').textContent=S.t;
  $('#cBody').innerHTML=S.ok?S.body():`<div class="soonbox">🛠️ <b>الخطوة دي قيد التجهيز.</b><br>بتتعمل دلوقتي وهتنزل هنا لايف أول ما تخلص — اعمل ريفرش كل شوية.</div>`;
  document.querySelectorAll('#cBody [data-p]').forEach(el=>el.onclick=()=>{ const p=PARTS[el.dataset.p]; if(p){ showPart(p); flash(p); } });
@@ -568,14 +660,14 @@ function go(i){ cur=Math.max(0,Math.min(STEPS.length-1,i)); const S=STEPS[cur]; 
  const el=document.querySelector('.st.on'); if(el) el.scrollIntoView({block:'nearest',inline:'nearest'});
  bootT=-1; LIST.forEach(p=>{ p.tw=null; p.kitTarget=null; }); if(cur>0){ panG.rotation.y=0; tiltG.rotation.x=0; }
  if(!S.ok){ return; }
- if(cur===0){ mode='overview'; LEDS_ON=true; BENCH_TO=0; setVisibleUpTo(99); LIST.forEach(p=>{ p.cur.copy(p.home); }); setXray(XRAY_USER); FOLD_TO=0; frameCam(LIST.filter(p=>!p.kitOnly&&p.kind!=='cable'),[1,.45,1.5],1.05,1100,'home'); return; }
- if(cur===1||cur===2){ mode='kit'; LEDS_ON=true; BENCH=BENCH_TO=0; tiltG.position.y=TILT_Y; setXray(false); FOLD_TO=0; foldV=0;
+ if(cur===0||cur===20){ mode='overview'; LEDS_ON=true; benchTw=null; BENCH=BENCH_TO=0; tiltG.position.y=TILT_Y; setVisibleUpTo(99); LIST.forEach(p=>{ p.cur.copy(p.home); }); setXray(XRAY_USER); FOLD_TO=0; frameCam(LIST.filter(p=>!p.kitOnly&&p.kind!=='cable'),[1,.45,1.5],1.05,1100,'home'); return; }
+ if(cur===1||cur===2){ mode='kit'; LEDS_ON=true; benchTw=null; BENCH=BENCH_TO=0; tiltG.position.y=TILT_Y; setXray(false); FOLD_TO=0; foldV=0;
   const list=LIST.filter(p=>p.kind!=='cable'&&(cur===1||p.kind==='print')); const T=kitTargets(list);
   LIST.forEach(p=>{ p.o.visible=list.includes(p); });
   list.forEach((p,i)=>{ p.kitTarget=T.get(p); moveTo(p,p.kitTarget,120+i*25,1000); });
   frameCam(list,[0,1.25,1],.95,1300,'kit'); return; }
  mode='build'; LEDS_ON=cur>=19; setVisibleUpTo(cur);
- BENCH_TO=(cur>=7&&cur<=15)?190:0; BENCH=BENCH_TO; tiltG.position.y=TILT_Y+BENCH;
+ benchTw=null; BENCH_TO=(cur>=7&&cur<=15)?190:0; BENCH=BENCH_TO; tiltG.position.y=TILT_Y+BENCH;
  setXray(XRAY_USER||!!S.xray); FOLD_TO=cur>=18&&cur!==18?0:1; if(cur===18) FOLD_TO=1;
  LIST.forEach(p=>{ if(p.step<cur){ p.cur.copy(p.home); } });
  const sp=stepParts(cur); sp.forEach((p,i)=>{ p.cur.copy(exPos(p)); addLabel(p,i); });
@@ -583,8 +675,9 @@ function go(i){ cur=Math.max(0,Math.min(STEPS.length-1,i)); const S=STEPS[cur]; 
  setTimeout(()=>{ if(STEPS[cur]===S) assemble(); },650);
  frameCam(S.frame?S.frame.map(id=>PARTS[id]):(sp.length?sp:LIST.filter(p=>!p.kitOnly&&p.kind!=='cable')),S.view,S.pad||1.15,1100,S.frame||!sp.length?'home':'both');
 }
-function assemble(){ const sp=stepParts(cur); sp.forEach((p,i)=>moveTo(p,p.home,i*260,950)); if(cur===15) BENCH_TO=0; if(cur===18) setTimeout(()=>{ if(cur===18) FOLD_TO=0; },sp.length*260+1000); }
-function disassemble(){ const sp=stepParts(cur); sp.slice().reverse().forEach((p,i)=>moveTo(p,exPos(p),i*200,850)); if(cur===15) BENCH_TO=190; if(cur===18) FOLD_TO=1; }
+function benchTo(v,delay=0,dur=1600){ benchTw={from:BENCH,to:v,t0:performance.now()+delay,dur}; BENCH_TO=v; }
+function assemble(){ const sp=stepParts(cur); sp.forEach((p,i)=>moveTo(p,p.home,i*260,950)); if(cur===15) benchTo(0,sp.length*260+300); if(cur===18) setTimeout(()=>{ if(cur===18) FOLD_TO=0; },sp.length*260+1000); }
+function disassemble(){ const sp=stepParts(cur); sp.slice().reverse().forEach((p,i)=>moveTo(p,exPos(p),i*200,850)); if(cur===15) benchTo(190); if(cur===18) FOLD_TO=1; }
 $('#bIn').onclick=assemble; $('#bOut').onclick=disassemble;
 function flash(p){ const t0=performance.now(); p.o.traverse(m=>{ if(m.isMesh&&m.material.emissive&&!m.material.emissiveMap){ m.userData.e0=m.userData.e0??m.material.emissive.getHex(); } }); p.flash=t0; }
 
@@ -647,7 +740,7 @@ function frame(){
   if(p.flash){ const k=(now-p.flash)/1400; p.o.traverse(m=>{ if(m.isMesh&&m.userData.e0!=null) m.material.emissive.setHex(k<1&&Math.floor(k*6)%2===0?0x8a2a10:m.userData.e0); }); if(k>=1) p.flash=0; }
  }
  // the head waits on the bench above the neck while it is being built
- BENCH+=(BENCH_TO-BENCH)*Math.min(1,dt*2.2); tiltG.position.y=TILT_Y+BENCH;
+ if(benchTw){ const k=Math.min(1,Math.max(0,(now-benchTw.t0)/benchTw.dur)); BENCH=benchTw.from+(benchTw.to-benchTw.from)*ease(k); if(k>=1) benchTw=null; } tiltG.position.y=TILT_Y+BENCH;
  // mirror hands
  foldV+=(FOLD_TO-foldV)*Math.min(1,dt*3.2); let f=foldV;
  if(wave>0){ wave-=dt; f=Math.max(0,.18+.16*Math.sin(t*9)); if(wave<=0) hands('open','#ffe6cf'); }
@@ -675,7 +768,7 @@ function frame(){
  controls.update(); renderer.render(scene,camera); labelR.render(scene,camera);
  requestAnimationFrame(frame);
 }
-window.__dbg={camera,controls,PARTS,go};
+window.__dbg={camera,controls,PARTS,go,tiltG,get bench(){return [BENCH,BENCH_TO,benchTw];}};
 renderList(); go(0); frame();
 </script>
 </body>
