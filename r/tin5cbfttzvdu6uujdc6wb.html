@@ -77,6 +77,57 @@ button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--amber);out
 @keyframes dash{to{stroke-dashoffset:-18}}
 @keyframes ping{from{transform:scale(.4);opacity:.9}to{transform:scale(2.2);opacity:0}}
 
+
+/* ---- orbital wheel (v99): every button is an arc («القوس») of one ring laid flat on the ground round the model; facts open as a polar grid of arc cells; all writing runs on circular paths ---- */
+.ohw{position:absolute;left:0;top:0;width:1400px;height:1400px;transform-origin:0 0;pointer-events:none;z-index:4;--c:#46d7cf;--gl:rgba(6,20,38,.84);opacity:0;transition:opacity .45s;will-change:transform}
+.ohw.on{opacity:1}
+.ohw>svg{position:absolute;inset:0;width:1400px;height:1400px;overflow:visible}
+.ohw .s{pointer-events:auto;cursor:pointer}
+.ohw .s path.f{fill:var(--gl);stroke:rgba(255,255,255,.22);stroke-width:2;transition:fill .25s}
+.ohw .s path.h{fill:color-mix(in srgb,var(--c) 75%,transparent)}
+.ohw .s:hover path.f{fill:color-mix(in srgb,var(--c) 28%,rgba(6,20,38,.9))}
+.ohw .s.on path.f{fill:var(--c);stroke:#fff;stroke-width:3}
+.ohw .s.on path.h{fill:#fff}
+.ohw .s.x{cursor:default}.ohw .s.x path.f{fill:rgba(6,20,38,.55)}.ohw .s.x path.h{fill:rgba(255,255,255,.1)}
+.ohw .s.sb path.f{fill:color-mix(in srgb,var(--c) 18%,rgba(6,20,38,.9));stroke:color-mix(in srgb,var(--c) 70%,transparent)}
+.ohw path.sbl{fill:var(--c);opacity:.55;pointer-events:none}
+.ohw .s.sb.on path.f{fill:#f4efe6;stroke:#fff}
+.ohw .r1{fill:none;stroke:var(--c);stroke-opacity:.75;stroke-width:3}
+.ohw .r2{fill:none;stroke:#fff;stroke-opacity:.25;stroke-width:2;stroke-dasharray:3 10}
+.ohw .tk{stroke:#fff;stroke-opacity:.4;stroke-width:2}
+.ohw .tk.l{stroke-opacity:.9;stroke-width:3}
+.ohw .num{fill:#fff;fill-opacity:.65;font:600 17px var(--f-num);text-anchor:middle;dominant-baseline:central}
+.ohw .num.n{fill:var(--amber);fill-opacity:1;font-size:22px}
+.ohw .tt{fill:#eef4fb;font-family:var(--f-head);font-weight:600;pointer-events:none;paint-order:stroke;stroke:rgba(0,0,0,.35);stroke-width:3px}
+.ohw .tt.v{font-family:var(--f-num);font-weight:700;fill:color-mix(in srgb,var(--c) 60%,#fff)}
+.ohw .tt.nm{font-weight:700}
+.ohw .tt.on{fill:#06101c;stroke:none}.ohw .tt.v.on{fill:#06101c}
+.ohw .tt.x{fill-opacity:.45}
+.ohw .tt.sb.on{fill:#06101c;stroke:none}
+.ohw .ti svg{fill:none;stroke:color-mix(in srgb,var(--c) 70%,#fff);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ohw .ti.on svg{stroke:#06101c}
+.ohw .ce{animation:ohCe .45s cubic-bezier(.2,.8,.2,1) both;pointer-events:auto}
+.ohw .ce.hd{fill:rgba(6,20,38,.92);stroke:color-mix(in srgb,var(--c) 70%,transparent);stroke-width:2}
+.ohw .ce.tx,.ohw .ce.q{fill:#e9eef5}
+.ohw .ce.v{fill:#fff}
+.ohw .ce.im{fill:#020a14;stroke:#fff;stroke-width:2;cursor:zoom-in}
+.ohw .ce.btn{fill:color-mix(in srgb,var(--c) 30%,rgba(6,20,38,.9));stroke:var(--c);stroke-width:2;cursor:pointer}
+.ohw .ce.btn:hover{fill:var(--c)}
+@keyframes ohCe{from{opacity:0}to{opacity:1}}
+.ohw .cg{animation:ohCe .45s both}
+.ohw .ct{pointer-events:none;font-family:var(--f-body);font-weight:600;fill:#0b1626}
+.ohw .ct.hd{font-family:var(--f-head);font-weight:700;fill:color-mix(in srgb,var(--c) 55%,#fff)}
+.ohw .ct.v{font-family:var(--f-num);font-weight:700}
+.ohw .ct.q{font-family:var(--f-head);font-weight:700}
+.ohw .ct.btn{fill:#fff;font-family:var(--f-head)}
+.ohw .ii{pointer-events:none;animation:ohCe .6s both}
+.ohw .tl0{fill:none;stroke:#2a3646;stroke-width:9}
+.ohw .tl1{fill:none;stroke:#c9d3de;stroke-width:9}
+.ohw .tlm{fill:var(--c);stroke:#fff;stroke-width:3}
+.ohw .tly{fill:#fff;font:700 22px var(--f-num);text-anchor:middle;dominant-baseline:central}
+.ohw .tle{fill:#9fb3c8;font:600 16px var(--f-num);text-anchor:middle;dominant-baseline:central}
+@media (max-width:900px){.ohw{display:none}}
+
 /* ---- labels projected from 3D ---- */
 .labels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .lb{position:absolute;left:0;top:0;white-space:nowrap;will-change:transform;transition:opacity .25s}
@@ -107,6 +158,12 @@ button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--amber);out
 .lb.ringcap{font-size:.78rem;letter-spacing:.06em;color:var(--dim);text-shadow:0 0 8px #000}
 .lb.lm{pointer-events:auto;cursor:pointer;display:flex;align-items:center;gap:.4rem;font:600 .86rem var(--f-head);color:#fff;text-shadow:0 0 6px #000,0 0 12px #000,0 1px 2px #000}
 .lb.lm i{flex:none;width:.6rem;height:.6rem;border-radius:50%;background:var(--c);box-shadow:0 0 0 .16rem color-mix(in srgb,var(--c) 30%,transparent),0 0 .7rem var(--c)}
+/* a project pin close in: a small glass tag in the project colour, hung just above its beacon head, so no project vanishes into the streets */
+.lb.pj{pointer-events:auto;cursor:pointer;display:flex;align-items:center;gap:.35rem;max-width:16rem;padding:.16rem .5rem .18rem .4rem;border-radius:.3rem;font:600 .74rem/1.25 var(--f-head);color:#fff;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 34%,rgba(4,14,30,.82)),rgba(4,14,30,.78));border:1px solid color-mix(in srgb,var(--c) 70%,transparent);box-shadow:0 0 .8rem -.2rem var(--c);text-shadow:0 1px 2px #000;white-space:nowrap}
+.lb.pj span{overflow:hidden;text-overflow:ellipsis}
+.lb.pj i{flex:none;width:.45rem;height:.45rem;transform:rotate(45deg);background:var(--c);box-shadow:0 0 .5rem var(--c)}
+.lb.pj.hot,.lb.pj:hover{border-color:#fff;z-index:2}
+
 
 /* ---- HUD panel: thin frame with corner brackets ---- */
 .hud{position:relative;--b:rgba(var(--lt),.6);border:1px solid var(--line);border-radius:.15rem;padding:.7rem .8rem;
@@ -880,7 +937,7 @@ html[data-lang="en"] #bLang{font-family:"Noto Kufi Arabic","IBM Plex Sans Arabic
 <script>
 (function(){
   var base = window.EG_BASE, tries = 0;
-  function part(i){ return fetch(base + "app/app." + i + ".txt?v=4470ff1b07").then(function(r){ if (!r.ok) throw new Error(r.status); return r.blob(); }); }
+  function part(i){ return fetch(base + "app/app." + i + ".txt?v=ce5e382438").then(function(r){ if (!r.ok) throw new Error(r.status); return r.blob(); }); }
   function go(){
     Promise.all([part(0), part(1)]).then(function(b){
       var s = document.createElement("script"); s.src = URL.createObjectURL(new Blob(b, {type: "text/javascript"})); document.body.appendChild(s);
