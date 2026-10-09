@@ -113,6 +113,22 @@ body.bp .bpb{background:#eaf4ff;color:#0c3a68;border-color:#eaf4ff}
 .bpsizes h5 span{font:400 11.5px var(--ar);color:var(--dim);margin-inline-start:8px}
 .bpsizes tr{cursor:pointer}
 .mono{font-family:var(--mono);direction:ltr}
+/* weights & loads */
+.ldb{width:100%;border-color:rgba(239,106,60,.5)}
+.tog .ldb.on{background:var(--org);border-color:var(--org);color:#180703}
+#card h5{margin:14px 0 2px;font:700 13.5px var(--ar)}
+#card .sm{font-size:13px;color:var(--dim);margin:4px 0}
+#card .sm b{color:var(--ink)}
+.ok{color:var(--teal);font-weight:600}
+.bad{color:#ff8a6a}
+.ldlive{font:500 13px var(--ar);border:1px solid rgba(239,106,60,.35);padding:6px 10px;margin:4px 0 6px;min-height:20px}
+.ldlive b{color:var(--org)}
+.ldl{direction:rtl;font:500 11.5px/1.25 var(--ar);color:var(--ink);background:rgba(11,9,8,.84);border:1px solid var(--line);padding:3px 8px;white-space:nowrap;transform:translate(calc(50% + 14px),-50%)}
+.ldl b{font:600 11px var(--mono);direction:ltr;display:inline-block}
+.ldl.o{border-inline-start:2px solid var(--org)}.ldl.o b{color:var(--org)}
+.ldl.t{border-inline-start:2px solid var(--teal);transform:translate(calc(-50% - 10px),-50%)}
+.ldl.w{border-inline-start:2px solid var(--ink)}
+body.bp .ldl{background:#0c3a68;border-color:rgba(234,244,255,.4)}
 @media (max-width:860px){ body.bp #bpTitle{top:8px;bottom:auto;left:8px;right:8px} body.bp #bpTitle span:nth-child(4){display:none} }
 #nogl{display:none;position:fixed;inset:0;place-items:center;text-align:center;z-index:9;padding:30px}
 @media (max-width:860px){
@@ -143,6 +159,7 @@ body.bp .bpb{background:#eaf4ff;color:#0c3a68;border-color:#eaf4ff}
 <div id="tools">
  <div class="tool" id="tExplode"><label><span>فكّ المجسم</span><span id="exV">0%</span></label><input type="range" dir="ltr" id="ex" min="0" max="100" value="0"></div>
  <div class="tool tog"><button id="bBP" class="bpb">📐 بلو برينت + المقاسات</button></div>
+ <div class="tool tog"><button id="bLD" class="ldb">⚖️ الأوزان والأحمال</button></div>
  <div class="tool tog"><button id="bX">شفاف</button><button id="bAlive" class="on">حيّ</button><button id="bSpin">لف</button></div>
  <div class="tool tog"><button id="bFold">ضم الإيدين</button><button id="bWave">سلّم</button></div>
 </div>
@@ -172,6 +189,7 @@ const LOG=[
  ['05:31','نزلت كل الخطوات من ٠٥ لـ ٢٠: البيرينج، العمود، الراس من جوه (الوش والكاميرا، السيرفوهات، الـ Pi، المايك، السماعة، الودان، الكهربا)، تركيب الراس، الغطا، الزجاج، الإيدين، أول تشغيل، والدماغ.'],
  ['10:21','نزل لوك «بلو برينت»: كل حاجة مرسومة خطوط على أزرق، ومقاسات كل قطعة بالمللي في كل خطوة، ولكل سلك طوله. والمقاس بقى ظاهر في كارت أي قطعة تدوس عليها.'],
  ['10:42','٣ تعديلات: (١) البلو برينت اتعمل من جديد: رسم خطوط نضيف، واجهة أمامية بخمس مقاسات، ومقاسات قطعة واحدة في كل مرة. (٢) الحتة المايلة: الشاسيه اتقص بميل اللوجو، وعمود الوش وبورد السيرفوهات دخلوا جوه، واختبار أوتوماتيك أكد إن صفر قطع طالعة برا القشرة. (٣) مفصل الميل بقى باين: مهد أسود فيه السيرفو + كوبري U ماسك الراس من الناحيتين + لفّة كابلات ورا الرقبة.'],
+ ['11:14','الوصلة اتصممت على الأحمال: كوبري ألومنيوم U ‏٣ مم + لوح عمود فقري ألومنيوم جوه الراس، و٦ مسامير حابسين أرضية القشرة بينهم، والسيرفوهات بقت 12 فولت (٣٠ كجم·سم). العمود بقى بولي كربونات داخل ٢٥ مم في الطوق بمسمار عرضي، والقاعدة Ø١٨ سم فيها ٩٢٥ جم حديد. وزرار جديد «⚖️ الأوزان والأحمال» بيحسب من المجسم: الراس ١٫٢٥ كجم، والسيرفو شغّال على ١٨٪ من قدرته، والروبوت مش بيقع غير عند ميل ٢٧°.'],
 
 ];
 
@@ -332,7 +350,7 @@ function cable(id,meta,grp,pts,color,r=2.2,ex=[0,0,0]){
  const c=new THREE.Vector3(); P.forEach(p=>c.add(p)); c.multiplyScalar(1/P.length);
  const curve=new THREE.CatmullRomCurve3(P.map(p=>p.clone().sub(c)),false,'centripetal');
  const build=()=>mesh(new THREE.TubeGeometry(curve,Math.max(24,P.length*14),r,8,false),MAT.wire(color));
- const p=part(id,Object.assign({kind:'cable'},meta),build,grp,[c.x,c.y+off,c.z],ex); p.len=curve.getLength(); p.curvePts=curve.getPoints(120); return p;
+ const p=part(id,Object.assign({kind:'cable'},meta),build,grp,[c.x,c.y+off,c.z],ex); p.len=curve.getLength(); p.r=r; p.curvePts=curve.getPoints(120); return p;
 }
 const STS=()=>{ // Feetech STS3215, origin = output shaft axis on the top face; body hangs below (−y), length along +x
  const g=new THREE.Group();
@@ -349,27 +367,29 @@ const SCS9=()=>{ // Feetech SCS0009 micro bus servo, origin = shaft on the top f
  g.add(at(cyl(2.4,3,MAT.metal(),14),0,1.5,0)); return g; };
 
 /* base */
-part('feet',{ar:'رجول كاوتش ×4',en:'Rubber feet Ø14 × 4',kind:'buy',step:3},()=>{const g=new THREE.Group(); [[40,40],[-40,40],[40,-40],[-40,-40]].forEach(([x,z])=>g.add(at(cyl(7,3,MAT.rubber()),x,0,z))); return g;},'base',[0,-1.5,0],[0,-60,0]);
-part('base_shell',{ar:'جسم القاعدة',en:'Base shell Ø150 × 40',kind:'print',step:3,mat:'PETG أسود مطفي',g:120,h:6},()=>{const g=new THREE.Group(); g.add(mesh(ringGeo(75,72.5,40),MAT.black())); g.add(at(cyl(72.5,3,MAT.black(),72),0,-18.5,0));
- g.add(rx(at(cyl(6.5,.5,MAT.chip(),20),0,0,-75.1),Math.PI/2)); return g;},'base',[0,20,0],[0,-130,0]);
-part('weights',{ar:'أوزان حديد ×4',en:'Steel discs Ø40 × 10 (≈ 400 g)',kind:'buy',step:3},()=>{const g=new THREE.Group(); [[36,36],[-36,36],[36,-36],[-36,-36]].forEach(([x,z])=>g.add(at(cyl(20,10,MAT.steel()),x,0,z))); return g;},'base',[0,8,0],[0,150,0]);
-part('dc_jack',{ar:'جاك الكهربا 5.5 مم',en:'Panel-mount DC jack 5.5 × 2.1',kind:'buy',step:3},()=>{const g=new THREE.Group(); const b=cyl(5.5,16,MAT.plastic(),24); b.rotation.x=Math.PI/2; g.add(b); const n=mesh(ringGeo(7.5,5.5,2.5,24),MAT.metal()); n.rotation.x=Math.PI/2; n.position.z=-6; g.add(n); return g;},'base',[0,20,-70],[0,0,-90]);
-cable('w_jack',{ar:'سلكين الكهربا (+ / −)',en:'18 AWG pair from the jack',step:3},'base',[[0,20,-61],[0,24,-50],[0,30,-34],[0,36,-22],[0,39,-19]],0xb8261a,1.8,[0,0,-60]);
-part('pan_servo',{ar:'سيرفو اللف STS3215 (ID 1)',en:'Feetech STS3215 — pan, ID 1',kind:'buy',step:4},STS,'base',[0,40,0],[0,150,0]);
+part('feet',{ar:'حلقة سيليكون مانعة للانزلاق',en:'Silicone anti-slip ring Ø172 / Ø160 × 3',kind:'buy',step:3},()=>mesh(ringGeo(86,80,3),MAT.rubber()),'base',[0,-1.5,0],[0,-60,0]);
+part('base_shell',{ar:'جسم القاعدة',en:'Base shell Ø180 × 40',kind:'print',step:3,mat:'PETG أسود مطفي',g:150,h:7},()=>{const g=new THREE.Group(); g.add(mesh(ringGeo(90,87.5,40),MAT.black())); g.add(at(cyl(87.5,3,MAT.black(),72),0,-18.5,0));
+ g.add(rx(at(cyl(6.5,.5,MAT.chip(),20),0,0,-90.1),Math.PI/2)); return g;},'base',[0,20,0],[0,-130,0]);
+part('weights',{ar:'أوزان حديد ×4 (≈ ٩٢٥ جم)',en:'Steel discs Ø50 × 15 ×4 (≈ 925 g)',kind:'buy',step:3},()=>{const g=new THREE.Group(); [[42,42],[-42,42],[42,-42],[-42,-42]].forEach(([x,z])=>g.add(at(cyl(25,15,MAT.steel()),x,0,z))); return g;},'base',[0,10.5,0],[0,150,0]);
+part('dc_jack',{ar:'جاك الكهربا 12 فولت',en:'Panel-mount DC jack 5.5 × 2.1 — 12 V in',kind:'buy',step:3},()=>{const g=new THREE.Group(); const b=cyl(5.5,16,MAT.plastic(),24); b.rotation.x=Math.PI/2; g.add(b); const n=mesh(ringGeo(7.5,5.5,2.5,24),MAT.metal()); n.rotation.x=Math.PI/2; n.position.z=-6; g.add(n); return g;},'base',[0,20,-85],[0,0,-90]);
+cable('w_jack',{ar:'سلكين الكهربا (+ / −)',en:'18 AWG pair from the jack',step:3},'base',[[0,20,-76],[0,24,-62],[0,30,-40],[0,36,-24],[0,39,-19]],0xb8261a,1.8,[0,0,-60]);
+part('pan_servo',{ar:'سيرفو اللف STS3215 ‏12V (ID 1)',en:'Feetech STS3215 12 V, 30 kg·cm — pan, ID 1',kind:'buy',step:4},STS,'base',[0,40,0],[0,150,0]);
 cable('w_pan',{ar:'كابل سيرفو اللف',en:'Servo bus lead',step:4},'base',[[33.8,16,0],[30,20,-10],[14,30,-19],[2,38,-19]],0xe9e6e0,1.6,[0,150,0]);
-part('base_lid',{ar:'غطا القاعدة',en:'Base lid with servo posts',kind:'print',step:4,mat:'PETG أسود مطفي',g:45,h:2},()=>{const g=new THREE.Group(); g.add(mesh(discHoles(75,[[0,0,11.5],[0,-19,5]],6),MAT.black()));
+part('base_lid',{ar:'غطا القاعدة',en:'Base lid with servo posts',kind:'print',step:4,mat:'PETG أسود مطفي',g:60,h:2.5},()=>{const g=new THREE.Group(); g.add(mesh(discHoles(90,[[0,0,11.5],[0,-19,5]],6),MAT.black()));
  [[-15,0],[37.4,0]].forEach(([x,z])=>g.add(at(cyl(2.5,10.5,MAT.black(),16),x,-8.25,z))); return g;},'base',[0,43,0],[0,110,0]);
 part('bearing',{ar:'بيرينج دوّار ٣ بوصة',en:'Lazy-susan bearing 75 mm',kind:'buy',step:5},()=>{const g=new THREE.Group(); const sq=shapeOf(rect(75,75)); const hp=new THREE.Path(); hp.absarc(0,0,24,0,Math.PI*2,true); sq.holes.push(hp);
  const pg=new THREE.ExtrudeGeometry(sq,{depth:1.2,bevelEnabled:false}); pg.rotateX(-Math.PI/2);
  g.add(at(mesh(pg,MAT.metal()),0,-3.75,0)); g.add(at(mesh(pg.clone(),MAT.metal()),0,2.55,0));
  const t=mesh(new THREE.TorusGeometry(31,2.6,12,64),MAT.steel()); t.rotation.x=Math.PI/2; g.add(t); return g;},'base',[0,49.75,0],[0,80,0]);
 /* pan */
-part('turntable',{ar:'الطبق الدوّار',en:'Turntable Ø110 + horn boss',kind:'print',step:5,mat:'PETG أسود مطفي',g:40,h:2},()=>{const g=new THREE.Group(); g.add(mesh(discHoles(55,[[0,-19,5]],6),MAT.black())); g.add(at(mesh(ringGeo(16.5,12.6,12),MAT.black()),0,9,0)); g.add(at(cyl(10,7,MAT.black()),0,-6.5,0)); return g;},'pan',[0,56.5,0],[0,90,0]);
-part('stem',{ar:'العمود الشفاف',en:'Clear acrylic tube Ø25 × 83.5',kind:'buy',step:6},()=>mesh(ringGeo(12.5,10.5,83.5,48),MAT.clear()),'pan',[0,101.25,0],[0,200,0]);
+part('turntable',{ar:'الطبق الدوّار',en:'Turntable Ø110 + 20 mm socket for the tube, M3 cross-bolt',kind:'print',step:5,mat:'PETG أسود مطفي',g:46,h:2.2},()=>{const g=new THREE.Group(); g.add(mesh(discHoles(55,[[0,-19,5]],6),MAT.black())); g.add(at(mesh(ringGeo(16.5,12.6,20),MAT.black()),0,13,0));
+ const xb=cyl(1.5,31,MAT.steel(),10); xb.rotation.z=Math.PI/2; g.add(at(xb,0,17,7)); const xh=cyl(2.75,2,MAT.steel(),12); xh.rotation.z=Math.PI/2; g.add(at(xh,15.5,17,7)); const xn=cyl(3.1,2.4,MAT.steel(),6); xn.rotation.z=Math.PI/2; g.add(at(xn,-15.6,17,7)); g.add(at(cyl(10,7,MAT.black()),0,-6.5,0)); return g;},'pan',[0,56.5,0],[0,90,0]);
+part('stem',{ar:'العمود الشفاف (بولي كربونات)',en:'Clear polycarbonate tube Ø25 × 3 wall × 83.5 — does not shatter',kind:'buy',step:6},()=>mesh(ringGeo(12.5,9.5,83.5,48),MAT.clear()),'pan',[0,101.25,0],[0,200,0]);
 cable('braid',{ar:'الكابلات جوه العمود (شراب أسود)',en:'Power pair + servo bus in black braid',step:6},'pan',[[0,40,-19],[0,52,-19],[0,60,-16],[0,70,-6],[0,84,0],[0,122,0],[0,134,-4],[0,139,-12],[0,141,-17.5]],0x161616,4,[0,0,-120]);
-part('neck',{ar:'مهد سيرفو الميل (الرقبة)',en:'Tilt cradle — holds the tilt servo, idler pivot on the left',kind:'print',step:6,mat:'PETG أسود مطفي',g:48,h:3,ord:0},()=>{const g=new THREE.Group();
+part('neck',{ar:'مهد سيرفو الميل (الرقبة)',en:'Tilt cradle — holds the tilt servo, idler pivot on the left, 25 mm collar on the tube',kind:'print',step:6,mat:'PETG أسود مطفي',g:56,h:3.4,ord:0},()=>{const g=new THREE.Group();
  g.add(box(42,60,31,MAT.black(),4));                                                        // the cradle around the servo (y 143–203)
- g.add(at(cyl(16.5,10,MAT.black()),0,-35,0));                                                // collar on the tube
+ g.add(at(cyl(16.5,25,MAT.black()),0,-42.5,0));                                              // collar: 25 mm down the tube
+ const xb=cyl(1.5,31,MAT.steel(),10); xb.rotation.z=Math.PI/2; g.add(at(xb,0,-50,7)); const xh=cyl(2.75,2,MAT.steel(),12); xh.rotation.z=Math.PI/2; g.add(at(xh,15.5,-50,7)); const xn=cyl(3.1,2.4,MAT.steel(),6); xn.rotation.z=Math.PI/2; g.add(at(xn,-15.6,-50,7));   // M3 cross-bolt through collar + tube
  const ax=TILT_Y-173, ib=cyl(6,3,MAT.dark(),24); ib.rotation.z=Math.PI/2; g.add(at(ib,-22.5,ax,0));   // idler pivot (M4 + 624 bearing)
  const sh=mesh(ringGeo(7.5,4.5,.6,32),MAT.chip()); sh.rotation.z=Math.PI/2; g.add(at(sh,21.2,ax,0));     // shaft opening
  g.add(at(cyl(6,.6,MAT.chip(),20),0,-35,-16.6)).children.at(-1).rotation.x=Math.PI/2;      // cable exit at the back of the collar
@@ -378,7 +398,7 @@ part('neck',{ar:'مهد سيرفو الميل (الرقبة)',en:'Tilt cradle �
 part('head_shell',{ar:'قشرة الراس',en:'Head shell — Aroma logo block, 253.8 × 124.2 × 109',kind:'print',step:7,mat:'PLA أحمر أروما',g:300,h:14},()=>{
  const g=new THREE.Group(); const eg=new THREE.ExtrudeGeometry(shapeOf(HEAD),{depth:HD,bevelEnabled:true,bevelThickness:HB,bevelSize:HB,bevelSegments:4,curveSegments:4}); eg.translate(0,0,-HD/2);
  g.add(mesh(eg,MAT.red()));
- g.add(at(cyl(6,.6,MAT.chip(),20),0,-.575*U-.2,-19));                                    // cable hole behind the bracket (underneath)
+ g.add(at(cyl(6,.6,MAT.chip(),20),-20,-.575*U-.2,-30));                                    // cable hole behind the bracket (underneath)
  for(let i=0;i<5;i++) for(let j=0;j<3;j++) g.add(at(cyl(1.4,.6,MAT.chip(),10),62+i*8,-.575*U-.2,-27+j*8));   // speaker holes
  return g; },'tilt',[0,HCY,0],[0,240,0]);
 part('chassis',{ar:'الشاسيه الداخلي',en:'Inner chassis — holds the face board, Pi and camera',kind:'print',step:7,mat:'PETG رمادي',g:80,h:4},()=>{
@@ -404,9 +424,10 @@ cable('w_cam',{ar:'كابل الكاميرا (Pi 5، 200 مم)',en:'Pi 5 camera 
 part('glass',{ar:'زجاج الوش الفيميه',en:'Smoked acrylic 3 mm — logo outline, Ø7 camera hole',kind:'buy',step:17,sz:[223.3,95,3]},()=>{const s=shapeOf(WIN); const ch=new THREE.Path(); ch.absarc(CAMC[0],CAMC[1],3.5,0,Math.PI*2,true); s.holes.push(ch); const m=mesh(new THREE.ShapeGeometry(s,16),MAT.gloss()); m.position.z=HZ+.6; return m;},'tilt',[0,HCY,0],[0,0,170]);
 /* tilt servo + bus adapter */
 const qTilt=new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(new THREE.Vector3(0,-1,0),new THREE.Vector3(1,0,0),new THREE.Vector3(0,0,1)));
-part('tilt_servo',{ar:'سيرفو الميل STS3215 (ID 2) جوه المهد',en:'Feetech STS3215 — tilt, ID 2, in the neck cradle',kind:'buy',step:6,ord:1},STS,'pan',[17.5,TILT_Y,0],[0,0,-130],qTilt);
-part('bus_adapter',{ar:'بورد السيرفوهات (Waveshare)',en:'Waveshare Bus Servo Adapter (A)',kind:'buy',step:9},()=>{const g=new THREE.Group(); g.add(box(40,1.6,32,MAT.pcbB())); g.add(at(box(9,6,7,MAT.white()),-12,3.8,-12)); g.add(at(box(9,6,7,MAT.white()),0,3.8,-12)); g.add(at(box(9,3.2,7.4,MAT.metal()),14,2.4,10)); g.add(at(box(10,8,7,MAT.wire(0x2c8a3e)),-12,4.8,10)); return g;},'tilt',[-55,222,-30],[0,0,-150]);
-cable('w_bus1',{ar:'كابل السيرفو: البورد ← خرم الرقبة',en:'Servo bus: adapter → neck hole',step:9},'tilt',[[-67,229,-44],[-40,226,-40],[-12,220,-28],[0,216,-19]],0xe9e6e0,1.6,[0,0,-150]);
+part('tilt_servo',{ar:'سيرفو الميل STS3215 ‏12V (ID 2) جوه المهد',en:'Feetech STS3215 12 V, 30 kg·cm — tilt, ID 2, in the neck cradle',kind:'buy',step:6,ord:1},STS,'pan',[17.5,TILT_Y,0],[0,0,-130],qTilt);
+part('bus_adapter',{ar:'بورد السيرفوهات (12 فولت: اللف + الميل)',en:'Waveshare Bus Servo Adapter (A) #1 — 12 V bus for pan + tilt',kind:'buy',step:9},()=>{const g=new THREE.Group(); g.add(box(40,1.6,32,MAT.pcbB())); g.add(at(box(9,6,7,MAT.white()),-12,3.8,-12)); g.add(at(box(9,6,7,MAT.white()),0,3.8,-12)); g.add(at(box(9,3.2,7.4,MAT.metal()),14,2.4,10)); g.add(at(box(10,8,7,MAT.wire(0x2c8a3e)),-12,4.8,10)); return g;},'tilt',[-55,222,-30],[0,0,-150]);
+part('bus_adapter2',{ar:'بورد سيرفوهات الإيدين (5 فولت)',en:'Waveshare Bus Servo Adapter (A) #2 — 5 V bus for the hinge motors',kind:'buy',step:9},()=>{const g=new THREE.Group(); g.add(box(40,1.6,32,MAT.pcbB())); g.add(at(box(9,6,7,MAT.white()),-12,3.8,-12)); g.add(at(box(9,6,7,MAT.white()),0,3.8,-12)); g.add(at(box(9,3.2,7.4,MAT.metal()),14,2.4,10)); g.add(at(box(10,8,7,MAT.wire(0x2c8a3e)),-12,4.8,10)); return g;},'tilt',[28,222,4],[0,0,-150]);
+cable('w_bus1',{ar:'كابل السيرفو: البورد ← خرم الرقبة',en:'Servo bus: adapter → neck hole',step:9},'tilt',[[-67,229,-44],[-40,226,-42],[-26,220,-34],[-20,216,-30]],0xe9e6e0,1.6,[0,0,-150]);
 /* Raspberry Pi 5 — board parallel to the face, parts facing back */
 part('pi5',{ar:'Raspberry Pi 5 (4GB)',en:'Raspberry Pi 5 — 4 GB',kind:'buy',step:10},()=>{const g=new THREE.Group();
  g.add(box(85,56,1.6,MAT.pcbG(),2.5));
@@ -436,27 +457,39 @@ part('ear_l',{ar:'الودن الشمال',en:'Left ear — houses the hinge mot
 const qEar=new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.PI,Math.PI/2,0,'YXZ'));
 part('ear_servo_r',{ar:'موتور مفصلة الإيد اليمين SCS0009 (ID 3)',en:'Feetech SCS0009 micro bus servo — right hinge, ID 3',kind:'buy',step:13,ord:0},SCS9,'tilt',[PIV[0],HCY+PIV[1]+5,PIV[2]],[170,0,0],qEar);
 part('ear_servo_l',{ar:'موتور مفصلة الإيد الشمال SCS0009 (ID 4)',en:'Feetech SCS0009 micro bus servo — left hinge, ID 4',kind:'buy',step:13,ord:1},SCS9,'tilt',[-PIV[0],HCY+PIV[1]+5,PIV[2]],[-170,0,0],qEar);
-cable('w_bus_ears',{ar:'كابل السيرفو: البورد ← موتورات الودان',en:'Servo bus: adapter → both hinge motors',step:13},'tilt',[[-55,229,-44],[-82,250,-44],[-108,270,-26],[-128,284,-6],[-116,306,-40],[0,324,-46],[116,306,-40],[128,284,-6]],0xe9e6e0,1.3,[0,60,-60]);
+cable('w_bus_ears',{ar:'كابل السيرفو: بورد الإيدين ← موتورات الودان',en:'Servo bus: adapter → both hinge motors',step:13},'tilt',[[28,228,-10],[-20,250,-38],[-60,256,-44],[-106,270,-26],[-128,284,-6],[-116,306,-40],[0,324,-46],[116,306,-40],[128,284,-6]],0xe9e6e0,1.3,[0,60,-60]);
 /* power + data */
-part('wago',{ar:'موزّع الكهربا (WAGO ×2)',en:'WAGO 221-415 ×2 — 5 V and GND',kind:'buy',step:14},()=>{const g=new THREE.Group(); [0,1].forEach(i=>{ g.add(at(box(20,8,18,MAT.wire(0xd9d5cc),1),i*22,0,0)); for(let k=0;k<5;k++) g.add(at(box(2.6,3,8,MAT.wire(0xe8651f)),i*22-7.5+k*3.8,5.2,-4)); }); return g;},'tilt',[-50,221,22],[0,-90,60]);
-cable('w_pwr_pi',{ar:'كهربا الـ Pi (USB-C)',en:'5 V → Pi USB-C pigtail',step:14},'tilt',[[-26,225,24],[0,232,24],[24,246,22],[32,252,20],[32,256,19.5]],0xb8261a,1.8,[0,-60,40]);
-cable('w_pwr_led',{ar:'كهربا شاشة الوش',en:'5 V → face board (thick pair)',step:14},'tilt',[[-40,225,30],[-10,228,38],[30,230,44],[60,236,46]],0xb8261a,2.2,[0,-60,40]);
-cable('w_pwr_bus',{ar:'كهربا بورد السيرفوهات',en:'5 V → servo adapter',step:14},'tilt',[[-56,222,14],[-62,224,2],[-67,227,-14]],0xb8261a,1.6,[0,-60,40]);
-cable('w_usb_mic',{ar:'USB: المايك ← الـ Pi',en:'USB-C → USB-A: mic array',step:14},'tilt',[[-18,329.7,0],[20,326,-12],[90,316,-12],[113,296,-2],[106,286,14]],0x1a1a1a,1.8,[0,60,-60]);
-cable('w_usb_bus',{ar:'USB: بورد السيرفوهات ← الـ Pi',en:'USB-C → USB-A: servo adapter',step:14},'tilt',[[-41,227,-24],[0,248,-42],[80,256,-30],[110,266,0],[106,268,14]],0x1a1a1a,1.8,[0,-60,-60]);
-cable('w_usb_led',{ar:'USB: بوردة الوش ← الـ Pi',en:'USB-C → USB-A: XIAO (face driver)',step:14},'tilt',[[-68,272,42],[-70,290,36],[-70,292,26],[-20,296,4],[60,318,0],[110,312,2],[106,304.5,14]],0x1a1a1a,1.8,[0,-60,60]);
+part('wago',{ar:'موزّع الكهربا (WAGO ×3: 12V / 5V / سالب)',en:'WAGO 221-415 ×3 — 12 V, 5 V, GND',kind:'buy',step:14},()=>{const g=new THREE.Group(); [-22,0,22].forEach((x,i)=>{ g.add(at(box(20,8,18,MAT.wire(0xd9d5cc),1),x,0,0)); for(let k=0;k<5;k++) g.add(at(box(2.6,3,8,MAT.wire([0xe8651f,0xe8b21f,0x222222][i])),x-7.5+k*3.8,5.2,-4)); }); return g;},'tilt',[-26,223.5,18],[0,-90,60]);
+part('buck',{ar:'منظّم 12 ← 5 فولت ‏10 أمبير',en:'DC-DC buck 12 V → 5 V 10 A (with heatsink)',kind:'buy',step:14,ord:0},()=>{const g=new THREE.Group(); g.add(box(58,8,30,MAT.pcbG())); g.add(at(box(58,4,30,MAT.alu()),0,6,0)); for(let i=0;i<9;i++) g.add(at(box(1.4,8,30,MAT.alu()),-26+i*6.5,12,0)); return g;},'tilt',[18,225,-34],[0,-80,-60]);
+cable('w_pwr_pi',{ar:'كهربا الـ Pi (USB-C)',en:'5 V → Pi USB-C pigtail (from the 5 V bank)',step:14},'tilt',[[-20,228,26],[6,232,24],[24,246,22],[32,252,20],[32,256,19.5]],0xb8261a,1.8,[0,-60,40]);
+cable('w_pwr_led',{ar:'كهربا شاشة الوش',en:'5 V → face board (thick pair)',step:14},'tilt',[[-26,227,28],[-10,229,38],[30,231,44],[60,236,46]],0xb8261a,2.2,[0,-60,40]);
+cable('w_pwr_bus',{ar:'12 فولت ← بورد السيرفوهات',en:'12 V → servo adapter #1',step:14},'tilt',[[-48,225,10],[-56,225,0],[-67,227,-14]],0xb8261a,1.6,[0,-60,40]);
+cable('w_usb_mic',{ar:'USB: المايك ← الـ Pi',en:'USB-C → USB-A: mic array',step:14},'tilt',[[-18,329.7,0],[20,326,-12],[90,316,-12],[113,292,-2],[106,282,14]],0x1a1a1a,1.8,[0,60,-60]);
+cable('w_usb_bus',{ar:'USB: بورد السيرفوهات ← الـ Pi',en:'USB-C → USB-A: servo adapter',step:14},'tilt',[[-41,227,-24],[0,248,-46],[80,256,-30],[110,262,0],[106,264,14]],0x1a1a1a,1.8,[0,-60,-60]);
+cable('w_usb_led',{ar:'USB: بوردة الوش ← الـ Pi',en:'USB-C → USB-A: XIAO (face driver)',step:14},'tilt',[[-68,272,42],[-70,290,36],[-70,292,26],[-20,296,4],[60,318,0],[110,300,2],[106,290,14]],0x1a1a1a,1.8,[0,-60,60]);
+cable('w_buck_in',{ar:'12 فولت ← المنظّم',en:'12 V → buck input',step:14},'tilt',[[-44,226,10],[-22,230,-12],[-12,230,-30]],0xe8b21f,1.6,[0,-60,40]);
+cable('w_buck_out',{ar:'5 فولت من المنظّم ← WAGO',en:'Buck 5 V out → 5 V bank',step:14},'tilt',[[44,233,-18],[20,232,4],[-22,229,12]],0xb8261a,2,[0,-60,40]);
+cable('w_pwr_bus2',{ar:'5 فولت ← بورد الإيدين',en:'5 V → servo adapter #2',step:14},'tilt',[[-20,228,22],[4,228,20],[16,227,14]],0xb8261a,1.4,[0,-60,40]);
+cable('w_usb_bus2',{ar:'USB: بورد الإيدين ← الـ Pi',en:'USB-C → USB-A: servo adapter #2',step:14},'tilt',[[42,225,14],[80,240,10],[110,262,6],[106,271,14]],0x1a1a1a,1.8,[0,-60,60]);
 /* head onto the neck */
-cable('w_stem',{ar:'كابلات الرقبة جوه الراس ← WAGO',en:'Neck cables inside the head → WAGO',step:15},'tilt',[[0,216,-19],[-10,220,0],[-30,222,22]],0x161616,3,[0,0,0]);
+cable('w_stem',{ar:'كابلات الرقبة جوه الراس ← WAGO',en:'Neck cables inside the head → WAGO',step:15},'tilt',[[-20,216,-30],[-24,221,-8],[-40,225,8]],0x161616,3,[0,0,0]);
 cable('w_chain',{ar:'كابل سيرفو الميل',en:'Tilt servo lead → the bus',step:6,ord:2},'pan',[[-6.5,149,0],[-4,145,-8],[0,141,-17.5]],0xe9e6e0,1.6,[0,0,-130]);
-cable('w_loop',{ar:'لفّة الكابلات ورا الرقبة',en:'Service loop behind the neck — lets the head tilt',step:15},'pan',[[0,141,-17.5],[0,146,-23],[0,163,-27],[0,190,-27],[0,206,-23],[0,216,-19]],0x161616,3.5,[0,0,0]);
-part('head_bracket',{ar:'كوبري الراس (U) — بيمسك الراس من الجنبين',en:'U bracket under the head — horn on the right, idler on the left',kind:'print',step:7,mat:'PETG أسود مطفي',g:40,h:2.5},()=>{const g=new THREE.Group();
- const sp=new THREE.Shape(); sp.moveTo(-14,26); sp.lineTo(-14,0); sp.absarc(0,0,14,Math.PI,2*Math.PI,false); sp.lineTo(14,26); sp.closePath(); const hp=new THREE.Path(); hp.absarc(0,0,4,0,Math.PI*2,true); sp.holes.push(hp);
- const pg=new THREE.ExtrudeGeometry(sp,{depth:4,bevelEnabled:false,curveSegments:24}); pg.rotateY(Math.PI/2);
- g.add(at(mesh(pg,MAT.black()),24,0,0)); g.add(at(mesh(pg.clone(),MAT.black()),-28,0,0));
- g.add(at(box(56,4,34,MAT.black(),1),0,28,0));                                              // bridge, bolted under the head
- for(let i=0;i<4;i++){ const a=i*Math.PI/2+Math.PI/4, b=cyl(1.4,.6,MAT.metal(),10); b.rotation.z=Math.PI/2; g.add(at(b,28.3,Math.sin(a)*7,Math.cos(a)*7)); }   // horn screws
- const bo=cyl(2.6,1,MAT.metal(),14); bo.rotation.z=Math.PI/2; g.add(at(bo,-28.5,0,0));     // idler bolt head
+cable('w_loop',{ar:'لفّة الكابلات ورا الرقبة',en:'Service loop behind the neck — lets the head tilt',step:15},'pan',[[0,141,-17.5],[0,146,-25],[0,163,-31],[0,190,-33],[-6,204,-33],[-16,212,-31],[-20,216,-30]],0x161616,3.5,[0,0,0]);
+part('head_bracket',{ar:'كوبري ألومنيوم (U) 3 مم — شايل الراس من الناحيتين',en:'Aluminium U bracket 3 mm (laser cut + bent) — horn on the right, idler on the left',kind:'buy',step:7,ord:2},()=>{const g=new THREE.Group();
+ const sp=new THREE.Shape(); sp.moveTo(-14,27); sp.lineTo(-14,0); sp.absarc(0,0,14,Math.PI,2*Math.PI,false); sp.lineTo(14,27); sp.closePath(); const hp=new THREE.Path(); hp.absarc(0,0,4,0,Math.PI*2,true); sp.holes.push(hp);
+ const pg=new THREE.ExtrudeGeometry(sp,{depth:3,bevelEnabled:false,curveSegments:24}); pg.rotateY(Math.PI/2);
+ g.add(at(mesh(pg,MAT.alu()),24,0,0)); g.add(at(mesh(pg.clone(),MAT.alu()),-27,0,0));
+ g.add(at(box(70,3,44,MAT.alu(),1),0,28.5,0));                                              // bridge — under the head floor
+ [[-28,-16],[0,-16],[28,-16],[-28,16],[0,16],[28,16]].forEach(([x,z])=>g.add(at(cyl(2.8,1.4,MAT.steel(),12),x,26.3,z)));   // 6 × M3 through-bolts
+ for(let i=0;i<4;i++){ const a=i*Math.PI/2+Math.PI/4, b=cyl(1.4,.6,MAT.metal(),10); b.rotation.z=Math.PI/2; g.add(at(b,27.3,Math.sin(a)*7,Math.cos(a)*7)); }   // horn screws
+ const bo=cyl(3.6,2,MAT.steel(),6); bo.rotation.z=Math.PI/2; g.add(at(bo,-28,0,0));       // idler: M4 bolt + 624 bearing
  return g;},'tilt',[0,TILT_Y,0],[0,-110,0]);
+part('spine',{ar:'العمود الفقري (لوح ألومنيوم جوه أرضية الراس)',en:'Aluminium spine plate 108 × 80 × 3 + 2 struts — takes the load into the chassis',kind:'buy',step:7,ord:1},()=>{const g=new THREE.Group();
+ const s=shapeOf(rect(108,80)); const h=new THREE.Path(); h.absarc(-20,-30,7,0,Math.PI*2,true); s.holes.push(h);
+ const pg=new THREE.ExtrudeGeometry(s,{depth:3,bevelEnabled:false,curveSegments:20}); pg.rotateX(-Math.PI/2); pg.translate(0,-1.5,0); g.add(mesh(pg,MAT.alu()));
+ [[-28,-16],[0,-16],[28,-16],[-28,16],[0,16],[28,16]].forEach(([x,z])=>g.add(at(cyl(3.2,2.4,MAT.steel(),6),x,2.7,z)));   // nyloc nuts
+ [-45,45].forEach(x=>g.add(at(box(8,11.7,6,MAT.alu(),1),x,7.35,31.5)));                    // struts up to the chassis
+ return g;},'tilt',[0,217.8,0],[0,0,-170]);
 part('back_cover',{ar:'الغطا الخلفي (بفتحات تهوية)',en:'Back cover with vents',kind:'print',step:16,mat:'PLA أحمر أروما',g:70,h:3},()=>{const s=shapeOf(offsetPoly(HEAD,-4)); for(let i=0;i<6;i++) s.holes.push(pathOf(rect(110,4).map(p=>[p[0]+20,p[1]-22+i*9])));
  const g=new THREE.ExtrudeGeometry(s,{depth:2.4,bevelEnabled:true,bevelThickness:.8,bevelSize:.8,bevelSegments:2}); g.translate(0,0,-1.2); return mesh(g,MAT.red());},'tilt',[0,HCY,-HZ-1.4],[0,0,-170]);
 /* screen hands on mirror hinges — they fold back against the head like car mirrors */
@@ -477,8 +510,8 @@ function mirrorHand(side){ return ()=>{
 part('hand_l',{ar:'الإيد الشمال — شاشة 18×18 على مفصلة',en:'Left screen hand + hinge arm',kind:'print',step:18,mat:'PLA أحمر + PETG أسود',g:56,h:2.5},mirrorHand(-1),'tilt',[-PIV[0],HCY+PIV[1],PIV[2]],[-140,0,70]);
 part('hand_r',{ar:'الإيد اليمين — شاشة 18×18 على مفصلة',en:'Right screen hand + hinge arm',kind:'print',step:18,mat:'PLA أحمر + PETG أسود',g:56,h:2.5},mirrorHand(1),'tilt',[PIV[0],HCY+PIV[1],PIV[2]],[140,0,70]);
 /* things that are only on the table */
-part('psu',{ar:'شاحن 5 فولت 10 أمبير',en:'5 V 10 A power adapter (50 W), 5.5 × 2.1 plug',kind:'buy',step:3,kitOnly:true},()=>{const g=new THREE.Group(); g.add(box(118,32,56,MAT.plastic(),5)); g.add(rx(at(cyl(2.6,60,MAT.plastic(),10),0,0,58),Math.PI/2)); return g;},'base',[0,16,-260],[0,0,0]);
-part('screws',{ar:'علبة مسامير + صواميل حرارية',en:'M2 / M2.5 / M3 screws, heat-set inserts',kind:'buy',step:3,kitOnly:true},()=>{const g=new THREE.Group(); g.add(box(80,22,50,MAT.wire(0x2f6fb0),3)); for(let i=0;i<6;i++) g.add(at(box(11,2,20,MAT.metal()),-32+i*13,11.5,0)); return g;},'base',[0,11,-320],[0,0,0]);
+part('psu',{ar:'شاحن 12 فولت 6 أمبير (72 وات)',en:'12 V 6 A power adapter (72 W) — plug must match the jack',kind:'buy',step:3,kitOnly:true},()=>{const g=new THREE.Group(); g.add(box(118,32,56,MAT.plastic(),5)); g.add(rx(at(cyl(2.6,60,MAT.plastic(),10),0,0,58),Math.PI/2)); return g;},'base',[0,16,-260],[0,0,0]);
+part('screws',{ar:'علبة مسامير + صواميل حرارية + بيرينج',en:'M2 / M2.5 / M3 / M4 screws, nylocs, heat-set inserts, 624ZZ bearing',kind:'buy',step:3,kitOnly:true},()=>{const g=new THREE.Group(); g.add(box(80,22,50,MAT.wire(0x2f6fb0),3)); for(let i=0;i<6;i++) g.add(at(box(11,2,20,MAT.metal()),-32+i*13,11.5,0)); return g;},'base',[0,11,-320],[0,0,0]);
 part('wires',{ar:'شنطة السلوك والكابلات',en:'18 AWG pair, braid, 3 × short USB, servo leads, WS2812',kind:'buy',step:3,kitOnly:true},()=>{const g=new THREE.Group(); const t=mesh(new THREE.TorusGeometry(26,5,10,40),MAT.wire(0x161616)); t.rotation.x=Math.PI/2; g.add(t); const t2=mesh(new THREE.TorusGeometry(18,3,10,40),MAT.wire(0xb8261a)); t2.rotation.x=Math.PI/2; t2.position.y=7; g.add(t2); return g;},'base',[0,5,-380],[0,0,0]);
 LIST.forEach(p=>{ if(p.kitOnly) p.o.visible=false; });
 
@@ -493,18 +526,20 @@ const BOM=[
  ['كابل كاميرا Pi 5 — 200 مم','1',[15,25],'Besomi.com','w_cam'],
  ['ReSpeaker XVF3800 (4-mic)','1',[260,330],'The Pi Hut · Seeed','mic_array'],
  ['سماعة 40 مم 3W 4Ω','1',[15,30],'Amazon.ae · محل إلكترونيات','speaker'],
- ['Feetech STS3215 (لف + ميل)','2',[120,180],'AliExpress · Waveshare','pan_servo'],
+ ['Feetech STS3215 ‏12V (30 كجم·سم) — لف + ميل','2',[150,220],'Waveshare (ST3215) · AliExpress','pan_servo'],
  ['Feetech SCS0009 (مفصلات الإيدين)','2',[60,100],'AliExpress · Feetech','ear_servo_r'],
- ['Waveshare Bus Servo Adapter (A)','1',[25,45],'Waveshare · Amazon.ae','bus_adapter'],
+ ['Waveshare Bus Servo Adapter (A)','2',[50,90],'Waveshare · Amazon.ae','bus_adapter'],
+ ['منظّم DC-DC ‏12 ← 5 فولت ‏10 أمبير','1',[35,70],'Amazon.ae · AliExpress','buck'],
+ ['كوبري U + لوح العمود الفقري — ألومنيوم 5052 ‏3 مم (قص ليزر + تني)','1',[80,180],'ورشة ليزر ألومنيوم في دبي — أنا ببعتلهم ملف DXF','head_bracket'],
  ['بيرينج Lazy-susan ٣ بوصة','1',[10,25],'Amazon.ae · ACE','bearing'],
- ['شاحن 5V 10A + جاك','1',[55,100],'Amazon.ae · Noon','psu'],
- ['أنبوبة أكريليك شفافة Ø25','1',[20,40],'محلات الأكريليك · Amazon.ae','stem'],
+ ['شاحن 12V ‏6A (72 وات) + جاك','1',[50,100],'Amazon.ae · Noon','psu'],
+ ['أنبوبة بولي كربونات شفافة Ø25 × 3 مم','1',[25,50],'محلات البلاستيك الهندسي · Amazon.ae','stem'],
  ['أكريليك فيميه 3 مم (ليزر كَت)','1',[50,100],'محل ليزر كَت في دبي','glass'],
- ['WAGO 221 ×4','4',[15,25],'Amazon.ae · ACE','wago'],
- ['أوزان حديد Ø40','4',[10,25],'ACE · محل عدد','weights'],
- ['رجول كاوتش','4',[5,15],'Amazon.ae','feet'],
- ['مسامير + صواميل حرارية','1',[40,70],'Amazon.ae','screws'],
- ['سلوك + شراب + كابلات USB + WS2812','1',[50,90],'Amazon.ae','wires'],
+ ['WAGO 221-415','3',[15,25],'Amazon.ae · ACE','wago'],
+ ['أقراص حديد Ø50 × 15 (≈ ٩٢٥ جم)','4',[20,50],'ورشة ليزر حديد · ACE','weights'],
+ ['حلقة سيليكون Ø172 (أو تتطبع TPU)','1',[10,25],'Amazon.ae','feet'],
+ ['مسامير M2–M4 + صواميل نايلون + حرارية + بيرينج 624ZZ','1',[45,80],'Amazon.ae','screws'],
+ ['سلوك 18AWG + شراب + كابلات USB + WS2812','1',[50,90],'Amazon.ae','wires'],
  ['خامة طباعة (~0.85 كجم، 5 ألوان)','—',[100,200],'Bambu Lab · Amazon.ae','head_shell'],
 ];
 const BOMLO=BOM.reduce((a,b)=>a+b[2][0],0), BOMHI=BOM.reduce((a,b)=>a+b[2][1],0);
@@ -515,15 +550,161 @@ const PRINTS=LIST.filter(p=>p.kind==='print'&&p.g);
 const printTable=()=>`<table class="bom"><thead><tr><th>القطعة</th><th>الخامة واللون</th><th>جرام</th><th>ساعات</th></tr></thead><tbody>${PRINTS.map(p=>`<tr data-p="${p.id}"><td>${p.ar}</td><td>${p.mat}</td><td class="n">${p.g}</td><td class="n">${p.h}</td></tr>`).join('')}</tbody>
 <tfoot><tr><td>المجموع</td><td></td><td class="n">≈ ${PRINTS.reduce((a,p)=>a+p.g,0)}</td><td class="n">≈ ${Math.round(PRINTS.reduce((a,p)=>a+p.h,0))}</td></tr></tfoot></table>`;
 
+
+/* ───────── weights & loads — computed from the model itself (mass × where it sits) ───────── */
+const GRAV=9.81, KGCM=.0980665;                                    // 1 kg·cm = 0.098 N·m
+const MASS={feet:14,weights:925,dc_jack:8,pan_servo:55,bearing:45,stem:21,tilt_servo:55,face_led:85,xiao:3,camera:4,glass:73,bus_adapter:15,bus_adapter2:15,
+ pi5:46,cooler:20,sdcard:.5,mic_array:25,mic_holes:0,speaker:30,ear_servo_r:13.5,ear_servo_l:13.5,wago:15,buck:60,head_bracket:55,spine:80,hand_l:64,hand_r:64};
+const FAST={base:15,pan:6,tilt:30};                                  // screws, inserts, nuts, ties (grams)
+const massOf=p=>MASS[p.id]??(p.kind==='cable'?2.5e-3*Math.PI*p.r*p.r*p.len:(p.g||0));
+const SERVO={sts12:30,sts5:13,scs5:1.9};                             // stall torque, kg·cm
+const LIM={tilt:15*Math.PI/180,aTilt:20,aPan:12,aHand:25,bump:9.81}; // firmware limits (±15°, rad/s²) · a bump = 1 kg-force on the head
+const RFOOT=83, FLOOR=-3, STEM_Y0=59.5, AL_YIELD=190, PC_YIELD=60, M3_PROOF=3200;   // ring foot radius, floor, foot of the tube (mm) · yield of 5052 aluminium & polycarbonate (MPa) · M3 8.8 proof load (N)
+const POWER={v5:[['Raspberry Pi 5 + الكاميرا',2.5],['شاشات الـ LED (حد السوفتوير)',3],['المايك + أمبليفاير السماعة',.6],['موتورات الإيدين',.6],['XIAO',.1]],servo12:1.5,psu:6};
+let LDc=null;
+function LD(){ if(LDc) return LDc;
+ const kP=panG.rotation.y,kT=tiltG.rotation.x,kB=tiltG.position.y,kR=HAND.r.pivot.rotation.y,kL=HAND.l.pivot.rotation.y;
+ panG.rotation.y=0; tiltG.rotation.x=0; tiltG.position.y=TILT_Y; HAND.r.pivot.rotation.y=HAND.l.pivot.rotation.y=0;   // hands open = the worst case
+ LIST.forEach(p=>p.o.position.copy(p.home)); root.updateMatrixWorld(true);
+ const b=new THREE.Box3(), c=new THREE.Vector3(), s=new THREE.Vector3();
+ const rows=LIST.filter(p=>!p.kitOnly).map(p=>{ const acc=new THREE.Vector3(), all=new THREE.Box3(); let W=0;
+  p.o.traverse(m=>{ if(!m.isMesh||m.userData.bpOnly) return; const g=m.geometry; if(!g.boundingBox) g.computeBoundingBox();
+   b.copy(g.boundingBox).applyMatrix4(m.matrixWorld); all.union(b); b.getSize(s); const v=Math.max(s.x*s.y*s.z,1e-3); W+=v; acc.addScaledVector(b.getCenter(c),v); });
+  return {p,m:massOf(p)/1000,c:acc.multiplyScalar(1/W),s:all.getSize(new THREE.Vector3())}; });
+ const dims=new THREE.Box3(); LIST.filter(p=>!p.kitOnly&&p.kind!=='cable').forEach(p=>dims.expandByObject(p.o));
+ const headBox=new THREE.Box3().setFromObject(PARTS.head_shell.o);
+ const pivR=new THREE.Vector3(); HAND.r.pivot.getWorldPosition(pivR);
+ panG.rotation.y=kP; tiltG.rotation.x=kT; tiltG.position.y=kB; HAND.r.pivot.rotation.y=kR; HAND.l.pivot.rotation.y=kL;
+ const sum=(list,extra)=>{ let m=extra/1000; const v=new THREE.Vector3(); list.forEach(r=>{ m+=r.m; v.addScaledVector(r.c,r.m); });
+  const c=v.multiplyScalar(1/(m-extra/1000)); return {m,c}; };
+ const T=rows.filter(r=>r.p.grp==='tilt'), P=rows.filter(r=>r.p.grp==='pan'), B=rows.filter(r=>r.p.grp==='base');
+ const head=sum(T,FAST.tilt), neck=sum(P,FAST.pan), base=sum(B,FAST.base);
+ const ax=new THREE.Vector3(0,TILT_Y,0), dH=head.c.clone().sub(ax);
+ // tilt: gravity on the head's centre of mass, worst angle inside ±15°, plus a quick nod
+ const zAt=th=>dH.y*Math.sin(th)+dH.z*Math.cos(th);
+ let zMax=0; for(let i=-60;i<=60;i++) zMax=Math.max(zMax,Math.abs(zAt(i/60*LIM.tilt)));
+ const tStat=head.m*GRAV*zMax/1000;
+ const Ix=T.reduce((a,r)=>{ const d=r.c.clone().sub(ax); return a+r.m*(d.y*d.y+d.z*d.z+(r.s.y*r.s.y+r.s.z*r.s.z)/12); },0)/1e6+FAST.tilt/1e3*(dH.y*dH.y+dH.z*dH.z)/1e6;
+ const tDyn=Ix*LIM.aTilt, tTilt=tStat+tDyn;
+ // pan: the servo only turns it — the bearing carries the weight
+ const PT=[...P,...T], Iy=PT.reduce((a,r)=>a+r.m*(r.c.x*r.c.x+r.c.z*r.c.z+(r.s.x*r.s.x+r.s.z*r.s.z)/12),0)/1e6;
+ const topM=head.m+neck.m, tPan=Iy*LIM.aPan+.01*topM*GRAV*.03;
+ // hinge motor: the hand swings on a vertical shaft — gravity only bites when the head is tilted
+ const hr=rows.find(r=>r.p.id==='hand_r'), hd=hr.c.clone().sub(pivR), hArm=Math.hypot(hd.x,hd.z)/1000;
+ const tHand=hr.m*GRAV*hArm*Math.sin(LIM.tilt)+(hr.m*(hArm*hArm)+hr.m*(hr.s.x*hr.s.x+hr.s.z*hr.s.z)/12e6)*LIM.aHand;
+ // a 1 kg-force bump on the side of the head top
+ const yTop=headBox.max.y, F=LIM.bump;
+ const sPlateIn=tTilt*1000/(3*28*28/6), sPlateOut=(F/2*27)/(28*9/6), sPlate=Math.max(sPlateIn,sPlateOut);
+ const yBridge=TILT_Y+30, fBolt=Math.max(F*(yTop-yBridge)/56/3, tTilt*1000/32/3)+head.m*GRAV/6;
+ const Zt=Math.PI*(25**4-19**4)/(32*25);
+ const mStem=F*(yTop-STEM_Y0)+head.m*GRAV*zMax, sStem=mStem/Zt;
+ // tipping: the whole robot's centre of mass vs the edge of the ring foot
+ const restM=neck.m+base.m, restC=neck.c.clone().multiplyScalar(neck.m).addScaledVector(base.c,base.m).multiplyScalar(1/restM), M=restM+head.m;
+ const wr=rows.find(r=>r.p.id==='weights');
+ const cogAt=(th,without=0)=>{ const h=new THREE.Vector3(dH.x,dH.y*Math.cos(th)-dH.z*Math.sin(th),dH.y*Math.sin(th)+dH.z*Math.cos(th)).add(ax);
+  return restC.clone().multiplyScalar(restM).addScaledVector(wr.c,-without).addScaledVector(h,head.m).multiplyScalar(1/(M-without)); };
+ const tip=(without=0)=>{ let worst=null; for(let i=-60;i<=60;i++){ const th=i/60*LIM.tilt, c=cogAt(th,without), e=Math.hypot(c.x,c.z), H=c.y-FLOOR, a=Math.atan2(RFOOT-e,H);
+   if(!worst||a<worst.a) worst={a,e,H,th,c,push:(M-without)*GRAV*(RFOOT-e)/(yTop-FLOOR)}; } return worst; };
+ const tipW=tip(), tipNo=tip(wr.m);
+ const a5=POWER.v5.reduce((a,r)=>a+r[1],0), a12=POWER.servo12+a5*5/(.9*12);
+ LDc={rows,head,neck,base,M,ax,dH,zMax,tStat,tDyn,tTilt,Ix,Iy,tPan,topM,tHand,hArm,yTop,sPlate,sPlateIn,sPlateOut,fBolt,sStem,mStem,tipW,tipNo,restM,restC,cogAt,a5,a12,
+  H:dims.max.y-dims.min.y,W:dims.max.x-dims.min.x,HW:headBox.max.x-headBox.min.x};
+ return LDc; }
+const kg=v=>(Math.round(v*100)/100).toFixed(2), n0=v=>Math.round(v).toLocaleString('en-US'), n1=v=>(Math.round(v*10)/10).toFixed(1);
+const AR=v=>String(v).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]).replace('.','٫');
+const pct=(need,have)=>Math.round(need/have*100);
+const deg=r=>Math.round(r*180/Math.PI);
+function loadsHTML(){ const L=LD(), u12=pct(L.tTilt/KGCM,SERVO.sts12), u5=pct(L.tTilt/KGCM,SERVO.sts5);
+ const r=(id,a,b,c)=>`<tr${id?` data-p="${id}"`:''}><td>${a}</td><td class="n">${b}</td>${c!=null?`<td class="n">${c}</td>`:''}</tr>`;
+ const sf=(have,need)=>`<span class="ok">أمان ×${n0(have/need)}</span>`;
+ return `<div class="meta"><span>⚖️ الروبوت كله ≈ ${AR(kg(L.M))} كجم</span><span>🧠 الراس ≈ ${AR(kg(L.head.m))} كجم</span><span>📍 مركز ثقل الراس فوق محور الميل بـ ${AR(Math.round(L.dH.y))} مم</span></div>
+<div class="ldlive" id="ldLive"></div>
+<p class="sm">كل رقم هنا متحسوب من المجسم نفسه: وزن كل قطعة × مكانها بالظبط. لو قطعة اتغيّرت أو اتضافت، الحساب بيتغيّر معاها.</p>
+<h5>١) الأوزان</h5>
+<table class="bom"><tbody>${r('head_shell','الراس (كل اللي بيميل: القشرة والبوردات والإيدين والكوبري)',n0(L.head.m*1000)+' g')}${r('stem','اللي بيلف تحت الراس (الطبق والعمود والمهد وسيرفو الميل)',n0(L.neck.m*1000)+' g')}${r('base_shell','القاعدة (منهم '+n0(MASS.weights)+' g حديد)',n0(L.base.m*1000)+' g')}</tbody></table>
+<h5>٢) سيرفو الميل — أهم حمل</h5>
+<table class="bom"><thead><tr><th>الحالة</th><th>N·m</th><th>kg·cm</th></tr></thead><tbody>
+${r('tilt_servo','وزن الراس لوحده وهي مايلة لحد ±١٥°',n1(L.tStat),n1(L.tStat/KGCM))}
+${r('tilt_servo','هزّة سريعة (السوفتوير بيحدّ التسارع لـ ٢٠ راد/ث²)',n1(L.tDyn),n1(L.tDyn/KGCM))}
+${r('tilt_servo','<b>الأقصى</b>',n1(L.tTilt),'<b>'+n1(L.tTilt/KGCM)+'</b>')}
+</tbody></table>
+<p class="sm">STS3215 على <b>12 فولت</b> = ٣٠ كجم·سم، يعني شغّال على <b class="ok">${AR(u12)}٪</b> بس من قدرته. نفس السيرفو على 5 فولت (التصميم القديم) كان هيبقى ≈ ١٣ كجم·سم، يعني ${AR(u5)}٪، وده كان هيسخّنه ويرعش الراس. عشان كده اللف والميل بقوا على 12 فولت.</p>
+<h5>٣) سيرفو اللف + موتورات الإيدين</h5>
+<table class="bom"><tbody>
+${r('pan_servo','اللف (لفة ٦٠° في ٠٫٦ ثانية، والوزن كله على البيرينج)',n1(L.tPan/KGCM)+' kg·cm',AR(pct(L.tPan/KGCM,SERVO.sts12))+'٪')}
+${r('bearing','الوزن على البيرينج',n0(L.topM*1000)+' g','—')}
+${r('ear_servo_r','مفصلة الإيد (SCS0009 على 5 فولت)',(L.tHand/KGCM).toFixed(2)+' kg·cm',AR(pct(L.tHand/KGCM,SERVO.scs5))+'٪')}
+</tbody></table>
+<h5>٤) الوصلة بين الرقبة والراس (لو حد خبط الراس من الجنب بـ ١ كجم)</h5>
+<table class="bom"><tbody>
+${r('head_bracket','ألواح الكوبري ألومنيوم ٣ مم',n1(L.sPlate)+' MPa',sf(AL_YIELD,L.sPlate))}
+${r('spine','أقصى شد على مسمار من الـ ٦ (M3) اللي ماسكين أرضية الراس بين الكوبري والعمود الفقري',n0(L.fBolt)+' N',sf(M3_PROOF,L.fBolt))}
+${r('stem','العمود البولي كربونات Ø25 (عند القاعدة)',n1(L.sStem)+' MPa',sf(PC_YIELD,L.sStem))}
+</tbody></table>
+<p class="sm">الوزن بيمشي كده: <b>الراس ← لوح العمود الفقري الألومنيوم (١٠٨×٨٠) ← ٦ مسامير من خلال أرضية القشرة ← الكوبري U ← شافت السيرفو من ناحية والمحور والبيرينج من الناحية التانية ← المهد ← طوق ٢٥ مم ومسمار عرضي ← العمود ← الطبق الدوّار ← البيرينج</b>. البلاستيك المطبوع عمره ما بيشيل الحمل لوحده: هو محبوس بين لوحين ألومنيوم.</p>
+<h5>٥) الثبات على الترابيزة</h5>
+<table class="bom"><tbody>
+${r('weights','بيقع لو الترابيزة نفسها اتميلت (أسوأ وضع: الراس مايلة ١٥°)',AR(deg(L.tipW.a))+'°','')}
+${r('weights','زقّة من فوق الراس توقّعه',n0(L.tipW.push/GRAV*1000)+' g','')}
+${r('weights','من غير الأوزان الحديد كان هيقع من زقّة',n0(L.tipNo.push/GRAV*1000)+' g','<span class="bad">'+AR(deg(L.tipNo.a))+'°</span>')}
+${r(null,'ارتفاع مركز ثقل الروبوت كله عن الترابيزة',n0(L.tipW.H)+' mm','')}
+</tbody></table>
+<h5>٦) الكهربا</h5>
+<table class="bom"><tbody>
+${POWER.v5.map(x=>r(null,'5V · '+x[0],n1(x[1])+' A','')).join('')}
+${r('buck','منظّم 12 ← 5 فولت (١٠ أمبير)، شغّال على',n1(L.a5)+' A',AR(pct(L.a5,10))+'٪')}
+${r('psu','الشاحن 12V '+POWER.psu+'A في أسوأ لحظة (كل حاجة شغّالة مع بعض)',n1(L.a12)+' A',AR(pct(L.a12,POWER.psu))+'٪')}
+</tbody></table>
+<div class="warn">✋ <b>شيله دايمًا من القاعدة، مش من الراس.</b> لو اتشال من راسه، وزن القاعدة كله (≈ ${AR(kg(L.base.m))} كجم) هيتعلّق في شافت سيرفو الميل وفي البيرينج، وهما مش معمولين للحمل ده.</div>`; }
+
+/* the analysis drawn on the model: tilt axis, the head's centre of mass and its lever, the robot's centre of mass and its tipping line */
+let LOADS=false, LDG=null, ldLast=0;
+const LDM={};
+function cogTex(col){ const c=document.createElement('canvas'); c.width=c.height=64; const x=c.getContext('2d'); x.translate(32,32); x.fillStyle=col; x.strokeStyle=col; x.lineWidth=4;
+ [[0,Math.PI/2],[Math.PI,Math.PI*1.5]].forEach(([a,b])=>{ x.beginPath(); x.moveTo(0,0); x.arc(0,0,25,a,b); x.closePath(); x.fill(); }); x.beginPath(); x.arc(0,0,25,0,Math.PI*2); x.stroke();
+ const t=new THREE.CanvasTexture(c); t.colorSpace=THREE.SRGBColorSpace; return t; }
+function ldLabel(html,cls){ const w=document.createElement('div'), d=document.createElement('div'); d.className='ldl '+(cls||''); d.innerHTML=html; w.appendChild(d); const o=new CSS2DObject(w); o.inner=d; LDG.add(o); return o; }
+function ldLine(col,dashed){ const g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(),new THREE.Vector3(0,1,0)]);
+ const m=dashed?new THREE.LineDashedMaterial({color:col,dashSize:5,gapSize:4,depthTest:false,transparent:true,toneMapped:false}):new THREE.LineBasicMaterial({color:col,depthTest:false,transparent:true,toneMapped:false});
+ const l=new THREE.Line(g,m); l.renderOrder=40; l.frustumCulled=false; LDG.add(l); return l; }
+const setLine=(l,a,b)=>{ const P=l.geometry.attributes.position; P.setXYZ(0,a.x,a.y,a.z); P.setXYZ(1,b.x,b.y,b.z); P.needsUpdate=true; if(l.material.isLineDashedMaterial) l.computeLineDistances(); };
+function ldBuild(){ if(LDG) return; const L=LD(); LDG=new THREE.Group(); LDG.visible=false; scene.add(LDG);
+ const spr=col=>{ const s=new THREE.Sprite(new THREE.SpriteMaterial({map:cogTex(col),depthTest:false,transparent:true,sizeAttenuation:false,toneMapped:false})); s.scale.set(.034,.034,1); s.renderOrder=41; LDG.add(s); return s; };
+ LDM.axis=ldLine(0x4fb3b0); setLine(LDM.axis,new THREE.Vector3(-78,TILT_Y,0),new THREE.Vector3(78,TILT_Y,0));
+ LDM.axisL=ldLabel('محور الميل','t'); LDM.axisL.position.set(-84,TILT_Y,0);
+ LDM.lever=ldLine(0xef6a3c); LDM.leverL=ldLabel('','o');
+ LDM.head=spr('#ef6a3c'); LDM.headL=ldLabel(`مركز ثقل الراس <b>${kg(L.head.m)} kg</b>`,'o');
+ LDM.all=spr('#f3ece6'); LDM.allL=ldLabel(`مركز ثقل الروبوت كله <b>${kg(L.M)} kg</b>`,'w');
+ LDM.drop=ldLine(0xf3ece6,true); LDM.edge=ldLine(0xf3ece6); LDM.edgeL=ldLabel('','w');
+ LDM.foot=ldLine(0xf3ece6); }
+function ldUpdate(now){ if(!LDG||!LDG.visible) return; const L=LD(), th=tiltG.rotation.x;
+ const h=new THREE.Vector3(L.dH.x,L.dH.y*Math.cos(th)-L.dH.z*Math.sin(th),L.dH.y*Math.sin(th)+L.dH.z*Math.cos(th)).add(L.ax);
+ const c=L.cogAt(th), dir=Math.abs(c.z)>.5?Math.sign(c.z):1, e=Math.hypot(c.x,c.z), a=Math.atan2(RFOOT-e,c.y-FLOOR);
+ const k=.024*Math.tan(THREE.MathUtils.degToRad(camera.fov/2))/Math.tan(THREE.MathUtils.degToRad(15)); LDM.head.scale.set(k,k,1); LDM.all.scale.set(k,k,1);
+ LDM.head.position.copy(h); LDM.headL.position.copy(h); setLine(LDM.lever,new THREE.Vector3(h.x,TILT_Y,0),h);
+ LDM.leverL.position.set(h.x,(TILT_Y+h.y)/2,h.z/2); LDM.leverL.inner.innerHTML=`<b>${Math.round(Math.hypot(h.y-TILT_Y,h.z))} mm</b>`;
+ LDM.all.position.copy(c); LDM.allL.position.copy(c);
+ const fl=new THREE.Vector3(c.x,FLOOR,c.z), ed=new THREE.Vector3(0,FLOOR,dir*RFOOT); setLine(LDM.drop,c,fl); setLine(LDM.edge,c,ed); setLine(LDM.foot,new THREE.Vector3(0,FLOOR,-dir*RFOOT),ed);
+ LDM.edgeL.position.copy(ed); LDM.edgeL.inner.innerHTML=`بيقع لو اتميل <b>${deg(a)}°</b>`;
+ if(now-ldLast>120){ ldLast=now; const el=$('#ldLive'); if(el){ const tq=L.head.m*GRAV*Math.abs(L.dH.y*Math.sin(th)+L.dH.z*Math.cos(th))/1000;
+  el.innerHTML=`🔴 لايف: الراس مايلة <b class="mono">${th>=0?'+':''}${Math.round(th*180/Math.PI)}°</b> ← العزم على سيرفو الميل <b class="mono">${n1(tq/KGCM)} kg·cm</b> (${AR(pct(tq/KGCM,SERVO.sts12))}٪ من قدرته)`; } } }
+function setLoads(on){
+ if(on){ if(cur!==0||mode!=='overview') _go(0); LOADS=true; EXP=0; $('#ex').value=0; $('#exV').textContent='0%'; $('#pcard').style.display='none'; FOLD_TO=0;
+  ldBuild(); LDG.visible=true; applyLook(); setXray(true); renderCard();
+  frameCam(LIST.filter(p=>!p.kitOnly&&p.kind!=='cable'),[1,.12,.24],BP?1.22:1.06,1100,'home'); }
+ else { LOADS=false; if(LDG) LDG.visible=false; setXray(XRAY_USER); renderCard(); if(mode==='overview') frameOverview(900); }
+ $('#bLD').classList.toggle('on',LOADS); $('#ex').disabled=LOADS; }
+
 /* ───────── the build, step by step ───────── */
 const chips=ids=>'<div class="chips">'+ids.map(id=>{ const p=PARTS[id]; return p?`<span class="chip ${p.kind}" data-p="${id}">${p.ar}</span>`:''; }).join('')+'</div>';
 const meta=(t,tools)=>`<div class="meta"><span>⏱ ${t}</span>${tools?`<span>🧰 ${tools}</span>`:''}</div>`;
 const STEPS=[
- {n:'00',t:'الشكل النهائي',ok:true,body:()=>`<div class="meta"><span>📏 الطول ≈ ٣٥ سم</span><span>↔️ الراس ٢٥٫٤ سم · الإيدين مفتوحة ≈ ٤٤ سم</span><span>⚖️ ≈ ١٫٥ كجم</span></div>
+ {n:'00',t:'الشكل النهائي',ok:true,body:()=>`<div class="meta"><span>📏 الطول ≈ ${AR(Math.round(LD().H/10))} سم بالأنتينا</span><span>↔️ الراس ${AR(n1(LD().HW/10))} سم · الإيدين مفتوحة ≈ ${AR(Math.round(LD().W/10))} سم</span><span>⚖️ ≈ ${AR(n1(LD().M))} كجم</span></div>
 <ul><li>ده "البوّاب" بنفس شكل ماسكوت الهب بالظبط: بلوك اللوجو بالحتة المقطوعة، الودان، والأنتينا التيل.</li>
 <li><b>الوش شاشة LED بشكل اللوجو نفسه:</b> بوردة مفصّلة 64×27 لمبة (نفس شبكة الهب) بالحافة المقطوعة، مش شاشة مستطيلة.</li>
 <li><b>الإيدين شاشتين 18×18 على مفصلة بموتور جوه الودن:</b> بيتضمّوا على جنب الراس ويتفتحوا زي مرايات العربية. جرّب زرار "ضم الإيدين" و"سلّم".</li>
-<li>القاعدة السودا فيها موتور اللف، والعمود الشفاف بيخلّي الراس تبان طايرة.</li>
+<li>القاعدة السودا فيها موتور اللف وحديد تقيل تحت، والعمود الشفاف بيخلّي الراس تبان طايرة.</li>
+<li>زرار <b>⚖️ الأوزان والأحمال</b> بيوريك وزن كل حتة، والعزم على كل موتور، وإمتى ممكن يقع. كل ده متحسوب من المجسم نفسه.</li>
 <li>حرّك الماوس: عينيه هتتبعك والراس هتلف ناحيتك، وده نفس اللي هيعمله مع اللي بيتكلم في الاجتماع.</li>
 <li>اسحب <b>فكّ المجسم</b>، أو دوس على أي قطعة عشان تعرف هي إيه.</li></ul>`},
  {n:'01',t:'العدة: كل القطع',ok:true,body:()=>`${meta('طلب القطع: ١–٣ أسابيع (البوردات وAliExpress أبطأ حاجة)')}
@@ -542,43 +723,46 @@ ${printTable()}
 <li><b>بوردتين للإيدين:</b> 18×18 لمبة لكل إيد، بنفس شبكة إيدين الهب.</li>
 <li>أنا بعمل ملفات الـ PCB كاملة (Gerber + BOM + أماكن اللمبات)، وانت بترفعهم على JLCPCB وتختار "PCB Assembly". بيوصلوا متركّب عليهم كل اللمبات.</li></ul>
 <div class="warn">⚡ الوش فيه ≈ ١٧٠٠ لمبة. لو اتشغّلوا كلهم أبيض على الآخر هيسحبوا كهربا كتير جدًا، فالسوفتوير بتاعي بيحدّد السطوع (أقصى ٣ أمبير). متغيّرش الحد ده.</div>`},
- {n:'03',t:'القاعدة: الأرجل والأوزان والكهربا',ok:true,view:[.9,1.05,1.25],pad:1.7,body:()=>`${meta('١٥ دقيقة','مفك + غراء سيليكون')}
+ {n:'03',t:'القاعدة: الحلقة والأوزان والكهربا',ok:true,view:[.9,1.05,1.25],pad:1.7,body:()=>`${meta('١٥ دقيقة','مفك + غراء سيليكون')}
 ${chips(['base_shell','feet','weights','dc_jack','w_jack'])}
-<ul><li>لزّق <b>٤ رجول الكاوتش</b> تحت القاعدة في الدواير المحفورة.</li>
-<li>حط <b>الـ ٤ أوزان الحديد</b> في أماكنهم جوه وثبّتهم بنقطة سيليكون. دول اللي بيمنعوا الروبوت إنه يقع لما الراس تلف بسرعة.</li>
-<li>دخّل <b>جاك الكهربا</b> في الخرم اللي ورا واربط الصامولة من جوه.</li>
-<li>وصّل سلكين الكهربا: <b>الأحمر على +</b> و<b>الأسود على −</b>، وسيبهم طوال ٤٠ سم لأنهم طالعين لحد الراس.</li></ul>
-<div class="warn">⚠️ قبل ما تكمّل: قيس الجاك بالشاحن والملتيميتر. لازم يطلع 5V بالظبط، وعلامته تبقى صح (+ في النص).</div>`},
+<ul><li>القاعدة Ø١٨ سم. ركّب <b>حلقة السيليكون</b> في المجرى اللي تحتها: بتمسك في الترابيزة وبتمنعه يزحف.</li>
+<li>حط <b>الـ ٤ أقراص الحديد</b> (Ø٥٠ × ١٥ مم، مجموعهم ≈ ٩٢٥ جم) في أماكنهم جوه، وثبّتهم بنقطة سيليكون. الحديد بينزّل مركز ثقل الروبوت لـ ${AR(Math.round(LD().tipW.H/10))} سم من الترابيزة، فمش هيقع غير لو الترابيزة نفسها اتميلت ${AR(deg(LD().tipW.a))}°. من غير الحديد كان هيقع عند ${AR(deg(LD().tipNo.a))}° بس.</li>
+<li>دخّل <b>جاك الكهربا</b> في الخرم اللي ورا واربط الصامولة من جوه. لازم يبقى نفس مقاس فيشة الشاحن.</li>
+<li>وصّل سلكين الكهربا 18AWG: <b>الأحمر على +</b> و<b>الأسود على −</b>. سيبهم طوال ٤٠ سم لأنهم طالعين لحد الراس.</li></ul>
+<div class="warn">⚠️ الروبوت كله شغّال على <b>12 فولت</b>. قبل ما تكمّل قيس الجاك بالملتيميتر وهو متوصل في الشاحن: لازم يطلع 12V، والموجب يبقى في النص.</div>`},
  {n:'04',t:'سيرفو اللف + غطا القاعدة',ok:true,xray:true,main:'pan_servo',view:[.85,1.15,1.15],pad:1.7,body:()=>`${meta('٢٠ دقيقة','مفك M2.5 + اللابتوب')}
 ${chips(['pan_servo','w_pan','base_lid'])}
-<ul><li><b>قبل التركيب:</b> وصّل السيرفو ببورد السيرفوهات وشغّل سكربت الإعداد بتاعي. هيدّيله <b>ID 1</b> ويحطّه في النص (Center). من غير الخطوة دي الراس مش هتبص قدام.</li>
+<ul><li>السيرفو ده نسخة <b>12 فولت (٣٠ كجم·سم)</b>، مش 5 فولت.</li>
+<li><b>قبل التركيب:</b> وصّل السيرفو ببورد السيرفوهات وشغّل سكربت الإعداد بتاعي. هيدّيله <b>ID 1</b> ويحطّه في النص (Center). من غير الخطوة دي الراس مش هتبص قدام.</li>
 <li>اربط السيرفو في العمودين اللي تحت الغطا بمسمارين M2.5، والشافت يبقى طالع من الخرم اللي في النص بالظبط.</li>
 <li>عدّي كابل السيرفو وسلكين الكهربا من <b>الخرم الصغير اللي ورا</b> في الغطا.</li>
 <li>قفّل الغطا على القاعدة بـ ٤ مسامير M3 في الصواميل الحرارية.</li></ul>
 <div class="warn">💡 السيرفو ده بيلف الراس بس، مش شايل وزنها. الوزن على البيرينج اللي في الخطوة الجاية.</div>`},
  {n:'05',t:'البيرينج + الطبق الدوّار',ok:true,xray:true,view:[1,1,1.3],pad:1.6,body:()=>`${meta('١٥ دقيقة','مفك M3 + M2.5')}
 ${chips(['bearing','turntable'])}
-<ul><li><b>البيرينج المربع هو اللي شايل وزن الراس كلها</b>، والسيرفو وظيفته اللف بس.</li>
+<ul><li><b>البيرينج المربع هو اللي شايل وزن الراس والرقبة كلها (≈ ${AR(kg(LD().topM))} كجم)</b>، والسيرفو وظيفته اللف بس.</li>
 <li>اربط اللوح التحتاني للبيرينج في الغطا بـ ٤ مسامير M3، والأماكن معلّمة.</li>
 <li>ركّب الطبق الدوّار: البوز اللي تحته بيقعد على الهورن المعدن بتاع السيرفو، اربطه بـ ٤ مسامير M2.5، واربط اللوح الفوقاني للبيرينج بـ ٤ مسامير M3.</li>
+<li>الطبق فيه <b>جراب عمقه ٢٠ مم</b> للعمود الشفاف، ومسمار M3 بيعدّي فيهم بالعرض.</li>
 <li>عدّي الكابلات من الخرم الصغير اللي في الطبق.</li>
 <li>لف الطبق بإيدك بالراحة ربع لفة يمين وشمال. لازم يلف ناعم، من غير خبط ولا تزييق.</li></ul>
 <div class="warn">⚠️ متلفّش الطبق لفة كاملة. الكابلات معمولة تستحمل ١٥٠° يمين و١٥٠° شمال بس، والسوفتوير بيمنع أكتر من كده.</div>`},
- {n:'06',t:'العمود الشفاف + مهد سيرفو الميل',ok:true,xray:true,main:'neck',view:[1.1,.45,1.3],pad:1.5,body:()=>`${meta('٢٥ دقيقة','مفك M2.5 + M4 + غراء UV')}
+ {n:'06',t:'العمود الشفاف + مهد سيرفو الميل',ok:true,xray:true,main:'neck',view:[1.1,.45,1.3],pad:1.5,body:()=>`${meta('٢٥ دقيقة','مفك M2.5 + M3 + مفتاح M4 + شنيور ٣ مم')}
 ${chips(['neck','tilt_servo','w_chain','braid','stem'])}
-<ul><li>اعمل لسيرفو الميل <b>ID 2</b> بنفس السكربت.</li>
+<ul><li>اعمل لسيرفو الميل <b>ID 2</b> بنفس السكربت. ده كمان نسخة <b>12 فولت</b>.</li>
 <li>السيرفو بيدخل في <b>المهد الأسود</b> واقف، و<b>الشافت بتاعه طالع من الجنب اليمين</b>. ده محور الميل.</li>
 <li>في الجنب الشمال للمهد فيه <b>محور تاني</b> على نفس الخط (مسمار M4 + بيرينج 624). يعني الراس هتبقى متشالة من الناحيتين، مش من ناحية واحدة.</li>
-<li>لبّس الكابلات جوه <b>الشراب الأسود</b> ودخّلها في الأنبوبة الشفافة، وبعدين دخّل الأنبوبة في الطوق اللي تحت المهد (١٠ مم) وثبّتها بنقطة غراء.</li>
-<li>الكابلات وكابل سيرفو الميل بيطلعوا من <b>خرم ورا الطوق</b>. سيبهم ٢٠ سم، دول اللي هيعملوا اللفّة اللي بتطلع للراس.</li></ul>
-<div class="warn">💡 كده السيرفو مش شايل وزن الراس على شافته لوحده: الوزن موزّع بين الشافت والمحور التاني.</div>`},
- {n:'07',t:'قشرة الراس + الشاسيه + الكوبري',ok:true,xray:true,main:'head_shell',view:[.8,.35,-1.3],pad:1.45,frame:['head_shell','head_bracket'],body:()=>`${meta('٢٥ دقيقة','كاوية للصواميل الحرارية + مفك M3')}
-${chips(['head_shell','chassis','head_bracket'])}
+<li>العمود <b>بولي كربونات</b> (مش أكريليك) لأنه مبيتكسرش لو اتخبط. بيدخل <b>٢٥ مم</b> جوه طوق المهد، و<b>٢٠ مم</b> جوه جراب الطبق، وكل طرف ماسكه مسمار M3 بالعرض. يعني مش معتمد على الغرا.</li>
+<li>لبّس الكابلات جوه <b>الشراب الأسود</b> ودخّلها في العمود. اعمل حزّ صغير ورا في طرف العمود من فوق ومن تحت عشان الكابلات تطلع منه.</li></ul>
+<div class="warn">💡 لو حد خبط الراس من الجنب بـ ١ كجم، الضغط على العمود ≈ ${AR(n1(LD().sStem))} ميجا باسكال، والبولي كربونات بيستحمل ٦٠. يعني أمان ×${AR(Math.round(PC_YIELD/LD().sStem))}.</div>`},
+ {n:'07',t:'قشرة الراس + العمود الفقري + الكوبري',ok:true,xray:true,main:'head_shell',view:[.8,.35,-1.3],pad:1.45,frame:['head_shell','head_bracket'],body:()=>`${meta('٣٠ دقيقة','كاوية للصواميل الحرارية + مفك M3 + مفتاح ٥٫٥')}
+${chips(['head_shell','spine','head_bracket','chassis'])}
 <ul><li>الراس بتتبني <b>على الترابيزة</b> الأول، وفي خطوة ١٥ تنزل على الرقبة. عشان كده شايفها طايرة فوق دلوقتي.</li>
-<li>ركّب الصواميل الحرارية M3 في البوزات اللي جوه القشرة: ٤ للشاسيه، و٤ تحت للكوبري.</li>
-<li>الشاسيه الرمادي بيدخل من ورا، وحرفه الشمال التحتاني مايل بنفس ميل اللوجو فبيقعد جوه القشرة بالظبط.</li>
-<li><b>الكوبري (U)</b> بيتربط تحت الراس بـ ٤ مسامير M3، ودراعينه نازلين لتحت: اليمين للهورن، والشمال للمحور.</li></ul>
-<div class="warn">💡 القشرة شفافة في المحاكاة بس عشان تشوف اللي جوه. في الحقيقة هي حمرا وشكلها زي ماسكوت الهب بالظبط.</div>`},
+<li><b>العمود الفقري:</b> لوح ألومنيوم ١٠٨ × ٨٠ × ٣ مم بيتحط جوه على أرضية القشرة. <b>الكوبري U</b> (ألومنيوم ٣ مم) بيتحط تحت الأرضية من برا قصاده.</li>
+<li><b>٦ مسامير M3</b> بيعدّوا من الكوبري، في أرضية القشرة، في العمود الفقري، وبيتقفلوا بصواميل نايلون. كده أرضية القشرة محبوسة بين لوحين ألومنيوم، ووزن الراس كله (≈ ${AR(kg(LD().head.m))} كجم) بيمشي في المعدن مش في البلاستيك.</li>
+<li>من العمود الفقري طالعين <b>دعامتين</b> لفوق، ماسكين الشاسيه الرمادي. يعني الوش والـ Pi متعلقين في المعدن برضه.</li>
+<li>الشاسيه بيدخل من ورا، وحرفه الشمال التحتاني مايل بنفس ميل اللوجو فبيقعد جوه القشرة بالظبط.</li></ul>
+<div class="warn">💡 الكوبري والعمود الفقري بيتقصّوا ليزر من ملف DXF أنا بعمله، والكوبري بيتني مرتين. أي ورشة ليزر ألومنيوم في دبي بتعملهم في يوم.</div>`},
  {n:'08',t:'بوردة الوش + الكاميرا المستخبية',ok:true,xray:true,view:[1,.4,1.6],pad:1.35,frame:['head_shell'],body:()=>`${meta('٢٥ دقيقة','مفك M2.5')}
 ${chips(['xiao','camera','face_led'])}
 <ul><li><b>الـ XIAO</b> بيتركب على ضهر بوردة الوش على الهيدر، وهو اللي بيسوق الـ ١٧٠٠ لمبة. بيكلّم الـ Pi بكابل USB واحد.</li>
@@ -586,11 +770,12 @@ ${chips(['xiao','camera','face_led'])}
 <li>البوردة بتدخل من <b>قدّام</b> في فتحة الوش، وتتربط على ٦ أعمدة الشاسيه بمسامير M2.5.</li>
 <li>قبل ما تقفل: ركّب كابل الكاميرا الشريطي في الكاميرا.</li></ul>
 <div class="warn">⚠️ امسك البوردة من الحروف ومتحطّهاش على وشها. اللمبات صغيرة (٢ مم) وممكن تتخلع.</div>`},
- {n:'09',t:'بورد السيرفوهات',ok:true,xray:true,view:[.9,.4,-1.4],pad:1.35,frame:['head_shell'],body:()=>`${meta('١٠ دقائق','مفك M2.5')}
-${chips(['bus_adapter','w_bus1'])}
-<ul><li>بورد السيرفوهات (Waveshare) بيتحط في أرضية الراس ورا، بعيد عن الحتة المايلة.</li>
-<li>كابل السيرفو بيطلع من البورد وينزل من <b>خرم أرضية الراس</b> اللي ورا الكوبري. من هناك بيروح لسيرفو الميل في الرقبة، ومنه لسيرفو اللف في القاعدة.</li></ul>
-<div class="warn">💡 كل السيرفوهات الأربعة (اللف والميل والإيدين) على <b>كابل واحد</b> بيلف عليهم كلهم، وكل واحد ليه رقم (ID) مختلف.</div>`},
+ {n:'09',t:'بوردين السيرفوهات',ok:true,xray:true,main:'bus_adapter',view:[.9,.4,-1.4],pad:1.35,frame:['head_shell'],body:()=>`${meta('١٠ دقائق','مفك M2.5')}
+${chips(['bus_adapter','bus_adapter2','w_bus1'])}
+<ul><li><b>بورد #1 (12 فولت):</b> لسيرفو اللف وسيرفو الميل. بيتحط في أرضية الراس ورا على الشمال، بعيد عن الحتة المايلة.</li>
+<li><b>بورد #2 (5 فولت):</b> لموتورين الإيدين الصغيرين، لأنهم 5 فولت بس ولو خدوا 12 هيتحرقوا.</li>
+<li>كابل البورد #1 بينزل من <b>خرم أرضية الراس</b> اللي ورا الكوبري، ويروح لسيرفو الميل في الرقبة، ومنه لسيرفو اللف في القاعدة.</li></ul>
+<div class="warn">⚠️ متبدّلش البوردين: البورد #2 لازم ياخد كهربا من خط الـ 5 فولت بس. أنا هعلّم عليهم بلون في الصور.</div>`},
  {n:'10',t:'Raspberry Pi 5 + التبريد',ok:true,xray:true,view:[.9,.45,-1.4],pad:1.35,frame:['head_shell'],body:()=>`${meta('١٥ دقيقة','مفك M2.5')}
 ${chips(['pi5','cooler','sdcard','w_cam'])}
 <ul><li>ركّب المروحة (Active Cooler) على الـ Pi الأول: بتتكبس في الخرمين، وكابلها بيتوصل في كونكتور FAN.</li>
@@ -615,19 +800,22 @@ ${chips(['ear_servo_r','ear_servo_l','ear_r','ear_l','w_bus_ears'])}
 <li>قبل التركيب: الموتور اليمين <b>ID 3</b> والشمال <b>ID 4</b>.</li>
 <li>الودن بتتربط على جنب الراس بمسمارين من جوه. في الركن القدّامي من برا فيه شق صغير، وده اللي دراع الإيد بيلف فيه.</li>
 <li>كابل السيرفو من البورد للودن الشمال، ومنها للودن اليمين، على نفس الكابل.</li></ul>`},
- {n:'14',t:'الكهربا والتوصيلات',ok:true,xray:true,view:[.5,.6,-1.4],pad:1.35,frame:['head_shell'],body:()=>`${meta('٣٠ دقيقة','مفك + رباطات')}
-${chips(['wago','w_pwr_pi','w_pwr_led','w_pwr_bus','w_usb_mic','w_usb_bus','w_usb_led'])}
-<ul><li><b>WAGO:</b> واحد للـ 5V (أحمر) وواحد للأرضي (أسود). منهم بتطلع ٣ خطوط: الـ Pi (USB-C)، بوردة الوش (سلك تخين)، وبورد السيرفوهات.</li>
-<li><b>USB:</b> ٣ كابلات قصيرة داخلة الـ Pi: المايك، وبورد السيرفوهات، والـ XIAO بتاع الوش.</li>
+ {n:'14',t:'الكهربا والتوصيلات',ok:true,xray:true,main:'buck',view:[.5,.6,-1.4],pad:1.35,frame:['head_shell'],body:()=>`${meta('٣٠ دقيقة','مفك + رباطات + ملتيميتر')}
+${chips(['buck','wago','w_buck_in','w_buck_out','w_pwr_bus','w_pwr_bus2','w_pwr_pi','w_pwr_led','w_usb_mic','w_usb_bus','w_usb_bus2','w_usb_led'])}
+<ul><li>الـ <b>12 فولت</b> طالعة من الرقبة لـ <b>WAGO الأول</b>. منه: بورد السيرفوهات #1، ومدخل <b>المنظّم</b>.</li>
+<li><b>المنظّم</b> بيحوّل 12 ← 5 فولت (لحد ١٠ أمبير) ويطلّعها على <b>WAGO التاني</b>. منه: الـ Pi (USB-C)، وبوردة الوش (سلك تخين)، وبورد السيرفوهات #2.</li>
+<li><b>WAGO التالت</b> للأرضي (السالب)، ومتوصل بكل حاجة.</li>
+<li><b>USB:</b> ٤ كابلات قصيرة داخلة الـ Pi: المايك، والبوردين، والـ XIAO بتاع الوش.</li>
 <li>رتّب السلوك برباطات صغيرة، وبعّدها عن المروحة.</li></ul>
-<div class="warn">⚠️ الوش بيسحب لحد ٣ أمبير، فسلكه لازم يكون 18AWG ورايح على WAGO مباشرة، <b>مش من الـ Pi</b>.</div>`},
+<div class="warn">⚠️ قبل ما توصّل الـ Pi: شغّل الشاحن وقيس خرج المنظّم بالملتيميتر، لازم يطلع ٥٫١ فولت. في أسوأ لحظة (كل حاجة شغّالة مع بعض) الشاحن بيشتغل على ${AR(pct(LD().a12,POWER.psu))}٪ والمنظّم على ${AR(pct(LD().a5,10))}٪.</div>`},
  {n:'15',t:'تركيب الراس على الرقبة',ok:true,xray:true,main:'head_bracket',view:[1.5,.3,.9],pad:1.2,frame:['head_shell','neck','stem'],body:()=>`${meta('١٥ دقيقة','مفك M2.5 + مفتاح M4')}
 ${chips(['w_loop','w_stem'])}
 <ul><li>نزّل الراس لحد ما دراعين الكوبري يركبوا على جنبين المهد.</li>
 <li><b>الدراع اليمين</b> بيتربط في هورن سيرفو الميل بـ ٤ مسامير M2.5.</li>
 <li><b>الدراع الشمال</b> بيتركب على المحور (مسمار M4 + بيرينج)، واربطه لحد ما يلف ناعم من غير لعب.</li>
 <li>الكابلات اللي طالعة من ورا الطوق بتعمل <b>لفّة صغيرة</b> ورا الرقبة، وتدخل الراس من الخرم اللي في الأرضية، وتتوصّل في WAGO والبورد.</li>
-<li>ميّل الراس بإيدك ±١٥° بالراحة: الراس بتتمرجح حوالين المحور، واللفّة بتتمد وتتلم من غير ما تتشد.</li></ul>`},
+<li>ميّل الراس بإيدك ±١٥° بالراحة: الراس بتتمرجح حوالين المحور، واللفّة بتتمد وتتلم من غير ما تتشد.</li></ul>
+<div class="warn">💡 مركز ثقل الراس فوق المحور بـ ${AR(Math.round(LD().dH.y))} مم. أقصى عزم محتاجه السيرفو ≈ ${AR(n1(LD().tTilt/KGCM))} كجم·سم من ٣٠، يعني شغّال على ${AR(pct(LD().tTilt/KGCM,SERVO.sts12))}٪ بس. ✋ <b>وشيل الروبوت دايمًا من القاعدة</b>.</div>`},
  {n:'16',t:'الغطا الخلفي',ok:true,view:[.6,.4,-1.4],pad:1.35,frame:['head_shell'],body:()=>`${meta('٥ دقائق','مفك M3')}
 ${chips(['back_cover'])}
 <ul><li>الغطا الأحمر اللي ورا فيه فتحات تهوية، ومنها بيطلع هوا المروحة.</li>
@@ -766,7 +954,7 @@ const showGroup=(g,on)=>{ if(!g) return; g.visible=on; (g.userData.labels||[]).f
 function mainPart(k){ if(STEPS[k]&&STEPS[k].main) return PARTS[STEPS[k].main]; let best=null,v=-1; stepParts(k).forEach(p=>{ if(p.kind==='cable') return; const s=sizeOf(p), vol=s.x*s.y*s.z; if(vol>v){ v=vol; best=p; } }); return best; }
 function refreshDims(){
  LIST.forEach(p=>showGroup(p.dims,false)); showGroup(overall,false);
- if(!BP) return;
+ if(!BP||LOADS) return;
  const S=STEPS[cur]||{}, inStep=new Set(mode==='build'?stepParts(cur):[]);
  LIST.forEach(p=>{ if(p.bpLM) p.bpLM.opacity=mode!=='build'?.88:inStep.has(p)?.95:.32; });   // older parts fade back, the new ones read clearly
  if(XRAY_ON) XRAYED.forEach(id=>{ const q=PARTS[id]; if(q.bpLM) q.bpLM.opacity=Math.min(q.bpLM.opacity,.3); });
@@ -799,9 +987,10 @@ function frameCam(list,dir,pad=1.18,dur=1100,which='both'){ lastFrame=[list,dir,
  camTw={p0:camera.position.clone(),t0:controls.target.clone(),p1:s.center.clone().addScaledVector(d,dist),t1:s.center.clone(),s:performance.now(),dur}; }
 let camTw=null;
 function setVisibleUpTo(k){ LIST.forEach(p=>{ p.o.visible=!p.kitOnly&&p.step<=k; }); }
-function go(i){ _go(i); applyLook(); }
+function go(i){ if(LOADS){ LOADS=false; if(LDG) LDG.visible=false; $('#bLD').classList.remove('on'); $('#ex').disabled=false; } _go(i); applyLook(); }
 function cardParts(){ if(cur===1) return LIST.filter(p=>p.kind!=='cable'); if(cur===2) return LIST.filter(p=>p.kind==='print'); if(cur===0||cur===20) return LIST.filter(p=>!p.kitOnly&&p.kind!=='cable'); return stepParts(cur); }
 function renderCard(){ const S=STEPS[cur];
+ if(LOADS){ $('#cNum').textContent='⚖️'; $('#cTitle').textContent='الأوزان والأحمال'; $('#cBody').innerHTML=loadsHTML(); document.querySelectorAll('#cBody [data-p]').forEach(el=>el.onclick=()=>{ const p=PARTS[el.dataset.p]; if(p){ showPart(p); flash(p); } }); return; }
  $('#cBody').innerHTML=S.ok?S.body()+(BP&&cardParts().length?sizesTable(cardParts()):''):`<div class="soonbox">🛠️ <b>الخطوة دي قيد التجهيز.</b><br>بتتعمل دلوقتي وهتنزل هنا لايف أول ما تخلص — اعمل ريفرش كل شوية.</div>`;
  document.querySelectorAll('#cBody [data-p]').forEach(el=>el.onclick=()=>{ const p=PARTS[el.dataset.p]; if(p){ showPart(p); flash(p); } });
  document.querySelectorAll('#cBody [data-sel]').forEach(el=>el.onclick=()=>{ const p=PARTS[el.dataset.sel]; if(p){ SEL=p; showPart(p); refreshDims(); } }); }
@@ -847,6 +1036,7 @@ addEventListener('keydown',e=>{ if(e.target.tagName==='INPUT') return; if(e.key=
 /* ───────── tools ───────── */
 $('#ex').oninput=e=>{ const was=EXP>.05; EXP=e.target.value/100; $('#exV').textContent=e.target.value+'%'; if(BP&&was!==(EXP>.05)) refreshDims(); };
 $('#bBP').onclick=()=>setBlueprint(!BP);
+$('#bLD').onclick=()=>setLoads(!LOADS);
 const bAlive=$('#bAlive'); bAlive.classList.toggle('on',ALIVE);
 $('#bX').onclick=e=>{ XRAY_USER=!XRAY_USER; e.target.classList.toggle('on',XRAY_USER); setXray(XRAY_USER||!!(STEPS[cur].xray&&mode==='build')); };
 bAlive.onclick=e=>{ ALIVE=!ALIVE; e.target.classList.toggle('on',ALIVE); };
@@ -918,15 +1108,17 @@ function frame(){
  else if(!LEDS_ON&&mode==='build'){ faceMood='off'; hands('off','#000'); }
  else if(!live&&mode!=='overview'){ hands('open','#ffe6cf'); }
  if(BP&&bootT<0){ pan=0; tilt=0; }
+ if(LOADS){ pan=0; tilt=LIM.tilt*Math.sin(t*.6); }
  if(BP) updateSil();
  panG.rotation.y+=(pan-panG.rotation.y)*.06; tiltG.rotation.x+=(tilt-tiltG.rotation.x)*.06;
+ if(LOADS){ root.updateMatrixWorld(); ldUpdate(now); }
  drawFace(faceMood,lx,ly,blink>0?1:0,Math.floor(t*(bootT>0?9:4)),(Math.sin(t*.25)+1)/2,word);
  PARTS.antenna.o.children[1].material.emissiveIntensity=(LEDS_ON||bootT>0)?(.7+.5*Math.max(0,Math.sin(t*3))*(faceMood==='talk'?1:0)):.05;
  if(camTw){ const k=Math.min(1,(now-camTw.s)/camTw.dur), e=ease(k); camera.position.lerpVectors(camTw.p0,camTw.p1,e); controls.target.lerpVectors(camTw.t0,camTw.t1,e); if(k>=1) camTw=null; }
  controls.update(); renderer.render(scene,camera); labelR.render(scene,camera);
  requestAnimationFrame(frame);
 }
-window.__dbg={THREE,LIST,panG,HEAD,HD,HB,HZ,HCY,TILT_Y,offsetPoly,HAND,camera,controls,PARTS,go,tiltG,get bench(){return [BENCH,BENCH_TO,benchTw];}};
+window.__dbg={LD,setLoads,THREE,LIST,panG,HEAD,HD,HB,HZ,HCY,TILT_Y,offsetPoly,HAND,camera,controls,PARTS,go,tiltG,get bench(){return [BENCH,BENCH_TO,benchTw];}};
 renderList(); go(0); frame();
 let startBP=/look=blue/.test(location.search); try{ startBP=startBP||localStorage.getItem('aroma-robot-look')==='bp'; }catch(e){}
 if(startBP) setBlueprint(true);
