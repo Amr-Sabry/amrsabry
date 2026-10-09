@@ -734,7 +734,7 @@ const SC = 0.05, H = 1.2;
 const K = D.proj.k, CXK = D.proj.cx * D.proj.k;
 const proj = (lat, lon) => [(lon - D.proj.lon0) * CXK, (D.proj.lat0 - lat) * K];
 const EC = {x: (D.ebb[0] + D.ebb[2]) / 2 * SC, z: (D.ebb[1] + D.ebb[3]) / 2 * SC};
-const U = {uTime: {value: 0}, uScale: {value: 600}, uPR: {value: PR}, uKP: {value: 1}};
+const U = {uTime: {value: 0}, uScale: {value: 600}, uPR: {value: PR}, uKP: {value: 1}, uRes: {value: new THREE.Vector2(1920, 1080)}};
 let KP = 1;   // device-independent size factor (screen height / 1080)
 
 /* ================= ground grid: only the frame (origin, step, size) is kept, to lay out the ground textures. It carries NO heights: the map is flat. ================= */
@@ -1408,6 +1408,7 @@ const layerY = s => LAYER0 + (SECS.length - 1 - s) * LGAP;
 /* ================= beacons (beams + base rings + heads) ================= */
 const HT = [1.5, 2.6, 4.0, 5.8];
 const aPos = new Float32Array(NI * 3), aH = new Float32Array(NI), aW = new Float32Array(NI), aA = new Float32Array(NI * 4), aCol = new Float32Array(NI * 3), aKind = new Float32Array(NI), aSz = new Float32Array(NI), aHeadPos = new Float32Array(NI * 3);
+const aOff = new Float32Array(NI * 2), offT = new Float32Array(NI * 2);   /* css px: a head pushed aside from a neighbour on the same spot; the beam leans to it, its foot stays true */
 const ap = new Float32Array(NI), fl = new Float32Array(NI), dimK = new Float32Array(NI).fill(1), hv = new Float32Array(NI), prevT = new Uint8Array(NI), sxy = new Float32Array(NI * 3);
 const SECF = SECC.map(h => { const c = new THREE.Color(h); return [c.r, c.g, c.b]; }), WHITE = [1, 0.97, 0.88];
 INST.forEach((q, k) => { const p = P[q.pi];
@@ -1420,11 +1421,11 @@ INST.forEach((q, k) => { const p = P[q.pi];
 });
 function makeInst(geo){ const g = new THREE.InstancedBufferGeometry(); g.setIndex(geo.index); g.setAttribute("position", geo.attributes.position); g.instanceCount = NI;
   const mk = (arr, n) => new THREE.InstancedBufferAttribute(arr, n).setUsage(THREE.DynamicDrawUsage);
-  g.setAttribute("iPos", mk(aPos, 3)); g.setAttribute("iH", mk(aH, 1)); g.setAttribute("iW", mk(aW, 1)); g.setAttribute("iA", mk(aA, 4)); g.setAttribute("iCol", mk(aCol, 3)); g.setAttribute("iKind", mk(aKind, 1)); return g; }
+  g.setAttribute("iPos", mk(aPos, 3)); g.setAttribute("iH", mk(aH, 1)); g.setAttribute("iW", mk(aW, 1)); g.setAttribute("iA", mk(aA, 4)); g.setAttribute("iCol", mk(aCol, 3)); g.setAttribute("iKind", mk(aKind, 1)); g.setAttribute("iOff", mk(aOff, 2)); return g; }
 const quadV = new THREE.BufferGeometry(); quadV.setAttribute("position", new THREE.Float32BufferAttribute([-0.5, 0, 0, 0.5, 0, 0, 0.5, 1, 0, -0.5, 1, 0], 3)); quadV.setIndex([0, 1, 2, 0, 2, 3]);
 const quadF = new THREE.BufferGeometry(); quadF.setAttribute("position", new THREE.Float32BufferAttribute([-0.5, 0, -0.5, 0.5, 0, -0.5, 0.5, 0, 0.5, -0.5, 0, 0.5], 3)); quadF.setIndex([0, 1, 2, 0, 2, 3]);
-const INSTDECL = `attribute vec3 iPos; attribute float iH; attribute float iW; attribute vec4 iA; attribute vec3 iCol; attribute float iKind;`;
-const beamMat = new THREE.ShaderMaterial({uniforms: {uTime: U.uTime, uScale: U.uScale, uPx: {value: 2.4}, uGlow: {value: 1}, uTwin: {value: 0}}, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
+const INSTDECL = `attribute vec3 iPos; attribute float iH; attribute float iW; attribute vec4 iA; attribute vec3 iCol; attribute float iKind; attribute vec2 iOff; uniform vec2 uRes; uniform float uPR;`;
+const beamMat = new THREE.ShaderMaterial({uniforms: {uTime: U.uTime, uScale: U.uScale, uPx: {value: 2.4}, uGlow: {value: 1}, uTwin: {value: 0}, uRes: U.uRes, uPR: U.uPR}, transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
   vertexShader: INSTDECL + `uniform float uScale; uniform float uPx; varying vec2 vUv; varying vec3 vC; varying float vAl; varying float vK; varying float vHh; varying float vHv; varying float vFl;
     void main(){ float h = iH * iA.x; vec3 base = iPos;
       vec3 tc = cameraPosition - base; tc.y = 0.0; float l = length(tc); tc = l > 1e-4 ? tc / l : vec3(1.0, 0.0, 0.0);
@@ -1433,7 +1434,7 @@ const beamMat = new THREE.ShaderMaterial({uniforms: {uTime: U.uTime, uScale: U.u
       float w = uPx * iW * dist / uScale * (1.0 + iA.z * 0.5 + iA.w * 0.35);
       vec3 p = base + right * position.x * w + vec3(0.0, position.y * h, 0.0);
       vUv = vec2(position.x + 0.5, position.y); vC = iCol; vAl = iA.y; vK = iKind; vHh = h; vHv = iA.z; vFl = iA.w;
-      gl_Position = projectionMatrix * viewMatrix * vec4(p, 1.0); }`,
+      gl_Position = projectionMatrix * viewMatrix * vec4(p, 1.0); gl_Position.xy += iOff * vec2(1.0, -1.0) * uPR * 2.0 / uRes * gl_Position.w * position.y; }`,
   fragmentShader: `uniform float uTime; uniform float uGlow; uniform float uTwin; varying vec2 vUv; varying vec3 vC; varying float vAl; varying float vK; varying float vHh; varying float vHv; varying float vFl;
     void main(){ float x = abs(vUv.x - 0.5) * 2.0; float prof = mix(exp(-x * x * 4.0), exp(-x * x * 9.0) * 0.8 + smoothstep(0.35, 0.0, x) * 0.35, uTwin);
       float grad = mix(0.12, 1.0, pow(vUv.y, 1.5));
@@ -1442,7 +1443,7 @@ const beamMat = new THREE.ShaderMaterial({uniforms: {uTime: U.uTime, uScale: U.u
       else if (vK > 0.5) { a *= 0.78 + 0.22 * sin(uTime * 2.2 + vHh * 3.0); }
       vec3 c = vC * (1.0 + vHv * 0.35 + vFl * 0.6) + vec3(vFl * 0.12 + vHv * 0.05);
       gl_FragColor = vec4(c, a); }`});
-const ringMat = new THREE.ShaderMaterial({uniforms: {uTime: U.uTime, uScale: U.uScale, uPx: {value: 9}}, transparent: true, depthWrite: false, blending: THREE.CustomBlending, blendEquation: THREE.MaxEquation, blendSrc: THREE.OneFactor, blendDst: THREE.OneFactor, side: THREE.DoubleSide,
+const ringMat = new THREE.ShaderMaterial({uniforms: {uTime: U.uTime, uScale: U.uScale, uPx: {value: 9}, uRes: U.uRes, uPR: U.uPR}, transparent: true, depthWrite: false, depthTest: false, blending: THREE.CustomBlending, blendEquation: THREE.MaxEquation, blendSrc: THREE.OneFactor, blendDst: THREE.OneFactor, side: THREE.DoubleSide,
   vertexShader: INSTDECL + `uniform float uScale; uniform float uPx; varying vec2 vUv; varying vec3 vC; varying float vAl; varying float vFl; varying float vK;
     void main(){ float dist = distance(cameraPosition, iPos);
       float r = uPx * (0.8 + iW * 0.35) * dist / uScale * (1.0 + iA.w * 1.3 + iA.z * 0.35);
@@ -1454,11 +1455,11 @@ const ringMat = new THREE.ShaderMaterial({uniforms: {uTime: U.uTime, uScale: U.u
       float inner = exp(-d * d * 7.0) * 0.3;
       float a = (ring + inner) * vAl * (vK > 1.5 ? 0.6 : 1.0) * (1.0 - vFl * 0.55);
       gl_FragColor = vec4(vC * (1.0 + vFl) * a, a); }`});
-const headMat = new THREE.ShaderMaterial({uniforms: {uPR: U.uPR, uKP: U.uKP, uTime: U.uTime, uGlow: {value: 1}}, transparent: true, depthWrite: false, blending: THREE.CustomBlending, blendEquation: THREE.MaxEquation, blendSrc: THREE.OneFactor, blendDst: THREE.OneFactor,
-  vertexShader: `attribute float aSize; attribute vec4 aA; attribute vec3 aCol; uniform float uPR; uniform float uKP; varying vec3 vC; varying float vAl; varying float vFl; varying float vHv;
+const headMat = new THREE.ShaderMaterial({uniforms: {uPR: U.uPR, uKP: U.uKP, uTime: U.uTime, uGlow: {value: 1}, uRes: U.uRes, uNear: {value: 1}}, transparent: true, depthWrite: false, depthTest: false, blending: THREE.CustomBlending, blendEquation: THREE.MaxEquation, blendSrc: THREE.OneFactor, blendDst: THREE.OneFactor,
+  vertexShader: `attribute float aSize; attribute vec4 aA; attribute vec3 aCol; attribute vec2 aOff; uniform float uPR; uniform float uKP; uniform vec2 uRes; uniform float uNear; varying vec3 vC; varying float vAl; varying float vFl; varying float vHv;
     void main(){ float s = aSize * (0.3 + 0.7 * aA.x) * (1.0 + aA.z * 0.8 + aA.w * 1.5) * mix(0.55, 1.0, aA.y);
-      gl_PointSize = s * uPR * uKP; vC = aCol; vAl = aA.y * smoothstep(0.0, 0.15, aA.x); vFl = aA.w; vHv = aA.z;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+      gl_PointSize = s * uPR * uKP * uNear; vC = aCol; vAl = aA.y * smoothstep(0.0, 0.15, aA.x); vFl = aA.w; vHv = aA.z;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); gl_Position.xy += aOff * vec2(1.0, -1.0) * uPR * 2.0 / uRes * gl_Position.w; }`,
   fragmentShader: `uniform float uGlow; varying vec3 vC; varying float vAl; varying float vFl; varying float vHv;
     void main(){ vec2 p = gl_PointCoord - 0.5; float d = abs(p.x) + abs(p.y);
       float core = smoothstep(0.3, 0.17, d); float glow = exp(-d * d * 26.0);
@@ -1469,7 +1470,7 @@ const beams = new THREE.Mesh(makeInst(quadV), beamMat); beams.frustumCulled = fa
 const rings = new THREE.Mesh(makeInst(quadF), ringMat); rings.frustumCulled = false; rings.renderOrder = 5; scene.add(rings);
 const headGeo = new THREE.BufferGeometry();
 headGeo.setAttribute("position", new THREE.BufferAttribute(aHeadPos, 3).setUsage(THREE.DynamicDrawUsage));
-headGeo.setAttribute("aSize", new THREE.BufferAttribute(aSz, 1)); headGeo.setAttribute("aA", new THREE.BufferAttribute(aA, 4).setUsage(THREE.DynamicDrawUsage)); headGeo.setAttribute("aCol", new THREE.BufferAttribute(aCol, 3).setUsage(THREE.DynamicDrawUsage));
+headGeo.setAttribute("aSize", new THREE.BufferAttribute(aSz, 1)); headGeo.setAttribute("aA", new THREE.BufferAttribute(aA, 4).setUsage(THREE.DynamicDrawUsage)); headGeo.setAttribute("aCol", new THREE.BufferAttribute(aCol, 3).setUsage(THREE.DynamicDrawUsage)); headGeo.setAttribute("aOff", new THREE.BufferAttribute(aOff, 2).setUsage(THREE.DynamicDrawUsage));
 const heads = new THREE.Points(headGeo, headMat); heads.frustumCulled = false; heads.renderOrder = 7; scene.add(heads);
 
 /* national ring (orbit) */
@@ -2040,6 +2041,7 @@ function updateZoomScale(){
   ZS.rel = lerp(1 / 15, 1, sstep(0.45, 12, d));          // relief exaggeration fades to true height near the ground
   ZS.beam = clamp(d / 16, 0.0032, 1);                     // beams shrink to a marker as the camera comes down
   ZS.close = 1 - sstep(0.35, 3.2, d);                      // 1 at city scale
+  headMat.uniforms.uNear.value = 1 + 0.6 * ZS.close; beamMat.uniforms.uPx.value = 2.3 * PR * KP * (1 + 0.45 * ZS.close);
   ZS.street = 1 - sstep(0.03, 0.22, d);                    // 1 at street scale
   TU.uNear.value = ZS.close; infraByZoom(); railGlowMat.visible = pipeMat.visible = d > 9; pipeCore.visible = d > 9; TU.uTLift.value = 0.003 * sstep(1.6, 4, d);   /* no terrain lift while street tiles are on: it made roads and land cover fight the ground in stripes */
   /* the sea is painted on a plinth below the land slab: near the ground it rises to the coast so the shore is not a cliff */
@@ -2102,6 +2104,31 @@ function updateCrowd(){
       for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) { const a = crowdMap.get((gx + dx) * 4096 + gy + dy); if (!a) continue;
         for (const j of a) { const ex = cX[j] - cX[k], ey = cY[j] - cY[k]; n += Math.exp(-(ex * ex + ey * ey) / sig2); } } }
     const tgt = n <= 1.15 ? 1 : Math.max(0.3, 1 / Math.sqrt(n * 0.85)); crowd[k] += (tgt - crowd[k]) * 0.07; }
+  fanOut();
+}
+/* beacons standing on (almost) the same spot: their heads part on a small circle round the spot so each one can be seen and picked;
+   the beam leans to its head and its foot ring stays on the true place. Big city clusters seen from far keep the soft dimming instead. */
+const fanPar = new Int32Array(NI), FAN_MAX = 9;
+function fanFind(a){ while (fanPar[a] !== a) { fanPar[a] = fanPar[fanPar[a]]; a = fanPar[a]; } return a; }
+function fanOut(){
+  const R = 15 * clamp(KP, 0.8, 1.6), cell = R * 2;
+  offT.fill(0);
+  if (mL < 0.5 && mD < 0.5) {
+    const grid = new Map();
+    for (let k = 0; k < NI; k++) { fanPar[k] = k; if (sxy[k * 3 + 2] < 0 || ap[k] < 0.5 || dimK[k] < 0.25) continue;
+      const key = Math.floor(cX[k] / cell) * 4096 + Math.floor(cY[k] / cell); let a = grid.get(key); if (!a) grid.set(key, a = []); a.push(k); }
+    grid.forEach((a, key) => { const gx = Math.floor(key / 4096), gy = key - gx * 4096;
+      for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) { const b = grid.get((gx + dx) * 4096 + gy + dy); if (!b) continue;
+        for (const i of a) for (const j of b) if (i < j && Math.hypot(cX[i] - cX[j], cY[i] - cY[j]) < R) { const ri = fanFind(i), rj = fanFind(j); if (ri !== rj) fanPar[ri] = rj; } } });
+    const cl = new Map(); grid.forEach(a => a.forEach(k => { const r = fanFind(k); let c = cl.get(r); if (!c) cl.set(r, c = []); c.push(k); }));
+    cl.forEach(c => { if (c.length < 2 || c.length > FAN_MAX) return;
+      c.sort((a, b) => INST[a].pi - INST[b].pi || a - b);
+      let mx = 0, my = 0; c.forEach(k => { mx += cX[k]; my += cY[k]; }); mx /= c.length; my /= c.length;
+      const rr = Math.max(R * 1.25, c.length * 7.5 * clamp(KP, 0.8, 1.6));
+      c.forEach((k, i) => { const a = -Math.PI / 2 + (i / c.length) * Math.PI * 2 + (c.length === 2 ? Math.PI / 2 : 0);
+        offT[k * 2] = mx + Math.cos(a) * rr - cX[k]; offT[k * 2 + 1] = my + Math.sin(a) * rr - cY[k]; }); });
+  }
+  for (let i = 0; i < NI * 2; i++) { aOff[i] += (offT[i] - aOff[i]) * 0.18; if (Math.abs(aOff[i]) < 0.05) aOff[i] = offT[i]; }
 }
 
 /* geographic readout: compass, altitude, coordinates and a true scale bar, the way a globe viewer shows them */
