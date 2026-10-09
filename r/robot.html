@@ -90,6 +90,30 @@ table.bom tr:hover td{background:rgba(243,236,230,.03);cursor:pointer}
 table.bom tfoot td{font-weight:700;color:var(--org);border-top:1px solid var(--line)}
 .soonbox{padding:18px 0 8px;color:var(--dim)}
 .soonbox b{color:var(--ink)}
+
+/* blueprint look */
+#bpTitle{display:none}
+body.bp{--bg:#0a3a6c;--glass:rgba(6,36,72,.86);--line:rgba(214,236,255,.28);--faint:rgba(214,236,255,.07);--dim:rgba(214,236,255,.66)}
+body.bp #sheet{background:
+ linear-gradient(rgba(214,236,255,.16) 1px,transparent 1px) 0 0/120px 120px,
+ linear-gradient(90deg,rgba(214,236,255,.16) 1px,transparent 1px) 0 0/120px 120px,
+ linear-gradient(rgba(214,236,255,.07) 1px,transparent 1px) 0 0/24px 24px,
+ linear-gradient(90deg,rgba(214,236,255,.07) 1px,transparent 1px) 0 0/24px 24px,
+ radial-gradient(1300px 800px at 50% 45%,#11518f,#0a3a6c 60%,#072a52);opacity:1}
+body.bp header{background:linear-gradient(rgba(6,36,72,.95),rgba(6,36,72,.7))}
+body.bp .st.on{background:rgba(214,236,255,.10)}
+body.bp #bpTitle{display:flex;position:absolute;bottom:16px;left:572px;right:322px;justify-content:center;overflow:hidden;gap:0;border:1.5px solid rgba(214,236,255,.85);font:600 10.5px var(--mono);letter-spacing:.12em;color:#eaf5ff;background:rgba(6,36,72,.55);direction:ltr;pointer-events:none;z-index:3;white-space:nowrap}
+body.bp #bpTitle>*{padding:6px 12px;flex:none;background:rgba(6,36,72,.75);border-left:1px solid rgba(214,236,255,.6)}
+body.bp #bpTitle>*:first-child{border-left:0}
+body.bp #bpTitle span:nth-child(3){font-family:var(--ar);letter-spacing:0;font-size:12px}
+.dim{font:600 11px/1 var(--mono);color:#fff;background:rgba(7,42,82,.92);border:1px solid rgba(214,236,255,.75);padding:3px 6px;white-space:nowrap;direction:ltr}
+.dim.tag{font-size:10px;color:#d6ecff;border-color:rgba(214,236,255,.4);transform:translateY(10px)}
+.bpb{width:100%;border-color:rgba(79,179,176,.5)}
+body.bp .bpb{background:#d6ecff;color:#072a52;border-color:#d6ecff}
+body.bp .lbl{background:rgba(7,42,82,.92);border-color:rgba(214,236,255,.5);border-inline-start-color:#fff}
+body.bp .lbl b{color:#9fd0ff}
+.mono{font-family:var(--mono);direction:ltr}
+@media (max-width:860px){ body.bp #bpTitle{top:8px;bottom:auto;left:8px;right:8px;font-size:9px} body.bp #bpTitle span:nth-child(5){display:none} }
 #nogl{display:none;position:fixed;inset:0;place-items:center;text-align:center;z-index:9;padding:30px}
 @media (max-width:860px){
  body{overflow:auto}
@@ -114,10 +138,11 @@ table.bom tfoot td{font-weight:700;color:var(--org);border-top:1px solid var(--l
  <div class="brand"><svg viewBox="0 0 44 20"><path d="M0 0H44V20H8L0 12Z" fill="#e2300f"/></svg><span class="w">AROMA</span><span class="s">DOORMAN · BUILD SIM</span></div>
  <div class="live"><i></i><span>LIVE</span><span class="ar" id="liveTxt"></span></div>
 </header>
-<div id="stage"><canvas id="c"></canvas><div id="labels"></div></div>
+<div id="stage"><canvas id="c"></canvas><div id="labels"></div><div id="bpTitle"></div></div>
 <div id="wrap">
 <div id="tools">
  <div class="tool" id="tExplode"><label><span>فكّ المجسم</span><span id="exV">0%</span></label><input type="range" dir="ltr" id="ex" min="0" max="100" value="0"></div>
+ <div class="tool tog"><button id="bBP" class="bpb">📐 بلو برينت + المقاسات</button></div>
  <div class="tool tog"><button id="bX">شفاف</button><button id="bAlive" class="on">حيّ</button><button id="bSpin">لف</button></div>
  <div class="tool tog"><button id="bFold">ضم الإيدين</button><button id="bWave">سلّم</button></div>
 </div>
@@ -145,6 +170,7 @@ const LOG=[
  ['04:59','رجّعت الشكل زي ماسكوت الهب بالظبط: الشاشة بحافة اللوجو 64×27، والإيدين مرايات بتتضم وتتفتح.'],
  ['05:18','نزلت كل القطع الداخلية بمقاساتها الحقيقية + خطوات ٠١ لـ ٠٤ (العدة، الطباعة والبوردات، القاعدة، سيرفو اللف).'],
  ['05:31','نزلت كل الخطوات من ٠٥ لـ ٢٠: البيرينج، العمود، الراس من جوه (الوش والكاميرا، السيرفوهات، الـ Pi، المايك، السماعة، الودان، الكهربا)، تركيب الراس، الغطا، الزجاج، الإيدين، أول تشغيل، والدماغ.'],
+ ['10:21','نزل لوك «بلو برينت»: كل حاجة مرسومة خطوط على أزرق، ومقاسات كل قطعة بالمللي في كل خطوة، ولكل سلك طوله. والمقاس بقى ظاهر في كارت أي قطعة تدوس عليها.'],
 
 ];
 
@@ -299,7 +325,7 @@ function cable(id,meta,grp,pts,color,r=2.2,ex=[0,0,0]){
  const c=new THREE.Vector3(); P.forEach(p=>c.add(p)); c.multiplyScalar(1/P.length);
  const curve=new THREE.CatmullRomCurve3(P.map(p=>p.clone().sub(c)),false,'centripetal');
  const build=()=>mesh(new THREE.TubeGeometry(curve,Math.max(24,P.length*14),r,8,false),MAT.wire(color));
- return part(id,Object.assign({kind:'cable'},meta),build,grp,[c.x,c.y+off,c.z],ex);
+ const p=part(id,Object.assign({kind:'cable'},meta),build,grp,[c.x,c.y+off,c.z],ex); p.len=curve.getLength(); return p;
 }
 const STS=()=>{ // Feetech STS3215, origin = output shaft axis on the top face; body hangs below (−y), length along +x
  const g=new THREE.Group();
@@ -361,7 +387,7 @@ part('camera',{ar:'كاميرا Pi Module 3 Wide (مستخبية في الوش)'
  g.add(box(25,24,1,MAT.pcbG())); g.add(at(box(8.5,8.5,4.5,MAT.chip()),0,2.5,2.7)); g.add(rx(at(cyl(3.6,8.5,MAT.chip(),20),0,2.5,9.2),Math.PI/2)); g.add(rx(at(cyl(2.4,.4,MAT.wire(0x26355c),20),0,2.5,13.5),Math.PI/2));
  g.add(at(box(21,4,2.4,MAT.white()),0,-10.5,-1.6)); return g;},'tilt',[CAMC[0],HCY+CAMC[1]-2.5,HZ-19.8],[0,0,200]);
 cable('w_cam',{ar:'كابل الكاميرا (Pi 5، 200 مم)',en:'Pi 5 camera FFC 22→15 pin',step:10},'tilt',[[17.5,HCY+20,HZ-21.5],[24,HCY+19,29],[40,HCY+14,31.5],[60,HCY-6,27],[72,HCY-14,22]],0xd8c08a,1.4,[0,0,-60]);
-part('glass',{ar:'زجاج الوش الفيميه',en:'Smoked acrylic 3 mm — logo outline, Ø7 camera hole',kind:'buy',step:17},()=>{const s=shapeOf(WIN); const ch=new THREE.Path(); ch.absarc(CAMC[0],CAMC[1],3.5,0,Math.PI*2,true); s.holes.push(ch); const m=mesh(new THREE.ShapeGeometry(s,16),MAT.gloss()); m.position.z=HZ+.6; return m;},'tilt',[0,HCY,0],[0,0,170]);
+part('glass',{ar:'زجاج الوش الفيميه',en:'Smoked acrylic 3 mm — logo outline, Ø7 camera hole',kind:'buy',step:17,sz:[223.3,95,3]},()=>{const s=shapeOf(WIN); const ch=new THREE.Path(); ch.absarc(CAMC[0],CAMC[1],3.5,0,Math.PI*2,true); s.holes.push(ch); const m=mesh(new THREE.ShapeGeometry(s,16),MAT.gloss()); m.position.z=HZ+.6; return m;},'tilt',[0,HCY,0],[0,0,170]);
 /* tilt servo + bus adapter */
 const qTilt=new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(new THREE.Vector3(0,0,-1),new THREE.Vector3(1,0,0),new THREE.Vector3(0,-1,0)));
 part('tilt_servo',{ar:'سيرفو الميل STS3215 (ID 2)',en:'Feetech STS3215 — tilt, ID 2',kind:'buy',step:9},STS,'tilt',[19,TILT_Y,0],[-150,0,-80],qTilt);
@@ -626,14 +652,14 @@ const exPos=p=>p.home.clone().add(p.ex);
 function stepParts(k){ return LIST.filter(p=>p.step===k&&!p.kitOnly).sort((a,b)=>(a.ord??50)-(b.ord??50)); }
 const STEPOF=k=>STEPS[k]||{};
 /* where each part sits on the table for the kit / print steps */
-function kitLayout(list,z0,maxW){ const out=new Map(); let x=0,z=z0,rowD=0,row=[]; const gap=26;
+function kitLayout(list,z0,maxW){ const out=new Map(); let x=0,z=z0,rowD=0,row=[]; const gap=BP?70:26;
  const flush=()=>{ const w=row.reduce((a,r)=>a+r.w,0)+gap*(row.length-1); let xx=-w/2; row.forEach(r=>{ out.set(r.p,{x:xx+r.w/2,z:z+r.d/2}); xx+=r.w+gap; }); z+=rowD+gap; rowD=0; row=[]; x=0; };
  list.slice().sort((a,b)=>(b.bb.max.x-b.bb.min.x)*(b.bb.max.z-b.bb.min.z)-(a.bb.max.x-a.bb.min.x)*(a.bb.max.z-a.bb.min.z)).forEach(p=>{ const w=p.bb.max.x-p.bb.min.x, d=p.bb.max.z-p.bb.min.z;
   if(x+w>maxW&&row.length) flush(); row.push({p,w,d}); x+=w+gap; rowD=Math.max(rowD,d); });
  if(row.length) flush(); return out; }
 function kitTargets(list){ // world target → local position
  const prints=list.filter(p=>p.kind==='print'), buys=list.filter(p=>p.kind!=='print');
- const A=kitLayout(prints,-340,760), B=kitLayout(buys,40,760), all=new Map([...A,...B]), res=new Map();
+ const A=kitLayout(prints,BP?-520:-340,BP?900:760), B=kitLayout(buys,BP?70:40,BP?900:760), all=new Map([...A,...B]), res=new Map();
  all.forEach((v,p)=>{ const c=new THREE.Vector3((p.bb.min.x+p.bb.max.x)/2,0,(p.bb.min.z+p.bb.max.z)/2);
   const w=new THREE.Vector3(v.x-c.x,-p.bb.min.y,v.z-c.z); if(p.grp==='tilt') w.y-=TILT_Y; res.set(p,w); }); return res; }
 let labels=[];
@@ -641,7 +667,83 @@ function clearLabels(){ labels.forEach(l=>l.parent&&l.parent.remove(l)); labels=
 function addLabel(p,i){ const d=document.createElement('div'), q=document.createElement('div'); q.className='lbl'; q.style.transform='translateY('+(-14-(i||0)%3*24)+'px)'; q.innerHTML=(i!=null?'<b>'+String(i+1).padStart(2,'0')+'</b>':'')+p.ar; d.appendChild(q);
  const o=new CSS2DObject(d); const b=p.bb; o.position.set((b.min.x+b.max.x)/2,b.max.y+6,(b.min.z+b.max.z)/2).applyQuaternion(p.o.quaternion.clone().invert()); p.o.add(o); labels.push(o); }
 const XRAYED=['head_shell','back_cover','base_shell','base_lid','turntable','ear_r','ear_l'];
-function setXray(on){ XRAYED.forEach(id=>{ const p=PARTS[id]; p.o.traverse(m=>{ if(m.isMesh){ m.material.transparent=on; m.material.opacity=on?.14:1; m.material.depthWrite=!on; m.material.needsUpdate=true; } }); }); }
+
+/* ───────── blueprint look: every part as a line drawing, with its measurements ───────── */
+let BP=false, bpReady=false, XRAY_ON=false;
+const BPC={edge:0xdcefff, fill:0x0f4c8f, cable:0x9fcbf3, dim:0xffffff};
+const mm=v=>(Math.round(v*10)/10).toString().replace(/\.0$/,'');
+function localBox(o){ // bounding box of a part in its own frame (rotation-free)
+ o.updateMatrixWorld(true); const inv=o.matrixWorld.clone().invert(), b=new THREE.Box3(), t=new THREE.Box3(), M=new THREE.Matrix4();
+ o.traverse(m=>{ if(!m.isMesh||m.userData.bpEdge) return; if(!m.geometry.boundingBox) m.geometry.computeBoundingBox(); t.copy(m.geometry.boundingBox).applyMatrix4(M.multiplyMatrices(inv,m.matrixWorld)); b.union(t); }); return b; }
+function sizeOf(p){ if(!p.lb) p.lb=localBox(p.o); const s=p.lb.getSize(new THREE.Vector3()); return s; }
+const sizeTxt=p=>{ if(p.kind==='cable') return 'L '+mm(p.len)+' mm'; if(p.sz) return p.sz.map(mm).join(' × ')+' mm'; const s=sizeOf(p); return mm(s.x)+' × '+mm(s.y)+' × '+mm(s.z)+' mm'; };
+function bpPrepare(){ if(bpReady) return; bpReady=true;
+ const edgeM=new THREE.LineBasicMaterial({color:BPC.edge,transparent:true,opacity:.92});
+ LIST.forEach(p=>p.o.traverse(m=>{ if(!m.isMesh||m.userData.bpEdge) return; m.userData.mat0=m.material;
+  const led=!!m.material.emissiveMap;
+  m.userData.bpMat=led?new THREE.MeshBasicMaterial({map:m.material.emissiveMap,color:0xffffff,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false})
+   :new THREE.MeshBasicMaterial({color:p.kind==='cable'?BPC.cable:BPC.fill,polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1});
+  if(p.kind!=='cable'&&!led&&m.geometry.attributes.position.count<60000){ const e=new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry,24),edgeM.clone()); e.userData.bpEdge=true; e.visible=false; e.raycast=()=>{}; m.add(e); m.userData.edge=e; } })); }
+/* a dimension: extension lines, the dimension line, architect ticks, and the number */
+function dimension(a,b,off,label,parent){
+ const g=new THREE.Group(), dir=b.clone().sub(a), L=dir.length(); if(L<2) return g; dir.normalize();
+ const o=off.clone(), a2=a.clone().add(o), b2=b.clone().add(o), ext=o.clone().normalize().multiplyScalar(3);
+ const tk=dir.clone().multiplyScalar(-2.6).add(o.clone().normalize().multiplyScalar(2.6)), tk2=tk.clone().negate();
+ const pts=[a,a2.clone().add(ext), b,b2.clone().add(ext), a2,b2, a2.clone().add(tk),a2.clone().add(tk2), b2.clone().add(tk),b2.clone().add(tk2)];
+ g.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:BPC.dim,transparent:true,opacity:.95})));
+ const d=document.createElement('div'); d.className='dim'; d.textContent=label; const c=new CSS2DObject(d); c.position.copy(a2).add(b2).multiplyScalar(.5); g.add(c);
+ g.userData.labels=[c]; parent.add(g); return g; }
+function partDims(p){ if(p.dims) return p.dims;
+ const b=sizeOf(p)&&p.lb, s=b.getSize(new THREE.Vector3()), off=Math.max(7,Math.max(s.x,s.y,s.z)*.14), g=new THREE.Group(); g.userData.labels=[];
+ const add=(a,c,o,v)=>{ if(v<2) return; const d=dimension(a,c,o,mm(v),g); g.userData.labels.push(...(d.userData.labels||[])); };
+ add(new THREE.Vector3(b.min.x,b.min.y,b.max.z),new THREE.Vector3(b.max.x,b.min.y,b.max.z),new THREE.Vector3(0,-off,0),s.x);
+ add(new THREE.Vector3(b.max.x,b.min.y,b.max.z),new THREE.Vector3(b.max.x,b.max.y,b.max.z),new THREE.Vector3(off,0,0),s.y);
+ add(new THREE.Vector3(b.max.x,b.min.y,b.max.z),new THREE.Vector3(b.max.x,b.min.y,b.min.z),new THREE.Vector3(off*.7,-off*.7,0),s.z);
+ g.visible=false; p.o.add(g); p.dims=g; return g; }
+function partTag(p){ if(p.tag) return p.tag; const b=sizeOf(p)&&p.lb, d=document.createElement('div'); d.className='dim tag'; d.textContent=sizeTxt(p);
+ const c=new CSS2DObject(d); c.position.set((b.min.x+b.max.x)/2,b.min.y-6,(b.min.z+b.max.z)/2); c.visible=false; p.o.add(c); p.tag=c; return c; }
+let overall=null;
+function overallDims(){ if(overall) return overall;
+ const keepP=panG.rotation.y, keepT=tiltG.rotation.x, keepB=tiltG.position.y; panG.rotation.y=0; tiltG.rotation.x=0; tiltG.position.y=TILT_Y;
+ HAND.r.pivot.rotation.y=0; HAND.l.pivot.rotation.y=0; LIST.forEach(p=>p.o.position.copy(p.home)); root.updateMatrixWorld(true);
+ const box=(ids)=>{ const b=new THREE.Box3(); ids.forEach(id=>b.expandByObject(PARTS[id].o)); return b; };
+ const all=box(LIST.filter(p=>!p.kitOnly&&p.kind!=='cable').map(p=>p.id)), head=box(['head_shell']), base=box(['base_shell']), stem=box(['stem']), hands=box(['hand_l','hand_r']);
+ const g=new THREE.Group(); g.userData.labels=[]; const V=(x,y,z)=>new THREE.Vector3(x,y,z);
+ const add=(a,b,o,t)=>{ const d=dimension(a,b,o,t,g); g.userData.labels.push(...(d.userData.labels||[])); };
+ add(V(all.max.x,all.min.y,0),V(all.max.x,all.max.y,0),V(40,0,0),'H '+mm(all.max.y-all.min.y));
+ add(V(hands.min.x,all.max.y,0),V(hands.max.x,all.max.y,0),V(0,26,0),'W '+mm(hands.max.x-hands.min.x)+' (الإيدين مفتوحة)');
+ add(V(head.min.x,head.max.y,head.max.z),V(head.max.x,head.max.y,head.max.z),V(0,12,0),mm(head.max.x-head.min.x));
+ add(V(head.min.x,head.min.y,head.max.z),V(head.min.x,head.max.y,head.max.z),V(-22,0,0),mm(head.max.y-head.min.y));
+ add(V(head.max.x,head.max.y,head.max.z),V(head.max.x,head.max.y,head.min.z),V(0,12,0),mm(head.max.z-head.min.z));
+ add(V(base.min.x,base.min.y,base.max.z),V(base.max.x,base.min.y,base.max.z),V(0,-22,0),'Ø '+mm(base.max.x-base.min.x));
+ add(V(stem.min.x,stem.min.y,0),V(stem.min.x,stem.max.y,0),V(-60,0,0),mm(stem.max.y-stem.min.y));
+ panG.rotation.y=keepP; tiltG.rotation.x=keepT; tiltG.position.y=keepB;
+ g.visible=false; scene.add(g); overall=g; return g; }
+const showGroup=(g,on)=>{ if(!g) return; g.visible=on; (g.userData.labels||[]).forEach(l=>l.visible=on); };
+function refreshDims(){
+ LIST.forEach(p=>{ showGroup(p.dims,false); if(p.tag) p.tag.visible=false; }); showGroup(overall,false);
+ if(!BP) return;
+ const S=STEPS[cur]||{};
+ if(mode==='overview'){ if(EXP>.25) LIST.forEach(p=>{ if(!p.kitOnly&&p.kind!=='cable') partTag(p).visible=true; }); else showGroup(overallDims(),true); return; }
+ if(mode==='kit'){ LIST.forEach(p=>{ if(p.kitTarget&&p.o.visible) partTag(p).visible=true; }); return; }
+ if(!S.ok) return;
+ stepParts(cur).forEach(p=>{ if(p.kind==='cable'){ partTag(p).visible=true; } else showGroup(partDims(p),true); });
+ if(cur>=19) showGroup(overallDims(),true);
+}
+function applyLook(){
+ LIST.forEach(p=>p.o.traverse(m=>{ if(!m.isMesh||m.userData.bpEdge) return; if(BP){ bpPrepare(); } if(!m.userData.mat0&&!BP) return;
+  m.material=BP?m.userData.bpMat:m.userData.mat0; if(m.userData.edge) m.userData.edge.visible=BP; }));
+ const xr=XRAY_ON;
+ XRAYED.forEach(id=>PARTS[id].o.traverse(m=>{ if(!m.isMesh||m.userData.bpEdge) return;
+  [m.userData.mat0||m.material,m.userData.bpMat].forEach(mt=>{ if(!mt) return; mt.transparent=xr; mt.opacity=xr?(mt===m.userData.bpMat?.08:.14):1; mt.depthWrite=!xr; mt.needsUpdate=true; });
+  if(m.userData.edge) m.userData.edge.material.opacity=xr?.35:.92; }));
+ document.body.classList.toggle('bp',BP); const tb=$('#bpTitle'); if(tb){ const S=STEPS[cur]||{}; tb.innerHTML=`<b>AROMA · DOORMAN</b><span>DWG ${S.n||'00'}</span><span>${S.t||''}</span><span>UNITS: mm</span><span>SCALE: 1:1 (3D)</span>`; }
+ refreshDims();
+}
+function setXray(on){ XRAY_ON=on; applyLook(); }
+function frameOverview(dur){ frameCam(LIST.filter(p=>!p.kitOnly&&p.kind!=='cable'),[1,.45,1.5],BP?1.38:1.05,dur,'home'); }
+function setBlueprint(on){ BP=on; if(mode==='overview') frameOverview(900); if(on) bpPrepare(); try{ localStorage.setItem('aroma-robot-look',on?'bp':''); }catch(e){} $('#bBP').classList.toggle('on',on); applyLook(); if(mode==='kit') go(cur); }
+
 function frameCam(list,dir,pad=1.18,dur=1100,which='both'){
  const bb=new THREE.Box3(); root.updateMatrixWorld(true);
  list.forEach(p=>{ const keep=p.o.position.clone(); (which==='kit'?[p.kitTarget]:which==='home'?[p.home]:[p.home,exPos(p)]).forEach(v=>{ if(!v) return; p.o.position.copy(v); p.o.updateMatrixWorld(true); bb.expandByObject(p.o); }); p.o.position.copy(keep); p.o.updateMatrixWorld(true); });
@@ -650,7 +752,8 @@ function frameCam(list,dir,pad=1.18,dur=1100,which='both'){
  camTw={p0:camera.position.clone(),t0:controls.target.clone(),p1:s.center.clone().addScaledVector(d,dist),t1:s.center.clone(),s:performance.now(),dur}; }
 let camTw=null;
 function setVisibleUpTo(k){ LIST.forEach(p=>{ p.o.visible=!p.kitOnly&&p.step<=k; }); }
-function go(i){ cur=Math.max(0,Math.min(STEPS.length-1,i)); const S=STEPS[cur]; if(ALLOK) S.ok=true; renderList(); clearLabels();
+function go(i){ _go(i); applyLook(); }
+function _go(i){ cur=Math.max(0,Math.min(STEPS.length-1,i)); const S=STEPS[cur]; if(ALLOK) S.ok=true; renderList(); clearLabels();
  $('#cNum').textContent=S.n; $('#cTitle').textContent=S.t;
  $('#cBody').innerHTML=S.ok?S.body():`<div class="soonbox">🛠️ <b>الخطوة دي قيد التجهيز.</b><br>بتتعمل دلوقتي وهتنزل هنا لايف أول ما تخلص — اعمل ريفرش كل شوية.</div>`;
  document.querySelectorAll('#cBody [data-p]').forEach(el=>el.onclick=()=>{ const p=PARTS[el.dataset.p]; if(p){ showPart(p); flash(p); } });
@@ -660,7 +763,7 @@ function go(i){ cur=Math.max(0,Math.min(STEPS.length-1,i)); const S=STEPS[cur]; 
  const el=document.querySelector('.st.on'); if(el) el.scrollIntoView({block:'nearest',inline:'nearest'});
  bootT=-1; LIST.forEach(p=>{ p.tw=null; p.kitTarget=null; }); if(cur>0){ panG.rotation.y=0; tiltG.rotation.x=0; }
  if(!S.ok){ return; }
- if(cur===0||cur===20){ mode='overview'; LEDS_ON=true; benchTw=null; BENCH=BENCH_TO=0; tiltG.position.y=TILT_Y; setVisibleUpTo(99); LIST.forEach(p=>{ p.cur.copy(p.home); }); setXray(XRAY_USER); FOLD_TO=0; frameCam(LIST.filter(p=>!p.kitOnly&&p.kind!=='cable'),[1,.45,1.5],1.05,1100,'home'); return; }
+ if(cur===0||cur===20){ mode='overview'; LEDS_ON=true; benchTw=null; BENCH=BENCH_TO=0; tiltG.position.y=TILT_Y; setVisibleUpTo(99); LIST.forEach(p=>{ p.cur.copy(p.home); }); setXray(XRAY_USER); FOLD_TO=0; frameOverview(1100); return; }
  if(cur===1||cur===2){ mode='kit'; LEDS_ON=true; benchTw=null; BENCH=BENCH_TO=0; tiltG.position.y=TILT_Y; setXray(false); FOLD_TO=0; foldV=0;
   const list=LIST.filter(p=>p.kind!=='cable'&&(cur===1||p.kind==='print')); const T=kitTargets(list);
   LIST.forEach(p=>{ p.o.visible=list.includes(p); });
@@ -691,7 +794,8 @@ $('#bPrev').onclick=()=>go(cur-1); $('#bNext').onclick=()=>go(cur+1);
 addEventListener('keydown',e=>{ if(e.target.tagName==='INPUT') return; if(e.key==='ArrowLeft') go(cur+1); if(e.key==='ArrowRight') go(cur-1); });
 
 /* ───────── tools ───────── */
-$('#ex').oninput=e=>{ EXP=e.target.value/100; $('#exV').textContent=e.target.value+'%'; };
+$('#ex').oninput=e=>{ const was=EXP>.25; EXP=e.target.value/100; $('#exV').textContent=e.target.value+'%'; if(BP&&was!==(EXP>.25)) refreshDims(); };
+$('#bBP').onclick=()=>setBlueprint(!BP);
 const bAlive=$('#bAlive'); bAlive.classList.toggle('on',ALIVE);
 $('#bX').onclick=e=>{ XRAY_USER=!XRAY_USER; e.target.classList.toggle('on',XRAY_USER); setXray(XRAY_USER||!!(STEPS[cur].xray&&mode==='build')); };
 bAlive.onclick=e=>{ ALIVE=!ALIVE; e.target.classList.toggle('on',ALIVE); };
@@ -717,6 +821,7 @@ const KIND={buy:'🛒 بتتشري',print:'🖨️ بتتطبع 3D',cable:'🔌 
 function showPart(p){ const b=BOM.find(x=>x[4]===p.id), S=STEPS[p.step];
  $('#pBody').innerHTML=`<h4>${p.ar}</h4><div class="en">${p.en}</div>
  <div class="row"><span>النوع</span><span>${KIND[p.kind]}</span></div>
+ <div class="row"><span>${p.kind==='cable'?'الطول':'المقاس'}</span><span class="mono">${sizeTxt(p)}</span></div>
  ${p.mat?`<div class="row"><span>الطباعة</span><span>${p.mat} · ${p.g} جم · ${p.h} س</span></div>`:''}
  ${b?`<div class="row"><span>السعر</span><span>${fmt(b[2][0])}–${fmt(b[2][1])} درهم</span></div><div class="row"><span>منين</span><span>${b[3]}</span></div>`:''}
  <div class="row"><span>الخطوة</span><span>${S?S.n+' · '+S.t:'—'}</span></div>`; $('#pcard').style.display='block'; }
@@ -737,7 +842,7 @@ function frame(){
  for(const p of LIST){
   if(p.tw){ const k=Math.min(1,Math.max(0,(now-p.tw.t0)/p.tw.dur)); p.cur.lerpVectors(p.tw.from,p.tw.to,ease(k)); if(k>=1) p.tw=null; }
   p.o.position.copy(p.cur); if(mode==='overview'&&!p.tw) p.o.position.addScaledVector(p.ex,EXP*.9);
-  if(p.flash){ const k=(now-p.flash)/1400; p.o.traverse(m=>{ if(m.isMesh&&m.userData.e0!=null) m.material.emissive.setHex(k<1&&Math.floor(k*6)%2===0?0x8a2a10:m.userData.e0); }); if(k>=1) p.flash=0; }
+  if(p.flash){ const k=(now-p.flash)/1400; p.o.traverse(m=>{ if(m.isMesh&&m.userData.e0!=null&&m.material.emissive) m.material.emissive.setHex(k<1&&Math.floor(k*6)%2===0?0x8a2a10:m.userData.e0); }); if(k>=1) p.flash=0; }
  }
  // the head waits on the bench above the neck while it is being built
  if(benchTw){ const k=Math.min(1,Math.max(0,(now-benchTw.t0)/benchTw.dur)); BENCH=benchTw.from+(benchTw.to-benchTw.from)*ease(k); if(k>=1) benchTw=null; } tiltG.position.y=TILT_Y+BENCH;
@@ -761,6 +866,7 @@ function frame(){
   if(s>4.6&&s<5.2) FOLD_TO=0; }
  else if(!LEDS_ON&&mode==='build'){ faceMood='off'; hands('off','#000'); }
  else if(!live&&mode!=='overview'){ hands('open','#ffe6cf'); }
+ if(BP&&bootT<0){ pan=0; tilt=0; }
  panG.rotation.y+=(pan-panG.rotation.y)*.06; tiltG.rotation.x+=(tilt-tiltG.rotation.x)*.06;
  drawFace(faceMood,lx,ly,blink>0?1:0,Math.floor(t*(bootT>0?9:4)),(Math.sin(t*.25)+1)/2,word);
  PARTS.antenna.o.children[1].material.emissiveIntensity=(LEDS_ON||bootT>0)?(.7+.5*Math.max(0,Math.sin(t*3))*(faceMood==='talk'?1:0)):.05;
@@ -770,6 +876,8 @@ function frame(){
 }
 window.__dbg={camera,controls,PARTS,go,tiltG,get bench(){return [BENCH,BENCH_TO,benchTw];}};
 renderList(); go(0); frame();
+let startBP=/look=blue/.test(location.search); try{ startBP=startBP||localStorage.getItem('aroma-robot-look')==='bp'; }catch(e){}
+if(startBP) setBlueprint(true);
 </script>
 </body>
 </html>
