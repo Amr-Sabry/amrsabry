@@ -19,8 +19,10 @@ body{min-height:100vh;overflow:hidden}
  radial-gradient(1200px 700px at 50% 55%,rgba(226,48,15,.10),transparent 70%),var(--bg);opacity:.9}
 #stage{position:fixed;inset:0}
 #c{display:block;width:100%;height:100%;touch-action:none}
-#labels{position:absolute;inset:0;pointer-events:none}
-.lbl{font:500 11px/1.2 var(--ar);color:var(--ink);background:rgba(11,9,8,.82);border:1px solid var(--line);border-inline-start:2px solid var(--org);padding:4px 7px;white-space:nowrap;transform:translateY(-14px)}
+#labels{position:absolute;inset:0;pointer-events:none;direction:ltr}
+#labels>div{left:0;top:0}
+#labels .lbl{direction:rtl}
+.lbl{font:500 11.5px/1.2 var(--ar);color:var(--ink);background:rgba(11,9,8,.82);border:1px solid var(--line);border-inline-start:2px solid var(--org);padding:4px 7px;white-space:nowrap;transform:translateY(-14px)}
 .lbl b{font:600 9px var(--mono);color:var(--org);letter-spacing:.08em;margin-inline-end:5px}
 header{position:fixed;top:0;inset-inline:0;height:64px;display:flex;align-items:center;gap:14px;padding:0 20px;border-bottom:1px solid var(--line);background:linear-gradient(rgba(11,9,8,.92),rgba(11,9,8,.6));z-index:5;direction:ltr}
 .brand{display:flex;align-items:center;gap:12px}
@@ -45,7 +47,7 @@ header{position:fixed;top:0;inset-inline:0;height:64px;display:flex;align-items:
 .st.on .n{color:var(--org)}
 #log{border-top:1px solid var(--line);padding:10px 16px 12px;font:12px/1.55 var(--ar);color:var(--dim);max-height:132px;overflow:auto}
 #log b{font:600 10px var(--mono);color:var(--org);letter-spacing:.08em;margin-inline-end:6px;direction:ltr;display:inline-block}
-#card{position:fixed;left:16px;bottom:16px;width:min(560px,calc(100vw - 340px));max-height:min(48vh,520px);display:flex;flex-direction:column;background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:4}
+#card{position:fixed;left:16px;bottom:16px;width:min(540px,calc(100vw - 340px));max-height:min(44vh,500px);display:flex;flex-direction:column;background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:4}
 #card .hd{display:flex;align-items:baseline;gap:12px;padding:14px 18px 8px}
 #card .hd .num{font:16px var(--display);color:var(--org);direction:ltr}
 #card .hd h2{margin:0;font:700 19px var(--ar)}
@@ -137,10 +139,12 @@ import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js'
 const $=s=>document.querySelector(s);
 const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* ───────── live status (updated with every upload) ───────── */
+/* ───────── live status (one line per upload) ───────── */
 const LOG=[
- ['04:48','نزلت أول نسخة: الشكل النهائي للبوّاب + فكّ المجسم. الخطوات جاية واحدة واحدة.'],
- ['04:59','رجّعت الشكل زي ماسكوت الهب بالظبط: الشاشة بحافة اللوجو 64×27 من غير إطار، والإيدين بقوا مرايات بتتضم وتتفتح على مفصلة في الودن.'],
+ ['04:48','نزلت أول نسخة: الشكل النهائي للبوّاب + فكّ المجسم.'],
+ ['04:59','رجّعت الشكل زي ماسكوت الهب بالظبط: الشاشة بحافة اللوجو 64×27، والإيدين مرايات بتتضم وتتفتح.'],
+ ['05:18','نزلت كل القطع الداخلية بمقاساتها الحقيقية + خطوات ٠١ لـ ٠٤ (العدة، الطباعة والبوردات، القاعدة، سيرفو اللف).'],
+
 ];
 
 /* ───────── renderer / scene ───────── */
@@ -156,61 +160,70 @@ scene.environment=pm.fromScene(new RoomEnvironment(renderer),0.04).texture;
 scene.add(new THREE.HemisphereLight(0xfff0e0,0x1a0c08,.35));
 const key=new THREE.DirectionalLight(0xffe2c8,1.5); key.position.set(500,800,700); scene.add(key);
 const rim=new THREE.DirectionalLight(0x4fb3b0,1.6); rim.position.set(-700,300,-600); scene.add(rim);
-const camera=new THREE.PerspectiveCamera(30,1,5,9000);
+const camera=new THREE.PerspectiveCamera(30,1,5,12000);
 camera.position.set(700,470,1060);
 const controls=new OrbitControls(camera,canvas);
-controls.enableDamping=true; controls.dampingFactor=.08; controls.target.set(0,190,0);
-controls.minDistance=180; controls.maxDistance=2600; controls.maxPolarAngle=Math.PI*.92;
+controls.enableDamping=true; controls.dampingFactor=.08; controls.target.set(0,200,0);
+controls.minDistance=120; controls.maxDistance=3600; controls.maxPolarAngle=Math.PI*.95;
 const labelR=new CSS2DRenderer({element:$('#labels')});
 
 /* ───────── materials ───────── */
 const MAT={
  red:()=>new THREE.MeshPhysicalMaterial({color:0xe2300f,roughness:.34,clearcoat:.8,clearcoatRoughness:.2}),
- orange:()=>new THREE.MeshPhysicalMaterial({color:0xef6a3c,roughness:.38,clearcoat:.5}),
  black:()=>new THREE.MeshStandardMaterial({color:0x1b1918,roughness:.68,metalness:.05}),
  dark:()=>new THREE.MeshPhysicalMaterial({color:0x1d1816,roughness:.38,metalness:.5,clearcoat:.6}),
  grey:()=>new THREE.MeshStandardMaterial({color:0x6b6661,roughness:.72}),
  teal:()=>new THREE.MeshPhysicalMaterial({color:0x4fb3b0,emissive:0x2c9893,emissiveIntensity:.9,roughness:.3}),
+ pcbG:()=>new THREE.MeshStandardMaterial({color:0x17633a,roughness:.45,metalness:.1}),
  pcbK:()=>new THREE.MeshStandardMaterial({color:0x121316,roughness:.45,metalness:.15}),
+ pcbB:()=>new THREE.MeshStandardMaterial({color:0x1f3f7a,roughness:.45,metalness:.1}),
+ chip:()=>new THREE.MeshStandardMaterial({color:0x0d0d0f,roughness:.35,metalness:.3}),
  metal:()=>new THREE.MeshStandardMaterial({color:0xd0d2d6,roughness:.28,metalness:1}),
+ alu:()=>new THREE.MeshStandardMaterial({color:0x9aa0a8,roughness:.4,metalness:.9}),
  steel:()=>new THREE.MeshStandardMaterial({color:0x6f7378,roughness:.45,metalness:.85}),
+ gold:()=>new THREE.MeshStandardMaterial({color:0xd8ad55,roughness:.3,metalness:1}),
  plastic:()=>new THREE.MeshStandardMaterial({color:0x111112,roughness:.55}),
+ white:()=>new THREE.MeshStandardMaterial({color:0xe9e6e0,roughness:.5}),
  rubber:()=>new THREE.MeshStandardMaterial({color:0x2a2a2a,roughness:.95}),
  clear:()=>new THREE.MeshPhysicalMaterial({color:0xeaf6f6,roughness:.04,metalness:0,clearcoat:1,transparent:true,opacity:.22,depthWrite:false,side:THREE.DoubleSide}),
  gloss:()=>new THREE.MeshPhysicalMaterial({color:0x000000,roughness:.06,clearcoat:1,clearcoatRoughness:.05,transparent:true,opacity:.16,depthWrite:false}),
- smoke:()=>new THREE.MeshPhysicalMaterial({color:0x0a0807,roughness:.05,clearcoat:1,transparent:true,opacity:.38,depthWrite:false}),
+ smoke:()=>new THREE.MeshPhysicalMaterial({color:0x0a0807,roughness:.05,clearcoat:1,transparent:true,opacity:.5,depthWrite:false}),
+ wire:c=>new THREE.MeshStandardMaterial({color:c,roughness:.5}),
 };
 
 /* ───────── geometry helpers (mm) ───────── */
 const mesh=(g,m)=>new THREE.Mesh(g,m);
-const box=(w,h,d,m,r)=>mesh(r?new RoundedBoxGeometry(w,h,d,3,r):new THREE.BoxGeometry(w,h,d),m);
+const box=(w,h,d,m,r)=>mesh(r?new RoundedBoxGeometry(w,h,d,3,Math.min(r,w/2-.01,h/2-.01,d/2-.01)):new THREE.BoxGeometry(w,h,d),m);
 const cyl=(r,h,m,seg=48,r2)=>mesh(new THREE.CylinderGeometry(r,r2??r,h,seg),m);
-function ringGeo(ro,ri,h,seg=72){ const s=new THREE.Shape(); s.absarc(0,0,ro,0,Math.PI*2,false); const p=new THREE.Path(); p.absarc(0,0,ri,0,Math.PI*2,true); s.holes.push(p);
+const at=(o,x,y,z)=>{ o.position.set(x,y,z); return o; };
+const rx=(o,a)=>{ o.rotation.x=a; return o; };
+function ringGeo(ro,ri,h,seg=72){ const s=new THREE.Shape(); s.absarc(0,0,ro,0,Math.PI*2,false); if(ri>0){ const p=new THREE.Path(); p.absarc(0,0,ri,0,Math.PI*2,true); s.holes.push(p); }
  const g=new THREE.ExtrudeGeometry(s,{depth:h,bevelEnabled:false,curveSegments:seg}); g.rotateX(-Math.PI/2); g.translate(0,-h/2,0); return g; }
+function discHoles(ro,holes,h){ const s=new THREE.Shape(); s.absarc(0,0,ro,0,Math.PI*2,false); holes.forEach(([x,z,r])=>{ const p=new THREE.Path(); p.absarc(x,-z,r,0,Math.PI*2,true); s.holes.push(p); });
+ const g=new THREE.ExtrudeGeometry(s,{depth:h,bevelEnabled:false,curveSegments:64}); g.rotateX(-Math.PI/2); g.translate(0,-h/2,0); return g; }
 const shapeOf=pts=>{ const s=new THREE.Shape(); pts.forEach((p,i)=>i?s.lineTo(p[0],p[1]):s.moveTo(p[0],p[1])); s.closePath(); return s; };
 const pathOf=pts=>{ const s=new THREE.Path(); pts.forEach((p,i)=>i?s.lineTo(p[0],p[1]):s.moveTo(p[0],p[1])); s.closePath(); return s; };
-function offsetPoly(pts,d){ // miter offset of a convex polygon, d>0 = outward
- const n=pts.length; let a=0; for(let i=0;i<n;i++){const p=pts[i],q=pts[(i+1)%n]; a+=p[0]*q[1]-q[0]*p[1];}
+function offsetPoly(pts,d){ const n=pts.length; let a=0; for(let i=0;i<n;i++){const p=pts[i],q=pts[(i+1)%n]; a+=p[0]*q[1]-q[0]*p[1];}
  const s=a>0?1:-1, L=[];
  for(let i=0;i<n;i++){ const p=pts[i],q=pts[(i+1)%n], dx=q[0]-p[0], dy=q[1]-p[1], l=Math.hypot(dx,dy), nx=s*dy/l, ny=-s*dx/l; L.push([p[0]+nx*d,p[1]+ny*d,dx,dy]); }
- return pts.map((_,i)=>{ const A=L[(i-1+n)%n],B=L[i], den=A[2]*B[3]-A[3]*B[2], t=((B[0]-A[0])*B[3]-(B[1]-A[1])*B[2])/den; return [A[0]+A[2]*t,A[1]+A[3]*t]; });
-}
+ return pts.map((_,i)=>{ const A=L[(i-1+n)%n],B=L[i], den=A[2]*B[3]-A[3]*B[2], t=((B[0]-A[0])*B[3]-(B[1]-A[1])*B[2])/den; return [A[0]+A[2]*t,A[1]+A[3]*t]; }); }
+const rect=(w,h)=>[[-w/2,-h/2],[w/2,-h/2],[w/2,h/2],[-w/2,h/2]];
 
 /* ───────── the mascot's numbers, in millimetres (same proportions as the hub mascot) ───────── */
 const U=108, LOGO=[[-1.1,.5],[1.1,.5],[1.1,-.5],[-.7,-.5],[-1.1,-.12]];
-const HEAD=LOGO.map(p=>[p[0]*U,p[1]*U]);                // 237.6 × 108, rounded by .075u → 253.8 × 124.2
-const WIN=LOGO.map(p=>[p[0]*U*.94,p[1]*U*.88]);         // the screen: the logo's own shape, cut corner and all
-const HD=.86*U, HB=.075*U, HZ=HD/2+HB;                  // depth 92.9, rounding 8.1, front face at z=54.5
-const HCY=276, TILT_Y=232;                              // head centre height, tilt axis height
-const HL=HCY-TILT_Y;                                    // head centre in the tilt group
-const EARX=1.24*U, EARY=.02*U;                          // ears, exactly where the hub mascot has them
-const HS=.26*U, HBV=.035*U, HDP=.16*U;                  // screen hands: 56.2 square + 3.8 rounding, 17.3 deep
-const PIV=[EARX+.08*U+4, EARY, 14];                      // mirror hinge: outer-front corner of the ear
-const HOFF=[HS+HBV+8, 0, 13];                           // hand centre from the hinge (open)
+const HEAD=LOGO.map(p=>[p[0]*U,p[1]*U]);
+const WIN=LOGO.map(p=>[p[0]*U*.94,p[1]*U*.88]);
+const HD=.86*U, HB=.075*U, HZ=HD/2+HB;                  // depth 92.9, rounding 8.1, front face z=54.5
+const HCY=276, TILT_Y=232;
+const EARX=1.24*U, EARY=.02*U, EARW=.16*U, EARS=.34*U;
+const HS=.26*U, HBV=.035*U, HDP=.16*U;                  // hand: 56.2 square + 3.8 rounding, 17.3 deep
+const PIV=[135, EARY-9, 13];                            // hinge axis inside the ear (micro servo shaft, pointing down)
+const HOFF=[12+HS+HBV, 0, 12+HDP/2+HBV];                // hand centre from the hinge when open
+const PITCH=3.5, CAMC=[17.5,33];                        // LED pitch; hidden camera position on the face (mm from centre)
 
 /* ───────── LED screens — the hub mascot's face, pixel for pixel ───────── */
-function led(cols,rows,px){ const cv=document.createElement('canvas'); cv.width=cols*px; cv.height=rows*px; const cx=cv.getContext('2d');
- const tex=new THREE.CanvasTexture(cv); tex.colorSpace=THREE.SRGBColorSpace; tex.anisotropy=4; tex.magFilter=THREE.NearestFilter; return {cv,cx,tex,cols,rows,px}; }
+function led(cols,rows,pxs){ const cv=document.createElement('canvas'); cv.width=cols*pxs; cv.height=rows*pxs; const cx=cv.getContext('2d');
+ const tex=new THREE.CanvasTexture(cv); tex.colorSpace=THREE.SRGBColorSpace; tex.anisotropy=4; tex.magFilter=THREE.NearestFilter; return {cv,cx,tex,cols,rows}; }
 const FACE=led(64,27,10);
 let ox=0,oy=0;
 function px(c,r,col){ c+=ox; r+=oy; if(c<0||r<0||c>=64||r>=27) return; const x=FACE.cx; x.fillStyle=col; x.fillRect(c*10+1,r*10+1,8,8); }
@@ -226,17 +239,19 @@ function mouth(kind,col){ let c;
  else if(kind==='big'){ px(17,14,col); px(28,14,col); px(18,15,col); px(27,15,col); for(c=19;c<=26;c++){ px(c,16,col); px(c,15,col); } for(c=21;c<=24;c++) px(c,17,col); }
  else if(kind==='flat'){ for(c=20;c<=25;c++) px(c,16,col); }
  else if(kind==='o'){ for(c=21;c<=24;c++){ px(c,14,col); px(c,17,col); } px(21,15,col); px(21,16,col); px(24,15,col); px(24,16,col); } }
-const COL={happy:'#9ff5d0',wow:'#ffe6cf',sleepy:'#7fa9d6'}, WORD={idle:'HELLO',happy:'NICE',wow:'WOW',sleepy:'ZZZ',talk:'HI',off:''};
+const COL={happy:'#9ff5d0',wow:'#ffe6cf',sleepy:'#7fa9d6'}, WORD={idle:'HELLO',happy:'NICE',wow:'WOW',sleepy:'ZZZ',talk:'HI'};
 let faceSig='';
-function drawFace(mood,lx,ly,blink,tick,pct){
+function drawFace(mood,lx,ly,blink,tick,pct,word){
  const d=new Date(), clk=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
- const s=[mood,lx,ly,blink,clk,pct,(mood==='sleepy'||mood==='talk')?tick:''].join('|'); if(s===faceSig) return; faceSig=s; ox=0; oy=0;
+ const s=[mood,lx,ly,blink,clk,pct,word,(mood==='sleepy'||mood==='talk'||mood==='boot')?tick:''].join('|'); if(s===faceSig) return; faceSig=s; ox=0; oy=0;
  const x=FACE.cx; x.fillStyle='#050302'; x.fillRect(0,0,640,270);
  let r,c; for(r=0;r<27;r++) for(c=0;c<64;c++) px(c,r,'rgba(255,230,207,.045)');
  if(mood==='off'){ FACE.tex.needsUpdate=true; return; }
- const col=COL[mood]||'#ffe6cf', L=9, R=29, dim='rgba(79,179,176,.95)';
+ const dim='rgba(79,179,176,.95)';
+ if(mood==='boot'){ text('BOOT',24,9,dim); for(c=0;c<16;c++) px(16+c*2,17,c<(tick%17)?'#ef6a3c':'rgba(239,106,60,.22)'); FACE.tex.needsUpdate=true; return; }
+ const col=COL[mood]||'#ffe6cf', L=9, R=29;
  for(c=0;c<4;c++) for(r=0;r<=c+1;r++) px(3+c*2,6-r,dim);
- text(WORD[mood]||'HELLO',13,2,dim); text(clk,64-22,2,dim);
+ text(word||WORD[mood]||'HELLO',13,2,dim); text(clk,64-22,2,dim);
  for(c=2;c<62;c++) px(c,8,'rgba(79,179,176,.28)');
  ox=8; oy=7;
  if(mood==='happy'){ eyeHappy(L,col); eyeHappy(R,col); mouth('big',col); }
@@ -247,18 +262,20 @@ function drawFace(mood,lx,ly,blink,tick,pct){
  ox=0; oy=0; const n=Math.round(pct*16); for(c=0;c<16;c++) px(16+c*2,25,c<n?'#ef6a3c':'rgba(239,106,60,.22)');
  FACE.tex.needsUpdate=true;
 }
-/* hand screens: 18 × 18, same signs as the hub */
 const HI={
  open:['......11......','...11.11.11...','...11.11.11...','...11.11.11.11','...11.11.11.11','...11.11.11.11','1..11.11.11.11','11.11111111111','11111111111111','.1111111111111','..111111111111','...11111111111','...11111111111','...1111111111.','....11111111..','....11111111..'],
  thumb:['..11..........','.1111.........','.1111.........','.1111.........','.111111111111.','11111111111111','111112222222..','1111111111111.','11111111111111','111112222222..','1111111111111.','1111111111111.','11111222222...','.1111111111...','..1111111.....'],
  heart:['.1111...1111..','111111.111111.','11111111111111','11111111111111','11111111111111','.111111111111.','..1111111111..','...11111111...','....111111....','.....1111.....','......11......'],
  z:['11111111','11111111','.....111','....111.','...111..','..111...','.111....','111.....','11111111','11111111']};
 const HANDL=led(18,18,10), HANDR=led(18,18,10);
-function drawHand(L,name,col,left){ const x=L.cx; x.fillStyle='#050302'; x.fillRect(0,0,180,180); let r,c;
+const handSig={l:'',r:''};
+function drawHand(L,name,col,left){ const k=name+col; if(handSig[left?'l':'r']===k) return; handSig[left?'l':'r']=k;
+ const x=L.cx; x.fillStyle='#050302'; x.fillRect(0,0,180,180); let r,c;
  for(r=0;r<18;r++) for(c=0;c<18;c++){ x.fillStyle='rgba(255,230,207,.05)'; x.fillRect(c*10+1,r*10+1,8,8); }
  if(name!=='off'){ const b=HI[name]||HI.open, h=b.length, w=b[0].length, oy2=Math.floor((18-h)/2), ox2=Math.floor((18-w)/2);
   for(r=0;r<h;r++) for(c=0;c<w;c++) if(b[r][left?w-1-c:c]==='1'){ x.fillStyle=col; x.fillRect((ox2+c)*10+1,(oy2+r)*10+1,8,8); } }
  L.tex.needsUpdate=true; }
+const hands=(nl,cl,nr,cr)=>{ drawHand(HANDL,nl,cl,true); drawHand(HANDR,nr||nl,cr||cl,false); };
 const ledMat=(L,rep,off)=>{ const t=L.tex; if(rep){ t.repeat.set(...rep); t.offset.set(...off); } return new THREE.MeshStandardMaterial({color:0x050302,roughness:.18,metalness:.2,emissive:0xffffff,emissiveMap:t,emissiveIntensity:1.35}); };
 
 /* ───────── parts ───────── */
@@ -266,162 +283,399 @@ const root=new THREE.Group(); scene.add(root);
 const baseG=new THREE.Group(), panG=new THREE.Group(), tiltG=new THREE.Group();
 root.add(baseG); root.add(panG); panG.add(tiltG); tiltG.position.set(0,TILT_Y,0);
 const GRP={base:baseG,pan:panG,tilt:tiltG};
-const PARTS={}, pickables=[];
+const PARTS={}, LIST=[], pickables=[];
 function part(id,meta,build,grp,pos,ex,rot){
  const o=build(); o.traverse(m=>{ if(m.isMesh){ m.userData.pid=id; pickables.push(m); } });
+ if(rot) (rot.isQuaternion?o.quaternion.copy(rot):o.rotation.set(...rot));
+ o.updateMatrixWorld(true); const bb=new THREE.Box3().setFromObject(o);    // size in its own frame, before it is placed
  const home=new THREE.Vector3(...pos); if(grp==='tilt') home.y-=TILT_Y;
- o.position.copy(home); if(rot) o.rotation.set(...rot); GRP[grp].add(o);
- const p=Object.assign({id,o,home,ex:new THREE.Vector3(...ex),grp},meta); PARTS[id]=p; return p;
+ o.position.copy(home); GRP[grp].add(o);
+ const p=Object.assign({id,o,home,ex:new THREE.Vector3(...ex),grp,bb,cur:home.clone(),tw:null},meta); PARTS[id]=p; LIST.push(p); return p;
 }
+/* cables: a tube along points given in world coordinates */
+function cable(id,meta,grp,pts,color,r=2.2,ex=[0,0,0]){
+ const off=grp==='tilt'?TILT_Y:0, P=pts.map(p=>new THREE.Vector3(p[0],p[1]-off,p[2]));
+ const c=new THREE.Vector3(); P.forEach(p=>c.add(p)); c.multiplyScalar(1/P.length);
+ const curve=new THREE.CatmullRomCurve3(P.map(p=>p.clone().sub(c)),false,'centripetal');
+ const build=()=>mesh(new THREE.TubeGeometry(curve,Math.max(24,P.length*14),r,8,false),MAT.wire(color));
+ return part(id,Object.assign({kind:'cable'},meta),build,grp,[c.x,c.y+off,c.z],ex);
+}
+const STS=()=>{ // Feetech STS3215, origin = output shaft axis on the top face; body hangs below (−y), length along +x
+ const g=new THREE.Group();
+ g.add(at(box(45.2,32,24.7,MAT.plastic(),2),11.2,-16,0));
+ g.add(at(box(45.2,3,24.7,MAT.dark(),1),11.2,-1.5,0));
+ const ear=box(57,2.5,19,MAT.plastic()); g.add(at(ear,11.2,-10,0));
+ g.add(at(box(22,9,.4,MAT.white()),14,-20,12.4));
+ g.add(at(cyl(3,4,MAT.metal(),16),0,2,0));
+ const horn=cyl(10.5,2.5,MAT.alu(),40); g.add(at(horn,0,5.2,0));
+ for(let i=0;i<4;i++){ const a=i*Math.PI/2, s=cyl(1.4,.6,MAT.chip(),10); g.add(at(s,Math.cos(a)*7,6.6,Math.sin(a)*7)); }
+ g.add(at(box(3,6,10,MAT.white()),33.8,-24,0)); return g; };
+const SCS9=()=>{ // Feetech SCS0009 micro bus servo, origin = shaft on the top face
+ const g=new THREE.Group(); g.add(at(box(23.2,22,12.1,MAT.plastic(),1.2),6.6,-11,0)); g.add(at(box(32,1.8,12.1,MAT.plastic()),6.6,-4,0));
+ g.add(at(cyl(2.4,3,MAT.metal(),14),0,1.5,0)); return g; };
+
 /* base */
-part('feet',{ar:'رجول كاوتش ×4',en:'Rubber feet Ø14 × 4',kind:'buy',step:3},()=>{const g=new THREE.Group(); [[40,40],[-40,40],[40,-40],[-40,-40]].forEach(([x,z])=>{const f=cyl(7,3,MAT.rubber()); f.position.set(x,0,z); g.add(f);}); return g;},'base',[0,-1.5,0],[0,-60,0]);
-part('base_shell',{ar:'جسم القاعدة',en:'Base shell Ø150 × 40',kind:'print',step:3},()=>{const g=new THREE.Group(); g.add(mesh(ringGeo(75,72.5,40),MAT.black())); const fl=cyl(72.5,3,MAT.black(),72); fl.position.y=-18.5; g.add(fl); return g;},'base',[0,20,0],[0,-120,0]);
-part('base_lid',{ar:'غطا القاعدة',en:'Base lid',kind:'print',step:4},()=>mesh(ringGeo(75,11.5,6),MAT.black()),'base',[0,43,0],[0,110,0]);
-part('bearing',{ar:'بيرينج دوّار ٣ بوصة',en:'Lazy-susan bearing 75 mm',kind:'buy',step:5},()=>{const g=new THREE.Group(); const sq=new THREE.Shape([[-37.5,-37.5],[37.5,-37.5],[37.5,37.5],[-37.5,37.5]].map(p=>new THREE.Vector2(...p))); const hp=new THREE.Path(); hp.absarc(0,0,24,0,Math.PI*2,true); sq.holes.push(hp);
+part('feet',{ar:'رجول كاوتش ×4',en:'Rubber feet Ø14 × 4',kind:'buy',step:3},()=>{const g=new THREE.Group(); [[40,40],[-40,40],[40,-40],[-40,-40]].forEach(([x,z])=>g.add(at(cyl(7,3,MAT.rubber()),x,0,z))); return g;},'base',[0,-1.5,0],[0,-60,0]);
+part('base_shell',{ar:'جسم القاعدة',en:'Base shell Ø150 × 40',kind:'print',step:3,mat:'PETG أسود مطفي',g:120,h:6},()=>{const g=new THREE.Group(); g.add(mesh(ringGeo(75,72.5,40),MAT.black())); g.add(at(cyl(72.5,3,MAT.black(),72),0,-18.5,0));
+ g.add(rx(at(cyl(6.5,.5,MAT.chip(),20),0,0,-75.1),Math.PI/2)); return g;},'base',[0,20,0],[0,-130,0]);
+part('weights',{ar:'أوزان حديد ×4',en:'Steel discs Ø40 × 10 (≈ 400 g)',kind:'buy',step:3},()=>{const g=new THREE.Group(); [[36,36],[-36,36],[36,-36],[-36,-36]].forEach(([x,z])=>g.add(at(cyl(20,10,MAT.steel()),x,0,z))); return g;},'base',[0,8,0],[0,150,0]);
+part('dc_jack',{ar:'جاك الكهربا 5.5 مم',en:'Panel-mount DC jack 5.5 × 2.1',kind:'buy',step:3},()=>{const g=new THREE.Group(); const b=cyl(5.5,16,MAT.plastic(),24); b.rotation.x=Math.PI/2; g.add(b); const n=mesh(ringGeo(7.5,5.5,2.5,24),MAT.metal()); n.rotation.x=Math.PI/2; n.position.z=-6; g.add(n); return g;},'base',[0,20,-70],[0,0,-90]);
+cable('w_jack',{ar:'سلكين الكهربا (+ / −)',en:'18 AWG pair from the jack',step:3},'base',[[0,20,-61],[0,24,-50],[0,30,-34],[0,36,-22],[0,39,-19]],0xb8261a,1.8,[0,0,-60]);
+part('pan_servo',{ar:'سيرفو اللف STS3215 (ID 1)',en:'Feetech STS3215 — pan, ID 1',kind:'buy',step:4},STS,'base',[0,40,0],[0,150,0]);
+cable('w_pan',{ar:'كابل سيرفو اللف',en:'Servo bus lead',step:4},'base',[[33.8,16,0],[30,20,-10],[14,30,-19],[2,38,-19]],0xe9e6e0,1.6,[0,150,0]);
+part('base_lid',{ar:'غطا القاعدة',en:'Base lid with servo posts',kind:'print',step:4,mat:'PETG أسود مطفي',g:45,h:2},()=>{const g=new THREE.Group(); g.add(mesh(discHoles(75,[[0,0,11.5],[0,-19,5]],6),MAT.black()));
+ [[-15,0],[37.4,0]].forEach(([x,z])=>g.add(at(cyl(2.5,10.5,MAT.black(),16),x,-8.25,z))); return g;},'base',[0,43,0],[0,110,0]);
+part('bearing',{ar:'بيرينج دوّار ٣ بوصة',en:'Lazy-susan bearing 75 mm',kind:'buy',step:5},()=>{const g=new THREE.Group(); const sq=shapeOf(rect(75,75)); const hp=new THREE.Path(); hp.absarc(0,0,24,0,Math.PI*2,true); sq.holes.push(hp);
  const pg=new THREE.ExtrudeGeometry(sq,{depth:1.2,bevelEnabled:false}); pg.rotateX(-Math.PI/2);
- const a=mesh(pg,MAT.metal()); a.position.y=-3.75; const b=mesh(pg.clone(),MAT.metal()); b.position.y=2.55; g.add(a,b);
+ g.add(at(mesh(pg,MAT.metal()),0,-3.75,0)); g.add(at(mesh(pg.clone(),MAT.metal()),0,2.55,0));
  const t=mesh(new THREE.TorusGeometry(31,2.6,12,64),MAT.steel()); t.rotation.x=Math.PI/2; g.add(t); return g;},'base',[0,49.75,0],[0,80,0]);
 /* pan */
-part('turntable',{ar:'الطبق الدوّار',en:'Turntable Ø110',kind:'print',step:5},()=>{const g=new THREE.Group(); g.add(mesh(ringGeo(55,0.01,6),MAT.black())); const s=mesh(ringGeo(16.5,12.6,12),MAT.black()); s.position.y=9; g.add(s); const b=cyl(10,7,MAT.black()); b.position.y=-6.5; g.add(b); return g;},'pan',[0,56.5,0],[0,90,0]);
-part('stem',{ar:'العمود الشفاف',en:'Clear acrylic tube Ø25 × 140',kind:'buy',step:6},()=>mesh(ringGeo(12.5,10.5,140,48),MAT.clear()),'pan',[0,129.5,0],[0,170,0]);
-part('neck',{ar:'رقبة الميل',en:'Neck cap + tilt tab',kind:'print',step:6},()=>{const g=new THREE.Group(); const c=cyl(16.5,16,MAT.black()); g.add(c); const t=box(6,40,26,MAT.black(),2); t.position.set(28.5,28,0); g.add(t); return g;},'pan',[0,198,0],[0,120,0]);
-/* head — the hub mascot's head, unchanged */
-part('head_shell',{ar:'قشرة الراس',en:'Head shell — Aroma logo block',kind:'print',step:7},()=>{
- const g=new THREE.ExtrudeGeometry(shapeOf(HEAD),{depth:HD,bevelEnabled:true,bevelThickness:HB,bevelSize:HB,bevelSegments:4,curveSegments:4}); g.translate(0,0,-HD/2);
- return mesh(g,MAT.red()); },'tilt',[0,HCY,0],[0,0,-240]);
-part('face_led',{ar:'شاشة الوش — LED بشكل اللوجو 64×27',en:'Custom LED board 64×27, logo outline',kind:'buy',step:8},()=>{const g=new THREE.Group();
- const sg=new THREE.ShapeGeometry(shapeOf(WIN)); const f=mesh(sg,ledMat(FACE,[1/(2.068*U),1/(.88*U)],[.5,.5])); f.position.z=HZ+.3; g.add(f);
- const pcb=new THREE.ExtrudeGeometry(shapeOf(offsetPoly(WIN,2)),{depth:1.6,bevelEnabled:false}); const pm=mesh(pcb,MAT.pcbK()); pm.position.z=HZ-6; g.add(pm); return g;},'tilt',[0,HCY,0],[0,0,200]);
-part('glass',{ar:'زجاج الوش الفيميه',en:'Smoked acrylic 3 mm, logo outline',kind:'buy',step:17},()=>{const g=new THREE.ShapeGeometry(shapeOf(WIN)); const m=mesh(g,MAT.gloss()); m.position.z=HZ+.6; return m;},'tilt',[0,HCY,0],[0,0,170]);
-part('ear_r',{ar:'الودن اليمين (سماعة + موتور الإيد)',en:'Right ear — speaker + hand hinge motor',kind:'print',step:13},()=>box(.16*U,.34*U,.34*U,MAT.dark(),3),'tilt',[EARX,HCY+EARY,0],[110,0,0]);
-part('ear_l',{ar:'الودن الشمال (تهوية + موتور الإيد)',en:'Left ear — vent + hand hinge motor',kind:'print',step:13},()=>box(.16*U,.34*U,.34*U,MAT.dark(),3),'tilt',[-EARX,HCY+EARY,0],[-110,0,0]);
-part('antenna',{ar:'الأنتينا + لمبة الحالة',en:'Antenna + status LED',kind:'print',step:12},()=>{const g=new THREE.Group(); const s=box(.045*U,.42*U,.045*U,MAT.dark()); s.position.y=.21*U; g.add(s); const b=box(.15*U,.15*U,.15*U,MAT.teal()); b.position.y=.48*U; g.add(b); return g;},'tilt',[.72*U,HCY+.56*U,0],[0,110,0],[0,0,-.25]);
-part('mic_holes',{ar:'فتحات المايك فوق الراس',en:'Mic holes (4)',kind:'print',step:12},()=>{const g=new THREE.Group(); for(let i=0;i<4;i++){ const a=i*Math.PI/2+Math.PI/4, h=cyl(1.6,.6,MAT.plastic(),16); h.position.set(Math.cos(a)*26,0,Math.sin(a)*26); g.add(h);} return g;},'tilt',[-45,HCY+.575*U+.1,0],[0,60,0]);
+part('turntable',{ar:'الطبق الدوّار',en:'Turntable Ø110 + horn boss',kind:'print',step:5,mat:'PETG أسود مطفي',g:40,h:2},()=>{const g=new THREE.Group(); g.add(mesh(discHoles(55,[[0,-19,5]],6),MAT.black())); g.add(at(mesh(ringGeo(16.5,12.6,12),MAT.black()),0,9,0)); g.add(at(cyl(10,7,MAT.black()),0,-6.5,0)); return g;},'pan',[0,56.5,0],[0,90,0]);
+part('stem',{ar:'العمود الشفاف',en:'Clear acrylic tube Ø25 × 140',kind:'buy',step:6},()=>mesh(ringGeo(12.5,10.5,140,48),MAT.clear()),'pan',[0,129.5,0],[0,230,0]);
+cable('braid',{ar:'الكابلات جوه العمود (شراب أسود)',en:'Power pair + servo bus in black braid',step:6},'pan',[[0,40,-19],[0,52,-19],[0,60,-16],[0,70,-6],[0,84,0],[0,140,0],[0,192,0],[6,202,0],[10,207,4]],0x161616,4,[0,0,-120]);
+part('neck',{ar:'رقبة الميل',en:'Neck cap + tilt tab',kind:'print',step:6,mat:'PETG أسود مطفي',g:20,h:1},()=>{const g=new THREE.Group(); g.add(cyl(16.5,16,MAT.black())); g.add(at(box(6,40,26,MAT.black(),2),28.5,28,0)); return g;},'pan',[0,198,0],[0,160,0]);
+/* head — the hub mascot's head, unchanged on the outside */
+part('head_shell',{ar:'قشرة الراس',en:'Head shell — Aroma logo block, 253.8 × 124.2 × 109',kind:'print',step:7,mat:'PLA أحمر أروما',g:300,h:14},()=>{
+ const g=new THREE.Group(); const eg=new THREE.ExtrudeGeometry(shapeOf(HEAD),{depth:HD,bevelEnabled:true,bevelThickness:HB,bevelSize:HB,bevelSegments:4,curveSegments:4}); eg.translate(0,0,-HD/2);
+ g.add(mesh(eg,MAT.red()));
+ g.add(at(box(26,.6,38,MAT.chip()),21,-.575*U-.2,0));                                    // slot for the neck tab (underneath)
+ for(let i=0;i<5;i++) for(let j=0;j<3;j++) g.add(at(cyl(1.4,.6,MAT.chip(),10),62+i*8,-.575*U-.2,-27+j*8));   // speaker holes
+ return g; },'tilt',[0,HCY,0],[0,240,0]);
+part('chassis',{ar:'الشاسيه الداخلي',en:'Inner chassis — holds the face board, Pi and camera',kind:'print',step:7,mat:'PETG رمادي',g:80,h:4},()=>{
+ const s=shapeOf(rect(220,90)); [[-70,15,50,40],[-5,-18,40,30],[70,10,40,50]].forEach(([x,y,w,h])=>s.holes.push(pathOf(rect(w,h).map(p=>[p[0]+x,p[1]+y]))));
+ const eg=new THREE.ExtrudeGeometry(s,{depth:3,bevelEnabled:false}); eg.translate(0,0,-1.5); const g=new THREE.Group(); g.add(mesh(eg,MAT.grey()));
+ [[-100,38],[100,38],[-100,-38],[100,-38],[0,40],[0,-40]].forEach(([x,y])=>{ const p=cyl(3,15.3,MAT.grey(),16); p.rotation.x=Math.PI/2; g.add(at(p,x,y,9.15)); });   // posts for the face board
+ [[-29,-24.5],[29,-24.5],[-29,24.5],[29,24.5]].forEach(([x,y])=>{ const p=cyl(2.5,4.8,MAT.grey(),16); p.rotation.x=Math.PI/2; g.add(at(p,60+x,y+10,-3.9)); });   // posts for the Pi
+ [[-125,30],[125,30],[-125,-30],[125,-30]].forEach(([x,y])=>g.add(at(box(14,8,3,MAT.grey()),x>0?x-10:x+10,y,0)));
+ return g; },'tilt',[0,HCY,31.5],[0,0,-220]);
+/* face: one board of 64 × 27 LEDs in the logo's own outline, driven by a XIAO ESP32-S3 */
+part('face_led',{ar:'بوردة الوش LED (64×27 بشكل اللوجو)',en:'Custom LED face board — 64×27 WS2812B-2020, logo outline',kind:'buy',step:8},()=>{const g=new THREE.Group();
+ const fs=shapeOf(WIN), fh=new THREE.Path(); fh.absarc(CAMC[0],CAMC[1],3.5,0,Math.PI*2,true); fs.holes.push(fh); const sg=new THREE.ShapeGeometry(fs,16); g.add(at(mesh(sg,ledMat(FACE,[1/(2.068*U),1/(.88*U)],[.5,.5])),0,0,HZ+.3));
+ const s=shapeOf(offsetPoly(WIN,2)); const ch=new THREE.Path(); ch.absarc(CAMC[0],CAMC[1],4,0,Math.PI*2,true); s.holes.push(ch);
+ const pcb=new THREE.ExtrudeGeometry(s,{depth:1.6,bevelEnabled:false,curveSegments:16}); g.add(at(mesh(pcb,MAT.pcbK()),0,0,HZ-6.2));
+ [[-100,38],[100,38],[-100,-38],[100,-38],[0,40],[0,-40]].forEach(([x,y])=>{ const p=cyl(2.6,2,MAT.metal(),14); p.rotation.x=Math.PI/2; g.add(at(p,x,y,HZ-7.4)); });
+ g.add(at(box(14,6,4,MAT.white()),60,-38,HZ-8.4)); const ln=mesh(new THREE.CircleGeometry(3.5,24),new THREE.MeshPhysicalMaterial({color:0x0b1020,roughness:.05,metalness:.3,clearcoat:1})); g.add(at(ln,CAMC[0],CAMC[1],HZ+.15)); return g;},'tilt',[0,HCY,0],[0,0,170]);
+part('xiao',{ar:'XIAO ESP32-S3 (بيسوق الـ LEDs)',en:'Seeed XIAO ESP32-S3 — LED driver',kind:'buy',step:8},()=>{const g=new THREE.Group(); g.add(box(21,17.5,1.2,MAT.pcbB())); g.add(at(box(12,12,2.4,MAT.metal()),2,0,-1.8)); g.add(at(box(8.6,6.6,3.2,MAT.metal()),-8.4,0,-2.2)); return g;},'tilt',[-60,HCY-8,HZ-8],[0,0,-70]);
+part('camera',{ar:'كاميرا Pi Module 3 Wide (مستخبية في الوش)',en:'Camera Module 3 Wide — behind the face, lens between the pixels',kind:'buy',step:8},()=>{const g=new THREE.Group();
+ g.add(box(25,24,1,MAT.pcbG())); g.add(at(box(8.5,8.5,4.5,MAT.chip()),0,2.5,2.7)); g.add(rx(at(cyl(3.6,8.5,MAT.chip(),20),0,2.5,9.2),Math.PI/2)); g.add(rx(at(cyl(2.4,.4,MAT.wire(0x26355c),20),0,2.5,13.5),Math.PI/2));
+ g.add(at(box(21,4,2.4,MAT.white()),0,-10.5,-1.6)); return g;},'tilt',[CAMC[0],HCY+CAMC[1]-2.5,HZ-19.8],[0,0,-90]);
+cable('w_cam',{ar:'كابل الكاميرا (Pi 5، 200 مم)',en:'Pi 5 camera FFC 22→15 pin',step:10},'tilt',[[17.5,HCY+20,HZ-21.5],[24,HCY+19,29],[40,HCY+14,31.5],[60,HCY-6,27],[72,HCY-14,22]],0xd8c08a,1.4,[0,0,-60]);
+part('glass',{ar:'زجاج الوش الفيميه',en:'Smoked acrylic 3 mm — logo outline, Ø7 camera hole',kind:'buy',step:17},()=>{const s=shapeOf(WIN); const ch=new THREE.Path(); ch.absarc(CAMC[0],CAMC[1],3.5,0,Math.PI*2,true); s.holes.push(ch); const m=mesh(new THREE.ShapeGeometry(s,16),MAT.gloss()); m.position.z=HZ+.6; return m;},'tilt',[0,HCY,0],[0,0,170]);
+/* tilt servo + bus adapter */
+const qTilt=new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(new THREE.Vector3(0,0,-1),new THREE.Vector3(1,0,0),new THREE.Vector3(0,-1,0)));
+part('tilt_servo',{ar:'سيرفو الميل STS3215 (ID 2)',en:'Feetech STS3215 — tilt, ID 2',kind:'buy',step:9},STS,'tilt',[19,TILT_Y,0],[-150,0,-80],qTilt);
+part('bus_adapter',{ar:'بورد السيرفوهات (Waveshare)',en:'Waveshare Bus Servo Adapter (A)',kind:'buy',step:9},()=>{const g=new THREE.Group(); g.add(box(40,1.6,32,MAT.pcbB())); g.add(at(box(9,6,7,MAT.white()),-12,3.8,-12)); g.add(at(box(9,6,7,MAT.white()),0,3.8,-12)); g.add(at(box(9,3.2,7.4,MAT.metal()),14,2.4,10)); g.add(at(box(10,8,7,MAT.wire(0x2c8a3e)),-12,4.8,10)); return g;},'tilt',[-70,222,-28],[0,0,-150]);
+cable('w_bus1',{ar:'كابل السيرفو: البورد ← الميل',en:'Servo bus: adapter → tilt',step:9},'tilt',[[-82,228,-40],[-50,232,-46],[-20,234,-42],[-5,232,-36]],0xe9e6e0,1.6,[0,0,-150]);
+/* Raspberry Pi 5 — board parallel to the face, parts facing back */
+part('pi5',{ar:'Raspberry Pi 5 (4GB)',en:'Raspberry Pi 5 — 4 GB',kind:'buy',step:10},()=>{const g=new THREE.Group();
+ g.add(box(85,56,1.6,MAT.pcbG(),2.5));
+ const usb=(y,h)=>g.add(at(box(17.5,h,15.5,MAT.metal()),37.5,y,-8.6));
+ usb(18.5,16); usb(0,14.5); usb(-18.5,14.5);
+ g.add(at(box(51,5,8.5,MAT.chip()),-6,25.5,-5)); for(let i=0;i<20;i++) g.add(at(box(.8,.8,6,MAT.gold()),-30+i*2.54,25.5,-12));
+ g.add(at(box(9,3.4,7.5,MAT.metal()),-28,-26.5,-4.5)); g.add(at(box(7.5,3.5,6.6,MAT.metal()),-14,-26.5,-4.1)); g.add(at(box(7.5,3.5,6.6,MAT.metal()),0,-26.5,-4.1));
+ g.add(at(box(9,3,4,MAT.white()),12,-24,-2.8)); g.add(at(box(9,3,4,MAT.white()),23,-24,-2.8));
+ g.add(at(box(15,15,1.4,MAT.metal()),-12,2,-1.5)); return g;},'tilt',[60,HCY+10,24],[0,0,-210]);
+part('cooler',{ar:'مروحة Pi 5 (Active Cooler)',en:'Raspberry Pi 5 Active Cooler',kind:'buy',step:10},()=>{const g=new THREE.Group(); g.add(box(56,40,2.4,MAT.alu()));
+ for(let i=0;i<12;i++) g.add(at(box(1.2,40,7,MAT.alu()),-26+i*3.8,0,-4.6)); const f=cyl(14,4,MAT.plastic(),32); f.rotation.x=Math.PI/2; g.add(at(f,14,0,-10)); return g;},'tilt',[48,HCY+12,19.6],[0,0,-150]);
+part('sdcard',{ar:'كارت microSD 64GB (عليه السيستم)',en:'microSD 64 GB A2 — I prepare the image',kind:'buy',step:10},()=>box(11,15,1,MAT.wire(0xb8261a),.5),'tilt',[20,HCY-12,25.8],[0,-90,0]);
+/* mic array + antenna */
+part('mic_array',{ar:'مايك XVF3800 (٤ مايكات)',en:'ReSpeaker XVF3800 — 4-mic array, DoA, AEC, 5 W amp',kind:'buy',step:11},()=>{const g=new THREE.Group(); g.add(cyl(32,1.6,MAT.pcbK(),48));
+ for(let i=0;i<4;i++){ const a=i*Math.PI/2+Math.PI/4; g.add(at(cyl(2,1.2,MAT.metal(),12),Math.cos(a)*26,1.4,Math.sin(a)*26)); }
+ for(let i=0;i<12;i++){ const a=i/12*Math.PI*2; g.add(at(box(2,1,2,MAT.white()),Math.cos(a)*18,1.3,Math.sin(a)*18)); }
+ g.add(at(box(10,1.6,10,MAT.chip()),0,-1.6,0)); g.add(at(box(9,3.2,7.4,MAT.metal()),27,-2.4,0)); g.add(at(box(6,4,5,MAT.white()),-20,-2.8,-16)); return g;},'tilt',[-45,HCY+.575*U-6,0],[0,120,0]);
+part('mic_holes',{ar:'فتحات المايك فوق الراس',en:'4 mic holes in the top of the shell',kind:'print',step:11},()=>{const g=new THREE.Group(); for(let i=0;i<4;i++){ const a=i*Math.PI/2+Math.PI/4; g.add(at(cyl(1.6,.6,MAT.chip(),16),Math.cos(a)*26,0,Math.sin(a)*26)); } return g;},'tilt',[-45,HCY+.575*U+.1,0],[0,60,0]);
+part('antenna',{ar:'الأنتينا + لمبة الحالة',en:'Antenna — teal cube with one WS2812 (listening light)',kind:'print',step:11,mat:'PETG تيل شفاف',g:6,h:.5},()=>{const g=new THREE.Group(); g.add(at(box(.045*U,.42*U,.045*U,MAT.dark()),0,.21*U,0)); g.add(at(box(.15*U,.15*U,.15*U,MAT.teal()),0,.48*U,0)); return g;},'tilt',[.72*U,HCY+.56*U,0],[0,110,0],[0,0,-.25]);
+cable('w_ant',{ar:'سلك لمبة الأنتينا',en:'3-wire to the WS2812 in the antenna',step:11},'tilt',[[76,HCY+.575*U-3,0],[64,HCY+50,26],[10,HCY+46,38],[-40,HCY+24,42],[-58,HCY,44]],0x2c8a3e,1,[0,90,0]);
+/* speaker — under the head, firing down */
+part('speaker',{ar:'سماعة 40 مم 3 وات (تحت الراس)',en:'40 mm 3 W 4 Ω speaker, firing down',kind:'buy',step:12},()=>{const g=new THREE.Group(); g.add(cyl(20,3,MAT.steel(),40)); g.add(at(cyl(16,3,MAT.wire(0x2a2a2a),40,12),0,-2.5,0)); g.add(at(cyl(10,8,MAT.metal(),32),0,6.5,0)); return g;},'tilt',[78,220.5,-11],[0,-120,0]);
+cable('w_spk',{ar:'سلك السماعة → كونكتور المايك',en:'Speaker → XVF3800 JST (built-in 5 W amp)',step:12},'tilt',[[78,231,-11],[100,250,-34],[96,300,-36],[30,324,-30],[-40,328,-24],[-62,329,-17]],0xb8261a,1.1,[0,-90,0]);
+/* ears + hinge motors */
+part('ear_r',{ar:'الودن اليمين',en:'Right ear — houses the hinge motor',kind:'print',step:13,mat:'PLA غامق',g:18,h:1},()=>box(EARW,EARS,EARS,MAT.dark(),3),'tilt',[EARX,HCY+EARY,0],[130,0,0]);
+part('ear_l',{ar:'الودن الشمال',en:'Left ear — houses the hinge motor',kind:'print',step:13,mat:'PLA غامق',g:18,h:1},()=>box(EARW,EARS,EARS,MAT.dark(),3),'tilt',[-EARX,HCY+EARY,0],[-130,0,0]);
+const qEar=new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.PI,Math.PI/2,0,'YXZ'));
+part('ear_servo_r',{ar:'موتور مفصلة الإيد اليمين SCS0009 (ID 3)',en:'Feetech SCS0009 micro bus servo — right hinge, ID 3',kind:'buy',step:13},SCS9,'tilt',[PIV[0],HCY+PIV[1]+5,PIV[2]],[170,0,0],qEar);
+part('ear_servo_l',{ar:'موتور مفصلة الإيد الشمال SCS0009 (ID 4)',en:'Feetech SCS0009 micro bus servo — left hinge, ID 4',kind:'buy',step:13},SCS9,'tilt',[-PIV[0],HCY+PIV[1]+5,PIV[2]],[-170,0,0],qEar);
+cable('w_bus_ears',{ar:'كابل السيرفو: البورد ← موتورات الودان',en:'Servo bus: adapter → both hinge motors',step:13},'tilt',[[-70,228,-42],[-100,250,-44],[-120,276,-26],[-130,284,-6],[-118,304,-40],[0,324,-46],[118,304,-40],[130,284,-6]],0xe9e6e0,1.3,[0,60,-60]);
+/* power + data */
+part('wago',{ar:'موزّع الكهربا (WAGO ×2)',en:'WAGO 221-415 ×2 — 5 V and GND',kind:'buy',step:14},()=>{const g=new THREE.Group(); [0,1].forEach(i=>{ g.add(at(box(20,8,18,MAT.wire(0xd9d5cc),1),i*22,0,0)); for(let k=0;k<5;k++) g.add(at(box(2.6,3,8,MAT.wire(0xe8651f)),i*22-7.5+k*3.8,5.2,-4)); }); return g;},'tilt',[-50,221,22],[0,-90,60]);
+cable('w_pwr_pi',{ar:'كهربا الـ Pi (USB-C)',en:'5 V → Pi USB-C pigtail',step:14},'tilt',[[-26,225,24],[0,232,24],[24,246,22],[32,252,20],[32,256,19.5]],0xb8261a,1.8,[0,-60,40]);
+cable('w_pwr_led',{ar:'كهربا شاشة الوش',en:'5 V → face board (thick pair)',step:14},'tilt',[[-40,225,30],[-10,228,38],[30,230,44],[60,236,46]],0xb8261a,2.2,[0,-60,40]);
+cable('w_pwr_bus',{ar:'كهربا بورد السيرفوهات',en:'5 V → servo adapter',step:14},'tilt',[[-56,222,14],[-70,222,2],[-80,226,-12]],0xb8261a,1.6,[0,-60,40]);
+cable('w_usb_mic',{ar:'USB: المايك ← الـ Pi',en:'USB-C → USB-A: mic array',step:14},'tilt',[[-18,329.7,0],[20,326,-12],[90,316,-12],[113,296,-2],[106,286,14]],0x1a1a1a,1.8,[0,60,-60]);
+cable('w_usb_bus',{ar:'USB: بورد السيرفوهات ← الـ Pi',en:'USB-C → USB-A: servo adapter',step:14},'tilt',[[-56,226,-22],[0,248,-42],[80,256,-30],[110,266,0],[106,268,14]],0x1a1a1a,1.8,[0,-60,-60]);
+cable('w_usb_led',{ar:'USB: بوردة الوش ← الـ Pi',en:'USB-C → USB-A: XIAO (face driver)',step:14},'tilt',[[-68,272,42],[-70,290,36],[-70,292,26],[-20,296,4],[60,318,0],[110,312,2],[106,304.5,14]],0x1a1a1a,1.8,[0,-60,60]);
+/* head onto the neck */
+cable('w_stem',{ar:'توصيل كابلات العمود جوه الراس',en:'Stem power → WAGO, bus → tilt servo chain',step:15},'tilt',[[10,207,4],[14,214,14],[-10,220,22],[-30,222,22]],0x161616,3,[0,0,0]);
+cable('w_chain',{ar:'كابل السيرفو: الميل ← اللف (نازل في العمود)',en:'Servo bus: tilt → pan (down the stem)',step:15},'tilt',[[-5,232,-36],[8,224,-24],[14,214,-10],[8,207,-2]],0xe9e6e0,1.6,[0,0,0]);
+part('back_cover',{ar:'الغطا الخلفي (بفتحات تهوية)',en:'Back cover with vents',kind:'print',step:16,mat:'PLA أحمر أروما',g:70,h:3},()=>{const s=shapeOf(offsetPoly(HEAD,-4)); for(let i=0;i<6;i++) s.holes.push(pathOf(rect(110,4).map(p=>[p[0]+20,p[1]-22+i*9])));
+ const g=new THREE.ExtrudeGeometry(s,{depth:2.4,bevelEnabled:true,bevelThickness:.8,bevelSize:.8,bevelSegments:2}); g.translate(0,0,-1.2); return mesh(g,MAT.red());},'tilt',[0,HCY,-HZ-1.4],[0,0,-170]);
 /* screen hands on mirror hinges — they fold back against the head like car mirrors */
 const HAND={};
 function mirrorHand(side){ return ()=>{
  const pivot=new THREE.Group();
- const k=cyl(5,22,MAT.dark(),24); pivot.add(k);                                         // hinge knuckle (motor shaft inside the ear)
- const br=box(HOFF[0]-HS-HBV+6,10,4,MAT.dark(),1.5); br.position.set(side*(HOFF[0]-HS-HBV)/2,0,HOFF[2]-HDP/2-HBV-2); pivot.add(br);   // bracket
+ pivot.add(at(cyl(4.5,10,MAT.dark(),24),0,0,0));                                           // hinge hub on the motor shaft
+ pivot.add(at(box(6,8,12,MAT.dark(),1.5),0,0,6));                                          // arm forward out of the ear
+ pivot.add(at(box(14,8,6,MAT.dark(),1.5),side*6,0,9));                                     // arm out to the hand
  const tile=new THREE.Group(); tile.position.set(side*HOFF[0],HOFF[1],HOFF[2]); pivot.add(tile);
- const pts=[[-HS,HS],[HS,HS],[HS,-HS],[-HS,-HS]];
+ const pts=rect(2*HS,2*HS);
  const tg=new THREE.ExtrudeGeometry(shapeOf(pts),{depth:HDP,bevelEnabled:true,bevelThickness:HBV,bevelSize:HBV,bevelSegments:3,curveSegments:2}); tg.translate(0,0,-HDP/2);
  tile.add(mesh(tg,MAT.red()));
  const K=.84, sg=new THREE.ShapeGeometry(shapeOf(pts.map(p=>[p[0]*K,p[1]*K])));
- const L=side<0?HANDL:HANDR, sc=mesh(sg,ledMat(L,[1/(2*HS*K),1/(2*HS*K)],[.5,.5])); sc.position.z=HDP/2+HBV+.3; tile.add(sc);
- const gl=mesh(sg.clone(),MAT.gloss()); gl.position.z=HDP/2+HBV+.6; tile.add(gl);
+ const L=side<0?HANDL:HANDR; tile.add(at(mesh(sg,ledMat(L,[1/(2*HS*K),1/(2*HS*K)],[.5,.5])),0,0,HDP/2+HBV+.3));
+ tile.add(at(mesh(sg.clone(),MAT.gloss()),0,0,HDP/2+HBV+.6));
  HAND[side<0?'l':'r']={pivot,tile}; return pivot; }; }
-part('hand_l',{ar:'الإيد الشمال — شاشة 18×18 على مفصلة',en:'Left screen hand on a folding hinge',kind:'print',step:18},mirrorHand(-1),'tilt',[-PIV[0],HCY+PIV[1],PIV[2]],[-120,0,60]);
-part('hand_r',{ar:'الإيد اليمين — شاشة 18×18 على مفصلة',en:'Right screen hand on a folding hinge',kind:'print',step:18},mirrorHand(1),'tilt',[PIV[0],HCY+PIV[1],PIV[2]],[120,0,60]);
-let FOLD=1, FOLD_TO=0;                                                                   // 0 = open, 1 = folded against the head
-function setFold(f){ HAND.r.pivot.rotation.y=f*Math.PI/2; HAND.l.pivot.rotation.y=-f*Math.PI/2; }
+part('hand_l',{ar:'الإيد الشمال — شاشة 18×18 على مفصلة',en:'Left screen hand + hinge arm',kind:'print',step:18,mat:'PLA أحمر + PETG أسود',g:56,h:2.5},mirrorHand(-1),'tilt',[-PIV[0],HCY+PIV[1],PIV[2]],[-140,0,70]);
+part('hand_r',{ar:'الإيد اليمين — شاشة 18×18 على مفصلة',en:'Right screen hand + hinge arm',kind:'print',step:18,mat:'PLA أحمر + PETG أسود',g:56,h:2.5},mirrorHand(1),'tilt',[PIV[0],HCY+PIV[1],PIV[2]],[140,0,70]);
+/* things that are only on the table */
+part('psu',{ar:'شاحن 5 فولت 10 أمبير',en:'5 V 10 A power adapter (50 W), 5.5 × 2.1 plug',kind:'buy',step:3,kitOnly:true},()=>{const g=new THREE.Group(); g.add(box(118,32,56,MAT.plastic(),5)); g.add(rx(at(cyl(2.6,60,MAT.plastic(),10),0,0,58),Math.PI/2)); return g;},'base',[0,16,-260],[0,0,0]);
+part('screws',{ar:'علبة مسامير + صواميل حرارية',en:'M2 / M2.5 / M3 screws, heat-set inserts',kind:'buy',step:3,kitOnly:true},()=>{const g=new THREE.Group(); g.add(box(80,22,50,MAT.wire(0x2f6fb0),3)); for(let i=0;i<6;i++) g.add(at(box(11,2,20,MAT.metal()),-32+i*13,11.5,0)); return g;},'base',[0,11,-320],[0,0,0]);
+part('wires',{ar:'شنطة السلوك والكابلات',en:'18 AWG pair, braid, 3 × short USB, servo leads, WS2812',kind:'buy',step:3,kitOnly:true},()=>{const g=new THREE.Group(); const t=mesh(new THREE.TorusGeometry(26,5,10,40),MAT.wire(0x161616)); t.rotation.x=Math.PI/2; g.add(t); const t2=mesh(new THREE.TorusGeometry(18,3,10,40),MAT.wire(0xb8261a)); t2.rotation.x=Math.PI/2; t2.position.y=7; g.add(t2); return g;},'base',[0,5,-380],[0,0,0]);
+LIST.forEach(p=>{ if(p.kitOnly) p.o.visible=false; });
 
-/* ───────── steps ───────── */
-const STEPS=[
- {n:'00',t:'الشكل النهائي',ok:true,body:`<div class="meta"><span>📏 الطول ≈ ٣٥ سم</span><span>↔️ الراس ٢٥٫٤ سم · الإيدين مفتوحة ≈ ٤٤ سم · مضمومة ≈ ٣٥ سم</span><span>⚖️ ≈ ١٫٥ كجم</span></div>
-<ul><li>ده "البوّاب" بنفس شكل ماسكوت الهب بالظبط: بلوك اللوجو بالحتة المقطوعة، الودان، الأنتينا التيل.</li>
-<li><b>الوش شاشة LED بشكل اللوجو نفسه</b> — بوردة مفصّلة 64×27 لمبة (نفس شبكة الهب) بالحافة المقطوعة، مش شاشة مستطيلة.</li>
-<li><b>الإيدين شاشتين 18×18 على مفصلة بموتور جوه الودن</b> — بيتضمّوا على جنب الراس ويتفتحوا زي مرايات العربية. جرّب زرار "ضم الإيدين" و"سلّم".</li>
-<li>القاعدة السودا فيها موتور اللف، والعمود الشفاف بيخلّي الراس تبان طايرة.</li>
-<li>حرّك الماوس: عينيه بتتبعك والراس بتلف ناحيتك — ده اللي هيعمله مع اللي بيتكلم في الاجتماع.</li>
-<li>اسحب <b>فكّ المجسم</b> أو دوس على أي قطعة تعرف هي إيه.</li></ul>
-<div class="warn">🛠️ الخطوات بتنزل لايف واحدة ورا التانية — اللي مكتوب جنبها "قيد التجهيز" لسه بتتعمل.</div>`},
- {n:'01',t:'العدة: كل القطع'},
- {n:'02',t:'طباعة القطع 3D'},
- {n:'03',t:'القاعدة: الأرجل والأوزان والكهربا'},
- {n:'04',t:'سيرفو اللف + غطا القاعدة'},
- {n:'05',t:'البيرينج + الطبق الدوّار'},
- {n:'06',t:'العمود الشفاف + رقبة الميل'},
- {n:'07',t:'قشرة الراس + الشاسيه'},
- {n:'08',t:'شاشة الوش + Matrix Portal'},
- {n:'09',t:'سيرفو الميل + بورد السيرفوهات'},
- {n:'10',t:'Raspberry Pi 5 + التبريد'},
- {n:'11',t:'الكاميرا'},
- {n:'12',t:'المايكات + الأنتينا'},
- {n:'13',t:'السماعة + الودان'},
- {n:'14',t:'الكهربا والتوصيلات'},
- {n:'15',t:'تركيب الراس على الرقبة'},
- {n:'16',t:'الغطا الخلفي'},
- {n:'17',t:'الواجهة: الزجاج + الإطار'},
- {n:'18',t:'الإيدين'},
- {n:'19',t:'أول تشغيل'},
- {n:'20',t:'الدماغ: السوفتوير'},
+/* ───────── shopping list ───────── */
+const BOM=[
+ ['Raspberry Pi 5 — 4GB','1',[250,450],'Besomi.com · Amazon.ae','pi5'],
+ ['Active Cooler للـ Pi 5','1',[25,45],'نفس المحل','cooler'],
+ ['microSD 64GB A2','1',[35,60],'Amazon.ae · Noon','sdcard'],
+ ['بوردات LED مفصّلة: وش 64×27 + إيدين 18×18','3',[600,850],'JLCPCB — أنا بصممها وهي بتتجمّع جاهزة','face_led'],
+ ['Seeed XIAO ESP32-S3','1',[35,50],'Seeed · The Pi Hut','xiao'],
+ ['Camera Module 3 Wide','1',[140,160],'Besomi.com','camera'],
+ ['كابل كاميرا Pi 5 — 200 مم','1',[15,25],'Besomi.com','w_cam'],
+ ['ReSpeaker XVF3800 (4-mic)','1',[260,330],'The Pi Hut · Seeed','mic_array'],
+ ['سماعة 40 مم 3W 4Ω','1',[15,30],'Amazon.ae · محل إلكترونيات','speaker'],
+ ['Feetech STS3215 (لف + ميل)','2',[120,180],'AliExpress · Waveshare','pan_servo'],
+ ['Feetech SCS0009 (مفصلات الإيدين)','2',[60,100],'AliExpress · Feetech','ear_servo_r'],
+ ['Waveshare Bus Servo Adapter (A)','1',[25,45],'Waveshare · Amazon.ae','bus_adapter'],
+ ['بيرينج Lazy-susan ٣ بوصة','1',[10,25],'Amazon.ae · ACE','bearing'],
+ ['شاحن 5V 10A + جاك','1',[55,100],'Amazon.ae · Noon','psu'],
+ ['أنبوبة أكريليك شفافة Ø25','1',[20,40],'محلات الأكريليك · Amazon.ae','stem'],
+ ['أكريليك فيميه 3 مم (ليزر كَت)','1',[50,100],'محل ليزر كَت في دبي','glass'],
+ ['WAGO 221 ×4','4',[15,25],'Amazon.ae · ACE','wago'],
+ ['أوزان حديد Ø40','4',[10,25],'ACE · محل عدد','weights'],
+ ['رجول كاوتش','4',[5,15],'Amazon.ae','feet'],
+ ['مسامير + صواميل حرارية','1',[40,70],'Amazon.ae','screws'],
+ ['سلوك + شراب + كابلات USB + WS2812','1',[50,90],'Amazon.ae','wires'],
+ ['خامة طباعة (~0.85 كجم، 5 ألوان)','—',[100,200],'Bambu Lab · Amazon.ae','head_shell'],
 ];
+const BOMLO=BOM.reduce((a,b)=>a+b[2][0],0), BOMHI=BOM.reduce((a,b)=>a+b[2][1],0);
+const fmt=n=>n.toLocaleString('en-US');
+const bomTable=()=>`<table class="bom"><thead><tr><th>القطعة</th><th>عدد</th><th>درهم</th><th>منين</th></tr></thead><tbody>${BOM.map(b=>`<tr data-p="${b[4]}"><td>${b[0]}</td><td class="n">${b[1]}</td><td class="n">${fmt(b[2][0])}–${fmt(b[2][1])}</td><td>${b[3]}</td></tr>`).join('')}</tbody>
+<tfoot><tr><td>الإجمالي التقريبي</td><td></td><td class="n">${fmt(BOMLO)}–${fmt(BOMHI)}</td><td></td></tr></tfoot></table>`;
+const PRINTS=LIST.filter(p=>p.kind==='print'&&p.g);
+const printTable=()=>`<table class="bom"><thead><tr><th>القطعة</th><th>الخامة واللون</th><th>جرام</th><th>ساعات</th></tr></thead><tbody>${PRINTS.map(p=>`<tr data-p="${p.id}"><td>${p.ar}</td><td>${p.mat}</td><td class="n">${p.g}</td><td class="n">${p.h}</td></tr>`).join('')}</tbody>
+<tfoot><tr><td>المجموع</td><td></td><td class="n">≈ ${PRINTS.reduce((a,p)=>a+p.g,0)}</td><td class="n">≈ ${Math.round(PRINTS.reduce((a,p)=>a+p.h,0))}</td></tr></tfoot></table>`;
+
+/* ───────── the build, step by step ───────── */
+const chips=ids=>'<div class="chips">'+ids.map(id=>{ const p=PARTS[id]; return p?`<span class="chip ${p.kind}" data-p="${id}">${p.ar}</span>`:''; }).join('')+'</div>';
+const meta=(t,tools)=>`<div class="meta"><span>⏱ ${t}</span>${tools?`<span>🧰 ${tools}</span>`:''}</div>`;
+const STEPS=[
+ {n:'00',t:'الشكل النهائي',ok:true,body:()=>`<div class="meta"><span>📏 الطول ≈ ٣٥ سم</span><span>↔️ الراس ٢٥٫٤ سم · الإيدين مفتوحة ≈ ٤٤ سم</span><span>⚖️ ≈ ١٫٥ كجم</span></div>
+<ul><li>ده "البوّاب" بنفس شكل ماسكوت الهب بالظبط: بلوك اللوجو بالحتة المقطوعة، الودان، والأنتينا التيل.</li>
+<li><b>الوش شاشة LED بشكل اللوجو نفسه:</b> بوردة مفصّلة 64×27 لمبة (نفس شبكة الهب) بالحافة المقطوعة، مش شاشة مستطيلة.</li>
+<li><b>الإيدين شاشتين 18×18 على مفصلة بموتور جوه الودن:</b> بيتضمّوا على جنب الراس ويتفتحوا زي مرايات العربية. جرّب زرار "ضم الإيدين" و"سلّم".</li>
+<li>القاعدة السودا فيها موتور اللف، والعمود الشفاف بيخلّي الراس تبان طايرة.</li>
+<li>حرّك الماوس: عينيه هتتبعك والراس هتلف ناحيتك، وده نفس اللي هيعمله مع اللي بيتكلم في الاجتماع.</li>
+<li>اسحب <b>فكّ المجسم</b>، أو دوس على أي قطعة عشان تعرف هي إيه.</li></ul>`},
+ {n:'01',t:'العدة: كل القطع',ok:true,body:()=>`${meta('طلب القطع: ١–٣ أسابيع (البوردات وAliExpress أبطأ حاجة)')}
+<p>كل القطع متفرّشة قدامك: <b>اللي بيتطبع ورا</b> و<b>اللي بيتشري قدام</b>. دوس على أي سطر في الجدول عشان القطعة تنوّر.</p>
+${bomTable()}
+<div class="warn">💡 الأسعار تقريبية بالدرهم، وهنثبّتها وقت الشراء لأن أسعار الـ Pi زادت كذا مرة السنة دي. أنا بجهّزلك لينكات الشراء، وانت بس بتدفع.</div>
+<p>🧰 <b>العدة اللي هتحتاجها:</b> مفك صليبة صغير، مفاتيح ألن M2/M2.5/M3، كاوية عادية عشان الصواميل الحرارية (مش لحام إلكترونيات)، قطّاعة سلك، رباطات بلاستيك.</p>`},
+ {n:'02',t:'التصنيع: طباعة 3D + بوردات LED',ok:true,body:()=>`${meta('طباعة ≈ ٤٠ ساعة على Bambu A1 · البوردات ≈ ١٠ أيام لحد ما توصل')}
+<p><b>🖨️ الطباعة:</b> الجدول ده كل اللي بيتطبع. الملفات (STL/3MF) أنا بطلّعها بالمقاسات المظبوطة.</p>
+${printTable()}
+<ul><li>القشرة مقاسها ٢٥٣٫٨ مم، يعني <b>داخلة في سرير ٢٥٦ بالعافية</b>. بتتطبع ضهرها على السرير ووشها لفوق (Ironing عشان الوش ييجي ناعم). لو السرير مش مظبوط هقسمهالك نصّين بتعشيق.</li>
+<li>القاعدة والرقبة PETG عشان شايلين الوزن، والباقي PLA. الإعدادات: طبقة 0.2، ٣ جدران، Infill ‏15–20% Gyroid.</li>
+<li>الأحمر: أقرب فتلة لـ <b>#E2300F</b>. هنطبع عينة مكعب الأول ونقارنها باللوجو.</li></ul>
+<p><b>🟥 بوردات الـ LED (من JLCPCB):</b></p>
+<ul><li><b>بوردة الوش:</b> 64×27 لمبة WS2812B-2020 بخطوة ٣٫٥ مم، مقصوصة بشكل اللوجو بالحافة المقطوعة. فيها خرم Ø8 للكاميرا بين البكسلات، فوق في النص بين كلمة HELLO والساعة.</li>
+<li><b>بوردتين للإيدين:</b> 18×18 لمبة لكل إيد، بنفس شبكة إيدين الهب.</li>
+<li>أنا بعمل ملفات الـ PCB كاملة (Gerber + BOM + أماكن اللمبات)، وانت بترفعهم على JLCPCB وتختار "PCB Assembly". بيوصلوا متركّب عليهم كل اللمبات.</li></ul>
+<div class="warn">⚡ الوش فيه ≈ ١٧٠٠ لمبة. لو اتشغّلوا كلهم أبيض على الآخر هيسحبوا كهربا كتير جدًا، فالسوفتوير بتاعي بيحدّد السطوع (أقصى ٣ أمبير). متغيّرش الحد ده.</div>`},
+ {n:'03',t:'القاعدة: الأرجل والأوزان والكهربا',ok:true,view:[.9,1.05,1.25],pad:1.7,body:()=>`${meta('١٥ دقيقة','مفك + غراء سيليكون')}
+${chips(['base_shell','feet','weights','dc_jack','w_jack'])}
+<ul><li>لزّق <b>٤ رجول الكاوتش</b> تحت القاعدة في الدواير المحفورة.</li>
+<li>حط <b>الـ ٤ أوزان الحديد</b> في أماكنهم جوه وثبّتهم بنقطة سيليكون. دول اللي بيمنعوا الروبوت إنه يقع لما الراس تلف بسرعة.</li>
+<li>دخّل <b>جاك الكهربا</b> في الخرم اللي ورا واربط الصامولة من جوه.</li>
+<li>وصّل سلكين الكهربا: <b>الأحمر على +</b> و<b>الأسود على −</b>، وسيبهم طوال ٤٠ سم لأنهم طالعين لحد الراس.</li></ul>
+<div class="warn">⚠️ قبل ما تكمّل: قيس الجاك بالشاحن والملتيميتر. لازم يطلع 5V بالظبط، وعلامته تبقى صح (+ في النص).</div>`},
+ {n:'04',t:'سيرفو اللف + غطا القاعدة',ok:true,xray:true,view:[.85,1.15,1.15],pad:1.7,body:()=>`${meta('٢٠ دقيقة','مفك M2.5 + اللابتوب')}
+${chips(['pan_servo','w_pan','base_lid'])}
+<ul><li><b>قبل التركيب:</b> وصّل السيرفو ببورد السيرفوهات وشغّل سكربت الإعداد بتاعي. هيدّيله <b>ID 1</b> ويحطّه في النص (Center). من غير الخطوة دي الراس مش هتبص قدام.</li>
+<li>اربط السيرفو في العمودين اللي تحت الغطا بمسمارين M2.5، والشافت يبقى طالع من الخرم اللي في النص بالظبط.</li>
+<li>عدّي كابل السيرفو وسلكين الكهربا من <b>الخرم الصغير اللي ورا</b> في الغطا.</li>
+<li>قفّل الغطا على القاعدة بـ ٤ مسامير M3 في الصواميل الحرارية.</li></ul>
+<div class="warn">💡 السيرفو ده بيلف الراس بس، مش شايل وزنها. الوزن على البيرينج اللي في الخطوة الجاية.</div>`},
+ {n:'05',t:'البيرينج + الطبق الدوّار',view:[1,1,1.3],pad:1.2,body:()=>``},
+ {n:'06',t:'العمود الشفاف + رقبة الميل',view:[1,.5,1.4],body:()=>``},
+ {n:'07',t:'قشرة الراس + الشاسيه',xray:true,view:[.8,.55,-1.3],body:()=>``},
+ {n:'08',t:'بوردة الوش + الكاميرا المستخبية',xray:true,view:[1,.4,1.6],body:()=>``},
+ {n:'09',t:'سيرفو الميل + بورد السيرفوهات',xray:true,view:[.9,.4,-1.4],body:()=>``},
+ {n:'10',t:'Raspberry Pi 5 + التبريد',xray:true,view:[.9,.45,-1.4],body:()=>``},
+ {n:'11',t:'المايكات + الأنتينا',xray:true,view:[.6,1.3,-.8],body:()=>``},
+ {n:'12',t:'السماعة (تحت الراس)',xray:true,view:[.9,-.7,1],body:()=>``},
+ {n:'13',t:'الودان + موتورات الإيدين',xray:true,view:[1.6,.45,.7],body:()=>``},
+ {n:'14',t:'الكهربا والتوصيلات',xray:true,view:[.5,.6,-1.4],body:()=>``},
+ {n:'15',t:'تركيب الراس على الرقبة',xray:true,view:[1.4,.35,1],body:()=>``},
+ {n:'16',t:'الغطا الخلفي',view:[.6,.4,-1.4],body:()=>``},
+ {n:'17',t:'الزجاج الفيميه',view:[.5,.3,1.6],body:()=>``},
+ {n:'18',t:'الإيدين (المرايات)',view:[.25,.35,1.6],pad:1.25,body:()=>``},
+ {n:'19',t:'أول تشغيل',view:[.6,.4,1.5],body:()=>``},
+ {n:'20',t:'الدماغ: السوفتوير',body:()=>``},
+];
+
+
+/* ───────── step engine ───────── */
+const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+let cur=0, mode='overview', EXP=0, BENCH=0, BENCH_TO=0, LEDS_ON=true, XRAY_USER=false, ALIVE=!REDUCED, bootT=-1;
+const tmpV=new THREE.Vector3();
+function moveTo(p,to,delay=0,dur=900){ p.tw={from:p.cur.clone(),to:to.clone(),t0:performance.now()+delay,dur}; }
+const exPos=p=>p.home.clone().add(p.ex);
+function stepParts(k){ return LIST.filter(p=>p.step===k&&!p.kitOnly); }
+const STEPOF=k=>STEPS[k]||{};
+/* where each part sits on the table for the kit / print steps */
+function kitLayout(list,z0,maxW){ const out=new Map(); let x=0,z=z0,rowD=0,row=[]; const gap=26;
+ const flush=()=>{ const w=row.reduce((a,r)=>a+r.w,0)+gap*(row.length-1); let xx=-w/2; row.forEach(r=>{ out.set(r.p,{x:xx+r.w/2,z:z+r.d/2}); xx+=r.w+gap; }); z+=rowD+gap; rowD=0; row=[]; x=0; };
+ list.slice().sort((a,b)=>(b.bb.max.x-b.bb.min.x)*(b.bb.max.z-b.bb.min.z)-(a.bb.max.x-a.bb.min.x)*(a.bb.max.z-a.bb.min.z)).forEach(p=>{ const w=p.bb.max.x-p.bb.min.x, d=p.bb.max.z-p.bb.min.z;
+  if(x+w>maxW&&row.length) flush(); row.push({p,w,d}); x+=w+gap; rowD=Math.max(rowD,d); });
+ if(row.length) flush(); return out; }
+function kitTargets(list){ // world target → local position
+ const prints=list.filter(p=>p.kind==='print'), buys=list.filter(p=>p.kind!=='print');
+ const A=kitLayout(prints,-340,760), B=kitLayout(buys,40,760), all=new Map([...A,...B]), res=new Map();
+ all.forEach((v,p)=>{ const c=new THREE.Vector3((p.bb.min.x+p.bb.max.x)/2,0,(p.bb.min.z+p.bb.max.z)/2);
+  const w=new THREE.Vector3(v.x-c.x,-p.bb.min.y,v.z-c.z); if(p.grp==='tilt') w.y-=TILT_Y; res.set(p,w); }); return res; }
+let labels=[];
+function clearLabels(){ labels.forEach(l=>l.parent&&l.parent.remove(l)); labels=[]; }
+function addLabel(p,i){ const d=document.createElement('div'), q=document.createElement('div'); q.className='lbl'; q.style.transform='translateY('+(-14-(i||0)%3*24)+'px)'; q.innerHTML=(i!=null?'<b>'+String(i+1).padStart(2,'0')+'</b>':'')+p.ar; d.appendChild(q);
+ const o=new CSS2DObject(d); const b=p.bb; o.position.set((b.min.x+b.max.x)/2,b.max.y+6,(b.min.z+b.max.z)/2).applyQuaternion(p.o.quaternion.clone().invert()); p.o.add(o); labels.push(o); }
+const XRAYED=['head_shell','back_cover','base_shell','base_lid','turntable','ear_r','ear_l'];
+function setXray(on){ XRAYED.forEach(id=>{ const p=PARTS[id]; p.o.traverse(m=>{ if(m.isMesh){ m.material.transparent=on; m.material.opacity=on?.14:1; m.material.depthWrite=!on; m.material.needsUpdate=true; } }); }); }
+function frameCam(list,dir,pad=1.18,dur=1100,which='both'){
+ const bb=new THREE.Box3(); root.updateMatrixWorld(true);
+ list.forEach(p=>{ const keep=p.o.position.clone(); (which==='kit'?[p.kitTarget]:which==='home'?[p.home]:[p.home,exPos(p)]).forEach(v=>{ if(!v) return; p.o.position.copy(v); p.o.updateMatrixWorld(true); bb.expandByObject(p.o); }); p.o.position.copy(keep); p.o.updateMatrixWorld(true); });
+ if(bb.isEmpty()) return; const s=bb.getBoundingSphere(new THREE.Sphere());
+ const d=new THREE.Vector3(...(dir||[1,.55,1.4])).normalize(), dist=Math.max(260,s.radius*pad/Math.sin(THREE.MathUtils.degToRad(camera.fov/2))*(camera.aspect<1?1.5:1));
+ camTw={p0:camera.position.clone(),t0:controls.target.clone(),p1:s.center.clone().addScaledVector(d,dist),t1:s.center.clone(),s:performance.now(),dur}; }
+let camTw=null;
+function setVisibleUpTo(k){ LIST.forEach(p=>{ p.o.visible=!p.kitOnly&&p.step<=k; }); }
+function go(i){ cur=Math.max(0,Math.min(STEPS.length-1,i)); const S=STEPS[cur]; renderList(); clearLabels();
+ $('#cNum').textContent=S.n; $('#cTitle').textContent=S.t;
+ $('#cBody').innerHTML=S.ok?S.body():`<div class="soonbox">🛠️ <b>الخطوة دي قيد التجهيز.</b><br>بتتعمل دلوقتي وهتنزل هنا لايف أول ما تخلص — اعمل ريفرش كل شوية.</div>`;
+ document.querySelectorAll('#cBody [data-p]').forEach(el=>el.onclick=()=>{ const p=PARTS[el.dataset.p]; if(p){ showPart(p); flash(p); } });
+ $('#bPrev').disabled=cur===0; $('#bNext').disabled=cur===STEPS.length-1;
+ const build=S.ok&&cur>=3&&cur<=18; $('#bIn').disabled=$('#bOut').disabled=!build;
+ $('#tExplode').style.display=cur===0?'':'none';
+ const el=document.querySelector('.st.on'); if(el) el.scrollIntoView({block:'nearest',inline:'nearest'});
+ bootT=-1; LIST.forEach(p=>{ p.tw=null; p.kitTarget=null; }); if(cur>0){ panG.rotation.y=0; tiltG.rotation.x=0; }
+ if(!S.ok){ return; }
+ if(cur===0){ mode='overview'; LEDS_ON=true; BENCH_TO=0; setVisibleUpTo(99); LIST.forEach(p=>{ p.cur.copy(p.home); }); setXray(XRAY_USER); FOLD_TO=0; frameCam(LIST.filter(p=>!p.kitOnly&&p.kind!=='cable'),[1,.45,1.5],1.05,1100,'home'); return; }
+ if(cur===1||cur===2){ mode='kit'; LEDS_ON=true; BENCH=BENCH_TO=0; tiltG.position.y=TILT_Y; setXray(false); FOLD_TO=0; foldV=0;
+  const list=LIST.filter(p=>p.kind!=='cable'&&(cur===1||p.kind==='print')); const T=kitTargets(list);
+  LIST.forEach(p=>{ p.o.visible=list.includes(p); });
+  list.forEach((p,i)=>{ p.kitTarget=T.get(p); moveTo(p,p.kitTarget,120+i*25,1000); });
+  frameCam(list,[0,1.25,1],.95,1300,'kit'); return; }
+ mode='build'; LEDS_ON=cur>=19; setVisibleUpTo(cur);
+ BENCH_TO=(cur>=7&&cur<=15)?190:0; BENCH=BENCH_TO; tiltG.position.y=TILT_Y+BENCH;
+ setXray(XRAY_USER||!!S.xray); FOLD_TO=cur>=18&&cur!==18?0:1; if(cur===18) FOLD_TO=1;
+ LIST.forEach(p=>{ if(p.step<cur){ p.cur.copy(p.home); } });
+ const sp=stepParts(cur); sp.forEach((p,i)=>{ p.cur.copy(exPos(p)); addLabel(p,i); });
+ if(cur===19){ bootT=performance.now(); }
+ setTimeout(()=>{ if(STEPS[cur]===S) assemble(); },650);
+ frameCam(S.frame?S.frame.map(id=>PARTS[id]):(sp.length?sp:LIST.filter(p=>!p.kitOnly&&p.kind!=='cable')),S.view,S.pad||1.15,1100,S.frame||!sp.length?'home':'both');
+}
+function assemble(){ const sp=stepParts(cur); sp.forEach((p,i)=>moveTo(p,p.home,i*260,950)); if(cur===15) BENCH_TO=0; if(cur===18) setTimeout(()=>{ if(cur===18) FOLD_TO=0; },sp.length*260+1000); }
+function disassemble(){ const sp=stepParts(cur); sp.slice().reverse().forEach((p,i)=>moveTo(p,exPos(p),i*200,850)); if(cur===15) BENCH_TO=190; if(cur===18) FOLD_TO=1; }
+$('#bIn').onclick=assemble; $('#bOut').onclick=disassemble;
+function flash(p){ const t0=performance.now(); p.o.traverse(m=>{ if(m.isMesh&&m.material.emissive&&!m.material.emissiveMap){ m.userData.e0=m.userData.e0??m.material.emissive.getHex(); } }); p.flash=t0; }
+
+/* ───────── list + log ───────── */
 const ready=STEPS.filter(s=>s.ok).length;
 $('#liveTxt').textContent='جاهز '+ready+' من '+STEPS.length+' · آخر تحديث '+LOG[LOG.length-1][0];
 $('#log').innerHTML=LOG.slice().reverse().map(l=>'<div><b>'+l[0]+'</b>'+l[1]+'</div>').join('');
-
-let cur=0;
 function renderList(){ $('#list').innerHTML=STEPS.map((s,i)=>`<div class="st ${s.ok?'ok':'soon'} ${i===cur?'on':''}" data-i="${i}"><span class="n">${s.n}</span><span class="t">${s.t}</span><span class="p">${s.ok?'جاهز':'قيد التجهيز'}</span></div>`).join('');
  document.querySelectorAll('.st').forEach(el=>el.onclick=()=>go(+el.dataset.i)); }
-function go(i){ cur=Math.max(0,Math.min(STEPS.length-1,i)); const s=STEPS[cur]; renderList();
- $('#cNum').textContent=s.n; $('#cTitle').textContent=s.t;
- $('#cBody').innerHTML=s.ok?s.body:`<div class="soonbox">🛠️ <b>الخطوة دي قيد التجهيز.</b><br>بتتعمل دلوقتي وهتنزل هنا لايف أول ما تخلص — اعمل ريفرش كل شوية.</div>`;
- $('#bPrev').disabled=cur===0; $('#bNext').disabled=cur===STEPS.length-1;
- $('#bIn').disabled=$('#bOut').disabled=!s.ok||cur<3;
- $('#tExplode').style.display=cur===0?'':'none';
- const el=document.querySelector('.st.on'); if(el) el.scrollIntoView({block:'nearest',inline:'nearest'});
-}
 $('#bPrev').onclick=()=>go(cur-1); $('#bNext').onclick=()=>go(cur+1);
+addEventListener('keydown',e=>{ if(e.target.tagName==='INPUT') return; if(e.key==='ArrowLeft') go(cur+1); if(e.key==='ArrowRight') go(cur-1); });
 
-/* ───────── explode / x-ray / alive ───────── */
-let EXP=0;
+/* ───────── tools ───────── */
 $('#ex').oninput=e=>{ EXP=e.target.value/100; $('#exV').textContent=e.target.value+'%'; };
-let XRAY=false, ALIVE=!REDUCED, SPIN=false;
 const bAlive=$('#bAlive'); bAlive.classList.toggle('on',ALIVE);
-$('#bX').onclick=e=>{ XRAY=!XRAY; e.target.classList.toggle('on',XRAY); setXray(XRAY); };
+$('#bX').onclick=e=>{ XRAY_USER=!XRAY_USER; e.target.classList.toggle('on',XRAY_USER); setXray(XRAY_USER||!!(STEPS[cur].xray&&mode==='build')); };
 bAlive.onclick=e=>{ ALIVE=!ALIVE; e.target.classList.toggle('on',ALIVE); };
-$('#bSpin').onclick=e=>{ SPIN=!SPIN; e.target.classList.toggle('on',SPIN); controls.autoRotate=SPIN; };
+$('#bSpin').onclick=e=>{ controls.autoRotate=!controls.autoRotate; e.target.classList.toggle('on',controls.autoRotate); };
 controls.autoRotateSpeed=1.2;
-function setXray(on){ ['head_shell','base_shell','base_lid','turntable','neck'].forEach(id=>{ const p=PARTS[id]; if(!p) return; p.o.traverse(m=>{ if(m.isMesh){ m.material.transparent=on; m.material.opacity=on?.16:1; m.material.depthWrite=!on; m.material.needsUpdate=true; } }); }); }
+let FOLD_TO=1, foldV=1, wave=0;
+const bFold=$('#bFold');
+bFold.onclick=()=>{ FOLD_TO=FOLD_TO>.5?0:1; bFold.textContent=FOLD_TO>.5?'افتح الإيدين':'ضم الإيدين'; bFold.classList.toggle('on',FOLD_TO>.5); };
+$('#bWave').onclick=()=>{ FOLD_TO=0; bFold.textContent='ضم الإيدين'; bFold.classList.remove('on'); wave=2.4; mood='happy'; moodUntil=clock.elapsedTime+2.6; hands('open','#ffe6cf','heart','#ff5a7a'); };
 
 /* ───────── picking ───────── */
-const ray=new THREE.Raycaster(), ndc=new THREE.Vector2(); let mouse={x:0,y:0,in:false};
+const ray=new THREE.Raycaster(), ndc=new THREE.Vector2(); const mouse={x:0,y:0,in:false};
+function visibleDeep(m){ let v=true; m.traverseAncestors(a=>{ if(!a.visible) v=false; }); return v&&m.visible; }
 function pick(e){ const r=canvas.getBoundingClientRect(); ndc.set(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1); ray.setFromCamera(ndc,camera);
- const hit=ray.intersectObjects(pickables.filter(m=>{ let v=true; m.traverseAncestors(a=>{ if(!a.visible) v=false; }); return v&&m.visible; }),false)[0]; return hit?PARTS[hit.object.userData.pid]:null; }
+ const hits=ray.intersectObjects(pickables.filter(visibleDeep),false); const h=hits.find(h=>!(XRAYED.includes(h.object.userData.pid)&&h.object.material.opacity<.5))||hits[0]; return h?PARTS[h.object.userData.pid]:null; }
 const tip=$('#tip');
 canvas.addEventListener('pointermove',e=>{ const r=canvas.getBoundingClientRect(); mouse.x=((e.clientX-r.left)/r.width)*2-1; mouse.y=-((e.clientY-r.top)/r.height)*2+1; mouse.in=true;
- if(e.pointerType==='mouse'){ const p=pick(e); if(p){ tip.style.display='block'; tip.textContent=p.ar; tip.style.left=(e.clientX+14)+'px'; tip.style.top=(e.clientY+12)+'px'; canvas.style.cursor='pointer'; } else { tip.style.display='none'; canvas.style.cursor=''; } } });
+ if(e.pointerType==='mouse'&&!e.buttons){ const p=pick(e); if(p){ tip.style.display='block'; tip.textContent=p.ar; tip.style.left=(e.clientX+14)+'px'; tip.style.top=(e.clientY+12)+'px'; canvas.style.cursor='pointer'; } else { tip.style.display='none'; canvas.style.cursor=''; } } });
 canvas.addEventListener('pointerleave',()=>{ mouse.in=false; tip.style.display='none'; });
 let downAt=null; canvas.addEventListener('pointerdown',e=>downAt=[e.clientX,e.clientY]);
-canvas.addEventListener('pointerup',e=>{ if(!downAt||Math.hypot(e.clientX-downAt[0],e.clientY-downAt[1])>5) return; const p=pick(e); if(p) showPart(p); });
-function showPart(p){ $('#pBody').innerHTML=`<h4>${p.ar}</h4><div class="en">${p.en}</div>
- <div class="row"><span>النوع</span><span>${p.kind==='buy'?'🛒 بتتشري':'🖨️ بتتطبع 3D'}</span></div>
- <div class="row"><span>الخطوة</span><span>${STEPS[p.step]?STEPS[p.step].n+' · '+STEPS[p.step].t:'—'}</span></div>`; $('#pcard').style.display='block'; }
+canvas.addEventListener('pointerup',e=>{ if(!downAt||Math.hypot(e.clientX-downAt[0],e.clientY-downAt[1])>5) return; const p=pick(e); if(p){ showPart(p); flash(p); } });
+const KIND={buy:'🛒 بتتشري',print:'🖨️ بتتطبع 3D',cable:'🔌 سلك / كابل'};
+function showPart(p){ const b=BOM.find(x=>x[4]===p.id), S=STEPS[p.step];
+ $('#pBody').innerHTML=`<h4>${p.ar}</h4><div class="en">${p.en}</div>
+ <div class="row"><span>النوع</span><span>${KIND[p.kind]}</span></div>
+ ${p.mat?`<div class="row"><span>الطباعة</span><span>${p.mat} · ${p.g} جم · ${p.h} س</span></div>`:''}
+ ${b?`<div class="row"><span>السعر</span><span>${fmt(b[2][0])}–${fmt(b[2][1])} درهم</span></div><div class="row"><span>منين</span><span>${b[3]}</span></div>`:''}
+ <div class="row"><span>الخطوة</span><span>${S?S.n+' · '+S.t:'—'}</span></div>`; $('#pcard').style.display='block'; }
 $('#pX').onclick=()=>$('#pcard').style.display='none';
 
 /* ───────── loop ───────── */
 function resize(){ const s=$('#stage'), w=s.clientWidth, h=s.clientHeight; renderer.setSize(w,h,false); labelR.setSize(w,h); camera.aspect=w/h; camera.updateProjectionMatrix();
- const wide=w>860; camera.setViewOffset(w,h,wide?-90:0,wide?40:0,w,h); }
+ const wide=w>860; camera.setViewOffset(w,h,wide?-Math.round(w*.03):0,wide?Math.round(h*.13):0,w,h); }
 addEventListener('resize',resize); resize();
-let blink=0, nextBlink=2, mood='idle', moodUntil=0, wave=0, foldV=1;
+let blink=0, nextBlink=2, mood='idle', moodUntil=0;
 const clock=new THREE.Clock();
-drawHand(HANDL,'open','#ffe6cf',true); drawHand(HANDR,'open','#ffe6cf',false);
-setFold(1); setTimeout(()=>{ FOLD_TO=0; },900);                       // he opens his hands when the page loads
-const bFold=$('#bFold');
-bFold.onclick=()=>{ FOLD_TO=FOLD_TO>.5?0:1; bFold.textContent=FOLD_TO>.5?'افتح الإيدين':'ضم الإيدين'; bFold.classList.toggle('on',FOLD_TO>.5); };
-$('#bWave').onclick=()=>{ if(FOLD_TO>.5){ FOLD_TO=0; bFold.textContent='ضم الإيدين'; bFold.classList.remove('on'); } wave=2.4; mood='happy'; moodUntil=clock.elapsedTime+2.6;
- drawHand(HANDL,'open','#ffe6cf',true); drawHand(HANDR,'heart','#ff5a7a',false); };
+hands('open','#ffe6cf');
+for(const id in PARTS){ PARTS[id].cur.copy(PARTS[id].home); }
+setTimeout(()=>{ if(cur===0) FOLD_TO=0; },900);
 function frame(){
- const dt=Math.min(clock.getDelta(),.05), t=clock.elapsedTime;
- for(const id in PARTS){ const p=PARTS[id]; p.o.position.copy(p.home).addScaledVector(p.ex,EXP*.9); }
- // mirror hands: ease towards open/folded, wave on demand
+ const dt=Math.min(clock.getDelta(),.05), t=clock.elapsedTime, now=performance.now();
+ // parts: tweens, or the explode slider on the overview
+ for(const p of LIST){
+  if(p.tw){ const k=Math.min(1,Math.max(0,(now-p.tw.t0)/p.tw.dur)); p.cur.lerpVectors(p.tw.from,p.tw.to,ease(k)); if(k>=1) p.tw=null; }
+  p.o.position.copy(p.cur); if(mode==='overview'&&!p.tw) p.o.position.addScaledVector(p.ex,EXP*.9);
+  if(p.flash){ const k=(now-p.flash)/1400; p.o.traverse(m=>{ if(m.isMesh&&m.userData.e0!=null) m.material.emissive.setHex(k<1&&Math.floor(k*6)%2===0?0x8a2a10:m.userData.e0); }); if(k>=1) p.flash=0; }
+ }
+ // the head waits on the bench above the neck while it is being built
+ BENCH+=(BENCH_TO-BENCH)*Math.min(1,dt*2.2); tiltG.position.y=TILT_Y+BENCH;
+ // mirror hands
  foldV+=(FOLD_TO-foldV)*Math.min(1,dt*3.2); let f=foldV;
- if(wave>0){ wave-=dt; f=Math.max(0,.18+.16*Math.sin(t*9)); if(wave<=0){ drawHand(HANDL,'open','#ffe6cf',true); drawHand(HANDR,'open','#ffe6cf',false); } }
+ if(wave>0){ wave-=dt; f=Math.max(0,.18+.16*Math.sin(t*9)); if(wave<=0) hands('open','#ffe6cf'); }
  HAND.r.pivot.rotation.y=f*Math.PI/2; HAND.l.pivot.rotation.y=-(wave>0?Math.max(0,foldV):f)*Math.PI/2;
- let lx=0, ly=0, pan=0, tilt=0;
- if(ALIVE){ const tx=mouse.in?mouse.x:Math.sin(t*.4)*.6, ty=mouse.in?mouse.y:Math.sin(t*.3)*.3;
+ // face
+ let lx=0, ly=0, pan=0, tilt=0, faceMood='idle', word='';
+ const live=mode==='overview'&&ALIVE;
+ if(live){ const tx=mouse.in?mouse.x:Math.sin(t*.4)*.6, ty=mouse.in?mouse.y:Math.sin(t*.3)*.3;
   lx=Math.max(-2,Math.min(2,Math.round(tx*2.4))); ly=Math.max(-1,Math.min(1,Math.round(-ty*1.6)));
   pan=tx*.45; tilt=-ty*.12;
   nextBlink-=dt; if(nextBlink<0){ blink=.12; nextBlink=2.5+Math.random()*3; } if(blink>0) blink-=dt;
   if(t>moodUntil&&wave<=0){ const r=Math.random(); mood=r<.25?'talk':r<.45?'happy':'idle'; moodUntil=t+2.5+Math.random()*2.5;
-   if(FOLD_TO>.5){ drawHand(HANDL,'z','#7fa9d6',true); drawHand(HANDR,'z','#7fa9d6',false); }
-   else if(mood==='happy'){ drawHand(HANDL,'thumb','#9ff5d0',true); drawHand(HANDR,'heart','#ff5a7a',false); } else { drawHand(HANDL,'open','#ffe6cf',true); drawHand(HANDR,'open','#ffe6cf',false); } } }
+   if(FOLD_TO>.5) hands('z','#7fa9d6'); else if(mood==='happy') hands('thumb','#9ff5d0','heart','#ff5a7a'); else hands('open','#ffe6cf'); }
+  faceMood=FOLD_TO>.5&&wave<=0?'sleepy':mood; }
+ if(bootT>0){ const s=(now-bootT)/1000;                                                   // step 19: first power-on
+  if(s<1.2){ faceMood='off'; hands('off','#000'); } else if(s<4){ faceMood='boot'; } else { faceMood=s<6.5?'happy':'idle'; hands(s<6.5?'thumb':'open',s<6.5?'#9ff5d0':'#ffe6cf',s<6.5?'heart':'open',s<6.5?'#ff5a7a':'#ffe6cf'); }
+  if(s>4&&s<9){ pan=Math.sin((s-4)*2.2)*.5; tilt=Math.sin((s-4)*3.1)*.15; }
+  if(s>4.6&&s<5.2) FOLD_TO=0; }
+ else if(!LEDS_ON&&mode==='build'){ faceMood='off'; hands('off','#000'); }
+ else if(!live&&mode!=='overview'){ hands('open','#ffe6cf'); }
  panG.rotation.y+=(pan-panG.rotation.y)*.06; tiltG.rotation.x+=(tilt-tiltG.rotation.x)*.06;
- drawFace(ALIVE?(FOLD_TO>.5&&wave<=0?'sleepy':mood):'idle',lx,ly,blink>0?1:0,Math.floor(t*4),(Math.sin(t*.25)+1)/2);
+ drawFace(faceMood,lx,ly,blink>0?1:0,Math.floor(t*(bootT>0?9:4)),(Math.sin(t*.25)+1)/2,word);
+ PARTS.antenna.o.children[1].material.emissiveIntensity=(LEDS_ON||bootT>0)?(.7+.5*Math.max(0,Math.sin(t*3))*(faceMood==='talk'?1:0)):.05;
+ if(camTw){ const k=Math.min(1,(now-camTw.s)/camTw.dur), e=ease(k); camera.position.lerpVectors(camTw.p0,camTw.p1,e); controls.target.lerpVectors(camTw.t0,camTw.t1,e); if(k>=1) camTw=null; }
  controls.update(); renderer.render(scene,camera); labelR.render(scene,camera);
  requestAnimationFrame(frame);
 }
+window.__dbg={camera,controls,PARTS,go};
 renderList(); go(0); frame();
 </script>
 </body>
