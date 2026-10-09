@@ -91,29 +91,29 @@ table.bom tfoot td{font-weight:700;color:var(--org);border-top:1px solid var(--l
 .soonbox{padding:18px 0 8px;color:var(--dim)}
 .soonbox b{color:var(--ink)}
 
-/* blueprint look */
+/* blueprint look — a clean drawing: flat paper, thin lines, few numbers */
 #bpTitle{display:none}
-body.bp{--bg:#0a3a6c;--glass:rgba(6,36,72,.86);--line:rgba(214,236,255,.28);--faint:rgba(214,236,255,.07);--dim:rgba(214,236,255,.66)}
+body.bp{--bg:#0c3a68;--glass:rgba(9,45,82,.9);--line:rgba(234,244,255,.22);--faint:rgba(234,244,255,.05);--dim:rgba(234,244,255,.62)}
 body.bp #sheet{background:
- linear-gradient(rgba(214,236,255,.16) 1px,transparent 1px) 0 0/120px 120px,
- linear-gradient(90deg,rgba(214,236,255,.16) 1px,transparent 1px) 0 0/120px 120px,
- linear-gradient(rgba(214,236,255,.07) 1px,transparent 1px) 0 0/24px 24px,
- linear-gradient(90deg,rgba(214,236,255,.07) 1px,transparent 1px) 0 0/24px 24px,
- radial-gradient(1300px 800px at 50% 45%,#11518f,#0a3a6c 60%,#072a52);opacity:1}
-body.bp header{background:linear-gradient(rgba(6,36,72,.95),rgba(6,36,72,.7))}
-body.bp .st.on{background:rgba(214,236,255,.10)}
-body.bp #bpTitle{display:flex;position:absolute;bottom:16px;left:572px;right:322px;justify-content:center;overflow:hidden;gap:0;border:1.5px solid rgba(214,236,255,.85);font:600 10.5px var(--mono);letter-spacing:.12em;color:#eaf5ff;background:rgba(6,36,72,.55);direction:ltr;pointer-events:none;z-index:3;white-space:nowrap}
-body.bp #bpTitle>*{padding:6px 12px;flex:none;background:rgba(6,36,72,.75);border-left:1px solid rgba(214,236,255,.6)}
-body.bp #bpTitle>*:first-child{border-left:0}
-body.bp #bpTitle span:nth-child(3){font-family:var(--ar);letter-spacing:0;font-size:12px}
-.dim{font:600 11px/1 var(--mono);color:#fff;background:rgba(7,42,82,.92);border:1px solid rgba(214,236,255,.75);padding:3px 6px;white-space:nowrap;direction:ltr}
-.dim.tag{font-size:10px;color:#d6ecff;border-color:rgba(214,236,255,.4);transform:translateY(10px)}
+ linear-gradient(rgba(234,244,255,.07) 1px,transparent 1px) 0 0/100px 100px,
+ linear-gradient(90deg,rgba(234,244,255,.07) 1px,transparent 1px) 0 0/100px 100px,
+ linear-gradient(rgba(234,244,255,.028) 1px,transparent 1px) 0 0/20px 20px,
+ linear-gradient(90deg,rgba(234,244,255,.028) 1px,transparent 1px) 0 0/20px 20px,#0c3a68;opacity:1}
+body.bp header{background:#0c3a68}
+body.bp .st.on{background:rgba(234,244,255,.08)}
+body.bp #labels .lbl{display:none}
+body.bp #bpTitle{display:flex;position:absolute;bottom:16px;left:572px;right:322px;justify-content:center;pointer-events:none;z-index:3;direction:ltr}
+body.bp #bpTitle>*{flex:none;padding:5px 12px;border:1px solid rgba(234,244,255,.45);border-left-width:0;font:500 10px var(--mono);letter-spacing:.14em;color:rgba(234,244,255,.85);white-space:nowrap}
+body.bp #bpTitle>*:first-child{border-left-width:1px}
+body.bp #bpTitle span:nth-child(3){font:500 11.5px var(--ar);letter-spacing:0}
+.dim{font:500 11px/1 var(--mono);color:#f2f8ff;background:#0c3a68;padding:1px 4px;white-space:nowrap;direction:ltr;letter-spacing:.02em}
 .bpb{width:100%;border-color:rgba(79,179,176,.5)}
-body.bp .bpb{background:#d6ecff;color:#072a52;border-color:#d6ecff}
-body.bp .lbl{background:rgba(7,42,82,.92);border-color:rgba(214,236,255,.5);border-inline-start-color:#fff}
-body.bp .lbl b{color:#9fd0ff}
+body.bp .bpb{background:#eaf4ff;color:#0c3a68;border-color:#eaf4ff}
+.bpsizes h5{margin:14px 0 4px;font:700 13px var(--ar)}
+.bpsizes h5 span{font:400 11.5px var(--ar);color:var(--dim);margin-inline-start:8px}
+.bpsizes tr{cursor:pointer}
 .mono{font-family:var(--mono);direction:ltr}
-@media (max-width:860px){ body.bp #bpTitle{top:8px;bottom:auto;left:8px;right:8px;font-size:9px} body.bp #bpTitle span:nth-child(5){display:none} }
+@media (max-width:860px){ body.bp #bpTitle{top:8px;bottom:auto;left:8px;right:8px} body.bp #bpTitle span:nth-child(4){display:none} }
 #nogl{display:none;position:fixed;inset:0;place-items:center;text-align:center;z-index:9;padding:30px}
 @media (max-width:860px){
  body{overflow:auto}
@@ -171,6 +171,7 @@ const LOG=[
  ['05:18','نزلت كل القطع الداخلية بمقاساتها الحقيقية + خطوات ٠١ لـ ٠٤ (العدة، الطباعة والبوردات، القاعدة، سيرفو اللف).'],
  ['05:31','نزلت كل الخطوات من ٠٥ لـ ٢٠: البيرينج، العمود، الراس من جوه (الوش والكاميرا، السيرفوهات، الـ Pi، المايك، السماعة، الودان، الكهربا)، تركيب الراس، الغطا، الزجاج، الإيدين، أول تشغيل، والدماغ.'],
  ['10:21','نزل لوك «بلو برينت»: كل حاجة مرسومة خطوط على أزرق، ومقاسات كل قطعة بالمللي في كل خطوة، ولكل سلك طوله. والمقاس بقى ظاهر في كارت أي قطعة تدوس عليها.'],
+ ['10:42','٣ تعديلات: (١) البلو برينت اتعمل من جديد: رسم خطوط نضيف، واجهة أمامية بخمس مقاسات، ومقاسات قطعة واحدة في كل مرة. (٢) الحتة المايلة: الشاسيه اتقص بميل اللوجو، وعمود الوش وبورد السيرفوهات دخلوا جوه، واختبار أوتوماتيك أكد إن صفر قطع طالعة برا القشرة. (٣) مفصل الميل بقى باين: مهد أسود فيه السيرفو + كوبري U ماسك الراس من الناحيتين + لفّة كابلات ورا الرقبة.'],
 
 ];
 
@@ -187,11 +188,11 @@ scene.environment=pm.fromScene(new RoomEnvironment(renderer),0.04).texture;
 scene.add(new THREE.HemisphereLight(0xfff0e0,0x1a0c08,.35));
 const key=new THREE.DirectionalLight(0xffe2c8,1.5); key.position.set(500,800,700); scene.add(key);
 const rim=new THREE.DirectionalLight(0x4fb3b0,1.6); rim.position.set(-700,300,-600); scene.add(rim);
-const camera=new THREE.PerspectiveCamera(30,1,5,12000);
+const camera=new THREE.PerspectiveCamera(30,1,5,60000);
 camera.position.set(700,470,1060);
 const controls=new OrbitControls(camera,canvas);
 controls.enableDamping=true; controls.dampingFactor=.08; controls.target.set(0,200,0);
-controls.minDistance=120; controls.maxDistance=3600; controls.maxPolarAngle=Math.PI*.95;
+controls.minDistance=120; controls.maxDistance=30000; controls.maxPolarAngle=Math.PI*.95;
 const labelR=new CSS2DRenderer({element:$('#labels')});
 
 /* ───────── materials ───────── */
@@ -220,14 +221,14 @@ const MAT={
 
 /* ───────── geometry helpers (mm) ───────── */
 const mesh=(g,m)=>new THREE.Mesh(g,m);
-const box=(w,h,d,m,r)=>mesh(r?new RoundedBoxGeometry(w,h,d,3,Math.min(r,w/2-.01,h/2-.01,d/2-.01)):new THREE.BoxGeometry(w,h,d),m);
+const box=(w,h,d,m,r)=>{ const g=r?new RoundedBoxGeometry(w,h,d,3,Math.min(r,w/2-.01,h/2-.01,d/2-.01)):new THREE.BoxGeometry(w,h,d); g.userData.box=[w,h,d]; return mesh(g,m); };
 const cyl=(r,h,m,seg=48,r2)=>mesh(new THREE.CylinderGeometry(r,r2??r,h,seg),m);
 const at=(o,x,y,z)=>{ o.position.set(x,y,z); return o; };
 const rx=(o,a)=>{ o.rotation.x=a; return o; };
 function ringGeo(ro,ri,h,seg=72){ const s=new THREE.Shape(); s.absarc(0,0,ro,0,Math.PI*2,false); if(ri>0){ const p=new THREE.Path(); p.absarc(0,0,ri,0,Math.PI*2,true); s.holes.push(p); }
- const g=new THREE.ExtrudeGeometry(s,{depth:h,bevelEnabled:false,curveSegments:seg}); g.rotateX(-Math.PI/2); g.translate(0,-h/2,0); return g; }
+ const g=new THREE.ExtrudeGeometry(s,{depth:h,bevelEnabled:false,curveSegments:seg}); g.rotateX(-Math.PI/2); g.translate(0,-h/2,0); g.userData.cyl={r:ro,h}; return g; }
 function discHoles(ro,holes,h){ const s=new THREE.Shape(); s.absarc(0,0,ro,0,Math.PI*2,false); holes.forEach(([x,z,r])=>{ const p=new THREE.Path(); p.absarc(x,-z,r,0,Math.PI*2,true); s.holes.push(p); });
- const g=new THREE.ExtrudeGeometry(s,{depth:h,bevelEnabled:false,curveSegments:64}); g.rotateX(-Math.PI/2); g.translate(0,-h/2,0); return g; }
+ const g=new THREE.ExtrudeGeometry(s,{depth:h,bevelEnabled:false,curveSegments:64}); g.rotateX(-Math.PI/2); g.translate(0,-h/2,0); g.userData.cyl={r:ro,h}; return g; }
 const shapeOf=pts=>{ const s=new THREE.Shape(); pts.forEach((p,i)=>i?s.lineTo(p[0],p[1]):s.moveTo(p[0],p[1])); s.closePath(); return s; };
 const pathOf=pts=>{ const s=new THREE.Path(); pts.forEach((p,i)=>i?s.lineTo(p[0],p[1]):s.moveTo(p[0],p[1])); s.closePath(); return s; };
 function offsetPoly(pts,d){ const n=pts.length; let a=0; for(let i=0;i<n;i++){const p=pts[i],q=pts[(i+1)%n]; a+=p[0]*q[1]-q[0]*p[1];}
@@ -235,13 +236,19 @@ function offsetPoly(pts,d){ const n=pts.length; let a=0; for(let i=0;i<n;i++){co
  for(let i=0;i<n;i++){ const p=pts[i],q=pts[(i+1)%n], dx=q[0]-p[0], dy=q[1]-p[1], l=Math.hypot(dx,dy), nx=s*dy/l, ny=-s*dx/l; L.push([p[0]+nx*d,p[1]+ny*d,dx,dy]); }
  return pts.map((_,i)=>{ const A=L[(i-1+n)%n],B=L[i], den=A[2]*B[3]-A[3]*B[2], t=((B[0]-A[0])*B[3]-(B[1]-A[1])*B[2])/den; return [A[0]+A[2]*t,A[1]+A[3]*t]; }); }
 const rect=(w,h)=>[[-w/2,-h/2],[w/2,-h/2],[w/2,h/2],[-w/2,h/2]];
+function clipBox(poly,x0,x1,y0,y1){ // Sutherland–Hodgman against an axis-aligned box
+ const edges=[[p=>p[0]>=x0,(a,b)=>{const t=(x0-a[0])/(b[0]-a[0]);return [x0,a[1]+t*(b[1]-a[1])];}],[p=>p[0]<=x1,(a,b)=>{const t=(x1-a[0])/(b[0]-a[0]);return [x1,a[1]+t*(b[1]-a[1])];}],
+  [p=>p[1]>=y0,(a,b)=>{const t=(y0-a[1])/(b[1]-a[1]);return [a[0]+t*(b[0]-a[0]),y0];}],[p=>p[1]<=y1,(a,b)=>{const t=(y1-a[1])/(b[1]-a[1]);return [a[0]+t*(b[0]-a[0]),y1];}]];
+ let out=poly; edges.forEach(([inside,cut])=>{ const src=out; out=[]; src.forEach((cp,i)=>{ const pp=src[(i+src.length-1)%src.length];
+  if(inside(cp)){ if(!inside(pp)) out.push(cut(pp,cp)); out.push(cp); } else if(inside(pp)) out.push(cut(pp,cp)); }); }); return out; }
 
 /* ───────── the mascot's numbers, in millimetres (same proportions as the hub mascot) ───────── */
 const U=108, LOGO=[[-1.1,.5],[1.1,.5],[1.1,-.5],[-.7,-.5],[-1.1,-.12]];
 const HEAD=LOGO.map(p=>[p[0]*U,p[1]*U]);
 const WIN=LOGO.map(p=>[p[0]*U*.94,p[1]*U*.88]);
 const HD=.86*U, HB=.075*U, HZ=HD/2+HB;                  // depth 92.9, rounding 8.1, front face z=54.5
-const HCY=276, TILT_Y=232;
+const HCY=276, TILT_Y=183.9;                               // tilt axis: in the neck cradle, 30 mm under the head
+const FACE_SCREWS=[[-100,38],[100,38],[-84,-22],[100,-38],[0,40],[0,-40]];   // bottom-left one sits inside the cut corner
 const EARX=1.24*U, EARY=.02*U, EARW=.16*U, EARS=.34*U;
 const HS=.26*U, HBV=.035*U, HDP=.16*U;                  // hand: 56.2 square + 3.8 rounding, 17.3 deep
 const PIV=[135, EARY-9, 13];                            // hinge axis inside the ear (micro servo shaft, pointing down)
@@ -325,7 +332,7 @@ function cable(id,meta,grp,pts,color,r=2.2,ex=[0,0,0]){
  const c=new THREE.Vector3(); P.forEach(p=>c.add(p)); c.multiplyScalar(1/P.length);
  const curve=new THREE.CatmullRomCurve3(P.map(p=>p.clone().sub(c)),false,'centripetal');
  const build=()=>mesh(new THREE.TubeGeometry(curve,Math.max(24,P.length*14),r,8,false),MAT.wire(color));
- const p=part(id,Object.assign({kind:'cable'},meta),build,grp,[c.x,c.y+off,c.z],ex); p.len=curve.getLength(); return p;
+ const p=part(id,Object.assign({kind:'cable'},meta),build,grp,[c.x,c.y+off,c.z],ex); p.len=curve.getLength(); p.curvePts=curve.getPoints(120); return p;
 }
 const STS=()=>{ // Feetech STS3215, origin = output shaft axis on the top face; body hangs below (−y), length along +x
  const g=new THREE.Group();
@@ -358,29 +365,36 @@ part('bearing',{ar:'بيرينج دوّار ٣ بوصة',en:'Lazy-susan bearing 
  const t=mesh(new THREE.TorusGeometry(31,2.6,12,64),MAT.steel()); t.rotation.x=Math.PI/2; g.add(t); return g;},'base',[0,49.75,0],[0,80,0]);
 /* pan */
 part('turntable',{ar:'الطبق الدوّار',en:'Turntable Ø110 + horn boss',kind:'print',step:5,mat:'PETG أسود مطفي',g:40,h:2},()=>{const g=new THREE.Group(); g.add(mesh(discHoles(55,[[0,-19,5]],6),MAT.black())); g.add(at(mesh(ringGeo(16.5,12.6,12),MAT.black()),0,9,0)); g.add(at(cyl(10,7,MAT.black()),0,-6.5,0)); return g;},'pan',[0,56.5,0],[0,90,0]);
-part('stem',{ar:'العمود الشفاف',en:'Clear acrylic tube Ø25 × 140',kind:'buy',step:6},()=>mesh(ringGeo(12.5,10.5,140,48),MAT.clear()),'pan',[0,129.5,0],[0,230,0]);
-cable('braid',{ar:'الكابلات جوه العمود (شراب أسود)',en:'Power pair + servo bus in black braid',step:6},'pan',[[0,40,-19],[0,52,-19],[0,60,-16],[0,70,-6],[0,84,0],[0,140,0],[0,192,0],[6,202,0],[10,207,4]],0x161616,4,[0,0,-120]);
-part('neck',{ar:'رقبة الميل',en:'Neck cap + tilt tab',kind:'print',step:6,mat:'PETG أسود مطفي',g:20,h:1},()=>{const g=new THREE.Group(); g.add(cyl(16.5,16,MAT.black())); g.add(at(box(6,40,26,MAT.black(),2),28.5,28,0)); return g;},'pan',[0,198,0],[0,160,0]);
+part('stem',{ar:'العمود الشفاف',en:'Clear acrylic tube Ø25 × 83.5',kind:'buy',step:6},()=>mesh(ringGeo(12.5,10.5,83.5,48),MAT.clear()),'pan',[0,101.25,0],[0,200,0]);
+cable('braid',{ar:'الكابلات جوه العمود (شراب أسود)',en:'Power pair + servo bus in black braid',step:6},'pan',[[0,40,-19],[0,52,-19],[0,60,-16],[0,70,-6],[0,84,0],[0,122,0],[0,134,-4],[0,139,-12],[0,141,-17.5]],0x161616,4,[0,0,-120]);
+part('neck',{ar:'مهد سيرفو الميل (الرقبة)',en:'Tilt cradle — holds the tilt servo, idler pivot on the left',kind:'print',step:6,mat:'PETG أسود مطفي',g:48,h:3,ord:0},()=>{const g=new THREE.Group();
+ g.add(box(42,60,31,MAT.black(),4));                                                        // the cradle around the servo (y 143–203)
+ g.add(at(cyl(16.5,10,MAT.black()),0,-35,0));                                                // collar on the tube
+ const ax=TILT_Y-173, ib=cyl(6,3,MAT.dark(),24); ib.rotation.z=Math.PI/2; g.add(at(ib,-22.5,ax,0));   // idler pivot (M4 + 624 bearing)
+ const sh=mesh(ringGeo(7.5,4.5,.6,32),MAT.chip()); sh.rotation.z=Math.PI/2; g.add(at(sh,21.2,ax,0));     // shaft opening
+ g.add(at(cyl(6,.6,MAT.chip(),20),0,-35,-16.6)).children.at(-1).rotation.x=Math.PI/2;      // cable exit at the back of the collar
+ return g;},'pan',[0,173,0],[0,170,0]);
 /* head — the hub mascot's head, unchanged on the outside */
 part('head_shell',{ar:'قشرة الراس',en:'Head shell — Aroma logo block, 253.8 × 124.2 × 109',kind:'print',step:7,mat:'PLA أحمر أروما',g:300,h:14},()=>{
  const g=new THREE.Group(); const eg=new THREE.ExtrudeGeometry(shapeOf(HEAD),{depth:HD,bevelEnabled:true,bevelThickness:HB,bevelSize:HB,bevelSegments:4,curveSegments:4}); eg.translate(0,0,-HD/2);
  g.add(mesh(eg,MAT.red()));
- g.add(at(box(26,.6,38,MAT.chip()),21,-.575*U-.2,0));                                    // slot for the neck tab (underneath)
+ g.add(at(cyl(6,.6,MAT.chip(),20),0,-.575*U-.2,-19));                                    // cable hole behind the bracket (underneath)
  for(let i=0;i<5;i++) for(let j=0;j<3;j++) g.add(at(cyl(1.4,.6,MAT.chip(),10),62+i*8,-.575*U-.2,-27+j*8));   // speaker holes
  return g; },'tilt',[0,HCY,0],[0,240,0]);
 part('chassis',{ar:'الشاسيه الداخلي',en:'Inner chassis — holds the face board, Pi and camera',kind:'print',step:7,mat:'PETG رمادي',g:80,h:4},()=>{
- const s=shapeOf(rect(220,90)); [[-70,15,50,40],[-5,-18,40,30],[70,10,40,50]].forEach(([x,y,w,h])=>s.holes.push(pathOf(rect(w,h).map(p=>[p[0]+x,p[1]+y]))));
+ const s=shapeOf(clipBox(offsetPoly(HEAD,-8),-110,110,-45,45)); [[-70,15,50,40],[-5,-18,40,30],[70,10,40,50]].forEach(([x,y,w,h])=>s.holes.push(pathOf(rect(w,h).map(p=>[p[0]+x,p[1]+y]))));
  const eg=new THREE.ExtrudeGeometry(s,{depth:3,bevelEnabled:false}); eg.translate(0,0,-1.5); const g=new THREE.Group(); g.add(mesh(eg,MAT.grey()));
- [[-100,38],[100,38],[-100,-38],[100,-38],[0,40],[0,-40]].forEach(([x,y])=>{ const p=cyl(3,15.3,MAT.grey(),16); p.rotation.x=Math.PI/2; g.add(at(p,x,y,9.15)); });   // posts for the face board
+ FACE_SCREWS.forEach(([x,y])=>{ const p=cyl(3,15.3,MAT.grey(),16); p.rotation.x=Math.PI/2; g.add(at(p,x,y,9.15)); });   // posts for the face board
  [[-29,-24.5],[29,-24.5],[-29,24.5],[29,24.5]].forEach(([x,y])=>{ const p=cyl(2.5,4.8,MAT.grey(),16); p.rotation.x=Math.PI/2; g.add(at(p,60+x,y+10,-3.9)); });   // posts for the Pi
- [[-125,30],[125,30],[-125,-30],[125,-30]].forEach(([x,y])=>g.add(at(box(14,8,3,MAT.grey()),x>0?x-10:x+10,y,0)));
+ [[-104,30],[104,30],[104,-30]].forEach(([x,y])=>g.add(at(box(14,8,3,MAT.grey()),x,y,0)));
+ const dt=box(14,8,3,MAT.grey()); dt.rotation.z=Math.atan2(41.04,43.2); g.add(at(dt,-88,-27,0));   // fourth tab on the slanted edge
  return g; },'tilt',[0,HCY,31.5],[0,0,-220]);
 /* face: one board of 64 × 27 LEDs in the logo's own outline, driven by a XIAO ESP32-S3 */
 part('face_led',{ar:'بوردة الوش LED (64×27 بشكل اللوجو)',en:'Custom LED face board — 64×27 WS2812B-2020, logo outline',kind:'buy',step:8},()=>{const g=new THREE.Group();
  const fs=shapeOf(WIN), fh=new THREE.Path(); fh.absarc(CAMC[0],CAMC[1],3.5,0,Math.PI*2,true); fs.holes.push(fh); const sg=new THREE.ShapeGeometry(fs,16); g.add(at(mesh(sg,ledMat(FACE,[1/(2.068*U),1/(.88*U)],[.5,.5])),0,0,HZ+.3));
  const s=shapeOf(offsetPoly(WIN,2)); const ch=new THREE.Path(); ch.absarc(CAMC[0],CAMC[1],4,0,Math.PI*2,true); s.holes.push(ch);
  const pcb=new THREE.ExtrudeGeometry(s,{depth:1.6,bevelEnabled:false,curveSegments:16}); g.add(at(mesh(pcb,MAT.pcbK()),0,0,HZ-6.2));
- [[-100,38],[100,38],[-100,-38],[100,-38],[0,40],[0,-40]].forEach(([x,y])=>{ const p=cyl(2.6,2,MAT.metal(),14); p.rotation.x=Math.PI/2; g.add(at(p,x,y,HZ-7.4)); });
+ FACE_SCREWS.forEach(([x,y])=>{ const p=cyl(2.6,2,MAT.metal(),14); p.rotation.x=Math.PI/2; g.add(at(p,x,y,HZ-7.4)); });
  g.add(at(box(14,6,4,MAT.white()),60,-38,HZ-8.4)); const ln=mesh(new THREE.CircleGeometry(3.5,24),new THREE.MeshPhysicalMaterial({color:0x0b1020,roughness:.05,metalness:.3,clearcoat:1})); g.add(at(ln,CAMC[0],CAMC[1],HZ+.15)); return g;},'tilt',[0,HCY,0],[0,0,170]);
 part('xiao',{ar:'XIAO ESP32-S3 (بيسوق الـ LEDs)',en:'Seeed XIAO ESP32-S3 — LED driver',kind:'buy',step:8,ord:0},()=>{const g=new THREE.Group(); g.add(box(21,17.5,1.2,MAT.pcbB())); g.add(at(box(12,12,2.4,MAT.metal()),2,0,-1.8)); g.add(at(box(8.6,6.6,3.2,MAT.metal()),-8.4,0,-2.2)); return g;},'tilt',[-60,HCY-8,HZ-8],[0,0,200]);
 part('camera',{ar:'كاميرا Pi Module 3 Wide (مستخبية في الوش)',en:'Camera Module 3 Wide — behind the face, lens between the pixels',kind:'buy',step:8,ord:1},()=>{const g=new THREE.Group();
@@ -389,10 +403,10 @@ part('camera',{ar:'كاميرا Pi Module 3 Wide (مستخبية في الوش)'
 cable('w_cam',{ar:'كابل الكاميرا (Pi 5، 200 مم)',en:'Pi 5 camera FFC 22→15 pin',step:10},'tilt',[[17.5,HCY+20,HZ-21.5],[24,HCY+19,29],[40,HCY+14,31.5],[60,HCY-6,27],[72,HCY-14,22]],0xd8c08a,1.4,[0,0,-60]);
 part('glass',{ar:'زجاج الوش الفيميه',en:'Smoked acrylic 3 mm — logo outline, Ø7 camera hole',kind:'buy',step:17,sz:[223.3,95,3]},()=>{const s=shapeOf(WIN); const ch=new THREE.Path(); ch.absarc(CAMC[0],CAMC[1],3.5,0,Math.PI*2,true); s.holes.push(ch); const m=mesh(new THREE.ShapeGeometry(s,16),MAT.gloss()); m.position.z=HZ+.6; return m;},'tilt',[0,HCY,0],[0,0,170]);
 /* tilt servo + bus adapter */
-const qTilt=new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(new THREE.Vector3(0,0,-1),new THREE.Vector3(1,0,0),new THREE.Vector3(0,-1,0)));
-part('tilt_servo',{ar:'سيرفو الميل STS3215 (ID 2)',en:'Feetech STS3215 — tilt, ID 2',kind:'buy',step:9},STS,'tilt',[19,TILT_Y,0],[-150,0,-80],qTilt);
-part('bus_adapter',{ar:'بورد السيرفوهات (Waveshare)',en:'Waveshare Bus Servo Adapter (A)',kind:'buy',step:9},()=>{const g=new THREE.Group(); g.add(box(40,1.6,32,MAT.pcbB())); g.add(at(box(9,6,7,MAT.white()),-12,3.8,-12)); g.add(at(box(9,6,7,MAT.white()),0,3.8,-12)); g.add(at(box(9,3.2,7.4,MAT.metal()),14,2.4,10)); g.add(at(box(10,8,7,MAT.wire(0x2c8a3e)),-12,4.8,10)); return g;},'tilt',[-70,222,-28],[0,0,-150]);
-cable('w_bus1',{ar:'كابل السيرفو: البورد ← الميل',en:'Servo bus: adapter → tilt',step:9},'tilt',[[-82,228,-40],[-50,232,-46],[-20,234,-42],[-5,232,-36]],0xe9e6e0,1.6,[0,0,-150]);
+const qTilt=new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(new THREE.Vector3(0,-1,0),new THREE.Vector3(1,0,0),new THREE.Vector3(0,0,1)));
+part('tilt_servo',{ar:'سيرفو الميل STS3215 (ID 2) جوه المهد',en:'Feetech STS3215 — tilt, ID 2, in the neck cradle',kind:'buy',step:6,ord:1},STS,'pan',[17.5,TILT_Y,0],[0,0,-130],qTilt);
+part('bus_adapter',{ar:'بورد السيرفوهات (Waveshare)',en:'Waveshare Bus Servo Adapter (A)',kind:'buy',step:9},()=>{const g=new THREE.Group(); g.add(box(40,1.6,32,MAT.pcbB())); g.add(at(box(9,6,7,MAT.white()),-12,3.8,-12)); g.add(at(box(9,6,7,MAT.white()),0,3.8,-12)); g.add(at(box(9,3.2,7.4,MAT.metal()),14,2.4,10)); g.add(at(box(10,8,7,MAT.wire(0x2c8a3e)),-12,4.8,10)); return g;},'tilt',[-55,222,-30],[0,0,-150]);
+cable('w_bus1',{ar:'كابل السيرفو: البورد ← خرم الرقبة',en:'Servo bus: adapter → neck hole',step:9},'tilt',[[-67,229,-44],[-40,226,-40],[-12,220,-28],[0,216,-19]],0xe9e6e0,1.6,[0,0,-150]);
 /* Raspberry Pi 5 — board parallel to the face, parts facing back */
 part('pi5',{ar:'Raspberry Pi 5 (4GB)',en:'Raspberry Pi 5 — 4 GB',kind:'buy',step:10},()=>{const g=new THREE.Group();
  g.add(box(85,56,1.6,MAT.pcbG(),2.5));
@@ -422,18 +436,27 @@ part('ear_l',{ar:'الودن الشمال',en:'Left ear — houses the hinge mot
 const qEar=new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.PI,Math.PI/2,0,'YXZ'));
 part('ear_servo_r',{ar:'موتور مفصلة الإيد اليمين SCS0009 (ID 3)',en:'Feetech SCS0009 micro bus servo — right hinge, ID 3',kind:'buy',step:13,ord:0},SCS9,'tilt',[PIV[0],HCY+PIV[1]+5,PIV[2]],[170,0,0],qEar);
 part('ear_servo_l',{ar:'موتور مفصلة الإيد الشمال SCS0009 (ID 4)',en:'Feetech SCS0009 micro bus servo — left hinge, ID 4',kind:'buy',step:13,ord:1},SCS9,'tilt',[-PIV[0],HCY+PIV[1]+5,PIV[2]],[-170,0,0],qEar);
-cable('w_bus_ears',{ar:'كابل السيرفو: البورد ← موتورات الودان',en:'Servo bus: adapter → both hinge motors',step:13},'tilt',[[-70,228,-42],[-100,250,-44],[-120,276,-26],[-130,284,-6],[-118,304,-40],[0,324,-46],[118,304,-40],[130,284,-6]],0xe9e6e0,1.3,[0,60,-60]);
+cable('w_bus_ears',{ar:'كابل السيرفو: البورد ← موتورات الودان',en:'Servo bus: adapter → both hinge motors',step:13},'tilt',[[-55,229,-44],[-82,250,-44],[-108,270,-26],[-128,284,-6],[-116,306,-40],[0,324,-46],[116,306,-40],[128,284,-6]],0xe9e6e0,1.3,[0,60,-60]);
 /* power + data */
 part('wago',{ar:'موزّع الكهربا (WAGO ×2)',en:'WAGO 221-415 ×2 — 5 V and GND',kind:'buy',step:14},()=>{const g=new THREE.Group(); [0,1].forEach(i=>{ g.add(at(box(20,8,18,MAT.wire(0xd9d5cc),1),i*22,0,0)); for(let k=0;k<5;k++) g.add(at(box(2.6,3,8,MAT.wire(0xe8651f)),i*22-7.5+k*3.8,5.2,-4)); }); return g;},'tilt',[-50,221,22],[0,-90,60]);
 cable('w_pwr_pi',{ar:'كهربا الـ Pi (USB-C)',en:'5 V → Pi USB-C pigtail',step:14},'tilt',[[-26,225,24],[0,232,24],[24,246,22],[32,252,20],[32,256,19.5]],0xb8261a,1.8,[0,-60,40]);
 cable('w_pwr_led',{ar:'كهربا شاشة الوش',en:'5 V → face board (thick pair)',step:14},'tilt',[[-40,225,30],[-10,228,38],[30,230,44],[60,236,46]],0xb8261a,2.2,[0,-60,40]);
-cable('w_pwr_bus',{ar:'كهربا بورد السيرفوهات',en:'5 V → servo adapter',step:14},'tilt',[[-56,222,14],[-70,222,2],[-80,226,-12]],0xb8261a,1.6,[0,-60,40]);
+cable('w_pwr_bus',{ar:'كهربا بورد السيرفوهات',en:'5 V → servo adapter',step:14},'tilt',[[-56,222,14],[-62,224,2],[-67,227,-14]],0xb8261a,1.6,[0,-60,40]);
 cable('w_usb_mic',{ar:'USB: المايك ← الـ Pi',en:'USB-C → USB-A: mic array',step:14},'tilt',[[-18,329.7,0],[20,326,-12],[90,316,-12],[113,296,-2],[106,286,14]],0x1a1a1a,1.8,[0,60,-60]);
-cable('w_usb_bus',{ar:'USB: بورد السيرفوهات ← الـ Pi',en:'USB-C → USB-A: servo adapter',step:14},'tilt',[[-56,226,-22],[0,248,-42],[80,256,-30],[110,266,0],[106,268,14]],0x1a1a1a,1.8,[0,-60,-60]);
+cable('w_usb_bus',{ar:'USB: بورد السيرفوهات ← الـ Pi',en:'USB-C → USB-A: servo adapter',step:14},'tilt',[[-41,227,-24],[0,248,-42],[80,256,-30],[110,266,0],[106,268,14]],0x1a1a1a,1.8,[0,-60,-60]);
 cable('w_usb_led',{ar:'USB: بوردة الوش ← الـ Pi',en:'USB-C → USB-A: XIAO (face driver)',step:14},'tilt',[[-68,272,42],[-70,290,36],[-70,292,26],[-20,296,4],[60,318,0],[110,312,2],[106,304.5,14]],0x1a1a1a,1.8,[0,-60,60]);
 /* head onto the neck */
-cable('w_stem',{ar:'توصيل كابلات العمود جوه الراس',en:'Stem power → WAGO, bus → tilt servo chain',step:15},'tilt',[[10,207,4],[14,214,14],[-10,220,22],[-30,222,22]],0x161616,3,[0,0,0]);
-cable('w_chain',{ar:'كابل السيرفو: الميل ← اللف (نازل في العمود)',en:'Servo bus: tilt → pan (down the stem)',step:15},'tilt',[[-5,232,-36],[8,224,-24],[14,214,-10],[8,207,-2]],0xe9e6e0,1.6,[0,0,0]);
+cable('w_stem',{ar:'كابلات الرقبة جوه الراس ← WAGO',en:'Neck cables inside the head → WAGO',step:15},'tilt',[[0,216,-19],[-10,220,0],[-30,222,22]],0x161616,3,[0,0,0]);
+cable('w_chain',{ar:'كابل سيرفو الميل',en:'Tilt servo lead → the bus',step:6,ord:2},'pan',[[-6.5,149,0],[-4,145,-8],[0,141,-17.5]],0xe9e6e0,1.6,[0,0,-130]);
+cable('w_loop',{ar:'لفّة الكابلات ورا الرقبة',en:'Service loop behind the neck — lets the head tilt',step:15},'pan',[[0,141,-17.5],[0,146,-23],[0,163,-27],[0,190,-27],[0,206,-23],[0,216,-19]],0x161616,3.5,[0,0,0]);
+part('head_bracket',{ar:'كوبري الراس (U) — بيمسك الراس من الجنبين',en:'U bracket under the head — horn on the right, idler on the left',kind:'print',step:7,mat:'PETG أسود مطفي',g:40,h:2.5},()=>{const g=new THREE.Group();
+ const sp=new THREE.Shape(); sp.moveTo(-14,26); sp.lineTo(-14,0); sp.absarc(0,0,14,Math.PI,2*Math.PI,false); sp.lineTo(14,26); sp.closePath(); const hp=new THREE.Path(); hp.absarc(0,0,4,0,Math.PI*2,true); sp.holes.push(hp);
+ const pg=new THREE.ExtrudeGeometry(sp,{depth:4,bevelEnabled:false,curveSegments:24}); pg.rotateY(Math.PI/2);
+ g.add(at(mesh(pg,MAT.black()),24,0,0)); g.add(at(mesh(pg.clone(),MAT.black()),-28,0,0));
+ g.add(at(box(56,4,34,MAT.black(),1),0,28,0));                                              // bridge, bolted under the head
+ for(let i=0;i<4;i++){ const a=i*Math.PI/2+Math.PI/4, b=cyl(1.4,.6,MAT.metal(),10); b.rotation.z=Math.PI/2; g.add(at(b,28.3,Math.sin(a)*7,Math.cos(a)*7)); }   // horn screws
+ const bo=cyl(2.6,1,MAT.metal(),14); bo.rotation.z=Math.PI/2; g.add(at(bo,-28.5,0,0));     // idler bolt head
+ return g;},'tilt',[0,TILT_Y,0],[0,-110,0]);
 part('back_cover',{ar:'الغطا الخلفي (بفتحات تهوية)',en:'Back cover with vents',kind:'print',step:16,mat:'PLA أحمر أروما',g:70,h:3},()=>{const s=shapeOf(offsetPoly(HEAD,-4)); for(let i=0;i<6;i++) s.holes.push(pathOf(rect(110,4).map(p=>[p[0]+20,p[1]-22+i*9])));
  const g=new THREE.ExtrudeGeometry(s,{depth:2.4,bevelEnabled:true,bevelThickness:.8,bevelSize:.8,bevelSegments:2}); g.translate(0,0,-1.2); return mesh(g,MAT.red());},'tilt',[0,HCY,-HZ-1.4],[0,0,-170]);
 /* screen hands on mirror hinges — they fold back against the head like car mirrors */
@@ -526,7 +549,7 @@ ${chips(['base_shell','feet','weights','dc_jack','w_jack'])}
 <li>دخّل <b>جاك الكهربا</b> في الخرم اللي ورا واربط الصامولة من جوه.</li>
 <li>وصّل سلكين الكهربا: <b>الأحمر على +</b> و<b>الأسود على −</b>، وسيبهم طوال ٤٠ سم لأنهم طالعين لحد الراس.</li></ul>
 <div class="warn">⚠️ قبل ما تكمّل: قيس الجاك بالشاحن والملتيميتر. لازم يطلع 5V بالظبط، وعلامته تبقى صح (+ في النص).</div>`},
- {n:'04',t:'سيرفو اللف + غطا القاعدة',ok:true,xray:true,view:[.85,1.15,1.15],pad:1.7,body:()=>`${meta('٢٠ دقيقة','مفك M2.5 + اللابتوب')}
+ {n:'04',t:'سيرفو اللف + غطا القاعدة',ok:true,xray:true,main:'pan_servo',view:[.85,1.15,1.15],pad:1.7,body:()=>`${meta('٢٠ دقيقة','مفك M2.5 + اللابتوب')}
 ${chips(['pan_servo','w_pan','base_lid'])}
 <ul><li><b>قبل التركيب:</b> وصّل السيرفو ببورد السيرفوهات وشغّل سكربت الإعداد بتاعي. هيدّيله <b>ID 1</b> ويحطّه في النص (Center). من غير الخطوة دي الراس مش هتبص قدام.</li>
 <li>اربط السيرفو في العمودين اللي تحت الغطا بمسمارين M2.5، والشافت يبقى طالع من الخرم اللي في النص بالظبط.</li>
@@ -541,18 +564,20 @@ ${chips(['bearing','turntable'])}
 <li>عدّي الكابلات من الخرم الصغير اللي في الطبق.</li>
 <li>لف الطبق بإيدك بالراحة ربع لفة يمين وشمال. لازم يلف ناعم، من غير خبط ولا تزييق.</li></ul>
 <div class="warn">⚠️ متلفّش الطبق لفة كاملة. الكابلات معمولة تستحمل ١٥٠° يمين و١٥٠° شمال بس، والسوفتوير بيمنع أكتر من كده.</div>`},
- {n:'06',t:'العمود الشفاف + رقبة الميل',ok:true,view:[1,.5,1.4],pad:1.3,body:()=>`${meta('٢٠ دقيقة','غراء UV أو إيبوكسي')}
-${chips(['braid','stem','neck'])}
-<ul><li>لبّس سلكين الكهربا وكابل السيرفو جوه <b>الشراب الأسود</b>. ده اللي هيبان جوه العمود الشفاف زي العمود الفقري.</li>
-<li>دخّل الأنبوبة الشفافة في الجراب اللي على الطبق (١٢ مم لتحت) وثبّتها بنقطة غراء. فيه فتحة صغيرة ورا في الجراب، ومنها الكابلات بتدخل الأنبوبة.</li>
-<li>لبّس رقبة الميل فوق، و<b>لسان الرقبة لازم يبقى ناحية اليمين</b> (يمين الروبوت). ده اللي سيرفو الميل هيتربط فيه.</li>
-<li>سيب ١٥ سم كابلات طالعة فوق الرقبة، دول اللي هيدخلوا الراس.</li></ul>`},
- {n:'07',t:'قشرة الراس + الشاسيه',ok:true,xray:true,view:[.8,.55,-1.3],pad:1.35,frame:['head_shell'],body:()=>`${meta('٢٠ دقيقة','كاوية للصواميل الحرارية + مفك')}
-${chips(['head_shell','chassis'])}
-<ul><li>الراس بتتبني <b>على الترابيزة</b> الأول، وفي خطوة ١٥ تتركب على الرقبة. عشان كده شايفها طايرة فوق دلوقتي.</li>
-<li>ركّب ٦ صواميل حرارية M3 في البوزات اللي جوه القشرة بالكاوية، وبالراحة لحد ما تبقى في مستوى البلاستيك.</li>
-<li>الشاسيه الرمادي بيدخل من ورا (الراس مفتوحة من ورا) وبيتربط في ٤ أماكن.</li>
-<li>الشاسيه ده العمود الفقري اللي جوه الراس: من قدام شايل بوردة الوش، ومن ورا شايل الـ Pi.</li></ul>
+ {n:'06',t:'العمود الشفاف + مهد سيرفو الميل',ok:true,xray:true,main:'neck',view:[1.1,.45,1.3],pad:1.5,body:()=>`${meta('٢٥ دقيقة','مفك M2.5 + M4 + غراء UV')}
+${chips(['neck','tilt_servo','w_chain','braid','stem'])}
+<ul><li>اعمل لسيرفو الميل <b>ID 2</b> بنفس السكربت.</li>
+<li>السيرفو بيدخل في <b>المهد الأسود</b> واقف، و<b>الشافت بتاعه طالع من الجنب اليمين</b>. ده محور الميل.</li>
+<li>في الجنب الشمال للمهد فيه <b>محور تاني</b> على نفس الخط (مسمار M4 + بيرينج 624). يعني الراس هتبقى متشالة من الناحيتين، مش من ناحية واحدة.</li>
+<li>لبّس الكابلات جوه <b>الشراب الأسود</b> ودخّلها في الأنبوبة الشفافة، وبعدين دخّل الأنبوبة في الطوق اللي تحت المهد (١٠ مم) وثبّتها بنقطة غراء.</li>
+<li>الكابلات وكابل سيرفو الميل بيطلعوا من <b>خرم ورا الطوق</b>. سيبهم ٢٠ سم، دول اللي هيعملوا اللفّة اللي بتطلع للراس.</li></ul>
+<div class="warn">💡 كده السيرفو مش شايل وزن الراس على شافته لوحده: الوزن موزّع بين الشافت والمحور التاني.</div>`},
+ {n:'07',t:'قشرة الراس + الشاسيه + الكوبري',ok:true,xray:true,main:'head_shell',view:[.8,.35,-1.3],pad:1.45,frame:['head_shell','head_bracket'],body:()=>`${meta('٢٥ دقيقة','كاوية للصواميل الحرارية + مفك M3')}
+${chips(['head_shell','chassis','head_bracket'])}
+<ul><li>الراس بتتبني <b>على الترابيزة</b> الأول، وفي خطوة ١٥ تنزل على الرقبة. عشان كده شايفها طايرة فوق دلوقتي.</li>
+<li>ركّب الصواميل الحرارية M3 في البوزات اللي جوه القشرة: ٤ للشاسيه، و٤ تحت للكوبري.</li>
+<li>الشاسيه الرمادي بيدخل من ورا، وحرفه الشمال التحتاني مايل بنفس ميل اللوجو فبيقعد جوه القشرة بالظبط.</li>
+<li><b>الكوبري (U)</b> بيتربط تحت الراس بـ ٤ مسامير M3، ودراعينه نازلين لتحت: اليمين للهورن، والشمال للمحور.</li></ul>
 <div class="warn">💡 القشرة شفافة في المحاكاة بس عشان تشوف اللي جوه. في الحقيقة هي حمرا وشكلها زي ماسكوت الهب بالظبط.</div>`},
  {n:'08',t:'بوردة الوش + الكاميرا المستخبية',ok:true,xray:true,view:[1,.4,1.6],pad:1.35,frame:['head_shell'],body:()=>`${meta('٢٥ دقيقة','مفك M2.5')}
 ${chips(['xiao','camera','face_led'])}
@@ -561,12 +586,10 @@ ${chips(['xiao','camera','face_led'])}
 <li>البوردة بتدخل من <b>قدّام</b> في فتحة الوش، وتتربط على ٦ أعمدة الشاسيه بمسامير M2.5.</li>
 <li>قبل ما تقفل: ركّب كابل الكاميرا الشريطي في الكاميرا.</li></ul>
 <div class="warn">⚠️ امسك البوردة من الحروف ومتحطّهاش على وشها. اللمبات صغيرة (٢ مم) وممكن تتخلع.</div>`},
- {n:'09',t:'سيرفو الميل + بورد السيرفوهات',ok:true,xray:true,view:[.9,.4,-1.4],pad:1.35,frame:['head_shell'],body:()=>`${meta('١٥ دقيقة','مفك M2.5 + اللابتوب')}
-${chips(['tilt_servo','bus_adapter','w_bus1'])}
-<ul><li>قبل التركيب: اعمل للسيرفو التاني <b>ID 2</b> بنفس السكربت.</li>
-<li>سيرفو الميل بيتربط في أرضية الراس تحت الشاسيه، و<b>الهورن بتاعه ناحية اليمين</b> قصاد لسان الرقبة بالظبط.</li>
-<li>بورد السيرفوهات (Waveshare) بيتحط في الركن الشمال اللي ورا.</li>
-<li>وصّل كابل السيرفو من البورد لسيرفو الميل. سيرفو اللف هيدخل على نفس السلسلة في خطوة ١٥.</li></ul>
+ {n:'09',t:'بورد السيرفوهات',ok:true,xray:true,view:[.9,.4,-1.4],pad:1.35,frame:['head_shell'],body:()=>`${meta('١٠ دقائق','مفك M2.5')}
+${chips(['bus_adapter','w_bus1'])}
+<ul><li>بورد السيرفوهات (Waveshare) بيتحط في أرضية الراس ورا، بعيد عن الحتة المايلة.</li>
+<li>كابل السيرفو بيطلع من البورد وينزل من <b>خرم أرضية الراس</b> اللي ورا الكوبري. من هناك بيروح لسيرفو الميل في الرقبة، ومنه لسيرفو اللف في القاعدة.</li></ul>
 <div class="warn">💡 كل السيرفوهات الأربعة (اللف والميل والإيدين) على <b>كابل واحد</b> بيلف عليهم كلهم، وكل واحد ليه رقم (ID) مختلف.</div>`},
  {n:'10',t:'Raspberry Pi 5 + التبريد',ok:true,xray:true,view:[.9,.45,-1.4],pad:1.35,frame:['head_shell'],body:()=>`${meta('١٥ دقيقة','مفك M2.5')}
 ${chips(['pi5','cooler','sdcard','w_cam'])}
@@ -598,12 +621,13 @@ ${chips(['wago','w_pwr_pi','w_pwr_led','w_pwr_bus','w_usb_mic','w_usb_bus','w_us
 <li><b>USB:</b> ٣ كابلات قصيرة داخلة الـ Pi: المايك، وبورد السيرفوهات، والـ XIAO بتاع الوش.</li>
 <li>رتّب السلوك برباطات صغيرة، وبعّدها عن المروحة.</li></ul>
 <div class="warn">⚠️ الوش بيسحب لحد ٣ أمبير، فسلكه لازم يكون 18AWG ورايح على WAGO مباشرة، <b>مش من الـ Pi</b>.</div>`},
- {n:'15',t:'تركيب الراس على الرقبة',ok:true,xray:true,view:[1.4,.35,1],pad:1.15,frame:['head_shell','neck','stem'],body:()=>`${meta('١٥ دقيقة','مفك M2.5')}
-${chips(['w_stem','w_chain'])}
-<ul><li>نزّل الراس على الرقبة، ولسان الرقبة يدخل في الشق اللي تحت الراس.</li>
-<li>اربط هورن سيرفو الميل في اللسان بـ ٤ مسامير M2.5 من الضهر المفتوح.</li>
-<li>وصّل كابلات العمود: الكهربا في WAGO، وكابل السيرفو من سيرفو الميل نازل لسيرفو اللف اللي في القاعدة.</li>
-<li>ميّل الراس بإيدك ±١٥° بالراحة، واتأكد إن مفيش حاجة بتخبط في حاجة.</li></ul>`},
+ {n:'15',t:'تركيب الراس على الرقبة',ok:true,xray:true,main:'head_bracket',view:[1.5,.3,.9],pad:1.2,frame:['head_shell','neck','stem'],body:()=>`${meta('١٥ دقيقة','مفك M2.5 + مفتاح M4')}
+${chips(['w_loop','w_stem'])}
+<ul><li>نزّل الراس لحد ما دراعين الكوبري يركبوا على جنبين المهد.</li>
+<li><b>الدراع اليمين</b> بيتربط في هورن سيرفو الميل بـ ٤ مسامير M2.5.</li>
+<li><b>الدراع الشمال</b> بيتركب على المحور (مسمار M4 + بيرينج)، واربطه لحد ما يلف ناعم من غير لعب.</li>
+<li>الكابلات اللي طالعة من ورا الطوق بتعمل <b>لفّة صغيرة</b> ورا الرقبة، وتدخل الراس من الخرم اللي في الأرضية، وتتوصّل في WAGO والبورد.</li>
+<li>ميّل الراس بإيدك ±١٥° بالراحة: الراس بتتمرجح حوالين المحور، واللفّة بتتمد وتتلم من غير ما تتشد.</li></ul>`},
  {n:'16',t:'الغطا الخلفي',ok:true,view:[.6,.4,-1.4],pad:1.35,frame:['head_shell'],body:()=>`${meta('٥ دقائق','مفك M3')}
 ${chips(['back_cover'])}
 <ul><li>الغطا الأحمر اللي ورا فيه فتحات تهوية، ومنها بيطلع هوا المروحة.</li>
@@ -652,99 +676,122 @@ const exPos=p=>p.home.clone().add(p.ex);
 function stepParts(k){ return LIST.filter(p=>p.step===k&&!p.kitOnly).sort((a,b)=>(a.ord??50)-(b.ord??50)); }
 const STEPOF=k=>STEPS[k]||{};
 /* where each part sits on the table for the kit / print steps */
-function kitLayout(list,z0,maxW){ const out=new Map(); let x=0,z=z0,rowD=0,row=[]; const gap=BP?70:26;
+function kitLayout(list,z0,maxW){ const out=new Map(); let x=0,z=z0,rowD=0,row=[]; const gap=26;
  const flush=()=>{ const w=row.reduce((a,r)=>a+r.w,0)+gap*(row.length-1); let xx=-w/2; row.forEach(r=>{ out.set(r.p,{x:xx+r.w/2,z:z+r.d/2}); xx+=r.w+gap; }); z+=rowD+gap; rowD=0; row=[]; x=0; };
  list.slice().sort((a,b)=>(b.bb.max.x-b.bb.min.x)*(b.bb.max.z-b.bb.min.z)-(a.bb.max.x-a.bb.min.x)*(a.bb.max.z-a.bb.min.z)).forEach(p=>{ const w=p.bb.max.x-p.bb.min.x, d=p.bb.max.z-p.bb.min.z;
   if(x+w>maxW&&row.length) flush(); row.push({p,w,d}); x+=w+gap; rowD=Math.max(rowD,d); });
  if(row.length) flush(); return out; }
 function kitTargets(list){ // world target → local position
  const prints=list.filter(p=>p.kind==='print'), buys=list.filter(p=>p.kind!=='print');
- const A=kitLayout(prints,BP?-520:-340,BP?900:760), B=kitLayout(buys,BP?70:40,BP?900:760), all=new Map([...A,...B]), res=new Map();
+ const A=kitLayout(prints,-340,760), B=kitLayout(buys,40,760), all=new Map([...A,...B]), res=new Map();
  all.forEach((v,p)=>{ const c=new THREE.Vector3((p.bb.min.x+p.bb.max.x)/2,0,(p.bb.min.z+p.bb.max.z)/2);
   const w=new THREE.Vector3(v.x-c.x,-p.bb.min.y,v.z-c.z); if(p.grp==='tilt') w.y-=TILT_Y; res.set(p,w); }); return res; }
 let labels=[];
 function clearLabels(){ labels.forEach(l=>l.parent&&l.parent.remove(l)); labels=[]; }
 function addLabel(p,i){ const d=document.createElement('div'), q=document.createElement('div'); q.className='lbl'; q.style.transform='translateY('+(-14-(i||0)%3*24)+'px)'; q.innerHTML=(i!=null?'<b>'+String(i+1).padStart(2,'0')+'</b>':'')+p.ar; d.appendChild(q);
  const o=new CSS2DObject(d); const b=p.bb; o.position.set((b.min.x+b.max.x)/2,b.max.y+6,(b.min.z+b.max.z)/2).applyQuaternion(p.o.quaternion.clone().invert()); p.o.add(o); labels.push(o); }
-const XRAYED=['head_shell','back_cover','base_shell','base_lid','turntable','ear_r','ear_l'];
+const XRAYED=['head_shell','back_cover','base_shell','base_lid','turntable','ear_r','ear_l','neck'];
 
-/* ───────── blueprint look: every part as a line drawing, with its measurements ───────── */
-let BP=false, bpReady=false, XRAY_ON=false;
-const BPC={edge:0xdcefff, fill:0x0f4c8f, cable:0x9fcbf3, dim:0xffffff};
+/* ───────── blueprint look: a clean line drawing; measurements on one part at a time ───────── */
+let BP=false, bpReady=false, XRAY_ON=false, SEL=null, lastFrame=null;
+const BPBG=0x0c3a68, BPLINE=0xeaf4ff;
 const mm=v=>(Math.round(v*10)/10).toString().replace(/\.0$/,'');
-function localBox(o){ // bounding box of a part in its own frame (rotation-free)
+function localBox(o){
  o.updateMatrixWorld(true); const inv=o.matrixWorld.clone().invert(), b=new THREE.Box3(), t=new THREE.Box3(), M=new THREE.Matrix4();
- o.traverse(m=>{ if(!m.isMesh||m.userData.bpEdge) return; if(!m.geometry.boundingBox) m.geometry.computeBoundingBox(); t.copy(m.geometry.boundingBox).applyMatrix4(M.multiplyMatrices(inv,m.matrixWorld)); b.union(t); }); return b; }
-function sizeOf(p){ if(!p.lb) p.lb=localBox(p.o); const s=p.lb.getSize(new THREE.Vector3()); return s; }
+ o.traverse(m=>{ if(!m.isMesh||m.userData.bpOnly) return; if(!m.geometry.boundingBox) m.geometry.computeBoundingBox(); t.copy(m.geometry.boundingBox).applyMatrix4(M.multiplyMatrices(inv,m.matrixWorld)); b.union(t); }); return b; }
+function sizeOf(p){ if(!p.lb) p.lb=localBox(p.o); return p.lb.getSize(new THREE.Vector3()); }
 const sizeTxt=p=>{ if(p.kind==='cable') return 'L '+mm(p.len)+' mm'; if(p.sz) return p.sz.map(mm).join(' × ')+' mm'; const s=sizeOf(p); return mm(s.x)+' × '+mm(s.y)+' × '+mm(s.z)+' mm'; };
+const SIL=[];                                                     // cylinders: their two side lines depend on where you look from
+function edgeSource(g){
+ if(g.userData.box) return new THREE.BoxGeometry(...g.userData.box);
+ if(g.type==='ExtrudeGeometry'&&g.parameters.options.bevelEnabled){            // rounded edges → two clean lines, not a fan of facets
+  const o=Object.assign({},g.parameters.options,{bevelSegments:1}), e=new THREE.ExtrudeGeometry(g.parameters.shapes,o);
+  if(!g.boundingBox) g.computeBoundingBox(); e.computeBoundingBox(); e.translate(...g.boundingBox.min.clone().sub(e.boundingBox.min).toArray()); return e; }
+ return g; }
 function bpPrepare(){ if(bpReady) return; bpReady=true;
- const edgeM=new THREE.LineBasicMaterial({color:BPC.edge,transparent:true,opacity:.92});
- LIST.forEach(p=>p.o.traverse(m=>{ if(!m.isMesh||m.userData.bpEdge) return; m.userData.mat0=m.material;
-  const led=!!m.material.emissiveMap;
-  m.userData.bpMat=led?new THREE.MeshBasicMaterial({map:m.material.emissiveMap,color:0xffffff,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false})
-   :new THREE.MeshBasicMaterial({color:p.kind==='cable'?BPC.cable:BPC.fill,polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1});
-  if(p.kind!=='cable'&&!led&&m.geometry.attributes.position.count<60000){ const e=new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry,24),edgeM.clone()); e.userData.bpEdge=true; e.visible=false; e.raycast=()=>{}; m.add(e); m.userData.edge=e; } })); }
-/* a dimension: extension lines, the dimension line, architect ticks, and the number */
+ const fill=new THREE.MeshBasicMaterial({color:BPBG,toneMapped:false,polygonOffset:true,polygonOffsetFactor:1.5,polygonOffsetUnits:1.5});
+ const none=new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false,colorWrite:false});
+ LIST.forEach(p=>{
+  p.bpEdges=[];
+  const lm=new THREE.LineBasicMaterial({color:BPLINE,transparent:true,opacity:.9,toneMapped:false}); p.bpLM=lm;
+  if(p.kind==='cable'){ const m=p.o; m.userData.mat0=m.material; m.userData.bpMat=none;
+   const ln=new THREE.Line(new THREE.BufferGeometry().setFromPoints(p.curvePts),lm); ln.userData.bpOnly=true; ln.visible=false; ln.raycast=()=>{}; m.add(ln); p.bpEdges.push(ln); return; }
+  p.o.traverse(m=>{ if(!m.isMesh||m.userData.bpOnly) return; m.userData.mat0=m.material; m.userData.bpMat=fill;
+   const g=m.geometry; if(g.attributes.position.count>80000) return;
+   const e=new THREE.LineSegments(new THREE.EdgesGeometry(edgeSource(g),32),lm); e.userData.bpOnly=true; e.visible=false; e.raycast=()=>{}; m.add(e); p.bpEdges.push(e);
+   const c=g.type==='CylinderGeometry'?{rt:g.parameters.radiusTop,rb:g.parameters.radiusBottom,h:g.parameters.height}:g.userData.cyl?{rt:g.userData.cyl.r,rb:g.userData.cyl.r,h:g.userData.cyl.h}:null;
+   if(c&&c.h>.8){ const s=new THREE.LineSegments(new THREE.BufferGeometry().setAttribute('position',new THREE.Float32BufferAttribute(new Float32Array(12),3)),lm); s.userData.bpOnly=true; s.visible=false; s.frustumCulled=false; s.raycast=()=>{}; m.add(s); p.bpEdges.push(s); SIL.push({m,s,...c}); } });
+ }); }
+const _c=new THREE.Vector3();
+function updateSil(){ for(const q of SIL){ if(!q.s.visible) continue; let vis=true; q.m.traverseAncestors(a=>{ if(!a.visible) vis=false; }); if(!vis) continue;
+ q.m.worldToLocal(_c.copy(camera.position)); const rho=Math.hypot(_c.x,_c.z), r=Math.max(q.rt,q.rb); if(rho<=r) continue;
+ const phi=Math.atan2(_c.z,_c.x), a=Math.acos(Math.min(1,r/rho)), P=q.s.geometry.attributes.position.array, h=q.h/2;
+ [phi+a,phi-a].forEach((t,i)=>{ const c=Math.cos(t), s=Math.sin(t), k=i*6; P[k]=q.rb*c; P[k+1]=-h; P[k+2]=q.rb*s; P[k+3]=q.rt*c; P[k+4]=h; P[k+5]=q.rt*s; });
+ q.s.geometry.attributes.position.needsUpdate=true; } }
+/* a dimension, drawing-office style: gap, extension lines, arrows, the number breaking the line */
+const DIMM=new THREE.LineBasicMaterial({color:BPLINE,transparent:true,opacity:.95,depthTest:false,toneMapped:false});
 function dimension(a,b,off,label,parent){
- const g=new THREE.Group(), dir=b.clone().sub(a), L=dir.length(); if(L<2) return g; dir.normalize();
- const o=off.clone(), a2=a.clone().add(o), b2=b.clone().add(o), ext=o.clone().normalize().multiplyScalar(3);
- const tk=dir.clone().multiplyScalar(-2.6).add(o.clone().normalize().multiplyScalar(2.6)), tk2=tk.clone().negate();
- const pts=[a,a2.clone().add(ext), b,b2.clone().add(ext), a2,b2, a2.clone().add(tk),a2.clone().add(tk2), b2.clone().add(tk),b2.clone().add(tk2)];
- g.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:BPC.dim,transparent:true,opacity:.95})));
- const d=document.createElement('div'); d.className='dim'; d.textContent=label; const c=new CSS2DObject(d); c.position.copy(a2).add(b2).multiplyScalar(.5); g.add(c);
- g.userData.labels=[c]; parent.add(g); return g; }
-function partDims(p){ if(p.dims) return p.dims;
- const b=sizeOf(p)&&p.lb, s=b.getSize(new THREE.Vector3()), off=Math.max(7,Math.max(s.x,s.y,s.z)*.14), g=new THREE.Group(); g.userData.labels=[];
- const add=(a,c,o,v)=>{ if(v<2) return; const d=dimension(a,c,o,mm(v),g); g.userData.labels.push(...(d.userData.labels||[])); };
- add(new THREE.Vector3(b.min.x,b.min.y,b.max.z),new THREE.Vector3(b.max.x,b.min.y,b.max.z),new THREE.Vector3(0,-off,0),s.x);
- add(new THREE.Vector3(b.max.x,b.min.y,b.max.z),new THREE.Vector3(b.max.x,b.max.y,b.max.z),new THREE.Vector3(off,0,0),s.y);
- add(new THREE.Vector3(b.max.x,b.min.y,b.max.z),new THREE.Vector3(b.max.x,b.min.y,b.min.z),new THREE.Vector3(off*.7,-off*.7,0),s.z);
- g.visible=false; p.o.add(g); p.dims=g; return g; }
-function partTag(p){ if(p.tag) return p.tag; const b=sizeOf(p)&&p.lb, d=document.createElement('div'); d.className='dim tag'; d.textContent=sizeTxt(p);
- const c=new CSS2DObject(d); c.position.set((b.min.x+b.max.x)/2,b.min.y-6,(b.min.z+b.max.z)/2); c.visible=false; p.o.add(c); p.tag=c; return c; }
+ const g=new THREE.Group(), dir=b.clone().sub(a), L=dir.length(); g.userData.labels=[]; if(L<2){ parent.add(g); return g; } dir.normalize();
+ const on=off.clone().normalize(), gap=on.clone().multiplyScalar(2), over=on.clone().multiplyScalar(2.5);
+ const a2=a.clone().add(off), b2=b.clone().add(off), ah=Math.min(4,L/4), aw=ah*.38;
+ const pts=[a.clone().add(gap),a2.clone().add(over), b.clone().add(gap),b2.clone().add(over), a2,b2,
+  a2,a2.clone().addScaledVector(dir,ah).addScaledVector(on,aw), a2,a2.clone().addScaledVector(dir,ah).addScaledVector(on,-aw),
+  b2,b2.clone().addScaledVector(dir,-ah).addScaledVector(on,aw), b2,b2.clone().addScaledVector(dir,-ah).addScaledVector(on,-aw)];
+ const ls=new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts),DIMM); ls.renderOrder=20; ls.raycast=()=>{}; g.add(ls);
+ const d=document.createElement('div'); d.className='dim'; d.textContent=label; const c=new CSS2DObject(d); c.position.copy(a2).add(b2).multiplyScalar(.5); g.add(c); g.userData.labels.push(c);
+ parent.add(g); return g; }
+function partDims(p){ if(p.dims) return p.dims; sizeOf(p);
+ const b=p.lb, s=b.getSize(new THREE.Vector3()), off=Math.max(9,Math.max(s.x,s.y)*.16), g=new THREE.Group(); g.userData.labels=[]; const V=(x,y,z)=>new THREE.Vector3(x,y,z);
+ const add=(a,c,o,v)=>{ if(v<1.5) return; g.userData.labels.push(...dimension(a,c,o,mm(v),g).userData.labels); };
+ add(V(b.min.x,b.min.y,b.max.z),V(b.max.x,b.min.y,b.max.z),V(0,-off,0),s.x);
+ add(V(b.max.x,b.min.y,b.max.z),V(b.max.x,b.max.y,b.max.z),V(off,0,0),s.y);
+ add(V(b.max.x,b.max.y,b.max.z),V(b.max.x,b.max.y,b.min.z),V(0,off,0),s.z);
+ g.visible=false; g.userData.labels.forEach(l=>l.visible=false); p.o.add(g); p.dims=g; return g; }
 let overall=null;
-function overallDims(){ if(overall) return overall;
- const keepP=panG.rotation.y, keepT=tiltG.rotation.x, keepB=tiltG.position.y; panG.rotation.y=0; tiltG.rotation.x=0; tiltG.position.y=TILT_Y;
+function overallDims(){ if(overall) return overall;                           // the front elevation of the whole robot
+ const kP=panG.rotation.y, kT=tiltG.rotation.x, kB=tiltG.position.y; panG.rotation.y=0; tiltG.rotation.x=0; tiltG.position.y=TILT_Y;
  HAND.r.pivot.rotation.y=0; HAND.l.pivot.rotation.y=0; LIST.forEach(p=>p.o.position.copy(p.home)); root.updateMatrixWorld(true);
- const box=(ids)=>{ const b=new THREE.Box3(); ids.forEach(id=>b.expandByObject(PARTS[id].o)); return b; };
- const all=box(LIST.filter(p=>!p.kitOnly&&p.kind!=='cable').map(p=>p.id)), head=box(['head_shell']), base=box(['base_shell']), stem=box(['stem']), hands=box(['hand_l','hand_r']);
- const g=new THREE.Group(); g.userData.labels=[]; const V=(x,y,z)=>new THREE.Vector3(x,y,z);
- const add=(a,b,o,t)=>{ const d=dimension(a,b,o,t,g); g.userData.labels.push(...(d.userData.labels||[])); };
- add(V(all.max.x,all.min.y,0),V(all.max.x,all.max.y,0),V(40,0,0),'H '+mm(all.max.y-all.min.y));
- add(V(hands.min.x,all.max.y,0),V(hands.max.x,all.max.y,0),V(0,26,0),'W '+mm(hands.max.x-hands.min.x)+' (الإيدين مفتوحة)');
- add(V(head.min.x,head.max.y,head.max.z),V(head.max.x,head.max.y,head.max.z),V(0,12,0),mm(head.max.x-head.min.x));
- add(V(head.min.x,head.min.y,head.max.z),V(head.min.x,head.max.y,head.max.z),V(-22,0,0),mm(head.max.y-head.min.y));
- add(V(head.max.x,head.max.y,head.max.z),V(head.max.x,head.max.y,head.min.z),V(0,12,0),mm(head.max.z-head.min.z));
- add(V(base.min.x,base.min.y,base.max.z),V(base.max.x,base.min.y,base.max.z),V(0,-22,0),'Ø '+mm(base.max.x-base.min.x));
- add(V(stem.min.x,stem.min.y,0),V(stem.min.x,stem.max.y,0),V(-60,0,0),mm(stem.max.y-stem.min.y));
- panG.rotation.y=keepP; tiltG.rotation.x=keepT; tiltG.position.y=keepB;
- g.visible=false; scene.add(g); overall=g; return g; }
+ const box=ids=>{ const b=new THREE.Box3(); ids.forEach(id=>b.expandByObject(PARTS[id].o)); return b; };
+ const all=box(LIST.filter(p=>!p.kitOnly&&p.kind!=='cable').map(p=>p.id)), head=box(['head_shell']), base=box(['base_shell']);
+ const g=new THREE.Group(); g.userData.labels=[]; const V=(x,y,z)=>new THREE.Vector3(x,y,z), z=all.max.z+5;
+ const add=(a,b,o,t)=>g.userData.labels.push(...dimension(a,b,o,t,g).userData.labels);
+ add(V(all.min.x,all.max.y,z),V(all.max.x,all.max.y,z),V(0,30,0),mm(all.max.x-all.min.x));          // overall width, hands open
+ add(V(head.min.x,head.max.y,z),V(head.max.x,head.max.y,z),V(0,14,0),mm(head.max.x-head.min.x));    // head width
+ add(V(all.max.x,all.min.y,z),V(all.max.x,all.max.y,z),V(44,0,0),mm(all.max.y-all.min.y));          // overall height
+ add(V(all.max.x,head.min.y,z),V(all.max.x,head.max.y,z),V(18,0,0),mm(head.max.y-head.min.y));      // head height
+ add(V(base.min.x,base.min.y,z),V(base.max.x,base.min.y,z),V(0,-20,0),'Ø'+mm(base.max.x-base.min.x)); // base
+ panG.rotation.y=kP; tiltG.rotation.x=kT; tiltG.position.y=kB;
+ g.visible=false; g.userData.labels.forEach(l=>l.visible=false); scene.add(g); overall=g; return g; }
 const showGroup=(g,on)=>{ if(!g) return; g.visible=on; (g.userData.labels||[]).forEach(l=>l.visible=on); };
+function mainPart(k){ if(STEPS[k]&&STEPS[k].main) return PARTS[STEPS[k].main]; let best=null,v=-1; stepParts(k).forEach(p=>{ if(p.kind==='cable') return; const s=sizeOf(p), vol=s.x*s.y*s.z; if(vol>v){ v=vol; best=p; } }); return best; }
 function refreshDims(){
- LIST.forEach(p=>{ showGroup(p.dims,false); if(p.tag) p.tag.visible=false; }); showGroup(overall,false);
+ LIST.forEach(p=>showGroup(p.dims,false)); showGroup(overall,false);
  if(!BP) return;
- const S=STEPS[cur]||{};
- if(mode==='overview'){ if(EXP>.25) LIST.forEach(p=>{ if(!p.kitOnly&&p.kind!=='cable') partTag(p).visible=true; }); else showGroup(overallDims(),true); return; }
- if(mode==='kit'){ LIST.forEach(p=>{ if(p.kitTarget&&p.o.visible) partTag(p).visible=true; }); return; }
- if(!S.ok) return;
- stepParts(cur).forEach(p=>{ if(p.kind==='cable'){ partTag(p).visible=true; } else showGroup(partDims(p),true); });
- if(cur>=19) showGroup(overallDims(),true);
+ const S=STEPS[cur]||{}, inStep=new Set(mode==='build'?stepParts(cur):[]);
+ LIST.forEach(p=>{ if(p.bpLM) p.bpLM.opacity=mode!=='build'?.88:inStep.has(p)?.95:.32; });   // older parts fade back, the new ones read clearly
+ if(XRAY_ON) XRAYED.forEach(id=>{ const q=PARTS[id]; if(q.bpLM) q.bpLM.opacity=Math.min(q.bpLM.opacity,.3); });
+ const sel=SEL&&SEL.o.visible?SEL:(mode==='build'&&S.ok?mainPart(cur):null);
+ if(sel&&sel.kind!=='cable'){ showGroup(partDims(sel),true); if(sel.bpLM) sel.bpLM.opacity=1; return; }
+ if(mode==='overview'&&EXP<.05) showGroup(overallDims(),true);
 }
+function sizesTable(list){ return `<div class="bpsizes"><h5>📐 المقاسات <span>دوس على أي سطر أو أي قطعة عشان تظهر مقاساتها على الرسم</span></h5><table class="bom"><tbody>${list.map(p=>`<tr data-sel="${p.id}"><td>${p.ar}</td><td class="n">${sizeTxt(p)}</td></tr>`).join('')}</tbody></table></div>`; }
 function applyLook(){
- LIST.forEach(p=>p.o.traverse(m=>{ if(!m.isMesh||m.userData.bpEdge) return; if(BP){ bpPrepare(); } if(!m.userData.mat0&&!BP) return;
-  m.material=BP?m.userData.bpMat:m.userData.mat0; if(m.userData.edge) m.userData.edge.visible=BP; }));
+ if(BP) bpPrepare();
+ LIST.forEach(p=>{ p.o.traverse(m=>{ if(m.isMesh&&m.userData.mat0) m.material=BP?m.userData.bpMat:m.userData.mat0; }); (p.bpEdges||[]).forEach(e=>e.visible=BP); });
  const xr=XRAY_ON;
- XRAYED.forEach(id=>PARTS[id].o.traverse(m=>{ if(!m.isMesh||m.userData.bpEdge) return;
-  [m.userData.mat0||m.material,m.userData.bpMat].forEach(mt=>{ if(!mt) return; mt.transparent=xr; mt.opacity=xr?(mt===m.userData.bpMat?.08:.14):1; mt.depthWrite=!xr; mt.needsUpdate=true; });
-  if(m.userData.edge) m.userData.edge.material.opacity=xr?.35:.92; }));
- document.body.classList.toggle('bp',BP); const tb=$('#bpTitle'); if(tb){ const S=STEPS[cur]||{}; tb.innerHTML=`<b>AROMA · DOORMAN</b><span>DWG ${S.n||'00'}</span><span>${S.t||''}</span><span>UNITS: mm</span><span>SCALE: 1:1 (3D)</span>`; }
+ XRAYED.forEach(id=>{ const p=PARTS[id]; p.o.traverse(m=>{ if(!m.isMesh) return; const mt=m.userData.mat0||m.material; mt.transparent=xr; mt.opacity=xr?.14:1; mt.depthWrite=!xr; mt.needsUpdate=true;
+  if(BP&&m.userData.bpMat) m.material=xr?m.userData.bpXray||(m.userData.bpXray=new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false,colorWrite:false})):m.userData.bpMat; }); });
+ document.body.classList.toggle('bp',BP); const tb=$('#bpTitle'); if(tb){ const S=STEPS[cur]||{}; tb.innerHTML=`<b>AROMA · DOORMAN</b><span>DWG ${S.n||'00'}</span><span>${S.t||''}</span><span>mm</span>`; }
  refreshDims();
 }
 function setXray(on){ XRAY_ON=on; applyLook(); }
-function frameOverview(dur){ frameCam(LIST.filter(p=>!p.kitOnly&&p.kind!=='cable'),[1,.45,1.5],BP?1.38:1.05,dur,'home'); }
-function setBlueprint(on){ BP=on; if(mode==='overview') frameOverview(900); if(on) bpPrepare(); try{ localStorage.setItem('aroma-robot-look',on?'bp':''); }catch(e){} $('#bBP').classList.toggle('on',on); applyLook(); if(mode==='kit') go(cur); }
+function frameOverview(dur){ frameCam(LIST.filter(p=>!p.kitOnly&&p.kind!=='cable'),BP?[0,.02,1]:[1,.45,1.5],BP?1.42:1.05,dur,'home'); }
+function setBlueprint(on){ BP=on; SEL=null; if(on) bpPrepare(); try{ localStorage.setItem('aroma-robot-look',on?'bp':''); }catch(e){}
+ $('#bBP').classList.toggle('on',on); camera.fov=on?9:30; camera.updateProjectionMatrix();
+ if(mode==='overview') frameOverview(900); else if(lastFrame) frameCam(...lastFrame);
+ renderCard(); applyLook(); }
 
-function frameCam(list,dir,pad=1.18,dur=1100,which='both'){
+function frameCam(list,dir,pad=1.18,dur=1100,which='both'){ lastFrame=[list,dir,pad,dur,which];
  const bb=new THREE.Box3(); root.updateMatrixWorld(true);
  list.forEach(p=>{ const keep=p.o.position.clone(); (which==='kit'?[p.kitTarget]:which==='home'?[p.home]:[p.home,exPos(p)]).forEach(v=>{ if(!v) return; p.o.position.copy(v); p.o.updateMatrixWorld(true); bb.expandByObject(p.o); }); p.o.position.copy(keep); p.o.updateMatrixWorld(true); });
  if(bb.isEmpty()) return; const s=bb.getBoundingSphere(new THREE.Sphere());
@@ -753,10 +800,14 @@ function frameCam(list,dir,pad=1.18,dur=1100,which='both'){
 let camTw=null;
 function setVisibleUpTo(k){ LIST.forEach(p=>{ p.o.visible=!p.kitOnly&&p.step<=k; }); }
 function go(i){ _go(i); applyLook(); }
+function cardParts(){ if(cur===1) return LIST.filter(p=>p.kind!=='cable'); if(cur===2) return LIST.filter(p=>p.kind==='print'); if(cur===0||cur===20) return LIST.filter(p=>!p.kitOnly&&p.kind!=='cable'); return stepParts(cur); }
+function renderCard(){ const S=STEPS[cur];
+ $('#cBody').innerHTML=S.ok?S.body()+(BP&&cardParts().length?sizesTable(cardParts()):''):`<div class="soonbox">🛠️ <b>الخطوة دي قيد التجهيز.</b><br>بتتعمل دلوقتي وهتنزل هنا لايف أول ما تخلص — اعمل ريفرش كل شوية.</div>`;
+ document.querySelectorAll('#cBody [data-p]').forEach(el=>el.onclick=()=>{ const p=PARTS[el.dataset.p]; if(p){ showPart(p); flash(p); } });
+ document.querySelectorAll('#cBody [data-sel]').forEach(el=>el.onclick=()=>{ const p=PARTS[el.dataset.sel]; if(p){ SEL=p; showPart(p); refreshDims(); } }); }
 function _go(i){ cur=Math.max(0,Math.min(STEPS.length-1,i)); const S=STEPS[cur]; if(ALLOK) S.ok=true; renderList(); clearLabels();
  $('#cNum').textContent=S.n; $('#cTitle').textContent=S.t;
- $('#cBody').innerHTML=S.ok?S.body():`<div class="soonbox">🛠️ <b>الخطوة دي قيد التجهيز.</b><br>بتتعمل دلوقتي وهتنزل هنا لايف أول ما تخلص — اعمل ريفرش كل شوية.</div>`;
- document.querySelectorAll('#cBody [data-p]').forEach(el=>el.onclick=()=>{ const p=PARTS[el.dataset.p]; if(p){ showPart(p); flash(p); } });
+ SEL=null; renderCard();
  $('#bPrev').disabled=cur===0; $('#bNext').disabled=cur===STEPS.length-1;
  const build=S.ok&&cur>=3&&cur<=18; $('#bIn').disabled=$('#bOut').disabled=!build;
  $('#tExplode').style.display=cur===0?'':'none';
@@ -768,7 +819,7 @@ function _go(i){ cur=Math.max(0,Math.min(STEPS.length-1,i)); const S=STEPS[cur];
   const list=LIST.filter(p=>p.kind!=='cable'&&(cur===1||p.kind==='print')); const T=kitTargets(list);
   LIST.forEach(p=>{ p.o.visible=list.includes(p); });
   list.forEach((p,i)=>{ p.kitTarget=T.get(p); moveTo(p,p.kitTarget,120+i*25,1000); });
-  frameCam(list,[0,1.25,1],.95,1300,'kit'); return; }
+  frameCam(list,[0,1.25,1],BP?1.25:.95,1300,'kit'); return; }
  mode='build'; LEDS_ON=cur>=19; setVisibleUpTo(cur);
  benchTw=null; BENCH_TO=(cur>=7&&cur<=15)?190:0; BENCH=BENCH_TO; tiltG.position.y=TILT_Y+BENCH;
  setXray(XRAY_USER||!!S.xray); FOLD_TO=cur>=18&&cur!==18?0:1; if(cur===18) FOLD_TO=1;
@@ -794,7 +845,7 @@ $('#bPrev').onclick=()=>go(cur-1); $('#bNext').onclick=()=>go(cur+1);
 addEventListener('keydown',e=>{ if(e.target.tagName==='INPUT') return; if(e.key==='ArrowLeft') go(cur+1); if(e.key==='ArrowRight') go(cur-1); });
 
 /* ───────── tools ───────── */
-$('#ex').oninput=e=>{ const was=EXP>.25; EXP=e.target.value/100; $('#exV').textContent=e.target.value+'%'; if(BP&&was!==(EXP>.25)) refreshDims(); };
+$('#ex').oninput=e=>{ const was=EXP>.05; EXP=e.target.value/100; $('#exV').textContent=e.target.value+'%'; if(BP&&was!==(EXP>.05)) refreshDims(); };
 $('#bBP').onclick=()=>setBlueprint(!BP);
 const bAlive=$('#bAlive'); bAlive.classList.toggle('on',ALIVE);
 $('#bX').onclick=e=>{ XRAY_USER=!XRAY_USER; e.target.classList.toggle('on',XRAY_USER); setXray(XRAY_USER||!!(STEPS[cur].xray&&mode==='build')); };
@@ -816,7 +867,7 @@ canvas.addEventListener('pointermove',e=>{ const r=canvas.getBoundingClientRect(
  if(e.pointerType==='mouse'&&!e.buttons){ const p=pick(e); if(p){ tip.style.display='block'; tip.textContent=p.ar; tip.style.left=(e.clientX+14)+'px'; tip.style.top=(e.clientY+12)+'px'; canvas.style.cursor='pointer'; } else { tip.style.display='none'; canvas.style.cursor=''; } } });
 canvas.addEventListener('pointerleave',()=>{ mouse.in=false; tip.style.display='none'; });
 let downAt=null; canvas.addEventListener('pointerdown',e=>downAt=[e.clientX,e.clientY]);
-canvas.addEventListener('pointerup',e=>{ if(!downAt||Math.hypot(e.clientX-downAt[0],e.clientY-downAt[1])>5) return; const p=pick(e); if(p){ showPart(p); flash(p); } });
+canvas.addEventListener('pointerup',e=>{ if(!downAt||Math.hypot(e.clientX-downAt[0],e.clientY-downAt[1])>5) return; const p=pick(e); if(p){ showPart(p); flash(p); } if(BP){ SEL=p&&p.kind!=='cable'?p:null; refreshDims(); } });
 const KIND={buy:'🛒 بتتشري',print:'🖨️ بتتطبع 3D',cable:'🔌 سلك / كابل'};
 function showPart(p){ const b=BOM.find(x=>x[4]===p.id), S=STEPS[p.step];
  $('#pBody').innerHTML=`<h4>${p.ar}</h4><div class="en">${p.en}</div>
@@ -867,6 +918,7 @@ function frame(){
  else if(!LEDS_ON&&mode==='build'){ faceMood='off'; hands('off','#000'); }
  else if(!live&&mode!=='overview'){ hands('open','#ffe6cf'); }
  if(BP&&bootT<0){ pan=0; tilt=0; }
+ if(BP) updateSil();
  panG.rotation.y+=(pan-panG.rotation.y)*.06; tiltG.rotation.x+=(tilt-tiltG.rotation.x)*.06;
  drawFace(faceMood,lx,ly,blink>0?1:0,Math.floor(t*(bootT>0?9:4)),(Math.sin(t*.25)+1)/2,word);
  PARTS.antenna.o.children[1].material.emissiveIntensity=(LEDS_ON||bootT>0)?(.7+.5*Math.max(0,Math.sin(t*3))*(faceMood==='talk'?1:0)):.05;
@@ -874,7 +926,7 @@ function frame(){
  controls.update(); renderer.render(scene,camera); labelR.render(scene,camera);
  requestAnimationFrame(frame);
 }
-window.__dbg={camera,controls,PARTS,go,tiltG,get bench(){return [BENCH,BENCH_TO,benchTw];}};
+window.__dbg={THREE,LIST,panG,HEAD,HD,HB,HZ,HCY,TILT_Y,offsetPoly,HAND,camera,controls,PARTS,go,tiltG,get bench(){return [BENCH,BENCH_TO,benchTw];}};
 renderList(); go(0); frame();
 let startBP=/look=blue/.test(location.search); try{ startBP=startBP||localStorage.getItem('aroma-robot-look')==='bp'; }catch(e){}
 if(startBP) setBlueprint(true);
