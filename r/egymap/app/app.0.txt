@@ -869,7 +869,7 @@ function paintBase(cv, twin){
   c.fillStyle = twin ? "#17468a" : "#157f8b"; c.fill(eg); c.restore();      /* under the land: water blue, because harbour basins, canals and the Nile in the street tiles are painted with this very texture */
   const mapT = (lat, lon, txt, size, fill, rot) => {
     const p = proj(lat, lon); c.save(); c.translate(p[0], p[1]); if (rot) c.rotate(rot * Math.PI / 180);
-    c.font = `600 ${size}px "Alexandria", "Noto Kufi Arabic", sans-serif`;
+    c.font = `600 ${size}px "Madani Arabic", "Alexandria", "Madani Arabic","Noto Kufi Arabic", sans-serif`;
     c.fillStyle = fill; c.textAlign = "center"; c.textBaseline = "middle"; c.direction = CDIR; c.fillText(txt, 0, 0); c.restore();
   };
   const sea = twin ? "rgba(120,180,255,.42)" : "rgba(120,235,225,.55)", nb = twin ? "rgba(170,195,225,.26)" : "rgba(200,220,215,.3)";
@@ -892,7 +892,7 @@ function getBaseTwinTex(){
   paintBase(baseTwinCanvas, true); return baseTwinTex;
 }
 paintBase();
-if (document.fonts && document.fonts.load) Promise.all([document.fonts.load('600 30px "Alexandria"'), document.fonts.load('500 8px "Oxanium"')]).then(() => { paintBase(); if (baseTwinCanvas) paintBase(baseTwinCanvas, true); }).catch(() => {});
+if (document.fonts && document.fonts.load) Promise.all([document.fonts.load('600 30px "Madani Arabic", "Alexandria"'), document.fonts.load('500 8px "Oxanium"'), document.fonts.load('400 30px "Madani Arabic"', 'عربي'), document.fonts.load('700 30px "Madani Arabic"', 'عربي'), document.fonts.load('900 30px "Madani Arabic"', 'عربي'), document.fonts.load('100 30px "Madani Arabic"', 'عربي')]).then(() => { paintBase(); if (baseTwinCanvas) paintBase(baseTwinCanvas, true); }).catch(() => {});
 /* the sea plane lies only a few metres under the land at street level; its two huge triangles lose depth precision at grazing views and could win over the ground
    (seen as a blue ground on the sand map). Pushing it back in depth keeps the land, and everything floating on the sea, in front of it. */
 const plinthTop = new THREE.MeshBasicMaterial({map: baseTex, toneMapped: false, polygonOffset: true, polygonOffsetFactor: 4, polygonOffsetUnits: 16});
