@@ -127,6 +127,95 @@ button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--amber);out
 .ohw .tly{fill:#fff;font:700 22px var(--f-num);text-anchor:middle;dominant-baseline:central}
 .ohw .tle{fill:#9fb3c8;font:600 16px var(--f-num);text-anchor:middle;dominant-baseline:central}
 @media (max-width:900px){.ohw{display:none}}
+.ohw .tline,.ohw .dial{transition:opacity .7s ease}
+.ohw.foc .tline,.ohw.foc .dial{opacity:.18}
+.ohw.foc .s:not(.on):not(.sb){opacity:.28}
+.ohw.foc .txt .tt:not(.on):not(.sb),.ohw.foc .txt .ti:not(.on){opacity:.22}
+.ohw .sbl{fill:var(--c);opacity:.32;pointer-events:none}
+/* the facts as one infographic card: a single curved panel, a clear scale of type */
+.ohw .ig,.ohw .ig-ac{transform-origin:700px 700px;animation:igCard .7s cubic-bezier(.16,1,.3,1) both}
+.ohw .ig{fill:rgba(6,20,38,.93);stroke:color-mix(in srgb,var(--c) 55%,transparent);stroke-width:2}
+.ohw .ig-ac{fill:var(--c);animation-name:igCard,igAcc;animation-duration:.7s,1.6s;animation-delay:0s,.7s}
+@keyframes igCard{from{opacity:0;transform:scale(.84)}to{opacity:1;transform:scale(1)}}
+@keyframes igAcc{0%{opacity:1}40%{opacity:.45}100%{opacity:1}}
+.ohw .s.sb{transform-origin:700px 700px;animation:subIn .55s cubic-bezier(.16,1,.3,1) both}
+@keyframes subIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.ohw .sbl{animation:ohCe .5s both}
+.ohw .pop,.ohw .ig-bd,.ohw .ig-pc{transform-box:fill-box;transform-origin:center;animation:igPop .55s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes igPop{from{opacity:0;transform:scale(.2)}to{opacity:1;transform:scale(1)}}
+.ohw .igt.flash{animation:igFlash .9s ease-out}
+.ohw .igt.tw{animation:none}
+.ohw .tw-r{fill-opacity:0}
+.ohw .tw-h{fill:color-mix(in srgb,var(--c) 55%,#fff);filter:drop-shadow(0 0 6px var(--c))}
+.ohw .ig-scan{fill:none;stroke:color-mix(in srgb,var(--c) 60%,#fff);stroke-width:3;filter:drop-shadow(0 0 8px var(--c));pointer-events:none}
+@keyframes igFlash{0%{filter:none}25%{filter:drop-shadow(0 0 10px color-mix(in srgb,var(--c) 80%,#fff))}100%{filter:none}}
+.ohw .ig-rt0{fill:none;stroke:rgba(255,255,255,.1);stroke-width:4}
+.ohw .ig-rt{fill:none;stroke:var(--c);stroke-width:4;stroke-linecap:round;stroke-dasharray:var(--l);stroke-dashoffset:var(--l);animation:igBar 1.5s cubic-bezier(.45,0,.2,1) forwards;filter:drop-shadow(0 0 6px var(--c))}
+.ohw .ig-node{fill:#0a1a33;stroke:var(--c);stroke-width:2.5}
+.ohw .ig-node.big{stroke-width:3;filter:drop-shadow(0 0 10px color-mix(in srgb,var(--c) 70%,transparent))}
+.ohw .ig-pt{fill:#fff;font-family:var(--f-head);font-weight:700}
+.ohw .ig-stn{opacity:.3;transition:opacity .6s ease;pointer-events:auto;cursor:pointer;transform-box:fill-box;transform-origin:center}
+.ohw .ig-stn.lit{opacity:1}
+.ohw .ig-stn.cur{animation:igStn .6s cubic-bezier(.34,1.56,.64,1)}
+.ohw .ig-stn.cur .ig-node{stroke-width:3.5;filter:drop-shadow(0 0 12px var(--c))}
+.ohw .ig-stn.lit .ig-node{fill:color-mix(in srgb,var(--c) 22%,#0a1a33)}
+@keyframes igStn{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+.ohw .ig-pd{fill:#fff;font-family:var(--f-head);font-weight:600}
+.ohw .ig-rtp{fill:none;stroke:var(--c);stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset .9s cubic-bezier(.45,0,.2,1);filter:drop-shadow(0 0 6px var(--c))}
+.ohw .ig-nd{fill:#0a1a33;stroke:rgba(255,255,255,.28);stroke-width:2;pointer-events:auto;cursor:pointer;transition:fill .5s,stroke .5s}
+.ohw .ig-nd.vis{fill:color-mix(in srgb,var(--c) 55%,#0a1a33);stroke:var(--c)}
+.ohw .ig-nd.on{fill:var(--c);stroke:#fff;filter:drop-shadow(0 0 8px var(--c))}
+.ohw .ig-si0 svg{fill:none;stroke:#fff;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.ohw .ig-end{fill:var(--c);transform-box:fill-box;transform-origin:center;animation:igPop .5s cubic-bezier(.34,1.56,.64,1) both}
+.ohw .ig-dv{fill:none;stroke:rgba(255,255,255,.16);stroke-width:2}
+.ohw .ig-vd{stroke:rgba(255,255,255,.16);stroke-width:2}
+.ohw .igt{pointer-events:none;animation:igIn .55s cubic-bezier(.2,.8,.2,1) both}
+@keyframes igIn{from{opacity:0}to{opacity:1}}
+.ohw .ig-e{fill:color-mix(in srgb,var(--c) 72%,#fff);font-family:var(--f-head);font-weight:600}
+.ohw .ig-h{fill:#fff;font-family:var(--f-num);font-weight:700}
+.ohw .ig-ht{fill:#fff;font-family:var(--f-head);font-weight:700}
+.ohw .ig-u{fill:color-mix(in srgb,var(--c) 45%,#fff);font-family:var(--f-head);font-weight:600}
+.ohw .ig-l{fill:#fff;font-family:var(--f-head);font-weight:700}
+.ohw .ig-b{fill:rgba(233,240,248,.84);font-family:var(--f-body);font-weight:500}
+.ohw .ig-n{fill:rgba(200,214,230,.62);font-family:var(--f-body);font-weight:500}
+.ohw .ig-q{fill:#fff;font-family:var(--f-head);font-weight:700}
+.ohw .ig-qm{fill:var(--c);font-family:var(--f-head);font-weight:700;opacity:.9}
+.ohw .ig-sn{fill:#fff;font-family:var(--f-num);font-weight:700}
+.ohw .ig-sl{fill:color-mix(in srgb,var(--c) 50%,#fff);font-family:var(--f-head);font-weight:600}
+.ohw .ig-k{fill:color-mix(in srgb,var(--c) 40%,#fff);font-family:var(--f-num);font-weight:700}
+.ohw .ig-bd{fill:#0a1a33;stroke:var(--c);stroke-width:3;animation:igIn .5s both}
+.ohw .ig-bi svg,.ohw .ig-si svg{fill:none;stroke:color-mix(in srgb,var(--c) 65%,#fff);stroke-linecap:round;stroke-linejoin:round}
+.ohw .ig-bi svg{stroke-width:1.8}.ohw .ig-si svg{stroke-width:1.6}
+.ohw .ig-si{animation:igIn .5s both}
+.ohw .ig-cur circle{fill:none;stroke:color-mix(in srgb,var(--c) 65%,#fff);stroke-width:2}
+.ohw .ig-cur text{fill:color-mix(in srgb,var(--c) 65%,#fff);font:700 13px var(--f-num);text-anchor:middle;dominant-baseline:central}
+.ohw .ig-tr{fill:none;stroke:rgba(255,255,255,.14);stroke-linecap:round}
+.ohw .ig-pr{fill:none;stroke:var(--c);stroke-linecap:round;stroke-dasharray:var(--l);stroke-dashoffset:var(--l);animation:igBar 1.4s cubic-bezier(.2,.8,.2,1) forwards}
+.ohw .ig-pr.o{stroke:rgba(255,255,255,.5)}
+.ohw .ig-tk{stroke:rgba(255,255,255,.3);stroke-width:2}
+.ohw .ig-dot{fill:#fff;stroke:var(--c);stroke-width:4;animation:igIn .4s both}
+@keyframes igBar{to{stroke-dashoffset:0}}
+.ohw .ig-pc{fill:rgba(255,255,255,.04);stroke:color-mix(in srgb,var(--c) 60%,transparent);stroke-width:2;animation:igIn .5s both}
+.ohw .ig-pl{fill:#eef4fb;font-family:var(--f-head);font-weight:600}
+.ohw .ig-col{fill:var(--c)}.ohw .ig-col.o{fill:rgba(255,255,255,.42)}
+/* the spotlight: everything outside the active piece sinks into the dark */
+.vig{position:fixed;inset:0;pointer-events:none;opacity:0;transition:opacity .9s ease;
+  background:radial-gradient(ellipse var(--vr,520px) calc(var(--vr,520px) * .78) at var(--vx,50%) var(--vy,60%),rgba(2,8,20,0) 0,rgba(2,8,20,0) 42%,rgba(2,8,20,.55) 78%,rgba(2,8,20,.82) 100%)}
+.vig.on{opacity:1}
+.fsw{position:fixed;left:16px;top:12px;display:flex;align-items:center;gap:4px;padding:5px;border:1px solid var(--line);border-radius:8px;background:rgba(4,12,28,.82);direction:rtl;z-index:10;flex-wrap:wrap;max-width:calc(100% - 32px)}
+.fsw span{font:600 12px var(--f-head);color:var(--dim);padding:0 6px}
+.fsw button{min-height:36px;padding:0 12px;border:1px solid transparent;border-radius:6px;background:none;color:var(--ink);font:600 13px var(--f-head);cursor:pointer}
+.fsw button:hover{border-color:var(--line)}
+.fsw button[aria-pressed="true"]{background:var(--c);color:#06101c}
+/* the spotlight: outside the active piece the map sinks into the dark */
+.ohv{position:absolute;inset:0;pointer-events:none;z-index:4;opacity:0;transition:opacity .9s ease;
+  background:radial-gradient(ellipse var(--vr,520px) calc(var(--vr,520px) * .78) at var(--vx,50%) var(--vy,60%),rgba(2,8,20,0) 0,rgba(2,8,20,0) 42%,rgba(2,8,20,.55) 78%,rgba(2,8,20,.82) 100%)}
+.ohv.on{opacity:1}
+@media (max-width:900px){.ohv{display:none}}
+.ohw .ig-cp{opacity:0;transition:opacity .35s ease}
+.ohw .ig-cp.on{opacity:1}
+.ohw .ig-cp .ig-pd{font-size:22px}
+
 
 /* ---- labels projected from 3D ---- */
 .labels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
@@ -937,7 +1026,7 @@ html[data-lang="en"] #bLang{font-family:"Noto Kufi Arabic","IBM Plex Sans Arabic
 <script>
 (function(){
   var base = window.EG_BASE, tries = 0;
-  function part(i){ return fetch(base + "app/app." + i + ".txt?v=de958e07f6").then(function(r){ if (!r.ok) throw new Error(r.status); return r.blob(); }); }
+  function part(i){ return fetch(base + "app/app." + i + ".txt?v=28636da6d2").then(function(r){ if (!r.ok) throw new Error(r.status); return r.blob(); }); }
   function go(){
     Promise.all([part(0), part(1)]).then(function(b){
       var s = document.createElement("script"); s.src = URL.createObjectURL(new Blob(b, {type: "text/javascript"})); document.body.appendChild(s);
