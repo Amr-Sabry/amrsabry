@@ -1032,7 +1032,7 @@ html[data-lang="en"] #bLang{font-family:"Madani Arabic","Noto Kufi Arabic","Mada
 <script>
 (function(){
   var base = window.EG_BASE, tries = 0;
-  function part(i){ return fetch(base + "app/app." + i + ".txt?v=05153e4dee").then(function(r){ if (!r.ok) throw new Error(r.status); return r.blob(); }); }
+  function part(i){ return fetch(base + "app/app." + i + ".txt?v=482e11c426").then(function(r){ if (!r.ok) throw new Error(r.status); return r.blob(); }); }
   function go(){
     Promise.all([part(0), part(1)]).then(function(b){
       var s = document.createElement("script"); s.src = URL.createObjectURL(new Blob(b, {type: "text/javascript"})); document.body.appendChild(s);
@@ -1249,4 +1249,4 @@ html[data-lang="en"] #bLang{font-family:"Madani Arabic","Noto Kufi Arabic","Mada
 
 </script>
 </body></html>
-<!-- egymap room v114 -->
+<!-- egymap room v116 -->
