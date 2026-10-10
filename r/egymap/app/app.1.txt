@@ -21596,7 +21596,8 @@ function updateModels3d(dt){
     if (foc) { fr = foc.rM * Math.max(foc.sx, foc.sz); if (Math.hypot(cp.x - foc.x, cp.y - H, cp.z - foc.z) > Math.max(model3dFit(foc) * 3, fr * 3)) foc = null; }
     for (const q of MODELS3D) { if (!q.map) continue; let tg = 1;
       if (foc && q !== foc) { const ax = cp.x, az = cp.z, bx = foc.x - ax, bz = foc.z - az, t = Math.max(0, Math.min(1, ((q.x - ax) * bx + (q.z - az) * bz) / (bx * bx + bz * bz || 1))), dd = Math.hypot(q.x - ax - bx * t, q.z - az - bz * t);
-        if (dd < q.rM * Math.max(q.sx, q.sz) * 0.95 + fr * 0.15) tg = 0; }
+        const tr = ((q.x - ax) * bx + (q.z - az) * bz) / (bx * bx + bz * bz || 1), fy = H + foc.hM * M2U * 0.45, ly = cp.y + (fy - cp.y) * tr;
+        if (tr > 0.05 && tr < 0.9 && dd < q.rM * Math.max(q.sx, q.sz) * 0.8 && H + q.hM * M2U > ly) tg = 0.22; }
       q.dim = (q.dim == null ? 1 : q.dim) + (tg - (q.dim == null ? 1 : q.dim)) * Math.min(1, dt * 5); } }
   for (const m of MODELS3D) {
     if (!m.map) continue;
@@ -21672,6 +21673,42 @@ function model3dLow(m, th){
 /* the model standing at the site of a project, if any (used to frame the camera when that project is opened) */
 function wsModelOf(i){ return MODELS3D.find(m => m.map && m.key === "wsm" + i) || null; }
 function wsPrelimOf(i){ const m = wsModelOf(i); return m && m.pct < 90 ? m : null; }
+/* ---- pressing a model on the map: its name stands over it and the camera glides to it ---- */
+const m3Ray = new THREE.Raycaster(), m3V2 = new THREE.Vector2();
+function m3Pick(x, y){
+  if (!models3dG.visible) return null;
+  const objs = MODELS3D.filter(m => m.map && m.h && m.h.group.visible && (m.dim == null || m.dim > 0.5)).map(m => m.h.group); if (!objs.length) return null;
+  const r = canvas.getBoundingClientRect(); m3V2.set(x / r.width * 2 - 1, -(y / r.height) * 2 + 1); m3Ray.setFromCamera(m3V2, camera);
+  let hit = null; try { hit = m3Ray.intersectObjects(objs, true)[0]; } catch (e) { return null; } if (!hit) return null;
+  let o = hit.object; while (o && !objs.includes(o)) o = o.parent; return o ? MODELS3D.find(m => m.h && m.h.group === o) || null : null;
+}
+function m3Name(m){
+  if (m.pi != null && P[m.pi]) { const p = P[m.pi]; return {n: p.n, k: SECS[p.sc] ? SECS[p.sc].n : "", c: SECC[p.sc] || "#46d7cf"}; }
+  const id = +String(m.key || "").replace("wsm", ""), L = (typeof EGM_LM !== "undefined" ? EGM_LM : []).find(r => r[0] === id);
+  return L ? {n: EN ? (L[3] || L[2]) : L[2], k: T(LMK[L[1]].n), c: LMK[L[1]].c} : {n: m.name || m.key || "", k: "", c: "#46d7cf"};
+}
+const m3TagEl = document.createElement("div"); m3TagEl.className = "m3tag"; m3TagEl.hidden = true;
+{ const st = document.createElement("style"); st.textContent = `.m3tag{position:absolute;left:0;top:0;z-index:7;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:.1rem;padding:.5rem .95rem .55rem;border-radius:.45rem;background:rgba(4,16,40,.84);border:1px solid color-mix(in srgb,var(--c) 65%,transparent);box-shadow:0 8px 28px rgba(0,0,0,.45),0 0 22px color-mix(in srgb,var(--c) 28%,transparent);backdrop-filter:blur(8px);color:#fff;font-family:var(--f-head);text-align:center;max-width:22rem;opacity:0;transition:opacity .35s ease}
+.m3tag.on{opacity:1;animation:m3In .5s cubic-bezier(.2,.9,.25,1)}
+.m3tag small{font-size:.74rem;font-weight:600;color:color-mix(in srgb,var(--c) 75%,#fff)}
+.m3tag b{font-size:1.06rem;font-weight:700;line-height:1.35;text-wrap:balance}
+.m3tag::after{content:"";position:absolute;left:50%;top:100%;width:1px;height:1.4rem;background:linear-gradient(var(--c),transparent)}
+@keyframes m3In{from{opacity:0;margin-top:.6rem}to{opacity:1;margin-top:0}}`; document.head.appendChild(st); }
+function m3Tag(m){
+  const nm = m3Name(m); if (!nm.n) return; if (!m3TagEl.parentNode) (labelsEl || document.body).appendChild(m3TagEl);
+  m3TagEl.style.setProperty("--c", nm.c); m3TagEl.innerHTML = (nm.k ? `<small>${esc(nm.k)}</small>` : "") + `<b>${esc(nm.n)}</b>`;
+  m3TagEl.hidden = false; m3TagEl.classList.remove("on"); void m3TagEl.offsetWidth; m3TagEl.classList.add("on");
+  const tok = (m3Tag.tok = (m3Tag.tok || 0) + 1), t0 = performance.now();
+  const f = () => { if (tok !== m3Tag.tok) return; const s = screenOf(m.x, H + (Math.min(m.hM || 40, 220) + 14) * M2U, m.z);
+    m3TagEl.style.transform = `translate(${s[0].toFixed(1)}px,${(s[1] - 22).toFixed(1)}px) translate(-50%,-100%)`;
+    if (performance.now() - t0 < 10000) requestAnimationFrame(f); else { m3TagEl.classList.remove("on"); setTimeout(() => { if (tok === m3Tag.tok) m3TagEl.hidden = true; }, 400); } };
+  requestAnimationFrame(f);
+}
+function m3Go(m){
+  if (m.pi != null && P[m.pi]) { openProject(m.pi); return; }
+  act(); tmpS.setFromVector3(camera.position.clone().sub(controls.target)); const v = model3dLow(m, tmpS.theta + 0.12); flyTo({p: v.p, t: v.t}, 2400); m3Tag(m);
+}
+if (QS.has("test")) window.__m3 = {pick: m3Pick, go: m3Go, tag: m3Tag, name: m3Name};
 function model3dOfProject(pi){ const p = P[pi]; return p ? MODELS3D.find(m => m.map && m.pi === p.i) || null : null; }
 /* ---- the project simulation (Layers mode): the diorama is the building's own model, fitted to the pedestal at a symbolic scale ---- */
 function model3dFor(i){ return MODELS3D.find(m => m.pi === i && m.ws) || MODELS3D.find(m => m.pi === i) || null; }      /* the workshop's site model first, then a single-building module */
@@ -25909,6 +25946,7 @@ canvas.addEventListener("pointerup", e => { canvas.classList.remove("drag"); con
   const [x, y] = localXY(e); ptr.x = x; ptr.y = y; hideChooser();
   { const bc = boPick(x, y); if (bc) { boClick(bc); return; } }
   { const oc = orbitPick(x, y); if (oc >= 0) { pickSector(oc); return; } }
+  { const mm = m3Pick(x, y); if (mm) { m3Go(mm); return; } }
   if (overSim(x, y)) return;
   const cl = pickCluster(pickCands(x, y));
   if (cl.length > 1) { showChooser(cl, x, y); return; }
