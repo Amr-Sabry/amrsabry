@@ -1,0 +1,542 @@
+{
+ "industry": {
+  "name_ar": "وزارة الصناعة",
+  "name_en": "Ministry of Industry",
+  "plate": "w",
+  "aspect": 1.0,
+  "source": "Ministry's official page (linked from mind.gov.eg)",
+  "source_ar": "صفحة الوزارة الرسمية (مرتبطة من mind.gov.eg)",
+  "match_pct": 87,
+  "review": "",
+  "review_ar": "",
+  "source_px": [
+   960,
+   960
+  ],
+  "upscaled": true,
+  "colour": "industry.svg",
+  "mono": "industry.mono.svg"
+ },
+ "tourism": {
+  "name_ar": "وزارة السياحة والآثار",
+  "name_en": "Ministry of Tourism and Antiquities",
+  "plate": "w",
+  "aspect": 1.0,
+  "source": "egymonuments.gov.eg",
+  "source_ar": "egymonuments.gov.eg",
+  "match_pct": 97,
+  "review": "",
+  "review_ar": "",
+  "source_px": [
+   780,
+   780
+  ],
+  "upscaled": true,
+  "colour": "tourism.svg",
+  "mono": "tourism.mono.svg"
+ },
+ "sczone": {
+  "name_ar": "الهيئة الاقتصادية لقناة السويس",
+  "name_en": "General Authority for the Suez Canal Economic Zone",
+  "plate": "d",
+  "aspect": 1.988,
+  "source": "sczone.eg",
+  "source_ar": "sczone.eg",
+  "match_pct": 99,
+  "review": "",
+  "review_ar": "",
+  "source_px": [
+   1672,
+   841
+  ],
+  "upscaled": false,
+  "colour": "sczone.svg",
+  "mono": "sczone.mono.svg"
+ },
+ "interior": {
+  "name_ar": "وزارة الداخلية",
+  "name_en": "Ministry of Interior",
+  "plate": "w",
+  "aspect": 1.0,
+  "source": "Wikimedia Commons (public domain)",
+  "source_ar": "ويكيميديا كومنز (ملكية عامة)",
+  "match_pct": 86,
+  "review": "Two variants circulate; the ministry site could not be opened to compare",
+  "review_ar": "يوجد شكلان متداولان للشعار، وموقع الوزارة لم يفتح للمطابقة",
+  "source_px": [
+   3264,
+   3264
+  ],
+  "upscaled": false,
+  "colour": "interior.svg",
+  "mono": "interior.mono.svg"
+ },
+ "petroleum": {
+  "name_ar": "وزارة البترول والثروة المعدنية",
+  "name_en": "Ministry of Petroleum and Mineral Resources",
+  "plate": "w",
+  "aspect": 1.0,
+  "source": "petroleum.gov.eg",
+  "source_ar": "petroleum.gov.eg",
+  "match_pct": 98,
+  "review": "",
+  "review_ar": "",
+  "source_px": [
+   1310,
+   1310
+  ],
+  "upscaled": false,
+  "colour": "petroleum.svg",
+  "mono": "petroleum.mono.svg"
+ },
+ "transport": {
+  "name_ar": "وزارة النقل",
+  "name_en": "Ministry of Transport",
+  "plate": "w",
+  "aspect": 1.0,
+  "source": "Ministry's Facebook page",
+  "source_ar": "صفحة الوزارة على فيسبوك",
+  "match_pct": 96,
+  "review": "Not checked against the ministry site (unreachable)",
+  "review_ar": "لم يُطابَق بموقع الوزارة (الموقع لم يفتح)",
+  "source_px": [
+   946,
+   946
+  ],
+  "upscaled": true,
+  "colour": "transport.svg",
+  "mono": "transport.mono.svg"
+ },
+ "agriculture": {
+  "name_ar": "وزارة الزراعة",
+  "name_en": "Ministry of Agriculture",
+  "plate": "w",
+  "aspect": 1.0,
+  "source": "Arabic Wikipedia (same emblem as moa.gov.eg)",
+  "source_ar": "ويكيبيديا العربية (نفس شعار moa.gov.eg)",
+  "match_pct": 94,
+  "review": "Source is only 400 px",
+  "review_ar": "المصدر 400 بكسل فقط",
+  "source_px": [
+   400,
+   400
+  ],
+  "upscaled": true,
+  "colour": "agriculture.svg",
+  "mono": "agriculture.mono.svg"
+ },
+ "udf": {
+  "name_ar": "صندوق التنمية الحضرية",
+  "name_en": "Urban Development Fund",
+  "plate": "d",
+  "aspect": 1.0,
+  "source": "The Fund's Facebook page",
+  "source_ar": "صفحة الصندوق على فيسبوك",
+  "match_pct": 97,
+  "review": "Single source; the Fund site is down",
+  "review_ar": "مصدر واحد فقط، وموقع الصندوق متعطل",
+  "source_px": [
+   541,
+   540
+  ],
+  "upscaled": true,
+  "colour": "udf.svg",
+  "mono": "udf.mono.svg"
+ },
+ "highered": {
+  "name_ar": "وزارة التعليم العالي والبحث العلمي",
+  "name_en": "Ministry of Higher Education and Scientific Research",
+  "plate": "d",
+  "aspect": 1.371,
+  "source": "mohesr.gov.eg",
+  "source_ar": "mohesr.gov.eg",
+  "match_pct": 98,
+  "review": "The ministry also uses a round gold seal",
+  "review_ar": "الوزارة تستخدم أيضًا ختمًا دائريًا ذهبيًا",
+  "source_px": [
+   915,
+   667
+  ],
+  "upscaled": true,
+  "colour": "highered.svg",
+  "mono": "highered.mono.svg"
+ },
+ "housing": {
+  "name_ar": "وزارة الإسكان والمرافق والمجتمعات العمرانية",
+  "name_en": "Ministry of Housing, Utilities and Urban Communities",
+  "plate": "w",
+  "aspect": 3.677,
+  "source": "Arabic Wikipedia (same lockup as mhuc.gov.eg)",
+  "source_ar": "ويكيبيديا العربية (نفس ترويسة mhuc.gov.eg)",
+  "match_pct": 99,
+  "review": "",
+  "review_ar": "",
+  "source_px": [
+   1000,
+   273
+  ],
+  "upscaled": true,
+  "colour": "housing.svg",
+  "mono": "housing.mono.svg"
+ },
+ "sca": {
+  "name_ar": "هيئة قناة السويس",
+  "name_en": "Suez Canal Authority",
+  "plate": "w",
+  "aspect": 1.0,
+  "source": "Authority's official page (same logo as suezcanal.gov.eg)",
+  "source_ar": "صفحة الهيئة الرسمية (نفس شعار suezcanal.gov.eg)",
+  "match_pct": 96,
+  "review": "",
+  "review_ar": "",
+  "source_px": [
+   1079,
+   1079
+  ],
+  "upscaled": true,
+  "colour": "sca.svg",
+  "mono": "sca.mono.svg"
+ },
+ "education": {
+  "name_ar": "وزارة التربية والتعليم والتعليم الفني",
+  "name_en": "Ministry of Education and Technical Education",
+  "plate": "w",
+  "aspect": 1.0,
+  "source": "emis.gov.eg",
+  "source_ar": "emis.gov.eg",
+  "match_pct": 96,
+  "review": "Main ministry site could not be opened to compare",
+  "review_ar": "موقع الوزارة الرئيسي لم يفتح للمطابقة",
+  "source_px": [
+   500,
+   500
+  ],
+  "upscaled": true,
+  "colour": "education.svg",
+  "mono": "education.mono.svg"
+ },
+ "milprod": {
+  "name_ar": "وزارة الإنتاج الحربي",
+  "name_en": "Ministry of Military Production",
+  "plate": "w",
+  "aspect": 0.98,
+  "source": "Arabic Wikipedia (full seal)",
+  "source_ar": "ويكيبيديا العربية (الختم الكامل)",
+  "match_pct": 96,
+  "review": "Source is 393 px; the ministry site shows the chariot only",
+  "review_ar": "المصدر 393 بكسل، وموقع الوزارة يعرض العجلة الحربية فقط",
+  "source_px": [
+   393,
+   400
+  ],
+  "upscaled": true,
+  "colour": "milprod.svg",
+  "mono": "milprod.mono.svg"
+ },
+ "awqaf": {
+  "name_ar": "وزارة الأوقاف",
+  "name_en": "Ministry of Awqaf",
+  "plate": "w",
+  "aspect": 1.0,
+  "source": "Ministry's official page",
+  "source_ar": "صفحة الوزارة الرسمية",
+  "match_pct": 98,
+  "review": "",
+  "review_ar": "",
+  "source_px": [
+   1500,
+   1500
+  ],
+  "upscaled": false,
+  "colour": "awqaf.svg",
+  "mono": "awqaf.mono.svg"
+ },
+ "localdev": {
+  "name_ar": "وزارة التنمية المحلية",
+  "name_en": "Ministry of Local Development",
+  "plate": "w",
+  "aspect": 1.0,
+  "source": "eeaa.gov.eg (same design, higher-resolution copy from the ministry page)",
+  "source_ar": "eeaa.gov.eg (نفس التصميم بدقة أعلى من صفحة الوزارة)",
+  "match_pct": 98,
+  "review": "Logo of the merged ministry (Local Development and Environment)",
+  "review_ar": "شعار الوزارة بعد الدمج: «وزارة التنمية المحلية والبيئة»",
+  "source_px": [
+   2048,
+   2048
+  ],
+  "upscaled": false,
+  "colour": "localdev.svg",
+  "mono": "localdev.mono.svg"
+ },
+ "culture": {
+  "name_ar": "وزارة الثقافة",
+  "name_en": "Ministry of Culture",
+  "plate": "w",
+  "aspect": 4.171,
+  "source": "moc.gov.eg",
+  "source_ar": "moc.gov.eg",
+  "match_pct": 96,
+  "review": "",
+  "review_ar": "",
+  "source_px": [
+   7675,
+   1839
+  ],
+  "upscaled": false,
+  "colour": "culture.svg",
+  "mono": "culture.mono.svg"
+ },
+ "youth": {
+  "name_ar": "وزارة الشباب والرياضة",
+  "name_en": "Ministry of Youth and Sports",
+  "plate": "w",
+  "aspect": 1.0,
+  "source": "emys.gov.eg",
+  "source_ar": "emys.gov.eg",
+  "match_pct": 98,
+  "review": "The ministry also uses a calligraphic lockup",
+  "review_ar": "الوزارة تستخدم أيضًا شعارًا خطيًا مع النسر",
+  "source_px": [
+   400,
+   400
+  ],
+  "upscaled": true,
+  "colour": "youth.svg",
+  "mono": "youth.mono.svg"
+ },
+ "solidarity": {
+  "name_ar": "وزارة التضامن الاجتماعي",
+  "name_en": "Ministry of Social Solidarity",
+  "plate": "w",
+  "aspect": 1.0,
+  "source": "Ministry's official page (same seal as moss.gov.eg)",
+  "source_ar": "صفحة الوزارة الرسمية (نفس ختم moss.gov.eg)",
+  "match_pct": 97,
+  "review": "",
+  "review_ar": "",
+  "source_px": [
+   2000,
+   2000
+  ],
+  "upscaled": false,
+  "colour": "solidarity.svg",
+  "mono": "solidarity.mono.svg"
+ },
+ "electricity": {
+  "name_ar": "وزارة الكهرباء والطاقة المتجددة",
+  "name_en": "Ministry of Electricity and Renewable Energy",
+  "plate": "w",
+  "aspect": 1.0,
+  "source": "Ministry's official page (linked from moee.gov.eg)",
+  "source_ar": "صفحة الوزارة الرسمية (مرتبطة من moee.gov.eg)",
+  "match_pct": 96,
+  "review": "Source is only 500 px",
+  "review_ar": "المصدر 500 بكسل فقط",
+  "source_px": [
+   500,
+   500
+  ],
+  "upscaled": true,
+  "colour": "electricity.svg",
+  "mono": "electricity.mono.svg"
+ },
+ "supply": {
+  "name_ar": "وزارة التموين",
+  "name_en": "Ministry of Supply",
+  "plate": "w",
+  "aspect": 1.0,
+  "source": "msit.gov.eg",
+  "source_ar": "msit.gov.eg",
+  "match_pct": 89,
+  "review": "",
+  "review_ar": "",
+  "source_px": [
+   1280,
+   1280
+  ],
+  "upscaled": true,
+  "colour": "supply.svg",
+  "mono": "supply.mono.svg"
+ },
+ "health": {
+  "name_ar": "وزارة الصحة والسكان",
+  "name_en": "Ministry of Health and Population",
+  "plate": "w",
+  "aspect": 1.0,
+  "source": "Ministry's official channel (linked from mohp.gov.eg)",
+  "source_ar": "قناة الوزارة الرسمية (مرتبطة من mohp.gov.eg)",
+  "match_pct": 94,
+  "review": "",
+  "review_ar": "",
+  "source_px": [
+   749,
+   750
+  ],
+  "upscaled": true,
+  "colour": "health.svg",
+  "mono": "health.mono.svg"
+ },
+ "irrigation": {
+  "name_ar": "وزارة الموارد المائية والري",
+  "name_en": "Ministry of Water Resources and Irrigation",
+  "plate": "w",
+  "aspect": 1.0,
+  "source": "Ministry's official channel (same seal as mwri.gov.eg)",
+  "source_ar": "قناة الوزارة الرسمية (نفس ختم mwri.gov.eg)",
+  "match_pct": 95,
+  "review": "",
+  "review_ar": "",
+  "source_px": [
+   1068,
+   1068
+  ],
+  "upscaled": true,
+  "colour": "irrigation.svg",
+  "mono": "irrigation.mono.svg"
+ },
+ "aviation": {
+  "name_ar": "وزارة الطيران المدني",
+  "name_en": "Ministry of Civil Aviation",
+  "plate": "d",
+  "aspect": 1.958,
+  "source": "civilaviation.gov.eg",
+  "source_ar": "civilaviation.gov.eg",
+  "match_pct": 97,
+  "review": "",
+  "review_ar": "",
+  "source_px": [
+   1974,
+   1008
+  ],
+  "upscaled": false,
+  "colour": "aviation.svg",
+  "mono": "aviation.mono.svg"
+ },
+ "mcit": {
+  "name_ar": "وزارة الاتصالات وتكنولوجيا المعلومات",
+  "name_en": "Ministry of Communications and Information Technology",
+  "plate": "d",
+  "aspect": 2.131,
+  "source": "aic.gov.eg (the ministry's innovation centre)",
+  "source_ar": "aic.gov.eg (تابع للوزارة)",
+  "match_pct": 96,
+  "review": "",
+  "review_ar": "",
+  "source_px": [
+   1041,
+   491
+  ],
+  "upscaled": true,
+  "colour": "mcit.svg",
+  "mono": "mcit.mono.svg"
+ },
+ "upperegypt": {
+  "name_ar": "هيئة تنمية الصعيد",
+  "name_en": "Upper Egypt Development Authority",
+  "plate": "w",
+  "aspect": 1.0,
+  "source": "uda.gov.eg site icon",
+  "source_ar": "أيقونة موقع uda.gov.eg",
+  "match_pct": 93,
+  "review": "Source is only 256 px: needs a clearer file from the Authority",
+  "review_ar": "المصدر 256 بكسل فقط: يحتاج ملفًا أوضح من الهيئة",
+  "source_px": [
+   256,
+   256
+  ],
+  "upscaled": true,
+  "colour": "upperegypt.svg",
+  "mono": "upperegypt.mono.svg"
+ },
+ "justice": {
+  "name_ar": "وزارة العدل",
+  "name_en": "Ministry of Justice",
+  "plate": "w",
+  "aspect": 1.0,
+  "source": "moj.gov.eg",
+  "source_ar": "moj.gov.eg",
+  "match_pct": 92,
+  "review": "",
+  "review_ar": "",
+  "source_px": [
+   500,
+   500
+  ],
+  "upscaled": true,
+  "colour": "justice.svg",
+  "mono": "justice.mono.svg"
+ },
+ "holding": {
+  "name_ar": "الشركات القابضة (قطاع الأعمال سابقاً)",
+  "name_en": "Holding Companies (formerly Public Business Sector)",
+  "plate": "w",
+  "aspect": 1.25,
+  "source": "Arabic Wikipedia (same logo as mpbs.gov.eg)",
+  "source_ar": "ويكيبيديا العربية (نفس شعار mpbs.gov.eg)",
+  "match_pct": 96,
+  "review": "Logo of the Public Business Sector ministry, abolished in February 2026: no successor logo found",
+  "review_ar": "شعار وزارة قطاع الأعمال العام الملغاة في فبراير 2026: لا شعار معروف لجهة بديلة",
+  "source_px": [
+   442,
+   352
+  ],
+  "upscaled": true,
+  "colour": "holding.svg",
+  "mono": "holding.mono.svg"
+ },
+ "environment": {
+  "name_ar": "وزارة التنمية المحلية والبيئة (وزارة البيئة)",
+  "name_en": "Ministry of Local Development and Environment (Ministry of Environment)",
+  "plate": "w",
+  "aspect": 1.0,
+  "source": "eeaa.gov.eg (same design, higher-resolution copy from the ministry page)",
+  "source_ar": "eeaa.gov.eg (نفس التصميم بدقة أعلى من صفحة الوزارة)",
+  "match_pct": 98,
+  "review": "Merged ministry's logo; the old Environment seal is available on request",
+  "review_ar": "شعار الوزارة بعد الدمج، وشعار وزارة البيئة القديم متاح عند الطلب",
+  "source_px": [
+   2048,
+   2048
+  ],
+  "upscaled": false,
+  "colour": "environment.svg",
+  "mono": "environment.mono.svg"
+ },
+ "msmeda": {
+  "name_ar": "جهاز تنمية المشروعات المتوسطة والصغيرة ومتناهية الصغر",
+  "name_en": "Micro, Small and Medium Enterprise Development Agency (MSMEDA)",
+  "plate": "w",
+  "aspect": 3.089,
+  "source": "msmeda.org.eg",
+  "source_ar": "msmeda.org.eg",
+  "match_pct": 97,
+  "review": "",
+  "review_ar": "",
+  "source_px": [
+   770,
+   250
+  ],
+  "upscaled": true,
+  "colour": "msmeda.svg",
+  "mono": "msmeda.mono.svg"
+ },
+ "investment": {
+  "name_ar": "وزارة الاستثمار والتجارة الخارجية",
+  "name_en": "Ministry of Investment and Foreign Trade",
+  "plate": "w",
+  "aspect": 0.993,
+  "source": "mift.gov.eg",
+  "source_ar": "mift.gov.eg",
+  "match_pct": 98,
+  "review": "",
+  "review_ar": "",
+  "source_px": [
+   530,
+   532
+  ],
+  "upscaled": true,
+  "colour": "investment.svg",
+  "mono": "investment.mono.svg"
+ }
+}
