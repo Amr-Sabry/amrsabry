@@ -23196,13 +23196,14 @@ function igLayout(q){
     if (b.k === "dv") { plan.push({k: "dv", r}); r += 16; return; }
     if (b.k === "st") { const n = b.items.length, fsn = n > 2 ? 46 : 56; let w = 0; b.items.forEach(it => { w = Math.max(w, igMw(it.n, "sn", fsn), igMw(it.l, "sl", 19)); });
       need = Math.max(need, n * (igDeg(w, r + 66) + 6) + 4); plan.push({k: "st", r, b, fsn}); r += 134; return; }
-    if (b.k === "pts" && b.items.length > 5) { const n = b.items.length, rr = r + 58, cw = Lmax(rr + 60); let w = 0;
+    if (b.k === "pts" && b.items.length > 12) { const n = b.items.length, rr = r + 58, cw = Lmax(rr + 60); let w = 0;
       /* many means: the line carries only their pictograms; one caption under it speaks for the station that is lit */
       b.items.forEach(it => { it.lines = igBalance(ohWrap(it.t, cw, 22, 2)); it.lines.forEach(t => { w = Math.max(w, igMw(t, "pl", 22)); }); });
       need = Math.max(need, n * (igDeg(48, rr) + 1.2) + 16, igDeg(w, rr + 62) + 12); plan.push({k: "pts", r, b, rr, many: true}); r = rr + 40 + 2 * 28 + 14; return; }
-    if (b.k === "pts") { const n = b.items.length, rr = r + 66, slot = rr * (MAX - 16) / n * Math.PI / 180 * .92; let w = 0, two = false;
-      b.items.forEach(it => { it.lines = igBalance(ohWrap(it.t, slot, 18, 2)); if (it.lines.length > 1) two = true; it.lines.forEach(t => { w = Math.max(w, igMw(t, "pl", 18)); }); });
-      need = Math.max(need, n * (igDeg(Math.max(w, 74), rr + 56) + 2.5) + 16); plan.push({k: "pts", r, b, rr}); r = rr + 62 + (two ? 24 : 0) + 10; return; }
+    if (b.k === "pts") { const n = b.items.length, rr = r + 66, slot = rr * (MAX - 16) / n * Math.PI / 180 * .92, fs = n > 5 ? 16 : 18, ml = n > 5 ? 3 : 2, lh = fs + 5; let w = 0, nl = 1;
+      /* many stations: a smaller face and up to three short lines each, never cut */
+      b.items.forEach(it => { it.lines = igBalance(ohWrap(it.t, slot, fs, ml)); nl = Math.max(nl, it.lines.length); it.lines.forEach(t => { w = Math.max(w, igMw(t, "pl", fs)); }); });
+      need = Math.max(need, n * (igDeg(Math.max(w, 74), rr + 56) + 2.5) + 16); plan.push({k: "pts", r, b, rr, fs, lh}); r = rr + 62 + (nl - 1) * lh + 10; return; }
     if (b.k === "tl") { need = Math.max(need, 50); plan.push({k: "tl", r, b}); r += 62; return; }
     if (b.k === "cmp") { const c = b.c, va = parseFloat(c.a.replace(/,/g, "")), vb = parseFloat(c.b.replace(/,/g, "")), pc = Math.round((va - vb) / vb * 100);
       const rows = [{lab: (c.b + (c.u ? " " + c.u : "")) + " · " + (c.yb || "قبل"), v: vb, cl: "o"}, {lab: (c.a + (c.u ? " " + c.u : "")) + " · الآن", v: va, cl: ""}];
@@ -23236,7 +23237,7 @@ function igLayout(q){
       its.forEach((it, i) => { const am = a0 + W * (i + .5) / n, c0 = a0 + W * i / n, c1 = c0 + W / n, [x, y] = ohPt(rr, am);
         if (e.many) { h += `<g class="ig-stn" data-i="${i}"><circle class="ig-node" cx="${x}" cy="${y}" r="20"/>${ohIco(igSvg(it.ic), rr, am, 21, "ig-si0")}</g>`; return; }
         h += `<g class="ig-stn" data-i="${i}"><circle class="ig-node" cx="${x}" cy="${y}" r="26"/>${ohIco(igSvg(it.ic), rr, am, 26, "ig-si0")}`;
-        it.lines.forEach((t, li) => { h += arcRich(t, rr + 50 + li * 23, c0 + .3, c1 - .3, 18, "ig-pd", dl); });
+        it.lines.forEach((t, li) => { h += arcRich(t, rr + 50 + li * (e.lh || 23), c0 + .3, c1 - .3, e.fs || 18, "ig-pd", dl); });
         h += `</g>`; });
       if (e.many) its.forEach((it, i) => { const off = (2 - it.lines.length) * 14; h += `<g class="ig-cp" data-i="${i}">`;
         it.lines.forEach((t, li) => { h += arcRich(t, rr + 48 + off + li * 28, a0, a1, 22, "ig-pd", 0).replace('class="igt ig-pd"', `class="igt ig-pd cp" data-cp="${ohEsc(t)}"`); }); h += `</g>`; });
@@ -23323,7 +23324,7 @@ function ohInfo(q, p){
   else if (q.k === "ax" || q.k === "en") { const o = q.k === "ax" ? ax : en; if (!o) return null;
     if (OH.sub === "sl" && o.sl) { icon = "quote"; E(T("شعار ") + o.n.replace(/^محور\s*/, T("المحور · "))); B.push({k: "q", t: "«" + o.sl + "»", mx: 2}); span = 80; }
     else if (OH.sub === "tg" && o.tg) { const c = igCmp(o.tg), pp = pointsOf(o.tg); icon = "target"; E(T("المستهدف · ") + o.n);
-      if (pp) { B.push({k: "l", t: pp.head, mx: 2}); B.push({k: "pts", items: pp.pts.map(t => ({t, ic: pointIcon(t)}))}); if (c) { DV(); B.push({k: "cmp", c}); } else if (pp.res) { DV(); N(pp.res); } span = Math.max(72, Math.min(84, pp.pts.length * 17)); }
+      if (pp) { B.push({k: "l", t: pp.head, mx: 2}); B.push({k: "pts", items: pp.pts.map(t => ({t, ic: pointIcon(t)}))}); if (c) { DV(); B.push({k: "cmp", c}); } else if (pp.res) { DV(); N(pp.res); } span = Math.max(72, Math.min(102, pp.pts.length * 14.5)); }
       else { const [a, b] = igLead(o.tg); B.push({k: "l", t: a, mx: 3}); if (c) B.push({k: "cmp", c}); BD(b, 4); span = 84; } }
     else if (o.inv && o.inv.length) { icon = "coins"; E(T("الاستثمارات · ") + o.n); INV(o.inv.slice(0, 3)); DV(); N(q.k === "ax" ? T("إجمالي استثمارات المحور") : T("إجمالي استثمارات الجهة")); span = Math.max(56, Math.min(3, o.inv.length) * 30); }
     else return null; }
@@ -23346,8 +23347,16 @@ function ohFocus(){
   const rc = (OW1 + rOut) / 2, t = _ohC.clone().addScaledVector(tw, rc * k);
   const fw = typeof FREE !== "undefined" && FREE ? Math.max(240, FREE.x1 - FREE.x0) : innerWidth, fh = typeof FREE !== "undefined" && FREE ? Math.max(200, FREE.y1 - FREE.y0) : innerHeight;
   const wide = 2 * rOut * Math.sin(Math.max(half, 36) * Math.PI / 180) * k, deep = (rOut - OW1 + 60) * k, vf = camera.fov * Math.PI / 180, hf = 2 * Math.atan(Math.tan(vf / 2) * fw / fh);
-  const d = Math.max(deep / 2 / Math.tan(vf / 2) * 1.5, wide / 2 / Math.tan(hf / 2) * 1.35);
+  const d = Math.max(deep / 2 / Math.tan(vf / 2) * 1.5, wide / 2 / Math.tan(hf / 2) * (1.35 + Math.max(0, half - 40) * 0.016));
   const sp = new THREE.Spherical().setFromVector3(OH.home.p.clone().sub(OH.home.t)); sp.radius = d; sp.phi = .5;      /* steep enough that writing on the ground reads flat */
+  /* fit: the card's corners and the pressed arc, seen from the final pose, must all stand inside the free part of the screen; the distance grows until they do */
+  if (L && typeof FREE !== "undefined" && FREE) { const rt = new THREE.Vector3(-tw.z, 0, tw.x), P0 = [], cam = camera.clone(), cr = canvas.getBoundingClientRect(), m = 70, v = new THREE.Vector3();
+    [[L.A0, L.r0], [L.A0, L.r1], [(L.A0 + 90) / 2, L.r1], [90, L.r1], [(L.A1 + 90) / 2, L.r1], [L.A1, L.r0], [L.A1, L.r1], [90, OW0]].forEach(([a, r]) => { const rad = a * Math.PI / 180;
+      P0.push(_ohC.clone().addScaledVector(tw, Math.sin(rad) * r * k).addScaledVector(rt, Math.cos(rad) * r * k)); });
+    const fits = dd => { sp.radius = dd; cam.position.setFromSpherical(sp).add(t); cam.lookAt(t); cam.updateMatrixWorld(); cam.updateProjectionMatrix();
+      return P0.every(p => { v.copy(p).project(cam); const sx = (v.x + 1) / 2 * cr.width, sy = (1 - v.y) / 2 * cr.height; return v.z < 1 && sx > FREE.x0 + m && sx < FREE.x1 - m && sy > FREE.y0 + m && sy < FREE.y1 - m; }); };
+    let dd = d * 0.85, n = 0; while (!fits(dd) && n++ < 16) dd *= 1.08; sp.radius = dd;
+    if (QS.has("test")) { const s0 = []; fits(dd); P0.forEach(p => { v.copy(p).project(cam); s0.push([((v.x + 1) / 2 * cr.width) | 0, ((1 - v.y) / 2 * cr.height) | 0, v.z.toFixed(3)]); }); OH.fitDbg = {d, dd, n, s0, k, A0: L.A0, A1: L.A1, r0: L.r0, r1: L.r1, cr: [cr.width, cr.height]}; } }
   flyTo({p: new THREE.Vector3().setFromSpherical(sp).add(t), t}, 1500, true);
   OH.foc = {t, r: rOut * k}; ohEl.classList.add("foc"); ohVig.classList.add("on");
 }
@@ -23405,7 +23414,7 @@ function updateOH(dt){
   if (key !== OH.dk) { OH.dk = key; ohDial.setAttribute("transform", `rotate(${ang.toFixed(2)} ${OWC} ${OWC})`); ohDial.querySelectorAll(".num").forEach(t => t.setAttribute("transform", `rotate(${(-ang).toFixed(2)} ${t.getAttribute("x")} ${t.getAttribute("y")})`)); }
   ohMedia(dt);
 }
-if (QS.has("test")) window.__ow = {OH, ohDraw, ohCells, get el(){ return ohEl; }, pick(k, s){ if (s && OH.sel === k) ohChoose(k, s); else { ohChoose(k); if (s) { OH.sub = s; ohDraw(); } } }};
+if (QS.has("test")) window.__ow = {OH, ohDraw, ohCells, get el(){ return ohEl; }, pick(k, s){ if (OH.sel !== k) ohChoose(k); if (s) ohChoose(k, s); }};
 
 /* English mode: model-type names (sim.js) are translated here so that sim.js itself stays untouched; its HUD text is translated by the observer in a_core.js */
 if (EN) Object.keys(SIM_NAME).forEach(k => { SIM_NAME[k] = T(SIM_NAME[k]); });
