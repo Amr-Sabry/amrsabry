@@ -1171,7 +1171,7 @@ html[data-lang="en"] #bLang{font-family:"Madani Arabic","Noto Kufi Arabic","Mada
   <footer class="hud tl resv" id="tl">
     <button class="play" id="bPlay" aria-label="تشغيل التسلسل الزمني"><svg viewBox="0 0 24 24" id="playI"><path d="M7 4.5v15l12-7.5z"/></svg></button>
     <div class="yr"><b id="yN">2013</b><span id="yS"></span></div>
-    <div class="hist" id="hist"><div class="bars" id="bars"></div><div class="ticks" id="ticks"></div><div class="cap2"><span>سنة الانتهاء أو التشغيل المعلنة</span><span><span class="now">■ حتى الآن</span> &nbsp; <span class="fut">■ مستهدف</span></span></div></div>
+    <div class="hist" id="hist"><div class="bars" id="bars"></div><div class="ticks" id="ticks"></div><div class="cap2"><span>سنة الانتهاء أو التشغيل</span><span><span class="now">■ حتى الآن</span> &nbsp; <span class="fut">■ مستهدف</span></span></div></div>
   </footer>
 
   <div class="dcard" id="dcard" aria-live="polite"></div>
@@ -1203,7 +1203,7 @@ html[data-lang="en"] #bLang{font-family:"Madani Arabic","Noto Kufi Arabic","Mada
 <script>
 (function(){
   var base = window.EG_BASE, tries = 0;
-  function part(i){ return fetch(base + "app/app." + i + ".txt?v=edab908136").then(function(r){ if (!r.ok) throw new Error(r.status); return r.blob(); }); }
+  function part(i){ return fetch(base + "app/app." + i + ".txt?v=7bb705f829").then(function(r){ if (!r.ok) throw new Error(r.status); return r.blob(); }); }
   function go(){
     Promise.all([part(0), part(1)]).then(function(b){
       var s = document.createElement("script"); s.src = URL.createObjectURL(new Blob(b, {type: "text/javascript"})); document.body.appendChild(s);
@@ -1420,4 +1420,4 @@ html[data-lang="en"] #bLang{font-family:"Madani Arabic","Noto Kufi Arabic","Mada
 
 </script>
 </body></html>
-<!-- egymap room v121 -->
+<!-- egymap room v122 -->
