@@ -23358,7 +23358,7 @@ function ohUnfocus(){ if (OH.home) flyTo({p: OH.home.p, t: OH.home.t}, 1300, tru
 function ohChoose(k, s2){
   if (s2) { OH.sub = s2; ohDraw(); ohFocus(); return; }
   if (!k || OH.sel === k) { OH.sel = null; OH.sub = null; ohSpin(0); ohUnfocus(); ohDraw(); return; }
-  if (k === "md" && typeof srOpen === "function") { srOpen(OH.pid); return; }
+  if (k === "md" && typeof shOpen === "function") { shOpen(OH.pid); return; }
   OH.sel = k; const q = OH.segs.find(x => x.k === k); OH.sub = q && q.sub ? q.sub[0][0] : null;
   ohSpin(90 - (q.a0 + q.a1) / 2); ohDraw(); ohFocus();
 }
@@ -26098,8 +26098,8 @@ function srFrame(){
   cam.near = d / 200; cam.far = d * 24; cam.lookAt(t); cam.updateProjectionMatrix(); return t;
 }
 function srTick(){}
-function srOpen(pi){ if (pi < 0 || inShow()) return; act(); PV.sr = true; pvOpen(pi); }
-if (QS.has("test")) window.__sr = {open: srOpen, get car(){ return SRS.car; }};
+function shOpen(pi){ if (pi < 0 || inShow()) return; act(); PV.sr = true; pvOpen(pi); }
+if (QS.has("test")) window.__sr = {open: shOpen, get car(){ return SRS.car; }};
 
 function pvMap(p){ return !!(p && p.onMap && !(typeof EGM_MAP_HOLD !== "undefined" && EGM_MAP_HOLD[p.i])); }
 function pvHas(p){ return !!(p && (model3dFor(p.i) || (typeof ADM !== "undefined" && ADM.models && ADM.models[p.i]))); }
