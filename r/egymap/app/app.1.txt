@@ -1,3 +1,6 @@
+  const asph = lin(o.asphalt || 0x4a4d50), walk = lin(o.walk || 0xb4ab98), mark = lin(0xe6e1d3);
+  D.roads.forEach(r => {
+    if (r.b === "tunnel" || r.b === "bridge" || r.c === "transit") return;
     if (r.c === "rail") { clipRuns(r.pts, H, 12).forEach(q => ribbon(br, q, 3.3, 0.06, lin(0x8c857a))); return; }
     if (r.c === "path") { if (r.s === "steps" || r.s === "corridor") return; clipRuns(r.pts, H, 8).forEach(q => ribbon(br, q, r.s === "pedestrian" ? 5 : 1.8, 0.03, walk)); return; }
     const cap = CAP[r.c]; if (!cap) return; const typ = TYP[r.c] * (r.ow ? 0.8 : 1);
@@ -23006,9 +23009,8 @@ function ohBuild(pi){
   OH.segs = [
     {k: "nm", a0: 58, a1: 122, t: T("المشروع"), nm: p.n},
     {k: "cs", a0: 122, a1: 164, t: T("التكلفة"), x: !cost, cost},
-    {k: "bf", a0: 164, a1: 214, t: T("النبذة"), x: !p.sm},
-    {k: "ax", a0: 214, a1: 256, t: T("المحور"), x: !ax, sub: ax ? [["sl", T("الشعار")], ["tg", T("المستهدف")], ["inv", T("الاستثمارات")]] : null},
-    {k: "lc", a0: 256, a1: 284, t: T("الموقع")},
+    {k: "bf", a0: 164, a1: 235, t: T("النبذة"), x: !p.sm},
+    {k: "lc", a0: 235, a1: 284, t: T("الموقع")},
     {k: "en", a0: 284, a1: 326, t: T("الجهة"), x: !en, sub: en ? [["inv", T("الاستثمارات")], ["tg", T("المستهدف")]] : null},
     {k: "md", a0: 326, a1: 376, t: T("الصور")},
     {k: "dt", a0: 16, a1: 58, t: T("التشغيل"), v: yearLabel(p)}];
@@ -23230,20 +23232,20 @@ function ohInfo(q, p){
   const ST = items => B.push({k: "st", items}), INV = list => ST(list.map(v => { const [n, u] = numSplit(v); return {n, l: u}; }));
   const ax = AXD.axes[AXD.pAx[p.i]], en = AXD.ents[AXD.pEnt[p.i]];
   let span = 62, icon = "chart";
-  if (q.k === "cs") { if (!q.cost) return null; const [n, u] = numSplit(q.cost); icon = "coins"; E(T("التكلفة")); if (/^\d/.test(n) && u) { Hn(n); U(u); } else B.push({k: "ht", t: q.cost}); span = 58; }
-  else if (q.k === "dt") { const yl = String(yearLabel(p) || ""); icon = "cal"; E(T("سنة الانتهاء أو التشغيل"));
+  if (q.k === "cs") { if (!q.cost) return null; const [n, u] = numSplit(q.cost); icon = "coins"; if (/^\d/.test(n) && u) { Hn(n); U(u); } else B.push({k: "ht", t: q.cost}); span = 58; }
+  else if (q.k === "dt") { const yl = String(yearLabel(p) || ""); icon = "cal"; 
     if (/^\d{4}$/.test(yl)) { Hn(yl); B.push({k: "tl", y: +yl}); } else if (yl) B.push({k: "ht", t: yl});
     if (p.dt && String(p.dt) !== String(p.y) && String(p.dt) !== yl) { DV(); N(String(p.dt)); } span = 60; }
-  else if (q.k === "bf") { if (!p.sm) return null; const jb = jobsOf(p.sm), st = (jb ? [jb] : []).concat(statsOf(p.sm).filter(x => !jb || x.n !== jb.n)).slice(0, 3); icon = "doc"; E(T("نبذة عن المشروع"));
+  else if (q.k === "bf") { if (!p.sm) return null; const jb = jobsOf(p.sm), st = (jb ? [jb] : []).concat(statsOf(p.sm).filter(x => !jb || x.n !== jb.n)).slice(0, 3); icon = "doc"; 
     if (st.length) { ST(st); DV(); N(p.sm); } else BD(p.sm, 5); span = Math.max(70, st.length * 34); }
-  else if (q.k === "lc") { const g = (p.g || []).map(id => GN[id]).filter(Boolean); icon = "pin"; E(T("الموقع"));
+  else if (q.k === "lc") { const g = (p.g || []).map(id => GN[id]).filter(Boolean); icon = "pin"; 
     B.push({k: "ht", t: g.length ? g.slice(0, 2).join(" · ") + (g.length > 2 ? " +" + (g.length - 2) : "") : (p.lc || "—")}); if (p.lc && g.length) BD(p.lc, 2); span = 56; }
   else if (q.k === "ax" || q.k === "en") { const o = q.k === "ax" ? ax : en; if (!o) return null;
-    if (OH.sub === "sl" && o.sl) { icon = "quote"; E(T("شعار ") + o.n.replace(/^محور\s*/, T("المحور · "))); B.push({k: "q", t: "«" + o.sl + "»", mx: 2}); span = 80; }
-    else if (OH.sub === "tg" && o.tg) { const c = igCmp(o.tg), pp = pointsOf(o.tg); icon = "target"; E(T("المستهدف · ") + o.n);
+    if (OH.sub === "sl" && o.sl) { icon = "quote"; E(o.n); B.push({k: "q", t: "«" + o.sl + "»", mx: 2}); span = 80; }
+    else if (OH.sub === "tg" && o.tg) { const c = igCmp(o.tg), pp = pointsOf(o.tg); icon = "target"; E(o.n);
       if (pp) { B.push({k: "l", t: pp.head, mx: 2}); B.push({k: "pts", items: pp.pts.map(t => ({t, ic: pointIcon(t)}))}); if (c) { DV(); B.push({k: "cmp", c}); } else if (pp.res) { DV(); N(pp.res); } span = Math.max(72, Math.min(102, pp.pts.length * 14.5)); }
       else { const [a, b] = igLead(o.tg); B.push({k: "l", t: a, mx: 3}); if (c) B.push({k: "cmp", c}); BD(b, 4); span = 84; } }
-    else if (o.inv && o.inv.length) { icon = "coins"; E(T("الاستثمارات · ") + o.n); INV(o.inv.slice(0, 3)); DV(); N(q.k === "ax" ? T("إجمالي استثمارات المحور") : T("إجمالي استثمارات الجهة")); span = Math.max(56, Math.min(3, o.inv.length) * 30); }
+    else if (o.inv && o.inv.length) { icon = "coins"; E(o.n); INV(o.inv.slice(0, 3)); DV(); N(q.k === "ax" ? T("إجمالي استثمارات المحور") : T("إجمالي استثمارات الجهة")); span = Math.max(56, Math.min(3, o.inv.length) * 30); }
     else return null; }
   return B.length ? {B, span, icon} : null;
 }
@@ -23889,7 +23891,7 @@ const XP = (() => {
   /* leader lines from the panel to the map */
   const NS = "http://www.w3.org/2000/svg", lk = document.createElementNS(NS, "svg"); lk.setAttribute("class", "xlink"); lk.setAttribute("aria-hidden", "true");
   stage.appendChild(lk);
-  const TABS = {sec: T("القطاعات"), ax: T("المحاور"), gov: T("المحافظات"), ent: T("الجهات"), feed: T("الأحدث"), facts: T("لمحات")};
+  const TABS = {sec: T("القطاعات"), ax: T("المحاور"), gov: T("المحافظات"), ent: T("الوزارات والجهات"), feed: T("الأحدث"), facts: T("لمحات")};
   let tab = "sec", shown = null, hold = 0, cycleT = 0, hot = null, sig = "", useA = true, lastSec = -2, pinned = false, fOpen = false, fSig = "";
   const CYCLE = 9;
   function tabList(){ return S.sec >= 0 ? ["sec", "facts", "gov", "ent", "feed"] : ["sec", "gov", "ent", "feed"]; }   /* the sector buttons stay one tap away even inside a sector: they are the switcher */
@@ -23963,7 +23965,7 @@ const XP = (() => {
     else if (tab === "facts") { html = viewFacts(); title = T("لمحات قطاع ") + SECS[S.sec].n; foot.textContent = T("أرقام من نبذات المشروعات مع رقم الصفحة"); }
     else if (tab === "ax") { html = viewAx(); title = T("محاور العرض الستة"); foot.textContent = T("اضغط على المحور لعرض مستهدفه وجهاته وتشغيل عرضه"); }
     else if (tab === "gov") { const d = govData(); html = bars(d, "gov"); title = T("المشروعات حسب المحافظة"); foot.textContent = d.length + T(" محافظة · اضغط لعرضها"); }
-    else if (tab === "ent") { const d = entData(); html = bars(d, "ent"); title = T("المشروعات حسب الجهة"); foot.textContent = FLT.mn ? T("اضغط على الجهة مرة أخرى لإلغاء فلترتها") : d.length + T(" جهة · اضغط على جهة لفلترة الخريطة بها"); }
+    else if (tab === "ent") { const d = entData(); html = bars(d, "ent"); title = T("المشروعات حسب الوزارة أو الجهة"); foot.textContent = FLT.mn ? T("اضغط على الجهة مرة أخرى لإلغاء فلترتها") : d.length + T(" جهة · اضغط على جهة لفلترة الخريطة بها"); }
     else { title = T("آخر ما تحقق"); foot.textContent = T("اضغط على المشروع لفتحه"); }
     $("xpT").textContent = title;
     if (tab === "feed") { if (feedOl.parentNode !== into) { into.innerHTML = ""; into.appendChild(feedOl); } } else into.innerHTML = html;
