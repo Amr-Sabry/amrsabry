@@ -309,6 +309,8 @@ const I18N = {
   "إحداثيات مُدخلة من صفحة الإعدادات، وليست من الملف المصدر": "Coordinates entered from the settings page, not from the source file",
   "النقطة تقريبية داخل المحافظة": "Approximate point within the governorate",
   "تفصيل التكلفة:": "Cost breakdown:",
+  "بدء التشغيل": "Start of operation",
+  "صورة افتراضية": "Placeholder image",
   "من الأول": "From the start",
   "إعادة": "Replay",
   "إعادة الشاشة": "Replay this screen",
@@ -26068,3 +26070,79 @@ const inwin = (pts, H) => pts.some(p => Math.abs(p[0]) <= H && Math.abs(p[1]) <=
 
 const pip = (pts, x, z) => { let c = false; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) { if ((pts[i][1] > z) !== (pts[j][1] > z) && x < (pts[j][0] - pts[i][0]) * (z - pts[i][1]) / (pts[j][1] - pts[i][1]) + pts[i][0]) c = !c; } return c; };
 const flatPoly = (b, pts, y, col) => { const v = pts.map(p => new THREE.Vector2(p[0], p[1])); const tri = THREE.ShapeUtils.triangulateShape(v, []); tri.forEach(t => pushTri(b, [pts[t[0]][0], y, pts[t[0]][1]], [pts[t[1]][0], y, pts[t[1]][1]], [pts[t[2]][0], y, pts[t[2]][1]], [0, 1, 0], col)); };
+const ROADS = { motorway: [0x3f4144, 10, 10, 0.17], primary: [0x424447, 10, 16, 0.14], secondary: [0x484a4d, 7.5, 12, 0.11], tertiary: [0x4e5053, 6, 9, 0.08], minor: [0x585a5c, 4.6, 5.8, 0.05], service: [0x626466, 3.8, 4.6, 0.04] };
+function drawRoads(D, opt) {
+  opt = opt || {}; const HW = opt.half || 1e9; const br = batch("road", K.mat(0xffffff, { vertexColors: true, roughness: 0.96, doubleSide: true }), true);
+  D.roads.forEach(r => { if (r.b === "tunnel") return; if (r.b === "bridge" && r.c !== "path") return;
+    if (r.c === "rail") { if (opt.rail !== false) clipRuns(r.pts, HW, 12).forEach(q => ribbon(br, q, 3.3, 0.06, lin(0x8c857a))); return; }
+    if (r.c === "path") { if (r.b === "bridge" || r.s === "steps" || r.s === "corridor") return; clipRuns(r.pts, HW, 10).forEach(q => ribbon(br, q, r.s === "pedestrian" ? 5 : 1.8, 0.05, lin(0xb3a88f))); return; }
+    const k = ROADS[r.c]; if (!k) return; const w = r.ow ? k[1] : k[2]; clipRuns(r.pts, HW, 10).forEach(q => { if (r.c === "primary" || r.c === "secondary" || r.c === "tertiary") ribbon(br, q, w + 3.2, 0.03, lin(0xb9ae98)); ribbon(br, q, w, k[3], lin(k[0]));
+      if ((r.c === "primary" || r.c === "secondary" || r.c === "motorway") && w >= 9.5) { const d = res(q, 3); for (let i = 0; i + 1 < d.length; i += 2) ribbon(br, [d[i], d[i + 1]], 0.18, k[3] + 0.035, lin(0xe9e5d9)); } }); });
+}
+const bridgeJoint = (D, p, same, half) => { if (Math.abs(p[0]) > half || Math.abs(p[1]) > half) return true; return D.roads.some(q => q !== same && q.b === "bridge" && q.c !== "path" && (Math.hypot(q.pts[0][0] - p[0], q.pts[0][1] - p[1]) < 5 || Math.hypot(q.pts[q.pts.length - 1][0] - p[0], q.pts[q.pts.length - 1][1] - p[1]) < 5)); };
+function drawBridges(D, half, H, extra) {
+  const bd = batch("deck", K.mat(0xffffff, { vertexColors: true, roughness: 0.9, doubleSide: true }), true), piers = [];
+  D.roads.forEach(r => { if (r.b !== "bridge") return; const foot = r.c === "path"; const k = foot ? [0xb7b1a4, 2.4, 2.4, 0] : ROADS[r.c]; if (!k) return; const w = foot ? 3 : (r.ow ? k[1] : k[2]); const Hm = foot ? 5.6 : H;
+    const runs = clipRuns(r.pts, half, 6); if (!runs.length) return; const pts = runs[0].length >= 2 ? runs.reduce((a, b) => (b.length > a.length ? b : a)) : runs[0], n = pts.length; const ja = bridgeJoint(D, r.pts[0], r, half), jb = bridgeJoint(D, r.pts[r.pts.length - 1], r, half); const ramp = Hm / 0.055; const cum = [0]; for (let i = 1; i < n; i++) cum.push(cum[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1])); const L = cum[n - 1];
+    const ys = pts.map((p, i) => { let h = Hm; if (!ja) h = Math.min(h, 0.3 + cum[i] / ramp * Hm); if (!jb) h = Math.min(h, 0.3 + (L - cum[i]) / ramp * Hm); return h; });
+    const top = lin(foot ? 0x9d978b : k[0]), conc = lin(0xb9b4a8), dark = lin(0x6f6a62); const o = offs(pts, w); const Lp = o.map(q => q[0]), Rp = o.map(q => q[1]);
+    ribbon(bd, pts, w, ys.map(y => y + 0.05), top); ribbon(bd, pts, w, ys.map(y => y - 1.15), dark); strip(bd, Lp, ys.map(y => y - 1.15), ys.map(y => y + 0.05), conc); strip(bd, Rp, ys.map(y => y - 1.15), ys.map(y => y + 0.05), conc);
+    const par = (E) => { strip(bd, E, ys.map(y => y + 0.05), ys.map(y => y + (foot ? 1.1 : 0.95)), conc); };
+    par(Lp); par(Rp);
+    if (!foot) ribbon(bd, pts, 0.5, ys.map(y => y + 1.0), conc);
+    for (let i = 1; i < n - 1; i += Math.max(1, Math.round((foot ? 18 : 24) / 6))) if (ys[i] > 2.4) piers.push([pts[i][0], 0, pts[i][1], 0, foot ? 0.9 : 1.7, ys[i] - 1.15, foot ? 0.9 : 1.7]); });
+  if (piers.length) K.inst(K.boxGeo(1, 1, 1), K.mat(0xb3aea2), piers);
+}
+
+const clipRuns = (pts, H, step) => { const r = res(pts, step || 8), runs = []; let cur = []; r.forEach(p => { if (Math.abs(p[0]) <= H && Math.abs(p[1]) <= H) cur.push(p); else { if (cur.length > 1) runs.push(cur); cur = []; } }); if (cur.length > 1) runs.push(cur); return runs; };
+
+const cenOf = p => { let x = 0, z = 0; p.forEach(q => { x += q[0]; z += q[1]; }); return [x / p.length, z / p.length]; };
+
+const clipRect = (pts, H) => { let out = pts.slice(); const edges = [[0, 1, H], [0, -1, H], [1, 1, H], [1, -1, H]];
+  edges.forEach(e => { const inp = out; out = []; if (!inp.length) return; const inside = p => e[1] * p[e[0]] <= e[2]; const isect = (a, b) => { const t = (e[1] * e[2] - a[e[0]]) / (b[e[0]] - a[e[0]]); const r = [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]; r[e[0]] = e[1] * e[2]; return r; };
+    for (let i = 0; i < inp.length; i++) { const a = inp[i], b = inp[(i + 1) % inp.length]; if (inside(b)) { if (!inside(a)) out.push(isect(a, b)); out.push(b); } else if (inside(a)) out.push(isect(a, b)); } });
+  return out; };
+
+/* ---- street asphalt from real building lines (width = gap between mapped building fronts minus sidewalks) ---- */
+function streetAsphalt(D, H, polys, o) {
+  o = o || {}; const CS = 16, grid = new Map(), key = (i, j) => i * 100003 + j;
+  polys.forEach((p, pi) => { let x0 = 1e9, x1 = -1e9, z0 = 1e9, z1 = -1e9; p.forEach(q => { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); z0 = Math.min(z0, q[1]); z1 = Math.max(z1, q[1]); });
+    for (let i = Math.floor(x0 / CS); i <= Math.floor(x1 / CS); i++) for (let j = Math.floor(z0 / CS); j <= Math.floor(z1 / CS); j++) { const k = key(i, j); (grid.get(k) || grid.set(k, []).get(k)).push(pi); } });
+  const inB = (x, z) => { const c = grid.get(key(Math.floor(x / CS), Math.floor(z / CS))); if (!c) return false; for (let n = 0; n < c.length; n++) if (pip(polys[c[n]], x, z)) return true; return false; };
+  const CAP = { motorway: 16, trunk: 16, primary: 15, secondary: 12, tertiary: 10, minor: 7.5, service: 5 }, TYP = { motorway: 8, trunk: 8, primary: 7.5, secondary: 6, tertiary: 4.8, minor: 3.4, service: 2.6 };
+  const br = batch("road", K.mat(0xffffff, { vertexColors: true, roughness: 0.96, doubleSide: true }), true);
+  const asph = lin(o.asphalt || 0x4a4d50), walk = lin(o.walk || 0xb4ab98), mark = lin(0xe6e1d3);
+  D.roads.forEach(r => {
+    if (r.b === "tunnel" || r.b === "bridge" || r.c === "transit") return;
+    if (r.c === "rail") { clipRuns(r.pts, H, 12).forEach(q => ribbon(br, q, 3.3, 0.06, lin(0x8c857a))); return; }
+    if (r.c === "path") { if (r.s === "steps" || r.s === "corridor") return; clipRuns(r.pts, H, 8).forEach(q => ribbon(br, q, r.s === "pedestrian" ? 5 : 1.8, 0.03, walk)); return; }
+    const cap = CAP[r.c]; if (!cap) return; const typ = TYP[r.c] * (r.ow ? 0.8 : 1);
+    clipRuns(r.pts, H, 4).forEach(q => {
+      const n = q.length, aL = [], aR = [], N = [];
+      for (let i = 0; i < n; i++) { const a = q[Math.max(0, i - 1)], b = q[Math.min(n - 1, i + 1)]; let dx = b[0] - a[0], dz = b[1] - a[1]; const l = Math.hypot(dx, dz) || 1; dx /= l; dz /= l; const nx = -dz, nz = dx; N.push([nx, nz]);
+        const ray = s => { for (let d = 1; d <= cap + 2; d += 0.75) if (inB(q[i][0] + nx * s * d, q[i][1] + nz * s * d)) return d; return -1; };
+        const dl = ray(1), dr = ray(-1); const side = r.c === "minor" || r.c === "service" ? 1.4 : 2.2;
+        aL.push(dl < 0 ? typ : Math.max(1.6, Math.min(cap, dl - side))); aR.push(dr < 0 ? typ : Math.max(1.6, Math.min(cap, dr - side))); }
+      const sm = a => a.map((v, i) => { const s = [a[Math.max(0, i - 1)], v, a[Math.min(n - 1, i + 1)]].sort((x, y) => x - y); return s[1] * 0.6 + (a[Math.max(0, i - 1)] + a[Math.min(n - 1, i + 1)]) * 0.2; });
+      const sL = sm(aL), sR = sm(aR);
+      for (let i = 0; i < n - 1; i++) { const A = [q[i][0] + N[i][0] * sL[i], q[i][1] + N[i][1] * sL[i]], B = [q[i + 1][0] + N[i + 1][0] * sL[i + 1], q[i + 1][1] + N[i + 1][1] * sL[i + 1]], C = [q[i + 1][0] - N[i + 1][0] * sR[i + 1], q[i + 1][1] - N[i + 1][1] * sR[i + 1]], Dd = [q[i][0] - N[i][0] * sR[i], q[i][1] - N[i][1] * sR[i]];
+        quad(br, [A[0], 0.05, A[1]], [B[0], 0.05, B[1]], [C[0], 0.05, C[1]], [Dd[0], 0.05, Dd[1]], asph); }
+      const wmean = (sL.reduce((s, v) => s + v, 0) + sR.reduce((s, v) => s + v, 0)) / n;
+      if (!r.ow && wmean >= 5.2 && (r.c === "primary" || r.c === "secondary" || r.c === "tertiary")) { const d = res(q, 3.2); for (let i = 0; i + 1 < d.length; i += 2) ribbon(br, [d[i], d[i + 1]], 0.16, 0.075, mark); } });
+  });
+}
+/* ---- asphalt = free space (not within a sidewalk of any building) near an OSM road centreline or inside a seed disc; rasterised and merged into rectangles ---- */
+function streetRaster(D, H, polys, o) {
+  o = o || {}; const CELL = o.cell || 1, W = Math.ceil(2 * H / CELL), OX = -H, dil = Math.ceil((o.dil || 1.8) / CELL);
+  const bld = new Uint8Array(W * W), roadM = new Uint8Array(W * W), free = new Uint8Array(W * W);
+  polys.forEach(p => { let x0 = 1e9, x1 = -1e9, z0 = 1e9, z1 = -1e9; p.forEach(q => { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); z0 = Math.min(z0, q[1]); z1 = Math.max(z1, q[1]); });
+    for (let j = Math.max(0, Math.floor((z0 - OX) / CELL)); j <= Math.min(W - 1, Math.floor((z1 - OX) / CELL)); j++) { const z = OX + (j + 0.5) * CELL; const xs = [];
+      for (let a = 0, b = p.length - 1; a < p.length; b = a++) { if ((p[a][1] > z) !== (p[b][1] > z)) xs.push(p[a][0] + (z - p[a][1]) * (p[b][0] - p[a][0]) / (p[b][1] - p[a][1])); }
+      xs.sort((u, v) => u - v); for (let k = 0; k + 1 < xs.length; k += 2) for (let i = Math.max(0, Math.floor((xs[k] - OX) / CELL)); i <= Math.min(W - 1, Math.floor((xs[k + 1] - OX) / CELL)); i++) bld[j * W + i] = 1; } });
+  // dilate buildings by dil cells (separable)
+  { const t = new Uint8Array(W * W), u = new Uint8Array(W * W);
+    for (let j = 0; j < W; j++) for (let i = 0; i < W; i++) if (bld[j * W + i]) for (let d = -dil; d <= dil; d++) { const x = i + d; if (x >= 0 && x < W) t[j * W + x] = 1; }
+    for (let j = 0; j < W; j++) for (let i = 0; i < W; i++) if (t[j * W + i]) for (let d = -dil; d <= dil; d++) { const y = j + d; if (y >= 0 && y < W) u[y * W + i] = 1; }
+    for (let k = 0; k < W * W; k++) free[k] = u[k] ? 0 : 1; }
+  const DMAX = { motorway: 16, trunk: 16, primary: 15, secondary: 12, tertiary: 11, minor: 8, service: 5 };
+  const stamp = (x, z, r) => { const ci = Math.floor((x - OX) / CELL), cj = Math.floor((z - OX) / CELL), rr = Math.ceil(r / CELL); for (let dj = -rr; dj <= rr; dj++) for (let di = -rr; di <= rr; di++) { if (di * di + dj * dj > rr * rr) continue; const i = ci + di, j = cj + dj; if (i >= 0 && i < W && j >= 0 && j < W) roadM[j * W + i] = 1; } };

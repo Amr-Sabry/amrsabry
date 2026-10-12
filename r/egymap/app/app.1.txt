@@ -1,79 +1,3 @@
-const ROADS = { motorway: [0x3f4144, 10, 10, 0.17], primary: [0x424447, 10, 16, 0.14], secondary: [0x484a4d, 7.5, 12, 0.11], tertiary: [0x4e5053, 6, 9, 0.08], minor: [0x585a5c, 4.6, 5.8, 0.05], service: [0x626466, 3.8, 4.6, 0.04] };
-function drawRoads(D, opt) {
-  opt = opt || {}; const HW = opt.half || 1e9; const br = batch("road", K.mat(0xffffff, { vertexColors: true, roughness: 0.96, doubleSide: true }), true);
-  D.roads.forEach(r => { if (r.b === "tunnel") return; if (r.b === "bridge" && r.c !== "path") return;
-    if (r.c === "rail") { if (opt.rail !== false) clipRuns(r.pts, HW, 12).forEach(q => ribbon(br, q, 3.3, 0.06, lin(0x8c857a))); return; }
-    if (r.c === "path") { if (r.b === "bridge" || r.s === "steps" || r.s === "corridor") return; clipRuns(r.pts, HW, 10).forEach(q => ribbon(br, q, r.s === "pedestrian" ? 5 : 1.8, 0.05, lin(0xb3a88f))); return; }
-    const k = ROADS[r.c]; if (!k) return; const w = r.ow ? k[1] : k[2]; clipRuns(r.pts, HW, 10).forEach(q => { if (r.c === "primary" || r.c === "secondary" || r.c === "tertiary") ribbon(br, q, w + 3.2, 0.03, lin(0xb9ae98)); ribbon(br, q, w, k[3], lin(k[0]));
-      if ((r.c === "primary" || r.c === "secondary" || r.c === "motorway") && w >= 9.5) { const d = res(q, 3); for (let i = 0; i + 1 < d.length; i += 2) ribbon(br, [d[i], d[i + 1]], 0.18, k[3] + 0.035, lin(0xe9e5d9)); } }); });
-}
-const bridgeJoint = (D, p, same, half) => { if (Math.abs(p[0]) > half || Math.abs(p[1]) > half) return true; return D.roads.some(q => q !== same && q.b === "bridge" && q.c !== "path" && (Math.hypot(q.pts[0][0] - p[0], q.pts[0][1] - p[1]) < 5 || Math.hypot(q.pts[q.pts.length - 1][0] - p[0], q.pts[q.pts.length - 1][1] - p[1]) < 5)); };
-function drawBridges(D, half, H, extra) {
-  const bd = batch("deck", K.mat(0xffffff, { vertexColors: true, roughness: 0.9, doubleSide: true }), true), piers = [];
-  D.roads.forEach(r => { if (r.b !== "bridge") return; const foot = r.c === "path"; const k = foot ? [0xb7b1a4, 2.4, 2.4, 0] : ROADS[r.c]; if (!k) return; const w = foot ? 3 : (r.ow ? k[1] : k[2]); const Hm = foot ? 5.6 : H;
-    const runs = clipRuns(r.pts, half, 6); if (!runs.length) return; const pts = runs[0].length >= 2 ? runs.reduce((a, b) => (b.length > a.length ? b : a)) : runs[0], n = pts.length; const ja = bridgeJoint(D, r.pts[0], r, half), jb = bridgeJoint(D, r.pts[r.pts.length - 1], r, half); const ramp = Hm / 0.055; const cum = [0]; for (let i = 1; i < n; i++) cum.push(cum[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1])); const L = cum[n - 1];
-    const ys = pts.map((p, i) => { let h = Hm; if (!ja) h = Math.min(h, 0.3 + cum[i] / ramp * Hm); if (!jb) h = Math.min(h, 0.3 + (L - cum[i]) / ramp * Hm); return h; });
-    const top = lin(foot ? 0x9d978b : k[0]), conc = lin(0xb9b4a8), dark = lin(0x6f6a62); const o = offs(pts, w); const Lp = o.map(q => q[0]), Rp = o.map(q => q[1]);
-    ribbon(bd, pts, w, ys.map(y => y + 0.05), top); ribbon(bd, pts, w, ys.map(y => y - 1.15), dark); strip(bd, Lp, ys.map(y => y - 1.15), ys.map(y => y + 0.05), conc); strip(bd, Rp, ys.map(y => y - 1.15), ys.map(y => y + 0.05), conc);
-    const par = (E) => { strip(bd, E, ys.map(y => y + 0.05), ys.map(y => y + (foot ? 1.1 : 0.95)), conc); };
-    par(Lp); par(Rp);
-    if (!foot) ribbon(bd, pts, 0.5, ys.map(y => y + 1.0), conc);
-    for (let i = 1; i < n - 1; i += Math.max(1, Math.round((foot ? 18 : 24) / 6))) if (ys[i] > 2.4) piers.push([pts[i][0], 0, pts[i][1], 0, foot ? 0.9 : 1.7, ys[i] - 1.15, foot ? 0.9 : 1.7]); });
-  if (piers.length) K.inst(K.boxGeo(1, 1, 1), K.mat(0xb3aea2), piers);
-}
-
-const clipRuns = (pts, H, step) => { const r = res(pts, step || 8), runs = []; let cur = []; r.forEach(p => { if (Math.abs(p[0]) <= H && Math.abs(p[1]) <= H) cur.push(p); else { if (cur.length > 1) runs.push(cur); cur = []; } }); if (cur.length > 1) runs.push(cur); return runs; };
-
-const cenOf = p => { let x = 0, z = 0; p.forEach(q => { x += q[0]; z += q[1]; }); return [x / p.length, z / p.length]; };
-
-const clipRect = (pts, H) => { let out = pts.slice(); const edges = [[0, 1, H], [0, -1, H], [1, 1, H], [1, -1, H]];
-  edges.forEach(e => { const inp = out; out = []; if (!inp.length) return; const inside = p => e[1] * p[e[0]] <= e[2]; const isect = (a, b) => { const t = (e[1] * e[2] - a[e[0]]) / (b[e[0]] - a[e[0]]); const r = [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]; r[e[0]] = e[1] * e[2]; return r; };
-    for (let i = 0; i < inp.length; i++) { const a = inp[i], b = inp[(i + 1) % inp.length]; if (inside(b)) { if (!inside(a)) out.push(isect(a, b)); out.push(b); } else if (inside(a)) out.push(isect(a, b)); } });
-  return out; };
-
-/* ---- street asphalt from real building lines (width = gap between mapped building fronts minus sidewalks) ---- */
-function streetAsphalt(D, H, polys, o) {
-  o = o || {}; const CS = 16, grid = new Map(), key = (i, j) => i * 100003 + j;
-  polys.forEach((p, pi) => { let x0 = 1e9, x1 = -1e9, z0 = 1e9, z1 = -1e9; p.forEach(q => { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); z0 = Math.min(z0, q[1]); z1 = Math.max(z1, q[1]); });
-    for (let i = Math.floor(x0 / CS); i <= Math.floor(x1 / CS); i++) for (let j = Math.floor(z0 / CS); j <= Math.floor(z1 / CS); j++) { const k = key(i, j); (grid.get(k) || grid.set(k, []).get(k)).push(pi); } });
-  const inB = (x, z) => { const c = grid.get(key(Math.floor(x / CS), Math.floor(z / CS))); if (!c) return false; for (let n = 0; n < c.length; n++) if (pip(polys[c[n]], x, z)) return true; return false; };
-  const CAP = { motorway: 16, trunk: 16, primary: 15, secondary: 12, tertiary: 10, minor: 7.5, service: 5 }, TYP = { motorway: 8, trunk: 8, primary: 7.5, secondary: 6, tertiary: 4.8, minor: 3.4, service: 2.6 };
-  const br = batch("road", K.mat(0xffffff, { vertexColors: true, roughness: 0.96, doubleSide: true }), true);
-  const asph = lin(o.asphalt || 0x4a4d50), walk = lin(o.walk || 0xb4ab98), mark = lin(0xe6e1d3);
-  D.roads.forEach(r => {
-    if (r.b === "tunnel" || r.b === "bridge" || r.c === "transit") return;
-    if (r.c === "rail") { clipRuns(r.pts, H, 12).forEach(q => ribbon(br, q, 3.3, 0.06, lin(0x8c857a))); return; }
-    if (r.c === "path") { if (r.s === "steps" || r.s === "corridor") return; clipRuns(r.pts, H, 8).forEach(q => ribbon(br, q, r.s === "pedestrian" ? 5 : 1.8, 0.03, walk)); return; }
-    const cap = CAP[r.c]; if (!cap) return; const typ = TYP[r.c] * (r.ow ? 0.8 : 1);
-    clipRuns(r.pts, H, 4).forEach(q => {
-      const n = q.length, aL = [], aR = [], N = [];
-      for (let i = 0; i < n; i++) { const a = q[Math.max(0, i - 1)], b = q[Math.min(n - 1, i + 1)]; let dx = b[0] - a[0], dz = b[1] - a[1]; const l = Math.hypot(dx, dz) || 1; dx /= l; dz /= l; const nx = -dz, nz = dx; N.push([nx, nz]);
-        const ray = s => { for (let d = 1; d <= cap + 2; d += 0.75) if (inB(q[i][0] + nx * s * d, q[i][1] + nz * s * d)) return d; return -1; };
-        const dl = ray(1), dr = ray(-1); const side = r.c === "minor" || r.c === "service" ? 1.4 : 2.2;
-        aL.push(dl < 0 ? typ : Math.max(1.6, Math.min(cap, dl - side))); aR.push(dr < 0 ? typ : Math.max(1.6, Math.min(cap, dr - side))); }
-      const sm = a => a.map((v, i) => { const s = [a[Math.max(0, i - 1)], v, a[Math.min(n - 1, i + 1)]].sort((x, y) => x - y); return s[1] * 0.6 + (a[Math.max(0, i - 1)] + a[Math.min(n - 1, i + 1)]) * 0.2; });
-      const sL = sm(aL), sR = sm(aR);
-      for (let i = 0; i < n - 1; i++) { const A = [q[i][0] + N[i][0] * sL[i], q[i][1] + N[i][1] * sL[i]], B = [q[i + 1][0] + N[i + 1][0] * sL[i + 1], q[i + 1][1] + N[i + 1][1] * sL[i + 1]], C = [q[i + 1][0] - N[i + 1][0] * sR[i + 1], q[i + 1][1] - N[i + 1][1] * sR[i + 1]], Dd = [q[i][0] - N[i][0] * sR[i], q[i][1] - N[i][1] * sR[i]];
-        quad(br, [A[0], 0.05, A[1]], [B[0], 0.05, B[1]], [C[0], 0.05, C[1]], [Dd[0], 0.05, Dd[1]], asph); }
-      const wmean = (sL.reduce((s, v) => s + v, 0) + sR.reduce((s, v) => s + v, 0)) / n;
-      if (!r.ow && wmean >= 5.2 && (r.c === "primary" || r.c === "secondary" || r.c === "tertiary")) { const d = res(q, 3.2); for (let i = 0; i + 1 < d.length; i += 2) ribbon(br, [d[i], d[i + 1]], 0.16, 0.075, mark); } });
-  });
-}
-/* ---- asphalt = free space (not within a sidewalk of any building) near an OSM road centreline or inside a seed disc; rasterised and merged into rectangles ---- */
-function streetRaster(D, H, polys, o) {
-  o = o || {}; const CELL = o.cell || 1, W = Math.ceil(2 * H / CELL), OX = -H, dil = Math.ceil((o.dil || 1.8) / CELL);
-  const bld = new Uint8Array(W * W), roadM = new Uint8Array(W * W), free = new Uint8Array(W * W);
-  polys.forEach(p => { let x0 = 1e9, x1 = -1e9, z0 = 1e9, z1 = -1e9; p.forEach(q => { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); z0 = Math.min(z0, q[1]); z1 = Math.max(z1, q[1]); });
-    for (let j = Math.max(0, Math.floor((z0 - OX) / CELL)); j <= Math.min(W - 1, Math.floor((z1 - OX) / CELL)); j++) { const z = OX + (j + 0.5) * CELL; const xs = [];
-      for (let a = 0, b = p.length - 1; a < p.length; b = a++) { if ((p[a][1] > z) !== (p[b][1] > z)) xs.push(p[a][0] + (z - p[a][1]) * (p[b][0] - p[a][0]) / (p[b][1] - p[a][1])); }
-      xs.sort((u, v) => u - v); for (let k = 0; k + 1 < xs.length; k += 2) for (let i = Math.max(0, Math.floor((xs[k] - OX) / CELL)); i <= Math.min(W - 1, Math.floor((xs[k + 1] - OX) / CELL)); i++) bld[j * W + i] = 1; } });
-  // dilate buildings by dil cells (separable)
-  { const t = new Uint8Array(W * W), u = new Uint8Array(W * W);
-    for (let j = 0; j < W; j++) for (let i = 0; i < W; i++) if (bld[j * W + i]) for (let d = -dil; d <= dil; d++) { const x = i + d; if (x >= 0 && x < W) t[j * W + x] = 1; }
-    for (let j = 0; j < W; j++) for (let i = 0; i < W; i++) if (t[j * W + i]) for (let d = -dil; d <= dil; d++) { const y = j + d; if (y >= 0 && y < W) u[y * W + i] = 1; }
-    for (let k = 0; k < W * W; k++) free[k] = u[k] ? 0 : 1; }
-  const DMAX = { motorway: 16, trunk: 16, primary: 15, secondary: 12, tertiary: 11, minor: 8, service: 5 };
-  const stamp = (x, z, r) => { const ci = Math.floor((x - OX) / CELL), cj = Math.floor((z - OX) / CELL), rr = Math.ceil(r / CELL); for (let dj = -rr; dj <= rr; dj++) for (let di = -rr; di <= rr; di++) { if (di * di + dj * dj > rr * rr) continue; const i = ci + di, j = cj + dj; if (i >= 0 && i < W && j >= 0 && j < W) roadM[j * W + i] = 1; } };
   D.roads.forEach(r => { if (r.b === "tunnel" || r.b === "bridge" || r.c === "transit" || r.c === "rail" || r.c === "path") return; const d = DMAX[r.c]; if (!d) return; res(r.pts, CELL).forEach(p => { if (Math.abs(p[0]) <= H && Math.abs(p[1]) <= H) stamp(p[0], p[1], d); }); });
   (o.seeds || []).forEach(s => { for (let a = 0; a < 1; a++) stamp(s[0], s[1], s[2]); });
   const br = batch("road", K.mat(0xffffff, { vertexColors: true, roughness: 0.96, doubleSide: true }), true), col = lin(o.asphalt || 0x4a4d50);
@@ -25751,6 +25675,15 @@ var PV = {on: false, pi: -1, r: null, B: null, raf: 0, last: 0, t: 0, az: .7, el
 .ps-cv{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .5s cubic-bezier(.2,.9,.25,1),opacity .4s}
 .ps-ci{overflow:hidden;display:flex;flex-direction:column;align-items:center;gap:.15rem;min-height:0}
 .ps-cs.on .ps-cv{grid-template-rows:1fr;opacity:1}
+/* the showroom (v126): the photos run round on a wall inside the scene, so the page keeps only the name above and the figures below;
+   a soft shade at the top and the bottom keeps them readable over the wall */
+.ps-ui.ps-sr::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(1,8,21,.88) 0,rgba(1,8,21,.6) 12%,rgba(1,8,21,0) 25%,rgba(1,8,21,0) 66%,rgba(1,8,21,.66) 79%,rgba(1,8,21,.92) 100%)}
+.ps-sr .ps-bt{bottom:4.2vh;gap:.9rem}
+.ps-sr .ps-row{display:flex;align-items:center;justify-content:center;gap:2.6rem;flex-wrap:wrap;row-gap:.8rem}
+.ps-sr .ps-row .ps-md{position:static;top:auto;width:auto;animation-delay:2.7s}
+.ps-sr .ps-row .ps-st{gap:2.6rem}
+@media (max-width:900px){.ps-sr .ps-bt{bottom:3vh}.ps-sr .ps-row{gap:1.2rem}}
+@media (max-width:640px){.ps-sr .ps-hd{top:calc(1.1rem + 3.2rem)}}
 `; document.head.appendChild(st); }
 
 const pvEl = document.createElement("section"); pvEl.className = "hud pv resv"; pvEl.id = "pv"; pvEl.hidden = true; pvEl.setAttribute("role", "dialog"); pvEl.setAttribute("aria-label", T("معاينة ثلاثية الأبعاد"));
@@ -25813,7 +25746,7 @@ const pvLin = x => new THREE.Color(x).convertSRGBToLinear();
 
 /* ---- building what is shown ---- */
 function pvFree(){
-  const B = PV.B; PV.B = null; if (!B) return;
+  const B = PV.B; PV.B = null; if (!B) return; if (B.car && B.car.ro) B.car.ro.disconnect();
   B.sc.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.isLight && o.shadow && o.shadow.map) o.shadow.map.dispose(); });
   B.own.forEach(t => { try { t.dispose(); } catch (e) {} }); if (B.h && B.h.dispose) { try { B.h.dispose(); } catch (e) {} }
   if (PV.r) PV.r.clear();
@@ -25832,7 +25765,7 @@ function pvBuildModel(B, am, tint){
   { const old = B.sc.children.filter(o => o.isMesh && o.geometry && (o.geometry.type === "CylinderGeometry" || o.geometry.type === "TorusGeometry")); old.forEach(o => { B.sc.remove(o); o.geometry.dispose(); o.material.dispose(); }); }
   const R0 = B.st.R, c0 = B.st.c, baseG = new THREE.CylinderGeometry(R0 * 1.32, R0 * 1.35, R0 * .04, 96), ringG = new THREE.TorusGeometry(R0 * 1.32, R0 * .005, 8, 128).rotateX(Math.PI / 2);
   const baseRealM = new THREE.MeshStandardMaterial({color: pvLin(0x0c3f4a), roughness: .95}), ringRealM = new THREE.MeshBasicMaterial({color: 0x46d7cf});
-  const base = new THREE.Mesh(baseG, baseRealM), ring = new THREE.Mesh(ringG, ringRealM); base.position.set(c0.x, -R0 * .02 - .05, c0.z); ring.position.set(c0.x, .02, c0.z); base.receiveShadow = true; B.sc.add(base, ring); B.own.push(baseRealM, ringRealM);
+  const base = new THREE.Mesh(baseG, baseRealM), ring = new THREE.Mesh(ringG, ringRealM); base.position.set(c0.x, -R0 * .02 - .05, c0.z); ring.position.set(c0.x, .02, c0.z); base.receiveShadow = true; B.sc.add(base, ring); B.own.push(baseRealM, ringRealM); B.base0 = [base, ring];
   const lights = B.sc.children.filter(o => o.isLight);
   const uT = {value: 0}, uH = {value: Math.max(10, st.size.y)}, tintOn = HOLO.mode === "tint";
   const fill = holoGlass(pvLin(0x2a78e8).lerp(tint.clone().convertSRGBToLinear(), .1), .3, null, uH, uT, true);
@@ -25852,7 +25785,7 @@ function pvBuildModel(B, am, tint){
     if (base) base.material = hl ? bFill : baseOrig; if (ring) ring.material = hl ? bRing : ringOrig; lights.forEach(l => { l.visible = !hl; });
     if (PV.r) PV.r.shadowMap.needsUpdate = true; };
   B.tick = (dt, t, k) => { uT.value = t; const e = clamp((k - .06) / .8, 0, 1), s = e * e * (3 - 2 * e); g.scale.y = Math.max(.002, s); if (B.mode === "real" && (k < 1.4 || B.shot)) { PV.r.shadowMap.needsUpdate = true; B.shot = 0; } };
-  B.scan = true; B.hasLook = true;
+  B.items = items; B.scan = true; B.hasLook = true;
 }
 /* the illustrative model of the project's kind: the same parts and glass the map builds at a sector plate, lit by the sector colour */
 function pvBuildParts(B, p, type, tint){
@@ -25910,13 +25843,13 @@ function pvLoop(now){
   PV.raf = requestAnimationFrame(pvLoop);
   if (document.hidden || !PV.B || !PV.on) return;
   if (now - PV.last < 22) return; const dt = Math.min(.1, (now - PV.last) / 1000); PV.last = now; PV.t += dt;
-  const B = PV.B; if (PV.auto && !PV.pts.size) PV.az += dt * .16; else if (!PV.auto && PV.userAuto && !PV.pts.size && now - PV.idle > 6000) PV.auto = true, pvSyncCt();
+  const B = PV.B; if (PV.auto && !PV.pts.size) PV.az += dt * (PV.sr ? .085 : .16); else if (!PV.auto && PV.userAuto && !PV.pts.size && now - PV.idle > 6000) PV.auto = true, pvSyncCt();
   B.k = Math.min(1.4, B.k + dt / (B.kind === "model" ? 1.5 : 3.4));
   PV.el = clamp(PV.el, .03, 1.5); PV.k = clamp(PV.k, .12, 3.2);
   const t = pvFrame(); if (B.tick) B.tick(dt, PV.t, B.k); if (PV.sr && B.car) srTick(dt);
   /* the scan ring rises through the model while it grows, then once more every few seconds */
   { const m = B.scanM, ph = (PV.t * .22) % 1, grow = B.k < 1.05 ? clamp(B.k / 1.0, 0, 1) : -1, u = grow >= 0 ? grow : ph, hy = Math.max(B.st.size.y, 1) * (B.kind === "model" ? 1.05 : 1.2);
-    m.visible = B.mode === "holo" || B.kind !== "model"; m.position.set(B.st.c.x, u * hy, B.st.c.z); m.scale.setScalar(Math.max(B.st.R * 1.25, 1)); m.material.opacity = .7 * Math.sin(Math.PI * clamp(u, 0, 1)) * (grow >= 0 ? 1 : .55); }
+    m.visible = B.mode === "holo" || B.kind !== "model"; m.position.set(B.st.c.x, u * hy, B.st.c.z); m.scale.setScalar(PV.sr && B.scR ? B.scR : Math.max(B.st.R * 1.25, 1)); m.material.opacity = .7 * Math.sin(Math.PI * clamp(u, 0, 1)) * (grow >= 0 ? 1 : .55); }
   PV.r.render(B.sc, PV.cam);
   const ld = pvEl.querySelector("#pvLd"); if (!ld.classList.contains("off")) ld.classList.add("off");
 }
@@ -26021,24 +25954,207 @@ function srRun(tok){
   srPut(scr, car.nxt++); SRS.tm = setTimeout(() => srRun(tok), SR_DUR / 2);
 }
 function srStop(){ SRS.tok++; clearTimeout(SRS.tm); SRS.car = null; }
-function srBuild(B){ psBuild(pvEl, B.p || P[PV.pi], false); PV.el = .36; PV.k = 1; PV.az = Math.PI * .15; }
+function srBuild(B){ psBuild(pvEl, B.p || P[PV.pi], false); srStage(B); PV.el = PV.el0 = SR_EL; PV.k = PV.k0 = 1; PV.az = Math.PI * .15; }
+/* ================= the showroom stage (v126) =================
+   The photos run round the model on a curved wall again (as in the first showroom): sixteen curved panels share the wall and each takes
+   the next photo while it passes behind the viewer, so any number of photos flows round. The model stands on a round podium in the
+   middle; the podium's rim carries the project's facts on a slow ticker and its top is a dial. Nothing of the model reaches past its
+   circle: every part is cut at the circle's edge. The podium and the model are framed together in the band between the name and the
+   figures, whatever the screen. */
+const SR_N = 16, SR_FOV = 38, SR_EL = .4, SR_WY = .3;
+const srFont = () => (getComputedStyle(document.documentElement).getPropertyValue("--f-head") || "sans-serif").trim();
+function srMirror(tex, rx, ox){ tex.repeat.x = -rx; tex.offset.x = rx + ox; }      /* the wall is seen from inside the cylinder: each picture is flipped so it reads the right way */
+function srPlaceholder(i, p, N){
+  const cv = document.createElement("canvas"); cv.width = 1024; cv.height = 576; const g = cv.getContext("2d"), c = SECC[p.sc] || "#46d7cf", fh = srFont();
+  const bg = g.createLinearGradient(0, 0, 1024, 576); bg.addColorStop(0, "#06173a"); bg.addColorStop(1, "#020a1c"); g.fillStyle = bg; g.fillRect(0, 0, 1024, 576);
+  const glow = g.createRadialGradient(512, 300, 20, 512, 300, 520); glow.addColorStop(0, c + "55"); glow.addColorStop(1, "transparent"); g.fillStyle = glow; g.fillRect(0, 0, 1024, 576);
+  g.strokeStyle = "rgba(255,255,255,.06)"; g.lineWidth = 1; for (let x = 0; x <= 1024; x += 64) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, 576); g.stroke(); } for (let y = 0; y <= 576; y += 64) { g.beginPath(); g.moveTo(0, y); g.lineTo(1024, y); g.stroke(); }
+  g.strokeStyle = c; g.globalAlpha = .9; g.lineWidth = 6; g.strokeRect(3, 3, 1018, 570); g.globalAlpha = 1;
+  g.fillStyle = "rgba(255,255,255,.08)"; g.beginPath(); g.moveTo(380, 330); g.lineTo(470, 230); g.lineTo(540, 300); g.lineTo(590, 250); g.lineTo(680, 330); g.closePath(); g.fill();
+  g.beginPath(); g.arc(610, 205, 22, 0, Math.PI * 2); g.fill();
+  g.fillStyle = "#fff"; g.textAlign = "center"; g.textBaseline = "middle"; g.font = `700 112px ${fh}`; g.fillText("image " + i, 512, 410);
+  g.fillStyle = "rgba(255,255,255,.55)"; g.font = `500 30px ${fh}`; g.direction = "rtl"; g.fillText(T("صورة افتراضية") + " · " + (i + 1) + " / " + N, 512, 500);
+  const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = 4; srMirror(t, 1, 0); return t;
+}
+function srTex(car, it){
+  if (car.tex[it.n]) return car.tex[it.n];
+  let t;
+  if (it.ph) t = srPlaceholder(it.n, car.p, car.list.length);
+  else { t = new THREE.TextureLoader().load(it.url, tx => { const im = tx.image, ia = im && im.width ? im.width / im.height : 16 / 9, pa = 16 / 9; let rx = 1, ox = 0;
+      if (ia > pa) { rx = pa / ia; ox = (1 - rx) / 2; } else { tx.repeat.y = ia / pa; tx.offset.y = (1 - tx.repeat.y) / 2; } srMirror(tx, rx, ox); tx.needsUpdate = true; });
+    t.encoding = THREE.sRGBEncoding; srMirror(t, 1, 0); }
+  car.own.push(t); car.tex[it.n] = t; return t;
+}
+/* the facts on the podium's rim: the name first, then where the project stands, when it opened, where it is and who carries it (the cost stays behind its key) */
+function srBandSegs(p){
+  const cut = (s, n) => { s = String(s || "").trim(); return s.length > n ? s.slice(0, n - 1) + "…" : s; }, out = [], g = (p.g || []).map(id => GN[id]).filter(Boolean);
+  out.push({k: "", v: cut(p.n, 70)});
+  const sl = stLabel(p); if (sl) out.push({k: T("الحالة"), v: sl});
+  const dt = srDate(p); if (dt) out.push({k: T("بدء التشغيل"), v: cut(dt.n || dt.tx, 46)});
+  if (g.length) out.push({k: T(g.length > 1 ? "المحافظات" : "المحافظة"), v: cut(g.slice(0, 3).join(" · "), 44)}); else if (p.lc) out.push({k: T("الموقع"), v: cut(p.lc, 44)});
+  if (p.mn) out.push({k: T("الجهة"), v: cut(p.mn, 50)});
+  if (SECS[p.sc]) out.push({k: T("القطاع"), v: SECS[p.sc].n});
+  return out;
+}
+function srBandTex(p, aspect){
+  const maxT = Math.min(8192, (PV.r && PV.r.capabilities.maxTextureSize) || 4096), col = SECC[p.sc] || "#46d7cf", fh = srFont();
+  let H = 192, W = Math.round(aspect * H); if (W > maxT) { W = maxT; H = Math.max(64, Math.round(W / aspect)); }
+  const cv = document.createElement("canvas"); cv.width = W; cv.height = H; const g = cv.getContext("2d");
+  const bg = g.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, "#0b2550"); bg.addColorStop(.55, "#061837"); bg.addColorStop(1, "#030c20"); g.fillStyle = bg; g.fillRect(0, 0, W, H);
+  g.globalAlpha = .1; g.fillStyle = col; g.fillRect(0, 0, W, H); g.globalAlpha = 1;
+  g.fillStyle = col; g.globalAlpha = .85; g.fillRect(0, Math.round(H * .07), W, Math.max(2, Math.round(H * .012))); g.globalAlpha = .35; g.fillRect(0, Math.round(H * .91), W, Math.max(1, Math.round(H * .008))); g.globalAlpha = 1;
+  let segs = srBandSegs(p), fv = Math.round(H * .3), fk = Math.round(H * .2), gin = H * .16, sep = H * .9;
+  g.direction = "rtl"; g.textBaseline = "middle";
+  const measure = () => segs.map(s => { g.font = `600 ${fk}px ${fh}`; const wk = s.k ? g.measureText(s.k).width : 0; g.font = `700 ${fv}px ${fh}`; const wv = g.measureText(s.v).width; return {s, wk, wv, w: wk + (s.k ? gin : 0) + wv + sep}; });
+  let m = measure(), cyc = m.reduce((a, x) => a + x.w, 0);
+  if (cyc > W) { const k = Math.max(.62, W / cyc * .98); fv = Math.round(fv * k); fk = Math.round(fk * k); gin *= k; sep *= k; m = measure(); cyc = m.reduce((a, x) => a + x.w, 0); }
+  while (cyc > W && segs.length > 1) { segs = segs.slice(0, -1); m = measure(); cyc = m.reduce((a, x) => a + x.w, 0); }
+  const n = Math.max(1, Math.floor(W / cyc)), extra = (W - n * cyc) / (n * m.length), y = H * .5;
+  let x = W;
+  for (let r = 0; r < n; r++) for (const q of m) {
+    if (q.s.k) { g.font = `600 ${fk}px ${fh}`; g.textAlign = "right"; g.fillStyle = "rgba(255,255,255,.62)"; g.fillText(q.s.k, x, y + fv * .04); x -= q.wk + gin; }
+    g.font = `700 ${fv}px ${fh}`; g.textAlign = "right"; g.fillStyle = "#fff"; g.fillText(q.s.v, x, y); x -= q.wv;
+    const s2 = sep + extra, cx = x - s2 / 2, r0 = H * .055; g.fillStyle = col; g.beginPath(); g.moveTo(cx, y - r0); g.lineTo(cx + r0, y); g.lineTo(cx, y + r0); g.lineTo(cx - r0, y); g.closePath(); g.fill(); x -= s2;
+  }
+  const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = 8; t.wrapS = THREE.RepeatWrapping; return t;
+}
+/* the podium's top: dark glass with faint rings under the model, a lit line at the model's circle, and a dial between that circle and the rim */
+function srDialTex(col, rin){
+  const S = 2048, C = S / 2, R = S / 2 - 2, cv = document.createElement("canvas"); cv.width = cv.height = S; const g = cv.getContext("2d");
+  const bg = g.createRadialGradient(C, C, 0, C, C, R); bg.addColorStop(0, "#0d2c55"); bg.addColorStop(rin, "#081d3e"); bg.addColorStop(1, "#04112a"); g.fillStyle = bg; g.beginPath(); g.arc(C, C, R, 0, Math.PI * 2); g.fill();
+  const ri = R * rin, line = (r, w, s, a) => { g.globalAlpha = a; g.strokeStyle = s; g.lineWidth = w; g.beginPath(); g.arc(C, C, r, 0, Math.PI * 2); g.stroke(); g.globalAlpha = 1; };
+  for (let k = 1; k <= 5; k++) line(ri * k / 6, 2, "#9fdcff", .1);
+  g.strokeStyle = "rgba(159,220,255,.07)"; g.lineWidth = 2; for (let k = 0; k < 12; k++) { const a = k * Math.PI / 6; g.beginPath(); g.moveTo(C + Math.cos(a) * ri * .16, C + Math.sin(a) * ri * .16); g.lineTo(C + Math.cos(a) * ri * .98, C + Math.sin(a) * ri * .98); g.stroke(); }
+  g.fillStyle = "rgba(1,8,22,.5)"; g.beginPath(); g.arc(C, C, R, 0, Math.PI * 2); g.arc(C, C, ri, 0, Math.PI * 2, true); g.fill("evenodd");
+  line(ri, 6, col, .8); line(ri + 16, 2, "#ffffff", .18); line(R * .985, 3, "#ffffff", .35);
+  const bw = R - ri;
+  for (let i = 0; i < 180; i++) { const a = i * Math.PI / 90, maj = i % 15 === 0, mid = i % 5 === 0, r1 = ri + bw * .2, r2 = r1 + bw * (maj ? .5 : mid ? .32 : .17);
+    g.strokeStyle = maj ? col : "#ffffff"; g.globalAlpha = maj ? .95 : mid ? .55 : .3; g.lineWidth = maj ? 6 : mid ? 4 : 3;
+    g.beginPath(); g.moveTo(C + Math.cos(a) * r1, C + Math.sin(a) * r1); g.lineTo(C + Math.cos(a) * r2, C + Math.sin(a) * r2); g.stroke(); }
+  g.globalAlpha = 1; g.fillStyle = col;
+  for (let k = 0; k < 8; k++) { const a = (k + .5) * Math.PI / 4, r = ri + bw * .8, x = C + Math.cos(a) * r, y = C + Math.sin(a) * r, s = bw * .06; g.save(); g.translate(x, y); g.rotate(a); g.beginPath(); g.moveTo(0, -s); g.lineTo(s, 0); g.lineTo(0, s); g.lineTo(-s, 0); g.closePath(); g.fill(); g.restore(); }
+  const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = 8; return t;
+}
+function srGlowTex(col, kind){
+  const S = 512, cv = document.createElement("canvas"); cv.width = cv.height = S; const g = cv.getContext("2d");
+  if (kind === "sweep" && g.createConicGradient) { const gr = g.createConicGradient(0, S / 2, S / 2); gr.addColorStop(0, col); gr.addColorStop(.16, "rgba(0,0,0,0)"); gr.addColorStop(1, "rgba(0,0,0,0)"); g.globalAlpha = .55; g.fillStyle = gr; g.fillRect(0, 0, S, S); }
+  else { const gr = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2); gr.addColorStop(0, col); gr.addColorStop(.42, col + "66"); gr.addColorStop(1, "rgba(0,0,0,0)"); g.globalAlpha = .5; g.fillStyle = gr; g.fillRect(0, 0, S, S); }
+  const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; return t;
+}
+/* every part of the model is cut at the circle (40 planes round it); shared materials are copied first, so the map's own models are never cut */
+function srClip(B, c, Rc){
+  const N = 40, planes = []; for (let i = 0; i < N; i++) { const a = i / N * Math.PI * 2, nx = Math.cos(a), nz = Math.sin(a); planes.push(new THREE.Plane(new THREE.Vector3(-nx, 0, -nz), Rc * Math.cos(Math.PI / N) + nx * c.x + nz * c.z)); }
+  PV.r.localClippingEnabled = true;
+  const own = m => (Array.isArray(m) ? m : [m]).forEach(x => { if (x && !x.isShaderMaterial) { x.clippingPlanes = planes; x.clipShadows = true; x.needsUpdate = true; } });
+  if (B.items) { const cl = new Map(), cp = m => { if (!m) return m; if (Array.isArray(m)) return m.map(cp); if (m.isShaderMaterial) return m;
+      let k = cl.get(m); if (!k) { k = m.clone(); k.onBeforeCompile = m.onBeforeCompile; k.customProgramCacheKey = m.customProgramCacheKey; k.clippingPlanes = planes; k.clipShadows = true; cl.set(m, k); B.own.push(k); } return k; };
+    const edges = new Set(); B.items.forEach(q => { const was = q.o.material === q.orig; q.orig = cp(q.orig); if (was) q.o.material = q.orig; if (q.glass) own(q.glass); if (q.ls) { own(q.ls.material); edges.add(q.ls); } });
+    B.root.traverse(o => { if ((o.isLine || o.isPoints) && !edges.has(o)) o.material = cp(o.material); }); }      /* the model's own lines and points (fences, paths) are cut too */
+  /* what cannot be cut (custom shaders) and stands outside the circle is left out */
+  const bx = new THREE.Box3(), cc = new THREE.Vector3(); B.root.updateMatrixWorld(true);
+  B.root.traverse(o => { if (!o.isMesh) return; const ms = Array.isArray(o.material) ? o.material : [o.material]; if (!ms.some(m => m && m.isShaderMaterial)) return; bx.setFromObject(o); bx.getCenter(cc); if (Math.hypot(cc.x - c.x, cc.z - c.z) > Rc) o.visible = false; });
+  return planes;
+}
+/* the outline that has to fit on the screen: the podium, and the model's height ring by ring (the same from every side, so turning never pushes it off) */
+function srFitPts(B, car){
+  const {c0, Rb, Rc, hb, y0} = car, NB = 6, hR = new Array(NB).fill(0), pts = [];
+  if (B.kind === "model") { B.root.updateMatrixWorld(true); const bx = new THREE.Box3(), tb = new THREE.Box3(); let n = 0;
+    B.root.traverse(o => { if (!o.visible || !o.geometry || n > 6000) return; n++; const gm = o.geometry; if (!gm.boundingBox) gm.computeBoundingBox(); bx.copy(gm.boundingBox).applyMatrix4(o.matrixWorld);
+      const top = bx.max.y; if (!(top > 0)) return; const dx = Math.max(bx.min.x - c0.x, 0, c0.x - bx.max.x), dz = Math.max(bx.min.z - c0.z, 0, c0.z - bx.max.z); if (Math.hypot(dx, dz) > Rc) return;
+      const r = Math.min(Rc, Math.hypot(Math.max(Math.abs(bx.min.x - c0.x), Math.abs(bx.max.x - c0.x)), Math.max(Math.abs(bx.min.z - c0.z), Math.abs(bx.max.z - c0.z)))), k = Math.min(NB - 1, Math.floor(r / Rc * NB)); hR[k] = Math.max(hR[k], top); }); }
+  else hR[Math.floor(NB * .6)] = Math.max(B.st.size.y, 1);
+  const ring = (r, y, n) => { for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2; pts.push(new THREE.Vector3(c0.x + Math.cos(a) * r, y, c0.z + Math.sin(a) * r)); } };
+  ring(Rb * 1.01, y0, 32); ring(Rb * 1.035, y0 - hb, 32);
+  hR.forEach((h, k) => { if (h > 0) ring(Rc * (k + 1) / NB, h, 16); });
+  car.hm = Math.max(...hR, 0); return pts;
+}
+function srStage(B){
+  const st = B.st, p = B.p, R0 = Math.max(st.R, .5), c0 = st.c.clone(), col = SECC[p.sc] || "#46d7cf", C = new THREE.Color(col), W = new THREE.Color(1, 1, 1);
+  const Rc = R0 * 1.16, Rb = Rc * 1.17, hb = Rb * .2, y0 = B.kind === "model" ? -Math.max(.05, Rb * .003) : -.13;
+  (B.base0 || []).forEach(o => { o.visible = false; });
+  const car = {g: new THREE.Group(), slots: [], list: srList(p), next: 0, tex: [], own: B.own, p, rot: 0, R0, Rc, Rb, hb, y0, c0, ui: SRS.car && SRS.car.ui, d: 0, dT: 0, ox: 0, oy: 0, oxT: 0, oyT: 0, bt: 0, snap: 1, dirty: 1};
+  const add = (geo, mat, y, ro) => { const m = new THREE.Mesh(geo, mat); m.position.set(c0.x, y, c0.z); if (ro != null) m.renderOrder = ro; B.sc.add(m); B.own.push(mat); return m; };
+  /* the podium */
+  const dial = srDialTex(col, Rc / Rb); B.own.push(dial);
+  const topM = new THREE.MeshStandardMaterial({color: 0xffffff, map: dial, emissive: 0xffffff, emissiveMap: dial, emissiveIntensity: .9, roughness: .82, metalness: .05});
+  const top = add(new THREE.CircleGeometry(Rb, 180).rotateX(-Math.PI / 2), topM, y0, 1); top.receiveShadow = true;
+  const swT = srGlowTex(col, "sweep"); B.own.push(swT);
+  car.sweep = add(new THREE.RingGeometry(Rc * 1.012, Rb * .985, 180, 1).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({map: swT, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false}), y0 + Rb * .0015, 2);
+  const band = srBandTex(p, 2 * Math.PI * Rb / hb); B.own.push(band);
+  car.band = add(new THREE.CylinderGeometry(Rb, Rb * 1.035, hb, 192, 1, true), new THREE.MeshBasicMaterial({map: band, toneMapped: false}), y0 - hb / 2, 1);
+  const rimM = new THREE.MeshBasicMaterial({color: C.clone().lerp(W, .45), toneMapped: false}), rimB = new THREE.MeshBasicMaterial({color: C.clone().lerp(W, .2), transparent: true, opacity: .55, toneMapped: false});
+  add(new THREE.TorusGeometry(Rb, Rb * .0045, 8, 192).rotateX(Math.PI / 2), rimM, y0, 2); add(new THREE.TorusGeometry(Rb * 1.035, Rb * .003, 8, 192).rotateX(Math.PI / 2), rimB, y0 - hb, 2);
+  const glT = srGlowTex(col, "glow"); B.own.push(glT);
+  add(new THREE.PlaneGeometry(Rb * 4.2, Rb * 4.2).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({map: glT, transparent: true, opacity: .42, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false}), y0 - hb - Rb * .01, 0);
+  srClip(B, c0, Rc); B.scR = Rc * .99;
+  /* the wall of photos: built at radius 1 and scaled round the viewer every frame */
+  const N = SR_N, slot = Math.PI * 2 / N, gw = slot - .035, ph = gw * 9 / 16, geo = new THREE.CylinderGeometry(1, 1, ph, 24, 1, true, -gw / 2, gw);
+  for (let i = 0; i < N; i++) { const it = car.list[i % car.list.length], m = new THREE.MeshBasicMaterial({map: srTex(car, it), side: THREE.DoubleSide, transparent: true, toneMapped: false, depthWrite: false});
+    const mesh = new THREE.Mesh(geo, m); mesh.rotation.y = i * slot; mesh.renderOrder = -1; car.g.add(mesh); B.own.push(m); car.slots.push({mesh, a: i * slot, armed: false}); }
+  car.next = N % car.list.length; car.ph = ph;
+  const lm = new THREE.MeshBasicMaterial({color: C.clone().lerp(W, .35), transparent: true, opacity: .5, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false}); B.own.push(lm);
+  [-1, 1].forEach(s => { const r = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, ph * .012, 180, 1, true), lm); r.position.y = s * (ph / 2 + ph * .05); r.renderOrder = -1; car.g.add(r); });
+  B.sc.add(car.g);
+  car.pts = srFitPts(B, car); car.t = new THREE.Vector3(c0.x, y0 + car.hm * .3, c0.z);
+  if (typeof ResizeObserver === "function" && car.ui) { car.ro = new ResizeObserver(() => { car.dirty = 1; }); car.ui.querySelectorAll(".ps-hd,.ps-bt").forEach(e => car.ro.observe(e)); }
+  B.car = car;
+}
+/* the podium and the model fill the band between the name and the figures: sized to it and set in its middle (a view offset, so the turning stays round the model) */
+function srFit(w, h){
+  const B = PV.B, car = B.car, cam = PV.cam, el = PV.el; car.fw = w; car.fh = h; car.fel = el; car.dirty = 0;
+  const cr = PV.r.domElement.getBoundingClientRect(), hd = car.ui && car.ui.querySelector(".ps-hd"), bt = car.ui && car.ui.querySelector(".ps-bt");
+  let top = hd && hd.getClientRects().length ? hd.getBoundingClientRect().bottom - cr.top : h * .16, bot = bt && bt.getClientRects().length && bt.offsetHeight > 4 ? bt.getBoundingClientRect().top - cr.top : h * .8;
+  const mg = Math.min(34, h * .042); top += mg; bot -= mg; if (bot - top < h * .34) { const m = (top + bot) / 2; top = m - h * .17; bot = m + h * .17; }
+  const narrow = w < h * 1.05, fw = narrow ? .92 : .52, fh = .95, t = car.t, v = new THREE.Vector3();
+  cam.fov = SR_FOV; cam.aspect = w / h; cam.clearViewOffset();
+  let d = car.dT || car.R0 * 5, bb = null;
+  const look = () => { cam.position.set(t.x, t.y + d * Math.sin(el), t.z + d * Math.cos(el)); cam.lookAt(t); cam.updateMatrixWorld(); cam.updateProjectionMatrix();
+    bb = [1e9, -1e9, 1e9, -1e9]; for (const q of car.pts) { v.copy(q).project(cam); const sx = (v.x + 1) / 2 * w, sy = (1 - v.y) / 2 * h; bb[0] = Math.min(bb[0], sx); bb[1] = Math.max(bb[1], sx); bb[2] = Math.min(bb[2], sy); bb[3] = Math.max(bb[3], sy); } };
+  for (let i = 0; i < 6; i++) { look(); d *= Math.max((bb[1] - bb[0]) / (w * fw), (bb[3] - bb[2]) / ((bot - top) * fh)); }
+  look(); car.dT = d; car.oxT = (bb[0] + bb[1]) / 2 - w / 2; car.oyT = (bb[2] + bb[3]) / 2 - (top + bot) / 2;
+  if (car.snap) { car.d = car.dT; car.ox = car.oxT; car.oy = car.oyT; }
+}
+function srFrame(){
+  const B = PV.B, car = B.car, cam = PV.cam; if (!car) return B.st.c;
+  const cv = PV.r.domElement, w = cv.clientWidth || innerWidth, h = cv.clientHeight || innerHeight;
+  PV.el = clamp(PV.el, .12, .95); PV.k = clamp(PV.k, .55, 1.7);
+  if (car.dirty || car.fw !== w || car.fh !== h || Math.abs(car.fel - PV.el) > .012) srFit(w, h);
+  const now = performance.now(), dt = Math.min(.1, (now - (car.lt || now)) / 1000), a = car.snap ? 1 : 1 - Math.exp(-dt * 4); car.lt = now; car.snap = 0;
+  car.d += (car.dT - car.d) * a; car.ox += (car.oxT - car.ox) * a; car.oy += (car.oyT - car.oy) * a;
+  if (cam.fov !== SR_FOV) cam.fov = SR_FOV;
+  const d = car.d * PV.k, el = PV.el, t = car.t;
+  cam.position.set(t.x + d * Math.cos(el) * Math.sin(PV.az), t.y + d * Math.sin(el), t.z + d * Math.cos(el) * Math.cos(PV.az));
+  cam.near = Math.max(.02, d / 150); cam.far = d * 14; cam.lookAt(t); cam.setViewOffset(w, h, car.ox * PV.k, car.oy * PV.k, w, h); cam.updateProjectionMatrix();
+  const Rw = Math.max(car.d * 1.6, d * 1.3); car.g.scale.setScalar(Rw); car.g.position.set(car.c0.x, t.y - Rw * SR_WY, car.c0.z);
+  return t;
+}
+function srTick(dt){
+  const car = PV.B.car, TAU = Math.PI * 2; if (!car) return;
+  car.rot -= dt * .05; car.g.rotation.y = car.rot; car.bt += dt * .045; car.band.rotation.y = PV.az + car.bt; car.sweep.rotation.y -= dt * .32;
+  for (const s of car.slots) {
+    let df = (s.a + car.rot - PV.az) % TAU; if (df > Math.PI) df -= TAU; if (df < -Math.PI) df += TAU; const ad = Math.abs(df);
+    if (ad < .32 && s.armed) { const it = car.list[car.next]; car.next = (car.next + 1) % car.list.length; s.mesh.material.map = srTex(car, it); s.mesh.material.needsUpdate = true; s.armed = false; }
+    else if (ad > .9) s.armed = true;
+    s.mesh.material.opacity = clamp((ad - .4) / .55, 0, 1); }
+}
 /* the same screen also stands over the live map (the presenter's story): then the site itself, seen from the drone, is the middle */
 function psBuild(host, p, onMap){
   srStop(); const tok = SRS.tok, col = SECC[p.sc] || "#46d7cf", list = srList(p);
   document.querySelectorAll(".ps-ui").forEach(x => x.remove()); host.style.setProperty("--c", col);
-  const ui = document.createElement("div"); ui.className = "ps-ui" + (onMap ? " ps-map" : "");
+  const ui = document.createElement("div"); ui.className = "ps-ui" + (onMap ? " ps-map" : " ps-sr");
   const kick = [SECS[p.sc] ? SECS[p.sc].n : "", p.mn || ""].filter(Boolean).join(" · ");
   const g = (p.g || []).map(id => GN[id]).filter(Boolean), loc = g.length ? g.slice(0, 3).join(" · ") : (p.lc || "");
   const jb = jobsOf(p.sm || ""), stats = (jb ? [jb] : []).concat(statsOf(p.sm || "").filter(x => (!jb || x.n !== jb.n) && !/^(?:(?:مليون|مليار|ألف)\s+)?(?:دولار|جنيه|يورو)$/.test(x.l))).slice(0, 3);
   const cost = srMoney(p.cd || p.ct), dt = srDate(p), bf = String(p.sm || "").trim().replace(/(كم|م)([23])(?!\d)/g, (a, u, d) => u + (d === "2" ? "²" : "³"));
   let h = (onMap ? "" : `${bkBtn("ps-x")}`) + `
     <div class="ps-hd"><div class="ps-k"><i></i>${srE(kick)}</div><h2 data-t="${srE(p.n)}"></h2>${loc ? `<div class="ps-loc">${igSvg("pin")}${srE(loc)}</div>` : ""}</div>`;
-  h += srScreen("r") + (list.length > 1 ? srScreen("l") : "");
+  if (onMap) h += srScreen("r") + (list.length > 1 ? srScreen("l") : "");
   /* the cost waits behind a press, as on the wheel: the impact is read first */
-  if (cost) h += `<div class="ps-md r ps-cs"><button type="button" class="ps-rv">${igSvg("coins")}<span>${T("تكلفة المشروع")}</span><i>${T("اضغط للعرض")}</i></button><div class="ps-cv"><div class="ps-ci">` + (cost.n ? `<div class="v">${cost.pre ? `<em>${srE(cost.pre)}</em>` : ""}<b data-v="${srE(cost.n)}">0</b><span>${srE(cost.u)}</span></div>` : `<div class="tx">${srE(cost.tx)}</div>`) + (cost.sub ? `<div class="s">${srE(cost.sub)}</div>` : "") + `</div></div></div>`;
-  if (dt) h += `<div class="ps-md l"><small>${igSvg("cal")}${T("تاريخ بدء التشغيل")}</small>` + (dt.n ? `<div class="v"><b data-v="${srE(dt.n)}">0</b></div>` : `<div class="tx">${srE(dt.tx)}</div>`) + `</div>`;
-  h += `<div class="ps-bt">`;
+  let costH = ""; if (cost) costH = `<div class="ps-md r ps-cs"><button type="button" class="ps-rv">${igSvg("coins")}<span>${T("تكلفة المشروع")}</span><i>${T("اضغط للعرض")}</i></button><div class="ps-cv"><div class="ps-ci">` + (cost.n ? `<div class="v">${cost.pre ? `<em>${srE(cost.pre)}</em>` : ""}<b data-v="${srE(cost.n)}">0</b><span>${srE(cost.u)}</span></div>` : `<div class="tx">${srE(cost.tx)}</div>`) + (cost.sub ? `<div class="s">${srE(cost.sub)}</div>` : "") + `</div></div></div>`;
+  if (onMap) h += costH; if (dt && onMap) h += `<div class="ps-md l"><small>${igSvg("cal")}${T("تاريخ بدء التشغيل")}</small>` + (dt.n ? `<div class="v"><b data-v="${srE(dt.n)}">0</b></div>` : `<div class="tx">${srE(dt.tx)}</div>`) + `</div>`;
+  h += `<div class="ps-bt">` + (onMap ? "" : `<div class="ps-row">${costH}`);
   if (stats.length) h += `<div class="ps-st">` + stats.map((s, i) => `<div class="${s.jobs ? "jobs" : ""}" style="animation-delay:${1.5 + i * .22}s">${igSvg(s.jobs ? "work" : iconFor(s.l))}<div><b data-v="${srE(s.n)}">0</b><small>${srE(s.l)}</small></div></div>`).join("") + `</div>`;
+  if (!onMap) h += `</div>`;
   if (bf) h += `<p class="ps-bf" data-t="${srE(bf)}" style="--fs:${bf.length > 260 ? 1.12 : bf.length > 170 ? 1.3 : 1.5}rem"></p>`;
   h += `</div>`;
   ui.innerHTML = h; host.appendChild(ui);
@@ -26051,22 +26167,11 @@ function psBuild(host, p, onMap){
   ui.querySelectorAll(".ps-md:not(.ps-cs) b").forEach(b => srCount(b, 3100));
   { const cs = ui.querySelector(".ps-cs"); if (cs) cs.querySelector(".ps-rv").addEventListener("click", e => { e.stopPropagation(); const on = !cs.classList.contains("on"); cs.classList.toggle("on", on); if (on) cs.querySelectorAll(".ps-cv b").forEach(b => srCount(b, 150)); }); }
   ui.querySelectorAll(".ps-scr").forEach(s => s.addEventListener("click", e => { e.stopPropagation(); const car = SRS.car; if (!car || car.list.length <= 2) return; srPut(s, car.nxt++); }));
-  SRS.tm = setTimeout(() => srRun(tok), 3600);
+  if (onMap) SRS.tm = setTimeout(() => srRun(tok), 3600);
   return ui;
 }
-/* the model sits in the middle band, between the name and the figures, small enough to leave the screens their room */
-function srFrame(){
-  const B = PV.B, st = B.st, cam = PV.cam; if (cam.fov !== 30) cam.fov = 30;
-  const cv = PV.r.domElement, w = cv.clientWidth || innerWidth, h = cv.clientHeight || innerHeight, nar = w < h * 1.2;
-  const frac = nar ? .55 : Math.min(.56, w * .145 / (h * .5)), d = Math.max(st.R * .95, st.size.y * 1.15) / Math.tan(cam.fov * Math.PI / 360) / frac * PV.k;
-  const t = new THREE.Vector3(st.c.x, Math.min(st.size.y * .35, st.R * .3), st.c.z);
-  cam.position.set(t.x + d * Math.cos(PV.el) * Math.sin(PV.az), t.y + d * Math.sin(PV.el), t.z + d * Math.cos(PV.el) * Math.cos(PV.az));
-  cam.setViewOffset(w, h, 0, h * (nar ? .14 : -.035), w, h);
-  cam.near = d / 200; cam.far = d * 24; cam.lookAt(t); cam.updateProjectionMatrix(); return t;
-}
-function srTick(){}
 function shOpen(pi){ if (pi < 0 || inShow()) return; act(); PV.sr = true; pvOpen(pi); }
-if (QS.has("test")) window.__sr = {open: shOpen, get car(){ return SRS.car; }};
+if (QS.has("test")) window.__sr = {open: shOpen, get car(){ return SRS.car; }, get stage(){ return PV.B && PV.B.car; }};
 
 function pvMap(p){ return !!(p && p.onMap && !(typeof EGM_MAP_HOLD !== "undefined" && EGM_MAP_HOLD[p.i])); }
 function pvHas(p){ return !!(p && (model3dFor(p.i) || (typeof ADM !== "undefined" && ADM.models && ADM.models[p.i]))); }
