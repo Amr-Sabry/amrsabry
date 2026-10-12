@@ -1,3 +1,41 @@
+    if (r.c === "rail") { clipRuns(r.pts, H, 12).forEach(q => ribbon(br, q, 3.3, 0.06, lin(0x8c857a))); return; }
+    if (r.c === "path") { if (r.s === "steps" || r.s === "corridor") return; clipRuns(r.pts, H, 8).forEach(q => ribbon(br, q, r.s === "pedestrian" ? 5 : 1.8, 0.03, walk)); return; }
+    const cap = CAP[r.c]; if (!cap) return; const typ = TYP[r.c] * (r.ow ? 0.8 : 1);
+    clipRuns(r.pts, H, 4).forEach(q => {
+      const n = q.length, aL = [], aR = [], N = [];
+      for (let i = 0; i < n; i++) { const a = q[Math.max(0, i - 1)], b = q[Math.min(n - 1, i + 1)]; let dx = b[0] - a[0], dz = b[1] - a[1]; const l = Math.hypot(dx, dz) || 1; dx /= l; dz /= l; const nx = -dz, nz = dx; N.push([nx, nz]);
+        const ray = s => { for (let d = 1; d <= cap + 2; d += 0.75) if (inB(q[i][0] + nx * s * d, q[i][1] + nz * s * d)) return d; return -1; };
+        const dl = ray(1), dr = ray(-1); const side = r.c === "minor" || r.c === "service" ? 1.4 : 2.2;
+        aL.push(dl < 0 ? typ : Math.max(1.6, Math.min(cap, dl - side))); aR.push(dr < 0 ? typ : Math.max(1.6, Math.min(cap, dr - side))); }
+      const sm = a => a.map((v, i) => { const s = [a[Math.max(0, i - 1)], v, a[Math.min(n - 1, i + 1)]].sort((x, y) => x - y); return s[1] * 0.6 + (a[Math.max(0, i - 1)] + a[Math.min(n - 1, i + 1)]) * 0.2; });
+      const sL = sm(aL), sR = sm(aR);
+      for (let i = 0; i < n - 1; i++) { const A = [q[i][0] + N[i][0] * sL[i], q[i][1] + N[i][1] * sL[i]], B = [q[i + 1][0] + N[i + 1][0] * sL[i + 1], q[i + 1][1] + N[i + 1][1] * sL[i + 1]], C = [q[i + 1][0] - N[i + 1][0] * sR[i + 1], q[i + 1][1] - N[i + 1][1] * sR[i + 1]], Dd = [q[i][0] - N[i][0] * sR[i], q[i][1] - N[i][1] * sR[i]];
+        quad(br, [A[0], 0.05, A[1]], [B[0], 0.05, B[1]], [C[0], 0.05, C[1]], [Dd[0], 0.05, Dd[1]], asph); }
+      const wmean = (sL.reduce((s, v) => s + v, 0) + sR.reduce((s, v) => s + v, 0)) / n;
+      if (!r.ow && wmean >= 5.2 && (r.c === "primary" || r.c === "secondary" || r.c === "tertiary")) { const d = res(q, 3.2); for (let i = 0; i + 1 < d.length; i += 2) ribbon(br, [d[i], d[i + 1]], 0.16, 0.075, mark); } });
+  });
+}
+/* ---- asphalt = free space (not within a sidewalk of any building) near an OSM road centreline or inside a seed disc; rasterised and merged into rectangles ---- */
+function streetRaster(D, H, polys, o) {
+  o = o || {}; const CELL = o.cell || 1, W = Math.ceil(2 * H / CELL), OX = -H, dil = Math.ceil((o.dil || 1.8) / CELL);
+  const bld = new Uint8Array(W * W), roadM = new Uint8Array(W * W), free = new Uint8Array(W * W);
+  polys.forEach(p => { let x0 = 1e9, x1 = -1e9, z0 = 1e9, z1 = -1e9; p.forEach(q => { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); z0 = Math.min(z0, q[1]); z1 = Math.max(z1, q[1]); });
+    for (let j = Math.max(0, Math.floor((z0 - OX) / CELL)); j <= Math.min(W - 1, Math.floor((z1 - OX) / CELL)); j++) { const z = OX + (j + 0.5) * CELL; const xs = [];
+      for (let a = 0, b = p.length - 1; a < p.length; b = a++) { if ((p[a][1] > z) !== (p[b][1] > z)) xs.push(p[a][0] + (z - p[a][1]) * (p[b][0] - p[a][0]) / (p[b][1] - p[a][1])); }
+      xs.sort((u, v) => u - v); for (let k = 0; k + 1 < xs.length; k += 2) for (let i = Math.max(0, Math.floor((xs[k] - OX) / CELL)); i <= Math.min(W - 1, Math.floor((xs[k + 1] - OX) / CELL)); i++) bld[j * W + i] = 1; } });
+  // dilate buildings by dil cells (separable)
+  { const t = new Uint8Array(W * W), u = new Uint8Array(W * W);
+    for (let j = 0; j < W; j++) for (let i = 0; i < W; i++) if (bld[j * W + i]) for (let d = -dil; d <= dil; d++) { const x = i + d; if (x >= 0 && x < W) t[j * W + x] = 1; }
+    for (let j = 0; j < W; j++) for (let i = 0; i < W; i++) if (t[j * W + i]) for (let d = -dil; d <= dil; d++) { const y = j + d; if (y >= 0 && y < W) u[y * W + i] = 1; }
+    for (let k = 0; k < W * W; k++) free[k] = u[k] ? 0 : 1; }
+  const DMAX = { motorway: 16, trunk: 16, primary: 15, secondary: 12, tertiary: 11, minor: 8, service: 5 };
+  const stamp = (x, z, r) => { const ci = Math.floor((x - OX) / CELL), cj = Math.floor((z - OX) / CELL), rr = Math.ceil(r / CELL); for (let dj = -rr; dj <= rr; dj++) for (let di = -rr; di <= rr; di++) { if (di * di + dj * dj > rr * rr) continue; const i = ci + di, j = cj + dj; if (i >= 0 && i < W && j >= 0 && j < W) roadM[j * W + i] = 1; } };
+  D.roads.forEach(r => { if (r.b === "tunnel" || r.b === "bridge" || r.c === "transit" || r.c === "rail" || r.c === "path") return; const d = DMAX[r.c]; if (!d) return; res(r.pts, CELL).forEach(p => { if (Math.abs(p[0]) <= H && Math.abs(p[1]) <= H) stamp(p[0], p[1], d); }); });
+  (o.seeds || []).forEach(s => { for (let a = 0; a < 1; a++) stamp(s[0], s[1], s[2]); });
+  const br = batch("road", K.mat(0xffffff, { vertexColors: true, roughness: 0.96, doubleSide: true }), true), col = lin(o.asphalt || 0x4a4d50);
+  let act = new Map(); let rects = 0;
+  const flushRect = (r) => { quad(br, [r.x0, 0.05, r.z0], [r.x1, 0.05, r.z0], [r.x1, 0.05, r.z1], [r.x0, 0.05, r.z1], col); rects++; };
+  for (let j = 0; j <= W; j++) { const runs = [];
     if (j < W) { let s = -1; for (let i = 0; i <= W; i++) { const on = i < W && free[j * W + i] && roadM[j * W + i]; if (on && s < 0) s = i; if (!on && s >= 0) { runs.push([s, i]); s = -1; } } }
     const nxt = new Map(); runs.forEach(rn => { const k = rn[0] + "|" + rn[1]; if (act.has(k)) { const r = act.get(k); r.z1 = OX + (j + 1) * CELL; nxt.set(k, r); act.delete(k); } else nxt.set(k, { x0: OX + rn[0] * CELL, x1: OX + rn[1] * CELL, z0: OX + j * CELL, z1: OX + (j + 1) * CELL }); });
     act.forEach(flushRect); act = nxt; }
@@ -21813,7 +21851,7 @@ function drawOrb(o, focus){
   if (orbIcons[s].complete) { c.save(); c.fillStyle = hexA(col, 0.18); c.beginPath(); const ix = OCW - 100, iy = 96; for (let k = 0; k < 6; k++) { const a = Math.PI / 6 + k * Math.PI / 3; c.lineTo(ix + Math.cos(a) * 58, iy + Math.sin(a) * 58); } c.closePath(); c.fill(); c.drawImage(orbIcons[s], ix - 38, iy - 38, 76, 76); c.restore(); }
   const colL = "#" + new THREE.Color(col).lerp(new THREE.Color(1, 1, 1), 0.3).getHexString();
   c.textAlign = "right"; c.fillStyle = colL; let tf = 60; c.font = orbFont(700, tf, F_HEAD); while (tf > 34 && c.measureText(SECS[s].n).width > 560) { tf -= 2; c.font = orbFont(700, tf, F_HEAD); } c.fillText(SECS[s].n, OCW - 180, 104);
-  c.font = orbFont(500, 24, F_NUM); c.fillStyle = hexA(col, 0.9); c.direction = "ltr"; c.textAlign = "right"; c.fillText(`SECTOR 0${s + 1} / 0${SECS.length}`, OCW - 182, 146); c.direction = CDIR;
+  c.font = orbFont(500, 24, F_NUM); c.fillStyle = hexA(col, 0.9); c.direction = "ltr"; c.textAlign = "right"; c.fillText(`AXIS 0${s + 1} / 0${SECS.length}`, OCW - 182, 146); c.direction = CDIR;
   /* big number (card: count) */
   c.textAlign = "right"; c.font = orbFont(700, 180, F_NUM); c.fillStyle = colL; c.shadowColor = hexA(col, 0.8); c.shadowBlur = 30;
   c.direction = "ltr"; c.fillText(String(Math.round(d.n * A(0.05))), OCW - 50, 368); c.shadowBlur = 0;
@@ -21915,9 +21953,9 @@ function simType(p){ if (p.n0 != null) p = Object.assign({}, p, {n: p.n0, sm: p.
   if (p.simT && SIM_NAME[p.simT] && p.simT !== "custom") return p.simT;   /* model type chosen in the settings page */
   if (SIM_PROG.test(p.n)) return "prog";
   for (const [k, r] of SIM_RULES) if (r.test(p.n)) return k;
-  if (p.sm) for (let i = 0; i < SIM_SUM.length; i++) if ((i === 0 || p.sc === 5 || p.sc === 6) && SIM_SUM[i][1].test(p.sm)) return SIM_SUM[i][0];
+  if (p.sm) for (let i = 0; i < SIM_SUM.length; i++) if ((i === 0 || p.sc0 === 5 || p.sc0 === 6) && SIM_SUM[i][1].test(p.sm)) return SIM_SUM[i][0];
   if (p.sm && SIM_HOUS.test(p.sm)) return "hous";
-  return SIM_DEF[p.sc];
+  return SIM_DEF[p.sc0 != null ? p.sc0 : AX6.a2s[p.sc] || 0];
 }
 
 /* ---- geometry kit: every solid is built with its base at y = 0 ---- */
@@ -22299,10 +22337,10 @@ function buildSimFx(p, type){
   simW[2].innerHTML = `<small>الجهة</small><b class="sm">${esc(p.mn)}</b>`;
   const st = p.nat ? "مشروع على مستوى الجمهورية: المجسم لا يحدد موقعًا" : p.kd === "e" ? "الجزء المتقطع من المجسم لم يكتمل بعد (توضيحي)" : p.kd === "p" ? "مشروع مستمر (توضيحي)" : "";
   const g = GEO[p.i];
-  if (S.mode === "layers" && sim.arch) simCap.innerHTML = `<span><i></i>${sim.arch.ws ? "مجسم الموقع الفعلي · مبني بالكود" : "مجسم المبنى الفعلي · مبني بالكود"}</span><small>على لوح القطاع بمقياس رمزي · الشكل من مراجع المبنى، والتفاصيل تقديرية</small>`;
+  if (S.mode === "layers" && sim.arch) simCap.innerHTML = `<span><i></i>${sim.arch.ws ? "مجسم الموقع الفعلي · مبني بالكود" : "مجسم المبنى الفعلي · مبني بالكود"}</span><small>على لوح المحور بمقياس رمزي · الشكل من مراجع المبنى، والتفاصيل تقديرية</small>`;
   else if (simIsReal(p)) simCap.innerHTML = `<span><i></i>المبنى الفعلي بحجمه الحقيقي · ${esc(g.src || "")}</span><small>${(m => m && m.note ? esc(m.note) : "المباني من خرائط OpenStreetMap المفتوحة، والموقع مطابق باسم المشروع")(MODELS3D.find(m => m.map && m.pi === p.i))}</small>`;
   else if (g && g.ln) simCap.innerHTML = `<span><i></i>المسار الفعلي على الخريطة · ${esc(g.src || "")}</span><small>المسار مرسوم من خرائط OpenStreetMap المفتوحة بحجمه الحقيقي</small>`;
-  else if (S.mode === "layers") simCap.innerHTML = `<span><i></i>تصوّر ثلاثي الأبعاد توضيحي · ${SIM_NAME[type]}</span><small>على لوح القطاع فقط، وليس التصميم المعتمد للمشروع${st ? " · " + st : ""}</small>`;
+  else if (S.mode === "layers") simCap.innerHTML = `<span><i></i>تصوّر ثلاثي الأبعاد توضيحي · ${SIM_NAME[type]}</span><small>على لوح المحور فقط، وليس التصميم المعتمد للمشروع${st ? " · " + st : ""}</small>`;
   else if (p.nat) simCap.innerHTML = `<span><i></i>مشروع على مستوى الجمهورية</span><small>لا يرتبط بموقع واحد على الخريطة</small>`;
   else if (g) simCap.innerHTML = `<span><i></i>الموقع الفعلي · ${esc(g.src || "")}</span><small>الموقع مطابق من OpenStreetMap، ولا توجد مبانٍ مرسومة له على الخريطة بعد</small>`;
   else simCap.innerHTML = `<span><i></i>الموقع تقريبي داخل ${esc(GN[p.g[0]] || "المحافظة")}</span><small>الملف لا يحدد موقعًا دقيقًا، لذلك لا نعرض مجسمًا للمشروع</small>`;
@@ -23854,7 +23892,7 @@ const XP = (() => {
   const TABS = {sec: T("القطاعات"), ax: T("المحاور"), gov: T("المحافظات"), ent: T("الجهات"), feed: T("الأحدث"), facts: T("لمحات")};
   let tab = "sec", shown = null, hold = 0, cycleT = 0, hot = null, sig = "", useA = true, lastSec = -2, pinned = false, fOpen = false, fSig = "";
   const CYCLE = 9;
-  function tabList(){ return S.sec >= 0 ? ["sec", "facts", "ax", "gov", "ent", "feed"] : ["sec", "ax", "gov", "ent", "feed"]; }   /* the sector buttons stay one tap away even inside a sector: they are the switcher */
+  function tabList(){ return S.sec >= 0 ? ["sec", "facts", "gov", "ent", "feed"] : ["sec", "gov", "ent", "feed"]; }   /* the sector buttons stay one tap away even inside a sector: they are the switcher */
   function buildTabs(){
     const l = tabList(); if (!l.includes(tab)) tab = l[0];
     tabsEl.innerHTML = l.map(t => `<button role="tab" data-t="${t}" aria-selected="${t === tab}">${TABS[t]}<i></i></button>`).join("");
@@ -24033,7 +24071,7 @@ function navLevels(){
   const l = [];
   if (S.mode !== "surface") l.push({k: "mode", t: S.mode === "layers" ? T("الطبقات") : T("الكثافة"), c: "#ffc98a"});
   if (S.sec >= 0) l.push({k: "sec", t: SECS[S.sec].n, c: SECC[S.sec], ic: S.sec});
-  if (S.axOpen >= 0) l.push({k: "ax", t: stxAxMeta(S.axOpen).sh, c: SECC[stxAxMeta(S.axOpen).s]});
+  if (S.axOpen >= 0 && S.axOpen !== S.sec) l.push({k: "ax", t: stxAxMeta(S.axOpen).sh, c: SECC[stxAxMeta(S.axOpen).s]});
   if (FLT.mn) l.push({k: "ent", t: FLT.mn, c: "#ffc98a"});
   if (S.selG) l.push({k: "gov", t: GN[S.selG], c: "#ffc98a"});
   if (S.selP >= 0) l.push({k: "proj", t: P[S.selP].n, c: SECC[P[S.selP].sc]});
@@ -24043,7 +24081,7 @@ function navDrop(k){            /* remove level k and everything deeper */
   if (S.show) stopShow();
   if (k === "proj" || k === "gov" || k === "ax") closeCard(true);
   else if (k === "ent") { if (S.selP >= 0 || S.selG || S.listK) closeCard(false); FLT.mn = null; fltTouch(); }
-  else if (k === "sec") { if (S.selP >= 0 || S.selG || S.listK) closeCard(false); setSector(-1); if (S.mode === "surface" && !userMoved) flyTo(homeView(), 1400); }
+  else if (k === "sec") { if (S.selP >= 0 || S.selG || S.listK || S.axOpen >= 0) closeCard(false); setSector(-1); if (S.mode === "surface" && !userMoved) flyTo(homeView(), 1400); }
   else if (k === "mode") { if (S.selP >= 0 || S.selG || S.listK) closeCard(false); setMode("surface"); }
 }
 /* panels that sit on top of the map (search, the year panel, the project preview) register here: back closes the one opened last, before it climbs any level */
@@ -24338,7 +24376,7 @@ function admBindForm(host, kind, row){
     const v = admFormRead(host); if (!admValidate(host, v)) { admNote(host, T("راجع الحقول المحددة بالأحمر"), true); return; }
     if (v.gov === "NAT") { v.lat = ""; v.lon = ""; }
     if (kind === "add" || (row && row.add)) {
-      const rec = {i: kind === "add" ? Math.max(999, ...ADM.added.map(e => e.i)) + 1 : row.i, n: v.n, sc: v.sc, mn: v.mn, y: v.y, kd: v.kd, ct: v.ct, sm: v.sm, simT: v.simT, gov: v.gov};
+      const rec = {i: kind === "add" ? Math.max(999, ...ADM.added.map(e => e.i)) + 1 : row.i, ax6: 1, n: v.n, sc: v.sc, mn: v.mn, y: v.y, kd: v.kd, ct: v.ct, sm: v.sm, simT: v.simT, gov: v.gov};
       if (v.gov !== "NAT") { rec.lat = v.lat; rec.lon = v.lon; }
       if (kind === "add") ADM.added.push(rec); else ADM.added[ADM.added.findIndex(e => e.i === row.i)] = rec;
       const done = () => { if (!admSave()) admNote(host, T("تعذّر الحفظ في هذا المتصفح (التخزين المحلي غير متاح)"), true); };
@@ -24824,7 +24862,7 @@ function lgLayers(k, inner, glint){
 document.addEventListener("animationend", e => { if (e.animationName !== "lgG") return; const s = e.target.closest && e.target.closest(".lga-s"); if (!s) return;
   const c = s.querySelector(".lga-c"); if (c) { s.style.animation = "none"; s.innerHTML = c.innerHTML; s.classList.add("done"); } });
 
-const LG_KEY = "eg-logos-v1", LG_HOLO = [["#6fe7ff", "سماوي"], ["#ffc98a", "عنبري"], ["#ffffff", "أبيض"], ["sec", "لون القطاع"]], LG_MAX = 420000;
+const LG_KEY = "eg-logos-v1", LG_HOLO = [["#6fe7ff", "سماوي"], ["#ffc98a", "عنبري"], ["#ffffff", "أبيض"], ["sec", "لون المحور"]], LG_MAX = 420000;
 const lgNorm = s => String(s || "").replace(/[ً-ْـ]/g, "").replace(/[أإآ]/g, "ا").replace(/\s+/g, " ").trim().toLowerCase();
 const LG_OF = {}; for (const k in LG) { LG_OF[lgNorm(LG[k][2])] = k; if (LG[k][3]) LG_OF[lgNorm(LG[k][3])] = k; }
 let LGCFG = {v: 1, mode: "color", holo: "#6fe7ff", anim: true, per: {}, custom: {}};
@@ -24896,7 +24934,7 @@ function lgHTML(mn, cls){ const k = lgKey(mn); if (!k) return ""; const m = lgMo
 .adm .lg-msg{font-size:.74rem;color:#ff9c9c;min-height:1em}
 .adm .lg-pv>div{cursor:pointer}
 #lgSaved{font:400 .74rem var(--f-body);color:#7fe0a2}#lgSaved.bad{color:#ff9c9c}` + LG_AN_CSS; document.head.appendChild(st);
-  if (typeof I18N === "object" && I18N) Object.assign(I18N, {"شعارات الجهات": "Entity logos", "شعارات الوزارات والجهات": "Ministry and authority logos", "شكل الشعار على الخريطة": "Logo style on the map", "ملوّن": "Colour", "هولوجرام بلون واحد": "One-colour hologram", "بدون شعار": "No logo", "لون الهولوجرام": "Hologram colour", "سماوي": "Cyan", "عنبري": "Amber", "أبيض": "White", "لون القطاع": "Sector colour", "شعارًا": "logos", "تحتاج مراجعة": "to review", "حسب العام": "As above", "هولوجرام": "Hologram", "إخفاء": "Hide", "المصدر:": "Source:", "المطابقة مع صورة المصدر:": "Match with the source picture:", "استبدال الملوّن": "Replace colour file", "استبدال الهولوجرام": "Replace hologram file", "رجوع لملفنا": "Back to our file", "تنزيل SVG": "Download SVG", "ملف مستبدَل على هذا الجهاز": "File replaced on this device", "الملف أكبر من المسموح (400 ك.ب)": "File is larger than allowed (400 KB)", "نوع الملف غير مدعوم: SVG أو PNG فقط": "Unsupported file type: SVG or PNG only", "مشروعًا": "projects", "حركة ظهور الشعار": "Logo entrance movement", "تعمل": "On", "متوقفة": "Off", "أعد تشغيل الكل": "Play all again", "اضغط على أي شعار لتشاهد حركته من جديد.": "Press any logo to watch its movement again.",
+  if (typeof I18N === "object" && I18N) Object.assign(I18N, {"شعارات الجهات": "Entity logos", "شعارات الوزارات والجهات": "Ministry and authority logos", "شكل الشعار على الخريطة": "Logo style on the map", "ملوّن": "Colour", "هولوجرام بلون واحد": "One-colour hologram", "بدون شعار": "No logo", "لون الهولوجرام": "Hologram colour", "سماوي": "Cyan", "عنبري": "Amber", "أبيض": "White", "لون المحور": "Axis colour", "شعارًا": "logos", "تحتاج مراجعة": "to review", "حسب العام": "As above", "هولوجرام": "Hologram", "إخفاء": "Hide", "المصدر:": "Source:", "المطابقة مع صورة المصدر:": "Match with the source picture:", "استبدال الملوّن": "Replace colour file", "استبدال الهولوجرام": "Replace hologram file", "رجوع لملفنا": "Back to our file", "تنزيل SVG": "Download SVG", "ملف مستبدَل على هذا الجهاز": "File replaced on this device", "الملف أكبر من المسموح (400 ك.ب)": "File is larger than allowed (400 KB)", "نوع الملف غير مدعوم: SVG أو PNG فقط": "Unsupported file type: SVG or PNG only", "مشروعًا": "projects", "حركة ظهور الشعار": "Logo entrance movement", "تعمل": "On", "متوقفة": "Off", "أعد تشغيل الكل": "Play all again", "اضغط على أي شعار لتشاهد حركته من جديد.": "Press any logo to watch its movement again.",
     "كل شعار مرسوم كملف vector من الشعار المنشور للجهة، بنسختين: ملوّنة، وهولوجرام بلون واحد. لا توجد جهة تنشر ملف vector أصليًا، فالرسم تحويل من الصورة ونسبة مطابقته مكتوبة تحت كل شعار. إذا وصل ملف أصلي من الجهة فاستبدله من هنا.": "Each logo is drawn as a vector file from the body's published logo, in two versions: colour, and a one-colour hologram. No body publishes an original vector file, so each drawing is a conversion from the picture and its match is written under it. If an original file arrives from the body, replace ours here."}); }
 
 function lgCount(){ const c = {}; P.forEach(p => { const k = lgKey(p.mn0 || p.mn) || lgKey(p.mn); if (k) c[k] = (c[k] || 0) + 1; }); return c; }
@@ -26619,7 +26657,7 @@ function buildShowAuto(){
 }
 /* the presenter's own scenario (settings › «سيناريو العرض»): the same scenes, in his order and at his pace; places are governorates and landmarks;
    consecutive projects are flown as one drone line, each stop holding for its own seconds */
-function buildShow(){ if (STX.on) return stxScenes(); const cfg = typeof showCfgActive === "function" ? showCfgActive() : null; if (cfg) { const o = showCustom(cfg); if (o.length) return o; } return buildShowAuto(); }
+function buildShow(){ if (STX.on) return STX.intro ? stxIntro() : stxScenes(); const cfg = typeof showCfgActive === "function" ? showCfgActive() : null; if (cfg) { const o = showCustom(cfg); if (o.length) return o; } return buildShowAuto(); }
 function showCustom(cfg){
   const auto = buildShowAuto(), out = []; let run = [];
   const flush = () => { const pts = run.map(st => { const pi = P.findIndex(p => p.i === st.i); if (pi < 0 || !pvMap(P[pi])) return null; const sp = simSite(P[pi]); return {pi, x: sp.x, z: sp.z, exact: !!GEO[P[pi].i], dw: st.d}; }).filter(Boolean); run = [];
@@ -26644,8 +26682,8 @@ function showCustom(cfg){
    The ministries' indicators (drivers in 2014, results, what if we had not moved, horizons) join when their file arrives. */
 /* the six axes of the client's sheet, in its order: key for the link (#energy …), icon, sector colour, short name */
 const STX_KEYS = ["economy", "energy", "water", "people", "infra", "security"];
-function stxAxMeta(a){ return [{ic: "factory", s: 4, sh: "محور التنمية الاقتصادية"}, {ic: "bolt", s: 2, sh: "محور الطاقة"}, {ic: "drop", s: 3, sh: "محور الأمن المائي والغذائي"},
-  {ic: "people", s: 5, sh: "محور بناء الإنسان"}, {ic: "road", s: 1, sh: "محور البنية التحتية"}, {ic: "shield", s: 7, sh: "محور الأمن وسيادة القانون"}][a] || {ic: "chart", s: 2, sh: ""}; }
+function stxAxMeta(a){ return [{ic: "factory", s: 0, sh: "محور التنمية الاقتصادية"}, {ic: "bolt", s: 1, sh: "محور الطاقة"}, {ic: "drop", s: 2, sh: "محور الأمن المائي والغذائي"},
+  {ic: "people", s: 3, sh: "محور بناء الإنسان"}, {ic: "road", s: 4, sh: "محور البنية التحتية"}, {ic: "shield", s: 5, sh: "محور الأمن وسيادة القانون"}][a] || {ic: "chart", s: 2, sh: ""}; }
 const STX = {on: false, ax: 1, tok: 0, pi: -1, tmp: false};
 { const k = QS.get("sc") || location.hash.replace(/^#/, ""), a = STX_KEYS.indexOf(k); if (a >= 0) { STX.on = true; STX.ax = a; } STX.url = STX.on; STX.urlAx = STX.ax; }
 /* projects of an entity / an axis come from the sheet's own mapping (its entity names do not always match the projects file) */
@@ -27141,6 +27179,72 @@ function frame(now){
 let firstFrame = false;
 const kiosk = QS.has("kiosk");
 
+/* ================= the six axes at the start (v128) =================
+   Amr: «أول ما أبدأ يلود عندي الـ6 أزرار لكل محور بعدد مشاريع، وبعدين ينزلوا لتحت عشان أستعرض الخريطة، ولما أضغط على زرار أي محور يكون فيه إنترو
+   بالداتا اللي كانت موجودة فيه». The six buttons open in the middle as the map loads, each with its icon, its name and its live project count
+   (it climbs with the years of the opening), then settle into a row over the timeline. A button plays the axis intro (its name screen, then its
+   target and investments, from the axes sheet) and lands on the map with that axis chosen and its card open; the card's «اعرض المحور» plays the
+   whole axis. Pressing the map, or waiting for the opening to end, sends the buttons down. */
+const AXL = {el: null, row: null, btn: [], cnt: [], shown: [], docked: false, t0: 0, big: false, place: "", k: 0, tot: []};
+const AXSH = [T("التنمية الاقتصادية"), T("أمن الطاقة"), T("المياه والغذاء"), T("بناء الإنسان"), T("البنية التحتية"), T("الأمن والقانون")];
+{ const el = document.createElement("div"); el.className = "axl"; el.id = "axl"; el.setAttribute("role", "toolbar"); el.setAttribute("aria-label", T("المحاور الستة"));
+  el.innerHTML = `<div class="axl-hd"><small>${T("مسيرة التنمية")}</small><b>${T("المحاور الستة")}</b><span>${T("اختر محورًا لعرضه، أو اضغط على الخريطة لاستعراضها")}</span></div><div class="axl-row">` +
+    SECS.map((s, a) => `<button type="button" class="axb" data-a="${a}" style="--c:${SECC[a]};--i:${a}"><span class="ic">${svgI(a)}</span><span class="tx"><small>${T("المحور ")}${STX_ORD[a] || ""}</small><span class="nm">${esc(s.n)}</span><span class="sh">${esc(AXSH[a])}</span></span><span class="ct"><b>0</b><small>${T("مشروعًا")}</small></span></button>`).join("") + `</div>`;
+  ($("app") || document.body).appendChild(el); AXL.el = el; AXL.row = el.querySelector(".axl-row"); AXL.btn = [...el.querySelectorAll(".axb")]; AXL.cnt = AXL.btn.map(b => b.querySelector(".ct b")); AXL.shown = AXL.btn.map(() => 0);
+  el.addEventListener("click", e => { const b = e.target.closest(".axb"); if (!b) return; act(); if (b.blur) b.blur(); axIntro(+b.dataset.a); }); }
+/* the row sits on the timeline, as wide as it */
+function axlPlace(){
+  const tl = $("tl"), app = $("app"); if (!tl || !app || !tl.getClientRects().length) return; const r = tl.getBoundingClientRect(), a = app.getBoundingClientRect();
+  let top = r.top; tl.querySelectorAll("*").forEach(e => { const q = e.getBoundingClientRect(); if (q.height > 0 && q.bottom > r.top - 80 && q.top < top) top = q.top; });   /* the year bars and their figures stand above the panel's own edge */
+  const k = Math.round(r.left - a.left) + "|" + Math.round(r.width) + "|" + Math.round(a.bottom - top); if (k === AXL.place) return; AXL.place = k;
+  AXL.el.style.setProperty("--dl", (r.left - a.left) + "px"); AXL.el.style.setProperty("--dw", r.width + "px"); AXL.el.style.setProperty("--db", (a.bottom - top + 8) + "px");
+}
+function axlOpen(){ if (AXL.docked) return; AXL.tot = SECS.map((x, a) => P.filter(p => p.sc === a && 2026.95 >= p.y + p.sg && fpass(p)).length); AXL.big = true; AXL.t0 = performance.now(); AXL.el.classList.add("big"); requestAnimationFrame(() => requestAnimationFrame(() => AXL.el.classList.add("in"))); }
+/* down to the row: each button glides from its place in the middle to its place over the timeline (first / last / invert / play) */
+function axlDock(){
+  if (AXL.docked) return; AXL.docked = true; axlPlace();
+  const first = AXL.btn.map(b => b.getBoundingClientRect());
+  AXL.el.classList.remove("big"); AXL.el.classList.add("dock", "in");
+  const last = AXL.btn.map(b => b.getBoundingClientRect());
+  if (reduce) return;
+  AXL.btn.forEach((b, i) => { const f = first[i], l = last[i]; if (!f.width || !l.width) return;
+    b.style.transition = "none"; b.style.transformOrigin = "0 0";
+    b.style.transform = `translate(${f.left - l.left}px,${f.top - l.top}px) scale(${f.width / l.width},${f.height / l.height})`; });
+  void AXL.row.offsetWidth;
+  AXL.btn.forEach((b, i) => { b.style.transition = `transform .9s cubic-bezier(.2,.85,.25,1) ${i * 55}ms`; b.style.transform = ""; });
+  setTimeout(() => AXL.btn.forEach(b => { b.style.transition = ""; b.style.transformOrigin = ""; }), 1500);
+}
+function axlTick(){
+  const now = performance.now();
+  if (AXL.big && !AXL.docked && !intro && now - AXL.t0 > 5200) axlDock();
+  if (AXL.docked && ++AXL.k % 30 === 0) axlPlace();
+  const hide = !!S.show || (typeof PV !== "undefined" && PV.on); AXL.el.classList.toggle("hide", hide && AXL.docked);
+  AXL.btn.forEach((b, a) => { const v = AXL.docked ? stat.secCnt[a] || 0 : AXL.tot[a] || 0, s = AXL.shown[a], n = Math.abs(v - s) < .5 ? v : s + (v - s) * .12; AXL.shown[a] = n;
+    const t = String(Math.round(n)); if (AXL.cnt[a].textContent !== t) AXL.cnt[a].textContent = t;
+    const on = S.sec === a; if (b.classList.contains("on") !== on) { b.classList.toggle("on", on); b.setAttribute("aria-pressed", String(on)); }
+    const lb = SECS[a].n + ": " + v + " " + T("مشروعًا"); if (b.getAttribute("aria-label") !== lb) b.setAttribute("aria-label", lb); });
+  requestAnimationFrame(axlTick);
+}
+canvas.addEventListener("pointerdown", () => { if (AXL.big) axlDock(); });
+stage.addEventListener("wheel", () => { if (AXL.big) axlDock(); }, {passive: true});
+addEventListener("keydown", e => { if (AXL.big && !AXL.docked && (e.code === "Escape" || e.code === "Space")) axlDock(); });
+addEventListener("resize", () => { AXL.place = ""; if (AXL.docked) setTimeout(axlPlace, 160); });
+/* the intro: the axis's own opening screens, then the map with the axis chosen and its card open */
+function stxIntro(){
+  const a = STX.ax, out = stxScenes().slice(0, 2);
+  out.push({k: "land", d: 0.6, still: true, lb: T("المحور على الخريطة"), grp: 1, in(){ setTimeout(() => axLand(a), 0); }, tick(){}, out(){}});
+  return out;
+}
+function axIntro(a){ axlDock(); if (S.show) stopShow(); STX.on = true; STX.ax = a; STX.tmp = true; STX.intro = true; closeCard(false); startShow(); }
+function axLand(a){
+  if (S.show) stopShow(); setMode("surface"); S.T = 2026.95; userMoved = false;
+  if (S.sec !== a) setSector(a);
+  { const v = sectorView(a); ringTo(orbAng(a) - v.th, 2400); flyTo(homeView(), 2400, true); }     /* the whole country, with only this axis's projects lit, and its screen brought round to the far rim */
+  openAx(a);
+}
+{ const _stop = stopShow; stopShow = function(){ _stop(); STX.intro = false; }; }
+if (QS.has("test")) window.__axl = {AXL, dock: axlDock, open: axlOpen, intro: axIntro, land: axLand};
+
 /* ================= boot ================= */
 function boot(){
   resize();
@@ -27159,6 +27263,7 @@ function boot(){
   if (QS.has("test")) window.__h = {INST, ap, M3_LOOK, M3_HEMI, showStep, showPause, showRate, get showRateNow(){ return SHOW_RATE; }, get showEl(){ return tAbs - showT0; }, setInput, model3dView, model3dAdd, model3dFor, model3dCovers, buildBuildings, MODELS3D, models3dG, simViewFor, tourPoints, stopScore, get showI(){ return showI; }, get dress(){ return dress; }, orbScr, orbitPick, orbFaceView, orbWideView, sectorView, sectorFitRect, ORB, orbNow, EC, get hiMesh(){ return hiMesh; }, boCards: () => boCards, colorCanvas, terrainMat, TG, applyTheme, ZS, crowd, cityTiles, cityBundles, CU, goLL: (lat, lon, d, phi, th) => { const t = new THREE.Vector3(lonX(lon), H, latZ(lat)); const s = new THREE.Spherical(d, phi == null ? 0.9 : phi, th == null ? 0.3 : th); flyTo({p: new THREE.Vector3().setFromSpherical(s).add(t), t}, 0); }, sim, simType, simParts, simViewFor, showSim, hideSim, SIM_NAME, terrain, walls, TU, relH, glyphs, FREE, FREET, layerView, zoomBy, orbitBy, tiltToggle, get prevView(){ return prevView; }, settle: () => { mD = tMD; mL = tML; let n = 0; while (fly && n++ < 4) { const f = fly; camera.position.copy(f.p1); controls.target.copy(f.t1); fly = null; if (f.kind === "dive") { diveFxSet(-1); sim.hold = false; sim.k = 0; if (f.then) flyTo(f.then(), 0); } } }, diveTo, scene, beams, rings, heads, scan, dust, S, setMode, setSector, openProject, openGov, closeCard, startShow, stopShow, setPlaying, stat, P, SECS, INST, camera, controls, plates, govs, flyTo, homeView, focusView, toggleNotes, setQuality, get mD(){ return mD; }, get mL(){ return mL; }, pickProject, pickCands, pickCluster, overSim, showChooser, pickGov, get fly(){ return fly; }, scr: k => { v3.set(aPos[k*3], aHeadPos[k*3+1], aPos[k*3+2]).project(camera); return [(v3.x + 1) / 2 * W, (1 - v3.y) / 2 * Hh]; }, scrG: id => { const o = govs[id]; v3.set(o.lx, H, o.lz).project(camera); return [(v3.x + 1) / 2 * W, (1 - v3.y) / 2 * Hh]; }, tip: () => tipEl.innerText, skipTo: i => { if (!S.show) startShow(); showI = i - 1; showDone = 0; for (let n = 0; n < i; n++) showDone += showScenes[n].d; nextScene(); }, nScenes: () => showScenes.length, seek: v => { showT0 = tAbs - v; }, get tAbs(){ return tAbs; }};
   if (QS.has("show")) startShow();
   requestAnimationFrame(frame);
+  axlPlace(); requestAnimationFrame(axlTick); if (!QS.has("show")) setTimeout(axlOpen, introOn ? 900 : 300);
 }
 boot();
 })();
