@@ -97,6 +97,15 @@
 .ps-cv{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .5s cubic-bezier(.2,.9,.25,1),opacity .4s}
 .ps-ci{overflow:hidden;display:flex;flex-direction:column;align-items:center;gap:.15rem;min-height:0}
 .ps-cs.on .ps-cv{grid-template-rows:1fr;opacity:1}
+/* the showroom (v126): the photos run round on a wall inside the scene, so the page keeps only the name above and the figures below;
+   a soft shade at the top and the bottom keeps them readable over the wall */
+.ps-ui.ps-sr::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(1,8,21,.88) 0,rgba(1,8,21,.6) 12%,rgba(1,8,21,0) 25%,rgba(1,8,21,0) 66%,rgba(1,8,21,.66) 79%,rgba(1,8,21,.92) 100%)}
+.ps-sr .ps-bt{bottom:4.2vh;gap:.9rem}
+.ps-sr .ps-row{display:flex;align-items:center;justify-content:center;gap:2.6rem;flex-wrap:wrap;row-gap:.8rem}
+.ps-sr .ps-row .ps-md{position:static;top:auto;width:auto;animation-delay:2.7s}
+.ps-sr .ps-row .ps-st{gap:2.6rem}
+@media (max-width:900px){.ps-sr .ps-bt{bottom:3vh}.ps-sr .ps-row{gap:1.2rem}}
+@media (max-width:640px){.ps-sr .ps-hd{top:calc(1.1rem + 3.2rem)}}
 /* the presenter's story: full screens over the dimmed live map, in the map's own language */
 .stx{position:fixed;inset:0;z-index:38;pointer-events:none;opacity:0;transition:opacity .55s ease;color:#fff;font-family:var(--f-head);direction:rtl}
 .stx.on{opacity:1}
@@ -1274,7 +1283,7 @@ html[data-lang="en"] #bLang{font-family:"Madani Arabic","Noto Kufi Arabic","Mada
 <script>
 (function(){
   var base = window.EG_BASE, tries = 0;
-  function part(i){ return fetch(base + "app/app." + i + ".txt?v=11c3b0b112").then(function(r){ if (!r.ok) throw new Error(r.status); return r.blob(); }); }
+  function part(i){ return fetch(base + "app/app." + i + ".txt?v=c3981f24bd").then(function(r){ if (!r.ok) throw new Error(r.status); return r.blob(); }); }
   function go(){
     Promise.all([part(0), part(1)]).then(function(b){
       var s = document.createElement("script"); s.src = URL.createObjectURL(new Blob(b, {type: "text/javascript"})); document.body.appendChild(s);
@@ -1491,4 +1500,4 @@ html[data-lang="en"] #bLang{font-family:"Madani Arabic","Noto Kufi Arabic","Mada
 
 </script>
 </body></html>
-<!-- egymap room v125 -->
+<!-- egymap room v126 -->
