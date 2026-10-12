@@ -194,6 +194,74 @@ body.stx-on #cap{opacity:0!important;pointer-events:none}
 .ps-ui .ps-x.bkx{height:2.6rem;padding:0 1rem 0 .8rem!important;font-size:.9rem!important}
 .pv-x.bkx{height:max(40px,2.6rem)}
 .adm-x.bkx{font-size:.95rem!important;padding:0 1rem 0 .8rem!important}
+
+/* ---- the axis player (v124): every part is driven by the show clock, so the CSS entrances are off and the parts hold their own styles ---- */
+.stx .stx-em,.stx .stx-k,.stx .stx-sl,.stx .stx-row,.stx .stx-ib,.stx .stx-chips{animation:none;opacity:1}
+.stx::after{content:"";position:absolute;inset:-25%;pointer-events:none;z-index:0;background:radial-gradient(circle at 34% 40%,color-mix(in srgb,var(--c) 11%,transparent),transparent 38%),radial-gradient(circle at 68% 66%,color-mix(in srgb,var(--c) 7%,transparent),transparent 36%);animation:stxGlow 24s ease-in-out infinite alternate}
+.stx.prj::after{display:none}
+@keyframes stxGlow{from{transform:translate3d(-3%,-2%,0) rotate(0deg)}to{transform:translate3d(3%,2.5%,0) rotate(9deg)}}
+.stx-wrap{z-index:1}
+.stx-em .rg circle.o{stroke-dasharray:100;stroke-dashoffset:100;stroke:var(--c);stroke-width:1.6;filter:drop-shadow(0 0 4px var(--c))}
+.stx-k{will-change:clip-path}
+.stx-mc{gap:.9rem}
+.stx-gauge{position:relative;width:4.6rem;height:4.6rem;flex:none}
+.stx-gauge>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;transform:rotate(-90deg) scaleY(-1)}
+.stx-gauge circle{fill:none;stroke-width:2.6}
+.stx-gauge .bg{stroke:rgba(255,255,255,.13)}
+.stx-gauge .fg{stroke:var(--c);stroke-linecap:round;stroke-dasharray:100;stroke-dashoffset:100;filter:drop-shadow(0 0 5px var(--c))}
+.stx-gauge>i{position:absolute;inset:0;display:grid;place-items:center}
+.stx-gauge>i svg{width:1.9rem;height:1.9rem;fill:none;stroke:#fff;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.stx-mc small em{font-style:normal;color:color-mix(in srgb,var(--c) 60%,#fff);font-family:var(--f-num)}
+.stx-mc.w>span{max-width:12rem}
+.stx-chips span b{font:700 .82rem/1 var(--f-num);min-width:1.5rem;padding:.22rem .45rem;border-radius:1rem;background:color-mix(in srgb,var(--c) 34%,rgba(4,16,40,.6));color:#fff;margin-inline-start:.15rem;text-align:center}
+.stx-big{position:relative;padding-bottom:.6rem}
+.stx-big .ul{position:absolute;inset-inline:0;bottom:0;height:2px;border-radius:1px;background:linear-gradient(to left,var(--c),color-mix(in srgb,var(--c) 0%,transparent));transform-origin:right center;transform:scaleX(0)}
+.stx-plus{align-self:center}
+/* the target's road: stations at equal distances, labels alternating below and above */
+.stx-pts{container-type:inline-size;width:min(76rem,90vw);aspect-ratio:1000/200;margin:2.4rem 0 2.6rem}
+.stx-pts.few{aspect-ratio:1000/140;margin:0 0 4.2rem}
+.stx-pts .p{stroke-dasharray:1000;stroke-dashoffset:1000;transition:none}
+.stx-stn{position:absolute;width:0;height:0;transform:none;display:block;opacity:.3;transition:opacity .45s}
+.stx-stn i{position:absolute;left:0;top:0;width:3.3rem;height:3.3rem;transform:translate(-50%,-50%);transition:background .45s,box-shadow .45s,transform .55s cubic-bezier(.16,1,.3,1)}
+.stx-stn.cur i{animation:none;transform:translate(-50%,-50%) scale(1.12);box-shadow:0 0 0 .4rem color-mix(in srgb,var(--c) 16%,transparent),0 0 26px color-mix(in srgb,var(--c) 60%,transparent)}
+.stx-stn span{position:absolute;left:0;top:2.15rem;width:var(--w);transform:translateX(-50%);display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;text-align:center;font-size:clamp(.88rem,1.08vw,1.08rem);transition:color .45s}
+.stx-stn.up span{top:auto;bottom:2.15rem}
+.stx-stn.cur span{color:color-mix(in srgb,var(--c) 30%,#fff)}
+.stx-wrap.tg{gap:1.5vh}
+/* the controls */
+.stxc{position:fixed;left:50%;bottom:calc(1.4vh + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:40;width:min(48rem,94vw);box-sizing:border-box;display:flex;flex-direction:column;gap:.5rem;padding:.6rem .9rem .55rem;border-radius:1.15rem;background:rgba(3,12,30,.74);border:1px solid rgba(255,255,255,.12);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 12px 40px rgba(0,0,0,.45);color:#fff;font-family:var(--f-head);direction:rtl;opacity:.55;transition:opacity .35s;pointer-events:auto;--c:#46d7cf}
+.stxc:hover,.stxc.act,.stxc.pz,.stxc:focus-within{opacity:1}
+.stxc[hidden]{display:none}
+.stxc-hd{display:flex;align-items:baseline;gap:.6rem;font-size:.88rem;min-width:0;line-height:1.3}
+.stxc-hd b{font-weight:700;color:color-mix(in srgb,var(--c) 70%,#fff);white-space:nowrap}
+.stxc-hd #stxcL{color:rgba(255,255,255,.8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.stxc-hd .n{margin-inline-start:auto;font:600 .8rem var(--f-num);color:rgba(255,255,255,.55);direction:ltr;white-space:nowrap}
+.stxc-bar{display:flex;gap:3px;height:.5rem}
+.stxc-bar i{position:relative;flex:1 1 0;min-width:4px;border-radius:3px;background:rgba(255,255,255,.14);cursor:pointer;overflow:hidden;transition:background .2s}
+.stxc-bar i.g{margin-inline-start:.5rem}
+.stxc-bar i:hover{background:rgba(255,255,255,.3)}
+.stxc-bar i b{position:absolute;inset:0;background:var(--c);transform-origin:right center;transform:scaleX(0)}
+.stxc-bar i.on{box-shadow:0 0 0 1px color-mix(in srgb,var(--c) 70%,transparent)}
+.stxc-row{display:flex;align-items:center;justify-content:center;gap:.3rem;flex-wrap:wrap}
+.stxc button{height:2.6rem;min-width:2.6rem;padding:0 .75rem;border-radius:1.3rem;border:none;background:transparent;color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;font:600 .86rem var(--f-head);cursor:pointer;transition:background .2s}
+.stxc button:hover{background:rgba(255,255,255,.11)}
+.stxc button:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.stxc button svg{width:1.2rem;height:1.2rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.stxc button.pp{width:3.2rem;height:3.2rem;padding:0;border-radius:50%;background:var(--c);color:#04101f}
+.stxc button.pp:hover{background:color-mix(in srgb,var(--c) 80%,#fff)}
+.stxc button.pp svg{width:1.35rem;height:1.35rem;fill:currentColor;stroke:none}
+.stxc .pp .ipl{display:none}
+.stxc.pz .pp .ipl{display:block}
+.stxc.pz .pp .ipz{display:none}
+.stxc .sep{width:1px;height:1.7rem;background:rgba(255,255,255,.14);margin:0 .35rem}
+.stxc-sp{display:flex;gap:2px;padding:2px;border-radius:1.4rem;background:rgba(255,255,255,.07)}
+.stxc-sp button{height:2.3rem;min-width:3rem;padding:0 .55rem;font:600 .84rem var(--f-num);direction:ltr}
+.stxc-sp button[aria-pressed="true"]{background:color-mix(in srgb,var(--c) 85%,#fff);color:#04101f}
+body.stx-show #showCtl{display:none!important}
+body.stx-show .stx .stx-wrap{padding-bottom:calc(9.5rem + 2vh)}
+body.stx-show .stx .ps-map .ps-bt{bottom:calc(8.8rem + 2vh)}
+@media (max-width:760px){.stxc button span{display:none}.stxc .sep{margin:0 .1rem}}
+@media (prefers-reduced-motion:reduce){.stx::after{animation:none}}
 </style>
 </head>
 <body>
@@ -1203,7 +1271,7 @@ html[data-lang="en"] #bLang{font-family:"Madani Arabic","Noto Kufi Arabic","Mada
 <script>
 (function(){
   var base = window.EG_BASE, tries = 0;
-  function part(i){ return fetch(base + "app/app." + i + ".txt?v=436ba56bf9").then(function(r){ if (!r.ok) throw new Error(r.status); return r.blob(); }); }
+  function part(i){ return fetch(base + "app/app." + i + ".txt?v=a50d3c2928").then(function(r){ if (!r.ok) throw new Error(r.status); return r.blob(); }); }
   function go(){
     Promise.all([part(0), part(1)]).then(function(b){
       var s = document.createElement("script"); s.src = URL.createObjectURL(new Blob(b, {type: "text/javascript"})); document.body.appendChild(s);
@@ -1420,4 +1488,4 @@ html[data-lang="en"] #bLang{font-family:"Madani Arabic","Noto Kufi Arabic","Mada
 
 </script>
 </body></html>
-<!-- egymap room v123 -->
+<!-- egymap room v124 -->
