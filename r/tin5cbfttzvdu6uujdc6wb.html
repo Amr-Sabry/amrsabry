@@ -99,7 +99,7 @@
 .ps-cs.on .ps-cv{grid-template-rows:1fr;opacity:1}
 /* the showroom (v126): the photos run round on a wall inside the scene, so the page keeps only the name above and the figures below;
    a soft shade at the top and the bottom keeps them readable over the wall */
-.ps-ui.ps-sr::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(1,8,21,.88) 0,rgba(1,8,21,.6) 12%,rgba(1,8,21,0) 25%,rgba(1,8,21,0) 66%,rgba(1,8,21,.66) 79%,rgba(1,8,21,.92) 100%)}
+.ps-ui.ps-sr::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(1,8,21,.88) 0,rgba(1,8,21,.5) 11%,rgba(1,8,21,0) 19%,rgba(1,8,21,0) 72%,rgba(1,8,21,.62) 82%,rgba(1,8,21,.92) 100%)}
 .ps-sr .ps-bt{bottom:4.2vh;gap:.9rem}
 .ps-sr .ps-row{display:flex;align-items:center;justify-content:center;gap:2.6rem;flex-wrap:wrap;row-gap:.8rem}
 .ps-sr .ps-row .ps-md{position:static;top:auto;width:auto;animation-delay:2.7s}
@@ -1283,7 +1283,7 @@ html[data-lang="en"] #bLang{font-family:"Madani Arabic","Noto Kufi Arabic","Mada
 <script>
 (function(){
   var base = window.EG_BASE, tries = 0;
-  function part(i){ return fetch(base + "app/app." + i + ".txt?v=c3981f24bd").then(function(r){ if (!r.ok) throw new Error(r.status); return r.blob(); }); }
+  function part(i){ return fetch(base + "app/app." + i + ".txt?v=68ffd1c5e4").then(function(r){ if (!r.ok) throw new Error(r.status); return r.blob(); }); }
   function go(){
     Promise.all([part(0), part(1)]).then(function(b){
       var s = document.createElement("script"); s.src = URL.createObjectURL(new Blob(b, {type: "text/javascript"})); document.body.appendChild(s);
@@ -1500,4 +1500,4 @@ html[data-lang="en"] #bLang{font-family:"Madani Arabic","Noto Kufi Arabic","Mada
 
 </script>
 </body></html>
-<!-- egymap room v126 -->
+<!-- egymap room v127 -->
