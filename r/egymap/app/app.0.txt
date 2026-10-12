@@ -26146,3 +26146,9 @@ function streetRaster(D, H, polys, o) {
     for (let k = 0; k < W * W; k++) free[k] = u[k] ? 0 : 1; }
   const DMAX = { motorway: 16, trunk: 16, primary: 15, secondary: 12, tertiary: 11, minor: 8, service: 5 };
   const stamp = (x, z, r) => { const ci = Math.floor((x - OX) / CELL), cj = Math.floor((z - OX) / CELL), rr = Math.ceil(r / CELL); for (let dj = -rr; dj <= rr; dj++) for (let di = -rr; di <= rr; di++) { if (di * di + dj * dj > rr * rr) continue; const i = ci + di, j = cj + dj; if (i >= 0 && i < W && j >= 0 && j < W) roadM[j * W + i] = 1; } };
+  D.roads.forEach(r => { if (r.b === "tunnel" || r.b === "bridge" || r.c === "transit" || r.c === "rail" || r.c === "path") return; const d = DMAX[r.c]; if (!d) return; res(r.pts, CELL).forEach(p => { if (Math.abs(p[0]) <= H && Math.abs(p[1]) <= H) stamp(p[0], p[1], d); }); });
+  (o.seeds || []).forEach(s => { for (let a = 0; a < 1; a++) stamp(s[0], s[1], s[2]); });
+  const br = batch("road", K.mat(0xffffff, { vertexColors: true, roughness: 0.96, doubleSide: true }), true), col = lin(o.asphalt || 0x4a4d50);
+  let act = new Map(); let rects = 0;
+  const flushRect = (r) => { quad(br, [r.x0, 0.05, r.z0], [r.x1, 0.05, r.z0], [r.x1, 0.05, r.z1], [r.x0, 0.05, r.z1], col); rects++; };
+  for (let j = 0; j <= W; j++) { const runs = [];

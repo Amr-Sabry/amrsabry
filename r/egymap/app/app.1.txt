@@ -1,9 +1,3 @@
-  D.roads.forEach(r => { if (r.b === "tunnel" || r.b === "bridge" || r.c === "transit" || r.c === "rail" || r.c === "path") return; const d = DMAX[r.c]; if (!d) return; res(r.pts, CELL).forEach(p => { if (Math.abs(p[0]) <= H && Math.abs(p[1]) <= H) stamp(p[0], p[1], d); }); });
-  (o.seeds || []).forEach(s => { for (let a = 0; a < 1; a++) stamp(s[0], s[1], s[2]); });
-  const br = batch("road", K.mat(0xffffff, { vertexColors: true, roughness: 0.96, doubleSide: true }), true), col = lin(o.asphalt || 0x4a4d50);
-  let act = new Map(); let rects = 0;
-  const flushRect = (r) => { quad(br, [r.x0, 0.05, r.z0], [r.x1, 0.05, r.z0], [r.x1, 0.05, r.z1], [r.x0, 0.05, r.z1], col); rects++; };
-  for (let j = 0; j <= W; j++) { const runs = [];
     if (j < W) { let s = -1; for (let i = 0; i <= W; i++) { const on = i < W && free[j * W + i] && roadM[j * W + i]; if (on && s < 0) s = i; if (!on && s >= 0) { runs.push([s, i]); s = -1; } } }
     const nxt = new Map(); runs.forEach(rn => { const k = rn[0] + "|" + rn[1]; if (act.has(k)) { const r = act.get(k); r.z1 = OX + (j + 1) * CELL; nxt.set(k, r); act.delete(k); } else nxt.set(k, { x0: OX + rn[0] * CELL, x1: OX + rn[1] * CELL, z0: OX + j * CELL, z1: OX + (j + 1) * CELL }); });
     act.forEach(flushRect); act = nxt; }
@@ -25677,7 +25671,7 @@ var PV = {on: false, pi: -1, r: null, B: null, raf: 0, last: 0, t: 0, az: .7, el
 .ps-cs.on .ps-cv{grid-template-rows:1fr;opacity:1}
 /* the showroom (v126): the photos run round on a wall inside the scene, so the page keeps only the name above and the figures below;
    a soft shade at the top and the bottom keeps them readable over the wall */
-.ps-ui.ps-sr::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(1,8,21,.88) 0,rgba(1,8,21,.6) 12%,rgba(1,8,21,0) 25%,rgba(1,8,21,0) 66%,rgba(1,8,21,.66) 79%,rgba(1,8,21,.92) 100%)}
+.ps-ui.ps-sr::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(1,8,21,.88) 0,rgba(1,8,21,.5) 11%,rgba(1,8,21,0) 19%,rgba(1,8,21,0) 72%,rgba(1,8,21,.62) 82%,rgba(1,8,21,.92) 100%)}
 .ps-sr .ps-bt{bottom:4.2vh;gap:.9rem}
 .ps-sr .ps-row{display:flex;align-items:center;justify-content:center;gap:2.6rem;flex-wrap:wrap;row-gap:.8rem}
 .ps-sr .ps-row .ps-md{position:static;top:auto;width:auto;animation-delay:2.7s}
@@ -25848,7 +25842,7 @@ function pvLoop(now){
   PV.el = clamp(PV.el, .03, 1.5); PV.k = clamp(PV.k, .12, 3.2);
   const t = pvFrame(); if (B.tick) B.tick(dt, PV.t, B.k); if (PV.sr && B.car) srTick(dt);
   /* the scan ring rises through the model while it grows, then once more every few seconds */
-  { const m = B.scanM, ph = (PV.t * .22) % 1, grow = B.k < 1.05 ? clamp(B.k / 1.0, 0, 1) : -1, u = grow >= 0 ? grow : ph, hy = Math.max(B.st.size.y, 1) * (B.kind === "model" ? 1.05 : 1.2);
+  { const m = B.scanM, ph = (PV.t * .22) % 1, grow = B.k < 1.05 ? clamp(B.k / 1.0, 0, 1) : -1, u = grow >= 0 ? grow : ph, hy = PV.sr && B.car ? Math.max(B.car.hm, .3) * 1.02 : Math.max(B.st.size.y, 1) * (B.kind === "model" ? 1.05 : 1.2);
     m.visible = B.mode === "holo" || B.kind !== "model"; m.position.set(B.st.c.x, u * hy, B.st.c.z); m.scale.setScalar(PV.sr && B.scR ? B.scR : Math.max(B.st.R * 1.25, 1)); m.material.opacity = .7 * Math.sin(Math.PI * clamp(u, 0, 1)) * (grow >= 0 ? 1 : .55); }
   PV.r.render(B.sc, PV.cam);
   const ld = pvEl.querySelector("#pvLd"); if (!ld.classList.contains("off")) ld.classList.add("off");
@@ -25961,7 +25955,7 @@ function srBuild(B){ psBuild(pvEl, B.p || P[PV.pi], false); srStage(B); PV.el = 
    middle; the podium's rim carries the project's facts on a slow ticker and its top is a dial. Nothing of the model reaches past its
    circle: every part is cut at the circle's edge. The podium and the model are framed together in the band between the name and the
    figures, whatever the screen. */
-const SR_N = 16, SR_FOV = 38, SR_EL = .4, SR_WY = .3;
+const SR_N = 20, SR_FOV = 38, SR_EL = .36, SR_WM = 1.6;
 const srFont = () => (getComputedStyle(document.documentElement).getPropertyValue("--f-head") || "sans-serif").trim();
 function srMirror(tex, rx, ox){ tex.repeat.x = -rx; tex.offset.x = rx + ox; }      /* the wall is seen from inside the cylinder: each picture is flipped so it reads the right way */
 function srPlaceholder(i, p, N){
@@ -26062,7 +26056,8 @@ function srFitPts(B, car){
     B.root.traverse(o => { if (!o.visible || !o.geometry || n > 6000) return; n++; const gm = o.geometry; if (!gm.boundingBox) gm.computeBoundingBox(); bx.copy(gm.boundingBox).applyMatrix4(o.matrixWorld);
       const top = bx.max.y; if (!(top > 0)) return; const dx = Math.max(bx.min.x - c0.x, 0, c0.x - bx.max.x), dz = Math.max(bx.min.z - c0.z, 0, c0.z - bx.max.z); if (Math.hypot(dx, dz) > Rc) return;
       const r = Math.min(Rc, Math.hypot(Math.max(Math.abs(bx.min.x - c0.x), Math.abs(bx.max.x - c0.x)), Math.max(Math.abs(bx.min.z - c0.z), Math.abs(bx.max.z - c0.z)))), k = Math.min(NB - 1, Math.floor(r / Rc * NB)); hR[k] = Math.max(hR[k], top); }); }
-  else hR[Math.floor(NB * .6)] = Math.max(B.st.size.y, 1);
+  else B.root.children.forEach(o => { const gm = o.geometry; if (!o.isMesh || !gm) return; if (!gm.boundingBox) gm.computeBoundingBox(); const bx = gm.boundingBox, top = o.position.y + bx.max.y;      /* the parts still lie flat while they grow: their full height is read from the shapes */
+      const r = Math.min(Rc, Math.hypot(o.position.x - c0.x, o.position.z - c0.z) + Math.max(Math.abs(bx.min.x), Math.abs(bx.max.x), Math.abs(bx.min.z), Math.abs(bx.max.z))), k = Math.min(NB - 1, Math.floor(r / Rc * NB)); if (top > 0) hR[k] = Math.max(hR[k], top); });
   const ring = (r, y, n) => { for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2; pts.push(new THREE.Vector3(c0.x + Math.cos(a) * r, y, c0.z + Math.sin(a) * r)); } };
   ring(Rb * 1.01, y0, 32); ring(Rb * 1.035, y0 - hb, 32);
   hR.forEach((h, k) => { if (h > 0) ring(Rc * (k + 1) / NB, h, 16); });
@@ -26072,7 +26067,7 @@ function srStage(B){
   const st = B.st, p = B.p, R0 = Math.max(st.R, .5), c0 = st.c.clone(), col = SECC[p.sc] || "#46d7cf", C = new THREE.Color(col), W = new THREE.Color(1, 1, 1);
   const Rc = R0 * 1.16, Rb = Rc * 1.17, hb = Rb * .2, y0 = B.kind === "model" ? -Math.max(.05, Rb * .003) : -.13;
   (B.base0 || []).forEach(o => { o.visible = false; });
-  const car = {g: new THREE.Group(), slots: [], list: srList(p), next: 0, tex: [], own: B.own, p, rot: 0, R0, Rc, Rb, hb, y0, c0, ui: SRS.car && SRS.car.ui, d: 0, dT: 0, ox: 0, oy: 0, oxT: 0, oyT: 0, bt: 0, snap: 1, dirty: 1};
+  const car = {g: new THREE.Group(), slots: [], list: srList(p), next: 0, tex: [], own: B.own, p, rot: 0, R0, Rc, Rb, hb, y0, c0, ui: SRS.car && SRS.car.ui, d: 0, dT: 0, ox: 0, oy: 0, oxT: 0, oyT: 0, wy: 0, wyT: 0, bt: 0, snap: 1, dirty: 1};
   const add = (geo, mat, y, ro) => { const m = new THREE.Mesh(geo, mat); m.position.set(c0.x, y, c0.z); if (ro != null) m.renderOrder = ro; B.sc.add(m); B.own.push(mat); return m; };
   /* the podium */
   const dial = srDialTex(col, Rc / Rb); B.own.push(dial);
@@ -26100,19 +26095,36 @@ function srStage(B){
   B.car = car;
 }
 /* the podium and the model fill the band between the name and the figures: sized to it and set in its middle (a view offset, so the turning stays round the model) */
+/* the screen between the name and the figures is shared out: the photos keep the upper part, the podium and the model the lower part,
+   so the model never stands in front of the photos. The far panels' height on the screen does not depend on the distance (the wall goes
+   with the camera), so their strip is measured first; the model is fitted under it, the two are centred together, and the wall is lifted
+   until its lower edge sits just above the model. A view offset does the centring, so turning stays round the model. */
 function srFit(w, h){
   const B = PV.B, car = B.car, cam = PV.cam, el = PV.el; car.fw = w; car.fh = h; car.fel = el; car.dirty = 0;
   const cr = PV.r.domElement.getBoundingClientRect(), hd = car.ui && car.ui.querySelector(".ps-hd"), bt = car.ui && car.ui.querySelector(".ps-bt");
   let top = hd && hd.getClientRects().length ? hd.getBoundingClientRect().bottom - cr.top : h * .16, bot = bt && bt.getClientRects().length && bt.offsetHeight > 4 ? bt.getBoundingClientRect().top - cr.top : h * .8;
-  const mg = Math.min(34, h * .042); top += mg; bot -= mg; if (bot - top < h * .34) { const m = (top + bot) / 2; top = m - h * .17; bot = m + h * .17; }
-  const narrow = w < h * 1.05, fw = narrow ? .92 : .52, fh = .95, t = car.t, v = new THREE.Vector3();
+  const mg = Math.min(30, h * .036); top += mg; bot -= mg; if (bot - top < h * .42) { const m = (top + bot) / 2; top = m - h * .21; bot = m + h * .21; }
+  const narrow = w < h * 1.05, fw = narrow ? .9 : .5, fh = .97, t = car.t, v = new THREE.Vector3(), gap = Math.max(12, h * .022);
   cam.fov = SR_FOV; cam.aspect = w / h; cam.clearViewOffset();
-  let d = car.dT || car.R0 * 5, bb = null;
+  const f = (h / 2) / Math.tan(SR_FOV * Math.PI / 360); let hp = car.ph * SR_WM / (Math.cos(el) + SR_WM) * f;
+  let d = car.dT || car.R0 * 5, bb = null, wy = 0, oy = 0, ox = 0;
   const look = () => { cam.position.set(t.x, t.y + d * Math.sin(el), t.z + d * Math.cos(el)); cam.lookAt(t); cam.updateMatrixWorld(); cam.updateProjectionMatrix();
     bb = [1e9, -1e9, 1e9, -1e9]; for (const q of car.pts) { v.copy(q).project(cam); const sx = (v.x + 1) / 2 * w, sy = (1 - v.y) / 2 * h; bb[0] = Math.min(bb[0], sx); bb[1] = Math.max(bb[1], sx); bb[2] = Math.min(bb[2], sy); bb[3] = Math.max(bb[3], sy); } };
-  for (let i = 0; i < 6; i++) { look(); d *= Math.max((bb[1] - bb[0]) / (w * fw), (bb[3] - bb[2]) / ((bot - top) * fh)); }
-  look(); car.dT = d; car.oxT = (bb[0] + bb[1]) / 2 - w / 2; car.oyT = (bb[2] + bb[3]) / 2 - (top + bot) / 2;
-  if (car.snap) { car.d = car.dT; car.ox = car.oxT; car.oy = car.oyT; }
+  const sy = y => { v.set(t.x, y, t.z - SR_WM * d).project(cam); return (1 - v.y) / 2 * h; };
+  for (let pass = 0; pass < 2; pass++) {
+    const mt = top + hp + gap;
+    for (let i = 0; i < 6; i++) { look(); d *= Math.max((bb[1] - bb[0]) / (w * fw), (bb[3] - bb[2]) / ((bot - mt) * fh)); }
+    look();
+    const G = hp + gap + (bb[3] - bb[2]), gTop = top + Math.max(0, (bot - top - G) / 2);
+    ox = (bb[0] + bb[1]) / 2 - w / 2; oy = bb[2] - (gTop + hp + gap);
+    /* the far panel's lower edge just above the model (found on the unshifted view: higher in the world is higher on the screen) */
+    const Rw = SR_WM * d, want = gTop + hp + oy; let lo = t.y - 4 * Rw, hi = t.y + 4 * Rw;
+    for (let i = 0; i < 40; i++) { const mid = (lo + hi) / 2; if (sy(mid) > want) lo = mid; else hi = mid; }
+    const yb = (lo + hi) / 2; wy = (yb + car.ph * Rw / 2 - t.y) / d;
+    hp = sy(yb) - sy(yb + car.ph * Rw);                                   /* measured, for the second pass */
+  }
+  car.dT = d; car.oxT = ox; car.oyT = oy; car.wyT = wy;
+  if (car.snap) { car.d = car.dT; car.ox = car.oxT; car.oy = car.oyT; car.wy = car.wyT; }
 }
 function srFrame(){
   const B = PV.B, car = B.car, cam = PV.cam; if (!car) return B.st.c;
@@ -26120,12 +26132,12 @@ function srFrame(){
   PV.el = clamp(PV.el, .12, .95); PV.k = clamp(PV.k, .55, 1.7);
   if (car.dirty || car.fw !== w || car.fh !== h || Math.abs(car.fel - PV.el) > .012) srFit(w, h);
   const now = performance.now(), dt = Math.min(.1, (now - (car.lt || now)) / 1000), a = car.snap ? 1 : 1 - Math.exp(-dt * 4); car.lt = now; car.snap = 0;
-  car.d += (car.dT - car.d) * a; car.ox += (car.oxT - car.ox) * a; car.oy += (car.oyT - car.oy) * a;
+  car.d += (car.dT - car.d) * a; car.ox += (car.oxT - car.ox) * a; car.oy += (car.oyT - car.oy) * a; car.wy += (car.wyT - car.wy) * a;
   if (cam.fov !== SR_FOV) cam.fov = SR_FOV;
   const d = car.d * PV.k, el = PV.el, t = car.t;
   cam.position.set(t.x + d * Math.cos(el) * Math.sin(PV.az), t.y + d * Math.sin(el), t.z + d * Math.cos(el) * Math.cos(PV.az));
   cam.near = Math.max(.02, d / 150); cam.far = d * 14; cam.lookAt(t); cam.setViewOffset(w, h, car.ox * PV.k, car.oy * PV.k, w, h); cam.updateProjectionMatrix();
-  const Rw = Math.max(car.d * 1.6, d * 1.3); car.g.scale.setScalar(Rw); car.g.position.set(car.c0.x, t.y - Rw * SR_WY, car.c0.z);
+  const Rw = Math.max(car.d * SR_WM, d * 1.3); car.g.scale.setScalar(Rw); car.g.position.set(car.c0.x, t.y + car.wy * car.d, car.c0.z);
   return t;
 }
 function srTick(dt){
