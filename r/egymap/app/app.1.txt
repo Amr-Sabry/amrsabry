@@ -25620,11 +25620,11 @@ function tlsMeasure(){ const a = $("app").getBoundingClientRect(), d = dockEl.ge
 function tlsOpen(){
   if (TLS.open) return; dockCloseOver("tls"); if (S.show) stopShow(); if (S.check) toggleNotes(false);
   TLS.open = true; TLS.sig = ""; TLS.y = 0; TLS.sec = -1; tlsMeasure(); tlsEl.classList.remove("out"); tlsEl.hidden = false; $("app").classList.add("tls-on"); tlxEl.setAttribute("aria-expanded", "true");
-  TLS.spd0 = S.speed; S.speed = 0.22; stopIntro(true); closeCard(false); tlsSync(true);
+  TLS.spd0 = S.speed; S.speed = 0.22; stopIntro(true); closeCard(false); tlsSync(true); if (typeof AXL !== "undefined" && AXL.docked) { AXL.so = !!TLS.open; AXL.place = ""; axlPlace(); }
 }
 function tlsClose(){
   if (!TLS.open) return; TLS.open = false; TLS.timers.forEach(clearTimeout); TLS.timers = []; if (S.playing) setPlaying(false); if (TLS.spd0 != null) { S.speed = TLS.spd0; TLS.spd0 = null; }
-  S.hl = null; S.hoverP = -1; TLS.hl = null; tlsEl.classList.add("out"); $("app").classList.remove("tls-on"); tlxEl.setAttribute("aria-expanded", "false");
+  S.hl = null; S.hoverP = -1; TLS.hl = null; tlsEl.classList.add("out"); $("app").classList.remove("tls-on"); tlxEl.setAttribute("aria-expanded", "false"); if (typeof AXL !== "undefined" && AXL.docked) { AXL.so = !!TLS.open; AXL.place = ""; axlPlace(); }
   const gone = () => { if (!TLS.open) { tlsEl.hidden = true; tlsEl.classList.remove("out"); } }; setTimeout(gone, tlsReduce ? 0 : 320); if (tlsReduce) gone();
 }
 function tlsToggle(){ if (TLS.open) tlsClose(); else tlsOpen(); }
@@ -27278,7 +27278,10 @@ const AXSH = [T("التنمية الاقتصادية"), T("أمن الطاقة")
 /* the row sits on the timeline, as wide as it */
 function axlPlace(){
   const tl = $("tl"), app = $("app"); if (!tl || !app || !tl.getClientRects().length) return; const r = tl.getBoundingClientRect(), a = app.getBoundingClientRect();
-  let top = r.top; tl.querySelectorAll("*").forEach(e => { const q = e.getBoundingClientRect(); if (q.height > 0 && q.bottom > r.top - 80 && q.top < top) top = q.top; });   /* the year bars and their figures stand above the panel's own edge */
+  let top = r.top; tl.querySelectorAll("*").forEach(e => { if (e.closest(".tkr")) return; const q = e.getBoundingClientRect(); if (q.height > 0 && q.bottom > r.top - 80 && q.top < top) top = q.top; });
+  { const h = $("hist"); if (h) app.style.setProperty("--axU", Math.max(0, Math.round(h.getBoundingClientRect().top - (top - 8 - AXL.el.offsetHeight))) + "px"); }
+  if (typeof TLS !== "undefined" && TLS.open && typeof tlsEl !== "undefined" && !tlsEl.hidden && tlsEl.offsetParent) { const c = getComputedStyle(tlsEl), up = parseFloat(c.bottom) + parseFloat(c.height);   /* layout position, not the entrance animation */
+    if (up > 0) top = Math.min(top, tlsEl.offsetParent.getBoundingClientRect().bottom - up); }   /* the year bars and their figures stand above the panel's own edge */
   const k = Math.round(r.left - a.left) + "|" + Math.round(r.width) + "|" + Math.round(a.bottom - top); if (k === AXL.place) return; AXL.place = k;
   AXL.el.style.setProperty("--dl", (r.left - a.left) + "px"); AXL.el.style.setProperty("--dw", r.width + "px"); AXL.el.style.setProperty("--db", (a.bottom - top + 8) + "px");
 }
@@ -27295,13 +27298,13 @@ function axlDock(){
     b.style.transform = `translate(${f.left - l.left}px,${f.top - l.top}px) scale(${f.width / l.width},${f.height / l.height})`; });
   void AXL.row.offsetWidth;
   AXL.btn.forEach((b, i) => { b.style.transition = `transform .9s cubic-bezier(.2,.85,.25,1) ${i * 55}ms`; b.style.transform = ""; });
-  setTimeout(() => AXL.btn.forEach(b => { b.style.transition = ""; b.style.transformOrigin = ""; }), 1500);
+  setTimeout(() => { AXL.btn.forEach(b => { b.style.transition = ""; b.style.transformOrigin = ""; }); AXL.el.classList.add("st"); }, 1500);
 }
 function axlTick(){
   const now = performance.now();
   if (AXL.big && !AXL.docked && !intro && now - AXL.t0 > 5200) axlDock();
-  if (AXL.docked && ++AXL.k % 30 === 0) axlPlace();
-  const hide = !!S.show || (typeof PV !== "undefined" && PV.on); AXL.el.classList.toggle("hide", hide && AXL.docked);
+  if (AXL.docked) { const so = typeof TLS !== "undefined" && !!TLS.open; if (so !== AXL.so) { AXL.so = so; AXL.place = ""; axlPlace(); } else if (now - (AXL.pt || 0) > 400) { AXL.pt = now; axlPlace(); } }
+  const hide = !!S.show || (typeof PV !== "undefined" && PV.on); AXL.el.classList.toggle("hide", hide && AXL.docked); { const up = AXL.docked && !hide, ap = $("app"); if (ap && ap.classList.contains("axd") !== up) ap.classList.toggle("axd", up); }
   AXL.btn.forEach((b, a) => { const v = stat.secCnt[a] || 0, s = AXL.shown[a], n = Math.abs(v - s) < .5 ? v : s + (v - s) * .25; AXL.shown[a] = n;
     const t = String(Math.round(n)); if (AXL.cnt[a].textContent !== t) AXL.cnt[a].textContent = t;
     const on = S.sec === a; if (b.classList.contains("on") !== on) { b.classList.toggle("on", on); b.setAttribute("aria-pressed", String(on)); }
