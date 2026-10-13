@@ -21587,7 +21587,8 @@ function updateModels3d(dt){
   if (want && now - m3BuiltAt > 140) { if (built >= M3_MAX && far && far.dist > want.dist && !(sim.on && sim.pi >= 0 && P[sim.pi].i === far.pi)) { model3dDrop(far); built--; } if (built < M3_MAX) { m3BuiltAt = now; model3dBuild(want); } }
   /* the map's own massing around a standing model is cleared (up to four models at once, nearest first), so no neighbouring block ever stands in front of it */
   { const cl = CU.uMdl.value, lst = on ? MODELS3D.filter(q => q.map && q.h && q.dist < R).sort((a, b) => a.dist - b.dist) : [];
-    for (let i = 0; i < 4; i++) { const q = lst[i]; if (q) cl[i].set(q.x, q.z, Math.max(q.rM * 1.15, 45) * Math.max(q.sx, q.sz)); else cl[i].set(0, 0, 0); } }
+    for (let i = 0; i < 4; i++) { const q = lst[i]; if (q) cl[i].set(q.x, q.z, Math.max(q.rM * 1.15, 45) * Math.max(q.sx, q.sz)); else cl[i].set(0, 0, 0); }
+    if (sim.on && sim.showM && !sim.arch && sim.fpR > 0 && mL < 0.5) { let k = cl.findIndex(v => v.z === 0); if (k < 0) k = 3; cl[k].set(sim.site.x, sim.site.z, sim.fpR * sim.s * 1.08); } }
   /* focus: when the camera is close to one model, any other model standing between the camera and it (or enclosing it) is dimmed away so it never hides the focused model's details */
   { let foc = null, fc = 1e9;
     if (on) for (const q of MODELS3D) { if (!q.map || !q.h) continue; const r = q.rM * Math.max(q.sx, q.sz), d = Math.hypot(controls.target.x - q.x, controls.target.z - q.z); if (d < r * 1.3 && d / r < fc) { fc = d / r; foc = q; } }
@@ -22372,7 +22373,7 @@ function showSim(pi, ov){
   simDispose(); simModel = new THREE.Group(); simG.add(simModel);
   sim.pi = pi; sim.k0 = site.nat ? -1 : p.ins[0]; sim.type = type; sim.site = site; sim.sc = p.sc; sim.nat = site.nat; sim.pulse = p.kd === "p" ? 1 : 0;
   setSimColor(p.sc);
-  sim.sizeM = simSizeM(p, type); sim.custom = type === "custom" && !!ADM.models[p.i]; sim.exact = !!site.exact || !!p.admLoc; const g = GEO[p.i]; sim.real = simIsReal(p);
+  sim.sizeM = simSizeM(p, type); sim.custom = type === "custom" && !!ADM.models[p.i]; sim.exact = !!site.exact || !!p.admLoc; const g = GEO[p.i]; sim.real = simIsReal(p); sim.showM = inShow() && !sim.custom; sim.fpR = 0;
   cityHighlight(null); sim.hiAcc = 1;
   buildRoute(sim.exact ? g : null); routeMat.uniforms.uC.value.copy(col(SECC[p.sc]));
   siteBuild(p, sim.exact ? g : null, site); dressClear();
@@ -22388,6 +22389,8 @@ function showSim(pi, ov){
     const bs = pt.sc || [1, 1, 1]; mesh.scale.set(bs[0], 1e-3, bs[2]); pt.geo.computeBoundingBox(); mesh.renderOrder = ghost ? 4.5 : pt.geo.boundingBox.max.y - pt.geo.boundingBox.min.y < .07 && pt.y < .09 && !pt.mv ? 3.6 : 4; simModel.add(mesh);      /* ground slabs and decals first, solids, then the unbuilt ghost parts */
     return {pt, mesh, bs, ghost, d: i === 0 ? 0 : .05 + i / (n - 1) * .66};
   });
+  sim.parts.forEach(q => { const bb = q.pt.geo.boundingBox; if (!bb || (bb.max.y - bb.min.y < .07 && q.pt.y < .09)) return;
+    const ex = Math.max(Math.abs(bb.min.x), Math.abs(bb.max.x)) * q.bs[0], ez = Math.max(Math.abs(bb.min.z), Math.abs(bb.max.z)) * q.bs[2]; sim.fpR = Math.max(sim.fpR, Math.hypot(q.pt.x, q.pt.z) + Math.hypot(ex, ez)); });
   sim.k = 0; sim.hold = false; sim.on = true; simG.visible = true; sim.rot = .4;
   const lb = document.getElementById("simfx"); if (lb) lb.hidden = false; buildSimFx(p, type);
 }
@@ -22463,11 +22466,11 @@ function updateSim(dt, t){
   sim.s = lerp(simRealS(sim.sizeM), SIM_S, mL);
   sim.baseY = lerp(H + sim.ty * TU.uRel.value + (sim.real ? .03 : sim.custom ? .004 : .32) * sim.s, plates[sim.sc].y + .4, mL);
   simG.position.set(sim.site.x, sim.baseY, sim.site.z); simG.scale.setScalar(sim.s); simModel.rotation.y = sim.real ? 0 : sim.custom ? sim.rot * (mL > 0.5 ? 1 : 0) : sim.rot;
-  simModel.visible = mL > 0.5 || !!sim.custom || (!sim.arch && !(sim.real && hiMesh));   /* v135: on the map the illustrative model stands only where no code-built model and no lit real buildings stand */
+  simModel.visible = mL > 0.5 || !!sim.custom || (!sim.arch && (!!sim.showM || !(sim.real && hiMesh)));   /* v135: on the map the illustrative model stands only where no code-built model and no lit real buildings stand */
   CU.uGrow.value = clamp((sim.k - 0.08) / 0.85, 0, 1);
   /* the real buildings at an exactly located site light up in the sector colour */
-  CU.uHiCol.value.set(SECC[sim.sc]); CU.uHiK.value = sim.real ? v0 * (1 - mL) : 0; CU.uHiR.value = 0;
-  if (sim.real && sim.on) { sim.hiAcc = (sim.hiAcc || 0) + dt; if (sim.hiAcc > 0.5) { sim.hiAcc = 0; cityHighlight(GEO[P[sim.pi].i], sim.site); } }
+  CU.uHiCol.value.set(SECC[sim.sc]); CU.uHiK.value = sim.real && !(sim.showM && !sim.arch) ? v0 * (1 - mL) : 0; CU.uHiR.value = 0;
+  if (sim.real && sim.on && !(sim.showM && !sim.arch)) { sim.hiAcc = (sim.hiAcc || 0) + dt; if (sim.hiAcc > 0.5) { sim.hiAcc = 0; cityHighlight(GEO[P[sim.pi].i], sim.site); } }
   [simPlate, simCone, simPool, simShade].forEach(o => o.visible = mL > 0.5);
   routeMat.uniforms.uA.value = v0 * (1 - mL) * (0.35 + 0.65 * ZS.close);
   simApprox.visible = !sim.exact && !sim.nat && mL < 0.5; if (simApprox.visible) { const r = 1500 * M2U / sim.s; simApprox.scale.set(r, 1, r); simApprox.material.opacity = 0.55 * v0; simApprox.rotation.y = t * 0.03; }
@@ -23192,6 +23195,11 @@ const IG_FW = {e: 600, h: 700, ht: 700, u: 600, l: 700, b: 500, n: 500, q: 700, 
 const IG_FF = {h: "--f-num", sn: "--f-num", b: "--f-body", n: "--f-body"};
 function igMw(t, k, fs){ igCtx.font = `${IG_FW[k] || 600} ${fs}px ${getComputedStyle(document.documentElement).getPropertyValue(IG_FF[k] || "--f-head")}`; return igCtx.measureText(String(t)).width; }
 const igDeg = (w, rr) => w / rr * 180 / Math.PI;
+/* a headline too wide for its card: lines broken at «·» first, then between words (measured, three lines at most) */
+function igWrapHt(t, W, fs){ const out = []; let c = ""; const fit = x => igMw(x, "ht", fs) <= W;
+  String(t).split(" · ").forEach(sg => { if (fit(sg)) { const nx = c ? c + " · " + sg : sg; if (!c || fit(nx)) c = nx; else { out.push(c); c = sg; } return; }
+    sg.split(/\s+/).forEach(wd => { const nx = c ? c + " " + wd : wd; if (!c || fit(nx)) c = nx; else { out.push(c); c = wd; } }); });
+  if (c) out.push(c); if (out.length > 3) { out.length = 3; out[2] += "…"; } return out; }
 function igLayout(q){
   const info = ohInfo(q, P[OH.pid]); if (!info) return null;
   const MAX = info.span, r0 = OWI0, Lmax = rr => rr * (MAX - 8) * Math.PI / 180 * .92, plan = [];
@@ -23216,8 +23224,11 @@ function igLayout(q){
       plan.push({k: "line", r: r + 40, t: "\u2066" + (pc >= 0 ? "+" : "") + pc + "%\u2069", fs: 64, cls: "ig-h"}); need = Math.max(need, igDeg(igMw("+" + pc + "%", "h", 64), r + 40) + 8);
       plan.push({k: "line", r: r + 92, t: c.what || "نسبة الزيادة", fs: 20, cls: "ig-u"}); r += 114;
       plan.push({k: "bars", r, rows, lw, mx: Math.max(va, vb)}); need = Math.max(need, igDeg(lw, r + 40) + 30); r += 2 * 42 + 6; return; }
-    const [fs, lh] = IG_S[b.k], wrapIt = b.k === "b" || b.k === "l" || b.k === "q" || b.k === "n" || b.k === "e";
-    const lines = wrapIt ? igBalance(ohWrap(b.t, Lmax(r + lh), fs, b.mx || (b.k === "n" || b.k === "e" ? 2 : 3))) : [b.t];
+    let [fs, lh] = IG_S[b.k]; const wrapIt = b.k === "b" || b.k === "l" || b.k === "q" || b.k === "n" || b.k === "e";
+    let lines = wrapIt ? igBalance(ohWrap(b.t, Lmax(r + lh), fs, b.mx || (b.k === "n" || b.k === "e" ? 2 : 3))).map(t => t.replace(/^\s*[·/،]\s*/, "").replace(/\s*[·/]\s*(…?)$/, "$1")) : [b.t];   /* no line starts or ends on a separator */
+    if (b.k === "ht") { const W = Lmax(r + lh / 2), w0 = igMw(b.t, "ht", fs);
+      if (w0 > W) { const f1 = Math.floor(fs * W / w0); if (f1 >= 38) fs = f1; else { lines = igWrapHt(b.t, W, fs); const mw = Math.max(...lines.map(t => igMw(t, "ht", fs))); if (mw > W) fs = Math.max(24, Math.floor(fs * W / mw)); }
+        lh = Math.round(IG_S.ht[1] * fs / IG_S.ht[0]); } }
     lines.forEach(t => { need = Math.max(need, igDeg(igMw(t, b.k, fs), r + lh / 2) + 7); plan.push({k: "line", r: r + lh / 2, t, fs, cls: "ig-" + b.k}); r += lh; });
     if (b.k === "e") r += 4;
   });
