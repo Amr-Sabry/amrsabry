@@ -22032,6 +22032,7 @@ const SIM_DEF = ["hous", "road", "power", "agri", "ind", "soc", "cult", "gov"];
 const SIM_NAME = {air: "مطار ومبنى ركاب", port: "ميناء ومحطة حاويات", rail: "محطة وقطار", hosp: "مستشفى", edu: "جامعة ومنشأة تعليمية", solar: "طاقة شمسية ورياح", oil: "منشأة بترولية", agri: "صوب وري مركزي", ind: "مصنع ومنطقة صناعية", power: "محطة كهرباء", water: "محطة مياه ومعالجة", sport: "استاد ومنشأة رياضية", cult: "متحف ومعلم تراثي", road: "كوبري ومحور طرق", gov: "مبنى إداري ومركز بيانات", hous: "مجتمع عمراني", soc: "مركز خدمات اجتماعية", prog: "برنامج أو مبادرة (رمز تجريدي)"};
 function simType(p){ if (p.n0 != null) p = Object.assign({}, p, {n: p.n0, sm: p.sm0});   /* English mode: the rules below read the Arabic originals */
   if (ADM.models[p.i]) return "custom";                       /* a model traced from an image in the settings page */
+  if (GEO[p.i] && GEO[p.i].hq) return "gov";                  /* v135: a nationwide programme placed at its executing body's headquarters */
   if (p.simT && SIM_NAME[p.simT] && p.simT !== "custom") return p.simT;   /* model type chosen in the settings page */
   if (SIM_PROG.test(p.n)) return "prog";
   for (const [k, r] of SIM_RULES) if (r.test(p.n)) return k;
@@ -22366,7 +22367,7 @@ function simScaleNow(){ return S.mode === "layers" ? SIM_S : simRealS(sim.sizeM)
 function simSiteTy(site, sc){ const c = relH(site.x, site.z); let m = c; const k = (sc || SIM_S) / SIM_S; for (let a = 0; a < 10; a++) for (const r of [1, 2, 3]) m = Math.max(m, relH(site.x + Math.cos(a * .628) * r * k, site.z + Math.sin(a * .628) * r * k)); return c + (m - c) * .85; }
 function simDispose(){ if (sim.arch) { sim.arch.h.dispose(); sim.arch = null; } simModel.traverse(o => { if (o.geometry) o.geometry.dispose(); }); simG.remove(simModel); }
 function showSim(pi, ov){
-  if (!pvHas(P[pi]) || !pvMap(P[pi])) { hideSim(); return; }      /* the simulation only ever stands a real model on the map: no generic symbols of a kind */
+  if (!pvMap(P[pi])) { hideSim(); return; }      /* v135: every project on the map stands a model: its own, or the illustrative one of its kind (said so on the card) */
   const p = P[pi], site = simSite(p), type = ov || simType(p);
   simDispose(); simModel = new THREE.Group(); simG.add(simModel);
   sim.pi = pi; sim.k0 = site.nat ? -1 : p.ins[0]; sim.type = type; sim.site = site; sim.sc = p.sc; sim.nat = site.nat; sim.pulse = p.kd === "p" ? 1 : 0;
@@ -22462,7 +22463,7 @@ function updateSim(dt, t){
   sim.s = lerp(simRealS(sim.sizeM), SIM_S, mL);
   sim.baseY = lerp(H + sim.ty * TU.uRel.value + (sim.real ? .03 : sim.custom ? .004 : .32) * sim.s, plates[sim.sc].y + .4, mL);
   simG.position.set(sim.site.x, sim.baseY, sim.site.z); simG.scale.setScalar(sim.s); simModel.rotation.y = sim.real ? 0 : sim.custom ? sim.rot * (mL > 0.5 ? 1 : 0) : sim.rot;
-  simModel.visible = mL > 0.5 || !!sim.custom;   /* the illustrative model only lives on the abstract layer plates; on the map everything is real scale */
+  simModel.visible = mL > 0.5 || !!sim.custom || (!sim.arch && !(sim.real && hiMesh));   /* v135: on the map the illustrative model stands only where no code-built model and no lit real buildings stand */
   CU.uGrow.value = clamp((sim.k - 0.08) / 0.85, 0, 1);
   /* the real buildings at an exactly located site light up in the sector colour */
   CU.uHiCol.value.set(SECC[sim.sc]); CU.uHiK.value = sim.real ? v0 * (1 - mL) : 0; CU.uHiR.value = 0;
@@ -23834,10 +23835,11 @@ function projectHTML(pi){
   const showRaw = (p.cf || p.cd === "—") && p.cr;
   return `<div class="hd"><span class="sect"><span class="sic">${svgI(p.sc)}</span><span>${SECS[p.sc].n}</span></span>${bkBtn("x")}</div>
   <h2>${esc(p.n)}</h2>${p.adm ? `<div class="admchip"><i></i>${T("بيانات مُدخلة من صفحة الإعدادات")}</div>` : ""}
-  ${!pvHas(p) ? "" : `<div class="simnote"><span><i></i>${(() => { const g = GEO[p.i], m3n = MODELS3D.find(m => m.pi === p.i && m.note); { const an = admSimNote(p); if (an) return an; } if (!pvMap(p)) return p.onMap ? T("المجسم للمعاينة فقط ولا يوضع على الخريطة") : T("المجسم للمعاينة فقط: لا يوجد موقع واحد مؤكد للمشروع على الخريطة"); if (simIsReal(p)) return (g.b > 12 ? T("مباني الموقع الفعلية") : T("المبنى الفعلي")) + T(" على الخريطة بالحجم الحقيقي (OpenStreetMap)") + (m3n ? " · " + T(m3n.note) : "");
+  ${!pvHas(p) && !pvMap(p) ? "" : `<div class="simnote"><span><i></i>${(() => { const g = GEO[p.i], m3n = MODELS3D.find(m => m.pi === p.i && m.note); { const an = admSimNote(p); if (an) return an; }
+    if (!pvHas(p)) { const ty = simType(p); return T("تصوّر توضيحي · ") + T(SIM_NAME[ty] || "") + T(" — وليس التصميم المعتمد للمشروع") + (simIsReal(p) && !(g && g.hq) ? " · " + T("مباني الموقع الفعلية مضاءة على الخريطة (OpenStreetMap)") : ""); } if (!pvMap(p)) return p.onMap ? T("المجسم للمعاينة فقط ولا يوضع على الخريطة") : T("المجسم للمعاينة فقط: لا يوجد موقع واحد مؤكد للمشروع على الخريطة"); if (simIsReal(p)) return (g.b > 12 ? T("مباني الموقع الفعلية") : T("المبنى الفعلي")) + T(" على الخريطة بالحجم الحقيقي (OpenStreetMap)") + (m3n ? " · " + T(m3n.note) : "");
     if (m3n) return T(m3n.note); if (simIsRoute(p)) return T("المسار الفعلي على الخريطة (OpenStreetMap)");
     if (g && p.kd === "e") return T("الموقع الفعلي · الهيكل والرافعات رمز لحالة التنفيذ"); if (g && g.pl) return T("حدود الموقع الفعلية على الخريطة (OpenStreetMap)"); if (g && g.hq) return T("النقطة على مقر الجهة المنفذة · المشروع على مستوى الجمهورية"); if (g && g.v === "g") return T("الموقع الفعلي على الخريطة (حُدِّد من خرائط جوجل)"); if (g) return g.v === "r" ? T("الموقع الفعلي على الخريطة (حُدِّد بالمراجعة على الصور الجوية)") : T("الموقع الفعلي على الخريطة (OpenStreetMap)");
-    return T("المجسم للمعاينة فقط: لا يوجد موقع واحد مؤكد للمشروع على الخريطة"); })()}</span><button class="rp" type="button">⟲ ${T("إعادة المحاكاة")}</button><button class="rp pvb" type="button">▣ ${T("معاينة المجسم")}</button></div>`}
+    return T("المجسم للمعاينة فقط: لا يوجد موقع واحد مؤكد للمشروع على الخريطة"); })()}</span><button class="rp" type="button">⟲ ${T("إعادة المحاكاة")}</button>${pvHas(p) ? `<button class="rp pvb" type="button">▣ ${T("معاينة المجسم")}</button>` : ""}</div>`}
   <div class="bgrid">
     <div class="bt w2"><span class="lbl">${T("الجهة")}</span><b class="lgrow" data-mn="${esc(p.mn).replace(/"/g, "&quot;")}">${lgHTML(p.mn, "")}<span>${esc(p.mn)}</span></b></div>
     <div class="bt"><span class="lbl">${when[0]}</span><b${when[2] ? ' class="num"' : ""}>${when[1]}</b>${p.dt && String(p.dt) !== String(when[1]) && String(p.dt) !== String(p.y) ? `<em class="osm">${esc(p.dt)}</em>` : ""}</div>
@@ -23875,7 +23877,7 @@ function openProject(pi, list, quiet, direct){
   card.querySelectorAll(".rp").forEach(b => pvRpInit(b, pi));
   if (p.onMap) selFXTarget = q; else { selFX.visible = false; selFXTarget = null; }
   if (!quiet) {
-    if (!pvHas(p)) { hideSim(); pvClose(); if (p.onMap && !inShow()) { rememberView(); flyTo(focusView(q.x, q.z, 4), 1600); } }      /* v133: no model yet, the map still goes to the project's point */
+    if (!pvHas(p)) { pvClose(); if (pvMap(p)) { showSim(pi); if (!inShow()) { rememberView(); diveTo(pi); } } else { hideSim(); if (p.onMap && !inShow()) { rememberView(); flyTo(focusView(q.x, q.z, 4), 1600); } } }      /* v135: the illustrative model of its kind stands at its point */
     else if (pvMap(p)) { pvClose(); showSim(pi); if (!inShow()) { rememberView(); diveTo(pi); } }      /* a pick goes straight into the project on the map; «معاينة المجسم» in the card still opens the preview */
     else { hideSim(); pvOverview(pi); pvOpen(pi); }
   }
