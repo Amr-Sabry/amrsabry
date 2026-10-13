@@ -23068,12 +23068,18 @@ function ohWrap(t, L, fs, maxL){ const cap = Math.max(3, Math.floor(L / (fs * 0.
   if (out.length > maxL) { out.length = maxL; out[maxL - 1] += "…"; } return out; }
 function ohLine(t, r, a0, a1, fs, cls){ const id = "ohtp" + (ohTp++), d = ohFront((a0 + a1) / 2) ? `M${ohPt(r, a1)}A${r},${r} 0 0 0 ${ohPt(r, a0)}` : `M${ohPt(r, a0)}A${r},${r} 0 0 1 ${ohPt(r, a1)}`;
   return `<path id="${id}" d="${d}" fill="none" stroke="none"/><text class="${cls}" style="font-size:${fs}px" dominant-baseline="central"><textPath href="#${id}" startOffset="50%" text-anchor="middle">${ohEsc(t)}</textPath></text>`; }
-function ohIcon(svg, r, mid, size, cls){ const [x, y] = ohPt(r, mid), rot = ohFront(mid) ? mid - 90 : mid + 90;
-  return `<g class="${cls}" transform="translate(${x} ${y}) rotate(${rot.toFixed(1)}) translate(${-size / 2} ${-size / 2})">${svg.replace("<svg ", `<svg width="${size}" height="${size}" `)}</g>`; }
+function ohIcon(svg, r, mid, size, cls, bd){ const [x, y] = ohPt(r, mid), rot = ohFront(mid) ? mid - 90 : mid + 90;
+  return `<g class="${cls}" transform="translate(${x} ${y}) rotate(${rot.toFixed(1)}) translate(${-size / 2} ${-size / 2})">${svg.replace("<svg ", `<svg width="${size}" height="${size}" `)}</g>` + (bd == null ? "" : ohBadge(bd, x, y, rot, size)); }
+/* the photo count: a small disc at the icon's upper corner (the reading side's start: left in Arabic, right in English) */
+function ohBadge(n, x, y, rot, size){ const t = String(n), w = Math.max(40, 16 + t.length * 14), dx = (EN ? 1 : -1) * (size / 2 + w / 2 - 8);
+  return `<g class="phb${n ? "" : " z"}" transform="translate(${x} ${y}) rotate(${rot.toFixed(1)}) translate(${dx.toFixed(1)} ${(-size / 2).toFixed(1)})"><rect x="${-w / 2}" y="-20" width="${w}" height="40" rx="20"/><text y="1">${t}</text></g>`; }
+/* how many photos the showroom has for the project on the wheel; null while the room's photo index is not in (or absent) */
+function ohPhN(){ const X = typeof EGPH !== "undefined" ? EGPH : null, p = P[OH.pid]; if (!X || !p) return null;
+  try { const st = X.state; if (!st || !st.loaded) return null; return X.count(p) | 0; } catch (e) { return null; } }
 function ohStack(items, rIn, rOut, a0, a1, mid){
   const hs = items.map(it => it.icon ? it.size + 6 : it.fs * 1.28), tot = hs.reduce((x, y) => x + y, 0), front = ohFront(mid);
   let r = front ? (rIn + rOut) / 2 - tot / 2 : (rIn + rOut) / 2 + tot / 2, out = "";
-  items.forEach((it, i) => { const h = hs[i], rc = front ? r + h / 2 : r - h / 2; out += it.icon ? ohIcon(it.icon, rc, mid, it.size, it.cls) : ohLine(it.t, rc, a0, a1, it.fs, it.cls); r = front ? r + h : r - h; });
+  items.forEach((it, i) => { const h = hs[i], rc = front ? r + h / 2 : r - h / 2; out += it.icon ? ohIcon(it.icon, rc, mid, it.size, it.cls, it.bd) : ohLine(it.t, rc, a0, a1, it.fs, it.cls); r = front ? r + h : r - h; });
   return out; }
 /* the dial inside the ring: ticks every 5°, figures every 30°, turned so north stays north */
 { let d = `<circle class="r1" cx="${OWC}" cy="${OWC}" r="${OW0 - 6}"/><circle class="r2" cx="${OWC}" cy="${OWC}" r="${OW0 - 46}"/>`;
@@ -23104,7 +23110,7 @@ function ohDraw(){
   let s = "", ss = "", tx = ""; ohTp = 0;
   OH.segs.forEach(q => { const on = OH.sel === q.k, a0 = q.a0 + OH.rot + 1.1, a1 = q.a1 + OH.rot - 1.1, mid = (q.a0 + q.a1) / 2 + OH.rot, L = (OW0 + OW1) / 2 * (a1 - a0) * Math.PI / 180 * 0.9, c = "tt" + (on ? " on" : "") + (q.x ? " x" : ""); q.mid = mid;
     s += `<g class="s${on ? " on" : ""}${q.x ? " x" : ""}" data-k="${q.k}"><path class="f" d="${ohSect(OW0, OW1, a0, a1)}"/><path class="h" d="${ohSect(OW1 - 7, OW1, a0 + .4, a1 - .4)}"/></g>`;
-    const ic = {icon: OHI[q.k], size: q.v ? 26 : 30, cls: "ti" + (on ? " on" : "")};
+    const ic = {icon: OHI[q.k], size: q.v ? 26 : 30, cls: "ti" + (on ? " on" : ""), bd: q.k === "md" ? ohPhN() : null};
     const items = q.nm ? ohWrap(q.nm, L, 30, 2).map(t => ({t, fs: 30, cls: c + " nm"})) : q.v ? [ic, {t: q.v, fs: 30, cls: c + " v"}, {t: q.t, fs: 19, cls: c}] : [ic, {t: q.t + (q.sub ? (on ? " ▴" : " ▾") : ""), fs: 21, cls: c}];
     tx += ohStack(items, OW0 + 6, OW1 - 10, a0 + 1, a1 - 1, mid);
     if (on && q.sub && !OH.rotTw) { /* sub-arcs: one regular shape each, a minimum width, spread evenly round their parent and joined to it */
@@ -23377,7 +23383,8 @@ addEventListener("keydown", e => { if (e.key === "Escape" && OH.sel && OH.vis) {
 /* photos: what the old card ring loads for this project (shipped media and media added on this device), cycling every few seconds */
 function ohMedia(dt){
   const list = boCards.filter(cd => cd.kind === "media");
-  if (list.length !== OH.media.length) { OH.media = list; OH.mi = 0; OH.mt = 0; const sg = OH.segs.find(x => x.k === "md"); if (sg) { sg.v = list.length ? String(list.length) : ""; ohDraw(); } }
+  if (list.length !== OH.media.length) { OH.media = list; OH.mi = 0; OH.mt = 0; }
+  { const X = typeof EGPH !== "undefined" ? EGPH : null, st = X && X.state, pv = st ? (st.loaded ? 1 : 0) + ":" + st.ver : ""; if (pv !== OH.phv) { OH.phv = pv; if (OH.segs) ohDraw(); } }
   if (OH.media.length > 1) { OH.mt += dt; if (OH.mt > 6.5) { OH.mt = 0; OH.mi = (OH.mi + 1) % OH.media.length; if (OH.sel === "md") ohCells(); } }
 }
 /* projection: a patch of ground round the model; four ground points give a homography for CSS */
