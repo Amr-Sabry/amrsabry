@@ -20,6 +20,7 @@ export default function middleware(request) {
     if (path === '/aromahub' || path === '/aromahub-admin') return;
     if (path.startsWith('/r/')) return;                       // rooms and their assets
     if (path === '/api/notes') return;                        // comments left on rooms (api/notes.js)
+    if (path === '/api/media') return;                        // photos a room's settings page edits online (api/media.js)
     const m = path.match(/^\/([a-z0-9][a-z0-9-]{1,40})$/);    // open project pages: /<project> is r/<project>.html
     if (m) return rewrite(request, '/r/' + (ALIAS[m[1]] || m[1]));
     return notFound();
