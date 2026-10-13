@@ -343,6 +343,11 @@ body.stx-show .stx .ps-map .ps-bt{bottom:calc(8.8rem + 2vh)}
 @container (max-width:900px){.axl.dock .axb .ct small{display:none}.axl.dock .axb{padding-inline:.5rem;column-gap:.35rem}.axl.dock .axb .ic{width:1.85rem;height:1.85rem}.axl.dock .axb .ct b{font-size:1.25rem}}
 @container (max-width:780px){.axl.dock .axb{justify-content:stretch}.axl.dock .axb .tx{display:block}.axl.dock .axb .sh{display:-webkit-box}}
 @container (max-width:520px){.axl.dock .axb .tx{display:none}.axl.dock .axb{grid-template-areas:"ic ct"}}
+/* v136: the six tiles close together, centred over the timeline; the row glides up onto the year stage when it opens */
+.axl.dock.st{transition:opacity .35s,bottom .6s cubic-bezier(.2,.85,.25,1)}
+@media (min-width:901px){.axl.dock .axl-row{display:flex;justify-content:center;gap:.3rem}.axl.dock .axb{flex:0 1 10.5rem;min-width:0}}
+.app.axd .hist .tkr{bottom:calc(100% + .45rem + var(--axU,0px));transition:right .3s cubic-bezier(.2,.8,.2,1),bottom .45s cubic-bezier(.2,.85,.25,1)}
+
 
 </style>
 </head>
@@ -1353,7 +1358,7 @@ html[data-lang="en"] #bLang{font-family:"Madani Arabic","Noto Kufi Arabic","Mada
 <script>
 (function(){
   var base = window.EG_BASE, tries = 0;
-  function part(i){ return fetch(base + "app/app." + i + ".txt?v=14c4c219c2").then(function(r){ if (!r.ok) throw new Error(r.status); return r.blob(); }); }
+  function part(i){ return fetch(base + "app/app." + i + ".txt?v=f9b08bf493").then(function(r){ if (!r.ok) throw new Error(r.status); return r.blob(); }); }
   function go(){
     Promise.all([part(0), part(1)]).then(function(b){
       var s = document.createElement("script"); s.src = URL.createObjectURL(new Blob(b, {type: "text/javascript"})); document.body.appendChild(s);
@@ -1570,4 +1575,4 @@ html[data-lang="en"] #bLang{font-family:"Madani Arabic","Noto Kufi Arabic","Mada
 
 </script>
 </body></html>
-<!-- egymap room v135 -->
+<!-- egymap room v136 -->
