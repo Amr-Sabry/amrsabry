@@ -22065,7 +22065,7 @@ function simParts(type){
   const pv = (geo, x, y, z, tn, o) => L.push(Object.assign({geo, x, y, z, tn, gr: "a"}, o));
   const rod = (a, b, r, tn) => { const A = new THREE.Vector3(a[0], a[1], a[2]), B = new THREE.Vector3(b[0], b[1], b[2]), d = B.clone().sub(A), len = d.length();
     L.push({geo: new THREE.CylinderGeometry(r, r, len, 5), x: (a[0] + b[0]) / 2, y: (a[1] + b[1]) / 2, z: (a[2] + b[2]) / 2, tn: tn == null ? 1 : tn, gr: "a", q: new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize())}); };
-  const slab = () => g(SK.cy(2.02, 2.02, .045, 6), 0, 0, 0, 2);
+  const slab = () => g(SK.cy(2.02, 2.02, .045, 72), 0, 0, 0, 2);
   const bob = (a, b) => t => [Math.sin(t * .4 + (b || 0)) * (a || .05), Math.sin(t * 1.2) * .015, 0];
   switch (type) {
   case "hous": {
@@ -22280,7 +22280,7 @@ const simBase = new THREE.Group(); simG.add(simBase);
 let simModel = new THREE.Group(); simG.add(simModel);
 const simRing = new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: .8, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide});
 const simDash = new THREE.LineDashedMaterial({color: 0xffffff, dashSize: .16, gapSize: .12, transparent: true, opacity: .85});
-const simPlate = new THREE.Mesh(new THREE.CylinderGeometry(2.3, 2.42, .12, 6), simMats[0]); simPlate.position.y = -.06; simBase.add(simPlate);
+const simPlate = new THREE.Mesh(new THREE.CylinderGeometry(2.3, 2.42, .12, 72), simMats[0]); simPlate.position.y = -.06; simBase.add(simPlate);
 simPlate.add(new THREE.LineSegments(new THREE.EdgesGeometry(simPlate.geometry, 20), simLine[0]));
 const simIn = new THREE.Mesh(new THREE.RingGeometry(1.88, 1.96, 72).rotateX(-SPI / 2), simRing); simIn.position.y = .012; simBase.add(simIn);
 const simIn2 = new THREE.Mesh(new THREE.RingGeometry(2.08, 2.12, 72).rotateX(-SPI / 2), simRing); simIn2.position.y = .012; simBase.add(simIn2);
@@ -25932,9 +25932,9 @@ function pvBuildParts(B, p, type, tint){
   const lines = [mkL(1), mkL(1), mkL(.4)]; lines[0].color.copy(c.clone().lerp(w, .3)); lines[1].color.copy(c.clone().lerp(w, .7)); lines[2].color.copy(c.clone().lerp(w, .25));
   B.own.push(...mats, ...ghosts, ...matsD, ...lines);
   const root = new THREE.Group(); B.sc.add(root); B.root = root; B.st = {R: 2.4, c: new THREE.Vector3(0, 0, 0), size: new THREE.Vector3(4.6, 2.7, 4.6)};
-  const plate = new THREE.Mesh(new THREE.CylinderGeometry(2.3, 2.42, .12, 6), mats[0]); plate.position.y = -.06; plate.add(new THREE.LineSegments(new THREE.EdgesGeometry(plate.geometry, 20), lines[0])); plate.renderOrder = 2; root.add(plate);
+  const plate = new THREE.Mesh(new THREE.CylinderGeometry(2.3, 2.42, .12, 72), mats[0]); plate.position.y = -.06; plate.add(new THREE.LineSegments(new THREE.EdgesGeometry(plate.geometry, 20), lines[0])); plate.renderOrder = 2; root.add(plate);
   const ringM = new THREE.MeshBasicMaterial({color: c.clone().lerp(w, .3), transparent: true, opacity: .55, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide}); B.own.push(ringM);
-  const ring = new THREE.Mesh(new THREE.RingGeometry(2.46, 2.5, 6, 1).rotateX(-Math.PI / 2), ringM); ring.position.y = .02; ring.rotation.y = Math.PI / 6; root.add(ring);
+  const ring = new THREE.Mesh(new THREE.RingGeometry(2.46, 2.5, 96, 1).rotateX(-Math.PI / 2), ringM); ring.position.y = .02; ring.rotation.y = Math.PI / 6; root.add(ring);
   const ghostFrom = p.kd === "e" ? Math.max(2, Math.round(n * .58)) : 9999;
   const parts = list.map((pt, i) => {
     const ghost = i >= ghostFrom, mesh = new THREE.Mesh(pt.geo, (ghost ? ghosts : pt.ds || custom ? matsD : mats)[pt.tn]);
