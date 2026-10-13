@@ -703,6 +703,12 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const fr = v => v - Math.floor(v);
 const GN_AR = {"EG-C":"القاهرة","EG-GZ":"الجيزة","EG-ALX":"الإسكندرية","EG-KB":"القليوبية","EG-SHR":"الشرقية","EG-DK":"الدقهلية","EG-GH":"الغربية","EG-MNF":"المنوفية","EG-BH":"البحيرة","EG-KFS":"كفر الشيخ","EG-DT":"دمياط","EG-PTS":"بورسعيد","EG-IS":"الإسماعيلية","EG-SUZ":"السويس","EG-SIN":"شمال سيناء","EG-JS":"جنوب سيناء","EG-BA":"البحر الأحمر","EG-MT":"مطروح","EG-WAD":"الوادي الجديد","EG-FYM":"الفيوم","EG-BNS":"بني سويف","EG-MN":"المنيا","EG-AST":"أسيوط","EG-SHG":"سوهاج","EG-KN":"قنا","EG-LX":"الأقصر","EG-ASN":"أسوان"};
 const GN = EN ? GN_EN : GN_AR;
+/* v130: a governorate is always written with the word «محافظة»; a raw place that starts with a governorate gets it too, segment by segment */
+const GNF = id => GN[id] ? (EN ? GN[id] + " Governorate" : "محافظة " + GN[id]) : "";
+const GN_LIST = Object.values(GN_AR).sort((a, b) => b.length - a.length);
+const LCF = t => { t = String(t || "").trim(); if (!t || EN) return t; return t.split(" / ").map(x => { const y = x.trim(); return !/^محافظة/.test(y) && GN_LIST.some(n => y === n || y.startsWith(n + " ") || y.startsWith(n + "(")) ? "محافظة " + y : y; }).join(" / "); };
+function lcDetail(p){ const t = String(p.lc || "").trim(); if (!t) return ""; const names = (p.g || []).map(id => GN[id]).filter(Boolean);
+  if (names.includes(t)) return ""; const m = t.match(/^([^()\/]+?)\s*\(([^)]*)\)\s*$/); if (m && names.includes(m[1].trim())) return m[2].trim(); return LCF(t); }
 const REGION = {"EG-C":"u","EG-ALX":"u","EG-PTS":"u","EG-SUZ":"u","EG-DT":"l","EG-DK":"l","EG-KFS":"l","EG-BH":"l","EG-GH":"l","EG-SHR":"l","EG-MNF":"l","EG-KB":"l","EG-IS":"l","EG-GZ":"s","EG-FYM":"s","EG-BNS":"s","EG-MN":"s","EG-AST":"s","EG-SHG":"s","EG-KN":"s","EG-LX":"s","EG-ASN":"s","EG-MT":"f","EG-WAD":"f","EG-BA":"f","EG-SIN":"f","EG-JS":"f"};
 /* one colour per sector, used by beams, layers, ring arcs and the interface */
 /* v128: one colour per axis (the same colours as the axis story) */
@@ -26122,5 +26128,3 @@ function streetAsphalt(D, H, polys, o) {
   polys.forEach((p, pi) => { let x0 = 1e9, x1 = -1e9, z0 = 1e9, z1 = -1e9; p.forEach(q => { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); z0 = Math.min(z0, q[1]); z1 = Math.max(z1, q[1]); });
     for (let i = Math.floor(x0 / CS); i <= Math.floor(x1 / CS); i++) for (let j = Math.floor(z0 / CS); j <= Math.floor(z1 / CS); j++) { const k = key(i, j); (grid.get(k) || grid.set(k, []).get(k)).push(pi); } });
   const inB = (x, z) => { const c = grid.get(key(Math.floor(x / CS), Math.floor(z / CS))); if (!c) return false; for (let n = 0; n < c.length; n++) if (pip(polys[c[n]], x, z)) return true; return false; };
-  const CAP = { motorway: 16, trunk: 16, primary: 15, secondary: 12, tertiary: 10, minor: 7.5, service: 5 }, TYP = { motorway: 8, trunk: 8, primary: 7.5, secondary: 6, tertiary: 4.8, minor: 3.4, service: 2.6 };
-  const br = batch("road", K.mat(0xffffff, { vertexColors: true, roughness: 0.96, doubleSide: true }), true);

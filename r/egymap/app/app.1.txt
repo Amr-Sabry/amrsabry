@@ -1,3 +1,5 @@
+  const CAP = { motorway: 16, trunk: 16, primary: 15, secondary: 12, tertiary: 10, minor: 7.5, service: 5 }, TYP = { motorway: 8, trunk: 8, primary: 7.5, secondary: 6, tertiary: 4.8, minor: 3.4, service: 2.6 };
+  const br = batch("road", K.mat(0xffffff, { vertexColors: true, roughness: 0.96, doubleSide: true }), true);
   const asph = lin(o.asphalt || 0x4a4d50), walk = lin(o.walk || 0xb4ab98), mark = lin(0xe6e1d3);
   D.roads.forEach(r => {
     if (r.b === "tunnel" || r.b === "bridge" || r.c === "transit") return;
@@ -22346,7 +22348,7 @@ function buildSimFx(p, type){
   else if (S.mode === "layers") simCap.innerHTML = `<span><i></i>تصوّر ثلاثي الأبعاد توضيحي · ${SIM_NAME[type]}</span><small>على لوح المحور فقط، وليس التصميم المعتمد للمشروع${st ? " · " + st : ""}</small>`;
   else if (p.nat) simCap.innerHTML = `<span><i></i>مشروع على مستوى الجمهورية</span><small>لا يرتبط بموقع واحد على الخريطة</small>`;
   else if (g) simCap.innerHTML = `<span><i></i>الموقع الفعلي · ${esc(g.src || "")}</span><small>الموقع مطابق من OpenStreetMap، ولا توجد مبانٍ مرسومة له على الخريطة بعد</small>`;
-  else simCap.innerHTML = `<span><i></i>الموقع تقريبي داخل ${esc(GN[p.g[0]] || "المحافظة")}</span><small>الملف لا يحدد موقعًا دقيقًا، لذلك لا نعرض مجسمًا للمشروع</small>`;
+  else simCap.innerHTML = `<span><i></i>الموقع تقريبي داخل ${esc(GNF(p.g[0]) || "المحافظة")}</span><small>الملف لا يحدد موقعًا دقيقًا، لذلك لا نعرض مجسمًا للمشروع</small>`;
 }
 function simSlots(c, R){
   const fr = FREE, cl = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -22890,7 +22892,7 @@ function boBuild(pi){
   else if (g && g.v === "r" && !g.pl) { loc = T("موقع مطابق"); note = T("حُدِّد بالمراجعة على الصور الجوية والمصادر المنشورة") + (g.src ? " · " + T(g.src) : ""); }
   else if (g) { loc = T("موقع مطابق"); note = (g.pl ? T("حدود الموقع من OpenStreetMap · ") : T("لا توجد مبانٍ مرسومة له على الخريطة بعد · ")) + (g.src || ""); }
   else if (p.admLoc) { loc = T("موقع مُدخل من صفحة الإعدادات"); note = T("إحداثيات أُدخلت يدويًا وليست من الملف المصدر"); }
-  else { loc = T("موقع تقريبي داخل ") + (GN[p.g[0]] || T("المحافظة")); note = T("الملف لا يحدد موقعًا دقيقًا للمشروع"); }
+  else { loc = T("موقع تقريبي داخل ") + (GNF(p.g[0]) || T("المحافظة")); note = T("الملف لا يحدد موقعًا دقيقًا للمشروع"); }
   { const ty = simType(p); if (g && !p.nat && (ty === "air" || ty === "rail" || ty === "port" || (g.ln && ty !== "water"))) note += T(" · الطائرات والقطارات والمركبات والحاويات رموز حركة توضيحية"); }
   boCard(0, boLoc(col, loc, note, wsP ? T("نسخة أولية") + " · " + wsP.pct + (EN ? "%" : "٪") : ""), col, "info");
   boCard(0, boAddCanvas(col), col, "add");
@@ -23238,8 +23240,8 @@ function ohInfo(q, p){
     if (p.dt && String(p.dt) !== String(p.y) && String(p.dt) !== yl) { DV(); N(String(p.dt)); } span = 60; }
   else if (q.k === "bf") { if (!p.sm) return null; const jb = jobsOf(p.sm), st = (jb ? [jb] : []).concat(statsOf(p.sm).filter(x => !jb || x.n !== jb.n)).slice(0, 3); icon = "doc"; 
     if (st.length) { ST(st); DV(); N(p.sm); } else BD(p.sm, 5); span = Math.max(70, st.length * 34); }
-  else if (q.k === "lc") { const g = (p.g || []).map(id => GN[id]).filter(Boolean); icon = "pin"; 
-    B.push({k: "ht", t: g.length ? g.slice(0, 2).join(" · ") + (g.length > 2 ? " +" + (g.length - 2) : "") : (p.lc || "—")}); if (p.lc && g.length) BD(p.lc, 2); span = 56; }
+  else if (q.k === "lc") { const g = (p.g || []).map(id => GNF(id)).filter(Boolean); icon = "pin"; 
+    B.push({k: "ht", t: g.length ? g.slice(0, 2).join(" · ") + (g.length > 2 ? " +" + (g.length - 2) : "") : (LCF(p.lc) || "—")}); { const d = g.length ? lcDetail(p) : ""; if (d) BD(d, 2); } span = 56; }
   else if (q.k === "ax" || q.k === "en") { const o = q.k === "ax" ? ax : en; if (!o) return null;
     if (OH.sub === "sl" && o.sl) { icon = "quote"; E(o.n); B.push({k: "q", t: "«" + o.sl + "»", mx: 2}); span = 80; }
     else if (OH.sub === "tg" && o.tg) { const c = igCmp(o.tg), pp = pointsOf(o.tg); icon = "target"; E(o.n);
@@ -23749,7 +23751,7 @@ const PIN = '<svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11.5a7 7 0 0 0-14 
 function projectHTML(pi){
   const p = P[pi], kd = p.kd === "e" ? "e" : p.kd === "p" ? "p" : "a";
   const when = p.yd === 0 ? [T("سنة الانتهاء أو التشغيل"), p.y, true] : p.yd === 1 ? [T("البداية"), T("منذ ") + p.y, false] : [T("التوقيت"), T("جارٍ حاليًا"), false];
-  const gx = GEO[p.i], loc = p.admLoc ? (GN[p.g[0]] || "—") : p.lc || (p.geoLoc ? (p.g[0] ? GN[p.g[0]] : "") : (p.nat ? T("على مستوى الجمهورية") : "—"));
+  const gx = GEO[p.i], loc = p.admLoc ? (GNF(p.g[0]) || "—") : LCF(p.lc) || (p.geoLoc ? (p.g[0] ? GNF(p.g[0]) : "") : (p.nat ? T("على مستوى الجمهورية") : "—"));
   const list = S.navList, idx = list ? list.indexOf(pi) : -1;
   const cost = p.cd && p.cd !== "—" ? p.cd : T("غير محددة");
   const showRaw = (p.cf || p.cd === "—") && p.cr;
@@ -23894,7 +23896,7 @@ const XP = (() => {
   const TABS = {sec: T("القطاعات"), ax: T("المحاور"), gov: T("المحافظات"), ent: T("الوزارات والجهات"), feed: T("الأحدث"), facts: T("لمحات")};
   let tab = "sec", shown = null, hold = 0, cycleT = 0, hot = null, sig = "", useA = true, lastSec = -2, pinned = false, fOpen = false, fSig = "";
   const CYCLE = 9;
-  function tabList(){ return S.sec >= 0 ? ["sec", "facts", "gov", "ent", "feed"] : ["sec", "gov", "ent", "feed"]; }   /* the sector buttons stay one tap away even inside a sector: they are the switcher */
+  function tabList(){ return ["sec", "gov", "ent", "feed"]; }   /* the sector buttons stay one tap away even inside a sector: they are the switcher */
   function buildTabs(){
     const l = tabList(); if (!l.includes(tab)) tab = l[0];
     tabsEl.innerHTML = l.map(t => `<button role="tab" data-t="${t}" aria-selected="${t === tab}">${TABS[t]}<i></i></button>`).join("");
@@ -23946,7 +23948,7 @@ const XP = (() => {
     const mx = Math.max(1, ...rows.map(r => r.n));
     return `<ol class="xbars">${rows.map((r, j) => {
       const segs = kind === "gov" ? r.sc.map((v, s) => v ? `<i style="flex:${v};background:${SECC[s]}"></i>` : "").join("") : r.st.map((v, s) => v ? `<i style="flex:${v};background:${SECC[r.sc]};opacity:${[1, .6, .32][s]}"></i>` : "").join("");
-      const nm = kind === "gov" ? GN[r.id] : r.nm, c = kind === "gov" ? SECC[r.sc.indexOf(Math.max(...r.sc))] : SECC[r.sc];
+      const nm = kind === "gov" ? GNF(r.id) : r.nm, c = kind === "gov" ? SECC[r.sc.indexOf(Math.max(...r.sc))] : SECC[r.sc];
       return `<li${kind === "gov" ? ' class="gv"' : ""} data-k="${kind}" data-id="${esc(r.id)}" style="--c:${c};--w:${(r.n / mx * 100).toFixed(1)}%;--d:${(j * 0.035).toFixed(3)}s">${kind === "gov" ? thumb(r.id, c) : ""}<span class="nm">${esc(nm)}</span><b>${r.n}</b><span class="tr"><span class="fl">${segs}</span></span></li>`; }).join("")}</ol>`;
   }
   /* the six axes of the client's sheet: icon, name, projects, investments; a press opens the axis card */
@@ -24075,7 +24077,7 @@ function navLevels(){
   if (S.sec >= 0) l.push({k: "sec", t: SECS[S.sec].n, c: SECC[S.sec], ic: S.sec});
   if (S.axOpen >= 0 && S.axOpen !== S.sec) l.push({k: "ax", t: stxAxMeta(S.axOpen).sh, c: SECC[stxAxMeta(S.axOpen).s]});
   if (FLT.mn) l.push({k: "ent", t: FLT.mn, c: "#ffc98a"});
-  if (S.selG) l.push({k: "gov", t: GN[S.selG], c: "#ffc98a"});
+  if (S.selG) l.push({k: "gov", t: GNF(S.selG), c: "#ffc98a"});
   if (S.selP >= 0) l.push({k: "proj", t: P[S.selP].n, c: SECC[P[S.selP].sc]});
   return l;
 }
@@ -25258,7 +25260,7 @@ function srDraw(){
   if (go) go.disabled = !SR.res.length;
   if (!SR.q.trim()) { r.innerHTML = `<div class="sr-hint">${T("الاقتراحات تظهر هنا وأنت تكتب")}</div>`; return; }
   if (!SR.res.length) { r.innerHTML = `<div class="sr-hint">${T("لا يوجد مشروع بهذا الاسم. جرّب كلمة أقصر أو اسم المحافظة.")}</div>`; return; }
-  r.innerHTML = SR.res.map((pi, i) => { const p = P[pi], pl = p.lc || (p.g && p.g[0] ? GN[p.g[0]] : "") || "";
+  r.innerHTML = SR.res.map((pi, i) => { const p = P[pi], pl = LCF(p.lc) || (p.g && p.g[0] ? GNF(p.g[0]) : "") || "";
     return `<button type="button" class="sr-it${i === SR.sel ? " on" : ""}" data-pi="${pi}" style="--c:${SECC[p.sc]};--i:${i}" tabindex="-1"><i></i><b>${srMark(p.n, SR.q)}</b><small>${esc(SECS[p.sc].n)}${pl ? " · " + esc(pl) : ""} · ${esc(yearLabel(p))}</small></button>`; }).join("");
 }
 function srKey(k){
@@ -25501,7 +25503,7 @@ function tlsNum(el, to){
   const t0 = performance.now(), dur = 750; const step = now => { const k = clamp((now - t0) / dur, 0, 1), e = 1 - Math.pow(1 - k, 3); el.textContent = Math.round(from + (to - from) * e);
     if (k < 1) TLS.raf.set(el, requestAnimationFrame(step)); else TLS.raf.delete(el); }; TLS.raf.set(el, requestAnimationFrame(step));
 }
-const tlsPlace = p => p.nat ? T("على مستوى الجمهورية") : p.g && p.g.length ? p.g.slice(0, 2).map(g => GN[g] || g).join(" · ") + (p.g.length > 2 ? " +" + (p.g.length - 2) : "") : (p.lc || "");
+const tlsPlace = p => p.nat ? T("على مستوى الجمهورية") : p.g && p.g.length ? p.g.slice(0, 2).map(g => GNF(g) || g).join(" · ") + (p.g.length > 2 ? " +" + (p.g.length - 2) : "") : LCF(p.lc);
 function tlsSync(force){
   if (!TLS.open) return; if (S.show || S.selP >= 0) { tlsClose(); return; }
   const y = tlsYearOf(), sig = y + "|" + S.sec + "|" + fltSig + "|" + TLS.sec; const pb = tlsEl.querySelector('[data-a="go"]');
@@ -26021,11 +26023,11 @@ function srTex(car, it){
 }
 /* the facts on the podium's rim: the name first, then where the project stands, when it opened, where it is and who carries it (the cost stays behind its key) */
 function srBandSegs(p){
-  const cut = (s, n) => { s = String(s || "").trim(); return s.length > n ? s.slice(0, n - 1) + "…" : s; }, out = [], g = (p.g || []).map(id => GN[id]).filter(Boolean);
+  const cut = (s, n) => { s = String(s || "").trim(); return s.length > n ? s.slice(0, n - 1) + "…" : s; }, out = [], g = (p.g || []).map(id => GNF(id)).filter(Boolean);
   out.push({k: "", v: cut(p.n, 70)});
   const sl = stLabel(p); if (sl) out.push({k: T("الحالة"), v: sl});
   const dt = srDate(p); if (dt) out.push({k: T("بدء التشغيل"), v: cut(dt.n || dt.tx, 46)});
-  if (g.length) out.push({k: T(g.length > 1 ? "المحافظات" : "المحافظة"), v: cut(g.slice(0, 3).join(" · "), 44)}); else if (p.lc) out.push({k: T("الموقع"), v: cut(p.lc, 44)});
+  if (g.length) out.push({k: "", v: cut(g.slice(0, 3).join(" · "), 60)}); else if (p.lc) out.push({k: T("الموقع"), v: cut(LCF(p.lc), 50)});
   if (p.mn) out.push({k: T("الجهة"), v: cut(p.mn, 50)});
   if (SECS[p.sc]) out.push({k: T("القطاع"), v: SECS[p.sc].n});
   return out;
@@ -26195,7 +26197,7 @@ function psBuild(host, p, onMap){
   document.querySelectorAll(".ps-ui").forEach(x => x.remove()); host.style.setProperty("--c", col);
   const ui = document.createElement("div"); ui.className = "ps-ui" + (onMap ? " ps-map" : " ps-sr");
   const kick = [SECS[p.sc] ? SECS[p.sc].n : "", p.mn || ""].filter(Boolean).join(" · ");
-  const g = (p.g || []).map(id => GN[id]).filter(Boolean), loc = g.length ? g.slice(0, 3).join(" · ") : (p.lc || "");
+  const g = (p.g || []).map(id => GNF(id)).filter(Boolean), loc = g.length ? g.slice(0, 3).join(" · ") : LCF(p.lc);
   const jb = jobsOf(p.sm || ""), stats = (jb ? [jb] : []).concat(statsOf(p.sm || "").filter(x => (!jb || x.n !== jb.n) && !/^(?:(?:مليون|مليار|ألف)\s+)?(?:دولار|جنيه|يورو)$/.test(x.l))).slice(0, 3);
   const cost = srMoney(p.cd || p.ct), dt = srDate(p), bf = String(p.sm || "").trim().replace(/(كم|م)([23])(?!\d)/g, (a, u, d) => u + (d === "2" ? "²" : "³"));
   let h = (onMap ? "" : `${bkBtn("ps-x")}`) + `
@@ -26614,7 +26616,7 @@ function droneScene(s, pts){
       controls.target.set(x, y, z); sphA.set(Math.max(controls.minDistance * 1.05, d), clamp(phi, 0.25, B.low || A.low ? M3_POLAR : 1.35), th); camera.position.setFromSpherical(sphA).add(controls.target); fly = null;
       /* arriving: prefetch, show the stop, raise the buildings */
       if (li !== st.cur) { st.cur = li; cityPrefetch(B.x, B.z); if (sim.on) hideSim(); showDCard(-1); st.shown = false;
-        const p = P[B.pi]; caption(SECS[p.sc].n, p.n.length > 84 ? p.n.slice(0, 82) + "…" : p.n, esc(p.lc || (p.g[0] ? GN[p.g[0]] : "")) + (p.cd && p.cd !== "—" ? " · " + esc(p.cd) : "") + `<small>${esc(stLabel(p))}${p.yd === 0 ? " · " + p.y : ""}</small>`); }
+        const p = P[B.pi]; caption(SECS[p.sc].n, p.n.length > 84 ? p.n.slice(0, 82) + "…" : p.n, esc(LCF(p.lc) || (p.g[0] ? GNF(p.g[0]) : "")) + (p.cd && p.cd !== "—" ? " · " + esc(p.cd) : "") + `<small>${esc(stLabel(p))}${p.yd === 0 ? " · " + p.y : ""}</small>`); }
       if (dwell && !st.shown) { st.shown = true; const p = P[B.pi]; selFXTarget = INST[p.ins[0]]; setSelColor(p.sc); if (B.real) showSim(B.pi); }   /* B.real: matched to the map, so its site, cards and whatever moves there come up */
       S.hoverP = dwell ? B.pi : -1;
       showDCard(dwell && !B.real ? B.pi : -1, dwell && frac > 0.04 && frac < 0.96); if (dwell && !B.real) placeDCard(B.pi);
@@ -26637,7 +26639,7 @@ function buildShowAuto(){
     tick(k){ S.T = lerp(2013.6, 2026.95, k * k * (3 - 2 * k)); capS.textContent = Math.max(2014, Math.floor(S.T)) + " · " + stat.n + T(" مشروعًا"); showDrift(this, 0.035); }});
   /* 2 · where they are: glass columns over the governorates */
   out.push({k: "density", d: 8, in(){ this.lt = null; S.T = 2026.95; compute(); setMode("density");
-      const top = Object.entries(stat.govCnt).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([g, n]) => GN[g] + " " + n).join("  ·  ");
+      const top = Object.entries(stat.govCnt).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([g, n]) => GNF(g) + " " + n).join("  ·  ");
       caption(T("أين تتركّز المشروعات"), stat.g.size + T(" محافظة"), top); XP.setTab("gov"); }, tick(){ showDrift(this, -0.05); }});
   /* 3 · what they are: the eight sectors as a stack of glass layers */
   out.push({k: "layers", d: 10, in(){ this.lt = null; S.T = 2026.95; setMode("layers"); caption(T("ثمانية قطاعات"), stat.n + T(" مشروعًا حتى 2026"), T("كل طبقة قطاع، وكل نقطة مشروع من الملف")); XP.setTab("sec"); }, tick(){ showDrift(this, 0.06); }});
@@ -27077,7 +27079,7 @@ function frame(now){
     canvas.classList.toggle("hov", pi >= 0 || !!S.hoverG || oh >= 0);
     if (oh >= 0) showTip(`<b>${SECS[oh].n}</b><span><em>${stat.secCnt[oh]}</em> ${T("مشروعًا")} · ${S.sec === oh ? T("اضغط لإلغاء التحديد") : T("اضغط لعرض القطاع على الخريطة")}</span>`, "o" + oh + "|" + S.sec, SECC[oh]); else
     if (pi >= 0) { const p = P[pi]; showTip(`<b>${esc(p.n)}</b><span>${esc(p.ms)} · ${yearLabel(p)}</span>${cl.length > 1 ? `<span class="more">+${cl.length - 1} ${cl.length - 1 === 1 ? T("مشروع آخر") : T("مشروعات أخرى")} ${T("في نفس النقطة · اضغط للاختيار")}</span>` : ""}`, "p" + pi + "|" + cl.length, SECC[p.sc]); }
-    else if (S.hoverG) showTip(`<b>${GN[S.hoverG]}</b><span><em>${stat.govCnt[S.hoverG] || 0}</em> ${T("مشروعًا في العرض الحالي")}</span>`, "g" + S.hoverG + "|" + (stat.govCnt[S.hoverG] || 0));
+    else if (S.hoverG) showTip(`<b>${GNF(S.hoverG)}</b><span><em>${stat.govCnt[S.hoverG] || 0}</em> ${T("مشروعًا في العرض الحالي")}</span>`, "g" + S.hoverG + "|" + (stat.govCnt[S.hoverG] || 0));
     else hideTip();
   } else if (tipOn) { if (ptr.in && !ptr.down) placeTip(); else hideTip(); }
 
