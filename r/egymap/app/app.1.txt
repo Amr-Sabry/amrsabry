@@ -26887,10 +26887,10 @@ function stxAxName(ax){
   const E = AXD.ents.filter(e => e.ax === STX.ax), s = stxStats();
   const head = stxHead(stxAxMeta(STX.ax).ic, T("المحور ") + (STX_ORD[STX.ax] || "") + T(" من ستة محاور"), ax.n) + `<div class="stx-sl" data-a="1.5">«<span data-t="${srE(ax.sl)}" data-at="1.7"></span>»</div>`;
   if (E.length <= 4) return `<div class="stx-wrap">${head}<div class="stx-row">${E.map((e, i) => { const q = stxStats(e.n), a = 3.4 + i * .3;
-      return `<div class="stx-mc w" data-a="${a.toFixed(2)}">${stxGauge(stxMnIcon(e.n), s.n ? q.n / s.n : 0, (a + .15).toFixed(2))}<div><b data-v="${q.n}" data-at="${(a + .1).toFixed(2)}">0</b><small>${T("مشروعًا")}</small></div><span>${srE(e.n)}</span></div>`; }).join(`<i class="stx-dot"></i>`)}
+      return `<div class="stx-mc w" data-a="${a.toFixed(2)}" data-ek="${AXD.ents.indexOf(e)}" role="button" tabindex="0">${stxGauge(stxMnIcon(e.n), s.n ? q.n / s.n : 0, (a + .15).toFixed(2))}<div><b data-v="${q.n}" data-at="${(a + .1).toFixed(2)}">0</b><small>${T("مشروعًا")}</small></div><span>${srE(e.n)}</span></div>`; }).join(`<i class="stx-dot"></i>`)}
       <i class="stx-dot"></i>${stxStat("pin", s.g, T("محافظة"), s.g / STX_GOV, 3.4 + E.length * .3, T("من ") + STX_GOV)}</div></div>`;
   return `<div class="stx-wrap">${head}<div class="stx-row">${stxStat("doc", s.n, T("مشروعًا"), s.n / NP, 3.2, T("من ") + NP)}<i class="stx-dot"></i>${stxStat("work", E.length, T("وزارة وجهة"), null, 3.45)}<i class="stx-dot"></i>${stxStat("pin", s.g, T("محافظة"), s.g / STX_GOV, 3.7, T("من ") + STX_GOV)}</div>
-    <div class="stx-chips">${E.map((e, i) => { const n = stxStats(e.n).n, a = (4.4 + i * .13).toFixed(2); return `<span data-a="${a}" data-fx="sc" data-du=".6">${igSvg(stxMnIcon(e.n))}${srE(stxShort(e.n))}${n ? `<b data-v="${n}" data-at="${a}">0</b>` : ""}</span>`; }).join("")}</div></div>`;
+    <div class="stx-chips">${E.map((e, i) => { const n = stxStats(e.n).n, a = (4.4 + i * .13).toFixed(2); return `<span data-a="${a}" data-fx="sc" data-du=".6" data-ek="${AXD.ents.indexOf(e)}" role="button" tabindex="0">${igSvg(stxMnIcon(e.n))}${srE(stxShort(e.n))}${n ? `<b data-v="${n}" data-at="${a}">0</b>` : ""}</span>`; }).join("")}</div></div>`;
 }
 function stxInv(list, at){ return `<div class="stx-inv">` + list.map((v, i) => { v = String(v).trim(); const a = (at + i * .3).toFixed(2), plus = i ? `<span class="stx-plus" data-a="${a}" data-fx="fade">+</span>` : "";
     v = v.replace(/\s*\+\s*$/, "").replace(/^\+\s*/, ""); const m = v.match(/^(\D*?)\s*(\d[\d.,]*)\s*(.*)$/);
@@ -26899,7 +26899,7 @@ function stxInv(list, at){ return `<div class="stx-inv">` + list.map((v, i) => {
     return plus + `<div class="stx-big" data-a="${a}">${pre ? `<em>${srE(pre)}</em>` : ""}${igSvg(!cur ? "chart" : IG_CUR(u) === "$" ? "trend" : "coins")}<b data-v="${srE(stxN(m[2]))}" data-at="${a}">0</b><span>${srE(u)}</span><i class="ul" data-bar="1" data-at="${(+a + .25).toFixed(2)}"></i></div>`; }).join("") + `</div>`; }
 function stxAxTarget(ax){
   const E = AXD.ents.filter(e => e.ax === STX.ax), pp = stxPoints(ax.tg), n = pp ? pp.pts.length : 0, tEnd = pp ? 1.7 + n * .85 : 1.4;
-  const by = E.length <= 4 ? `<div class="stx-by">${E.map((e, i) => `<span data-a="${(tEnd + 1.5 + i * .2).toFixed(2)}" data-fx="fade">${igSvg(stxMnIcon(e.n))}${srE(stxShort(e.n))}: ${e.inv.map(v => srE(stxN(numSplit(v)[0])) + " " + srE(numSplit(v)[1])).join(" + ")}</span>`).join("")}</div>` : "";
+  const by = E.length <= 4 ? `<div class="stx-by">${E.map((e, i) => `<span data-a="${(tEnd + 1.5 + i * .2).toFixed(2)}" data-fx="fade" data-ek="${AXD.ents.indexOf(e)}" role="button" tabindex="0">${igSvg(stxMnIcon(e.n))}${srE(stxShort(e.n))}: ${e.inv.map(v => srE(stxN(numSplit(v)[0])) + " " + srE(numSplit(v)[1])).join(" + ")}</span>`).join("")}</div>` : "";
   return `<div class="stx-wrap tg"><div class="stx-k" data-a=".1" data-fx="wipe" data-du=".9">${igSvg("target")}${T("مستهدف المحور وإجمالي استثماراته")}</div>
     ${pp ? `<div class="stx-hd" data-t="${srE(pp.head)}" data-at=".35"></div>` + stxStations(pp, 1.7) + (pp.res ? `<div class="stx-res" data-t="${srE(pp.res)}" data-at="${(tEnd + .15).toFixed(2)}"></div>` : "") : `<div class="stx-hd" data-t="${srE(ax.tg)}" data-at=".35"></div>`}
     <div class="stx-ib" data-a="${(tEnd + .7).toFixed(2)}"><small>${T("إجمالي استثمارات المحور")}</small>${stxInv(ax.inv, tEnd + .9)}${by}</div></div>`;
@@ -27300,7 +27300,7 @@ function axlTick(){
   if (AXL.big && !AXL.docked && !intro && now - AXL.t0 > 5200) axlDock();
   if (AXL.docked && ++AXL.k % 30 === 0) axlPlace();
   const hide = !!S.show || (typeof PV !== "undefined" && PV.on); AXL.el.classList.toggle("hide", hide && AXL.docked);
-  AXL.btn.forEach((b, a) => { const v = AXL.docked ? stat.secCnt[a] || 0 : AXL.tot[a] || 0, s = AXL.shown[a], n = Math.abs(v - s) < .5 ? v : s + (v - s) * .12; AXL.shown[a] = n;
+  AXL.btn.forEach((b, a) => { const v = stat.secCnt[a] || 0, s = AXL.shown[a], n = Math.abs(v - s) < .5 ? v : s + (v - s) * .25; AXL.shown[a] = n;
     const t = String(Math.round(n)); if (AXL.cnt[a].textContent !== t) AXL.cnt[a].textContent = t;
     const on = S.sec === a; if (b.classList.contains("on") !== on) { b.classList.toggle("on", on); b.setAttribute("aria-pressed", String(on)); }
     const lb = SECS[a].n + ": " + v + " " + T("مشروعًا"); if (b.getAttribute("aria-label") !== lb) b.setAttribute("aria-label", lb); });
@@ -27324,6 +27324,14 @@ function axLand(a){
   openAx(a);
 }
 { const _stop = stopShow; stopShow = function(){ _stop(); STX.intro = false; }; }
+/* v132: an entity in the axis screens is a button: stop the show, put the axis on the map, open that entity's projects */
+function stxPickEnt(k){
+  const a = STX.ax, en = AXD.ents[k]; if (!en || !stxIds(k).length) return;
+  if (typeof act === "function") act(); stxHide(); axLand(a);
+  const mn = stxFltMn(en.n); S.axOpen = -1; FLT.mn = mn; fltTouch(); openList("ent", mn);
+}
+stxEl.addEventListener("click", e => { const t = e.target.closest("[data-ek]"); if (t) { e.stopPropagation(); stxPickEnt(+t.dataset.ek); } });
+stxEl.addEventListener("keydown", e => { if (e.key !== "Enter" && e.key !== " ") return; const t = e.target.closest("[data-ek]"); if (t) { e.preventDefault(); e.stopPropagation(); stxPickEnt(+t.dataset.ek); } });
 if (QS.has("test")) window.__axl = {AXL, dock: axlDock, open: axlOpen, intro: axIntro, land: axLand};
 
 /* ================= boot ================= */
