@@ -368,7 +368,7 @@ const mF=mk(),mB=mk();
 const bag=new THREE.Group();
 const front=new THREE.Mesh(bagF,mF),back=new THREE.Mesh(bagB,mB);back.rotation.y=Math.PI;
 bag.add(front,back);bag.scale.setScalar(1.22);scene.add(bag);
-const T={};FL.forEach(f=>T[f.id]={f:tex(A+f.id+'-front.webp'),b:tex(A+f.id+'-back.webp')});
+const T={};FL.forEach(f=>T[f.id]={f:tex(A+f.id+'-front.webp?v=5'),b:tex(A+f.id+'-back.webp?v=5')});
 
 /* chip */
 function rnd(seed){let s=seed;return()=>(s=(s*16807)%2147483647)/2147483647}
@@ -447,7 +447,7 @@ renderer.setAnimationLoop(()=>{
 
 /* ---------- concept frames ---------- */
 const CF=[['all','All four'],['cheese','French Cheese'],['chili','Chili'],['salt','Himalayan Salt'],['ketchup','Tomato Ketchup']];
-const cfu=k=>A+'cf-'+k+'.webp';let cfc='all';
+const cfu=k=>A+'cf-'+k+'.webp?v=5';let cfc='all';
 function setCF(k){cfc=k;$('#cfbig').style.backgroundImage=`url(${cfu(k)})`;document.querySelectorAll('#cfth button').forEach(b=>b.classList.toggle('on',b.dataset.k===k))}
 CF.forEach(([k,n])=>{const b=document.createElement('button');b.dataset.k=k;b.title=n;b.setAttribute('aria-label',n);b.style.backgroundImage=`url(${cfu(k)})`;b.onclick=()=>setCF(k);$('#cfth').appendChild(b)});
 setCF('all');
@@ -508,8 +508,7 @@ FILMS_A.forEach(F=>F.fr.forEach((f,i)=>f.i=(F.id==='mix'&&i===5)?'b-mix-6':F.id+
 const OPTS={B:{name:'Pack first',films:FILMS_B}};
 let opt='B',FILMS=OPTS.B.films;
 let film=FILMS[0];
-const IMGA={'c-cheese-6':'cheese-4','c-chili-6':'chili-4','c-salt-6':'salt-4','c-ketchup-6':'ketchup-4','c-mix-6':'b-mix-6'};
-const img=i=>A+'sb-'+(IMGA[film.fr[i].i]||film.fr[i].i)+'.webp';
+const img=i=>A+'sb-'+film.fr[i].i+'.webp?v=5';
 const LS='yummis-fb-r5';let FB={};try{FB=JSON.parse(localStorage.getItem(LS)||'{}')}catch(e){}
 const save=()=>{try{localStorage.setItem(LS,JSON.stringify(FB))}catch(e){}summary()};
 function summary(){
