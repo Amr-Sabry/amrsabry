@@ -91,6 +91,7 @@ section{padding:64px 0;scroll-margin-top:64px}
 .fr .tx{padding:14px 16px;flex:1}
 .fr .tx b{display:block;font-weight:800;text-transform:uppercase;font-size:15px;margin-bottom:4px}
 .fr .tx small{display:block;font-size:13px;color:var(--ink)}
+.fr .tx .cam{margin-top:8px;font-size:12px;font-weight:700;color:var(--plum,#713258);opacity:.85}
 .fr .tx .sfx{margin-top:8px;font-size:12px;font-weight:800;color:var(--teal);text-transform:uppercase;letter-spacing:.05em}
 .fb{display:flex;gap:6px;padding:0 12px 12px;flex-wrap:wrap}
 .fb button{font-size:12px;font-weight:800;text-transform:uppercase;padding:7px 12px;border-radius:99px;border:2px solid var(--plum)}
@@ -171,8 +172,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 
 <header class="hero" data-mascot-say="أهلاً! أنا هشرحلك الصفحة.. انزل معايا خطوة خطوة" data-mascot-mood="happy"><div class="wrap">
   <div>
-    <div class="kicker">Modern Saudi Crunch · CG product films · Round 04</div>
-    <h1>Three flavours. <em>One crunch.</em></h1>
+    <div class="kicker">Modern Saudi Crunch · CG product films · Round 05</div>
+    <h1>Four flavours. <em>One crunch.</em></h1>
     <p>One link, the whole process. Spin the pack, look at the concept frames, read the boards for each film, play the animatics, then tell us what you think, frame by frame. This page updates every time we move a step forward.</p>
   </div>
   <div>
@@ -181,10 +182,10 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
       <span class="sticker plum ar" style="transform:rotate(5deg)">مررره يمي</span>
     </div>
     <div class="meta">
-      <div><b>Range</b><span>Potato Chips × 3</span></div>
-      <div><b>Films</b><span>3 × 8 sec + 1 × 15 sec</span></div>
+      <div><b>Range</b><span>Potato Chips × 4</span></div>
+      <div><b>Films</b><span>4 × 8 sec + 1 × 15 sec</span></div>
       <div><b>Technique</b><span>Full CG, no live action</span></div>
-      <div><b>Updated</b><span>04 Oct 2026</span></div>
+      <div><b>Updated</b><span>14 Oct 2026</span></div>
     </div>
   </div>
 </div></header>
@@ -314,10 +315,10 @@ const A='/r/yummis/';
 const $=s=>document.querySelector(s);
 
 const FL=[
- {id:'cheese', name:'French Cheese', ar:'بالجبنة الفرنسية', pack:'#F7931D', bg:'#DD6617', mood:'Warm · rich · appetizing', word:'Cheese', dust:['#F9A825','#FFD54F','#E65100']},
- {id:'chili',  name:'Chili', ar:'بالفلفل الحار', pack:'#D91F33', bg:'#D02925', mood:'Hot · bold · energetic', word:'Chili', dust:['#B71C1C','#E53935','#7f1010']},
+ {id:'cheese', name:'French Cheese', ar:'بالجبنة الفرنسية', pack:'#F7931D', bg:'#DD6617', mood:'Warm · rich · appetizing', word:'Cheese', dust:['#F9A825','#FFD54F','#FB8C00']},
+ {id:'chili',  name:'Chili', ar:'بالفلفل الحار', pack:'#D91F33', bg:'#D02925', mood:'Hot · bold · energetic', word:'Chili', dust:['#D84315','#E64A19','#F4511E','#C62828']},
  {id:'salt',   name:'Himalayan Salt', ar:'ملح الهيمالايا', pack:'#E587A2', bg:'#EA8CB3', mood:'Soft · light · distinctive', word:'Salt', dust:['#fff','#F8BBD0','#fde']},
- {id:'ketchup',name:'Tomato Ketchup', ar:'بكاتشب الطماطم', pack:'#2484C6', bg:'#004182', mood:'Fresh · cool · confident', word:'Ketchup', dust:['#C62828','#EF5350','#8E0000']}
+ {id:'ketchup',name:'Tomato Ketchup', ar:'بكاتشب الطماطم', pack:'#2484C6', bg:'#004182', mood:'Fresh · cool · confident', word:'Ketchup', dust:['#E53935','#EF6C3A','#D84315']}
 ];
 
 /* ---------- three ---------- */
@@ -343,7 +344,7 @@ function bagGeo(tab,otab){
   const W=2,H=2.4,NX=64,NY=72,g=new THREE.PlaneGeometry(W,H,NX,NY),p=g.attributes.position,uvA=g.attributes.uv,T=.43,s0=.06,s1=.94,e=.006;
   for(let i=0;i<p.count;i++){
     const u=p.getX(i)/W+.5,v=p.getY(i)/H+.5,r=Math.round(v*NY);
-    const o=otab[r],t=tab[r];
+    const rr=v<s0?Math.ceil(s0*NY):v>s1?Math.floor(s1*NY):r;const o=otab[rr],t=tab[r];
     p.setX(i,((o[0]+(o[1]-o[0])*u)-.5)*W);
     uvA.setX(i,t[0]+e+(t[1]-t[0]-2*e)*u);
     let z=0;
@@ -352,8 +353,7 @@ function bagGeo(tab,otab){
       const py=Math.pow(Math.sin(Math.PI*s),.55);
       const px=Math.pow(Math.max(0,1-Math.pow(Math.abs(2*u-1),2.2)),.5);
       const belly=1+.16*(.5-s);
-      const wr=.07*Math.sin(u*34+s*3)*Math.pow(1-Math.sin(Math.PI*s),2.2);
-      z=T*py*px*belly+wr*px;
+      z=T*py*px*belly;
     }
     p.setZ(i,z);
   }
@@ -374,12 +374,12 @@ const T={};FL.forEach(f=>T[f.id]={f:tex(A+f.id+'-front.webp'),b:tex(A+f.id+'-bac
 function rnd(seed){let s=seed;return()=>(s=(s*16807)%2147483647)/2147483647}
 function chipGeo(seed){
   const R=40,S=110,pos=[],uv=[],idx=[],r=rnd(seed);
-  const a1=r()*6,a2=r()*6,k=.34+r()*.12,e=.9+r()*.12;
+  const a1=r()*6,a2=r()*6,a3=r()*6,k=.2+r()*.08,e=.86+r()*.12;
   for(let i=0;i<=R;i++){const t=i/R;
     for(let j=0;j<=S;j++){const th=j/S*Math.PI*2;
-      const edge=1+.055*Math.sin(3*th+a1)+.035*Math.sin(5*th+a2)+.02*Math.sin(9*th);
+      const edge=1+.07*Math.sin(2*th+a1)+.045*Math.sin(3*th+a2)+.025*Math.sin(7*th+a3)+.012*Math.sin(13*th+a1);
       const rr=t*edge,x=rr*Math.cos(th)*1.12,y=rr*Math.sin(th)*e;
-      let z=k*(x*x-y*y)+.035*Math.sin(5*x+a1)*Math.cos(4*y+a2)+.02*Math.sin(11*x*y+a2);
+      let z=k*(x*x-.7*y*y)+.06*x*x*x+.03*Math.sin(3.3*x+a1)*Math.cos(2.7*y+a2)+.012*Math.sin(9*x+4*y+a3);
       z+=.05*t*t*Math.sin(2*th+a1);
       pos.push(x,y,z);uv.push(.5+x/2.4,.5+y/2.4);
     }}
@@ -393,17 +393,18 @@ function chipTex(f){
   const c=document.createElement('canvas');c.width=c.height=1024;const x=c.getContext('2d'),r=rnd(f.id.length*977+13);
   const g=x.createRadialGradient(512,512,60,512,512,560);g.addColorStop(0,'#F4CF6B');g.addColorStop(.7,'#EDBE55');g.addColorStop(1,'#C98A2B');
   x.fillStyle=g;x.fillRect(0,0,1024,1024);
-  for(let i=0;i<260;i++){const px=r()*1024,py=r()*1024,rad=10+r()*60;const gg=x.createRadialGradient(px,py,0,px,py,rad);
-    const dark=r()>.55;gg.addColorStop(0,dark?'rgba(176,112,28,.22)':'rgba(255,236,170,.30)');gg.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=gg;x.fillRect(px-rad,py-rad,rad*2,rad*2)}
-  for(let i=0;i<34;i++){const px=r()*1024,py=r()*1024,rad=14+r()*34;x.beginPath();x.arc(px,py,rad,0,7);x.fillStyle='rgba(255,240,190,.35)';x.fill();x.lineWidth=3;x.strokeStyle='rgba(150,95,20,.35)';x.stroke()}
-  const n=f.id==='salt'?900:2600;
-  for(let i=0;i<n;i++){x.fillStyle=f.dust[(r()*f.dust.length)|0];x.globalAlpha=.45+r()*.5;const s=1+r()*(f.id==='salt'?5:3.4);x.fillRect(r()*1024,r()*1024,s,s)}
+  x.filter='blur(22px)';
+  for(let i=0;i<70;i++){const px=r()*1024,py=r()*1024,rx=40+r()*120,ry=30+r()*90,dark=r()>.6;
+    x.fillStyle=dark?'rgba(205,140,50,.20)':'rgba(255,238,175,.28)';x.beginPath();x.ellipse(px,py,rx,ry,r()*3,0,7);x.fill()}
+  x.filter='none';
+  const n=f.id==='salt'?1100:f.id==='cheese'?3600:5200;
+  for(let i=0;i<n;i++){x.fillStyle=f.dust[(r()*f.dust.length)|0];x.globalAlpha=.45+r()*.5;const s=.8+r()*(f.id==='salt'?3.5:2.2);x.fillRect(r()*1024,r()*1024,s,s)}
   x.globalAlpha=1;
   if(f.id!=='salt'){x.globalCompositeOperation='multiply';x.fillStyle=f.id==='cheese'?'rgba(255,190,90,.35)':'rgba(235,120,90,.28)';x.fillRect(0,0,1024,1024);x.globalCompositeOperation='source-over'}
   const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;return t;
 }
 const CT={};FL.forEach(f=>CT[f.id]=chipTex(f));
-const chipM=new THREE.MeshStandardMaterial({side:THREE.DoubleSide,roughness:.8,metalness:0,bumpScale:3,envMapIntensity:.25});
+const chipM=new THREE.MeshStandardMaterial({side:THREE.DoubleSide,roughness:.8,metalness:0,bumpScale:.5,envMapIntensity:.3});
 const chip=new THREE.Mesh(chipGeo(7),chipM);chip.scale.setScalar(1.05);chip.rotation.x=-1.0;scene.add(chip);
 const minis=new THREE.Group();scene.add(minis);
 const MP=[[-1.75,.95,.4,.34],[1.8,.55,.2,.42],[-1.55,-.9,.7,.3],[1.6,-1,.5,.36],[.2,1.5,-.6,.26],[-2.3,.05,-.5,.24],[2.35,-.2,-.6,.22]];
@@ -412,7 +413,7 @@ MP.forEach((m,i)=>{const c=new THREE.Mesh(chipGeo(31+i*17),chipM);c.position.set
 let mode='pack',cur=FL[0],spinKick=0;
 function setFlavor(f){
   cur=f;mF.map=T[f.id].f;mB.map=T[f.id].b;mF.needsUpdate=mB.needsUpdate=true;
-  chipM.map=CT[f.id];chipM.bumpMap=CT[f.id];chipM.needsUpdate=true;
+  chipM.map=CT[f.id];chipM.needsUpdate=true;
   document.documentElement.style.setProperty('--fl',f.bg);
   $('#bigword').textContent=f.word;$('#t-ar').textContent=f.ar;$('#t-en').textContent=f.name;
   $('#s-name').textContent=f.name;$('#s-pack').textContent=f.pack;$('#s-bg').textContent=f.bg;$('#s-mood').textContent=f.mood;
@@ -483,34 +484,37 @@ const FILMS_A=[
   {t:'The line-up',d:'All four packs land in a row with their ingredients. Logo and tagline: مررره يمي.',sfx:'Four hits. Logo sting.',s:3.5}]}
 ];
 const mkB=(id,name,col,ing,open,burst,back)=>({id,name,len:'8s',col,fr:[
-  {i:'b-'+id+'-1',t:'Pack first',d:'The closed pack lands, front and centre. We see the product before anything happens.',sfx:'Soft thud.',s:1.2},
-  {i:'b-'+id+'-2',t:'It opens',d:open,sfx:'Rip. Crunch wave.',s:1.0},
-  {i:'b-'+id+'-3',t:'The flavour bursts out',d:burst,sfx:'Whoosh. Crunches.',s:1.8},
-  {i:'b-'+id+'-5',t:'The clean snap',d:'Macro. The hero chip snaps into two equal halves. A clean break, not a single crumb: proof of the quality.',sfx:'One sharp, clean snap.',s:1.4},
-  {i:'b-'+id+'-4',t:'Back into the pack',d:back,sfx:'Reverse swirl.',s:1.2},
-  {i:id+'-4',t:'Pack shot',d:'The pack closes and settles with '+ing+'. Logo and tagline: مررره يمي.',sfx:'Final crunch. Logo sting.',s:1.4}]});
+  {i:'b-'+id+'-1',t:'Establishing',d:'Wide on the '+name+' world: flavour colour backdrop, a few ingredients drifting in slow motion. The camera pushes in and the closed pack drops into the centre of frame.',cam:'Slow push-in from wide to mid. The push carries straight into the next shot, no cut.',sfx:'Air whoosh. Soft thud.',s:1.2},
+  {i:'b-'+id+'-2',t:'It opens from the top',d:open,cam:'Camera keeps pushing, tilting up with the opening top seal.',sfx:'Pop of air. Crunch wave.',s:1.0},
+  {i:'b-'+id+'-3',t:'The flavour bursts out',d:burst,cam:'Camera follows the hero chip up and out of the burst.',sfx:'Whoosh. Crunches.',s:1.8},
+  {i:'b-'+id+'-5',t:'The clean snap',d:'Macro on the hero chip, still inside the same burst, same backdrop and light: no cut to another atmosphere. It snaps into two equal halves, a clean break with no crumbs, proof of the quality.',cam:'Continuous move from shot 3, slowing into a macro.',sfx:'One sharp, clean snap.',s:1.4},
+  {i:'b-'+id+'-4',t:'Back into the pack',d:back,cam:'Camera pulls back out with the swirl.',sfx:'Reverse swirl.',s:1.2},
+  {i:'c-'+id+'-6',t:'Pack shot',d:'The hero pack settles centre with '+ing+'. The other Yummis flavour packs slide in from the left and the right beside it. Clear headroom on top for the platform name and logo. Tagline: مررره يمي.',cam:'Locked off, slightly wider to leave the headroom.',sfx:'Pack hits. Final crunch. Logo sting.',s:1.4}]});
 const FILMS_B=[
- mkB('cheese','French Cheese','#F7931D','cheese and chips','The top seal tears open on its own. Chips and cheese cubes pop out.','Chips, cheese wedges and cubes fountain out and fill the frame around one hero chip.','Everything spirals back down into the pack.'),
- mkB('chili','Chili','#D91F33','chilies and chips','The top seal tears open on its own. Chips and chili flakes pop out with heat.','Chips, whole chilies and a storm of flakes fountain out around one hero chip.','Chips, chilies and flakes spiral back down into the pack.'),
- mkB('ketchup','Tomato Ketchup','#2484C6','ketchup, tomatoes and chips','The top seal tears open on its own. Chips and a few ketchup drops pop out.','Chips, two tomatoes and a single ketchup ribbon rise out around one hero chip.','Chips, tomatoes and the ribbon spiral back down into the pack.'),
+ mkB('cheese','French Cheese','#F7931D','cheese and chips','The top seal pops open cleanly from the top, no tearing. Chips and cheese cubes pop out.','Chips, cheese wedges and cubes fountain out and fill the frame around one hero chip.','Everything spirals back down into the pack.'),
+ mkB('chili','Chili','#D91F33','chilies and chips','The top seal pops open cleanly from the top, no tearing. Chips and chili flakes pop out with heat.','Chips, whole chilies and a storm of flakes fountain out around one hero chip.','Chips, chilies and flakes spiral back down into the pack.'),
+ mkB('salt','Himalayan Salt','#E587A2','pink salt and chips','The top seal pops open cleanly from the top, no tearing. Chips and pink salt crystals pop out.','Chips and a shower of pink Himalayan salt crystals burst out around one hero chip, same structure as cheese and chili.','Chips and crystals spiral back down into the pack.'),
+ mkB('ketchup','Tomato Ketchup','#2484C6','ketchup, tomatoes and chips','The top seal pops open cleanly from the top, no tearing. Chips and a few ketchup drops pop out.','Chips, cherry tomatoes and ketchup drops burst out around one hero chip, same structure as cheese and chili.','Chips, tomatoes and the ribbon spiral back down into the pack.'),
  {id:'mix',name:'All flavours',len:'15s',col:'#713258',fr:[
-  {i:'mix-1',t:'The chips',d:'Chips fall side by side, each trailing its own seasoning.',sfx:'Whooshes.',s:1.5},
-  {i:'mix-2',t:'French Cheese',d:'Cheese pack flies at camera through exploding cheese.',sfx:'Thud. Crunch.',s:2.8},
-  {i:'mix-3',t:'Chili',d:'Chili pack cuts across frame with a burst of flakes.',sfx:'Snap. Crunch.',s:2.8},
-  {i:'mix-5',t:'Tomato Ketchup',d:'Ketchup pack breaks through a ketchup splash.',sfx:'Splash. Crunch.',s:2.8},
-  {i:'b-mix-5',t:'The clean snap',d:'Macro. One chip snaps into two equal halves. A clean break, not a single crumb: proof of the quality.',sfx:'One sharp, clean snap.',s:1.6},
-  {i:'b-mix-6',t:'The line-up',d:'The packs land in a row with their ingredients. Logo and tagline: مررره يمي.',sfx:'Pack hits. Logo sting.',s:3.5}]}
+  {i:'mix-1',t:'The chips',d:'Four chips fall side by side, each trailing its own seasoning.',cam:'The camera dives with the cheese chip; its seasoning cloud wipes us into the cheese world.',sfx:'Whooshes.',s:1.3},
+  {i:'mix-2',t:'French Cheese',d:'Cheese pack flies at camera through exploding cheese.',cam:'Pack fills frame, then whips left: a whip-pan transition into chili.',sfx:'Thud. Crunch.',s:2.2},
+  {i:'mix-3',t:'Chili',d:'Chili pack cuts across frame with a burst of flakes.',cam:'The flakes sweep across lens and clear to pink: a wipe into salt.',sfx:'Snap. Crunch.',s:2.2},
+  {i:'mix-4',t:'Himalayan Salt',d:'Salt pack sweeps through a spray of pink crystals.',cam:'Crystals catch the light and flash to white, then the flash opens on ketchup.',sfx:'Crystal rush. Crunch.',s:2.2},
+  {i:'mix-5',t:'Tomato Ketchup',d:'Ketchup pack breaks through a burst of chips and tomatoes, same structure as the other flavours.',cam:'One chip flies at lens and we follow it into the macro.',sfx:'Burst. Crunch.',s:2.2},
+  {i:'b-mix-5',t:'The clean snap',d:'Macro, same backdrop as the shot before. One chip snaps into two equal halves. A clean break, not a single crumb: proof of the quality.',cam:'Continuous push-in, no cut.',sfx:'One sharp, clean snap.',s:1.5},
+  {i:'c-mix-6',t:'The line-up',d:'All four packs land in a row with their ingredients. Clear headroom on top for the platform name and logo. Tagline: مررره يمي.',cam:'Pull back to a locked wide.',sfx:'Four hits. Logo sting.',s:3.4}]}
 ];
 FILMS_A.forEach(F=>F.fr.forEach((f,i)=>f.i=(F.id==='mix'&&i===5)?'b-mix-6':F.id+'-'+(i+1)));
 const OPTS={B:{name:'Pack first',films:FILMS_B}};
 let opt='B',FILMS=OPTS.B.films;
 let film=FILMS[0];
-const img=i=>A+'sb-'+film.fr[i].i+'.webp';
-const LS='yummis-fb-r4';let FB={};try{FB=JSON.parse(localStorage.getItem(LS)||'{}')}catch(e){}
+const IMGA={'c-cheese-6':'cheese-4','c-chili-6':'chili-4','c-salt-6':'salt-4','c-ketchup-6':'ketchup-4','c-mix-6':'b-mix-6'};
+const img=i=>A+'sb-'+(IMGA[film.fr[i].i]||film.fr[i].i)+'.webp';
+const LS='yummis-fb-r5';let FB={};try{FB=JSON.parse(localStorage.getItem(LS)||'{}')}catch(e){}
 const save=()=>{try{localStorage.setItem(LS,JSON.stringify(FB))}catch(e){}summary()};
 function summary(){
   const L=[];Object.keys(OPTS).forEach(o=>OPTS[o].films.forEach(F=>F.fr.forEach((f,i)=>{const x=FB[o+F.id+i];if(!x||(!x.s&&!x.n))return;L.push(`${F.name} ${F.len} · Frame ${i+1} · ${f.t}: ${x.s==='ok'?'APPROVED':x.s==='ch'?'CHANGE':''}${x.n?' — '+x.n:''}`)})));
-  const txt=L.length?'Yummis films · Round 04 feedback\n\n'+L.join('\n'):'No feedback yet. Use the buttons under each storyboard frame.';
+  const txt=L.length?'Yummis films · Round 05 feedback\n\n'+L.join('\n'):'No feedback yet. Use the buttons under each storyboard frame.';
   $('#sum').textContent=txt;
 }
 function grid(){
@@ -518,7 +522,7 @@ function grid(){
   film.fr.forEach((f,i)=>{
     const k=opt+film.id+i,el=document.createElement('div');el.className='fr';
     el.innerHTML=`<div class="im" style="background-image:url(${img(i)})"><span class="no">${String(i+1).padStart(2,'0')}</span><span class="du">${f.s.toFixed(1)}s</span></div>
-    <div class="tx"><b>${f.t}</b><small>${f.d}</small><div class="sfx">SFX · ${f.sfx}</div></div>
+    <div class="tx"><b>${f.t}</b><small>${f.d}</small>${f.cam?`<div class="cam">CAM · ${f.cam}</div>`:''}<div class="sfx">SFX · ${f.sfx}</div></div>
     <div class="fb"><button class="ok">Approve</button><button class="ch">Change</button><textarea placeholder="What should change in this frame?"></textarea></div>`;
     const ok=el.querySelector('.ok'),ch=el.querySelector('.ch'),ta=el.querySelector('textarea'),u=img(i);
     const paint=()=>{const x=FB[k]||{};ok.classList.toggle('on',x.s==='ok');ch.classList.toggle('on',x.s==='ch');ta.classList.toggle('show',x.s==='ch');ta.value=x.n||''};
