@@ -77,6 +77,8 @@ button.spec:hover{border-color:var(--line2);color:var(--fg)}
 .pjp h3 i{display:flex;gap:4px}.pjp h3 i b{width:14px;height:14px;border-radius:50%;border:1px solid var(--line2);display:block}
 .pjp .pgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .pjp .lab{display:block}
+.pjp .pgrid .pjsec{grid-column:1/-1;margin:10px 0 0;padding-top:12px;border-top:1px solid var(--line2);color:var(--fg)}
+.pjp .pgrid .tile span{white-space:normal;min-height:3.3em}
 .pjp .acts2{display:flex;flex-direction:column;gap:8px}
 .pjm-i{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px 10px;align-items:center;padding:12px;border-radius:7px;color:var(--fg);border:0;background:transparent;width:100%;text-align:left;cursor:pointer}
 .pjm-i:hover,.pjm-i:focus-visible{background:rgba(255,255,255,.06)}
@@ -1479,8 +1481,8 @@ COMPS.linechart={name:'Line Chart',icon:'chart',
 var GTOK={fill:function(P){return P.color;},accent:function(P){return P.accent;},black:function(){return '#000000';},white:function(){return '#ffffff';},plate:function(){return '#1c1c1c';},accentDim:function(P){return cShade(P.accent,.52);},grey:function(){return '#464646';},ink:function(){return '#15120a';},edge:function(){return '#8a8a8a';}};
 function gCol(v,P){ if(v==null||v===''||v==='none') return null; if(v.charAt(0)==='$'){var f=GTOK[v.slice(1)]; return f?f(P):null;} return v; }
 var GDEF={box:{dir:'row',gap:0,px:0,py:0,align:'center',just:'center',bg:'',stripes:false,stroke:'',sw:4,shape:'rect',r:0,cut:0,sl:0,sr:0,sk:.62,minW:0,minH:0,gapTop:'',wOf:'',wPlus:0,ban:'auto',bfrom:'auto',bdir:'ccw',bout:'trim'},
-  text:{t:'',fs:34,fw:800,col:'$fill',lh:1.32,al:'c',ty:0}, num:{t:'0',u:'',fs:100,fw:900,col:'$fill',ufs:26,ufw:600,ucol:'$fill',up:'side',al:'c',ssz:.58},
-  vtext:{t:'',fs:24,fw:600,col:'$fill',rot:-90}, bar:{w:62,h:3.2,col:'$accent'}, space:{w:40,h:0,wOf:'',wPlus:0}, chart:{pts:[],lead:true,cw:560,ch:330,lcol:'$fill',bcol:'$accent',tcol:'$ink',xcol:'$fill'}};
+  text:{t:'',fs:34,fw:800,col:'$fill',lh:1.32,al:'c',ty:0,kfit:'',kPlus:0}, num:{t:'0',u:'',fs:100,fw:900,col:'$fill',ufs:26,ufw:600,ucol:'$fill',up:'side',al:'c',ssz:.58},
+  vtext:{t:'',fs:24,fw:600,col:'$fill',rot:-90}, bar:{w:62,h:3.2,col:'$accent',wOf:'',wPlus:0}, arrow:{w:160,h:44,sw:6,col:'$fill',dir:'l',hw:.3}, space:{w:40,h:0,wOf:'',wPlus:0}, chart:{pts:[],lead:true,cw:560,ch:330,lcol:'$fill',bcol:'$accent',tcol:'$ink',xcol:'$fill'}};
 var GCOM={hide:false,dx:0,dy:0,pos:'flow',ax:.5,ay:.5,ox:.5,oy:.5,mt:0,mr:0,mb:0,ml:0,grow:0,an:'auto',ad:'r',d0:0,dd:1};
 function gv(n,k){var v=n[k]; if(v!==undefined) return v; var d=GDEF[n.type]; if(d&&d[k]!==undefined) return d[k]; return GCOM[k];}
 function gEach(n,fn,depth,parent){ if(!n) return; fn(n,depth||0,parent||null); (n.kids||[]).forEach(function(k){gEach(k,fn,(depth||0)+1,n);}); }
@@ -1489,13 +1491,13 @@ function gFind(root,id){var f=null; gEach(root,function(n){ if(n.id===id) f=n; }
 /* ---- measure: the size each node wants ---- */
 function gMeasure(n,P,s){ if(gv(n,'hide')){n._nw=n._nh=0; return;}
   var t=n.type, fs=gv(n,'fs')*s;
-  if(t==='text'){var rows=String(gv(n,'t')).split('\n'), w=0; rows.forEach(function(r){w=Math.max(w,cW(P,r,gv(n,'fw'),fs));}); n._nw=w; n._nh=rows.length*fs*gv(n,'lh');}
+  if(t==='text'){var rows=String(gKfit(n,P,s,fs)).split('\n'), w=0; rows.forEach(function(r){w=Math.max(w,cW(P,r,gv(n,'fw'),fs));}); n._nw=w; n._nh=rows.length*fs*gv(n,'lh');}
   else if(t==='num'){var up=gv(n,'up'), u=up==='none'?'':gv(n,'u'), ur=!!u&&up!=='below'&&!hasAr(u), nw=cW(P,gv(n,'t'),gv(n,'fw'),fs), cap=fs*.74, ufs=gUfs(n,s,ur), uw=u?cW(P,u,ur?gv(n,'fw'):gv(n,'ufw'),ufs):0;
     n._cap=cap; n._numw=nw; n._uw=uw; n._ur=ur;
     /* an Arabic unit sits small beside the number; a sign (%, +, $) follows it on the same line, the way it is read */
     if(u&&up==='below'){n._nw=Math.max(nw,uw); n._nh=cap*1.16+ufs*1.45;} else if(ur){n._nw=nw+fs*.05+uw; n._nh=cap*1.2;} else {n._nw=nw+(u?fs*.2+uw:0); n._nh=Math.max(cap*1.2,ufs*1.4);}}
   else if(t==='vtext'){n._nw=fs*1.6; n._nh=cW(P,gv(n,'t'),gv(n,'fw'),fs)+fs*.6;}
-  else if(t==='bar'||t==='space'){n._nw=gv(n,'w')*s; n._nh=gv(n,'h')*s; if(t==='space') gWOf(n,s,true);}
+  else if(t==='bar'||t==='space'||t==='arrow'){n._nw=gv(n,'w')*s; n._nh=gv(n,'h')*s; if(t==='space'||t==='bar') gWOf(n,s,true);}
   else if(t==='chart'){var np=(gv(n,'pts')||[]).length; n._nw=Math.max(gv(n,'cw'),150+np*150)*s; n._nh=gv(n,'ch')*s;}
   else if(t==='box'){var kids=(n.kids||[]), row=gv(n,'dir')==='row', gap=gv(n,'gap')*s, main=0, cross=0, cnt=0;
     kids.forEach(function(k){gMeasure(k,P,s); if(gv(k,'pos')==='abs'||gv(k,'hide')) return; var kw=k._nw+(gv(k,'ml')+gv(k,'mr'))*s, kh=k._nh+(gv(k,'mt')+gv(k,'mb'))*s; if(row){main+=kw; cross=Math.max(cross,kh);} else {main+=kh; cross=Math.max(cross,kw);} cnt++;});
@@ -1508,6 +1510,12 @@ function gMeasure(n,P,s){ if(gv(n,'hide')){n._nw=n._nh=0; return;}
 
 /* a plate or a space can take the width of another layer of the group (+ extra): ticks that line up under a number, a tab as wide as its box */
 var G_ROOT=null, G_WOF=false;
+/* Kashida To Width Of: the word's tatweel runs (ـ) grow or shrink together until the word is as wide as another layer of the group (+ extra) */
+function gKfit(n,P,s,fs){var t=String(gv(n,'t')); n._ts=null; var id=gv(n,'kfit'); if(!id||!G_ROOT) return t; G_WOF=true; var o=gFind(G_ROOT,id); if(!o||o===n||o._nw==null||gv(o,'hide')) return t;
+  var runs=t.match(/\u0640+/g); if(!runs||t.indexOf('\n')>=0) return t; var tot=runs.reduce(function(a,r){return a+r.length;},0), fw=gv(n,'fw'), goal=o._nw+gv(n,'kPlus')*s;
+  var mk=function(m){var i=0, acc=0; return t.replace(/\u0640+/g,function(r){var k=i++===runs.length-1?m-acc:Math.max(1,Math.round(m*r.length/tot)); if(k<1) k=1; acc+=k; return new Array(k+1).join('\u0640');});};
+  var lo=runs.length, hi=Math.max(lo,400); if(cW(P,mk(lo),fw,fs)>=goal){n._ts=mk(lo); return n._ts;}
+  while(hi-lo>1){var mid=(lo+hi)>>1; if(cW(P,mk(mid),fw,fs)<=goal) lo=mid; else hi=mid;} n._ts=mk(lo); return n._ts;}
 function gWOf(n,s,exact){var id=gv(n,'wOf'); if(!id||!G_ROOT) return; G_WOF=true; var o=gFind(G_ROOT,id); if(!o||o===n||o._nw==null||gv(o,'hide')) return; var tw=o._nw+gv(n,'wPlus')*s; n._nw=exact?Math.max(0,tw):Math.max(n._nw,tw);}
 function gUfs(n,s,ur){return ur?gv(n,'fs')*s*gv(n,'ssz'):gv(n,'ufs')*s;}
 
@@ -1598,7 +1606,7 @@ function gBorder(g,P,n,s,pin,pout){var sc=gCol(gv(n,'stroke'),P), sw=gv(n,'sw')*
   if(ok) g.stroke(); g.restore();}
 
 /* ---- draw, with each node's own entrance ---- */
-function gAnimOf(n){var a=gv(n,'an'); if(a!=='auto') return a; if(n.type==='box') return gv(n,'bg')?'wipe':'none'; if(n.type==='num') return 'count'; if(n.type==='text') return 'rise'; if(n.type==='bar') return 'grow'; if(n.type==='chart') return 'chart'; return 'fade';}
+function gAnimOf(n){var a=gv(n,'an'); if(a!=='auto') return a; if(n.type==='box') return gv(n,'bg')?'wipe':'none'; if(n.type==='num') return 'count'; if(n.type==='text') return 'rise'; if(n.type==='bar'||n.type==='arrow') return 'grow'; if(n.type==='chart') return 'chart'; return 'fade';}
 function gDraw(g,P,env,K){var R=P.g&&P.g.root; if(!R) return; var ph=cPhase(env), st=gStepAt(P,env), G; P.g._vis=st.q<.5?st.a:st.b;
   if(st.q<=0){ gWith(P,st.a,function(){G=gLay(P); gEach(R,function(n){n._chg=null;}); gDraw2(g,P,G,ph,K);}); return; }
   /* between two steps: lay both out, slide every layer from one to the other, and swap the text and numbers that change */
@@ -1657,7 +1665,7 @@ function gNode(g,P,n,s,ph,par){ if(gv(n,'hide')) return; var p=n._p==null?1:n._p
   if(an==='wipe'&&p<1){var e4=EASE.outExpo(p); g.beginPath(); g.rect(x+w*(1-e4),y-h*.2,w*e4+2,h*1.4); g.clip();}
   if(n.type==='text'){var fs=gv(n,'fs')*s, lh=fs*gv(n,'lh'), al=gv(n,'al'), tx=al==='l'?x:(al==='r'?x+w:x+w/2), fw=gv(n,'fw'), col=gCol(gv(n,'col'),P), ty=gv(n,'ty')*s,
       blk=function(str){var rows=String(str).split('\n'), y0=y+h/2-(rows.length*lh)/2; rows.forEach(function(r,i){cText(g,P,r,tx,y0+i*lh+lh/2+fs*.36+ty,fw,fs,col,al);});};
-    if(n._chg) gSwap(g,P,n,par,s,tm,Math.max(h*.55,fs*1.2),[x-w*.06,y-h*.3,w*1.12,h*1.6],function(){blk(n._chg.t0);},function(){blk(gv(n,'t'));}); else blk(gv(n,'t'));}
+    if(n._chg) gSwap(g,P,n,par,s,tm,Math.max(h*.55,fs*1.2),[x-w*.06,y-h*.3,w*1.12,h*1.6],function(){blk(n._chg.t0);},function(){blk(n._ts!=null?n._ts:gv(n,'t'));}); else blk(n._ts!=null?n._ts:gv(n,'t'));}
   else if(n.type==='num'){var nfs=gv(n,'fs')*s, cap=n._cap||nfs*.74, below=gv(n,'up')==='below', col=gCol(gv(n,'col'),P), ucol=gCol(gv(n,'ucol'),P), fw=gv(n,'fw'), noU=gv(n,'up')==='none', t1=gv(n,'t'), u1=noU?'':gv(n,'u'), Q=gNumGeo(n,s,n._ur,below),
       dN=function(str){cText(g,P,str,Q.nx,Q.ny,fw,nfs,col,'c');}, dU=function(str,q,ur){ if(str) cText(g,P,str,q.ux,q.uy,ur?fw:gv(n,'ufw'),gUfs(n,s,ur),ucol,q.ual);},
       /* while the number changes, its unit stays fixed to the number's edge as the digits grow or shrink */
@@ -1672,6 +1680,9 @@ function gNode(g,P,n,s,ph,par){ if(gv(n,'hide')) return; var p=n._p==null?1:n._p
   else if(n.type==='vtext'){var vfs=gv(n,'fs')*s, vb=function(str){g.save(); g.translate(x+w/2,y+h/2); g.rotate(gv(n,'rot')*Math.PI/180); cText(g,P,str,0,vfs*.36,gv(n,'fw'),vfs,gCol(gv(n,'col'),P),'c'); g.restore();};
     if(n._chg) gSwap(g,P,n,par,s,tm==='wipe'?'fade':tm,Math.min(h*.6,vfs*2),null,function(){vb(n._chg.t0);},function(){vb(gv(n,'t'));}); else vb(gv(n,'t'));}
   else if(n.type==='bar'){var e5=an==='grow'?EASE.outExpo(p):1; g.fillStyle=gCol(gv(n,'col'),P)||P.accent; g.fillRect(x+w*(1-e5)/2,y,w*e5,h);}
+  else if(n.type==='arrow'){var e6=an==='grow'?EASE.outExpo(p):1, lw=gv(n,'sw')*s, hl=Math.min(w*.45,h*.5*gv(n,'hw')/.3), hh=h/2, cy6=y+h/2, L=gv(n,'dir')==='l', tip=L?x+w*(1-e6):x+w*e6, tail=L?x+w:x;
+      g.strokeStyle=gCol(gv(n,'col'),P)||P.color; g.lineWidth=lw; g.lineCap='round'; g.lineJoin='round'; g.beginPath(); g.moveTo(tail,cy6); g.lineTo(tip,cy6); g.stroke();
+      if(e6>.05){var dx6=L?hl:-hl; g.beginPath(); g.moveTo(tip+dx6,cy6-hh+lw/2); g.lineTo(tip,cy6); g.lineTo(tip+dx6,cy6+hh-lw/2); g.stroke();}}
   else if(n.type==='chart') gChart(g,P,n,s,p);
   g.restore();
   (n.kids||[]).forEach(function(k){gNode(g,P,k,s,ph,n);});}
@@ -1695,7 +1706,7 @@ var GRP={draw:function(g,P,env,K){gDraw(g,P,env,K);}};
 /* ---- templates: plain trees, copied into the layer when it is added ---- */
 var GTPL={}, GID=0;
 function gN(type,o,kids){var n=Object.assign({type:type},o||{}); if(kids) n.kids=kids; return n;}
-function gIds(root){var c={}; gEach(root,function(n){var b=n.type; c[b]=(c[b]||0)+1; n.id=n.id||(b+c[b]); if(!n.name) n.name={box:'Plate',text:'Text',num:'Number',vtext:'Side Text',bar:'Tick',space:'Space',chart:'Chart'}[b]+(c[b]>1?' '+c[b]:'');}); return root;}
+function gIds(root){var c={}; gEach(root,function(n){var b=n.type; c[b]=(c[b]||0)+1; n.id=n.id||(b+c[b]); if(!n.name) n.name={box:'Plate',text:'Text',num:'Number',vtext:'Side Text',bar:'Tick',space:'Space',chart:'Chart',arrow:'Arrow'}[b]+(c[b]>1?' '+c[b]:'');}); return root;}
 function gNum(t,u,o){return gN('num',Object.assign({t:t,u:u},o||{}));}
 (function(){
   var W4=4.5, PL=function(o,kids){return gN('box',Object.assign({dir:'row',just:'end',align:'center',px:44,py:22,bg:'$black',stroke:'$white',sw:W4,sk:.64},o),kids);};
@@ -1739,6 +1750,115 @@ function gNum(t,u,o){return gN('num',Object.assign({t:t,u:u},o||{}));}
     steps:[{pre:{t:'أكثر من'},num:{t:'280',u:''},txt:{t:'مركز تعهيد لشركات\nعالمية في مصر'}},
            {pre:{t:'استثمارات تجاوزت'},num:{t:'150',u:''},txt:{t:'مليار دولار في البنية التحتية\nالرقمية منذ 2019'}}]};
 })();
+/* ================= NPD films: every super of a film as a group template =================
+   Each template carries its film's own look (brand: font, white, accent) so it opens the way the film's designer set it.
+   Sizes are design pixels at Size 170 = the film's 1080p frame. Names: "Film 03 · 01 · ..." = film, the number of the super in the film's PNG set, what it is. */
+(function(){
+  var F03={font:'Cairo',color:'#FFFFFF',accent:'#BC8229'};
+  var T=function(t,fs,fw,col,o){return gN('text',Object.assign({t:t,fs:fs,fw:fw,col:col||'$fill',lh:1.2},o||{}));};
+  var N=function(t,fs,o){return gN('num',Object.assign({t:t,u:'',fs:fs,fw:800,col:'$fill'},o||{}));};
+  var LN=function(o){return gN('bar',Object.assign({name:'Line',w:200,h:3,col:'$fill'},o||{}));};
+  var COL=function(o,kids){return gN('box',Object.assign({dir:'col',align:'center'},o||{}),kids);};
+  var ROW=function(o,kids){return gN('box',Object.assign({dir:'row',align:'center'},o||{}),kids);};
+  /* a thin accent frame around a word or a line */
+  var FB=function(o,kids){return gN('box',Object.assign({dir:'row',just:'center',align:'center',px:34,py:10,stroke:'$accent',sw:2.4},o||{}),kids);};
+  var ARW=function(o){return gN('arrow',Object.assign({name:'Arrow',w:150,h:44,sw:4.5,col:'$fill',dir:'l'},o||{}));};
+  var add=function(id,name,root,brand){GTPL[id]={name:name,icon:'num',brand:brand,root:gIds(root)};};
+
+  add('f03_01','Film 03 · 01 · Number + Label',COL({name:'Group',align:'stretch',gap:4},[
+    N('٣٥٧',405,{name:'Number'}),
+    FB({name:'Label Frame',py:8},[T('منطقة غير آمنة مستهدفة',66,700,'$accent',{name:'Label'})])]),F03);
+
+  add('f03_02','Film 03 · 02 · Name + Event + Date',COL({name:'Group',align:'stretch',gap:22},[
+    T('الرئيـــــــس',110,300,'$fill',{name:'Title'}),
+    T('عبد الفتاح السيسي',116,700,'$accent',{id:'name',name:'Name'}),
+    LN({name:'Line',h:3.5,mt:6,mb:6}),
+    T('افتتـــاح الأسمـــــرات',112,300,'$fill',{name:'Event',kfit:'name'}),
+    ROW({name:'Date Row',align:'center'},[N('2016',205,{name:'Year',col:'$accent',fw:700,an:'rise'}),gN('space',{name:'Space',grow:1,w:40}),T('مايـــــــــــو',112,300,'$fill',{name:'Month'})])]),F03);
+
+  add('f03_03','Film 03 · 03 · Number + Unit + Note',COL({name:'Group',align:'center',gap:6},[
+    T('تـــم تنفيـــذ',76,300,'$accent',{name:'Top Line'}),
+    N('١,٦',440,{id:'num',name:'Number',mt:-34,mb:-44}),
+    T('مليـــون',76,300,'$accent',{name:'Unit',kfit:'txt'}),
+    T('وحدة بالمدن الجديدة',72,700,'$accent',{id:'txt',name:'Text'}),
+    LN({name:'Line',wOf:'txt',mt:16,mb:30}),
+    FB({name:'Note Frame',py:12},[T('تم تنفيذ محورًا على النيل',62,700,'$fill',{name:'Note'})])]),F03);
+
+  add('f03_04','Film 03 · 04 · Number + From / To + Note',COL({name:'Group',align:'center',gap:6},[
+    T('تـــم تنفيـــذ',70,300,'$accent',{name:'Top Line'}),
+    N('٦,٦٠٠',350,{id:'num',name:'Number',mt:-28,mb:-34}),
+    T('كـــم',70,300,'$accent',{name:'Unit',kfit:'num'}),
+    T('طـــرق جـديـــدة',62,700,'$accent',{name:'Text',kfit:'num'}),
+    LN({name:'Line',w:855,h:2.6,mt:20,mb:20}),
+    ROW({name:'From / To',gap:34},[N('٧٣',262,{name:'To Number',col:'$accent'}),ARW({name:'Arrow',w:162,h:46}),N('٣٨',262,{name:'From Number',col:'$accent'}),T('مــن',62,300,'$fill',{name:'From Word',dy:46})]),
+    FB({name:'Note Frame',wOf:'num',py:12,mt:18},[T('محـورًا علـى النـيـل',46,700,'$fill',{name:'Note'})])]),F03);
+
+  add('f03_05','Film 03 · 05 · Number + From / To',COL({name:'Group',align:'center',gap:8},[
+    N('٣٩',440,{name:'Number'}),
+    T('مـدينـة جيــل رابــع',62,700,'$fill',{name:'Text',mt:-26}),
+    LN({name:'Line',w:938,h:2.6,mt:30,mb:30}),
+    ROW({name:'From / To',gap:70},[N('٢,٨٥',262,{name:'To Number',col:'$accent'}),ARW({name:'Arrow',w:123,h:38,sw:4}),N('١,٦',262,{name:'From Number',col:'$accent'})])]),F03);
+
+  add('f03_06','Film 03 · 06 · Two Numbers Stacked',COL({name:'Group',align:'center',gap:6},[
+    N('٨٨٧',390,{name:'Upper Number'}),
+    T('ألف وحدة بالمدن الجديدة',62,700,'$accent',{name:'Upper Text',mt:-16}),
+    LN({name:'Line',w:705,h:2.6,mt:26,mb:26}),
+    N('١٧٧',390,{name:'Lower Number'}),
+    T('ألف وحدة بـــالمحافظات',62,700,'$accent',{name:'Lower Text',mt:-16})]),F03);
+
+  add('f03_07','Film 03 · 07 · Done Of Total + Percent',COL({name:'Group',align:'center',gap:6},[
+    T('تــم الانتهــاء مــن',70,300,'$accent',{name:'Top Line'}),
+    ROW({name:'Numbers',gap:36,align:'end'},[N('٣٧٥',345,{name:'Total'}),T('مـن',54,300,'$accent',{name:'Of',mb:34}),N('٣٤٢',345,{name:'Done'})]),
+    LN({name:'Line',w:1421,h:3,col:'$accent',mt:14,mb:14}),
+    N('‭(٩٦٪)‬',262,{name:'Percent',col:'$accent'})]),F03);
+
+  var SIDE=function(k,nm,top,num,bot){return COL({name:nm,align:'center',gap:0},[T(top.t,52,top.w,'$accent',Object.assign({name:nm+' Top'},top.o||{})),N(num,390,{id:k+'n',name:nm+' Number',mt:-30,mb:-34}),T(bot.t,60,bot.w,'$accent',{name:nm+' Bottom',kfit:k+'n'})]);};
+  add('f03_08','Film 03 · 08 · Two Numbers Side By Side',ROW({name:'Group',align:'stretch',gap:150},[
+    SIDE('l','Left',{t:'نحـــو',w:300,o:{kfit:'ln'}},'٦٣',{t:'ألــف وحـــدة',w:600}),
+    gN('bar',{name:'Divider',w:4.5,h:317,col:'$fill'}),
+    SIDE('r','Right',{t:'داره:',w:700,o:{al:'r',kfit:''}},'٢٣',{t:'موقـــعًا',w:700})]),F03);
+
+  add('f03_09','Film 03 · 09 · Heading + Number + Unit',COL({name:'Group',align:'center',gap:4},[
+    T('محور يربط متحف الحضارات بصلاح سالم',76,300,'$accent',{id:'h1',name:'Heading 1'}),
+    T('حـــدائـق تـــلال الفسطــاط:',76,300,'$accent',{name:'Heading 2',kfit:'h1'}),
+    gN('num',{name:'Number',t:'٥٠٠',u:'فـــــدان',fs:480,fw:800,col:'$fill',ucol:'$accent',ufs:76,ufw:300,up:'side',mt:-6})]),F03);
+
+  var CELL=function(nm,t){return FB({name:nm,minW:411,minH:209,px:20},[T(t,112,700,'$fill',{name:nm+' Word'})]);};
+  add('f03_10','Film 03 · 10 · Heading + Four Boxes',COL({name:'Group',align:'center',gap:6},[
+    T('طرح أصول وأراضي الدولة للاستثمار',76,300,'$accent',{id:'h1',name:'Heading 1'}),
+    T('مجمع الحـــرف:',76,300,'$accent',{name:'Heading 2',kfit:'h1'}),
+    LN({name:'Line',w:1002,h:2,mt:30,mb:52}),
+    ROW({name:'Upper Row',gap:154},[CELL('Box 2','سكن'),CELL('Box 1','ورش')]),
+    ROW({name:'Lower Row',gap:154,mt:30},[CELL('Box 4','مدرسة'),CELL('Box 3','تسويق')])]),F03);
+
+  var CB=function(nm,t){return FB({name:nm,minW:692,minH:166},[T(t,82,700,'$fill',{name:nm+' Word'})]);};
+  add('f03_11','Film 03 · 11 · Three Boxes',COL({name:'Group',align:'center',gap:150},[
+    ROW({name:'Upper Row',gap:176},[CB('Box 2','قطار خفيف'),CB('Box 1','أتوبيس ترددي')]),
+    CB('Box 3','مونوريل')]),F03);
+
+  add('f03_12','Film 03 · 12 · Two Numbers + Note',COL({name:'Group',align:'center',gap:6},[
+    N('١٤٧٧',370,{id:'n1',name:'Upper Number'}),
+    T('قـريـــة',54,500,'$accent',{name:'Upper Unit',mt:-30,kfit:'n2'}),
+    LN({name:'Line',h:2,wOf:'n2',mt:22,mb:26}),
+    N('٢٩٠٠',370,{id:'n2',name:'Lower Number'}),
+    T('كـــم',62,500,'$accent',{name:'Lower Unit',mt:-30,kfit:'n2'}),
+    FB({name:'Note Frame',py:8,px:22,mt:14},[T('طـــرق ضمن حيـاة كــريمة',58,400,'$fill',{name:'Note'})])]),F03);
+
+  var PAIR=function(nm,num,t){return COL({name:nm,align:'center',gap:0},[N(num,390,{name:nm+' Number'}),T(t,62,700,'$accent',{name:nm+' Text',mt:-44})]);};
+  add('f03_13','Film 03 · 13 · Two Numbers + Divider',ROW({name:'Group',align:'stretch',gap:200},[
+    PAIR('Left','٣٢','مليـــار جنيه'),gN('bar',{name:'Divider',w:4,h:317,col:'$fill'}),PAIR('Right','٦','آلاف مشروع')]),F03);
+
+  add('f03_14','Film 03 · 14 · Heading + Number',COL({name:'Group',align:'center',gap:6},[
+    T('ناصـــــر الجـديـــــدة:',70,700,'$accent',{name:'Heading'}),
+    LN({name:'Line',h:3,wOf:'num',mt:22,mb:22}),
+    T('نحـــو',66,300,'$accent',{name:'Top Word',kfit:'num'}),
+    N('٣٤٥',470,{id:'num',name:'Number',mt:-48,mb:-44}),
+    T('ألف نسمة',74,700,'$accent',{name:'Text'})]),F03);
+
+  add('f03_15','Film 03 · 15 · Framed Title',COL({name:'Group',align:'center'},[
+    FB({name:'Frame',minW:1277,minH:297,px:60},[T('سؤال الجلسة',172,700,'$fill',{name:'Title'})])]),F03);
+})();
+
 function gMain(q){var m=''; gEach(q.g&&q.g.root,function(n){ if(!m&&n.type==='num'&&!gv(n,'hide')) m=gv(n,'t'); }); if(!m) gEach(q.g&&q.g.root,function(n){ if(!m&&n.type==='text'&&!gv(n,'hide')) m=gv(n,'t'); }); return m;}
 
 /* ================= export: PNG frames -> ZIP (store) or QuickTime MOV (PNG codec, RGBA) ================= */
@@ -1911,7 +2031,7 @@ function fmtStep(p){var dec=(String(p.step).split('.')[1]||'').length; return fu
 var G_BIN=[['draw','Trim Path'],['draw2','Both Ways'],['wipe','Wipe'],['fade','Fade'],['pop','Pop'],['none','Cut']], G_BOUT=[['trim','Trim Path'],['retract','Reverse'],['fade','Fade'],['wipe','Wipe'],['group','With Group']], G_BDIR=[['ccw','Counter-Clockwise'],['cw','Clockwise']],
   G_BFROM=[['auto','Auto'],['tr','Top Right'],['tc','Top Middle'],['tl','Top Left'],['lc','Left Middle'],['bl','Bottom Left'],['bc','Bottom Middle'],['br','Bottom Right'],['rc','Right Middle']];
 var gsel='', gstep=0, GCOLS=[['$fill','Layer Fill'],['$accent','Accent'],['$accentDim','Accent Dark'],['$white','White'],['$black','Black'],['$plate','Plate Dark'],['$grey','Grey'],['$edge','Edge Grey'],['$ink','Dark Ink'],['','None'],['#','Custom']];
-var GTYPE={box:'Plate',text:'Text',num:'Number',vtext:'Side Text',bar:'Tick',space:'Space',chart:'Chart'};
+var GTYPE={box:'Plate',text:'Text',num:'Number',vtext:'Side Text',bar:'Tick',space:'Space',chart:'Chart',arrow:'Arrow'};
 function placeNodeBox(){var b=$('#nodeBox'); if(!b) return; var n=null; if(P&&P.kind==='group'&&gsel){var G=gLayout(P); if(G) n=gFind(G.root,gsel);} if(!n||gv(n,'hide')||!(n._w>0)){b.classList.remove('on'); return;}
   b.style.left=(n._x/W*100)+'%'; b.style.top=(n._y/H*100)+'%'; b.style.width=(n._w/W*100)+'%'; b.style.height=(Math.max(2,n._h)/H*100)+'%'; b.classList.add('on');}
 function setNode(n,k,v,rebuild){n[k]=v; P.text=compLabel(P); syncLines(); placeSel(); dirty(); persist(); hook('change','group'); if(rebuild) buildGroupUI();}
@@ -1959,12 +2079,15 @@ function buildGroupUI(){var box=UI.compBox; if(!box||P.kind!=='group') return; v
   /* 3. the picked layer */
   var n=gsel?gFind(R,gsel):null;
   if(n){var pb=el('div','gprops',box); el('h4','',pb,n.name+' · '+(GTYPE[n.type]||n.type)); var t;
-    if(n.type==='text'||n.type==='vtext'){t=gPair(pb); gRange(t,'Size',n,'fs',8,240,1,function(x){return Math.round(x)+' px';}); gRange(t,'Weight',n,'fw',100,900,100,function(x){return String(x);}); gColorCtl(pb,'Color',n,'col');
-      if(n.type==='text') gSeg(pb,'Align',n,'al',[['l','Left'],['c','Center'],['r','Right']]); else gSeg(pb,'Turn',n,'rot',[[-90,'Up'],[90,'Down'],[0,'Flat']]);}
-    if(n.type==='num'){t=gPair(pb); gRange(t,'Size',n,'fs',20,320,1,function(x){return Math.round(x)+' px';}); gRange(t,'Weight',n,'fw',100,900,100,function(x){return String(x);}); gColorCtl(pb,'Number Color',n,'col');
+    if(n.type==='text'||n.type==='vtext'){t=gPair(pb); gRange(t,'Size',n,'fs',8,400,1,function(x){return Math.round(x)+' px';}); gRange(t,'Weight',n,'fw',100,900,100,function(x){return String(x);}); gColorCtl(pb,'Color',n,'col');
+      if(n.type==='text'){gSeg(pb,'Align',n,'al',[['l','Left'],['c','Center'],['r','Right']]); var kf=el('div','f',pb); el('span','lab',kf,'Kashida To Width Of'); var ks=el('select','',kf); ks.setAttribute('aria-label','Kashida To Width Of'); var k0=el('option','',ks,'Nothing (as typed)'); k0.value='';
+        gEach(R,function(m){ if(m===n||m===R||m.type==='space') return; var o=el('option','',ks,m.name); o.value=m.id;}); ks.value=gv(n,'kfit')||''; ks.addEventListener('change',function(){setNode(n,'kfit',ks.value,true);});
+        if(gv(n,'kfit')){gRange(pb,'Extra Width',n,'kPlus',-300,300,1,function(x){return Math.round(x)+' px';}); el('p','hint',pb,'الكشيدة (ـ) اللي في الكلمة بتطول أو تقصر لوحدها لحد ما الكلمة تبقى بعرض الـ Layer اللي اخترته.');}} else gSeg(pb,'Turn',n,'rot',[[-90,'Up'],[90,'Down'],[0,'Flat']]);}
+    if(n.type==='num'){t=gPair(pb); gRange(t,'Size',n,'fs',20,600,1,function(x){return Math.round(x)+' px';}); gRange(t,'Weight',n,'fw',100,900,100,function(x){return String(x);}); gColorCtl(pb,'Number Color',n,'col');
       gSeg(pb,'Unit',n,'up',[['side','Beside'],['below','Below'],['none','Hidden']]); t=gPair(pb); gRange(t,'Unit Size',n,'ufs',6,120,1,function(x){return Math.round(x)+' px';}); gRange(t,'Unit Weight',n,'ufw',100,900,100,function(x){return String(x);}); gRange(pb,'Sign Size (% + $)',n,'ssz',.2,1,.02,function(x){return Math.round(x*100)+'%';}); gColorCtl(pb,'Unit Color',n,'ucol');
       el('p','hint',pb,'الوحدة العربي بتقعد صغيرة جنب الرقم، والعلامات زي % و+ بتيجي بعده على نفس السطر.');}
-    if(n.type==='bar'){t=gPair(pb); gRange(t,'Width',n,'w',2,600,1); gRange(t,'Height',n,'h',1,80,.5); gColorCtl(pb,'Color',n,'col');}
+    if(n.type==='bar'){t=gPair(pb); gRange(t,'Width',n,'w',2,1600,1); gRange(t,'Height',n,'h',1,400,.5); gColorCtl(pb,'Color',n,'col'); gMatchCtl(pb,n,R);}
+    if(n.type==='arrow'){t=gPair(pb); gRange(t,'Length',n,'w',20,1200,1); gRange(t,'Head',n,'h',8,200,1); t=gPair(pb); gRange(t,'Thickness',n,'sw',1,30,.5); gRange(t,'Head Size',n,'hw',.1,1,.02,function(x){return Math.round(x*100)+'%';}); gSeg(pb,'Points',n,'dir',[['l','Left'],['r','Right']]); gColorCtl(pb,'Color',n,'col');}
     if(n.type==='space'){t=gPair(pb); gRange(t,'Width',n,'w',0,400,1); gRange(t,'Height',n,'h',0,400,1); gMatchCtl(pb,n,R);}
     if(n.type==='chart'){gColorCtl(pb,'Line',n,'lcol'); gColorCtl(pb,'Bubbles',n,'bcol'); gColorCtl(pb,'Bubble Text',n,'tcol'); gColorCtl(pb,'Labels',n,'xcol'); gToggle(pb,'Line Starts From The Corner',n,'lead'); t=gPair(pb); gRange(t,'Width',n,'cw',200,1600,10); gRange(t,'Height',n,'ch',120,900,10);}
     if(n.type==='box'){gColorCtl(pb,'Fill',n,'bg'); gToggle(pb,'Stripes',n,'stripes'); gColorCtl(pb,'Stroke',n,'stroke'); t=gPair(pb); gRange(t,'Stroke Width',n,'sw',0,16,.5); gRange(t,'Gap',n,'gap',-20,120,1);
@@ -2261,18 +2384,18 @@ var PROJECTS=[
  {id:'npd',name:'NPD',tip:'تايبو وأرقام ورسوم بيانية بهوية المشروع: أسود ودهبي وأبيض',
   brand:{color:'#ffffff',accent:'#DBC373',font:'Alexandria',bg:'black'},
   templates:[{group:'plates2'},{group:'plates3'},{group:'fromto'},{group:'textrows'},{comp:'bignum'},{group:'statbox'},{group:'framenum'},{comp:'plate'},{comp:'linechart'},
-   {text:'عنوان بخط تقيل',name:'Text · Bold',weight:800,move:'mask'},{text:'سطر بخط خفيف',name:'Text · Light',weight:300,move:'fade'}]}];
+   {text:'عنوان بخط تقيل',name:'Text · Bold',weight:800,move:'mask'},{text:'سطر بخط خفيف',name:'Text · Light',weight:300,move:'fade'},{sec:'Film 03'},{group:'f03_01'},{group:'f03_02'},{group:'f03_03'},{group:'f03_04'},{group:'f03_05'},{group:'f03_06'},{group:'f03_07'},{group:'f03_08'},{group:'f03_09'},{group:'f03_10'},{group:'f03_11'},{group:'f03_12'},{group:'f03_13'},{group:'f03_14'},{group:'f03_15'}]}];
 var PKEY='aromaTypo.proj', PJ=null, ptiles=[];
 try{var pid=localStorage.getItem(PKEY); PROJECTS.forEach(function(p){ if(p.id===pid) PJ=p; });}catch(e){}
 function mkFromTpl(tp,br){var o={color:br.color,accent:br.accent,font:br.font,dur:LINES[0].dur,x:.5,y:.5,align:'c',delay:0};
-  if(tp.group){var GT=GTPL[tp.group]; Object.assign(o,{kind:'group',g:{tpl:tp.group,name:GT.name,root:JSON.parse(JSON.stringify(GT.root)),steps:JSON.parse(JSON.stringify(GT.steps||[])),tx:.9,nt:'count',tt:'roll'},text:'g',size:170,weight:900,inDur:1.8,outDur:.6,outOn:true}); o.dur=Math.max(o.dur,gNeedDur(o));} else if(tp.comp) Object.assign(o,{kind:'comp',comp:tp.comp,f:tp.f||{},text:'c',size:170,weight:900,inDur:1.6,outDur:.6,outOn:true}); else Object.assign(o,{kind:'text',text:tp.text,weight:tp.weight,move:tp.move,size:110,inDur:1,outDur:.6});
+  if(tp.group){var GT=GTPL[tp.group]; if(GT.brand) Object.assign(o,GT.brand); Object.assign(o,{kind:'group',g:{tpl:tp.group,name:GT.name,root:JSON.parse(JSON.stringify(GT.root)),steps:JSON.parse(JSON.stringify(GT.steps||[])),tx:.9,nt:'count',tt:'roll'},text:'g',size:170,weight:900,inDur:1.8,outDur:.6,outOn:true}); o.dur=Math.max(o.dur,gNeedDur(o));} else if(tp.comp) Object.assign(o,{kind:'comp',comp:tp.comp,f:tp.f||{},text:'c',size:170,weight:900,inDur:1.6,outDur:.6,outOn:true}); else Object.assign(o,{kind:'text',text:tp.text,weight:tp.weight,move:tp.move,size:110,inDur:1,outDur:.6});
   return mkLine(o);}
 /* add a project template as a new layer. A title that is still the untouched starter text is replaced by it. */
 function addTemplate(tp){ if(!PJ) return; var q=mkFromTpl(tp,PJ.brand), fresh=LINES.every(function(l){return l.kind==='text'&&DEF.text.split('\n').indexOf(l.text)>=0;});
   if(q.kind!=='text'){var b=q.kind==='group'?gBoxMax(q):boxOf(q), k=Math.min(1,W*.9/Math.max(1,b.w),H*.88/Math.max(1,b.h)); if(k<1) q.size=Math.floor(q.size*k);} var qd=Math.max(q.dur,fresh?0:LINES[0].dur);
   if(fresh){LINES.length=0; LINES.push(q); sel=0;} else { if(LINES.length>=MAXL){$('#mSay').textContent='وصلت لأقصى عدد Layers ('+MAXL+'). امسح واحد الأول.'; return;} LINES.splice(sel+1,0,q); sel=sel+1; }
-  LINES.forEach(function(l){l.dur=qd;}); P=q; gstep=0; gsel=''; if(q.kind==='text') useFont(q.font); buildLines(); refreshAll(); flashSel(2600); time=0; playing=!reduce; syncPlay(); dirty(); hook('template',tp.comp||'text');}
-function brandTo(all){ if(!PJ) return; (all?LINES:[P]).forEach(function(q){q.color=PJ.brand.color; q.accent=PJ.brand.accent; q.font=PJ.brand.font;}); LCACHE.clear(); useFont(PJ.brand.font); refreshAll(); hook('brand');}
+  LINES.forEach(function(l){l.dur=qd;}); P=q; gstep=0; gsel=''; useFont(q.font); buildLines(); refreshAll(); flashSel(2600); time=0; playing=!reduce; syncPlay(); dirty(); hook('template',tp.comp||'text');}
+function brandTo(all){ if(!PJ) return; (all?LINES:[P]).forEach(function(q){var br=(q.kind==='group'&&q.g&&GTPL[q.g.tpl]&&GTPL[q.g.tpl].brand)||PJ.brand; q.color=br.color; q.accent=br.accent; q.font=br.font;}); LCACHE.clear(); useFont(PJ.brand.font); refreshAll(); hook('brand');}
 function saveBlob(blob,name){ if(inViewer){ if(dlNS) dlNS.save({filename:name,data:blob}).catch(function(){}); return; } var a=document.createElement('a'), url=URL.createObjectURL(blob); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){URL.revokeObjectURL(url);},20000);}
 /* a title as a small file, to hand to a teammate or keep: the layers and the output settings */
 function saveTitle(){var name=((PJ?PJ.id+'_':'')+(LINES[0].kind==='comp'?LINES[0].comp:'title')).replace(/[^\w\-]+/g,'_'); saveBlob(new Blob([JSON.stringify({app:'aroma-typo',v:1,project:PJ?PJ.id:'',out:OUT,lines:LINES},gStrip,1)],{type:'application/json'}),name+'.typo.json'); hook('title-save');}
@@ -2284,7 +2407,9 @@ function buildProjectPanel(){var box=$('#pjPanel'); box.textContent=''; ptiles=[
   var h=el('h3','',box); h.appendChild(document.createTextNode(PJ.name)); var sw=el('i','',h); [br.accent,br.color,'#000000'].forEach(function(c){el('b','',sw).style.background=c;});
   el('p','hint',box,'مكوّنات المشروع جاهزة بألوانه. دوس على أي واحد يتضاف Layer، وبعدها غيّر بياناته من Component على اليمين.');
   el('span','lab',box,'Templates'); var gr=el('div','pgrid',box);
-  PJ.templates.forEach(function(tp){var b=el('button','tile',gr), cv=el('canvas','',b); b.type='button'; cv.width=TW; cv.height=TH; var nm=el('span','',b,tp.group?GTPL[tp.group].name:(tp.comp?COMPS[tp.comp].name:tp.name)); b.title='Add '+nm.textContent;
+  var tfonts={}; PJ.templates.forEach(function(tp){var GB=tp.group&&GTPL[tp.group]&&GTPL[tp.group].brand; if(GB&&GB.font&&GB.font!==br.font) tfonts[GB.font]=1;});
+  Object.keys(tfonts).forEach(function(f){useFont(f,function(){ptiles.forEach(function(x){drawTile(x,x.q.inDur+.6);});});});
+  PJ.templates.forEach(function(tp){ if(tp.sec){el('span','lab pjsec',gr,tp.sec); return;} var b=el('button','tile',gr), cv=el('canvas','',b); b.type='button'; cv.width=TW; cv.height=TH; var nm=el('span','',b,tp.group?GTPL[tp.group].name:(tp.comp?COMPS[tp.comp].name:tp.name)); b.title='Add '+nm.textContent;
     var q=in169(function(){var q=mkFromTpl(tp,br); q.dur=q.kind==='group'&&gStepN(q)>1?gNeedDur(q):3.4; if(q.kind!=='text'){var bx=q.kind==='group'?gBoxMax(q):boxOf(q), k=Math.min(1920*.86/Math.max(1,bx.w),1080*.8/Math.max(1,bx.h)); q.size=170*k;} else {MG.font=fontStr(q); MG.direction='rtl'; q.size=Math.max(60,Math.min(300,Math.round(q.size*1920*.7/(MG.measureText(q.text).width||1))));} return q;});
     var t={b:b,g:cv.getContext('2d'),q:q,hover:false,t0:0}; ptiles.push(t); drawTile(t,q.inDur+.6);
     function on(){t.hover=true; t.t0=performance.now(); kick();} function off(){t.hover=false; drawTile(t,q.inDur+.6);}
@@ -2298,7 +2423,7 @@ function setProject(p,quiet){PJ=p||null; try{ if(PJ) localStorage.setItem(PKEY,P
   Array.prototype.forEach.call($('#pjM').children,function(b){b.setAttribute('aria-current',String((b.dataset.id||'')===(PJ?PJ.id:'')));}); buildProjectPanel(); setTab(PJ?'proj':'moves');
   if(PJ&&!quiet&&PJ.brand.bg&&OUT.alpha!=='off'){var bb=$('#segBg').querySelector('[data-bg="'+PJ.brand.bg+'"]'); if(bb) bb.click();} if(!quiet) hook('project',PJ?PJ.id:''); }
 (function(){var m=$('#pjM'), b=$('#pjB');
-  function item(p){var it=el('button','pjm-i',m); it.type='button'; it.setAttribute('role','menuitem'); it.dataset.id=p?p.id:''; el('b','',it,p?p.name:'NO PROJECT'); if(p){var tg=el('span','atm-tag',it,p.templates.length+' TEMPLATES');} el('small','',it,p?p.tip:'الأداة زي ما هي: حركات الكتابة بس'); it.addEventListener('click',function(){set(false); setProject(p);});}
+  function item(p){var it=el('button','pjm-i',m); it.type='button'; it.setAttribute('role','menuitem'); it.dataset.id=p?p.id:''; el('b','',it,p?p.name:'NO PROJECT'); if(p){var tg=el('span','atm-tag',it,p.templates.filter(function(t){return !t.sec;}).length+' TEMPLATES');} el('small','',it,p?p.tip:'الأداة زي ما هي: حركات الكتابة بس'); it.addEventListener('click',function(){set(false); setProject(p);});}
   PROJECTS.forEach(item); item(null);
   function set(o){m.hidden=!o; b.setAttribute('aria-expanded',String(o)); if(o){var f=m.querySelector('button'); if(f) f.focus();}}
   b.addEventListener('click',function(e){e.stopPropagation(); set(m.hidden);});
