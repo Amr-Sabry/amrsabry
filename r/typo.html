@@ -1937,11 +1937,11 @@ function fMCol(P,L,c){ if(!c||c==='none'||/^url/.test(c)) return c; var o=P.f&&P
   var a=P.accent&&String(P.accent).toLowerCase(); if(a&&a!==FMINT&&/^#[0-9a-f]{6}$/.test(a)&&h===FMINT) return fMSwap(c,a);
   return c;}
 /* where a rewritten text sits and how much wider / taller it got than the deck's */
-function fMRep(g,d,it,pa,tm,rep){var m2=fTk(d.K[it[3]],tm), lines=fMJ(d,fTk(d.K[it[4]],tm)[0]); if(!lines||!lines.length) return null; var s2=m2[2]||1, fs=parseFloat(pa[3])*s2, font=pa[2]+' '+fs.toFixed(2)+'px '+pa[1];
+function fMRep(g,d,it,pa,tm,rep,room){var m2=fTk(d.K[it[3]],tm), lines=fMJ(d,fTk(d.K[it[4]],tm)[0]); if(!lines||!lines.length) return null; var s2=m2[2]||1, fs=parseFloat(pa[3])*s2, font=pa[2]+' '+fs.toFixed(2)+'px '+pa[1];
   g.font=font; try{g.letterSpacing=pa[4]&&pa[4]!=='normal'?(parseFloat(pa[4])*s2)+'px':'0px';}catch(e){}
   var mw=0, R0=-1e9, L0=1e9; lines.forEach(function(ln){mw=Math.max(mw,ln[3]*s2); R0=Math.max(R0,m2[0]+(ln[1]+ln[3])*s2); L0=Math.min(L0,m2[0]+ln[1]*s2);});
   var pitch=lines.length>1?(lines[1][2]-lines[0][2])*s2:lines[0][4]*s2*1.3, lh0=lines[0][4]*s2, top0=m2[1]+lines[0][2]*s2, last=lines[lines.length-1];
-  var wl=lines.length>1?fMWrap(g,rep,Math.max(mw*1.02,fs*4)):[String(rep)], nw=0; wl.forEach(function(t){nw=Math.max(nw,g.measureText(t).width);});
+  var wl=fMWrap(g,rep,Math.max(mw*1.02+(room||0),fs*4)), nw=0; wl.forEach(function(t){nw=Math.max(nw,g.measureText(t).width);});
   return {font:font,fs:fs,lines:wl,R0:R0,L0:L0,top0:top0,pitch:pitch,lh0:lh0,x0:L0,x1:R0,y0:top0,y1:m2[1]+(last[2]+last[4])*s2,dw:String(rep).trim()?nw-mw:-mw,dh:(wl.length-lines.length)*pitch,rtl:pa[5]!=='ltr'};}
 function fMR(X,L,x,y,w,h){ if(!X._rec) return; X.rec('L'+L,x,y,w,h); var f=X.P._fir; if(f&&w*h>0) f.push([L,x,y,w,h]);}
 function fMRec(X,T,L,x,y,w,h){ if(!X._rec) return; var a=X._tc&&X._tc.A||X._bi.multiply(T), p1=a.transformPoint(new DOMPoint(x,y)), p2=a.transformPoint(new DOMPoint(x+w,y+h)); fMR(X,L,Math.min(p1.x,p2.x),Math.min(p1.y,p2.y),Math.abs(p2.x-p1.x),Math.abs(p2.y-p1.y));}
@@ -1954,7 +1954,12 @@ function fMapDraw(X,d,tm){var g=X.g, P=X.P, TC={}; P._fmd=d; P._fir=[]; X._rec=!
   g.fillStyle=(P.f&&P.f.c_card)||d.bg; g.fillRect(X.x0,X.y0,X.w,X.h); X.rec('card',X.x0,X.y0,X.w,X.h);
   var I=d.I, n=I.length, EX=[], tx0=P.f&&P.f.tx;
   if(tx0) for(var q0=0;q0<n;q0++){var i0=I[q0]; if(i0[0]!=='x'||d.FS[q0]==null||tx0[d.FS[q0]]==null) continue; var o0=i0[2]!=null?fTk(d.K[i0[2]],tm)[0]:1; if(o0<=.004) continue;
-    var pi0=i0[5]!=null?fTk(d.K[i0[5]],tm)[0]:-1, pa0=pi0>=0?fMJ(d,pi0):null; if(!pa0) continue; var e0=fMRep(g,d,i0,pa0,tm,tx0[d.FS[q0]]); if(e0){e0.an=(d.L[i0[1]]&&d.L[i0[1]][2])||0; e0.q=q0; EX.push(e0);}}
+    var pi0=i0[5]!=null?fTk(d.K[i0[5]],tm)[0]:-1, pa0=pi0>=0?fMJ(d,pi0):null; if(!pa0) continue; var an0=(d.L[i0[1]]&&d.L[i0[1]][2])||0, room=0;
+    /* room to grow: the box holding the text may widen up to 78 % of the card (the deck's limit for its plates) */
+    var mm0=fTk(d.K[i0[3]],tm), bx0=null; for(var qb=0;qb<n;qb++){var ib=I[qb]; if(ib[0]!=='b'||((d.L[ib[1]]&&d.L[ib[1]][2])||0)!==an0) continue; var ob=ib[2]!=null?fTk(d.K[ib[2]],tm)[0]:1; if(ob<=.004) continue; var rb=fTk(d.K[ib[3]],tm);
+      if(mm0[0]>=rb[0]-2&&mm0[0]<=rb[0]+rb[2]+2&&mm0[1]>=rb[1]-2&&mm0[1]<=rb[1]+rb[3]+2&&(!bx0||rb[2]*rb[3]>bx0[2]*bx0[3])) bx0=rb;}
+    if(bx0) room=Math.max(0,Math.min(d.w*.78,an0===2?560:d.w*.78)-bx0[2]); else if(an0===0) room=d.w*.25;
+    var e0=fMRep(g,d,i0,pa0,tm,tx0[d.FS[q0]],room); if(e0){e0.an=an0; e0.q=q0; EX.push(e0);}}
   /* the texts that stay as they are: a box never gets narrower than them */
   var OX=[]; if(EX.length) for(var q1=0;q1<n;q1++){var i1=I[q1]; if(i1[0]!=='x'||EX.some(function(e){return e.q===q1;})) continue; var o1=i1[2]!=null?fTk(d.K[i1[2]],tm)[0]:1; if(o1<=.004) continue;
     var m1=fTk(d.K[i1[3]],tm), ls1=fMJ(d,fTk(d.K[i1[4]],tm)[0]); if(!ls1||!ls1.length) continue; var s1=m1[2]||1, a1=1e9, b1=-1e9;
