@@ -1778,13 +1778,13 @@ fComp('flist',{name:'List Card',icon:'list',dsz:'4×3',dbg:'dark',sizes:['4×3',
   fields:[{k:'ic',label:'Icon (Lucide name)',type:'text',def:'list',part:'icon'},{k:'h',label:'Heading',type:'text',def:'',part:'head'},
     {k:'items',label:'Rows',type:'points',def:[{ic:'check',t:'بند أول',v:''},{ic:'check',t:'بند ثاني',v:''}],keys:['ic','t','v'],heads:['Icon','Text','Value'],part:'items'},{k:'fs',label:'Text Size (empty = 19)',type:'text',def:'',part:'items'}],
   draw:function(X,F){var s=X.s, its=(F.items||[]).map(function(it){return Array.isArray(it)?{ic:it[0],t:it[1],v:it[2]}:(typeof it==='string'?{ic:F.lic||'map-pin',t:it}:it);}), fs=(parseFloat(F.fs)||(F.plist?18:19))*s, cols=+F.cols||1, isz=(F.plist?18:24)*s;
-    fWm(X,F.wm&&F.wm!=='1'?F.wm:F.ic);
+    if(!F.plist) fWm(X,F.wm&&F.wm!=='1'?F.wm:F.ic); /* the deck's long lists (plist) carry no big icon behind */
     var top=F.h?fHdr(X,'head',F.ic||'list',F.h,27*s,18*s,.16)+14*s:X.yt, foot=F.foot?fFlow(X.P,F.foot,{px:14*s,wt:400,maxW:X.iw,lh:1.4,maxL:2}):null, bot=X.yb-(foot?foot.h+8*s:0), colW=(X.iw-(cols-1)*16*s)/cols;
     var rows=Math.ceil(its.length/cols), gap=(F.gap!=null&&F.gap!==''?+F.gap:(F.plist?8:12))*s;
     var fls=its.map(function(it){return fFlow(X.P,it.t,{px:fs,wt:400,maxW:colW-isz-12*s-(it.v?cW(X.P,String(it.v),600,fs)+12*s:0),lh:1.35,maxL:3});});
     var rh=[]; for(var r=0;r<rows;r++){var m=0; for(var c=0;c<cols;c++){var f=fls[r*cols+c]; if(f) m=Math.max(m,f.h,isz);} rh.push(m);}
     var tot=rh.reduce(function(a,b){return a+b;},0)+gap*(rows-1), y=F.plist?top:Math.max(top,Math.min(top+(bot-top-tot)/2,bot-tot)), yy=y;
-    for(var r2=0;r2<rows;r2++){for(var c2=0;c2<cols;c2++){var i=r2*cols+c2, it=its[i]; if(!it) continue; var xr=X.xr-c2*(colW+16*s), a0=.25+i*.045;
+    for(var r2=0;r2<rows;r2++){for(var c2=0;c2<cols;c2++){var i=r2*cols+c2, it=its[i]; if(!it) continue; var xr=X.xr-c2*(colW+16*s), a0=.25+i*Math.min(.045,.45/Math.max(1,its.length-1));
       fI(X,'icon',it.ic||F.lic||'map-pin',xr-isz,yy+(rh[r2]-isz)/2,isz,'ic',a0,a0+.35);
       fFlowDraw(X,'items',fls[i],xr-isz-12*s,yy+(rh[r2]-fls[i].h)/2,'tx',a0,a0+.35);
       if(it.v) fT(X,'vals',String(it.v),xr-colW,yy+rh[r2]/2+fs*.36,600,fs,'tx','l',a0+.05,a0+.4);}
@@ -1824,7 +1824,7 @@ fComp('fglance',{name:'At A Glance Card',icon:'num',dsz:'8×2',dbg:'dark',sizes:
   draw:function(X,F){var s=X.s, z=X.z, its=F.items||[], nf=(parseFloat(F.nf)||Math.round(Math.min(64,(z.h-48)*.3,(z.w-52)/3.2)))*s;
     var top=(F.h?fHdr(X,'head',F.ic,F.h,27*s,18*s,.16):X.yt), tl=F.t?fFlow(X.P,F.t,{px:(parseFloat(F.fs)||17)*s,wt:500,font:'IBM Plex Sans Arabic',maxW:X.iw,lh:1.6,maxL:3}):null;
     var yN=(tl?X.yb-tl.h-12*s:X.yb)-nf*.1, x=X.xr;
-    its.forEach(function(it,i){var f=(it.f==='1'||it.f===1||it.f===true)?nf:nf*.84, a0=.25+i*.08, nt=fFmtN(it.v), w=fN(X,'num',nt,x,yN,600,f,'tx','r',a0,a0+.4), pc=String(it.u)==='%'; if(pc){fT(X,'unit','%',x-w-2*s,yN,500,f*.52,'tx','r',a0+.15,a0+.5,'fade'); w+=cW(X.P,'%',500,f*.52)+2*s;}
+    its.forEach(function(it,i){var f=(it.f==='1'||it.f===1||it.f===true)?nf:nf*.84, a0=.25+i*Math.min(.08,.45/Math.max(1,its.length-1)), nt=fFmtN(it.v), w=fN(X,'num',nt,x,yN,600,f,'tx','r',a0,a0+.4), pc=String(it.u)==='%'; if(pc){fT(X,'unit','%',x-w-2*s,yN,500,f*.52,'tx','r',a0+.15,a0+.5,'fade'); w+=cW(X.P,'%',500,f*.52)+2*s;}
       var lx=x-w-8*s, lw=0; if(it.l) lw=Math.max(lw,fT(X,'label',it.l,lx,yN-f*.42,400,12.5*s,'mu','r',a0+.15,a0+.5,'fade')); if(it.u&&!pc) lw=Math.max(lw,fT(X,'unit',it.u,lx,yN-(it.l?f*.08:f*.2),600,15*s,'tx','r',a0+.15,a0+.5,'fade'));
       x=lx-lw-22*s;});
     if(tl) fFlowDraw(X,'text',tl,X.xr,X.yb-tl.h,'para',.55,.9);}});
@@ -1843,7 +1843,7 @@ fComp('fcq',{name:'Idea Card',icon:'frame',dsz:'4×3',dbg:'dark',sizes:['4×3','
       if(it.k){var pz=fWC((it.k||'')+' '+(it.t||''))>5&&!it.v, kf=(it.v?fs*.82:fs), kl=fFlow(X.P,it.k,{px:kf,wt:700,maxW:X.iw,lh:1.22,pz:false,maxL:4}); y2-=kl.h+7*s; fFlowDraw(X,'title',kl,X.xr,y2,'tx',.3,.7,{hl:'hl'});}
       parts.forEach(function(f){f();}); return;}
     var top=F.h?fHdr(X,'head',F.ic||'list',F.h,27*s,18*s,.16)+6*s:X.yt, per=(X.yb-top)/its.length, fs2=(parseFloat(F.fs)||Math.round(Math.min(28,(z.w-52)*.062,per/s*.2)))*s, ring2=Math.min(per*.42,66*s);
-    its.forEach(function(it,j){var y=top+j*per, a0=.25+j*.1; if(j&&X.on('lines')){X.g.fillStyle=X.S.ln; X.g.fillRect(X.xl,y,X.iw*X.ph.sub(a0-.1,a0+.3),1*s);}
+    its.forEach(function(it,j){var y=top+j*per, a0=.25+j*Math.min(.1,.45/Math.max(1,its.length-1)); if(j&&X.on('lines')){X.g.fillStyle=X.S.ln; X.g.fillRect(X.xl,y,X.iw*X.ph.sub(a0-.1,a0+.3),1*s);}
       fRing(X,X.xr-ring2,y+(per-ring2)/2,ring2,it.ic||'circle',a0); var kl=fFlow(X.P,it.k||'',{px:fs2,wt:700,maxW:X.iw-ring2-18*s,lh:1.22,maxL:2}), tl=it.t?fFlow(X.P,it.t,{px:Math.max(16*s,fs2*.64),wt:400,maxW:X.iw-ring2-18*s,lh:1.4,maxL:2}):null, hh=kl.h+(tl?tl.h+6*s:0), yy=y+(per-hh)/2;
       fFlowDraw(X,'title',kl,X.xr-ring2-18*s,yy,'tx',a0+.05,a0+.4); if(tl) fFlowDraw(X,'text',tl,X.xr-ring2-18*s,yy+kl.h+6*s,'lb',a0+.1,a0+.45);});}});
 function fRing(X,x,y,sz,icon,a0){var g=X.g, s=X.s, p=X.ph.sub(a0,a0+.35,EASE.outCubic); X.rec('ring',x,y,sz,sz); if(X.on('ring')&&p>0){g.save(); g.globalAlpha*=p; var gr=g.createRadialGradient(x+sz*.3,y+sz*.25,0,x+sz/2,y+sz/2,sz*.72); var rc=fHex2rgb(fToHex(X.col('ring','ic')))||'182,242,220'; gr.addColorStop(0,'rgba('+rc+',.24)'); gr.addColorStop(.72,'rgba(110,109,242,.16)'); gr.addColorStop(1,'rgba(110,109,242,.16)'); g.fillStyle=gr; g.beginPath(); g.arc(x+sz/2,y+sz/2,sz/2,0,Math.PI*2); g.fill(); g.strokeStyle='rgba('+rc+',.34)'; g.lineWidth=1*s; g.stroke(); g.restore();}
@@ -1862,7 +1862,7 @@ fComp('fbars',{name:'Bars Card',icon:'chart',dsz:'4×4',dbg:'dark',sizes:['4×4'
   fields:[{k:'ic',label:'Icon (Lucide name)',type:'text',def:'bar-chart-3',part:'icon'},{k:'h',label:'Heading',type:'text',def:'',part:'head'},{k:'ya',label:'Then (name)',type:'text',def:'2014',part:'years'},{k:'yb',label:'Now (name)',type:'text',def:'2026',part:'years'},
     {k:'rows',label:'Rows',type:'points',def:[{l:'بند',av:'20',at:'',bv:'60',bt:''}],keys:['l','av','at','bv','bt'],heads:['Label','Then %','Then Text','Now %','Now Text'],part:'items'}],
   draw:function(X,F){var s=X.s, rows=(F.rows&&F.rows.length&&F.rows[0].av!==undefined)?F.rows:(F.items||[]).map(function(x){return {l:x.l,av:x.a.v,at:x.a.t,bv:x.b.v,bt:x.b.t};}), top=fHdr(X,'head',F.ic||'bar-chart-3',F.h,27*s,18*s,.16)+10*s, key=26*s, per=(X.yb-key-top)/Math.max(1,rows.length), g=X.g;
-    rows.forEach(function(r,i){var y=top+i*per+per/2-26*s, a0=.25+i*.08; fT(X,'items',r.l,X.xr,y,600,21*s,'tx','r',a0,a0+.4); fT(X,'vals',r.bv+'% '+(r.bt||''),X.xl,y,600,16*s,'em','l',a0+.05,a0+.45,'fade');
+    rows.forEach(function(r,i){var y=top+i*per+per/2-26*s, a0=.25+i*Math.min(.08,.45/Math.max(1,rows.length-1)); fT(X,'items',r.l,X.xr,y,600,21*s,'tx','r',a0,a0+.4); fT(X,'vals',r.bv+'% '+(r.bt||''),X.xl,y,600,16*s,'em','l',a0+.05,a0+.45,'fade');
       [[+r.bv,9,'bb',y+10*s],[+r.av,5,'ba',y+23*s]].forEach(function(o,j){var w=X.iw, p=X.ph.sub(a0+.05+j*.06,a0+.6,EASE.outCubic)*clamp(o[0]/100,0,1); X.rec('bars',X.xl,o[3],w,o[1]*s); g.fillStyle=X.S.trk; rrect(g,X.xl,o[3],w,o[1]*s,o[1]*s/2); g.fill(); if(X.on('bars')&&p>0){g.fillStyle=X.col('bars',o[2]); rrect(g,X.xr-w*p,o[3],w*p,o[1]*s,o[1]*s/2); g.fill();}});
       fT(X,'years',(F.ya||'')+': '+r.av+'% · '+(r.at||''),X.xr,y+46*s,400,14*s,'mu','r',a0+.1,a0+.5,'fade');});
     fT(X,'years',(F.yb||'')+'   ·   '+(F.ya||''),X.xr,X.yb,500,14*s,'mu','r',.6,.95,'fade');}});
@@ -1885,9 +1885,9 @@ fComp('fpict',{name:'Pictogram Card',icon:'num',dsz:'6×4',dbg:'dark',sizes:['6�
     {k:'rows',label:'Columns',type:'points',def:[{n:'4',u:'',l:'2014',on:''},{n:'12',u:'',l:'2026',on:'1'}],keys:['n','u','l','on'],heads:['Count','Unit','Label','Lit (1)'],part:'num'}],
   draw:function(X,F){var s=X.s, rows=(F.rows||[]).slice().sort(function(a,b){return ((a.on==='1'||a.on===true)?1:0)-((b.on==='1'||b.on===true)?1:0);}), nc=Math.max(1,rows.length), gap=28*s, top=fHdr(X,'head',F.ic||'building-2',F.h,27*s,18*s,.16)+10*s, colW=(X.iw-(nc-1)*gap)/nc, mx=Math.max.apply(null,rows.map(function(x){return +x.n||0;}).concat([1]));
     var fs=Math.min(colW*.5,(X.yb-top)*.24,130*s), stackH=X.yb-top-fs*1.02-40*s-14*s, best={s:0,k:1}; for(var k=1;k<=14;k++){var sz=Math.min(colW/k-5*s,stackH/Math.ceil(mx/k)-5*s,64*s); if(sz>best.s) best={s:sz,k:k};}
-    rows.forEach(function(r,i){var on=r.on==='1'||r.on===true||r.on===1, xr=X.xr-i*(colW+gap), a0=.25+i*.1, f=on?fs:fs*.8, n=+r.n||0, sz=best.s, kk=best.k;
+    rows.forEach(function(r,i){var on=r.on==='1'||r.on===true||r.on===1, xr=X.xr-i*(colW+gap), a0=.25+i*Math.min(.1,.45/Math.max(1,rows.length-1)), f=on?fs:fs*.8, n=+r.n||0, sz=best.s, kk=best.k;
       fN(X,'num',r.n,xr,top+f*.8,600,f,on?'tx':'mu','r',a0,a0+.4);
-      for(var j=0;j<n;j++){var rr=Math.floor(j/kk), cc=j%kk; fIconRaw(X.g,F.icon||'building-2',xr-(cc+1)*(sz+5*s),X.yb-34*s-(rr+1)*(sz+5*s),sz,on?X.col('items','ic'):'rgba(93,92,158,1)',X.ph.sub(a0+.1+j*.01,a0+.4+j*.01),1.5);} X.rec('items',xr-kk*(sz+5*s),X.yb-34*s-Math.ceil(n/kk)*(sz+5*s),kk*(sz+5*s),Math.ceil(n/kk)*(sz+5*s));
+      for(var j=0;j<n;j++){var rr=Math.floor(j/kk), cc=j%kk; fIconRaw(X.g,F.icon||'building-2',xr-(cc+1)*(sz+5*s),X.yb-34*s-(rr+1)*(sz+5*s),sz,on?X.col('items','ic'):'rgba(93,92,158,1)',X.ph.sub(a0+.1+j*Math.min(.01,.2/Math.max(1,n)),a0+.4+j*Math.min(.01,.2/Math.max(1,n))),1.5);} X.rec('items',xr-kk*(sz+5*s),X.yb-34*s-Math.ceil(n/kk)*(sz+5*s),kk*(sz+5*s),Math.ceil(n/kk)*(sz+5*s));
       fT(X,'label',fClean(r.l).replace(/\[\[|\]\]/g,''),xr,X.yb,500,16*s,on?'kk':'mu','r',a0+.2,a0+.5,'fade');});}});
 
 /* ================= Map cards: the deck's maps exactly as they play there (the map drawing in, points and bubbles, routes, the camera tour,
@@ -1908,6 +1908,9 @@ function fMapPrep(d){
 /* a text the team rewrote: wrapped to the width the deck gave it, kept to the reading side */
 function fMWrap(g,s,maxW){var ws=String(s).split(/\s+/).filter(Boolean), out=[], cur=''; ws.forEach(function(w){var t=cur?cur+' '+w:w; if(cur&&g.measureText(t).width>maxW){out.push(cur); cur=w;} else cur=t;}); if(cur) out.push(cur); return out.length?out:[''];}
 /* a track's value at time t (seconds): linear between keyframes, or held (step) */
+/* where a thing is: its own track, or (negative index) a rule riding the camera: k*a + camera offset + q */
+function fMM(d,mi,ty,tm){ if(mi==null) return [1,0,0,1,0,0]; if(mi>=0) return fTk(d.K[mi],tm); var c=d.C[-mi-1], v=fTk(d.K[c[0]],tm), k=v[0], ex=k*c[1]+v[4]+c[2], ey=k*c[3]+v[5]+c[4];
+  if(ty==='b') return [ex,ey,c[5],c[6],c[7]]; if(ty==='x') return [ex,ey,c[5]]; return [1,0,0,1,ex,ey];}
 function fTk(k,t){var T=k.T, n=k.n, V=k.V, N=T.length, o=new Array(n), i, j;
   if(N===1||t<=T[0]){for(j=0;j<n;j++) o[j]=V[j]; return o;}
   if(t>=T[N-1]){for(j=0;j<n;j++) o[j]=V[(N-1)*n+j]; return o;}
@@ -1939,7 +1942,7 @@ function fMCol(P,L,c){ if(!c||c==='none'||/^url/.test(c)) return c; var o=P.f&&P
   var a=P.accent&&String(P.accent).toLowerCase(); if(a&&a!==FMINT&&/^#[0-9a-f]{6}$/.test(a)&&h===FMINT) return fMSwap(c,a);
   return c;}
 /* where a rewritten text sits and how much wider / taller it got than the deck's */
-function fMRep(g,d,it,pa,tm,rep,room){var m2=fTk(d.K[it[3]],tm), lines=fMJ(d,fTk(d.K[it[4]],tm)[0]); if(!lines||!lines.length) return null; var s2=m2[2]||1, fs=parseFloat(pa[3])*s2, font=pa[2]+' '+fs.toFixed(2)+'px '+pa[1];
+function fMRep(g,d,it,pa,tm,rep,room){var m2=fMM(d,it[3],it[0],tm), lines=fMJ(d,fTk(d.K[it[4]],tm)[0]); if(!lines||!lines.length) return null; var s2=m2[2]||1, fs=parseFloat(pa[3])*s2, font=pa[2]+' '+fs.toFixed(2)+'px '+pa[1];
   g.font=font; try{g.letterSpacing=pa[4]&&pa[4]!=='normal'?(parseFloat(pa[4])*s2)+'px':'0px';}catch(e){}
   var mw=0, R0=-1e9, L0=1e9; lines.forEach(function(ln){mw=Math.max(mw,ln[3]*s2); R0=Math.max(R0,m2[0]+(ln[1]+ln[3])*s2); L0=Math.min(L0,m2[0]+ln[1]*s2);});
   var pitch=lines.length>1?(lines[1][2]-lines[0][2])*s2:lines[0][4]*s2*1.3, lh0=lines[0][4]*s2, top0=m2[1]+lines[0][2]*s2, last=lines[lines.length-1];
@@ -1958,20 +1961,20 @@ function fMapDraw(X,d,tm){var g=X.g, P=X.P, TC={}; P._fmd=d; P._fir=[]; X._rec=!
   if(tx0) for(var q0=0;q0<n;q0++){var i0=I[q0]; if(i0[0]!=='x'||d.FS[q0]==null||tx0[d.FS[q0]]==null) continue; var o0=i0[2]!=null?fTk(d.K[i0[2]],tm)[0]:1; if(o0<=.004) continue;
     var pi0=i0[5]!=null?fTk(d.K[i0[5]],tm)[0]:-1, pa0=pi0>=0?fMJ(d,pi0):null; if(!pa0) continue; var an0=(d.L[i0[1]]&&d.L[i0[1]][2])||0, room=0;
     /* room to grow: the box holding the text may widen up to 78 % of the card (the deck's limit for its plates) */
-    var mm0=fTk(d.K[i0[3]],tm), bx0=null; for(var qb=0;qb<n;qb++){var ib=I[qb]; if(ib[0]!=='b'||((d.L[ib[1]]&&d.L[ib[1]][2])||0)!==an0) continue; var ob=ib[2]!=null?fTk(d.K[ib[2]],tm)[0]:1; if(ob<=.004) continue; var rb=fTk(d.K[ib[3]],tm);
+    var mm0=fMM(d,i0[3],i0[0],tm), bx0=null; for(var qb=0;qb<n;qb++){var ib=I[qb]; if(ib[0]!=='b'||((d.L[ib[1]]&&d.L[ib[1]][2])||0)!==an0) continue; var ob=ib[2]!=null?fTk(d.K[ib[2]],tm)[0]:1; if(ob<=.004) continue; var rb=fMM(d,ib[3],ib[0],tm);
       if(mm0[0]>=rb[0]-2&&mm0[0]<=rb[0]+rb[2]+2&&mm0[1]>=rb[1]-2&&mm0[1]<=rb[1]+rb[3]+2&&(!bx0||rb[2]*rb[3]>bx0[2]*bx0[3])) bx0=rb;}
     if(bx0) room=Math.max(0,Math.min(d.w*.78,an0===2?560:d.w*.78)-bx0[2]); else if(an0===0) room=d.w*.25;
     var e0=fMRep(g,d,i0,pa0,tm,tx0[d.FS[q0]],room); if(e0){e0.an=an0; e0.q=q0; EX.push(e0);}}
   /* the texts that stay as they are: a box never gets narrower than them */
   var OX=[]; if(EX.length) for(var q1=0;q1<n;q1++){var i1=I[q1]; if(i1[0]!=='x'||EX.some(function(e){return e.q===q1;})) continue; var o1=i1[2]!=null?fTk(d.K[i1[2]],tm)[0]:1; if(o1<=.004) continue;
-    var m1=fTk(d.K[i1[3]],tm), ls1=fMJ(d,fTk(d.K[i1[4]],tm)[0]); if(!ls1||!ls1.length) continue; var s1=m1[2]||1, a1=1e9, b1=-1e9;
+    var m1=fMM(d,i1[3],i1[0],tm), ls1=fMJ(d,fTk(d.K[i1[4]],tm)[0]); if(!ls1||!ls1.length) continue; var s1=m1[2]||1, a1=1e9, b1=-1e9;
     ls1.forEach(function(l){a1=Math.min(a1,m1[0]+l[1]*s1); b1=Math.max(b1,m1[0]+(l[1]+l[3])*s1);}); OX.push({an:(d.L[i1[1]]&&d.L[i1[1]][2])||0,x0:a1,x1:b1,y0:m1[1]+ls1[0][2]*s1,y1:m1[1]+(ls1[ls1.length-1][2]+ls1[ls1.length-1][4])*s1});}
   for(var q=0;q<n;q++){var it=I[q], L=it[1]; if(P.f&&P.f['h_L'+L]) continue; var an=(d.L[L]&&d.L[L][2])||0; B=BA[an]; bS=BSA[an]; ox=AX[an]; oy=AY[an]; k=AK[an];
     var op=it[2]!=null?fTk(d.K[it[2]],tm)[0]:1; if(op<=.004) continue;
     var ty=it[0], pi=it[5]!=null?fTk(d.K[it[5]],tm)[0]:-1, pa=pi>=0?fMJ(d,pi):null; if(!pa) continue;
     g.save();
     try{
-    if(ty==='b'){ var m=fTk(d.K[it[3]],tm); g.setTransform(B); var x=m[0], y=m[1], w=m[2], h=m[3], rs=m[4]||1;
+    if(ty==='b'){ var m=fMM(d,it[3],it[0],tm); g.setTransform(B); var x=m[0], y=m[1], w=m[2], h=m[3], rs=m[4]||1;
       if(EX.length){var gw=0, gh=0; EX.forEach(function(e){ if(e.an===an&&e.x0>=x-2&&e.x1<=x+w+2&&e.y0>=y-2&&e.y1<=y+h+2){ if(Math.abs(e.dw)>Math.abs(gw)) gw=e.dw; if(Math.abs(e.dh)>Math.abs(gh)) gh=e.dh; }});
         if(gw<0){var ins=OX.filter(function(o){return o.an===an&&o.x0>=x-2&&o.x1<=x+w+2&&o.y0>=y-2&&o.y1<=y+h+2;}), tin=EX.filter(function(e){return e.an===an&&e.x0>=x-2&&e.x1<=x+w+2&&e.y0>=y-2&&e.y1<=y+h+2;}).concat(ins);
           if(ins.length){var padL=Math.min.apply(null,tin.map(function(o){return o.x0;}))-x, padR=x+w-Math.max.apply(null,tin.map(function(o){return o.x1;})), mn=Math.min.apply(null,ins.map(function(o){return o.x0;})), mx=Math.max.apply(null,ins.map(function(o){return o.x1;}));
@@ -1984,7 +1987,7 @@ function fMapDraw(X,d,tm){var g=X.g, P=X.P, TC={}; P._fmd=d; P._fir=[]; X._rec=!
       else { g.clip(); var sd=[[bw,pa[3],x,y,w,bw*rs],[pa[8],pa[11],x+w-(pa[8]||0)*rs,y,(pa[8]||0)*rs,h],[pa[9],pa[12],x,y+h-(pa[9]||0)*rs,w,(pa[9]||0)*rs],[pa[10],pa[13],x,y,(pa[10]||0)*rs,h]];
         sd.forEach(function(s){ if(s[0]>0&&s[1]&&!/rgba\([^)]*,\s*0\)$/.test(s[1])){g.fillStyle=fMCol(P,L,s[1]); g.fillRect(s[2],s[3],s[4],s[5]);}}); }
       fMR(X,L,ox+x*k,oy+y*k,w*k,h*k); }
-    else if(ty==='x'){ var m2=fTk(d.K[it[3]],tm), li=fTk(d.K[it[4]],tm)[0], lines=fMJ(d,li); if(!lines) continue; var s2=m2[2]||1, fs=parseFloat(pa[3])*s2;
+    else if(ty==='x'){ var m2=fMM(d,it[3],it[0],tm), li=fTk(d.K[it[4]],tm)[0], lines=fMJ(d,li); if(!lines) continue; var s2=m2[2]||1, fs=parseFloat(pa[3])*s2;
       var font=pa[2]+' '+fs.toFixed(2)+'px '+pa[1]; g.setTransform(B); g.font=font; g.direction=pa[5]==='ltr'?'ltr':'rtl'; g.textAlign='left'; g.textBaseline='alphabetic';
       try{g.letterSpacing=pa[4]&&pa[4]!=='normal'?(parseFloat(pa[4])*s2)+'px':'0px';}catch(e){}
       var fm=fMFont(g,font); g.globalAlpha=A0*op; g.fillStyle=fMCol(P,L,pa[0]);
@@ -1993,7 +1996,7 @@ function fMapDraw(X,d,tm){var g=X.g, P=X.P, TC={}; P._fmd=d; P._fir=[]; X._rec=!
         var sx=(an===1||an===3)?e.dw:(an===0?e.dw/2:0), R1=e.R0+(e.rtl?sx:0), L1=e.L0-(e.rtl?0:(an===2||an===4?e.dw:(an===0?e.dw/2:0))), up=(an===3||an===4)?e.dh:0;
         g.textAlign=e.rtl?'right':'left'; e.lines.forEach(function(t,j){var top=e.top0-up+j*e.pitch, by=top+(e.lh0-(fm[0]+fm[1]))/2+fm[0], tw=g.measureText(t).width; g.fillText(t,e.rtl?R1:L1,by); fMR(X,L,ox+(e.rtl?R1-tw:L1)*k,oy+top*k,tw*k,e.lh0*k);}); }
       else for(var j=0;j<lines.length;j++){var ln=lines[j], lx=m2[0]+ln[1]*s2, top=m2[1]+ln[2]*s2, lh=ln[4]*s2, by=top+(lh-(fm[0]+fm[1]))/2+fm[0]; g.fillText(ln[0],lx,by); fMR(X,L,ox+lx*k,oy+top*k,ln[3]*s2*k,lh*k);} }
-    else { var tck=it[3]+'|'+an, tc=TC[tck]; if(!tc){var M0=fTk(d.K[it[3]],tm), T0=B.multiply(new DOMMatrix(M0)); tc=TC[tck]={M:M0,T:T0,sc:Math.sqrt(Math.abs(M0[0]*M0[3]-M0[1]*M0[2]))||1,A:X._rec?X._bi.multiply(T0):null};}
+    else { var tck=it[3]+'|'+an, tc=TC[tck]; if(!tc){var M0=fMM(d,it[3],it[0],tm), T0=B.multiply(new DOMMatrix(M0)); tc=TC[tck]={M:M0,T:T0,sc:Math.sqrt(Math.abs(M0[0]*M0[3]-M0[1]*M0[2]))||1,A:X._rec?X._bi.multiply(T0):null};}
       var M=tc.M, T=tc.T, sc=tc.sc; X._tc=tc;
       /* clip paths */
       if(it[7]!=null){var ki=fTk(d.K[it[7]],tm)[0], cl=fMJ(d,ki); if(cl) cl.forEach(function(c){g.setTransform(B.multiply(new DOMMatrix(c[1]||[1,0,0,1,0,0]))); g.clip(fMShape(c[0]));});}
@@ -2050,6 +2053,62 @@ window.__fmb=function(s,n){ if(!FMD[s]){fMapLoad(s); return null;} var d=FMD[s],
   var Q={kind:'comp',comp:'fmapc',f:{sz:'6×6',src:s,tpl:'1'},x:.5,y:.5,size:220,accent:'#b6f2dc',color:'#ffffff'}, F=fF(Q), G=COMPS.fmapc.geo(Q,F), ts=[];
   for(var i=0;i<(n||40);i++){var tm=i/(n||40)*d.dur, X=fX(g,Q,F,G,cPhase({t:tm,Ti:1,To:0,tOut:99,D:99})); g.setTransform(1,0,0,1,0,0); g.clearRect(0,0,1920,1080); var t0=performance.now(); fMapDraw(X,d,tm); ts.push(performance.now()-t0);}
   ts.sort(function(a,b){return a-b;}); return [d.I.length, +ts[ts.length>>1].toFixed(1), +ts[Math.floor(ts.length*.9)].toFixed(1)];};
+
+/* ================= ProRes in pieces: long titles (a 25-second map is about a gigabyte of ProRes 4444) were made in one go inside the
+   encoder's memory and could fail or come out cut, which Premiere then would not open. Now the frames are drawn and encoded two seconds
+   at a time, each piece is kept as a file part, and one MOV is put together at the end (64-bit offsets, so size is no limit). ================= */
+var PR_CHUNK=50;
+/* one piece: PNG frames -> a small MOV from ffmpeg (the frames are handed over, not copied) */
+function prEncode(frames,fps,alpha){return ffLoad().then(function(w){var pf=alpha===false?'yuv422p10le':'yuva444p10le',
+    enc=alpha===false?['-c:v','prores_ks','-profile:v','3','-pix_fmt',pf]:['-c:v','prores_ks','-profile:v','4444','-pix_fmt',pf,'-alpha_bits','16'];
+  return new Promise(function(res,rej){ffReject=rej;
+    w.onmessage=function(e){var d=e.data; if(d.type==='done'||d.type==='error') ffReject=null;
+      if(d.type==='done'){ if(d.ret===0&&d.out) res(d.out); else rej(new Error('ffmpeg exit '+d.ret)); }
+      else if(d.type==='error') rej(new Error(d.message)); };
+    w.postMessage({type:'encode',frames:frames,args:['-framerate',String(fps),'-i','f_%05d.png','-vf','scale=in_range=pc:out_range=tv:out_color_matrix=bt709,format='+pf].concat(enc,['-vendor','apl0','-color_primaries','bt709','-color_trc','bt709','-colorspace','bt709','-color_range','tv','-movflags','+write_colr','-r',String(fps),'out.mov'])},frames.map(function(f){return f.buffer;}));});});}
+function prU32(u8,p){return ((u8[p]<<24)|(u8[p+1]<<16)|(u8[p+2]<<8)|u8[p+3])>>>0;}
+function prAt(u8,p,s){for(var q=0;q<s.length;q++) if(u8[p+q]!==s.charCodeAt(q)) return false; return true;}
+/* from one piece: its sample description (the codec box) and its frames */
+function prSplit(u8){var n=u8.length, i, st=null, fr=[];
+  for(i=n-8;i>=4;i--) if(u8[i]===0x73&&prAt(u8,i,'stsd')){var sz=prU32(u8,i-4); st=u8.slice(i-4,i-4+sz); break;}
+  var p=0; while(p+8<=n){var s=prU32(u8,p), end; if(prAt(u8,p+4,'mdat')){var q=p+8; end=s===0?n:p+s; if(s===1){q=p+16; end=p+prU32(u8,p+8)*4294967296+prU32(u8,p+12);}
+      while(q+8<=end){var fs=prU32(u8,q); if(fs<8||q+fs>end) break; fr.push(u8.slice(q,q+fs)); q+=fs;} break;}
+    if(s<8) break; p+=(s===1?prU32(u8,p+8)*4294967296+prU32(u8,p+12):s);}
+  return {stsd:st,frames:fr};}
+/* the finished file's index: one track, one frame per chunk, 64-bit offsets */
+function prMoov(stsd,sizes,fps,w,h,base){var ts=fps*100, delta=100, n=sizes.length, dur=n*delta, now=Math.floor(Date.now()/1000)+2082844800;
+  var mvhd=atom('mvhd',be([[4,0],[4,now],[4,now],[4,ts],[4,dur],[4,0x10000],[2,0x0100],[2,0],[4,0],[4,0]].concat(MATRIX,[[4,0],[4,0],[4,0],[4,0],[4,0],[4,0],[4,2]])));
+  var tkhd=atom('tkhd',be([[4,0x0000000F],[4,now],[4,now],[4,1],[4,0],[4,dur],[4,0],[4,0],[2,0],[2,0],[2,0],[2,0]].concat(MATRIX,[[4,w*65536],[4,h*65536]])));
+  var mdhd=atom('mdhd',be([[4,0],[4,now],[4,now],[4,ts],[4,dur],[2,0],[2,0]]));
+  var hdlr1=atom('hdlr',be([[4,0],['s','mhlr'],['s','vide'],[4,0],[4,0],[4,0],[1,12],['s','VideoHandler']]));
+  var vmhd=atom('vmhd',be([[4,1],[2,0x0040],[2,0x8000],[2,0x8000],[2,0x8000]]));
+  var hdlr2=atom('hdlr',be([[4,0],['s','dhlr'],['s','alis'],[4,0],[4,0],[4,0],[1,11],['s','DataHandler']]));
+  var dinf=atom('dinf',atom('dref',be([[4,0],[4,1]]),atom('alis',be([[4,1]]))));
+  var stts=atom('stts',be([[4,0],[4,1],[4,n],[4,delta]])), stsc=atom('stsc',be([[4,0],[4,1],[4,1],[4,1],[4,1]]));
+  var sz=new Uint8Array(12+n*4), sd=new DataView(sz.buffer); sd.setUint32(8,n); sizes.forEach(function(s,i){sd.setUint32(12+i*4,s);});
+  var co=new Uint8Array(8+n*8), cd=new DataView(co.buffer), off=base; cd.setUint32(4,n); sizes.forEach(function(s,i){cd.setUint32(8+i*8,Math.floor(off/4294967296)); cd.setUint32(12+i*8,off>>>0); off+=s;});
+  var stbl=atom('stbl',stsd,stts,stsc,atom('stsz',sz),atom('co64',co));
+  return atom('moov',mvhd,atom('trak',tkhd,atom('mdia',mdhd,hdlr1,atom('minf',vmhd,hdlr2,dinf,stbl))));}
+/* draw frames f0..f1-1 of the title as PNGs (same drawing as the PNG / single-piece render) */
+async function prFrames(lines,fps,f0,f1,premult,bg,isCancelled,onFrame){var cv=document.createElement('canvas'); cv.width=W; cv.height=H; var g=cv.getContext('2d',{willReadFrequently:!!premult}), out=[];
+  for(var f=f0;f<f1;f++){ if(isCancelled&&isCancelled()) return null; g.setTransform(1,0,0,1,0,0); g.clearRect(0,0,W,H); renderAll(g,f/fps,1,lines);
+    if(bg){g.setTransform(1,0,0,1,0,0); g.globalCompositeOperation='destination-over'; g.fillStyle=bg; g.fillRect(0,0,W,H); g.globalCompositeOperation='source-over';} else if(premult) premultiply(g);
+    var blob=await new Promise(function(res){cv.toBlob(res,'image/png');}); out.push(new Uint8Array(await blob.arrayBuffer())); if(onFrame) onFrame(f+1); if(f%4===3) await breathe(); }
+  return out;}
+/* the whole title as one ProRes MOV, piece by piece. onProgress(framesDone, total) */
+async function proResStream(lines,fps,alpha,premult,bg,onProgress,isCancelled){var T=timing(lines[0]), n=Math.max(1,Math.round(T.D*fps)), parts=[], sizes=[], stsd=null, done=0;
+  await ffLoad();
+  for(var c=0;c<n;c+=PR_CHUNK){var c1=Math.min(n,c+PR_CHUNK);
+    var frames=await prFrames(lines,fps,c,c1,premult,bg,isCancelled,function(f){ if(onProgress) onProgress(c+(f-c)*.5,n);}); if(!frames) return null;
+    var out=await prEncode(frames,fps,alpha); frames=null; if(isCancelled&&isCancelled()) return null;
+    var sp=prSplit(tagAsApple(out)); out=null;
+    if(!stsd) stsd=sp.stsd; if(!stsd||sp.frames.length!==c1-c) throw new Error('piece '+(c/PR_CHUNK+1)+' came out with '+sp.frames.length+' frames');
+    sp.frames.forEach(function(f){sizes.push(f.length);}); parts.push(new Blob(sp.frames)); done=c1; if(onProgress) onProgress(done,n); await breathe();}
+  var ftyp=atom('ftyp',be([['s','qt  '],[4,0x20050300],['s','qt  '],[4,0],[4,0],[4,0]])), total=sizes.reduce(function(a,b){return a+b;},0), mh=new Uint8Array(16), md=new DataView(mh.buffer);
+  md.setUint32(0,1); mh.set(strU8('mdat'),4); md.setUint32(8,Math.floor((total+16)/4294967296)); md.setUint32(12,(total+16)>>>0);
+  var moov=prMoov(stsd,sizes,fps,W,H,ftyp.length+16);
+  var blob=new Blob([ftyp,mh].concat(parts,[moov]),{type:'video/quicktime'});
+  return {blob:blob,length:n};}
 
 
 /* ================= groups: a layer made of layers =================
@@ -3046,10 +3105,10 @@ $('#rSave').addEventListener('click',saveFile);
 $('#rStart').addEventListener('click',async function(){ if(rBusy) return; rBusy=true; rCancel=false; rBlob=null; $('#rFile').hidden=true; var fps=OUT.fps, name=($('#rName').value.trim()||'typo_title').replace(/[^\w\-]+/g,'_'), wasPlaying=playing; playing=false; syncPlay();
   $('#rStart').hidden=true; $('#rClose').textContent='Cancel'; $('#rState').textContent='Rendering'; hook('render-start');
   try{ if(document.fonts&&document.fonts.ready) await document.fonts.ready;
-    var pro=fmtSel==='mov'&&canProRes, span=pro?35:100; var frames=await renderFrames(LINES,fps,function(d,n){hook('render-progress',d/n*span/100); $('#rFill').style.width=(d/n*span)+'%'; $('#rCount').textContent='FRAME '+('00'+d).slice(-3)+' / '+('00'+n).slice(-3);},function(){return rCancel;},pro&&OUT.alpha==='pm',OUT.alpha==='off'?OUT.bg:null);
+    var pro=fmtSel==='mov'&&canProRes, span=pro?35:100, frames; if(pro){ $('#rState').textContent='Loading Encoder'; encoding=true; hook('encode-load'); try{ frames=await proResStream(LINES,fps,OUT.alpha!=='off',OUT.alpha==='pm',OUT.alpha==='off'?OUT.bg:null,function(d,n){ $('#rState').textContent='Rendering ProRes'; hook('render-progress',d/n); $('#rFill').style.width=(d/n*100)+'%'; $('#rCount').textContent='FRAME '+('00'+Math.floor(d)).slice(-3)+' / '+('00'+n).slice(-3);},function(){return rCancel;}); } finally{ encoding=false; } } else frames=await renderFrames(LINES,fps,function(d,n){hook('render-progress',d/n*span/100); $('#rFill').style.width=(d/n*span)+'%'; $('#rCount').textContent='FRAME '+('00'+d).slice(-3)+' / '+('00'+n).slice(-3);},function(){return rCancel;},pro&&OUT.alpha==='pm',OUT.alpha==='off'?OUT.bg:null);
     if(!frames){$('#rState').textContent='Cancelled'; $('#rFill').style.width='0'; hook('render-cancel');}
     else { $('#rState').textContent='Packing'; await breathe();
-      if(pro){ $('#rState').textContent='Loading Encoder'; encoding=true; hook('encode-load'); try{ await ffLoad(); $('#rState').textContent='Encoding ProRes'; hook('encode'); rBlob=await movProRes(frames,fps,function(q){hook('render-progress',.35+q*.65); $('#rFill').style.width=(35+q*65)+'%';},OUT.alpha!=='off'); rFileName=name+'.mov'; } finally{ encoding=false; } }
+      if(pro){ rBlob=frames.blob; rFileName=name+'.mov'; }
       else if(fmtSel==='mov'){rBlob=movPNG(frames,fps,W,H); rFileName=name+'.mov';} else {rBlob=buildZip(frames,name); rFileName=name+'_png.zip';}
       $('#rFill').style.width='100%';
       $('#rState').textContent='Done'; $('#rFileName').textContent=rFileName+' · '+(rBlob.size/1048576).toFixed(1)+' MB · '+frames.length+' frames'+' · '+W+'×'+H+(OUT.alpha==='off'?' · No Alpha':(pro?' · '+(OUT.alpha==='pm'?'Premultiplied':'Straight'):'')); $('#rFile').hidden=false; $('#rSave').focus(); hook('render-done'); }
