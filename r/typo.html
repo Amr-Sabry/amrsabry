@@ -1636,7 +1636,7 @@ function fBuildUI(){var C=COMPS[P.comp], F=fF(P), box=UI.compBox; if(!box) retur
   FSTYLES.forEach(function(v){var b=el('button','chip',ch2,v); b.type='button'; b.setAttribute('aria-pressed',String(String(F.bg)===v)); b.addEventListener('click',function(){fSetF('bg',v,true);});});}
   /* 3. the layers inside the card */
   el('span','lab',box,'Layers In Card'); var tr=el('div','gtree',box); tr.id='fTree'; var seen=P._fb||{};
-  var parts=(C.partsOf?C.partsOf(P):C.parts).filter(function(k){return seen[k]||k==='card'||!Object.keys(seen).length;}); if(P._fsel&&parts.indexOf(P._fsel)<0) P._fsel='';
+  var parts=C.partsOf?C.partsOf(P):C.parts.filter(function(k){return seen[k]||k==='card'||!Object.keys(seen).length;}); if(P._fsel&&parts.indexOf(P._fsel)<0) P._fsel='';
   parts.forEach(function(k){var row=el('div','gr',tr); row.dataset.id=k; row.setAttribute('aria-selected',String(k===P._fsel)); var off=!!(P.f&&P.f['h_'+k]);
     var eye=el('button','eye',row); eye.type='button'; eye.innerHTML=ico('ring'); eye.setAttribute('aria-pressed',String(!off)); eye.setAttribute('aria-label',(off?'Show ':'Hide ')+(fPN(P,k))); eye.addEventListener('click',function(){fSetF('h_'+k,off?'':true,true);});
     var nm=el('button','nm',row,fPN(P,k)); nm.type='button'; nm.addEventListener('click',function(){P._fsel=P._fsel===k?'':k; fBuildUI(); placeNodeBox();});
@@ -1936,22 +1936,41 @@ function fMCol(P,L,c){ if(!c||c==='none'||/^url/.test(c)) return c; var o=P.f&&P
   if(o&&(!d||!d.L[L]||h===d.L[L][1])) return fMSwap(c,o);
   var a=P.accent&&String(P.accent).toLowerCase(); if(a&&a!==FMINT&&/^#[0-9a-f]{6}$/.test(a)&&h===FMINT) return fMSwap(c,a);
   return c;}
-function fMR(X,L,x,y,w,h){X.rec('L'+L,x,y,w,h); var f=X.P._fir; if(f&&w*h>0) f.push([L,x,y,w,h]);}
-function fMRec(X,T,L,x,y,w,h){var bi=X._bi, a=bi.multiply(T), p1=a.transformPoint(new DOMPoint(x,y)), p2=a.transformPoint(new DOMPoint(x+w,y+h)); fMR(X,L,Math.min(p1.x,p2.x),Math.min(p1.y,p2.y),Math.abs(p2.x-p1.x),Math.abs(p2.y-p1.y));}
-function fMapDraw(X,d,tm){var g=X.g, P=X.P; P._fmd=d; P._fir=[]; var k=Math.min(X.w/d.w,X.h/d.h), ox=X.x0+(X.w-d.w*k)/2, oy=X.y0+(X.h-d.h*k)/2, A0=g.globalAlpha;
+/* where a rewritten text sits and how much wider / taller it got than the deck's */
+function fMRep(g,d,it,pa,tm,rep){var m2=fTk(d.K[it[3]],tm), lines=fMJ(d,fTk(d.K[it[4]],tm)[0]); if(!lines||!lines.length) return null; var s2=m2[2]||1, fs=parseFloat(pa[3])*s2, font=pa[2]+' '+fs.toFixed(2)+'px '+pa[1];
+  g.font=font; try{g.letterSpacing=pa[4]&&pa[4]!=='normal'?(parseFloat(pa[4])*s2)+'px':'0px';}catch(e){}
+  var mw=0, R0=-1e9, L0=1e9; lines.forEach(function(ln){mw=Math.max(mw,ln[3]*s2); R0=Math.max(R0,m2[0]+(ln[1]+ln[3])*s2); L0=Math.min(L0,m2[0]+ln[1]*s2);});
+  var pitch=lines.length>1?(lines[1][2]-lines[0][2])*s2:lines[0][4]*s2*1.3, lh0=lines[0][4]*s2, top0=m2[1]+lines[0][2]*s2, last=lines[lines.length-1];
+  var wl=lines.length>1?fMWrap(g,rep,Math.max(mw*1.02,fs*4)):[String(rep)], nw=0; wl.forEach(function(t){nw=Math.max(nw,g.measureText(t).width);});
+  return {font:font,fs:fs,lines:wl,R0:R0,L0:L0,top0:top0,pitch:pitch,lh0:lh0,x0:L0,x1:R0,y0:top0,y1:m2[1]+(last[2]+last[4])*s2,dw:String(rep).trim()?nw-mw:-mw,dh:(wl.length-lines.length)*pitch,rtl:pa[5]!=='ltr'};}
+function fMR(X,L,x,y,w,h){ if(!X._rec) return; X.rec('L'+L,x,y,w,h); var f=X.P._fir; if(f&&w*h>0) f.push([L,x,y,w,h]);}
+function fMRec(X,T,L,x,y,w,h){ if(!X._rec) return; var a=X._tc&&X._tc.A||X._bi.multiply(T), p1=a.transformPoint(new DOMPoint(x,y)), p2=a.transformPoint(new DOMPoint(x+w,y+h)); fMR(X,L,Math.min(p1.x,p2.x),Math.min(p1.y,p2.y),Math.abs(p2.x-p1.x),Math.abs(p2.y-p1.y));}
+function fMapDraw(X,d,tm){var g=X.g, P=X.P, TC={}; P._fmd=d; P._fir=[]; X._rec=!!(window.__fmap&&window.__fmap.cur()===P); var k=Math.min(X.w/d.w,X.h/d.h), ox=X.x0+(X.w-d.w*k)/2, oy=X.y0+(X.h-d.h*k)/2, A0=g.globalAlpha;
   var base=g.getTransform(); X._bi=base.inverse(); var B=base.translate(ox,oy).scale(k), bS=Math.sqrt(Math.abs(B.a*B.d-B.b*B.c));
   /* the map fits the card; the title plate, legend, data chip and corner map keep their size and stay in their corner */
   var ku=X.s, AX=[ox,X.x0,X.x0+X.w-d.w*ku,X.x0,X.x0+X.w-d.w*ku], AY=[oy,X.y0,X.y0,X.y0+X.h-d.h*ku,X.y0+X.h-d.h*ku], AK=[k,ku,ku,ku,ku], BA=[], BSA=[];
   for(var ai=0;ai<5;ai++){BA[ai]=ai?base.translate(AX[ai],AY[ai]).scale(ku):B; BSA[ai]=Math.sqrt(Math.abs(BA[ai].a*BA[ai].d-BA[ai].b*BA[ai].c));}
   g.save(); rrect(g,X.x0,X.y0,X.w,X.h,22*X.s); g.clip();
   g.fillStyle=(P.f&&P.f.c_card)||d.bg; g.fillRect(X.x0,X.y0,X.w,X.h); X.rec('card',X.x0,X.y0,X.w,X.h);
-  var I=d.I, n=I.length;
+  var I=d.I, n=I.length, EX=[], tx0=P.f&&P.f.tx;
+  if(tx0) for(var q0=0;q0<n;q0++){var i0=I[q0]; if(i0[0]!=='x'||d.FS[q0]==null||tx0[d.FS[q0]]==null) continue; var o0=i0[2]!=null?fTk(d.K[i0[2]],tm)[0]:1; if(o0<=.004) continue;
+    var pi0=i0[5]!=null?fTk(d.K[i0[5]],tm)[0]:-1, pa0=pi0>=0?fMJ(d,pi0):null; if(!pa0) continue; var e0=fMRep(g,d,i0,pa0,tm,tx0[d.FS[q0]]); if(e0){e0.an=(d.L[i0[1]]&&d.L[i0[1]][2])||0; e0.q=q0; EX.push(e0);}}
+  /* the texts that stay as they are: a box never gets narrower than them */
+  var OX=[]; if(EX.length) for(var q1=0;q1<n;q1++){var i1=I[q1]; if(i1[0]!=='x'||EX.some(function(e){return e.q===q1;})) continue; var o1=i1[2]!=null?fTk(d.K[i1[2]],tm)[0]:1; if(o1<=.004) continue;
+    var m1=fTk(d.K[i1[3]],tm), ls1=fMJ(d,fTk(d.K[i1[4]],tm)[0]); if(!ls1||!ls1.length) continue; var s1=m1[2]||1, a1=1e9, b1=-1e9;
+    ls1.forEach(function(l){a1=Math.min(a1,m1[0]+l[1]*s1); b1=Math.max(b1,m1[0]+(l[1]+l[3])*s1);}); OX.push({an:(d.L[i1[1]]&&d.L[i1[1]][2])||0,x0:a1,x1:b1,y0:m1[1]+ls1[0][2]*s1,y1:m1[1]+(ls1[ls1.length-1][2]+ls1[ls1.length-1][4])*s1});}
   for(var q=0;q<n;q++){var it=I[q], L=it[1]; if(P.f&&P.f['h_L'+L]) continue; var an=(d.L[L]&&d.L[L][2])||0; B=BA[an]; bS=BSA[an]; ox=AX[an]; oy=AY[an]; k=AK[an];
     var op=it[2]!=null?fTk(d.K[it[2]],tm)[0]:1; if(op<=.004) continue;
     var ty=it[0], pi=it[5]!=null?fTk(d.K[it[5]],tm)[0]:-1, pa=pi>=0?fMJ(d,pi):null; if(!pa) continue;
     g.save();
     try{
-    if(ty==='b'){ var m=fTk(d.K[it[3]],tm); g.setTransform(B); var x=m[0], y=m[1], w=m[2], h=m[3], rs=m[4]||1, r=Math.min((pa[4]||0)*rs,w/2,h/2), bw=pa[2]||0;
+    if(ty==='b'){ var m=fTk(d.K[it[3]],tm); g.setTransform(B); var x=m[0], y=m[1], w=m[2], h=m[3], rs=m[4]||1;
+      if(EX.length){var gw=0, gh=0; EX.forEach(function(e){ if(e.an===an&&e.x0>=x-2&&e.x1<=x+w+2&&e.y0>=y-2&&e.y1<=y+h+2){ if(Math.abs(e.dw)>Math.abs(gw)) gw=e.dw; if(Math.abs(e.dh)>Math.abs(gh)) gh=e.dh; }});
+        if(gw<0){var ins=OX.filter(function(o){return o.an===an&&o.x0>=x-2&&o.x1<=x+w+2&&o.y0>=y-2&&o.y1<=y+h+2;}), tin=EX.filter(function(e){return e.an===an&&e.x0>=x-2&&e.x1<=x+w+2&&e.y0>=y-2&&e.y1<=y+h+2;}).concat(ins);
+          if(ins.length){var padL=Math.min.apply(null,tin.map(function(o){return o.x0;}))-x, padR=x+w-Math.max.apply(null,tin.map(function(o){return o.x1;})), mn=Math.min.apply(null,ins.map(function(o){return o.x0;})), mx=Math.max.apply(null,ins.map(function(o){return o.x1;}));
+            if(an===2||an===4) gw=Math.max(gw,x-(mn-padL)); else if(an===0) gw=Math.max(gw,(mx-mn)-(w-padL-padR)); else gw=Math.max(gw,(mx+padR)-(x+w)); gw=Math.min(0,gw);}}
+        if(gw){ if(an===2||an===4){x-=gw; w+=gw;} else if(an===0){x-=gw/2; w+=gw;} else w+=gw; } if(gh){ if(an===3||an===4) y-=gh; h+=gh; } w=Math.max(0,w); h=Math.max(0,h);}
+      var r=Math.min((pa[4]||0)*rs,w/2,h/2), bw=pa[2]||0;
       g.globalAlpha=A0*op; g.beginPath(); if(g.roundRect) g.roundRect(x,y,w,h,r); else g.rect(x,y,w,h);
       var bg=fMCol(P,L,pa[0]); if(bg&&!/rgba\([^)]*,\s*0\)$/.test(bg)&&bg!=='transparent'){g.fillStyle=bg; g.fill();}
       if(bw>0&&(pa[8]||0)===bw&&(pa[9]||0)===bw&&(pa[10]||0)===bw){ if(!/rgba\([^)]*,\s*0\)$/.test(pa[3])){g.beginPath(); var hb=bw*rs/2; if(g.roundRect) g.roundRect(x+hb,y+hb,w-2*hb,h-2*hb,Math.max(0,r-hb)); else g.rect(x+hb,y+hb,w-2*hb,h-2*hb); g.lineWidth=bw*rs; g.strokeStyle=fMCol(P,L,pa[3]); g.stroke();} }
@@ -1963,11 +1982,12 @@ function fMapDraw(X,d,tm){var g=X.g, P=X.P; P._fmd=d; P._fir=[]; var k=Math.min(
       try{g.letterSpacing=pa[4]&&pa[4]!=='normal'?(parseFloat(pa[4])*s2)+'px':'0px';}catch(e){}
       var fm=fMFont(g,font); g.globalAlpha=A0*op; g.fillStyle=fMCol(P,L,pa[0]);
       var rep=(P.f&&P.f.tx&&d.FS[q]!=null)?P.f.tx[d.FS[q]]:undefined;
-      if(rep!=null){var rtl=pa[5]!=='ltr', mw=0, R0=-1e9, L0=1e9; lines.forEach(function(ln){mw=Math.max(mw,ln[3]*s2); R0=Math.max(R0,m2[0]+(ln[1]+ln[3])*s2); L0=Math.min(L0,m2[0]+ln[1]*s2);});
-        var pitch=lines.length>1?(lines[1][2]-lines[0][2])*s2:lines[0][4]*s2*1.3, lh0=lines[0][4]*s2, top0=m2[1]+lines[0][2]*s2, wl=fMWrap(g,rep,Math.max(mw*1.02,fs*4));
-        g.textAlign=rtl?'right':'left'; wl.forEach(function(t,j){var top=top0+j*pitch, by=top+(lh0-(fm[0]+fm[1]))/2+fm[0], tw=g.measureText(t).width; g.fillText(t,rtl?R0:L0,by); fMR(X,L,ox+(rtl?R0-tw:L0)*k,oy+top*k,tw*k,lh0*k);}); }
+      if(rep!=null){var e=null; for(var ei=0;ei<EX.length;ei++) if(EX[ei].q===q){e=EX[ei]; break;} if(!e) e=fMRep(g,d,it,pa,tm,rep); if(!e) continue; g.font=e.font;
+        var sx=(an===1||an===3)?e.dw:(an===0?e.dw/2:0), R1=e.R0+(e.rtl?sx:0), L1=e.L0-(e.rtl?0:(an===2||an===4?e.dw:(an===0?e.dw/2:0))), up=(an===3||an===4)?e.dh:0;
+        g.textAlign=e.rtl?'right':'left'; e.lines.forEach(function(t,j){var top=e.top0-up+j*e.pitch, by=top+(e.lh0-(fm[0]+fm[1]))/2+fm[0], tw=g.measureText(t).width; g.fillText(t,e.rtl?R1:L1,by); fMR(X,L,ox+(e.rtl?R1-tw:L1)*k,oy+top*k,tw*k,e.lh0*k);}); }
       else for(var j=0;j<lines.length;j++){var ln=lines[j], lx=m2[0]+ln[1]*s2, top=m2[1]+ln[2]*s2, lh=ln[4]*s2, by=top+(lh-(fm[0]+fm[1]))/2+fm[0]; g.fillText(ln[0],lx,by); fMR(X,L,ox+lx*k,oy+top*k,ln[3]*s2*k,lh*k);} }
-    else { var M=fTk(d.K[it[3]],tm), T=B.multiply(new DOMMatrix(M)), sc=Math.sqrt(Math.abs(M[0]*M[3]-M[1]*M[2]))||1;
+    else { var tck=it[3]+'|'+an, tc=TC[tck]; if(!tc){var M0=fTk(d.K[it[3]],tm), T0=B.multiply(new DOMMatrix(M0)); tc=TC[tck]={M:M0,T:T0,sc:Math.sqrt(Math.abs(M0[0]*M0[3]-M0[1]*M0[2]))||1,A:X._rec?X._bi.multiply(T0):null};}
+      var M=tc.M, T=tc.T, sc=tc.sc; X._tc=tc;
       /* clip paths */
       if(it[7]!=null){var ki=fTk(d.K[it[7]],tm)[0], cl=fMJ(d,ki); if(cl) cl.forEach(function(c){g.setTransform(B.multiply(new DOMMatrix(c[1]||[1,0,0,1,0,0]))); g.clip(fMShape(c[0]));});}
       g.setTransform(T);
@@ -2015,9 +2035,14 @@ COMPS.fmapc={name:'Map Card',icon:'map',fmap:1,mapc:1,sizes:[],parts:['card'],
   draw:function(g,P,env,K){var F=fF(P), G=this.geo(P,F), ph=cPhase(env), src=String(F.src||''), d=FMD[src]; P._fb={}; if(!d) fMapLoad(src);
     cOut(g,P,K,ph.po,function(g){var X=fX(g,P,F,G,ph), tm=env.t; if(d) tm=Math.min(d.dur,env.t*d.dur/Math.max(.5,env.D-1.5));
       fOpenX(X,clamp(env.t/.86),function(){
-        if(d){ fMapDraw(X,d,tm); return; }
+        if(d){ fMapDraw(X,d,tm); if(X._rec&&P._fsel&&typeof placeNodeBox==='function') placeNodeBox(); return; }
         var s=X.s; g.save(); rrect(g,X.x0,X.y0,X.w,X.h,22*s); g.fillStyle='#0c0c13'; g.fill(); g.restore(); X.rec('card',X.x0,X.y0,X.w,X.h);
         var isz=Math.min(X.w,X.h)*.22; fIconRaw(g,'map',X.x0+X.w/2-isz/2,X.y0+X.h/2-isz/2,isz,'rgba(182,242,220,.5)',1,1.5);});});}};
+/* timing check for the map player (used by the build's tests) */
+window.__fmb=function(s,n){ if(!FMD[s]){fMapLoad(s); return null;} var d=FMD[s], cv=document.createElement('canvas'); cv.width=1920; cv.height=1080; var g=cv.getContext('2d');
+  var Q={kind:'comp',comp:'fmapc',f:{sz:'6×6',src:s,tpl:'1'},x:.5,y:.5,size:220,accent:'#b6f2dc',color:'#ffffff'}, F=fF(Q), G=COMPS.fmapc.geo(Q,F), ts=[];
+  for(var i=0;i<(n||40);i++){var tm=i/(n||40)*d.dur, X=fX(g,Q,F,G,cPhase({t:tm,Ti:1,To:0,tOut:99,D:99})); g.setTransform(1,0,0,1,0,0); g.clearRect(0,0,1920,1080); var t0=performance.now(); fMapDraw(X,d,tm); ts.push(performance.now()-t0);}
+  ts.sort(function(a,b){return a-b;}); return [d.I.length, +ts[ts.length>>1].toFixed(1), +ts[Math.floor(ts.length*.9)].toFixed(1)];};
 
 
 /* ================= groups: a layer made of layers =================
