@@ -3,7 +3,8 @@
       it shows whole, inside the card, on the cover and the closing card only;
    2. the date card names the venue (Al Masa Conference Centre, New Administrative Capital); the date itself stays small;
    3. no pig (piggy bank) and no cross as a health or hospital symbol, in icons and map symbols; plain plus and x signs are fine;
-   4. the word «النهو» is never shown: it reads «الانتهاء». */
+   4. the word «النهو» is never shown: it reads «الانتهاء»;
+   5. maps carry no border lines at all. */
 (function(){
   /* ---------- 3. banned shapes: swap them for neutral icons before anything is drawn ---------- */
   /* only the pig (piggy bank for savings) and the cross used as a symbol for health or hospitals; ordinary plus and x signs stay */
@@ -75,8 +76,18 @@
   /* the cover and the closing card carry the symbol large */
   [1,249].forEach(n=>{const sp=typeof SLIDES!=='undefined'&&SLIDES[n];if(sp)(sp.cards||[]).forEach(cd=>{if(cd[0]==='title')cd[2].logo='cover'})});
 
+  /* ---------- 5. maps: no border lines at all (Amr's standing rule for every map) ---------- */
+  /* governorate lines, neighbouring-country lines and highlighted governorate outlines are not drawn; areas keep their fills */
+  /* Egypt's own outline goes too: the country reads by its land colour; the outline's two sliver holes near 22N are dropped */
+  try{if(typeof MAPTH!=='undefined'){MAPTH.gov='';MAPTH.nbs='none';MAPTH.coast='none'}}catch(e){}
+  try{if(typeof EGY!=='undefined'&&EGY.geometry&&EGY.geometry.type==='MultiPolygon')EGY.geometry={type:'MultiPolygon',coordinates:EGY.geometry.coordinates.map(p=>[p[0]])}}catch(e){}
+
   /* ---------- styles ---------- */
   const st=document.createElement('style');st.textContent=`
+  .rgov,.rtm .rgov,.mapc .ghi .gsel,.mtour .mt2-hi path,.map path[stroke="#0c0c13"],.rmini .me,.mt-mini .me{stroke:none!important}
+  .mlocs>path{stroke:none!important;fill:rgba(182,242,220,.14)!important}
+  .egs .eo{stroke:none!important;fill:rgba(255,255,255,.1)!important}
+  .bc.grad .egs .eo,.bc.mint .egs .eo{fill:rgba(13,13,20,.12)!important}
   .bc>.wm.wlogo{right:auto;bottom:auto;opacity:1;color:inherit;line-height:0;z-index:0}
   .flogo{width:100%;height:100%;overflow:visible;--c1:#b6f2dc;--c2:#a9a8ff;opacity:.42;transform-origin:50% 50%;animation:flSpin 64s linear infinite}
   .wlogo.cov .flogo{opacity:.62}
