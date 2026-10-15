@@ -77,6 +77,7 @@ button.spec:hover{border-color:var(--line2);color:var(--fg)}
 .pjp h3 i{display:flex;gap:4px}.pjp h3 i b{width:14px;height:14px;border-radius:50%;border:1px solid var(--line2);display:block}
 .pjp .pgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .pjp .lab{display:block}
+.pjp .pjtot{display:flex;justify-content:space-between;align-items:center}.pjp .pjtot b{color:var(--accent);letter-spacing:.12em}.pjp .pgrid .pjsec{display:flex;justify-content:space-between;align-items:center;gap:10px}.pjp .pgrid .pjsec .pjsn{font-style:normal;color:var(--accent);letter-spacing:.12em}
 .pjp .pgrid .pjsec{grid-column:1/-1;margin:10px 0 0;padding-top:12px;border-top:1px solid var(--line2);color:var(--fg)}
 .pjp .pgrid .tile span{white-space:normal;min-height:3.3em}
 .pjp .acts2{display:flex;flex-direction:column;gap:8px}
@@ -2812,7 +2813,7 @@ function buildTiles(){var cats=['All']; MOVES.forEach(function(m){ if(cats.index
     b.addEventListener('click',function(){ if(P.kind!=='text'){$('#mSay').textContent='الحركات دي للنص. المكوّن ليه حركته الجاهزة، وبياناته من Component على اليمين.'; return;} P.move=M.id; markTile(); buildMoveUI(); time=0; playing=true; syncPlay(); dirty(); persist(); hook('move',M);});
     function on(){t.hover=true; t.t0=performance.now(); if(!t.q) t.q=thumbP(t.M); kick();} function off(){t.hover=false; if(t.q) drawTile(t,t.q.inDur*.62);}
     b.addEventListener('pointerenter',on); b.addEventListener('pointerleave',off); b.addEventListener('focus',on); b.addEventListener('blur',off);});
-  $('#mCount').textContent=String(MOVES.length); $('#mSearch').addEventListener('input',filterTiles);}
+  $('#mCount').textContent=String(MOVES.length); var mt=$('#pTabs').querySelector('[data-t="moves"]'); if(mt) mt.textContent='Moves · '+MOVES.length; $('#mSearch').addEventListener('input',filterTiles);}
 function filterTiles(){var q=$('#mSearch').value.trim().toLowerCase().replace(/[٠-٩]/g,function(d){return '٠١٢٣٤٥٦٧٨٩'.indexOf(d);}), n=/^#?\d+$/.test(q)?parseInt(q.replace('#',''),10):0; tiles.forEach(function(t){t.b.hidden=!((cat==='All'||t.M.cat===cat)&&(!q||(n?t.M.no===n:t.M.name.toLowerCase().indexOf(q)>=0)));});}
 function markTile(){tiles.forEach(function(t){t.b.setAttribute('aria-pressed',String(t.M.id===P.move));}); syncLines();}
 var thumbT=0; function refreshThumbs(){clearTimeout(thumbT); thumbT=setTimeout(function(){tiles.forEach(function(t){ if(t.vis) paintTile(t); else t.stale=true; }); ptiles.forEach(function(t){ if(!t.hover) drawTile(t,t.q.inDur+.6); });},140);}
@@ -2940,12 +2941,12 @@ function openTitle(file){file.text().then(function(t){var d=JSON.parse(t); if(!d
     if(d.project) PROJECTS.forEach(function(p){ if(p.id===d.project&&p!==PJ) setProject(p); });
     LINES.map(function(q){return q.font;}).filter(function(f,i,a){return a.indexOf(f)===i;}).forEach(function(f){useFont(f);}); buildLines(); refreshAll(); time=0; dirty(true); $('#mSay').textContent='الملف اتفتح: '+LINES.length+' Layer.'; hook('title-open');}).catch(function(){$('#mSay').textContent='الملف ده مش ملف Typo سليم.';});}
 function buildProjectPanel(){var box=$('#pjPanel'); box.textContent=''; ptiles=[]; if(!PJ) return; var br=PJ.brand;
-  var h=el('h3','',box); h.appendChild(document.createTextNode(PJ.name)); var sw=el('i','',h); [br.accent,br.color,'#000000'].forEach(function(c){el('b','',sw).style.background=c;});
+  var h=el('h3','',box); h.appendChild(document.createTextNode(PJ.name)); var SECN={}, cs='', NT=0; PJ.templates.forEach(function(t){ if(t.sec){cs=t.sec; SECN[cs]=0;} else {NT++; if(cs) SECN[cs]++;}}); var sw=el('i','',h); [br.accent,br.color,'#000000'].forEach(function(c){el('b','',sw).style.background=c;});
   el('p','hint',box,'مكوّنات المشروع جاهزة بألوانه. دوس على أي واحد يتضاف Layer، وبعدها غيّر بياناته من Component على اليمين.');
-  el('span','lab',box,'Templates'); var gr=el('div','pgrid',box);
+  var tl=el('span','lab pjtot',box,'Templates'); el('b','',tl,'TOTAL · '+NT); var gr=el('div','pgrid',box);
   var tfonts={}; PJ.templates.forEach(function(tp){var GB=tp.group&&GTPL[tp.group]&&GTPL[tp.group].brand; if(GB&&GB.font&&GB.font!==br.font) tfonts[GB.font]=1;});
   Object.keys(tfonts).forEach(function(f){useFont(f,function(){ptiles.forEach(function(x){drawTile(x,x.q.inDur+.6);});});});
-  PJ.templates.forEach(function(tp){ if(tp.sec){el('span','lab pjsec',gr,tp.sec); return;} var b=el('button','tile',gr), cv=el('canvas','',b); b.type='button'; cv.width=TW; cv.height=TH; var nm=el('span','',b,tp.name||(tp.group?GTPL[tp.group].name:(tp.comp?COMPS[tp.comp].name:tp.name))); b.title='Add '+nm.textContent;
+  PJ.templates.forEach(function(tp){ if(tp.sec){var sl=el('span','lab pjsec',gr,tp.sec); el('em','pjsn',sl,String(SECN[tp.sec]||0)); return;} var b=el('button','tile',gr), cv=el('canvas','',b); b.type='button'; cv.width=TW; cv.height=TH; var nm=el('span','',b,tp.name||(tp.group?GTPL[tp.group].name:(tp.comp?COMPS[tp.comp].name:tp.name))); b.title='Add '+nm.textContent;
     var q=in169(function(){var q=mkFromTpl(tp,br); q.dur=q.kind==='group'&&gStepN(q)>1?gNeedDur(q):3.4; if(q.kind!=='text'){var bx=q.kind==='group'?gBoxMax(q):boxOf(q), k=Math.min(1920*.86/Math.max(1,bx.w),1080*.8/Math.max(1,bx.h)); q.size=170*k;} else {MG.font=fontStr(q); MG.direction='rtl'; q.size=Math.max(60,Math.min(300,Math.round(q.size*1920*.7/(MG.measureText(q.text).width||1))));} return q;});
     var t={b:b,g:cv.getContext('2d'),q:q,hover:false,t0:0}; ptiles.push(t); if(PJ.lazy) fLazy(t); else drawTile(t,q.inDur+.6);
     function on(){t.hover=true; t.t0=performance.now(); kick();} function off(){t.hover=false; drawTile(t,q.inDur+.6);}
@@ -2955,7 +2956,7 @@ function buildProjectPanel(){var box=$('#pjPanel'); box.textContent=''; ptiles=[
   s1.addEventListener('click',saveTitle); s2.addEventListener('click',function(){fi.click();}); fi.addEventListener('change',function(){var f=fi.files&&fi.files[0]; if(f) openTitle(f); fi.value='';});
   el('p','hint',box,'Save بينزّل الـ Layers والمقاس في ملف صغير. ابعته لزميلك يفتحه بـ Open ويكمّل عليه أو يغيّر الأرقام ويعمل Render.');}
 function setTab(t){$('#mAside').dataset.tab=t; Array.prototype.forEach.call($('#pTabs').children,function(b){b.setAttribute('aria-pressed',String(b.dataset.t===t));}); if(t==='proj') ptiles.forEach(function(x){ if(!PJ||!PJ.lazy||x._seen) drawTile(x,x.q.inDur+.6);});}
-function setProject(p,quiet){PJ=p||null; try{ if(PJ) localStorage.setItem(PKEY,PJ.id); else localStorage.removeItem(PKEY);}catch(e){} $('#pjName').textContent=PJ?PJ.name:'Projects'; $('#pTabs').hidden=!PJ; $('#pTabP').textContent=PJ?PJ.name:'Project';
+function setProject(p,quiet){PJ=p||null; try{ if(PJ) localStorage.setItem(PKEY,PJ.id); else localStorage.removeItem(PKEY);}catch(e){} $('#pjName').textContent=PJ?PJ.name:'Projects'; $('#pTabs').hidden=!PJ; $('#pTabP').textContent=PJ?PJ.name+' · '+PJ.templates.filter(function(t){return !t.sec;}).length:'Project';
   Array.prototype.forEach.call($('#pjM').children,function(b){b.setAttribute('aria-current',String((b.dataset.id||'')===(PJ?PJ.id:'')));}); buildProjectPanel(); if(PJ&&PJ.fonts) PJ.fonts.forEach(function(f){useFont(f);}); setTab(PJ?'proj':'moves');
   if(PJ&&!quiet&&PJ.brand.bg&&OUT.alpha!=='off'){var bb=$('#segBg').querySelector('[data-bg="'+PJ.brand.bg+'"]'); if(bb) bb.click();} if(!quiet) hook('project',PJ?PJ.id:''); }
 (function(){var m=$('#pjM'), b=$('#pjB');
