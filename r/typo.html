@@ -1896,6 +1896,8 @@ fComp('fpict',{name:'Pictogram Card',icon:'num',dsz:'6Ã—4',dbg:'dark',sizes:['6Ã
 var FMD={}, FMDL={}, FMDT=0;
 function fMapLoad(src){ if(!src||FMD[src]||FMDL[src]) return; FMDL[src]=1;
   fetch('/r/typo-maps/'+src+'.json').then(function(r){ if(!r.ok) throw 0; return r.json();}).then(function(d){ fMapPrep(d); FMD[src]=d;
+    /* the map's layers arrive with its file: the panel of a map card that is open now gets them at once */
+    try{var cp=window.__fmap&&window.__fmap.cur(); if(cp&&fIsMap(cp)&&COMPS[cp.comp].mapc&&String(fF(cp).src)===String(src)) fBuildUI();}catch(e){}
     clearTimeout(FMDT); FMDT=setTimeout(function(){ try{LCACHE.clear();}catch(e){} dirty(true); if(typeof ptiles!=='undefined') ptiles.forEach(function(t){ if(t._seen) drawTile(t,t.q.inDur+.6);});},80);
   }).catch(function(){FMDL[src]=0;});}
 function fMapPrep(d){
