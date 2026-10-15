@@ -1940,10 +1940,13 @@ function fMR(X,L,x,y,w,h){X.rec('L'+L,x,y,w,h); var f=X.P._fir; if(f&&w*h>0) f.p
 function fMRec(X,T,L,x,y,w,h){var bi=X._bi, a=bi.multiply(T), p1=a.transformPoint(new DOMPoint(x,y)), p2=a.transformPoint(new DOMPoint(x+w,y+h)); fMR(X,L,Math.min(p1.x,p2.x),Math.min(p1.y,p2.y),Math.abs(p2.x-p1.x),Math.abs(p2.y-p1.y));}
 function fMapDraw(X,d,tm){var g=X.g, P=X.P; P._fmd=d; P._fir=[]; var k=Math.min(X.w/d.w,X.h/d.h), ox=X.x0+(X.w-d.w*k)/2, oy=X.y0+(X.h-d.h*k)/2, A0=g.globalAlpha;
   var base=g.getTransform(); X._bi=base.inverse(); var B=base.translate(ox,oy).scale(k), bS=Math.sqrt(Math.abs(B.a*B.d-B.b*B.c));
+  /* the map fits the card; the title plate, legend, data chip and corner map keep their size and stay in their corner */
+  var ku=X.s, AX=[ox,X.x0,X.x0+X.w-d.w*ku,X.x0,X.x0+X.w-d.w*ku], AY=[oy,X.y0,X.y0,X.y0+X.h-d.h*ku,X.y0+X.h-d.h*ku], AK=[k,ku,ku,ku,ku], BA=[], BSA=[];
+  for(var ai=0;ai<5;ai++){BA[ai]=ai?base.translate(AX[ai],AY[ai]).scale(ku):B; BSA[ai]=Math.sqrt(Math.abs(BA[ai].a*BA[ai].d-BA[ai].b*BA[ai].c));}
   g.save(); rrect(g,X.x0,X.y0,X.w,X.h,22*X.s); g.clip();
   g.fillStyle=(P.f&&P.f.c_card)||d.bg; g.fillRect(X.x0,X.y0,X.w,X.h); X.rec('card',X.x0,X.y0,X.w,X.h);
   var I=d.I, n=I.length;
-  for(var q=0;q<n;q++){var it=I[q], L=it[1]; if(P.f&&P.f['h_L'+L]) continue;
+  for(var q=0;q<n;q++){var it=I[q], L=it[1]; if(P.f&&P.f['h_L'+L]) continue; var an=(d.L[L]&&d.L[L][2])||0; B=BA[an]; bS=BSA[an]; ox=AX[an]; oy=AY[an]; k=AK[an];
     var op=it[2]!=null?fTk(d.K[it[2]],tm)[0]:1; if(op<=.004) continue;
     var ty=it[0], pi=it[5]!=null?fTk(d.K[it[5]],tm)[0]:-1, pa=pi>=0?fMJ(d,pi):null; if(!pa) continue;
     g.save();
@@ -2010,7 +2013,7 @@ COMPS.fmapc={name:'Map Card',icon:'map',fmap:1,mapc:1,sizes:[],parts:['card'],
   fields:[{k:'sz',label:'Bento Size · columns × rows (of 12 × 6)',type:'text',def:'6×6'},{k:'bg',label:'Card Style',type:'text',def:'dark'},{k:'src',label:'Map (deck slide)',type:'text',def:'22'}],
   geo:function(P,F){F=F||fF(P); var s=fS(P), z=fSize(F.sz,6,6), w=z.w*s, h=z.h*s; return {s:s,x0:P.x*W-w/2,y0:P.y*H-h/2,w:w,h:h,z:z};},
   draw:function(g,P,env,K){var F=fF(P), G=this.geo(P,F), ph=cPhase(env), src=String(F.src||''), d=FMD[src]; P._fb={}; if(!d) fMapLoad(src);
-    cOut(g,P,K,ph.po,function(g){var X=fX(g,P,F,G,ph), tm=env.t; if(d&&env.D<d.dur&&env.t>=env.D-.01) tm=d.dur;
+    cOut(g,P,K,ph.po,function(g){var X=fX(g,P,F,G,ph), tm=env.t; if(d) tm=Math.min(d.dur,env.t*d.dur/Math.max(.5,env.D-1.5));
       fOpenX(X,clamp(env.t/.86),function(){
         if(d){ fMapDraw(X,d,tm); return; }
         var s=X.s; g.save(); rrect(g,X.x0,X.y0,X.w,X.h,22*s); g.fillStyle='#0c0c13'; g.fill(); g.restore(); X.rec('card',X.x0,X.y0,X.w,X.h);
