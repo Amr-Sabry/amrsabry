@@ -287,6 +287,10 @@ em{font-style:normal;color:var(--mint)}
 .rchip.tot .sw{background:#0d0d14}.rchip.tot .rv b{color:#0d0d14}.rchip.tot .rv small{color:#2a2a3a}
 .rre{top:16px;left:124px;opacity:0;transition:opacity .5s}
 .mapc.rdone .rre{opacity:1}
+.cmapw{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:12px;background:#0b0b12}
+.cmapw.t{padding-top:84px}
+.cmapw img{max-width:100%;max-height:100%;object-fit:contain;border-radius:10px;display:block}
+
 .mapc svg.nightmap .world path[stroke="#3a3a62"]{stroke:rgba(255,255,255,.42)}
 .mapc svg.nightmap .world path[stroke="#262638"],.mapc svg.nightmap .world path[stroke="#3a3a5e"]{stroke:rgba(255,255,255,.2)}
 .mapc svg.nightmap .world path[stroke="#1a1a26"]{stroke:rgba(255,255,255,.12)}
@@ -1271,6 +1275,13 @@ function locInset(cc,r){
   requestAnimationFrame(()=>requestAnimationFrame(()=>box.classList.add('on')));
 }
 function MAPCARD(el,r,c,live){
+  if(c.cimg){
+    const [tt]=String(c.title||'').split(' · '), sp=B&&B.sp;
+    el.innerHTML=`<div class="cmapw${tt?' t':''}"><img src="${IMG(c.cimg)}" alt="${tt}"></div>`;
+    if(tt){const t=document.createElement('div');t.className='mtitle'+(r.w<480?' sm':'');t.innerHTML=`${sp&&sp.h&&r.w>=480?`<div class="mtk"><span class="axc">${sp.ax||''}</span>${sp.h}</div>`:''}<div class="mtt"><span class="mti">${ICON(c.tic||'map',22)}</span><b>${tt}</b></div>`;el.appendChild(t)}
+    if(c.list) setTimeout(()=>pickGov(el.closest('.slide'),c,c.pick),900);
+    if(c.info) setTimeout(()=>pickPt(el.closest('.slide'),c,c.pick),900);
+    return}
   const W0=W,H0=H; W=r.w; H=r.h;
   const pad=Math.min(r.w,r.h)*(c.pad??.07), top=c.top??(c.title&&!c.loc&&r.w>=480?(/ · /.test(c.title)?124:100):52), bot=c.bot??40;
   let ctx;
@@ -1419,14 +1430,10 @@ document.getElementById('view').addEventListener('click',e=>{if(e.target.closest
 <script src="src/maptour.js"></script>
 <script src="src/maptour2.js"></script>
 <script>
-try{Object.values(SLIDES).forEach(sp=>(sp.cards||[]).forEach(cd=>{if(cd[0]==='map')cd[2].noTour=1}))}catch(e){}
-</script>
-<script src="src/mapcam.js"></script>
-<script src="src/maptour.js"></script>
-<script src="src/maptour2.js"></script>
-<script>
 /* the client's maps are shown as they are: whole Egypt where theirs is whole Egypt, no camera tours on map cards */
 try{Object.values(SLIDES).forEach(sp=>(sp.cards||[]).forEach(cd=>{if(cd[0]==='map')cd[2].noTour=1}))}catch(e){}
+/* the client's own maps (night-graded): every line, number and name exactly as the client drew it */
+try{[12,34,39,48,49,50,58,64,68,88].forEach(n=>{const sp=SLIDES[n],cd=sp&&(sp.cards||[]).find(x=>x[0]==='map'&&!x[2].loc&&!x[2].pip);if(cd)cd[2].cimg='cmap_'+n})}catch(e){}
 </script>
 <script>
 window.__qa=()=>[...curLayer.querySelectorAll('.bc')].map((el,i)=>{const n=el.querySelector(':scope>.in:not(.old)');return n?{i,ovf:el.dataset.ovf||'',sh:n.scrollHeight,ch:n.clientHeight,sw:n.scrollWidth,cw:n.clientWidth,c:el.className}:{i}}).filter(x=>x.ovf||x.sw>x.cw+2);
