@@ -287,6 +287,13 @@ em{font-style:normal;color:var(--mint)}
 .rchip.tot .sw{background:#0d0d14}.rchip.tot .rv b{color:#0d0d14}.rchip.tot .rv small{color:#2a2a3a}
 .rre{top:16px;left:124px;opacity:0;transition:opacity .5s}
 .mapc.rdone .rre{opacity:1}
+.mapc svg.nightmap .world path[stroke="#3a3a62"]{stroke:rgba(255,255,255,.42)}
+.mapc svg.nightmap .world path[stroke="#262638"],.mapc svg.nightmap .world path[stroke="#3a3a5e"]{stroke:rgba(255,255,255,.2)}
+.mapc svg.nightmap .world path[stroke="#1a1a26"]{stroke:rgba(255,255,255,.12)}
+.mapc svg.nightmap .night{image-rendering:auto}
+.rtm.nightmap .rctx .ru{display:none}
+.rtm.nightmap .rctx .rv{opacity:.55}
+
 .rl.hid>span{opacity:0!important}
 .rl.nm>span{font-size:13px;font-weight:600;color:#e9eaf5;background:rgba(12,12,19,.88);border:1px solid var(--c);bottom:auto;top:-12px;transform:translate(-50%,0)}
 
@@ -1108,7 +1115,7 @@ function ctxLayers(ctx){
 const KMPX=(P,lat)=>Math.hypot(...[0,1].map(i=>P([31.1,lat])[i]-P([31,lat])[i]))/(0.1*111.32*Math.cos(lat*Math.PI/180));
 function routeMap(el,r,c,ctx,live){
   const P=ctx.proj, svg=ctx.svg, WG=ctx.world, net=c.net?RTS[c.net]:c;
-  const played=B&&(B._rtp||(B._rtp=new Set())), fast=played&&played.has(c);
+  const played=B&&(B._rtp||(B._rtp=new Set())), fast=window.__fastMaps||(played&&played.has(c));
   let dead=false; live.push(()=>{dead=true});
   svg.classed('rtm',true);
   WG.selectAll('path').filter(function(){return this.getAttribute('stroke')===MAPTH.nile}).remove();
@@ -1192,7 +1199,9 @@ function routeMap(el,r,c,ctx,live){
     if(!ph) return [20,t,r.w-20,r.h-20];
     const A=[pw+34,t,r.w-20,r.h-20], Bb=[20,t,r.w-20,r.h-ph-30], sc=b=>vT(fitV(allPts(),b,.14),b).k;
     return sc(A)>=sc(Bb)?A:Bb};
-  const finalV=()=>{const fb=finalBX(), tf=vT(fitV(allPts(),fb,SITES.length&&!RT.length?0:.14,(c.zw||(RT.length?(RT.length===1?16:0):90))*kmpx),fb);return tV(tf,BX)};
+  const finalV=()=>{const fb=finalBX(), vw=c.view||net.view;
+    if(vw){const eb=vw==='egypt'?ctx.path.bounds(EGY):[P([vw[0],vw[1]]),P([vw[2],vw[3]])];return tV(vT(fitV([eb[0],eb[1]],BX,vw==='egypt'?.04:0),BX),BX)}
+    const tf=vT(fitV(allPts(),fb,SITES.length&&!RT.length?0:.14,(c.zw||(RT.length?(RT.length===1?16:0):90))*kmpx),fb);return tV(tf,BX)};
   const replay=document.createElement('button');replay.type='button';replay.className='mback rre';replay.setAttribute('data-int','');replay.innerHTML=`${ICON('rotate-ccw',15)}إعادة الجولة`;
   replay.onclick=ev=>{ev.stopPropagation();const cc=B&&B.cards.find(x=>x.el===el);if(!cc)return;played.delete(c);paint(cc,cc.pr)};el.appendChild(replay);
   /* names that would sit on top of each other: keep the more important one */
@@ -1209,7 +1218,7 @@ function routeMap(el,r,c,ctx,live){
   setTimeout(async()=>{if(dead)return;
     const tp=el.querySelector('.mtitle');BX=[20,tp?tp.offsetTop+tp.offsetHeight+12:20,r.w-20,r.h-20];
     const eb=ctx.path.bounds(EGY), V0=fitV([eb[0],eb[1]],BX,.04);
-    if(fast||c.instant){apply(V0);finish();apply(finalV());requestAnimationFrame(declutter);return}
+    if(fast||c.instant!==0){apply(V0);finish();apply(finalV());requestAnimationFrame(declutter);return}
     apply(V0);setTimeout(()=>played&&played.add(c),1500);
     await wait(650);
     svg.classed('rgon',true);
@@ -1257,7 +1266,7 @@ function locInset(cc,r){
   if(!best||best[2]!==c||area(best)<12) return;
   const g=geoOf(best), S=Math.round(Math.min(r.w*.4,r.h*.52,290));
   const box=document.createElement('div');box.className='ploc mapc';box.style.width=S+'px';box.style.height=S+'px';el.appendChild(box);
-  const lc=c._loc||(c._loc={mode:'route',pip:1,site:{p:[g[0],g[1]],n:g[2]},zw:g[3]==='g'?240:130});
+  const lc=c._loc||(c._loc={mode:'route',pip:1,view:'egypt',site:{p:[g[0],g[1]],n:g[2]},zw:g[3]==='g'?240:130});
   MAPCARD(box,{x:0,y:0,w:S,h:S},lc,cc.kill);
   requestAnimationFrame(()=>requestAnimationFrame(()=>box.classList.add('on')));
 }
@@ -1267,6 +1276,11 @@ function MAPCARD(el,r,c,live){
   let ctx;
   try{ctx=baseMap(el,MAPTH,{glow:true,pulse:c.mode==='layers',links:c.mode==='layers'?'arc':false,box:[pad,pad+top*.6,r.w-pad,r.h-pad-bot*.6]})} finally {W=W0;H=H0}
   const svg=ctx.svg; svg.classed('duo',true).style('width',r.w+'px').style('height',r.h+'px').style('position','absolute').style('inset','0');
+  /* night satellite base: natural satellite with the night grade (same image as option 3, web-mercator zoom 7 tiles 72–77 × 51–56) */
+  {const P0=ctx.proj, q0=P0([22.5,34.307144]), q1=P0([39.375,19.311143]), base=ctx.world.select('g');
+    base.selectAll('rect').attr('fill','none');base.selectAll('path').each(function(){const f=this.getAttribute('fill');if(f&&f!=='none'&&!/url/.test(f))this.setAttribute('fill','none')});
+    base.insert('image',':first-child').attr('class','night').attr('href','img/egy_sat_night.webp').attr('x',q0[0]).attr('y',q0[1]).attr('width',q1[0]-q0[0]).attr('height',q1[1]-q0[1]).attr('preserveAspectRatio','none');
+    svg.classed('nightmap',true)}
   uniqIds(svg.node());
   if(c.mode==='layers'){ctx.step(c.s);}
   else svg.classed('plain',true);
@@ -1332,7 +1346,8 @@ function MAPCARD(el,r,c,live){
       const seen={};pts.forEach((p,i)=>{const key=p.map(v=>v.toFixed(1)).join(','), m=seen[key]=(seen[key]||0)+1, a=m*2.1, off=m>1?14/k:0;
         const g=pins.append('g').attr('class','gp').attr('data-i',i).attr('data-x',p[0]+Math.cos(a)*off).attr('data-y',p[1]+Math.sin(a)*off);
         g.append('circle').attr('class','gpr').attr('r',16);g.append('circle').attr('r',11);g.append('text').text(i+1).attr('text-anchor','middle').attr('dy','.36em')});
-      go({k,x:cx-(x0+x1)/2*k,y:cy-(y0+y1)/2*k})};
+      /* the client's maps show the whole of Egypt: the governorate lights up in place, no zoom */
+      go(c.gzoom?{k,x:cx-(x0+x1)/2*k,y:cy-(y0+y1)/2*k}:{k:1,x:0,y:0})};
     el._hiPin=i=>{pins.selectAll('g.gp').classed('on',function(){return +this.dataset.i===i})};
     const back=document.createElement('button');back.type='button';back.className='mback';back.setAttribute('data-int','');back.innerHTML=`${ICON('maximize',15)}مصر كلها`;
     back.onclick=ev=>{ev.stopPropagation();el._zoomGov(null)};el.appendChild(back);
@@ -1404,12 +1419,23 @@ document.getElementById('view').addEventListener('click',e=>{if(e.target.closest
 <script src="src/maptour.js"></script>
 <script src="src/maptour2.js"></script>
 <script>
+try{Object.values(SLIDES).forEach(sp=>(sp.cards||[]).forEach(cd=>{if(cd[0]==='map')cd[2].noTour=1}))}catch(e){}
+</script>
+<script src="src/mapcam.js"></script>
+<script src="src/maptour.js"></script>
+<script src="src/maptour2.js"></script>
+<script>
+/* the client's maps are shown as they are: whole Egypt where theirs is whole Egypt, no camera tours on map cards */
+try{Object.values(SLIDES).forEach(sp=>(sp.cards||[]).forEach(cd=>{if(cd[0]==='map')cd[2].noTour=1}))}catch(e){}
+</script>
+<script>
 window.__qa=()=>[...curLayer.querySelectorAll('.bc')].map((el,i)=>{const n=el.querySelector(':scope>.in:not(.old)');return n?{i,ovf:el.dataset.ovf||'',sh:n.scrollHeight,ch:n.clientHeight,sw:n.scrollWidth,cw:n.clientWidth,c:el.className}:{i}}).filter(x=>x.ovf||x.sw>x.cw+2);
 const h=+(location.hash||'').slice(1);
 document.fonts&&document.fonts.ready.then(()=>{});
 show(SLIDES[h]?h:ORDER[0]);
 if(document.fonts) document.fonts.ready.then(()=>{if(curLayer){const n=cur;curLayer.remove();curLayer=null;show(n)}});
 </script>
+
 <script>/* hub room: the deck fits the space left under the comment strip */
 addEventListener('resize',function(){var v=document.getElementById('view'),s=document.getElementById('stage');if(!v||!s)return;var vw=v.clientWidth,vh=v.clientHeight,sc=Math.min(vw/1600,vh/900);s.style.transform='translate('+(vw-1600*sc)/2+'px,'+(vh-900*sc)/2+'px) scale('+sc+')'});</script>
 <script>

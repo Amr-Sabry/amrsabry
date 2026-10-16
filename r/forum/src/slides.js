@@ -335,7 +335,7 @@ S({n:33,...H01T,cards:[
 
 /* 34 — interactive map: roads and axes */
 S({n:34,...H01T,cards:[
-  ['map',[0,0,7,6],{mode:'route',net:'roads',title:'أبرز شبكات الطرق والمحاور · مسارات تمثيلية',tic:'route'}],
+  ['map',[0,0,7,6],{mode:'route',net:'roads',view:'egypt',title:'أبرز شبكات الطرق والمحاور · مسارات تمثيلية',tic:'route'}],
   ['title',[7,0,5,2],{bg:'dark',k:'الخريطة التفاعلية',ki:'map-pinned',t:'مواقع أبرز شبكات المحاور والطرق',fs:36}],
   ['list',[7,2,5,4],{bg:'dark2',h:'المحاور العرضية المقترحة',ic:'git-commit-horizontal',fs:15,items:[
     ['circle-dot','1 – الطريق الساحلي الدولي (رفح / السلوم)'],['circle-dot','2 – العوجا / الإسماعيلية / طنطا / وادي النطرون / طريق الجيش / السلوم'],['circle-dot','3 – طابا / السويس / القاهرة / طريق الجيش'],
@@ -380,7 +380,7 @@ S({n:38,...H01T,cards:RD.map(([k,cap],i)=>['photo',[8-(i%3)*4,Math.floor(i/3)*2,
 /* 39 — Nile axes */
 const NAX=DATA.nodes.filter(n=>n.t==='nileaxis').map(n=>[n.n,n.p[0],n.p[1],1]);
 S({n:39,...H01T,cards:[
-  ['map',[0,0,6,6],{mode:'route',net:'nile',title:'توزيع تخطيطي للمحاور على النيل · محور كل 25 كم',tic:'waypoints'}],
+  ['map',[0,0,6,6],{mode:'route',net:'nile',view:'egypt',title:'توزيع تخطيطي للمحاور على النيل · محور كل 25 كم',tic:'waypoints'}],
   ['title',[6,0,6,2],{bg:'dark',k:'المحاور على النيل',ki:'waypoints',t:'مضاعفة عدد المحاور المنفذة على النيل لربط القطاع الغربي بالشرق لنهر النيل وتحقيق التنمية المتكاملة',fs:28}],
   ['kpi',[9,2,3,4],{bg:'grad',ic:'waypoints',l:'محور تم وجاري تنفيذه',v:35,u:'محورًا'}],
   ['kpi',[6,2,3,2],{bg:'mint',ic:'circle-check',l:'تم الانتهاء من',v:16,u:'محورًا منهم'}],
@@ -389,7 +389,7 @@ S({n:39,...H01T,cards:[
 
 /* 40 — interactive map: Nile axes */
 S({n:40,...H01T,cards:[
-  ['map',[0,0,7,6],{mode:'route',net:'nile',instant:1,title:'محاور النيل · توزيع تخطيطي · اضغط على الخط',tic:'waypoints'}],
+  ['map',[0,0,7,6],{mode:'route',net:'nile',view:'egypt',title:'محاور النيل · توزيع تخطيطي · اضغط على الخط',tic:'waypoints'}],
   ['title',[7,0,5,2],{bg:'dark',k:'الخريطة التفاعلية',ki:'map-pinned',t:'توقيع على الخريطة محاور النيل',fs:36}],
   ['model',[7,2,5,4],{id:90,name:'محور عدلي منصور على النيل',opt:{el:.42,zoom:1.35}}],
 ]});
@@ -445,14 +445,14 @@ S({n:46,...H01T,cards:[
 const HSRST=DATA.nodes.filter(n=>n.t==='hsrst').map(n=>[n.n.replace('محطة ',''),n.p[0],n.p[1],n.hub?2:1]);
 const RAILC={l0:'#b6f2dc',l1:'#ffffff',l2:'#8f8ef7',l3:'#5fd1a8',l4:'#5fd1a8',l5:'#c9c8ff',l6:'#c9c8ff'};
 S({n:47,...H01T,cards:[
-  ['map',[0,0,8,6],{mode:'route',net:'rail',title:'السكك الحديدية والجر الكهربائي · اضغط على أي خط',tic:'train-front'}],
+  ['map',[0,0,8,6],{mode:'route',net:'rail',view:'egypt',title:'السكك الحديدية والجر الكهربائي · اضغط على أي خط',tic:'train-front'}],
   ['title',[8,0,4,2],{bg:'dark',k:'الخريطة التفاعلية',ki:'map-pinned',t:'مشروعات السكك الحديدية والجر الكهربائي',s:'(المونوريل/ القطار الكهربائي/ القطار السريع)',fs:30}],
   ['model',[8,2,4,4],{id:81,name:'القطار الكهربائي الخفيف LRT',opt:{el:.38,zoom:1.3}}],
 ]});
 
 /* 48 — high-speed rail maps: three lines drawn with the camera riding along, stations named as in the deck's maps */
 S({n:48,...H01T,cards:[
-  ['map',[0,0,7,6],{mode:'route',net:'hsr',title:'خرائط القطار السريع · اضغط على أي خط',tic:'train-front'}],
+  ['map',[0,0,7,6],{mode:'route',net:'hsr',view:'egypt',title:'خرائط القطار السريع · اضغط على أي خط',tic:'train-front'}],
   ['title',[7,0,5,1],{bg:'dark',t:'خرائط القطار السريع',fs:40}],
   ['text',[7,1,5,2],{bg:'dark2',cls:'stn',h:'الخط الأول (السخنة – الضبعة)',ic:'train-front',icc:RAILC.l0,fs:15.5,t:'<em>محطات سريعة</em>مطروح · رأس الحكمة · الضبعة · العلمين · برج العرب · الإسكندرية · الاستاد · السادات · 6 أكتوبر · حدائق أكتوبر · الحزام الأخضر · محمد نجيب · العاصمة الإدارية · السخنة · السويس<span class="rg"><em>محطات إقليمية</em>سيدي عبد الرحمن · الحمام · العامرية · النوبارية · وادي النطرون · سفنكس · الجيزة · القاهرة · العياط · السويس الجديدة</span>'}],
   ['text',[7,3,5,2],{bg:'dark2',cls:'stn',h:'الخط الثاني (الفيوم – أبو سمبل)',ic:'train-front',icc:RAILC.l1,fs:15.5,t:'<em>محطات سريعة</em>6 أكتوبر · بني سويف · المنيا · أسيوط · قنا · الأقصر · إدفو · كوم أمبو · أسوان · توشكى · الغردقة · سفاجا<span class="rg"><em>محطات إقليمية</em>الجيزة · الفشن · بني مزار · مغاغة · سمالوط · ملوي · ديروط · طهما · القوصية · منفلوط · طما · طهطا · جرجا · البلينا · نجع حمادي · دشنا · قوص · أرمنت · إسنا · السباعية · كلابشة · دراو · أسوان الجديدة · السد العالي · سهل حشيش</span>'}],
@@ -461,14 +461,14 @@ S({n:48,...H01T,cards:[
 
 /* 49 — monorail map: drawn live on our map (routes traced from the client's map) */
 S({n:49,...H01T,cards:[
-  ['map',[0,0,8,6],{mode:'route',net:'mono',title:'خريطة مونوريل شرق وغرب النيل · اضغط على أي خط',tic:'cable-car'}],
+  ['map',[0,0,8,6],{mode:'route',net:'mono',view:[30.8134,30.2819,31.8005,29.7743],title:'خريطة مونوريل شرق وغرب النيل · اضغط على أي خط',tic:'cable-car'}],
   ['title',[8,0,4,2],{bg:'dark',k:'مشروعات الجر الكهربائي',ki:'cable-car',t:'مونوريل شرق وغرب النيل',fs:40}],
   ['kpi2',[8,2,4,4],{bg:'grad',ic:'sigma',h:'إجمالي الخطين',items:[{v:100.3,u:'كم',l:'إجمالي الطول'},{v:35,u:'محطة',l:'إجمالي المحطات'}],fs:84}],
 ]});
 
 /* 50 — LRT map: drawn live, phase by phase (routes traced from the client's map) */
 S({n:50,...H01T,cards:[
-  ['map',[0,0,8,6],{mode:'route',net:'lrt',title:'خريطة القطار الكهربائي الخفيف LRT · اضغط على أي مرحلة',tic:'tram-front'}],
+  ['map',[0,0,8,6],{mode:'route',net:'lrt',view:[31.3861,30.3488,31.8965,29.8484],title:'خريطة القطار الكهربائي الخفيف LRT · اضغط على أي مرحلة',tic:'tram-front'}],
   ['title',[8,0,4,2],{bg:'dark',k:'مشروعات الجر الكهربائي',ki:'tram-front',t:'القطار الكهربائي الخفيف LRT',fs:40}],
   ['kpi',[8,2,4,4],{bg:'grad',ic:'tram-front',l:'المرحلتان الأولى والثانية بطول حوالي',v:70,u:'كم',sub:'افتتاح يوليو 2022'}],
 ]});
