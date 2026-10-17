@@ -718,20 +718,21 @@ em{color:var(--cobalt)}
 #stage .mapc .callouts .cob{fill:rgba(255,255,255,.92);stroke:rgba(255,255,255,.9);stroke-width:1;filter:drop-shadow(0 4px 8px rgba(28,37,71,.28))}
 #stage .mapc .callouts .col{stroke:#1c2547;stroke-width:1.1;opacity:.55;fill:none}
 
-/* route maps with every station named (client-matched): names stack in tiers, a leader tick ties each to its station */
-#stage .rlay.an .rl[data-s]>span{bottom:calc(11px + var(--lift,0px))}
-#stage .rlay.an .rl[data-s="b"]>span{top:calc(11px + var(--lift,0px));bottom:auto}
-#stage .rlay.an .rl.t[data-s]>span{bottom:calc(14px + var(--lift,0px))}
-#stage .rlay.an .rl.t[data-s="b"]>span{top:calc(14px + var(--lift,0px));bottom:auto}
+/* route maps with every station named (client-matched): each name sits where the placer puts it, a leader ties it to its station */
+#stage .rlay.an .rl[data-s]>span{left:0!important;top:0!important;bottom:auto!important;transform:translate(var(--tx,-50%),var(--ty,calc(-100% - 11px)))!important}
 #stage .rlay.an .rl[data-s]:not(.t)>span{font-size:11.5px;font-weight:600;padding:2px 8px 3px;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--lc,#1c2547) 45%,transparent),0 4px 10px -5px rgba(28,37,71,.45)}
-#stage .rlay.an .rl[data-s]::before{content:'';position:absolute;left:-.6px;width:1.2px;bottom:4px;height:calc(8px + var(--lift,0px));background:var(--lc,#1c2547);opacity:0;transition:opacity .4s}
-#stage .rlay.an .rl.t[data-s]::before{height:calc(11px + var(--lift,0px))}
-#stage .rlay.an .rl[data-s="b"]::before{top:4px;bottom:auto}
+#stage .rlay.an .rl[data-s]::before{content:'';position:absolute;left:0;top:0;width:var(--ll,0px);height:1.2px;margin-top:-.6px;transform-origin:0 50%;transform:rotate(var(--la,0deg)) translateX(5px);background:var(--lc,#1c2547);opacity:0;transition:opacity .4s}
 #stage .rlay.an .rl.on[data-s]::before{opacity:.7}
 #stage .rlay.an .rl.on.hid[data-s]::before{opacity:0}
 #stage .rtm .rxl.dash{stroke-dasharray:1.5 5.5;stroke-linecap:round;stroke-width:3.2}
 #stage .rl.cx.cxe>span{opacity:1}
-#stage .rlay.an .rl[data-s]>span{transform:translateX(calc(-50% + var(--dx,0px)))}
+#stage .rleg{position:absolute;top:64px;left:16px;z-index:3;display:flex;flex-direction:column;gap:6px;padding:9px 12px;border-radius:14px;font-family:var(--f-display);font-size:12.5px;font-weight:600;color:var(--ink);pointer-events:none;
+  background:linear-gradient(160deg,rgba(255,255,255,.8),rgba(255,255,255,.5));-webkit-backdrop-filter:blur(12px) saturate(1.8);backdrop-filter:blur(12px) saturate(1.8);box-shadow:inset 0 1px 0 #fff,inset 0 0 0 1px rgba(255,255,255,.6),0 12px 26px -12px rgba(28,37,71,.45)}
+#stage .rleg span{display:flex;align-items:center;gap:8px;white-space:nowrap}
+#stage .rleg i{width:11px;height:11px;border-radius:50%;flex:none;box-sizing:border-box}
+#stage .rleg i.f{background:var(--ink);box-shadow:0 0 0 2px #fff,0 1px 3px rgba(28,37,71,.4)}
+#stage .rleg i.r{background:#fff;border:2.4px solid var(--ink)}
+#stage .rleg i.x{width:22px;height:0;border-radius:0;border-top:3px dotted var(--teal,#3c8ca4)}
 
 </style>
 
@@ -1275,7 +1276,7 @@ function routeMap(el,r,c,ctx,live){
   const P=ctx.proj, svg=ctx.svg, WG=ctx.world, net=c.net?RTS[c.net]:c;
   const played=B&&(B._rtp||(B._rtp=new Set())), fast=window.__fastMaps||(played&&played.has(c));
   let dead=false; live.push(()=>{dead=true});
-  const AN=!!(c.allNames||net.allNames);
+  const AN=!!(c.allNames||net.allNames); let SEL=null;
   svg.classed('rtm',true);
   WG.selectAll('path').filter(function(){return this.getAttribute('stroke')===MAPTH.nile}).remove();
   ctxLayers(ctx);
@@ -1289,14 +1290,14 @@ function routeMap(el,r,c,ctx,live){
   const labs=[];
   const addLab=(geo,html,cls,side,px)=>{const d=document.createElement('div');d.className='rl '+(cls||'');d.innerHTML=`<span>${html}</span>`;if(side)d.dataset.s=side;lay.appendChild(d);const p=px?geo:pr(geo);const o={d,x:p[0],y:p[1]};labs.push(o);return o};
   /* routes: each is one or two drawn segments with stations along them */
-  const RT=(net.routes||[]).map((x,ri)=>{const segs=[{pts:x.pts,st:x.st||[]}].concat(x.branch?[{pts:x.branch.pts,st:x.branch.st||[]}]:[]);
+  const RT=(net.routes||[]).map((x,ri)=>{const segs=[{pts:x.pts,st:x.st||[]}].concat((x.branches||(x.branch?[x.branch]:[])).map(b=>({pts:b.pts,st:b.st||[]})));
     const o={...x,ri,segs:segs.map(s=>{const sm=sample(s.pts);
       const glow=gR.append('path').attr('class','rgw').attr('stroke',x.col).attr('data-ri',ri), line=gR.append('path').attr('class','rln'+(x.dash?' dash':'')).attr('stroke',x.col).attr('data-ri',ri);
       const st=s.st.map((q,j)=>{const p=pr(q);let bi=0,bd=1e9;sm.S.forEach((a,i)=>{const dd=(a[0]-p[0])**2+(a[1]-p[1])**2;if(dd<bd){bd=dd;bi=i}});
         const end=j===s.st.length-1&&!x.noEnd||(j===0&&s===segs[0]&&!x.noStart);
         const g=gS.append('g').attr('class','rsd'+(end?' t':'')).attr('data-ri',ri);g.node().__x=p[0];g.node().__y=p[1];
-        const cir=g.append('circle').attr('r',0).attr('fill',end?x.col:(x.stc||'#ffffff')).attr('stroke',end||x.stc?'#ffffff':x.col);
-        const lab=q[2]?addLab(p,q[2],end?'t':'',(q[3]||(j%2?'b':'a')),1):null; if(lab&&end)lab.d.style.setProperty('--c',x.col); if(lab)lab.d.style.setProperty('--lc',x.col);
+        const cir=g.append('circle').attr('r',0).attr('fill',end||q[4]==='F'?x.col:(x.stc||'#ffffff')).attr('stroke',end||q[4]==='F'||x.stc?'#ffffff':x.col);
+        const lab=q[2]?addLab(p,q[2],end?'t':'',(q[3]||(j%2?'b':'a')),1):null; if(lab&&end)lab.d.style.setProperty('--c',x.col); if(lab){lab.ri=ri;lab.cat=q[4];lab.d.style.setProperty('--lc',x.col);const a=sm.S[Math.max(0,bi-5)],b=sm.S[Math.min(sm.S.length-1,bi+5)];lab.vert=Math.abs(b[1]-a[1])>Math.abs(b[0]-a[0])*1.1}
         return {i:bi,cir,lab,end,on:0}});
       return {...sm,el:[glow.node(),line.node()],st}})};
     o.segs.forEach(sg=>sg.o=o);
@@ -1342,13 +1343,14 @@ function routeMap(el,r,c,ctx,live){
   const pen=gS.append('g').attr('class','rpen').style('opacity',0);pen.node().__x=0;pen.node().__y=0;pen.append('circle').attr('r',9);pen.append('circle').attr('r',3.4).attr('class','pc');
   /* the data panel: one chip per route, in the brand's type */
   const panel=document.createElement('div');panel.className='rpanel';el.appendChild(panel);
+  if(net.legend){const lg=document.createElement('div');lg.className='rleg';lg.innerHTML=net.legend.map(([k,t])=>`<span><i class="${k}"></i>${t}</span>`).join('');el.appendChild(lg)}
   const noPanel=(c.panel??net.panel)===0;
   const chip=o=>{if(o.ch||noPanel)return o.ch;const d=document.createElement('button');d.type='button';d.className='rchip';d.setAttribute('data-int','');d.style.setProperty('--c',o.col);
     d.innerHTML=`<i class="sw"></i><span class="rn">${o.n}${o.sub?`<small>${o.sub}</small>`:''}</span><span class="rv">${o.km!=null?`${o.pre?`<em>${o.pre}</em>`:''}<b class="num">${fmt(o.km)}</b><small>كم</small>`:''}${o.count?`<b class="num cntv">${fmt(o.shown||0)}</b><small>محورًا</small>`:(o.ns!=null?`<b class="num">${fmt(o.ns)}</b><small>${o.ns===1?'محطة':(o.ns<=10?'محطات':'محطة')}</small>`:'')}</span>`;
-    d.onclick=ev=>{ev.stopPropagation();const on=!d.classList.contains('sel');panel.querySelectorAll('.rchip').forEach(x=>x.classList.toggle('sel',on&&x===d));
+    d.onclick=ev=>{ev.stopPropagation();const on=!d.classList.contains('sel');SEL=on?o.ri:null;panel.querySelectorAll('.rchip').forEach(x=>x.classList.toggle('sel',on&&x===d));
       svg.classed('solo',on);gR.selectAll('path').classed('hi',function(){return on&&+this.dataset.ri===o.ri});
       gS.selectAll('g.rsd').classed('hi',function(){return on&&+this.dataset.ri===o.ri});
-      lay.querySelectorAll('.rl.hid').forEach(x=>x.classList.remove('hid'));(on?fly(fitV(o.all,BX,.22,6*kmpx),1300):fly(finalV(),1300)).then(declutter)};
+      lay.querySelectorAll('.rl.hid').forEach(x=>x.classList.remove('hid'));(on?fly((fb=>tV(vT(fitV(o.all,fb,.22,6*kmpx),fb),BX))(finalBX()),1300):fly(finalV(),1300)).then(declutter)};
     panel.appendChild(d);o.ch=d;requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add('on')));return d};
   const tag=o=>{const S=o.segs[0].S, p=S[Math.round((S.length-1)*.5)];if(o.tg||o.km==null||c.tags===0||RT.length===1)return;o.tg=1;const t=addLab(p,`${o.pre?o.pre+' ':''}${fmt(o.km)} كم`,'km','',1);o.tgl=t;t.d.style.setProperty('--c',o.col);t.d.classList.add('on');apply(V)};
   let tot=null;
@@ -1365,23 +1367,41 @@ function routeMap(el,r,c,ctx,live){
   replay.onclick=ev=>{ev.stopPropagation();const cc=B&&B.cards.find(x=>x.el===el);if(!cc)return;played.delete(c);paint(cc,cc.pr)};el.appendChild(replay);
   /* names that would sit on top of each other: keep the more important one */
   const PRI=['t','km','nm','cx','ar'];
-  /* allNames: every station name stays; names stack in tiers above / below the line with a leader tick */
+  /* allNames: every station keeps its name. Each name is placed around its station (above / below, or left / right
+     on north-south lines), stepping further out and sliding until it is clear of the other names, the stations,
+     the lines and the panels; a thin leader ties it back to its station */
   const tiers=kept=>{const box=n=>{if(!n||!n.offsetWidth)return null;return {l:n.offsetLeft,r:n.offsetLeft+n.offsetWidth,t:n.offsetTop,b:n.offsetTop+n.offsetHeight}};
-    const P=[panel,el.querySelector('.mtitle'),replay,mini.classList.contains('on')?mini:null].map(box).filter(Boolean);
-    const items=labs.filter(o=>o.d.dataset.s&&o.d.classList.contains('on')).map(o=>{o.s0=o.s0||o.d.dataset.s;const s=o.d.firstChild;return {o,s,w:s.offsetWidth,h:s.offsetHeight,ax:o.x*T.k+T.x,ay:o.y*T.k+T.y,g:o.d.classList.contains('t')?14:11}});
-    const ov=(a,b)=>!(a.r+4<b.l||b.r+4<a.l||a.b+2<b.t||b.b+2<a.t), ovl=(a,b)=>!(a.r<b.l||b.r<a.l||a.b<b.t||b.b<a.t);
+    const P=[panel,el.querySelector('.mtitle'),replay,mini.classList.contains('on')?mini:null,el.querySelector('.rleg')].map(box).filter(Boolean);
+    const all=labs.filter(o=>o.d.dataset.s&&o.d.classList.contains('on')), vis=all.filter(o=>o.ri==null||(SEL!=null?o.ri===SEL:(!net.anMin||o.cat!=='R'||o.d.classList.contains('t'))));
+    all.forEach(o=>o.d.classList.toggle('hid',!vis.includes(o)));
+    const items=vis.map(o=>{o.s0=o.s0||o.d.dataset.s;const s=o.d.firstChild;
+      return {o,s,w:s.offsetWidth,h:s.offsetHeight,ax:o.x*T.k+T.x,ay:o.y*T.k+T.y,g:o.d.classList.contains('t')?13:10}});
+    const ov=(a,b)=>!(a.r+4<b.l||b.r+4<a.l||a.b+2<b.t||b.b+2<a.t);
     const dots=[];gS.selectAll('g.rsd').each(function(){const x=this.__x*T.k+T.x,y=this.__y*T.k+T.y;dots.push({l:x-6,r:x+6,t:y-6,b:y+6,x,y})});
     const LP=RT.flatMap(o=>o.all).filter((p,i)=>i%2===0).map(p=>[p[0]*T.k+T.x,p[1]*T.k+T.y]);
-    items.sort((a,b)=>(b.o.d.classList.contains('t')-a.o.d.classList.contains('t'))||a.ax-b.ax).forEach(it=>{let best=null,bs=1e9;const od=dots.filter(d=>Math.abs(d.x-it.ax)>2||Math.abs(d.y-it.ay)>2);
-      out: for(let t=0;t<8;t++)for(const side of [it.o.s0,it.o.s0==='a'?'b':'a']){const lift=t*(it.h+3);
-        const bx=side==='a'?{l:it.ax-it.w/2,r:it.ax+it.w/2,t:it.ay-it.g-lift-it.h,b:it.ay-it.g-lift}:{l:it.ax-it.w/2,r:it.ax+it.w/2,t:it.ay+it.g+lift,b:it.ay+it.g+lift+it.h};
-        let dx=0;if(bx.l<6)dx=6-bx.l;else if(bx.r>r.w-6)dx=r.w-6-bx.r;bx.l+=dx;bx.r+=dx;
-        const ld=side==='a'?{l:it.ax-1,r:it.ax+1,t:bx.b,b:it.ay-6}:{l:it.ax-1,r:it.ax+1,t:it.ay+6,b:bx.t};
-        const lh=q=>LP.some(p=>p[0]>q.l-2&&p[0]<q.r+2&&p[1]>q.t-2&&p[1]<q.b+2&&Math.abs(p[0]-it.ax)+Math.abs(p[1]-it.ay)>12);
-        let sc=(lh(bx)?3:0)+(lift&&lh(ld)?5:0)+P.filter(p=>ov(p,bx)).length*10+od.filter(p=>ov(p,bx)).length*8+(lift?P.filter(p=>ovl(p,ld)).length*6+od.filter(p=>ovl(p,ld)).length*3:0)+t*.6+(side!==it.o.s0?.3:0);
-        if(bx.t<4||bx.b>r.h-4)sc+=30;
-        if(sc<bs){bs=sc;best={side,lift,bx,dx}} if(sc<4)break out}
-      P.push(best.bx);it.o.d.dataset.s=best.side;it.o.d.style.setProperty('--lift',best.lift+'px');it.o.d.style.setProperty('--dx',best.dx+'px');it.o.d.classList.remove('hid')});
+    items.sort((a,b)=>(b.o.d.classList.contains('t')-a.o.d.classList.contains('t'))||a.ay-b.ay||a.ax-b.ax).forEach(it=>{
+      const {ax,ay,w,h,g}=it, s0=it.o.s0, opp=s0==='a'?'b':'a', V=it.o.vert;
+      const sides=V?(s0==='a'?['r','l','a','b']:['l','r','a','b']):[s0,opp,'r','l'];
+      const od=dots.filter(d=>Math.abs(d.x-ax)>2||Math.abs(d.y-ay)>2);
+      const inb=q=>(p=>p[0]>q.l-2&&p[0]<q.r+2&&p[1]>q.t-2&&p[1]<q.b+2);
+      let best=null,bs=1e9;
+      out: for(let t=0;t<9;t++)for(const [si,side] of sides.entries())for(const dy of (side==='l'||side==='r')&&t?[0,-(h+3),h+3,-2*(h+3),2*(h+3)]:[0]){
+        let bx;
+        if(side==='a')bx={l:ax-w/2,t:ay-g-t*(h+3)-h};else if(side==='b')bx={l:ax-w/2,t:ay+g+t*(h+3)};
+        else if(side==='r')bx={l:ax+g+t*14,t:ay-h/2+dy};else bx={l:ax-g-t*14-w,t:ay-h/2+dy};
+        if(side==='a'||side==='b'){if(bx.l<6)bx.l=6;else if(bx.l+w>r.w-6)bx.l=r.w-6-w}
+        bx.r=bx.l+w;bx.b=bx.t+h;
+        const tx=Math.max(bx.l,Math.min(bx.r,ax)), ty=Math.max(bx.t,Math.min(bx.b,ay)), L=Math.hypot(tx-ax,ty-ay);
+        let sc=P.filter(p=>ov(p,bx)).length*10+od.filter(p=>ov(p,bx)).length*8+(LP.some(p=>inb(bx)(p)&&Math.abs(p[0]-ax)+Math.abs(p[1]-ay)>12)?3:0)+t*.6+si*.3+(dy?.4:0);
+        if(L>16){let lc=0,ld=0,lp=0;for(let k=1;k<6;k++){const x=ax+(tx-ax)*k/6,y=ay+(ty-ay)*k/6,q={l:x-2,r:x+2,t:y-2,b:y+2};
+            if(Math.hypot(x-ax,y-ay)>12&&LP.some(inb(q)))lc=1;if(od.some(p=>ov(p,q)))ld=1;if(P.some(p=>ov(p,q)))lp=1}
+          sc+=lc*5+ld*3+lp*6}
+        if(bx.t<4||bx.b>r.h-4||bx.l<4||bx.r>r.w-4)sc+=30;
+        if(sc<bs){bs=sc;best={side,bx,tx,ty,L}} if(sc<3.5)break out}
+      const b=best;P.push(b.bx);it.o.d.dataset.s=b.side;const st=it.o.d.style;
+      st.setProperty('--tx',(b.bx.l-ax).toFixed(1)+'px');st.setProperty('--ty',(b.bx.t-ay).toFixed(1)+'px');
+      st.setProperty('--ll',Math.max(0,b.L-5).toFixed(1)+'px');st.setProperty('--la',(Math.atan2(b.ty-ay,b.tx-ax)*180/Math.PI).toFixed(1)+'deg');
+      it.o.d.classList.remove('hid')});
     items.forEach(it=>kept.push(it.s.getBoundingClientRect()))};
   const declutter=()=>{const kept=[], near=lay.classList.contains('near');
     if(AN)tiers(kept);
