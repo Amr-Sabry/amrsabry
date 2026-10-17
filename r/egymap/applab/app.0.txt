@@ -710,7 +710,10 @@ const QS = new URLSearchParams(location.search);
 const CTLM = (QS.get("ctl") || window.EG_CTL || "").toLowerCase();
 const WALL = (() => { const w = String(QS.get("wall") || window.EG_WALL || "auto").toLowerCase(); if (w === "0" || w === "off") return false; if (w === "1" || w === "on") return true; return !!CTLM && innerWidth / Math.max(1, innerHeight) >= 3; })();   /* v142 lab: the 4-metre wall */
 const LOOK = (QS.get("look") || window.EG_LOOK || "").toLowerCase();   /* v141 lab: glass */
-var GLASS_PASS = null;   /* v140 lab: float | deck */
+var GLASS_PASS = null;
+const LITE = QS.has("lite") ? QS.get("lite") !== "0" : !!window.EG_LITE;   /* v143 lab: a 4 GB / Core i5 machine */
+if (LITE) document.documentElement.classList.add("lite");
+const litePR = (w, h) => Math.max(0.55, Math.min(1, Math.sqrt(3.5e6 / Math.max(1, w * h))));   /* v140 lab: float | deck */
 const EGB = window.EG_BASE || "";      /* where the files beside the page live: "" (artifact, offline package) or "/r/<project>/" in an Aroma Hub room */
 const lerp = (a, b, t) => a + (b - a) * t;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -741,7 +744,7 @@ function fail(){ $("loading").classList.add("off"); $("fallback").classList.add(
 if (typeof THREE === "undefined" || !THREE.OrbitControls || !THREE.EffectComposer || !THREE.UnrealBloomPass) { fail(); return; }
 const stage = $("stage"), canvas = $("gl");
 let renderer;
-try { renderer = new THREE.WebGLRenderer({canvas, antialias: true, powerPreference: "high-performance"}); renderer.localClippingEnabled = true; }
+try { renderer = new THREE.WebGLRenderer({canvas, antialias: !LITE, powerPreference: "high-performance"}); renderer.localClippingEnabled = true; }
 catch (e) { fail(); return; }
 let PR = Math.min(window.devicePixelRatio || 1, coarse ? 1.5 : 2);
 renderer.setPixelRatio(PR);
