@@ -21972,7 +21972,7 @@ function orbitPick(mx, my){
   return -1;
 }
 function updateOrbit(dt){
-  const on = (1 - mL) * (1 - ZS.close) * (QS.has("noorbit") ? 0 : 1);
+  const on = (1 - mL) * (1 - ZS.close) * (QS.has("noorbit") || (WALL && !S.show) ? 0 : 1);
   orbitGroup.visible = on > 0.01; orbitGroup.rotation.y = -ringRotNow(); if (!orbitGroup.visible) return;
   orbAnT += dt; if (orbAnT > 2.6) { orbAnT = 0; orbAnI = (orbAnI + 1) % ORB.n; if (orbScr[orbAnI].an >= 1 && S.sec < 0) orbScr[orbAnI].an = 0; }   /* every few seconds one screen refreshes its data with the intro animation */
   const k = Math.min(1, dt * 5), cx = camera.position.x - EC.x, cz = camera.position.z - EC.z;
@@ -23544,8 +23544,10 @@ function homeView(mode){
   mode = mode || S.mode; let pol = 0.8, th = 0.3, ty = 1.0, d;
   if (mode === "density") { pol = 0.98; ty = 3; d = fitDist(pol, 6) * 0.98; }
   else if (mode === "layers") { pol = 1.12; th = 0.42; ty = 19; d = fitDist(pol, 34) * 0.7; }
+  else if (WALL && !S.show) { pol = 0.96; th = 0.22; const tv = Math.tan(camera.fov * Math.PI / 360), fw = Math.max(240, FREET.x1 - FREET.x0), fh = Math.max(200, FREET.y1 - FREET.y0);
+    d = Math.max((27 * Math.cos(pol) + 1.2) * 1.02 / (tv * fh / Hh), 30 / (tv * 0.92 * fw / Hh)); ty = 0.6; }      /* v144: Egypt fills the two middle screens of the wall */
   else d = fitDist(pol) * (S.show ? 0.92 : 1);
-  const t = new THREE.Vector3(EC.x, ty, EC.z + 2.5 + (S.show ? 4 : 0));
+  const t = new THREE.Vector3(EC.x, ty, EC.z + (WALL && !S.show && mode !== "density" && mode !== "layers" ? 0.5 : 2.5) + (S.show ? 4 : 0));
   return {p: new THREE.Vector3().setFromSpherical(new THREE.Spherical(d, pol, th)).add(t), t};
 }
 function govTopY(o, x, z){ return H * o.s + relH(x, z) * o.k; }
@@ -27496,6 +27498,7 @@ html.wall-on{--wW:25%}
 .wall{font-size:calc(16px * var(--wk,1))}
 html.wall-on #top .brand,html.wall-on #aroma{visibility:hidden!important}
 html.wall-on .stx{left:var(--wW);right:var(--wW)}
+html.wall-on #tls{display:none!important}
 .wall{position:absolute;top:0;bottom:0;width:var(--wW);z-index:30;box-sizing:border-box;padding:1.5em 1.7em 1.7em;display:flex;flex-direction:column;gap:1em;pointer-events:none;direction:${EN ? "ltr" : "rtl"};
   font-family:var(--f-head);color:#1c2547;background:linear-gradient(180deg,rgba(242,244,250,.55),rgba(242,244,250,.3));-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 .wall.wl{left:0;border-inline-start:1px solid rgba(255,255,255,.7)}.wall.wr{right:0;border-inline-end:1px solid rgba(255,255,255,.7)}
@@ -27595,8 +27598,9 @@ html.wall-still .wc,html.lite .wc{animation:none!important}
     const pi = S.selP >= 0 ? S.selP : (S.show && sim.on && sim.pi >= 0 ? sim.pi : -1);
     if (pi >= 0) return {k: "p", pi};
     if (S.selG) return {k: "g", g: S.selG};
+    if (typeof TLS !== "undefined" && TLS.open) return {k: "y", y: yearNow(), s: S.sec};      /* «اكشف السنة»: the year, within the chosen axis if there is one */
     if (S.sec >= 0) return {k: "a", s: S.sec};
-    if (S.playing || (typeof TLS !== "undefined" && TLS.open)) return {k: "y", y: yearNow()};
+    if (S.playing) return {k: "y", y: yearNow(), s: -1};
     return {k: "h"};
   }
   const keyOf = s => [s.k, s.pi, s.g, s.s, s.y, S.show ? 1 : 0, s.k === "h" || s.k === "a" || s.k === "g" ? yearNow() : "", EN ? 1 : 0].join("|");
@@ -27635,11 +27639,11 @@ html.wall-still .wc,html.lite .wc{animation:none!important}
       cards.push(card("", [2, 1], `<div class="k"><span>${L2("أكثر الجهات", "Leading entities")}</span></div>${topList(mnPairs(ids), 3, "#3c8ca4")}`, 4));
       cards.push(card("x", [2, 1], `<div class="k"><span>${L2("من أبرز المشروعات", "Highlights")}</span></div>${projList(ids, 4)}`, 5, cv(s.s)));
     } else if (s.k === "y") {
-      const ids = visIds(() => true), now = ids.filter(i => P[i].y === s.y);
-      kick = L2("الزمن", "Timeline"); title = L2("مصر في ", "Egypt in ") + s.y;
+      const ax = s.s >= 0 ? s.s : -1, inAx = p => ax < 0 || p.sc === ax, ids = visIds(inAx), now = ids.filter(i => P[i].y === s.y); if (ax >= 0) c = SECC[ax];
+      kick = ax >= 0 ? L2("الزمن · ", "Timeline · ") + SECS[ax].n : L2("الزمن", "Timeline"); title = L2("مصر في ", "Egypt in ") + s.y;
       cards.push(card("e", [2, 1], `<div class="k"><span>${L2("السنة", "Year")}</span></div><div class="sp"></div><div class="n">${s.y}</div><div class="u">${NF(ids.length) + L2(" مشروعًا على الخريطة بنهايتها", " projects on the map by its end")}</div>`, 0));
       cards.push(card("g", [2, 1], `<div class="k"><span>${L2("ما تحقق في هذه السنة", "Delivered this year")}</span></div><div class="sp"></div><div class="n">${NF(now.length)}</div><div class="u">${L2("مشروعًا", "projects")}</div>`, 1));
-      cards.push(card("", [4, 1], yearsHTML(() => true, L2("المشروعات حسب السنة", "Projects by year")), 2));
+      cards.push(card("", [4, 1], yearsHTML(inAx, L2("المشروعات حسب السنة", "Projects by year")), 2));
       cards.push(card("", [2, 1], `<div class="k"><span>${L2("حسب المحور في ", "By axis in ") + s.y}</span></div>${topList(SECS.map((x, i) => [x.n, now.filter(j => P[j].sc === i).length, SECC[i]]).sort((a, b) => b[1] - a[1]), 3)}`, 3));
       cards.push(card("a", [2, 1], `<div class="k"><span>${L2("من مشروعات ", "Projects of ") + s.y}</span></div>${projList(now, 4)}`, 4));
     } else {
@@ -27661,7 +27665,7 @@ html.wall-still .wc,html.lite .wc{animation:none!important}
   const SPANS = [[2, 2], [1, 1], [1, 1], [1, 1], [1, 1], [2, 1], [2, 1]];
   function left(s){
     let kick = L2("صور المشروعات", "Project photos"), title = "", items = [], c = "#3d5cc0";
-    const scope = s.k === "p" ? null : s.k === "g" ? (p => p.g.includes(s.g)) : s.k === "a" ? (p => p.sc === s.s) : s.k === "y" ? (p => p.y === s.y) : (() => true);
+    const scope = s.k === "p" ? null : s.k === "g" ? (p => p.g.includes(s.g)) : s.k === "a" ? (p => p.sc === s.s) : s.k === "y" ? (p => p.y === s.y && (s.s < 0 || p.sc === s.s)) : (() => true);
     if (s.k === "p") { const p = P[s.pi]; c = SECC[p.sc]; title = p.n; const l = PH() ? (EGPH.list(p) || []) : [];
       items = l.slice(0, 7).map(o => ({o, pi: s.pi, cap: o.cap || ""})); }
     else { let ids = visIds(scope).filter(i => phCount(P[i]) > 0).sort((a, b) => (P[b].tr || 0) - (P[a].tr || 0) || P[b].y - P[a].y);
@@ -27675,7 +27679,7 @@ html.wall-still .wc,html.lite .wc{animation:none!important}
       return card("ph", SPANS[j], `<img alt="" data-j="${j}"><span class="wait">${svgI(p.sc)}</span><div class="wcap"><b>${esc(s.k === "p" ? (it.cap || p.n) : p.n)}</b><span><i></i>${esc(SECS[p.sc].n)}${s.k === "p" ? "" : " · " + esc(String(p.y))}</span></div>`, j, cv(p.sc)); });
     if (!items.length) {
       const p = s.k === "p" ? P[s.pi] : null, sc = p ? p.sc : s.k === "a" ? s.s : -1;
-      cards.push(card("a no", [4, 1], `${sc >= 0 ? `<span class="ic" style="${cv(sc)}">${svgI(sc)}</span>` : ""}<div class="t">${PH() ? L2("لا توجد صور لهذا المشروع بعد", "No photos for this project yet") : L2("الصور بتتحمّل…", "Loading photos…")}</div>`, 0));
+      cards.push(card("a no", [4, 1], `${sc >= 0 ? `<span class="ic" style="${cv(sc)}">${svgI(sc)}</span>` : ""}<div class="t">${PH() ? (s.k === "p" ? L2("لا توجد صور لهذا المشروع بعد", "No photos for this project yet") : L2("لا توجد صور لهذه المرحلة بعد", "No photos for this stage yet")) : L2("الصور بتتحمّل…", "Loading photos…")}</div>`, 0));
       if (s.k !== "p") cards.push(card("", [4, 2], `<div class="k"><span>${L2("مشروعات في هذه المرحلة", "Projects at this stage")}</span></div>${projList(visIds(scope), 8)}`, 1));
     } else if (items.length < 7) {
       const used = items.reduce((a, it, j) => a + SPANS[j][0] * SPANS[j][1], 0), rest = 12 - used;
@@ -27703,6 +27707,62 @@ html.wall-still .wc,html.lite .wc{animation:none!important}
   if (QS.has("test")) window.__wall = {PH, stage, keyOf, left, right, get last(){ return [last, lastPh]; }};
 })();
 
+/* ================= v144 lab: «أنت هنا» — a small map of Egypt that shows which part of it the camera is looking at =================
+   Amr (17 Oct): «زي ما عملنا في عرض المنتدى، ثمنيل صغير بيبين احنا واقفين في انهي جزء في مصر».
+   Egypt and its governorates drawn once from the map's own outlines; every quarter of a second the part of the ground the camera sees
+   (the four corners of the free part of the screen, cast onto the ground) is drawn on it, with a dot where the camera looks and the name
+   of the governorate under it. Read-only (no finger is needed there). On the wall it stands at the top of the middle screens, beside the
+   right screen; on a normal screen at the top left. */
+if (CTLM) (() => {
+  const app = $("app"), NS = "http://www.w3.org/2000/svg", E0 = D.ebb, pad = 14;
+  const vb = [E0[0] - pad, E0[1] - pad, E0[2] - E0[0] + 2 * pad, E0[3] - E0[1] + 2 * pad];
+  const st = document.createElement("style"); st.textContent = `
+.mmap{position:absolute;z-index:31;top:calc(14px * var(--wk,1));left:calc(14px * var(--wk,1));width:calc(300px * var(--wk,1));pointer-events:none;direction:${EN ? "ltr" : "rtl"};
+  font-family:var(--f-head);color:#1c2547;border-radius:calc(22px * var(--wk,1));padding:calc(12px * var(--wk,1)) calc(14px * var(--wk,1)) calc(14px * var(--wk,1));box-sizing:border-box;
+  background:linear-gradient(140deg,rgba(255,255,255,.62),rgba(255,255,255,.34) 60%,rgba(238,242,255,.45));border:1px solid rgba(255,255,255,.95);
+  box-shadow:inset 0 1.5px 0 #fff,0 22px 44px -28px rgba(40,55,120,.55);-webkit-backdrop-filter:blur(14px) saturate(1.5);backdrop-filter:blur(14px) saturate(1.5)}
+html.wall-on .mmap{left:auto;right:calc(var(--wW) + 18px * var(--wk,1));top:calc(18px * var(--wk,1));width:calc(360px * var(--wk,1))}
+html.lite .mmap{background:rgba(255,255,255,.8)}
+.mmap .mh{display:flex;align-items:center;justify-content:space-between;gap:.5em;font-size:calc(13px * var(--wk,1));font-weight:700;color:#3d5cc0;margin-bottom:calc(6px * var(--wk,1))}
+.mmap .mh b{font-size:calc(15px * var(--wk,1));color:#1c2547;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mmap svg{display:block;width:100%;height:auto;overflow:hidden}
+.mmap .eg{fill:rgba(61,92,192,.13);stroke:rgba(61,92,192,.42);stroke-width:1;vector-effect:non-scaling-stroke}
+.mmap .gv{fill:rgba(238,152,115,.32);stroke:#e0703f;stroke-width:1.2;vector-effect:non-scaling-stroke}
+.mmap .fp{fill:rgba(61,92,192,.2);stroke:#3d5cc0;stroke-width:2;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.mmap .dt{fill:#e0703f;stroke:#fff;stroke-width:2;vector-effect:non-scaling-stroke}
+.mmap .dr{fill:none;stroke:#e0703f;stroke-width:1.5;vector-effect:non-scaling-stroke;transform-box:fill-box;transform-origin:center;animation:mmP 2.2s ease-out infinite}
+html.lite .mmap .dr,html.wall-still .mmap .dr{animation:none;opacity:0}
+@keyframes mmP{0%{transform:scale(.4);opacity:1}100%{transform:scale(2.4);opacity:0}}
+`; document.head.appendChild(st);
+  const el = document.createElement("div"); el.className = "mmap"; el.id = "mmap";
+  const ring = r => { let d = "M"; for (let i = 0; i < r.length; i += 2) d += (i ? " " : "") + r[i].toFixed(1) + "," + r[i + 1].toFixed(1); return d + "Z"; };
+  const gp = {}; let all = "";
+  D.govs.forEach(g => { let d = ""; g.rings.forEach(rr => rr.forEach(r => { d += ring(r); })); gp[g.id] = d; all += d; });
+  el.innerHTML = `<div class="mh"><span>${EN ? "You are here" : "أنت هنا"}</span><b></b></div><svg viewBox="${vb.join(" ")}" aria-hidden="true"><path class="eg" d="${all}"/><path class="gv" d=""/><path class="fp" d=""/><circle class="dr" r="10"/><circle class="dt" r="5"/></svg>`;
+  app.appendChild(el);
+  const Q = s => el.querySelector(s), gvP = Q(".gv"), fpP = Q(".fp"), dt = Q(".dt"), dr = Q(".dr"), nm = Q(".mh b");
+  /* point in a governorate (even-odd over all its rings) */
+  const inRing = (x, y, r) => { let c = false; for (let i = 0, j = r.length - 2; i < r.length; j = i, i += 2) { const xi = r[i], yi = r[i + 1], xj = r[j], yj = r[j + 1]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) c = !c; } return c; };
+  const govAt = (x, y) => { for (const g of D.govs) { if (x < g.bb[0] || x > g.bb[2] || y < g.bb[1] || y > g.bb[3]) continue; let c = false; g.rings.forEach(rr => rr.forEach(r => { if (inRing(x, y, r)) c = !c; })); if (c) return g.id; } return null; };
+  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+  /* where a point of the screen falls on the ground (the map's own units); a point above the horizon is taken far out along its direction */
+  const ground = (px, py) => { const r = stage.getBoundingClientRect(); ndc.set((px - r.left) / r.width * 2 - 1, -(py - r.top) / r.height * 2 + 1); ray.setFromCamera(ndc, camera);
+    const o = ray.ray.origin, d = ray.ray.direction; let t = d.y < -1e-4 ? (H - o.y) / d.y : 400; t = Math.min(t, 400); return [(o.x + d.x * t) / SC, (o.z + d.z * t) / SC]; };
+  let lastG = "", sig = "";
+  function draw(){ try {
+    const a = app.getBoundingClientRect(), L = $("wallL"), R = $("wallR"), x0 = L ? L.getBoundingClientRect().right : a.left, x1 = R ? R.getBoundingClientRect().left : a.right, y0 = a.top, y1 = a.bottom;
+    const c = [ground(x0, y0), ground(x1, y0), ground(x1, y1), ground(x0, y1)].map(q => [clamp(q[0], vb[0] - 400, vb[0] + vb[2] + 400), clamp(q[1], vb[1] - 400, vb[1] + vb[3] + 400)]);
+    const t = controls.target, tx = t.x / SC, ty = t.z / SC, g = govAt(tx, ty);
+    const s = c.map(q => q[0].toFixed(0) + "," + q[1].toFixed(0)).join(" ") + "|" + tx.toFixed(0) + "," + ty.toFixed(0);
+    if (s !== sig) { sig = s; fpP.setAttribute("d", "M" + c.map(q => q[0].toFixed(1) + "," + q[1].toFixed(1)).join(" ") + "Z");
+      dt.setAttribute("cx", tx.toFixed(1)); dt.setAttribute("cy", ty.toFixed(1)); dr.setAttribute("cx", tx.toFixed(1)); dr.setAttribute("cy", ty.toFixed(1)); }
+    const wide = Math.abs((c[2][1] + c[3][1]) - (c[0][1] + c[1][1])) / 2 > (E0[3] - E0[1]) * 0.75;
+    const k = (wide ? "*" : "") + (g || "");
+    if (k !== lastG) { lastG = k; gvP.setAttribute("d", g && !wide ? gp[g] : ""); nm.textContent = wide ? (EN ? "All of Egypt" : "مصر كلها") : g ? (GN[g] || "") : (EN ? "Egypt" : "مصر"); }
+  } catch (e) {} }
+  setInterval(draw, 250); setTimeout(draw, 100);
+})();
+
 /* ================= v140 lab: every control of the map in one place, for the 4-metre touch wall (7680×1080) =================
    ?ctl=float — one glass console the presenter drags with a finger to wherever he stands (a long press on the map calls it there),
                 that shrinks to a round puck; the lists panel and the show controls follow it.
@@ -27728,7 +27788,6 @@ if (CTLM === "float" || CTLM === "deck") (() => {
   const axIc = a => { const b = AXL.btn[a]; const ic = b && b.querySelector(".ic"); return ic ? ic.innerHTML : ""; };
   { const st = document.createElement("style"); st.textContent = `
 html.ctl-on #top .tools,html.ctl-on #modes,html.ctl-on #dock,html.ctl-on #tl,html.ctl-on .axl,html.ctl-on #railR,html.ctl-on #camhud{visibility:hidden!important;pointer-events:none!important}
-html.ctl-on .axl.big{visibility:visible!important;pointer-events:auto!important}
 html.ctl-on #colL{display:none}
 html.ctl-on.ctl-lists #colL{display:flex;transition:left .45s cubic-bezier(.2,.85,.25,1),top .45s cubic-bezier(.2,.85,.25,1)}
 html.ctl-deck.ctl-lists #colL{top:auto;bottom:var(--ctlLB,12rem);height:var(--ctlLH,40rem)}
@@ -27849,6 +27908,13 @@ html.ctl-deck.ctl-lists #colL{top:auto;bottom:var(--ctlLB,12rem);height:var(--ct
     g.addEventListener("pointermove", e => { if (!d || e.pointerId !== d.id) return; place(e.clientX - d.ox, e.clientY - d.oy, false); });
     const end = e => { if (!d || (e && e.pointerId !== d.id)) return; d = null; el.classList.remove("drag"); const r = el.getBoundingClientRect(), A = app.getBoundingClientRect(); place(r.left - A.left, r.top - A.top, true); };
     ["pointerup", "pointercancel", "lostpointercapture"].forEach(ev => g.addEventListener(ev, end)); }
+  /* v144: the round puck of the minimised console is dragged the same way (a tap still opens the console) */
+  let puckMoved = false;
+  if (FLOAT) { const pk = Q(".puck"); let d = null;
+    pk.addEventListener("pointerdown", e => { e.stopPropagation(); const r = el.getBoundingClientRect(), A = app.getBoundingClientRect(); d = {id: e.pointerId, x: e.clientX, y: e.clientY, ox: e.clientX - r.left + A.left, oy: e.clientY - r.top + A.top, mv: false}; puckMoved = false; try { pk.setPointerCapture(e.pointerId); } catch (x) {} });
+    pk.addEventListener("pointermove", e => { if (!d || e.pointerId !== d.id) return; if (!d.mv && Math.hypot(e.clientX - d.x, e.clientY - d.y) < 8) return; d.mv = true; el.classList.add("drag"); place(e.clientX - d.ox, e.clientY - d.oy, false); });
+    const pend = e => { if (!d || (e && e.pointerId !== d.id)) return; puckMoved = d.mv; d = null; el.classList.remove("drag"); if (puckMoved) { const r = el.getBoundingClientRect(), A = app.getBoundingClientRect(); place(r.left - A.left, r.top - A.top, true); } };
+    ["pointerup", "pointercancel", "lostpointercapture"].forEach(ev => pk.addEventListener(ev, pend)); }
   /* a long press on the map calls the console to where the finger is */
   if (FLOAT) { let lp = null;
     canvas.addEventListener("pointerdown", e => { if (lp) clearTimeout(lp.t); const x = e.clientX, y = e.clientY; lp = {x, y, t: setTimeout(() => { lp = null; const A = app.getBoundingClientRect(), r = el.getBoundingClientRect();
@@ -27884,7 +27950,7 @@ html.ctl-deck.ctl-lists #colL{top:auto;bottom:var(--ctlLB,12rem);height:var(--ct
     else if (k === "set") $("bAdmin").click();
     else if (k === "lists") { H.classList.toggle("ctl-lists"); }
     else if (k === "min") el.classList.add("min");
-    else if (k === "restore") el.classList.remove("min");
+    else if (k === "restore") { if (puckMoved) puckMoved = false; else el.classList.remove("min"); }
     if (b.blur) b.blur(); });
   /* what the console shows follows the map: counts, the chosen axis, the year, the play key, the view, the back key */
   const chips = QA(".chip"), bars = QA(".bars button"), yrB = Q(".yr b"), playB = Q(".play"), tlxB = Q(".tlx"), backB = Q('[data-k="back"]'), listsB = QA('[data-k="lists"]'), showB = QA('[data-k="show"]');
@@ -27923,7 +27989,9 @@ html.ctl-deck.ctl-lists #colL{top:auto;bottom:var(--ctlLB,12rem);height:var(--ct
     const sx = document.querySelector(".stxc"); if (sx && FLOAT && !sx.hidden) { const cx = r.left + r.width / 2, sw = sx.offsetWidth || 700; sx.style.left = (A.left + clamp(snapB(cx - A.left - sw / 2, sw) + sw / 2, Z[0] + sw / 2, Z[1] - sw / 2)) + "px";
       sx.style.bottom = (innerHeight - r.bottom < 190 ? innerHeight - r.top + 14 : 14) + "px"; }
   }
-  setInterval(() => { try { sync(); follow(); } catch (e) {} }, 200);
+  /* v144 (Amr: «شيل الأزرار الكبيرة بتاعت المحاور اللي بتبان أول ما نعمل لوود، لأنها موجودة جوه لوحة التحكم»): the axes' big opening tiles never show with the console */
+  const noBig = () => { if (document.querySelector(".axl.big")) try { axlDock(); } catch (e) {} };
+  setInterval(() => { try { noBig(); sync(); follow(); } catch (e) {} }, 200); setTimeout(noBig, 0);
   sync();
 })();
 

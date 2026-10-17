@@ -881,12 +881,14 @@ function paintBase(cv, twin){
   c.clearRect(0, 0, cv.width, cv.height);
   c.setTransform(k, 0, 0, k, -PL.x0 * k, -PL.y0 * k);
   let g = c.createRadialGradient(120, -420, 0, 120, -420, 1300);
-  if (twin) { g.addColorStop(0, "#1b4d92"); g.addColorStop(0.5, "#12336c"); g.addColorStop(1, "#0b2150"); }
+  if (twin && LOOK === "glass") { g.addColorStop(0, "#546280"); g.addColorStop(0.5, "#5c6c8c"); g.addColorStop(1, "#647698"); }
+  else if (twin) { g.addColorStop(0, "#1b4d92"); g.addColorStop(0.5, "#12336c"); g.addColorStop(1, "#0b2150"); }
   else { g.addColorStop(0, "#1a8791"); g.addColorStop(0.5, "#0f5560"); g.addColorStop(1, "#0b3743"); }
   c.fillStyle = g; c.fillRect(PL.x0, PL.y0, PL.x1 - PL.x0, PL.y1 - PL.y0);
   c.fillStyle = twin ? "rgba(90,170,255,.10)" : "rgba(111,227,218,.16)";
   for (let x = Math.ceil(PL.x0 / 10) * 10; x < PL.x1; x += 10) for (let y = Math.ceil(PL.y0 / 10) * 10; y < PL.y1; y += 10) c.fillRect(x - 0.7, y - 0.7, 1.4, 1.4);
   const land = new Path2D(D.land);
+  if (twin && LOOK === "glass") { c.fillStyle = "#1e2024"; c.fill(land); }
   c.lineJoin = "round";
   [80, 60, 45, 32, 22, 14, 7].forEach(w => { c.strokeStyle = twin ? "rgba(70,150,255,.045)" : "rgba(70,215,207,.06)"; c.lineWidth = w; c.stroke(land); });
   c.fillStyle = twin ? "#0c1c40" : "#0b2c36"; D.ctx.forEach(o => { if (!o.ln) c.fill(new Path2D(o.d)); });      /* neighbours are now border lines, not filled shapes */
@@ -901,7 +903,7 @@ function paintBase(cv, twin){
   const R = D.rivers; const nile = new Path2D((R.nile || "") + (R.rosetta || "") + (R.damietta || ""));
   c.strokeStyle = twin ? "rgba(70,150,255,.16)" : "rgba(70,215,207,.18)"; c.lineWidth = 7; c.stroke(nile);
   c.strokeStyle = twin ? "rgba(150,210,255,.8)" : "rgba(166,255,245,.85)"; c.lineWidth = 1.4; c.stroke(nile);
-  c.fillStyle = twin ? "#0a2f4a" : "#0b4a51"; D.lakes.forEach(l => c.fill(new Path2D(l.d)));
+  c.fillStyle = twin ? (LOOK === "glass" ? "#5c6c8c" : "#0a2f4a") : "#0b4a51"; D.lakes.forEach(l => c.fill(new Path2D(l.d)));
   const eg = new Path2D(D.egyptLo || D.egypt);
   c.save(); c.shadowColor = twin ? "rgba(5,16,48,.7)" : "rgba(4,30,38,.7)"; c.shadowBlur = 60 * k / 2.7; c.shadowOffsetX = 10 * k; c.shadowOffsetY = 16 * k;
   c.fillStyle = twin ? "#17468a" : "#157f8b"; c.fill(eg); c.restore();      /* under the land: water blue, because harbour basins, canals and the Nile in the street tiles are painted with this very texture */
