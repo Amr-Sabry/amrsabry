@@ -124,5 +124,47 @@ if(typeof RTS!=='undefined'&&RTS.hsr){const H=RTS.hsr, F='F', R='R';
   h3.pts=[[32.72,26.16],[33.3,26.5],[33.93,26.74],[33.87,27.01],[33.81,27.25]]; h3.st=S(L3);
   h2.col='#3c8ca4'; h3.col='#ee9873'; H.legend=[['f','محطات سريعة'],['r','محطات إقليمية']]; H.allNames=1; H.anMin=1}
 
-window.__matched=[58,64,68,88,49,50,48];
+/* 34 · roads: the client's road map traced line by line — the nine numbered transverse axes (with every length the
+   client writes on them), the longitudinal axes and the development corridor; the axis names stay in the list card */
+if(typeof RTS!=='undefined'&&RTS.roads&&window.MDATA&&MDATA.roads34){const D=MDATA.roads34, N=RTS.roads;
+  N.routes=[...D.red.map((p,i)=>({id:'a'+i,n:'المحاور العرضية المقترحة',col:'#ee9873',grp:'a',pts:p,st:[]})),
+            ...D.blue.map((p,i)=>({id:'b'+i,n:'المحاور الطولية',col:'#2a3b86',grp:'b',pts:p,st:[]}))];
+  N.ctx=D.corr.map(p=>({col:'#8e9be6',dash:1,pts:p}));
+  N.marks=[...D.num.map(q=>({p:[q[0],q[1]],t:q[2],cls:'num'})),...D.km.map(q=>({p:[q[0],q[1]],t:q[2],cls:'kmv'})),...D.pl.map(q=>({p:[q[0],q[1]],t:q[2],cls:'pl'}))];
+  N.legend=[['lr','المحاور العرضية المقترحة'],['lb','المحاور الطولية'],['ld','ممر التنمية – د. فاروق الباز']];
+  N.areas=[['الصحراء الغربية',27.6,26.4],['الصحراء الشرقية',32.9,27.2],['سيناء',33.8,29.6]]}
+
+/* 39 · axes on the Nile: every axis on the client's map, by status (implemented / under way / future) and by name,
+   on the main Nile and on the Rosetta and Damietta branches; pick a branch to read every name */
+if(typeof RTS!=='undefined'&&RTS.nile&&window.MDATA&&MDATA.nile39){const D=MDATA.nile39, N=RTS.nile, old=N.routes[0];
+  const C={Y:'#2a3b86',M:'#ee9873',Ccol:'#3c8ca4'}, col=k=>k==='Y'?C.Y:k==='M'?C.M:C.Ccol;
+  const of=b=>D.filter(q=>q[4]===b), st=a=>a.map(q=>[q[0],q[1],q[2],'',col(q[3])]);
+  const apex=[31.13,30.19], up=a=>[...a].sort((p,q)=>p[1]-q[1]);
+  const Nn=of('N').sort((p,q)=>q[1]-p[1]), W=up(of('W')), E=up(of('E'));
+  const R=(id,n,sub,pts,s)=>({id,n,sub,col:'#8e9be6',count:1,ns:s.length,noStart:1,noEnd:1,pts,st:st(s)});
+  N.routes=[R('nn','النيل','القاهرة – أسوان',[apex,[31.2,30.1],...old.pts,[32.88,23.95]],Nn),
+            R('nw','فرع رشيد','',[apex,...W.map(q=>[q[0],q[1]])],[...W].reverse()),
+            R('ne','فرع دمياط','',[apex,...E.map(q=>[q[0],q[1]])],[...E].reverse())];
+  N.routes[1].st.reverse(); N.routes[2].st.reverse();
+  const cnt=k=>D.filter(q=>q[3]===k).length;
+  N.legend=[['cy',`محاور منفذة · ${cnt('Y')}`],['cm',`محاور جارية · ${cnt('M')}`],['cc',`محاور مستقبلية · ${cnt('C')}`]];
+  N.allNames=1; N.anNone=1; N.panel=1}
+
+/* 12 · the built-up map: the client's planning map traced zone by zone (valley and delta, agricultural expansion,
+   oases and proposed areas, new cities, industry and mining, tourism), with the places the client names on it */
+window.zoneMap=function(el,r,c,ctx){const Z=window.MDATA&&MDATA[c.zones];if(!Z)return;
+  const P=ctx.proj, base=ctx.world.select('g'), g=d3.select(base.node().parentNode).insert('g',()=>base.node().nextSibling).attr('class','zones'), gl=ctx.ov.append('g').attr('class','zlab');
+  const CL=[['cream','#e6c58a','الواحات ومناطق التنمية المقترحة'],['green','#3c8ca4','التوسع الزراعي'],['aqua','#a7dcd6','الوادي والدلتا'],
+            ['orange','#ee9873','التنمية العمرانية والمدن الجديدة'],['purple','#2a3b86','مناطق صناعية وتعدينية'],['magenta','#8e9be6','التنمية السياحية']];
+  CL.forEach(([k,col],ci)=>(Z[k]||[]).forEach((p,i)=>{g.append('path').attr('d','M'+p.map(q=>P(q).map(v=>v.toFixed(1)).join(',')).join('L')+'Z')
+    .attr('fill',col).attr('fill-opacity',k==='aqua'?.75:.82).attr('stroke','#ffffff').attr('stroke-width',.7).attr('stroke-opacity',.9)
+    .style('opacity',0).transition().delay(500+ci*260+i*12).duration(700).style('opacity',1)}));
+  (MDATA[c.zones+'lab']||[]).forEach((q,i)=>{const p=P([q[0],q[1]]);
+    gl.append('text').attr('x',p[0]).attr('y',p[1]).attr('text-anchor','middle').attr('dy','.35em').attr('font-size',Math.max(10.5,Math.min(13,r.w/64))).attr('font-weight',600)
+      .attr('fill','#1c2547').attr('stroke','#ffffff').attr('stroke-width',3.2).attr('paint-order','stroke').style('font-family','Readex Pro').text(q[2])
+      .style('opacity',0).transition().delay(2200+i*40).duration(500).style('opacity',1)});
+  const lg=document.createElement('div');lg.className='rleg zleg';lg.innerHTML=CL.map(([k,col,t])=>`<span><i style="background:${col};border-radius:4px;box-shadow:0 0 0 1.5px #fff,0 1px 3px rgba(28,37,71,.35)"></i>${t}</span>`).join('');el.appendChild(lg)};
+(()=>{const cd=card(12);if(cd){cd[2].mode='zones';cd[2].zones='zones12';delete cd[2].s}})();
+
+window.__matched=[58,64,68,88,49,50,48,34,39,12];
 })();

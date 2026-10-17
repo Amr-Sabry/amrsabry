@@ -734,6 +734,20 @@ em{color:var(--cobalt)}
 #stage .rleg i.r{background:#fff;border:2.4px solid var(--ink)}
 #stage .rleg i.x{width:22px;height:0;border-radius:0;border-top:3px dotted var(--teal,#3c8ca4)}
 
+/* marks on traced maps: numbered axes, the lengths the client writes along them, border points */
+#stage .rl.mk>span{bottom:auto;top:0;transform:translate(-50%,-50%);box-shadow:0 4px 10px -4px rgba(28,37,71,.5)}
+#stage .rl.mk.num>span{width:26px;height:26px;padding:0;display:grid;place-items:center;border-radius:50%;background:var(--ink);color:#fff;font-size:13.5px;font-weight:700;font-family:var(--f-num,var(--f-display))}
+#stage .rl.mk.kmv>span{font-size:12px;font-weight:700;color:#b5532c;background:rgba(255,255,255,.92);box-shadow:inset 0 0 0 1.3px #ee9873,0 4px 10px -5px rgba(28,37,71,.45);padding:2px 8px 3px}
+#stage .rl.mk.pl>span{font-size:11.5px;font-weight:600;background:rgba(255,255,255,.8);padding:1px 7px 2px}
+#stage .rleg i.lr,#stage .rleg i.lb,#stage .rleg i.ld{width:22px;height:0;border-radius:0}
+#stage .rleg i.lr{border-top:4px solid #ee9873}
+#stage .rleg i.lb{border-top:4px solid #2a3b86}
+#stage .rleg i.ld{border-top:3.5px dotted #8e9be6}
+#stage .rleg i.cy{background:#2a3b86;box-shadow:0 0 0 2px #fff,0 1px 3px rgba(28,37,71,.4)}
+#stage .rleg i.cm{background:#ee9873;box-shadow:0 0 0 2px #fff,0 1px 3px rgba(28,37,71,.4)}
+#stage .rleg i.cc{background:#3c8ca4;box-shadow:0 0 0 2px #fff,0 1px 3px rgba(28,37,71,.4)}
+#stage .rleg.zleg{top:47%;gap:5px;font-size:12px}
+
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -1296,7 +1310,7 @@ function routeMap(el,r,c,ctx,live){
       const st=s.st.map((q,j)=>{const p=pr(q);let bi=0,bd=1e9;sm.S.forEach((a,i)=>{const dd=(a[0]-p[0])**2+(a[1]-p[1])**2;if(dd<bd){bd=dd;bi=i}});
         const end=j===s.st.length-1&&!x.noEnd||(j===0&&s===segs[0]&&!x.noStart);
         const g=gS.append('g').attr('class','rsd'+(end?' t':'')).attr('data-ri',ri);g.node().__x=p[0];g.node().__y=p[1];
-        const cir=g.append('circle').attr('r',0).attr('fill',end||q[4]==='F'?x.col:(x.stc||'#ffffff')).attr('stroke',end||q[4]==='F'||x.stc?'#ffffff':x.col);
+        const cir=g.append('circle').attr('r',0).attr('fill',end||q[4]==='F'?x.col:(q[4]&&q[4][0]==='#'?q[4]:(x.stc||'#ffffff'))).attr('stroke',end||q[4]==='F'||(q[4]&&q[4][0]==='#')||x.stc?'#ffffff':x.col);
         const lab=q[2]?addLab(p,q[2],end?'t':'',(q[3]||(j%2?'b':'a')),1):null; if(lab&&end)lab.d.style.setProperty('--c',x.col); if(lab){lab.ri=ri;lab.cat=q[4];lab.d.style.setProperty('--lc',x.col);const a=sm.S[Math.max(0,bi-5)],b=sm.S[Math.min(sm.S.length-1,bi+5)];lab.vert=Math.abs(b[1]-a[1])>Math.abs(b[0]-a[0])*1.1}
         return {i:bi,cir,lab,end,on:0}});
       return {...sm,el:[glow.node(),line.node()],st}})};
@@ -1306,6 +1320,7 @@ function routeMap(el,r,c,ctx,live){
   const CX=(net.ctx||[]).map(x=>{const sm=sample(x.pts);const p=gC.append('path').attr('class','rxl'+(x.dash?' dash':'')).attr('stroke',x.col).attr('d',d3.line()(sm.S));
     const lb=[];if(x.n){const q=sm.S[Math.round(sm.n*(x.lp??.35))];lb.push(x.nOn?addLab(q,x.n,'cx cxe on t2',x.nOn===1?'b':x.nOn,1):addLab(q,x.n,'cx','',1))}if(x.end)lb.push(x.endOn?addLab(pr(x.end[1]),x.end[0],'cx cxe on t2',x.endOn===1?'b':x.endOn,1):addLab(x.end[1],x.end[0],'cx'));return {p,lb}});
   const AR=(net.areas&&net.areas.length?net.areas:GEO.gov.map(d=>[GOVN(d.n),d.c[0],d.c[1]])).map(a=>addLab([a[1],a[2]],a[0],'ar'));
+  const MK=(net.marks||[]).map(m=>addLab(m.p,m.t,'mk '+(m.cls||'')));
   const SITES=(c.site?[].concat(c.site):[]).map(s=>{const p=pr(s.p), g=gS.append('g').attr('class','rpin');g.node().__x=p[0];g.node().__y=p[1];
     g.append('circle').attr('class','rr0').attr('r',0);g.append('circle').attr('class','rr1').attr('r',0);
     const lab=addLab(p,s.n,'t pin','',1);lab.d.style.setProperty('--c','#3d5cc0');return {...s,p,g,lab}});
@@ -1372,7 +1387,7 @@ function routeMap(el,r,c,ctx,live){
      the lines and the panels; a thin leader ties it back to its station */
   const tiers=kept=>{const box=n=>{if(!n||!n.offsetWidth)return null;return {l:n.offsetLeft,r:n.offsetLeft+n.offsetWidth,t:n.offsetTop,b:n.offsetTop+n.offsetHeight}};
     const P=[panel,el.querySelector('.mtitle'),replay,mini.classList.contains('on')?mini:null,el.querySelector('.rleg')].map(box).filter(Boolean);
-    const all=labs.filter(o=>o.d.dataset.s&&o.d.classList.contains('on')), vis=all.filter(o=>o.ri==null||(SEL!=null?o.ri===SEL:(!net.anMin||o.cat!=='R'||o.d.classList.contains('t'))));
+    const all=labs.filter(o=>o.d.dataset.s&&o.d.classList.contains('on')), vis=all.filter(o=>o.ri==null||(SEL!=null?o.ri===SEL:(o.d.classList.contains('t')||(net.anNone?false:(!net.anMin||o.cat!=='R')))));
     all.forEach(o=>o.d.classList.toggle('hid',!vis.includes(o)));
     const items=vis.map(o=>{o.s0=o.s0||o.d.dataset.s;const s=o.d.firstChild;
       return {o,s,w:s.offsetWidth,h:s.offsetHeight,ax:o.x*T.k+T.x,ay:o.y*T.k+T.y,g:o.d.classList.contains('t')?13:10}});
@@ -1411,7 +1426,7 @@ function routeMap(el,r,c,ctx,live){
       /* on a network, the overview keeps only the line ends that matter: the first line's start and every line's end */
       if(!AN&&q.lab&&RT.length>1&&(o.fdim||!q.end||(j===0&&si===0&&oi>0)))q.lab.d.classList.add('dim')})});if(!o.grp)tag(o);if(!o.ch)chip(o);if(o.nlab)o.nlab.d.classList.add('on');if(RT.length>1&&o.tgl)o.tgl.d.classList.add('dim')});
     SITES.forEach(s=>{s.g.select('.rr0').attr('r',11);s.g.select('.rr1').attr('r',20);s.lab.d.classList.add('on')});
-    total();svg.classed('rgon',true);el.classList.add('rdone')};
+    total();MK.forEach(o=>o.d.classList.add('on'));svg.classed('rgon',true);el.classList.add('rdone')};
   /* ---- the sequence ---- */
   setTimeout(async()=>{if(dead)return;
     const tp=el.querySelector('.mtitle');BX=[20,tp?tp.offsetTop+tp.offsetHeight+12:20,r.w-20,r.h-20];
@@ -1495,6 +1510,7 @@ function MAPCARD(el,r,c,live){
   else svg.classed('plain',true);
   if(c.mode==='route'){routeMap(el,r,c,ctx,live);if(!c.title&&c.net)c.title=RTS[c.net].title}
   const P=ctx.proj, ov=ctx.ov;
+  if(c.zones&&window.zoneMap)zoneMap(el,r,c,ctx,live);
   if(c.mode==='choro'){
     const col=c.colors, base=ctx.world.select('g'), g=base.insert('g',()=>base.node().childNodes[3]);
     GEO.gov.forEach((d,i)=>{const k=c.cls[GOVN(d.n)];g.append('path').attr('d',ctx.path(d.g)).attr('fill',col[k]??'rgba(255,255,255,.35)').attr('stroke','#ffffff').attr('stroke-width',1)
@@ -1628,6 +1644,7 @@ document.getElementById('view').addEventListener('click',e=>{if(e.target.closest
 <script src="src/lt/mapcam.js"></script>
 <script src="src/lt/maptour.js"></script>
 <script src="src/lt/maptour2.js"></script>
+<script src="src/lt/mapdata.js"></script>
 <script src="src/lt/match.js"></script>
 <script>
 /* the client's maps are shown as they are: whole Egypt where theirs is whole Egypt, no camera tours on map cards */
