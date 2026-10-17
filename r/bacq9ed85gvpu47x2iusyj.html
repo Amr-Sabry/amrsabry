@@ -748,6 +748,33 @@ em{color:var(--cobalt)}
 #stage .rleg i.cc{background:#3c8ca4;box-shadow:0 0 0 2px #fff,0 1px 3px rgba(28,37,71,.4)}
 #stage .rleg.zleg{top:47%;gap:5px;font-size:12px}
 
+
+/* ===== motion v2 (glass one-take) ===== */
+:root{--mv:cubic-bezier(.4,0,.1,1);--mvin:cubic-bezier(.16,.84,.24,1)}
+.bc{clip-path:none!important;opacity:0;transform:translateY(18px) scale(.97);transform-origin:50% 60%;
+  transition:opacity .5s var(--mvin) var(--d,0ms),transform .75s var(--mvin) var(--d,0ms),left .62s var(--mv),top .62s var(--mv),width .62s var(--mv),height .62s var(--mv),background-color .6s var(--mv)}
+.slide.on .bc{opacity:1;transform:none}
+.slide.on .bc.wait{opacity:0;transform:translateY(12px) scale(.975);pointer-events:none;
+  transition:opacity .28s ease,transform .32s ease,left .62s var(--mv),top .62s var(--mv),width .62s var(--mv),height .62s var(--mv)}
+.slide.out .bc:not(.gx){opacity:0;transform:scale(.985);transition:opacity .3s ease,transform .3s ease}
+/* content: soft fade-up instead of a clip wipe */
+.bc>.in,.bc>.wm{clip-path:none!important;transition:opacity .45s var(--mvin) .06s,transform .55s var(--mvin) .06s!important}
+.bc>.in{opacity:1;transform:none}
+.bc>.in.old,.bc>.wm.old{opacity:0!important;transform:translateY(-6px);transition:opacity .16s ease,transform .16s ease!important}
+.bc>.in.fresh,.bc>.wm.fresh{opacity:0!important;transform:translateY(10px);transition:none!important}
+.bc.mv>.in,.bc.mv>.wm{transition-delay:.4s!important}
+.bc.mv{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+[data-st]:not(.pb):not(.bdiv){clip-path:none!important;transition:opacity .45s var(--mvin),transform .55s var(--mvin)}
+[data-st]:not(.pb):not(.bdiv).wait{opacity:0;transform:translateY(8px)}
+/* slide change: the new cards fade in where they belong while the old frames glide onto them and dissolve */
+.slide.morph .bc>.in,.slide.morph .bc>.wm{opacity:0!important;transform:translateY(10px);transition:none!important}
+.bc.gx{opacity:1;transform:none;z-index:5;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  transition:left .6s var(--mv),top .6s var(--mv),width .6s var(--mv),height .6s var(--mv),opacity .42s ease .16s,transform .5s var(--mv)!important}
+.bc.gx.fade{opacity:0}
+.bc.gx.drop{transform:scale(.9)}
+.bc.gx>*{clip-path:none!important;opacity:0!important;transform:translateY(-6px);transition:opacity .26s ease,transform .26s ease!important}
+@media (prefers-reduced-motion: reduce){.bc,.bc>.in,.bc>.wm,[data-st]{transition:none!important}}
+/* ===== /motion v2 ===== */
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -1190,19 +1217,25 @@ function show(n,dir){
   B.morph=gh.length>0;
   setStep(dir<0?P.max:0,true);
   if(gh.length){
-    /* each old card wipes its content out, glides to the nearest new card's place and takes on that card's colour; then the new cards draw their content in */
-    const tg=B.cards.filter(cc=>cc.st<=B.step&&cc.r).map(cc=>({r:cc.r,c:flatBg(cc.el)}));
-    gh.forEach(e=>{const cx=e.offsetLeft+e.offsetWidth/2, cy=e.offsetTop+e.offsetHeight/2; let best=tg[0],bd=1e9;
-      tg.forEach(t=>{const d=Math.hypot(t.r.x+t.r.w/2-cx,t.r.y+t.r.h/2-cy);if(d<bd){bd=d;best=t}});
+    /* motion v2: each old frame drops its content, glides onto ONE new card (closest place and size first) and dissolves into it
+       while that card fades in underneath; frames left over shrink away. The new content fades up as the frames land. */
+    const tg=B.cards.filter(cc=>cc.st<=B.step&&cc.r).map(cc=>({r:cc.r}));
+    const pairs=[];gh.forEach((e,i)=>{const cx=e.offsetLeft+e.offsetWidth/2, cy=e.offsetTop+e.offsetHeight/2, ea=e.offsetWidth*e.offsetHeight;
+      tg.forEach((t,j)=>pairs.push([Math.hypot(t.r.x+t.r.w/2-cx,t.r.y+t.r.h/2-cy)+Math.abs(t.r.w*t.r.h-ea)/4000,i,j]))});
+    pairs.sort((a,b)=>a[0]-b[0]);const ga=new Map(),ta=new Set();pairs.forEach(([d,i,j])=>{if(!ga.has(i)&&!ta.has(j)){ga.set(i,j);ta.add(j)}});
+    gh.forEach((e,gi)=>{const best=ga.has(gi)?tg[ga.get(gi)]:null;
       e.style.left=e.offsetLeft+'px';e.style.top=e.offsetTop+'px';e.style.width=e.offsetWidth+'px';e.style.height=e.offsetHeight+'px';
-      e.classList.add('gx'); const ov=document.createElement('i');ov.className='gxc';ov.style.background=best?best.c:'var(--g-clear)';e.appendChild(ov);
-      requestAnimationFrame(()=>requestAnimationFrame(()=>{if(best)place(e,best.r);ov.classList.add('go')}))});
-    B.mdone=()=>{clearTimeout(B.mt);L.classList.remove('morph');old&&old.remove();B.mdone=null};
-    B.mt=setTimeout(()=>B.mdone&&B.mdone(),760);
+      e.classList.add('gx');
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{if(best)place(e,best.r);else e.classList.add('drop');e.classList.add('fade')}))});
+    B.mdone=()=>{clearTimeout(B.mt);clearTimeout(B.mt2);L.classList.remove('morph');old&&old.remove();B.mdone=null};
+    B.mt2=setTimeout(()=>L.classList.remove('morph'),150);
+    B.mt=setTimeout(()=>B.mdone&&B.mdone(),720);
   }
   requestAnimationFrame(()=>requestAnimationFrame(()=>L.classList.add('on')));
   document.querySelector('#prog i').style.width=(n/TOTAL*100)+'%';
   try{history.replaceState(null,'','#'+n)}catch(e){}
+  /* motion v2: the photos of the next two slides load and decode now, so their cards open full, not empty */
+  try{const PRE=window.__pre||(window.__pre={}),ix=ORDER.indexOf(n);[ORDER[ix+1],ORDER[ix+2]].forEach(nx=>{if(nx==null||!SLIDES[nx])return;(JSON.stringify(SLIDES[nx]).match(/p\d+_[a-z0-9_]+/g)||[]).forEach(k=>{if(PRE[k])return;const im=new Image();im.decoding='async';im.src=IMG(k);PRE[k]=im;im.decode&&im.decode().catch(()=>{})})})}catch(e){}
 }
 function setStep(k,init){
   const b=B; if(!b) return; if(!init&&b.mdone) b.mdone(); b.tm.forEach(clearTimeout); b.tm=[]; b.step=k;
@@ -1216,12 +1249,12 @@ function setStep(k,init){
     if(el.classList.contains('wait')){
       el.style.transition='none';place(el,r);void el.offsetWidth;el.style.transition='';
       if(!sameR(cc.pr,r)) paint(cc,r);
-      const d=init?(B.morph?0:ord*70+120):(moving?380:40); ord++;
-      if(init&&B.morph){const inn=el.querySelector(':scope>.in');if(inn)inn.style.transitionDelay=(ord*80)+'ms'}
+      const d=init?(B.morph?150+ord*35:ord*70+120):(moving?380:40); ord++;
+      if(init&&B.morph){const inn=el.querySelector(':scope>.in');if(inn)inn.style.transitionDelay=(ord*45)+'ms'}
       el.style.setProperty('--d',d+'ms'); el.classList.remove('wait');
-      post(el,(init&&B.morph?900+ord*70:d+380),!!cc.posted); cc.posted=1;
+      post(el,(init&&B.morph?440+ord*45:d+380),!!cc.posted); cc.posted=1;
     } else if(!sameR(cc.r,r)){
-      place(el,r);
+      place(el,r);el.classList.add('mv');clearTimeout(el._mv);el._mv=setTimeout(()=>el.classList.remove('mv'),760);
       if(cc.type==='map') b.tm.push(setTimeout(()=>paint(cc,r,1),760));
       if(cc.type==='photo') b.tm.push(setTimeout(()=>panFit(el),800));
       else if(!/^(photo|model)$/.test(cc.type)){paint(cc,r,1);post(el,420,1)}

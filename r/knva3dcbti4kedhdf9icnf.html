@@ -250,6 +250,15 @@ body{font-family:var(--f-body);direction:rtl;-webkit-font-smoothing:antialiased;
 
 .ln .sw,[class] .sw{box-shadow:0 0 0 1px rgba(28,37,71,.18)}
 .co .bx .n{direction:ltr;unicode-bidi:isolate}
+
+/* ===== motion v2 (glass one-take) ===== */
+.bc{transition:opacity .7s var(--settle) var(--d,0ms),transform .95s var(--settle) var(--d,0ms),left .72s var(--glide),top .72s var(--glide),width .72s var(--glide),height .72s var(--glide),color .5s var(--ease),box-shadow .5s}
+.bc.mv{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.bc .in{transition:opacity .5s var(--settle) .18s,transform .6s var(--settle) .14s}
+.bc .in.out{transition:opacity .18s var(--ease),transform .22s var(--ease)}
+.bc>.gf{position:absolute;inset:0;z-index:0;border-radius:inherit;pointer-events:none;opacity:1;transition:opacity .5s var(--ease)}
+.bc>.gf.off{opacity:0}
+/* ===== /motion v2 ===== */
 </style>
 </head>
 <body data-mascot-lines="الخريطة في النص… والحكاية حواليها|دوس السهم وشوف مصر بتكبر|من 7% لـ 14%… ركّز في اللون المنت">
@@ -427,9 +436,13 @@ const CARDS={};
 function place(id,cell,cls,inner,delay,wm){let el=CARDS[id];const b=box(cell);const W0=wm?`<div class="wm">${ICON(wm,130)}</div>`:'';
   if(!el){el=document.createElement('div');el.className='bc '+cls;Object.assign(el.style,px(b));el.style.setProperty('--d',delay+'ms');el.innerHTML=W0+`<div class="in">${inner}</div>`;stage.insertBefore(el,LINKS);CARDS[id]=el;
     requestAnimationFrame(()=>requestAnimationFrame(()=>{el.classList.add('shown');grow(el)}));return el}
+  /* motion v2: glide at once; old content out now; new colour crossfades over the old; new content fades up as it lands */
   el.style.setProperty('--d','0ms');const old=el.querySelector('.in');old&&old.classList.add('out');
-  setTimeout(()=>{el.className='bc shown '+cls;Object.assign(el.style,px(b));el.innerHTML=W0+`<div class="in pre">${inner}</div>`;
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{el.querySelector('.in').classList.remove('pre');grow(el)}))},delay+280);return el}
+  const nb=px(b),moved=['left','top','width','height'].some(k=>el.style[k]!==nb[k]);Object.assign(el.style,nb);
+  if(moved){el.classList.add('mv');clearTimeout(el._mv);el._mv=setTimeout(()=>el.classList.remove('mv'),820)}
+  const of=getComputedStyle(el).getPropertyValue('--fill').trim();
+  setTimeout(()=>{const mv=el.classList.contains('mv');el.className='bc shown '+cls+(mv?' mv':'');el.innerHTML=(of?`<i class="gf" style="background:${of}"></i>`:'')+W0+`<div class="in pre">${inner}</div>`;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{el.querySelector('.in').classList.remove('pre');const g=el.querySelector(':scope>.gf');g&&g.classList.add('off');grow(el)}))},Math.min(delay,240)+170);return el}
 function drop(keep){Object.keys(CARDS).forEach(id=>{if(!keep.has(id)){const el=CARDS[id];delete CARDS[id];el.classList.add('gone');setTimeout(()=>el.remove(),500)}})}
 function grow(el){el.querySelectorAll('.num[data-v]').forEach(n=>{const raw=n.dataset.v,v=+raw;if(isNaN(v))return;const dec=(raw.split('.')[1]||'').length,sm=n.querySelector('small'),small=sm?sm.outerHTML:'',t0=performance.now(),yr=v>1900&&v<2100;
    const f=t=>{const k=Math.min(1,(t-t0)/1300),e=1-Math.pow(1-k,3);n.innerHTML=(yr?raw:(v*e).toFixed(dec))+small;if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)});
@@ -502,6 +515,8 @@ function go(i){if(i===step||i<0||i>=SL.length)return;step=i;const st=SL[i];
   zls.innerHTML=st.zoneLabels?GROW.map((z,k)=>{const c=cen(z.g);return`<div class="zl" data-lon="${c[0]}" data-lat="${c[1]}"><b>${k+1}</b></div>`}).join(''):'';
   const c=st.call;calls.innerHTML=c?`<div class="co"><div class="bx"><span class="n" style="width:auto;min-width:26px;padding:0 7px;border-radius:13px">${c.n}</span><span class="t"><b>${c.b}</b><span>${c.s}</span></span></div></div>`:'';
   drawK=0;draw();setTimeout(()=>{drawIn(st.cur.length>4?2600:2200);calls.firstChild&&calls.firstChild.classList.add('in');cycle()},450);
+  /* motion v2: the next slide's photos load and decode now */
+  try{const PRE=window.__pre||(window.__pre={});[SL[i+1],SL[i+2]].forEach(s=>s&&s.photos.forEach(p=>{if(PRE[p.img])return;const im=new Image();im.decoding='async';im.src='img/'+p.img+'.webp';PRE[p.img]=im;im.decode&&im.decode().catch(()=>{})}))}catch(e){}
 }
 
 /* ---------- events ---------- */
