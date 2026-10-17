@@ -786,6 +786,15 @@ em{color:var(--cobalt)}
 .bc.gx>.gxc{clip-path:none!important;position:absolute;inset:0;border-radius:inherit;z-index:6;pointer-events:none;opacity:0!important;transform:none!important;transition:opacity .9s var(--mv)!important}
 .bc.gx>.gxc.go{opacity:1!important}
 .slide.morph .bc.hasf{visibility:hidden;opacity:1;transform:none;transition:none!important}
+/* motion v4: push between slides */
+.slide.push{transition:transform 1.15s cubic-bezier(.65,0,.35,1)!important;will-change:transform}
+.slide.from-l{transform:translateX(-104%)}.slide.from-r{transform:translateX(104%)}.slide.from-u{transform:translateY(104%)}.slide.from-d{transform:translateY(-104%)}
+.slide.out.to-l{transform:translateX(104%)}.slide.out.to-r{transform:translateX(-104%)}.slide.out.to-u{transform:translateY(-104%)}.slide.out.to-d{transform:translateY(104%)}
+.slide.push .bc:not(.wait){opacity:1!important;transform:none!important;transition:none!important}
+.slide.push .bc:not(.wait)>.in,.slide.push .bc:not(.wait)>.wm{opacity:1;transform:none;transition:none!important}
+.slide.out.push .bc.wait{opacity:0!important}
+.slide.out.push .hd{visibility:visible}
+.slide.push .bc{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 /* ===== /motion v2 ===== */
 </style>
 
@@ -1223,9 +1232,13 @@ function show(n,dir){
   const sp=prep(SLIDES[n]); cur=n;
   const old=curLayer;
   /* the outgoing cards themselves become the moving frames (see setStep/morph below) */
-  const gh=old&&!RM?[...old.querySelectorAll(':scope>.bc:not(.wait)')]:[];
-  if(old){old.classList.add('out');old.classList.remove('on');setTimeout(()=>old.remove(),gh.length?900:0)}
-  const L=document.createElement('div');L.className='slide'+(gh.length?' morph':'');L.innerHTML=header(sp);stage.appendChild(L);curLayer=L;
+  const gh=[];
+  /* motion v4: push — the old slide slides out, the new one slides in from the other side (direction varies with the content) */
+  const pv=old&&old._sp, newSec=!pv||(pv.ax||'')!==(sp.ax||'')||!!sp.full!==!!pv.full; window.__pk=(window.__pk||0)+1;
+  let pd=newSec?'u':['l','u','l','d'][window.__pk%4]; if(dir<0) pd={l:'r',r:'l',u:'d',d:'u'}[pd];
+  if(old){old.classList.add('out','push','to-'+pd);old.classList.remove('on');setTimeout(()=>old.remove(),RM?0:1250)}
+  const L=document.createElement('div');L.className='slide'+(old&&!RM?' push pushin from-'+pd:'');L._sp=sp;L.innerHTML=header(sp);stage.appendChild(L);curLayer=L;
+  if(old&&!RM){requestAnimationFrame(()=>requestAnimationFrame(()=>{L.classList.remove('from-'+pd);setTimeout(()=>L.classList.remove('pushin','push'),1200)}))}
   const P=plan(sp);
   B={sp,L,P,step:-1,max:P.max,tm:[],cards:(sp.cards||[]).map((cd,i)=>{const [type,g,c]=cd;
     const el=document.createElement('div');el.className='bc wait';L.appendChild(el);
