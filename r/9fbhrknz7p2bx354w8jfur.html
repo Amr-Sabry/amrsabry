@@ -780,7 +780,7 @@ em{color:var(--cobalt)}
 .bc.gx.fade{opacity:0}
 .bc.gx.drop{transform:scale(.9)}
 .bc.gx>*{clip-path:none!important;opacity:0!important;transform:translateY(-6px);transition:opacity .26s ease,transform .26s ease!important}
-@media (prefers-reduced-motion: reduce){.bc,.bc>.in,.bc>.wm,[data-st]{transition:none!important}}
+@media (max-width:1px){.bc,.bc>.in,.bc>.wm,[data-st]{transition:none!important}}
 /* ===== /motion v2 ===== */
 </style>
 
@@ -810,7 +810,7 @@ em{color:var(--cobalt)}
 /* ---------- basics ---------- */
 let TOTAL=249;
 const state={step:0};
-const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const RM=matchMedia('(max-width:1px)').matches;
 /* house rule: no pig (piggy bank for savings) and no cross as a symbol (health, hospitals, ambulances) */
 const NOSYM={'piggy-bank':'hand-coins','hospital':'stethoscope','ambulance':'truck','briefcase-medical':'briefcase','cross':'circle-dot','church':'landmark'};
 const ICON=(n,s=26,cls='')=>{n=NOSYM[n]||n;const def=lucide.icons[n.split('-').map(w=>w[0].toUpperCase()+w.slice(1)).join('')];if(!def)return '';

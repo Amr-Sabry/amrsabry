@@ -114,6 +114,6 @@
   .vtx b{font:700 30px/1.2 var(--f-display)}
   .vtx i{display:flex;align-items:center;gap:7px;font:500 18px/1.35 var(--f-body);font-style:normal;opacity:.9}
   .vtx.sm{padding-top:10px;gap:3px}.vtx.sm b{font-size:19px}.vtx.sm i{font-size:14px}
-  @media (prefers-reduced-motion: reduce){.flogo{animation:none!important}.flogo path,.flogo circle{animation:none!important;opacity:1!important;stroke-dashoffset:0!important}.flogo .dt{transform:none!important}}`;
+  @media (max-width:1px){.flogo{animation:none!important}.flogo path,.flogo circle{animation:none!important;opacity:1!important;stroke-dashoffset:0!important}.flogo .dt{transform:none!important}}`;
   document.head.appendChild(st);
 })();

@@ -164,6 +164,6 @@
   .mcco{align-self:flex-start;display:flex;align-items:center;gap:6px;font:500 12px var(--f-display);color:#8c8eb0;font-variant-numeric:tabular-nums;direction:rtl}
   .mcco svg{color:#b6f2dc}
   @keyframes mcDraw{to{stroke-dashoffset:0}}
-  @media (prefers-reduced-motion: reduce){.mapcam *{transition:none!important;animation:none!important}}`;
+  @media (max-width:1px){.mapcam *{transition:none!important;animation:none!important}}`;
   document.head.appendChild(st);
 })();

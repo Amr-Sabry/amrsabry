@@ -1,4 +1,4 @@
-const RMV=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const RMV=matchMedia('(max-width:1px)').matches;
 /* outline model viewer: draws EGM model edges on a 2D canvas, slow orbit, rises from the ground on appear */
 function mvDecode(m){
   if(m._u) return m;

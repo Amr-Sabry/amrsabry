@@ -19,7 +19,7 @@ const css=`
 .isostk .iso{z-index:0}
 .isostk svg{width:100%;height:100%}
 .isostk text{font-family:var(--f-display)}
-@media (prefers-reduced-motion:reduce){.iso .sl,.iso .dr,.iso .gl{transition:none!important}}
+@media (max-width:1px){.iso .sl,.iso .dr,.iso .gl{transition:none!important}}
 `;
 const st=document.createElement('style');st.id='isoCss';st.textContent=css;document.head.appendChild(st);
 

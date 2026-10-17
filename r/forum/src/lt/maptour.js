@@ -7,7 +7,7 @@
    - point maps: category by category (e.g. new cities by generation), with a closer look where points crowd. */
 (function(){
   if(typeof MAPCARD!=='function'||typeof baseMap!=='function') return;
-  const RMx=typeof RM!=='undefined'?RM:matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const RMx=typeof RM!=='undefined'?RM:matchMedia('(max-width:1px)').matches;
   let LAST=null; const _bm=baseMap; baseMap=function(){const x=_bm.apply(this,arguments);LAST=x;return x};
   const _mc=MAPCARD;
   /* tours are registered by map kind: {test(c,r), build(api)}; the first that fits the card runs */
@@ -263,6 +263,6 @@
   .gens .g4 .gl{color:#3d5cc0}.gens .g4 b{color:#3d5cc0}
   .gu{margin-top:.7em;font:500 12.5px var(--f-body);color:rgba(28,37,71,.55)}
   @keyframes gbar{to{transform:scaleX(1)}}
-  @media (prefers-reduced-motion: reduce){.gens .gb i{animation:none;transform:none}}`;
+  @media (max-width:1px){.gens .gb i{animation:none;transform:none}}`;
   document.head.appendChild(st);
 })();

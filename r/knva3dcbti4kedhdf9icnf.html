@@ -207,7 +207,7 @@ body{font-family:var(--f-body);direction:rtl;-webkit-font-smoothing:antialiased;
 #ui button.on{background:var(--cobalt);color:#fff;font-weight:600;box-shadow:inset 0 1px 0 rgba(255,255,255,.45)}
 #ui button.tg.on{background:transparent;color:var(--cobalt);box-shadow:inset 0 0 0 1.5px var(--cobalt)}
 #ui button:focus-visible{outline:2px solid var(--cobalt);outline-offset:1px}
-@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (max-width:1px){*{transition:none!important;animation:none!important}}
 
 .kick2{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:500;color:rgba(255,255,255,.88)}
 .kick2 svg{width:18px;height:18px}
@@ -552,7 +552,7 @@ setLook(4);go(0);
   'use strict';
   if(window.AromaMascot) return;
   var Q=[]; window.AromaMascot={say:function(t,m){ Q.push([t,m]); }};
-  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if(window.matchMedia&&window.matchMedia('(max-width:1px)').matches) return;
 
   function boot(){
     var T=window.THREE, renderer;
