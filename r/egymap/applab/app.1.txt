@@ -23503,8 +23503,9 @@ function measureFree(){
   const rc = id => { const e = $(id); if (!e || e.hidden || !e.getClientRects().length) return null; const b = e.getBoundingClientRect(); return {l: b.left - r.left, t: b.top - r.top, r: b.right - r.left, b: b.bottom - r.top}; };
   let x0 = 0, x1 = W, y0 = 0, y1 = Hh;
   if (!phone) {
-    const L = rc("colL"), R = null, T = rc("tl");          /* the sectors now live on the orbit around the map, so the right edge is free */
+    const L = CTLM ? null : rc("colL"), R = null, T = rc("tl");          /* the sectors now live on the orbit around the map, so the right edge is free */
     y0 = 4.4 * rem; if (L) x0 = L.r - (L.r - L.l) * 0.1; if (R) x1 = R.l + (R.r - R.l) * 0.1; if (T) y1 = T.t - 0.2 * rem;
+    if (CTLM === "deck") { const dk = document.querySelector(".ctl.deck .cbox"); if (dk && dk.offsetHeight) y1 = Math.min(y1, dk.getBoundingClientRect().top - r.top - 0.4 * rem); }
     x0 = Math.max(x0, 0); x1 = Math.min(x1, W);
   } else {
     const L = rc("colL"), R = rc("railR"), T = rc("tl"), C = rc("ctx");
@@ -25634,7 +25635,7 @@ function tlsSync(force){
   list.slice(0, 22).forEach((pi, n) => { TLS.timers.push(setTimeout(() => { if (!TLS.open) return; const q = P[pi].ins && P[pi].ins[0]; if (q != null) fl[q] = 1; }, 380 + n * 95)); });
 }
 function tlsMeasure(){ const a = $("app").getBoundingClientRect(), d = dockEl.getBoundingClientRect(), t = $("tl").getBoundingClientRect(), rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
-  const top = Math.min(d.height ? d.top : 1e9, t.top); if (top < 1e9) tlsEl.style.setProperty("--stB", (a.bottom - top + 0.55 * rem).toFixed(0) + "px"); }
+  let top = Math.min(d.height ? d.top : 1e9, t.top); if (CTLM === "deck") { const dk = document.querySelector(".ctl.deck .cbox"); if (dk && dk.offsetHeight) top = Math.min(top, dk.getBoundingClientRect().top); } if (top < 1e9) tlsEl.style.setProperty("--stB", (a.bottom - top + 0.55 * rem).toFixed(0) + "px"); }
 function tlsOpen(){
   if (TLS.open) return; dockCloseOver("tls"); if (S.show) stopShow(); if (S.check) toggleNotes(false);
   TLS.open = true; TLS.sig = ""; TLS.y = 0; TLS.sec = -1; tlsMeasure(); tlsEl.classList.remove("out"); tlsEl.hidden = false; $("app").classList.add("tls-on"); tlxEl.setAttribute("aria-expanded", "true");
@@ -26603,7 +26604,7 @@ function padStep(dt){
   if (PAD.hold && performance.now() - PAD.t0 > 180) { if (fly) fly = null; userMoved = true; act(); padAct(PAD.hold, dt); }
 }
 /* the offline package is no longer downloaded from the map itself: it has its own page (see offline/welcome) */
-$("app").addEventListener("pointerdown", e => { act(); if (!S.show || e.target.closest("#bShow,#cap,.stxc")) return;
+$("app").addEventListener("pointerdown", e => { act(); if (!S.show || e.target.closest("#bShow,#cap,.stxc,.ctl")) return;
   if (e.target === canvas || e.target.closest("#joy,#cZi,#cZo,#cRl,#cRr,#cTu,#cTd,.stx")) showHold(); else stopShow(); }, true);      /* moving the map holds the show (its panel stays); pressing anything else on the screen ends it */
 
 /* ================= show mode ================= */
@@ -27377,6 +27378,217 @@ function boot(){
   requestAnimationFrame(frame);
   axlPlace(); requestAnimationFrame(axlTick); if (!QS.has("show")) setTimeout(axlOpen, introOn ? 900 : 300);
 }
+/* ================= v140 lab: every control of the map in one place, for the 4-metre touch wall (7680×1080) =================
+   ?ctl=float — one glass console the presenter drags with a finger to wherever he stands (a long press on the map calls it there),
+                that shrinks to a round puck; the lists panel and the show controls follow it.
+   ?ctl=deck  — the same controls as one fixed deck at the bottom centre; the lists open above it.
+   The console only presses the map's own buttons (and drives its own camera pad), so everything behaves exactly as before. */
+if (CTLM === "float" || CTLM === "deck") (() => {
+  const H = document.documentElement, FLOAT = CTLM === "float";
+  H.classList.add("ctl-on", "ctl-" + CTLM);
+  const IC = {
+    back: '<path d="M9 5.5l6.5 6.5L9 18.5"/>', home: '<path d="M3.5 11.2L12 4l8.5 7.2M5.8 9.8V20h4.4v-5.6h3.6V20h4.4V9.8"/>', search: '<circle cx="10.5" cy="10.5" r="6.2"/><path d="M15.2 15.2L21 21"/>',
+    show: '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M10 7.5v5l4.2-2.5z" fill="currentColor"/><path d="M8 20h8M12 16v4"/>',
+    play: '<path d="M7 4.5v15l12-7.5z" fill="currentColor" stroke="none"/>', pause: '<path d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z" fill="currentColor" stroke="none"/>',
+    grip: '<g fill="currentColor" stroke="none"><circle cx="9" cy="6" r="1.7"/><circle cx="15" cy="6" r="1.7"/><circle cx="9" cy="12" r="1.7"/><circle cx="15" cy="12" r="1.7"/><circle cx="9" cy="18" r="1.7"/><circle cx="15" cy="18" r="1.7"/></g>',
+    min: '<path d="M5 12h14"/>', list: '<path d="M8.5 6h11M8.5 12h11M8.5 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/>',
+    gear: '<circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.6M12 18.6v2.6M4.2 7.5l2.2 1.3M17.6 15.2l2.2 1.3M4.2 16.5l2.2-1.3M17.6 8.8l2.2-1.3"/><circle cx="12" cy="12" r="7.2"/>',
+    fs: '<path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/>', up: '<path d="M6 15l6-6 6 6"/>',
+    surf: '<path d="M3 17l5-6 4 4 3-3 6 5"/>', dens: '<path d="M5 20V11M10 20V5M15 20v-8M20 20v-5"/>', lay: '<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
+    zi: '<path d="M12 5v14M5 12h14"/>', zo: '<path d="M5 12h14"/>', rl: '<path d="M5 11a7 7 0 1 1 2 6"/><path d="M5 5v6h6"/>', rr: '<path d="M19 11a7 7 0 1 0-2 6"/><path d="M19 5v6h-6"/>',
+    tilt: '<path d="M4 18h16"/><path d="M6 14l6-8 6 8"/>'
+  };
+  const sv = (k, s) => `<svg viewBox="0 0 24 24" width="${s || 26}" height="${s || 26}" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
+  const AXN = [T("التنمية الاقتصادية"), T("أمن الطاقة"), T("المياه والغذاء"), T("بناء الإنسان"), T("البنية التحتية"), T("الأمن والقانون")];
+  const axIc = a => { const b = AXL.btn[a]; const ic = b && b.querySelector(".ic"); return ic ? ic.innerHTML : ""; };
+  { const st = document.createElement("style"); st.textContent = `
+html.ctl-on #top .tools,html.ctl-on #modes,html.ctl-on #dock,html.ctl-on #tl,html.ctl-on .axl,html.ctl-on #railR,html.ctl-on #camhud{visibility:hidden!important;pointer-events:none!important}
+html.ctl-on .axl.big{visibility:visible!important;pointer-events:auto!important}
+html.ctl-on #colL{display:none}
+html.ctl-on.ctl-lists #colL{display:flex;transition:left .45s cubic-bezier(.2,.85,.25,1),top .45s cubic-bezier(.2,.85,.25,1)}
+html.ctl-deck.ctl-lists #colL{top:auto;bottom:var(--ctlLB,12rem);height:var(--ctlLH,40rem)}
+.ctl{position:absolute;z-index:40;direction:rtl;font-family:var(--f-head);color:#1c2547;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+.ctl.float{left:var(--cx,60%);top:var(--cy,40%);transition:left .5s cubic-bezier(.2,.85,.25,1),top .5s cubic-bezier(.2,.85,.25,1)}
+.ctl.float.drag{transition:none}
+.ctl.deck{left:50%;bottom:14px;transform:translateX(-50%) scale(var(--ds,1));transform-origin:50% 100%}
+.ctl .cbox{position:relative;border-radius:28px;padding:18px 20px 20px;background:linear-gradient(140deg,rgba(255,255,255,.9),rgba(255,255,255,.7) 55%,rgba(236,240,255,.78));
+  backdrop-filter:blur(26px) saturate(1.6);-webkit-backdrop-filter:blur(26px) saturate(1.6);border:1.5px solid rgba(255,255,255,.95);
+  box-shadow:inset 0 1.5px 0 #fff,inset 0 -18px 40px -20px rgba(120,140,230,.32),0 34px 70px -30px rgba(5,12,40,.7),0 8px 22px -8px rgba(5,12,40,.4)}
+.ctl .cbox::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.5px;pointer-events:none;background:linear-gradient(135deg,#fff,rgba(183,192,243,.75) 35%,rgba(255,255,255,.2) 55%,rgba(251,213,187,.85) 85%,#fff);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.ctl.float .cbox{width:640px}
+.ctl button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ctl .chd{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.ctl .chd b{font-size:21px;font-weight:800}
+.ctl .chd .sp{flex:1}
+.ctl .grip{display:grid;place-items:center;width:58px;height:58px;border-radius:18px;background:rgba(61,92,192,.1);border:1px solid rgba(255,255,255,.9);color:#3d5cc0;cursor:grab;touch-action:none}
+.ctl.drag .grip{cursor:grabbing;background:rgba(61,92,192,.2)}
+.ctl .hb{display:grid;place-items:center;width:54px;height:54px;border-radius:16px;background:rgba(255,255,255,.65);border:1px solid rgba(255,255,255,.95);color:#2a3b86;box-shadow:inset 0 1px 0 #fff,0 8px 18px -12px rgba(30,40,110,.5)}
+.ctl .hb[aria-pressed="true"]{background:linear-gradient(160deg,#6d86dc,#3d5cc0);color:#fff}
+.ctl .btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:78px;border-radius:20px;border:1px solid rgba(255,255,255,.95);
+  background:linear-gradient(160deg,rgba(255,255,255,.95),rgba(255,255,255,.55));font-size:17px;font-weight:700;color:#1c2547;box-shadow:inset 0 1px 0 #fff,0 10px 22px -14px rgba(30,40,110,.55);transition:transform .12s}
+.ctl .btn:active,.ctl .hb:active,.ctl .chip:active{transform:scale(.96)}
+.ctl .btn.off{opacity:.38;pointer-events:none}
+.ctl .btn.em,.ctl .play{color:#3a1806;border:1px solid rgba(255,236,214,.95);background:radial-gradient(ellipse 80% 90% at 50% 70%,#ffc49a,#f4a07a 55%,#ee9873);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.85),0 0 0 4px rgba(238,152,115,.2),0 14px 30px -10px rgba(238,120,80,.7)}
+.ctl .btn.em[aria-pressed="true"]{background:radial-gradient(ellipse 80% 90% at 50% 70%,#ffb07e,#ee8a5e 60%,#e2744a)}
+.ctl .cnav{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.ctl .sec{margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.85)}
+.ctl .sec>small{display:block;font-size:14px;font-weight:700;color:#3d5cc0;margin-bottom:9px}
+.ctl .cax{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.ctl .chip{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px 9px;min-height:100px;border-radius:20px;border:1px solid rgba(255,255,255,.95);
+  background:linear-gradient(160deg,rgba(255,255,255,.95),rgba(255,255,255,.55));box-shadow:inset 0 1px 0 #fff,0 10px 22px -16px rgba(30,40,110,.6);overflow:hidden;transition:transform .12s,box-shadow .25s}
+.ctl .chip::before{content:"";position:absolute;inset-inline-start:0;inset-block:12px;width:3px;border-radius:3px;background:var(--c)}
+.ctl .chip .i{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:color-mix(in srgb,var(--c) 16%,#fff);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--c) 70%,#fff)}
+.ctl .chip .i svg{width:19px;height:19px;stroke:color-mix(in srgb,var(--c) 80%,#1c2547)}
+.ctl .chip b{font:700 23px var(--f-num);line-height:1}
+.ctl .chip span{font-size:12px;font-weight:700;line-height:1.25;text-align:center;color:#2a3b86}
+.ctl .chip.on{background:linear-gradient(160deg,color-mix(in srgb,var(--c) 28%,#fff),rgba(255,255,255,.7));box-shadow:inset 0 1px 0 #fff,0 0 0 3px color-mix(in srgb,var(--c) 35%,transparent),0 14px 28px -14px color-mix(in srgb,var(--c) 70%,transparent)}
+.ctl .ctime{display:flex;align-items:center;gap:12px}
+.ctl .play{flex:none;display:grid;place-items:center;width:70px;height:70px;border-radius:22px}
+.ctl .bars{flex:1;display:flex;align-items:flex-end;gap:3px;height:76px;direction:ltr;transform:scaleX(-1)}
+.ctl .bars button{flex:1;position:relative;height:100%;padding:0;border:0;background:none;display:flex;align-items:flex-end}
+.ctl .bars i{display:block;width:100%;border-radius:5px 5px 2px 2px;background:linear-gradient(180deg,rgba(109,134,220,.85),rgba(160,178,238,.4));min-height:5px}
+.ctl .bars button.on i{background:linear-gradient(180deg,#ffc49a,#ee9873);box-shadow:0 0 1rem rgba(238,130,90,.7)}
+.ctl .bars button.f i{background:rgba(160,178,238,.3)}
+.ctl .yr{flex:none;text-align:center;min-width:80px}
+.ctl .yr b{display:block;font:700 32px var(--f-num);line-height:1}
+.ctl .yr small{font-size:12px;color:#3d5cc0}
+.ctl .tlx{flex:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 12px;min-height:70px;justify-content:center;border-radius:18px;border:1px solid rgba(255,255,255,.95);background:rgba(255,255,255,.6);font-size:14px;font-weight:700}
+.ctl .tlx[aria-pressed="true"]{background:linear-gradient(160deg,#6d86dc,#3d5cc0);color:#fff}
+.ctl .cview{display:flex;gap:14px;align-items:center}
+.ctl .segs{flex:1;display:flex;flex-direction:column;gap:9px}
+.ctl .seg{display:flex;border-radius:18px;border:1px solid rgba(255,255,255,.95);background:rgba(255,255,255,.45);box-shadow:inset 0 1px 0 #fff;overflow:hidden}
+.ctl .seg button{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;height:60px;padding:0 8px;border:0;background:none;font-size:16px;font-weight:700;color:#2a3b86;border-inline-start:1px solid rgba(255,255,255,.85)}
+.ctl .seg button:first-child{border-inline-start:0}
+.ctl .seg button[aria-pressed="true"]{background:linear-gradient(160deg,#6d86dc,#3d5cc0);color:#fff}
+.ctl .cam{display:flex;gap:10px;align-items:center}
+.ctl .joy{position:relative;width:150px;height:150px;border-radius:50%;border:1.5px solid rgba(255,255,255,.95);background:radial-gradient(circle at 50% 40%,rgba(255,255,255,.95),rgba(205,215,250,.55) 70%);box-shadow:inset 0 -12px 26px -12px rgba(110,130,220,.45),0 14px 26px -16px rgba(30,40,110,.6);touch-action:none}
+.ctl .joy .k{position:absolute;left:50%;top:50%;width:58px;height:58px;margin:-29px;border-radius:50%;border:1px solid #fff;background:radial-gradient(circle at 50% 35%,#fff,#c9d2f6);box-shadow:0 6px 14px -6px rgba(30,40,110,.6);pointer-events:none}
+.ctl .joy .a{position:absolute;color:#3d5cc0;font-size:15px;line-height:1;pointer-events:none}
+.ctl .cbt{display:grid;grid-template-columns:repeat(2,58px);gap:8px}
+.ctl .cbt button{display:grid;place-items:center;height:58px;border-radius:16px;border:1px solid rgba(255,255,255,.95);background:rgba(255,255,255,.7);color:#2a3b86;box-shadow:inset 0 1px 0 #fff}
+.ctl .cbt button.on{background:linear-gradient(160deg,#6d86dc,#3d5cc0);color:#fff}
+.ctl .puck{display:none}
+.ctl.min .cbox{display:none}
+.ctl.min .puck{display:grid;place-items:center;width:104px;height:104px;border-radius:50%;border:1.5px solid #fff;color:#1c2547;font-size:14px;font-weight:800;
+  background:radial-gradient(circle at 50% 72%,rgba(255,196,154,.95),rgba(255,255,255,.88) 62%);box-shadow:inset 0 1.5px 0 #fff,0 0 0 6px rgba(255,255,255,.18),0 18px 34px -12px rgba(238,120,80,.7)}
+.ctl.min .puck svg{width:32px;height:32px;margin-bottom:-14px}
+/* the deck: the same sections side by side */
+.ctl.deck .cbox{display:flex;align-items:stretch;gap:0;padding:14px 18px 16px}
+.ctl.deck .chd{display:none}
+.ctl.deck .sec{margin:0;padding:0 16px;border-top:0;border-inline-start:1px solid rgba(255,255,255,.85);display:flex;flex-direction:column;justify-content:center}
+.ctl.deck .sec:first-child{border-inline-start:0;padding-inline-start:0}
+.ctl.deck .cnav{grid-template-columns:repeat(3,92px);gap:8px}
+.ctl.deck .cax{grid-template-columns:repeat(6,104px)}
+.ctl.deck .ctime .bars{width:330px;flex:none}
+.ctl.deck .joy{width:118px;height:118px}.ctl.deck .joy .k{width:48px;height:48px;margin:-24px}
+.ctl.deck .segs{flex:none;width:330px}
+.ctl.deck .dside{display:grid;grid-template-columns:repeat(2,58px);gap:8px}
+.ctl .dside{display:none}
+.ctl.deck .dside{display:grid}
+@media (max-width:900px){.ctl{display:none}}
+`; document.head.appendChild(st); }
+  const el = document.createElement("div"); el.className = "ctl " + CTLM; el.id = "ctl"; el.setAttribute("role", "toolbar"); el.setAttribute("aria-label", T("لوحة التحكم"));
+  const navH = `<div class="cnav"><button type="button" class="btn" data-k="back">${sv("back")}${T("رجوع")}</button><button type="button" class="btn" data-k="home">${sv("home")}${T("الرئيسية")}</button><button type="button" class="btn" data-k="search">${sv("search")}${T("بحث")}</button>${FLOAT ? `<button type="button" class="btn em" data-k="show">${sv("show")}${T("وضع العرض")}</button>` : ""}</div>`;
+  const axH = `<div class="cax">` + AXN.map((n, a) => `<button type="button" class="chip" data-k="ax" data-a="${a}" style="--c:${SECC[a]}"><span class="i">${axIc(a)}</span><b>0</b><span>${n}</span></button>`).join("") + `</div>`;
+  const barsH = `<div class="bars">` + YEARS.map((y, i) => `<button type="button" data-k="yr" data-y="${y}" aria-label="${y}"><i></i></button>`).join("") + `</div>`;
+  const timeH = `<div class="ctime"><button type="button" class="play" data-k="play" aria-label="${T("تشغيل")}">${sv("play", 28)}</button>${barsH}<div class="yr"><b>2026</b><small>${T("السنة")}</small></div><button type="button" class="tlx" data-k="tlx" aria-pressed="false">${sv("up", 20)}${T("اكشف السنة")}</button></div>`;
+  const viewH = `<div class="segs"><div class="seg" data-g="mode"><button type="button" data-k="mode" data-m="surface">${sv("surf", 20)}${T("السطح")}</button><button type="button" data-k="mode" data-m="density">${sv("dens", 20)}${T("الكثافة")}</button><button type="button" data-k="mode" data-m="layers">${sv("lay", 20)}${T("الطبقات")}</button></div>
+    <div class="seg" data-g="theme"><button type="button" data-k="theme" data-t="twin">${T("رقمي")}</button><button type="button" data-k="theme" data-t="sand">${T("رملي")}</button><button type="button" data-k="lang">${EN ? "عربي" : "EN"}</button></div></div>`;
+  const camH = `<div class="cam"><div class="joy" data-k="joy"><span class="a" style="top:10px;left:50%;margin-left:-6px">▲</span><span class="a" style="bottom:10px;left:50%;margin-left:-6px">▼</span><span class="a" style="left:12px;top:50%;margin-top:-8px">◀</span><span class="a" style="right:12px;top:50%;margin-top:-8px">▶</span><span class="k"></span></div>
+    <div class="cbt"><button type="button" data-h="zi" aria-label="${T("تقريب")}">${sv("zi", 24)}</button><button type="button" data-h="zo" aria-label="${T("تبعيد")}">${sv("zo", 24)}</button><button type="button" data-h="rl" aria-label="${T("لف")}">${sv("rl", 24)}</button><button type="button" data-h="rr" aria-label="${T("لف")}">${sv("rr", 24)}</button></div></div>`;
+  if (FLOAT) el.innerHTML = `<div class="cbox"><div class="chd"><span class="grip" data-k="grip" title="${T("اسحب لتحريك اللوحة")}">${sv("grip", 26)}</span><b>${T("لوحة التحكم")}</b><span class="sp"></span>
+      <button type="button" class="hb" data-k="lists" aria-pressed="false" title="${T("القوائم")}">${sv("list", 24)}</button><button type="button" class="hb" data-k="fs" title="${T("ملء الشاشة")}">${sv("fs", 22)}</button><button type="button" class="hb" data-k="set" title="${T("الإعدادات")}">${sv("gear", 24)}</button><button type="button" class="hb" data-k="min" title="${T("تصغير")}">${sv("min", 24)}</button></div>
+      ${navH}<div class="sec"><small>${T("المحاور الستة")}</small>${axH}</div><div class="sec"><small>${T("الزمن")}</small>${timeH}</div>
+      <div class="sec"><small>${T("طريقة العرض والكاميرا")}</small><div class="cview">${viewH}${camH}</div></div></div>
+      <button type="button" class="puck" data-k="restore" aria-label="${T("لوحة التحكم")}">${sv("grip", 30)}<br>${T("تحكم")}</button>`;
+  else el.innerHTML = `<div class="cbox"><div class="sec">${navH}</div><div class="sec">${axH}</div><div class="sec">${timeH}</div><div class="sec"><div class="cview">${viewH}</div></div><div class="sec">${camH}</div>
+      <div class="sec"><div class="dside"><button type="button" class="hb" data-k="lists" aria-pressed="false" style="width:58px;height:58px">${sv("list", 24)}</button><button type="button" class="hb" data-k="fs" style="width:58px;height:58px">${sv("fs", 22)}</button><button type="button" class="hb" data-k="set" style="width:58px;height:58px">${sv("gear", 24)}</button><button type="button" class="btn em" data-k="show" style="min-height:58px;font-size:13px;padding:0 4px">${sv("show", 22)}</button></div></div></div>`;
+  $("app").appendChild(el);
+  const Q = s => el.querySelector(s), QA = s => [...el.querySelectorAll(s)];
+  const dk = a => dockEl.querySelector(`[data-a="${a}"]`);
+  /* ---- where the console stands (float): remembered on this screen, never off it ---- */
+  let pos = null; try { pos = JSON.parse(localStorage.getItem("egymap.ctl") || "null"); } catch (e) {}
+  const app = $("app");
+  function place(x, y, anim){ const A = app.getBoundingClientRect(), r = el.getBoundingClientRect(), w = r.width || 660, h = r.height || 560;
+    x = clamp(x, 8, A.width - w - 8); y = clamp(y, 8, A.height - h - 8); el.classList.toggle("drag", !anim); el.style.setProperty("--cx", x + "px"); el.style.setProperty("--cy", y + "px"); pos = {x: x / A.width, y: y / A.height};
+    try { localStorage.setItem("egymap.ctl", JSON.stringify(pos)); } catch (e) {} }
+  if (FLOAT) setTimeout(() => { const A = app.getBoundingClientRect(); if (pos) place(pos.x * A.width, pos.y * A.height, false); else place(A.width * 0.5 + 420, A.height, false); }, 60);
+  /* drag by the grip (finger or mouse) */
+  if (FLOAT) { const g = Q(".grip"); let d = null;
+    g.addEventListener("pointerdown", e => { e.preventDefault(); e.stopPropagation(); act(); const r = el.getBoundingClientRect(), A = app.getBoundingClientRect(); d = {id: e.pointerId, ox: e.clientX - r.left + A.left, oy: e.clientY - r.top + A.top}; try { g.setPointerCapture(e.pointerId); } catch (x) {} el.classList.add("drag"); });
+    g.addEventListener("pointermove", e => { if (!d || e.pointerId !== d.id) return; place(e.clientX - d.ox, e.clientY - d.oy, false); });
+    const end = e => { if (!d || (e && e.pointerId !== d.id)) return; d = null; el.classList.remove("drag"); };
+    ["pointerup", "pointercancel", "lostpointercapture"].forEach(ev => g.addEventListener(ev, end)); }
+  /* a long press on the map calls the console to where the finger is */
+  if (FLOAT) { let lp = null;
+    canvas.addEventListener("pointerdown", e => { if (lp) clearTimeout(lp.t); const x = e.clientX, y = e.clientY; lp = {x, y, t: setTimeout(() => { lp = null; const A = app.getBoundingClientRect(), r = el.getBoundingClientRect();
+      el.classList.remove("min"); place(x - A.left - (r.width || 660) / 2, y - A.top - 80, true); }, 650)}; });
+    const cancel = e => { if (!lp) return; if (e.type === "pointermove" && Math.hypot(e.clientX - lp.x, e.clientY - lp.y) < 12) return; clearTimeout(lp.t); lp = null; };
+    canvas.addEventListener("pointermove", cancel); canvas.addEventListener("pointerup", cancel); canvas.addEventListener("pointercancel", cancel); }
+  /* the camera pad: the joystick moves the map, the buttons zoom and turn while held */
+  { const joy = Q(".joy"), knob = joy.querySelector(".k"); let pid = null;
+    const setK = (dx, dy) => { knob.style.transform = `translate(${dx.toFixed(1)}px,${dy.toFixed(1)}px)`; };
+    const mv = e => { const r = joy.getBoundingClientRect(), R = r.width * 0.32; let dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2); const l = Math.hypot(dx, dy); if (l > R) { dx *= R / l; dy *= R / l; }
+      setK(dx, dy); const k = Math.min(1, l / R), kk = k < 0.12 ? 0 : (k - 0.12) / 0.88, n = Math.max(1e-6, Math.hypot(dx, dy)); PAD.jx = dx / n * kk; PAD.jy = dy / n * kk; };
+    const end = () => { if (pid == null) return; pid = null; PAD.jx = PAD.jy = 0; setK(0, 0); };
+    joy.addEventListener("pointerdown", e => { e.preventDefault(); e.stopPropagation(); pid = e.pointerId; try { joy.setPointerCapture(pid); } catch (x) {} padGrab(); mv(e); });
+    joy.addEventListener("pointermove", e => { if (e.pointerId === pid) mv(e); });
+    ["pointerup", "pointercancel", "lostpointercapture"].forEach(ev => joy.addEventListener(ev, e => { if (pid != null && e.pointerId === pid) end(); }));
+    QA(".cbt [data-h]").forEach(b => { const k = b.dataset.h; let p = null;
+      const up = () => { if (p == null) return; p = null; b.classList.remove("on"); if (PAD.hold === k) PAD.hold = null; };
+      b.addEventListener("pointerdown", e => { e.preventDefault(); e.stopPropagation(); p = e.pointerId; try { b.setPointerCapture(p); } catch (x) {} b.classList.add("on"); padGrab(); PAD.hold = k; PAD.t0 = performance.now(); padAct(k, 0.16); });
+      ["pointerup", "pointercancel", "lostpointercapture"].forEach(ev => b.addEventListener(ev, up)); }); }
+  /* every other button presses the map's own control */
+  el.addEventListener("pointerdown", e => e.stopPropagation());
+  el.addEventListener("click", e => { const b = e.target.closest("[data-k]"); if (!b || !el.contains(b)) return; const k = b.dataset.k; act();
+    if (k === "back" || k === "home" || k === "search") { const t = dk(k); if (t) t.click(); }
+    else if (k === "show") $("bShow").click();
+    else if (k === "ax") { const t = AXL.btn[+b.dataset.a]; if (t) t.click(); }
+    else if (k === "play") $("bPlay").click();
+    else if (k === "yr") { stopIntro(false); if (S.playing) setPlaying(false); S.T = +b.dataset.y + 0.95; }
+    else if (k === "tlx") tlsToggle();
+    else if (k === "mode") { const t = $("modes").querySelector(`[data-mode="${b.dataset.m}"]`); if (t) t.click(); }
+    else if (k === "theme") { const t = $("themeSeg").querySelector(`[data-theme="${b.dataset.t}"]`); if (t) t.click(); }
+    else if (k === "lang") $("bLang").click();
+    else if (k === "fs") toggleFs();
+    else if (k === "set") $("bAdmin").click();
+    else if (k === "lists") { H.classList.toggle("ctl-lists"); }
+    else if (k === "min") el.classList.add("min");
+    else if (k === "restore") el.classList.remove("min");
+    if (b.blur) b.blur(); });
+  /* what the console shows follows the map: counts, the chosen axis, the year, the play key, the view, the back key */
+  const chips = QA(".chip"), bars = QA(".bars button"), yrB = Q(".yr b"), playB = Q(".play"), tlxB = Q(".tlx"), backB = Q('[data-k="back"]'), listsB = QA('[data-k="lists"]'), showB = QA('[data-k="show"]');
+  let sig = "";
+  function sync(){
+    const py = perYear(), mx = Math.max(1, ...py), y = clamp(Math.floor(S.T), 2014, 2030);
+    const s = [S.sec, y, S.playing, S.mode, S.theme, TLS.open, !!S.show, H.classList.contains("ctl-lists"), dk("back") && dk("back").classList.contains("off"), py.join(","), (stat.secCnt || []).join(",")].join("|");
+    if (s === sig) return; sig = s;
+    chips.forEach((c, a) => { const n = String((stat.secCnt || [])[a] || 0); const bb = c.querySelector("b"); if (bb.textContent !== n) bb.textContent = n; c.classList.toggle("on", S.sec === a); c.setAttribute("aria-pressed", String(S.sec === a)); });
+    bars.forEach((b, i) => { const yy = YEARS[i]; b.querySelector("i").style.height = Math.max(7, py[i] / mx * 100) + "%"; b.classList.toggle("on", yy === y); b.classList.toggle("f", yy > NOW_Y); });
+    yrB.textContent = y; playB.innerHTML = sv(S.playing ? "pause" : "play", 28); tlxB.setAttribute("aria-pressed", String(!!TLS.open));
+    QA('.seg [data-k="mode"]').forEach(b => b.setAttribute("aria-pressed", String(b.dataset.m === S.mode)));
+    QA('.seg [data-k="theme"]').forEach(b => b.setAttribute("aria-pressed", String(b.dataset.t === S.theme)));
+    backB.classList.toggle("off", !!(dk("back") && dk("back").classList.contains("off")));
+    listsB.forEach(b => b.setAttribute("aria-pressed", String(H.classList.contains("ctl-lists"))));
+    showB.forEach(b => b.setAttribute("aria-pressed", String(!!S.show)));
+  }
+  /* the lists panel and the show's own controls stay beside the console */
+  const colL = $("colL");
+  function follow(){
+    const A = app.getBoundingClientRect(), r = el.querySelector(el.classList.contains("min") ? ".puck" : ".cbox").getBoundingClientRect();
+    if (!FLOAT) { const w = el.querySelector(".cbox").offsetWidth || 2400, k = Math.min(1, (A.width - 24) / w); if (Math.abs(k - (+el.style.getPropertyValue("--ds") || 1)) > 0.005) el.style.setProperty("--ds", k.toFixed(3)); }
+    if (FLOAT && !el.classList.contains("drag") && r.height && (r.bottom > A.bottom + 1 || r.right > A.right + 1 || r.top < A.top - 1 || r.left < A.left - 1)) place(r.left - A.left, r.top - A.top, true);   /* never off the screen (after a resize or a change of size) */
+    if (H.classList.contains("ctl-lists") && colL) { const w = colL.offsetWidth || 330;
+      if (FLOAT) { const left = r.left - A.left > w + 24 ? r.left - A.left - w - 14 : r.right - A.left + 14; colL.style.left = left + "px"; }
+      else { colL.style.left = (r.left - A.left) + "px"; H.style.setProperty("--ctlLB", (A.bottom - r.top + 12) + "px"); H.style.setProperty("--ctlLH", Math.max(320, r.top - A.top - 96) + "px"); } }
+    const sx = document.querySelector(".stxc"); if (sx && FLOAT && !sx.hidden) { const cx = r.left + r.width / 2, sw = sx.offsetWidth || 700; sx.style.left = clamp(cx, sw / 2 + 8, innerWidth - sw / 2 - 8) + "px";
+      sx.style.bottom = (innerHeight - r.bottom < 190 ? innerHeight - r.top + 14 : 14) + "px"; }
+  }
+  setInterval(() => { try { sync(); follow(); } catch (e) {} }, 200);
+  sync();
+})();
+
 boot();
 })();
 

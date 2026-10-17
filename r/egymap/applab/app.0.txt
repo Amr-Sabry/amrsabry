@@ -707,6 +707,7 @@ const $ = id => document.getElementById(id);
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const coarse = matchMedia("(pointer: coarse)").matches;
 const QS = new URLSearchParams(location.search);
+const CTLM = (QS.get("ctl") || "").toLowerCase();   /* v140 lab: float | deck */
 const EGB = window.EG_BASE || "";      /* where the files beside the page live: "" (artifact, offline package) or "/r/<project>/" in an Aroma Hub room */
 const lerp = (a, b, t) => a + (b - a) * t;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
