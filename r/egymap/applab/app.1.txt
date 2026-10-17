@@ -23481,7 +23481,7 @@ function buildComposer(){
     const rt = renderer.capabilities.isWebGL2 && typeof THREE.WebGLMultisampleRenderTarget === "function" ? new THREE.WebGLMultisampleRenderTarget(size.x, size.y, {format: THREE.RGBAFormat, encoding: THREE.sRGBEncoding}) : new THREE.WebGLRenderTarget(size.x, size.y, {format: THREE.RGBAFormat, encoding: THREE.sRGBEncoding});
     composer = new THREE.EffectComposer(renderer, rt);
     composer.addPass(new THREE.RenderPass(scene, camera));
-    bloom = new THREE.UnrealBloomPass(new THREE.Vector2(size.x, size.y), parseFloat(QS.get("bs") || (THEME[S.theme] || THEME.sand).bloom), parseFloat(QS.get("br") || 0.45), parseFloat(QS.get("bt") || 0.88)); composer.addPass(bloom);
+    bloom = new THREE.UnrealBloomPass(new THREE.Vector2(size.x, size.y), parseFloat(QS.get("bs") || (THEME[S.theme] || THEME.sand).bloom), parseFloat(QS.get("br") || 0.45), parseFloat(QS.get("bt") || 0.88)); composer.addPass(bloom); if (GLASS_PASS) composer.addPass(GLASS_PASS); bloom.enabled = quality > 0;
   } catch (e) { composer = null; quality = 0; }
 }
 function resize(){
@@ -23507,6 +23507,7 @@ function measureFree(){
     y0 = 4.4 * rem; if (L) x0 = L.r - (L.r - L.l) * 0.1; if (R) x1 = R.l + (R.r - R.l) * 0.1; if (T) y1 = T.t - 0.2 * rem;
     if (CTLM === "deck") { const dk = document.querySelector(".ctl.deck .cbox"); if (dk && dk.offsetHeight) y1 = Math.min(y1, dk.getBoundingClientRect().top - r.top - 0.4 * rem); }
     x0 = Math.max(x0, 0); x1 = Math.min(x1, W);
+    if (WALL) { const a = rc("wallL"), b = rc("wallR"); if (a) x0 = Math.max(x0, a.r + rem); if (b) x1 = Math.min(x1, b.l - rem); }
   } else {
     const L = rc("colL"), R = rc("railR"), T = rc("tl"), C = rc("ctx");
     y0 = (L ? L.b : 0) + 4; y1 = Hh; if (T) y1 = Math.min(y1, T.t); if (R) y1 = Math.min(y1, R.t); if (C && !card.hidden) y1 = Math.min(y1, C.t);
@@ -27117,7 +27118,7 @@ addEventListener("keydown", e => {
 const DPR = window.devicePixelRatio || 1;
 function setQuality(q){
   quality = q; PR = q >= 2 ? Math.min(DPR, coarse ? 1.5 : 2) : q === 1 ? Math.min(DPR, 1.25) : 1;
-  if (q >= 1 && !composer) { renderer.setPixelRatio(PR); renderer.setSize(W, Hh, false); buildComposer(); } else if (q < 1) { if (composer) { try { composer.renderTarget1.dispose(); composer.renderTarget2.dispose(); if (bloom && bloom.dispose) bloom.dispose(); } catch (e) {} } composer = null; }
+  if ((q >= 1 || GLASS_PASS) && !composer) { renderer.setPixelRatio(PR); renderer.setSize(W, Hh, false); buildComposer(); } else if (q < 1 && !GLASS_PASS) { if (composer) { try { composer.renderTarget1.dispose(); composer.renderTarget2.dispose(); if (bloom && bloom.dispose) bloom.dispose(); } catch (e) {} } composer = null; }
   resize();
 }
 let ema = 0.016, slowT = 0;
@@ -27208,7 +27209,7 @@ function frame(now){
 
   /* governorates: relief flattens in the density mode, columns rise for the busy ones */
   const ia = reduce ? 1 : clamp(bootT / 2.0, 0, 1);
-  ZS.tk = 0; TU.uRel.value = 1;   /* the digital map drops the height displacement entirely */ TU.uMD.value = mD; TU.uCont.value = 1 - mD; TU.uBoot.value = reduce ? 99 : bootT;
+  ZS.tk = 0; TU.uRel.value = 1;   /* the digital map drops the height displacement entirely */ TU.uMD.value = mD; TU.uCont.value = LOOK === "glass" ? 0 : 1 - mD; TU.uBoot.value = reduce ? 99 : bootT;
   terrain.visible = walls.visible = mL < 0.99;
   for (const id in govs) { const o = govs[id];
     const c = stat.govCnt[id] || 0; o.tHeat = Math.pow(c / MAXG, 0.6); o.heat += (o.tHeat - o.heat) * Math.min(1, dt * 3);
@@ -27275,7 +27276,7 @@ function frame(now){
   feedAcc += dt; if (feedAcc > (Math.abs(dT) > 0.002 ? 1.0 : 0.25)) { feedAcc = 0; updateFeed(); }
 
   /* render */
-  if (firstFrame && PV.on && PV.sr && PV.B && !pvEl.classList.contains("out")) {} else if (composer && quality > 0) composer.render(dt); else renderer.render(scene, camera);
+  if (firstFrame && PV.on && PV.sr && PV.B && !pvEl.classList.contains("out")) {} else if (composer && (quality > 0 || GLASS_PASS)) { if (bloom) bloom.enabled = quality > 0; composer.render(dt); } else renderer.render(scene, camera);
   if (!firstFrame) { firstFrame = true; $("loading").classList.add("off"); $("app").classList.add("ready"); }
 }
 let firstFrame = false;
@@ -27362,7 +27363,7 @@ if (QS.has("test")) window.__axl = {AXL, dock: axlDock, open: axlOpen, intro: ax
 function boot(){
   resize();
   if (!qLocked && coarse) quality = 1;
-  setQuality(quality); applyTheme(savedTheme());
+  setQuality(quality); applyTheme(LOOK === "glass" ? "twin" : savedTheme());
   scopeText(); renderIns(); updateTL(true); compute();
   const introOn = !reduce && !QS.has("nointro");
   const hv0 = homeView(); camera.position.copy(hv0.p); controls.target.copy(hv0.t);
@@ -27378,6 +27379,325 @@ function boot(){
   requestAnimationFrame(frame);
   axlPlace(); requestAnimationFrame(axlTick); if (!QS.has("show")) setTimeout(axlOpen, introOn ? 900 : 300);
 }
+/* ================= v141 lab: the light «glass» look (?look=glass, or window.EG_LOOK = "glass") =================
+   Amr's references: an airy sky from periwinkle to peach, frosted clear glass with bright edges, a warm glowing core for the main action;
+   the palette #4e779e · #83adb4 · #e3c49c · #edd7c0 and the forum's glass colours (Mist, Haze, Cobalt, Indigo, Ember, Ink). No contour lines.
+   The 3D map is recoloured by one pass after the render (its brightness read through a sky-to-sand ramp, under a soft sky light);
+   colours that carry meaning (the axes' pins and beams) keep their own hue. The interface takes light glass tokens. */
+if (LOOK === "glass") (() => {
+  const H = document.documentElement; H.classList.add("look-glass");
+  const ramp = [[0, "fdfdff"], [.05, "f8f8fc"], [.09, "f6ece0"], [.16, "f0dcc4"], [.26, "e6c9a2"], [.36, "b9c3d6"], [.46, "8fa6d2"], [.6, "5c78b2"], [.78, "3a5288"], [1, "22325a"]];
+  const hx = h => [0, 2, 4].map(k => parseInt(h.substr(k, 2), 16));
+  const N = 256, data = new Uint8Array(N * 4);
+  for (let i = 0; i < N; i++) { const t = i / (N - 1); let k = 1; while (k < ramp.length - 1 && t > ramp[k][0]) k++;
+    const [a, A] = ramp[k - 1], [b, B] = ramp[k], u = clamp((t - a) / (b - a), 0, 1), x = hx(A), y = hx(B);
+    for (let j = 0; j < 3; j++) data[i * 4 + j] = Math.round(x[j] + (y[j] - x[j]) * u); data[i * 4 + 3] = 255; }
+  const lut = new THREE.DataTexture(data, N, 1, THREE.RGBAFormat); lut.magFilter = lut.minFilter = THREE.LinearFilter; lut.needsUpdate = true;
+  GLASS_PASS = new THREE.ShaderPass({
+    uniforms: {tDiffuse: {value: null}, tLut: {value: lut}},
+    vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
+    fragmentShader: `uniform sampler2D tDiffuse; uniform sampler2D tLut; varying vec2 vUv;
+      void main(){
+        vec4 c = texture2D(tDiffuse, vUv);
+        float l = dot(c.rgb, vec3(0.2126, 0.7152, 0.0722));
+        vec3 g = texture2D(tLut, vec2(clamp(l, 0.0, 1.0), 0.5)).rgb;
+        float y = vUv.y;
+        vec3 top = vec3(0.765, 0.816, 0.937), mid = vec3(0.875, 0.902, 0.969), low = vec3(0.969, 0.945, 0.918), bot = vec3(0.945, 0.863, 0.776);
+        vec3 sky = y > 0.62 ? mix(mid, top, (y - 0.62) / 0.38) : y > 0.3 ? mix(low, mid, (y - 0.3) / 0.32) : mix(bot, low, y / 0.3);
+        sky = mix(sky, vec3(0.80, 0.77, 0.95), 0.5 * exp(-pow(length((vUv - vec2(0.16, 0.72)) * vec2(1.7, 1.0)) / 0.34, 2.0)));
+        sky = mix(sky, vec3(1.0, 0.83, 0.70), 0.45 * exp(-pow(length((vUv - vec2(0.86, 0.26)) * vec2(1.7, 1.0)) / 0.34, 2.0)));
+        vec3 o = g * sky;
+        float mx = max(c.r, max(c.g, c.b)), mn = min(c.r, min(c.g, c.b)), sat = mx > 0.02 ? (mx - mn) / mx : 0.0;
+        float blue = smoothstep(0.02, 0.14, c.b - max(c.r, c.g * 0.95));
+        float keep = smoothstep(0.35, 0.7, sat) * smoothstep(0.22, 0.5, mx) * (1.0 - blue);
+        o = mix(o, c.rgb * 0.9 + 0.05, keep);
+        gl_FragColor = vec4(o, 1.0);
+      }`
+  });
+  /* the interface: light glass tokens, and the places that were drawn white-on-dark */
+  const st = document.createElement("style"); st.textContent = `
+html.look-glass,html.look-glass[data-map]{--bg:#eef1f8;--ink:#1c2547;--dim:#4b5683;--mute:#6c769b;--teal:#3d5cc0;--acc:#3d5cc0;--amber:#ee9873;--sand:#e3a46f;--violet:#7b5fd6;
+  --well:rgba(61,92,192,.06);--line:rgba(61,92,192,.16);--line-2:rgba(61,92,192,.38);--pd:255,255,255;--pl:248,250,255;--ph:240,243,252;--pd2:250,251,255;--lt:61,92,192;color-scheme:light}
+html.look-glass body,html.look-glass .app,html.look-glass[data-map] body,html.look-glass[data-map] .app{background:#eef1f8;color:#1c2547}
+html.look-glass .hud{border-radius:20px;border:1px solid rgba(255,255,255,.92);background:linear-gradient(140deg,rgba(255,255,255,.86),rgba(255,255,255,.62) 60%,rgba(238,242,255,.72));
+  backdrop-filter:blur(22px) saturate(1.6);-webkit-backdrop-filter:blur(22px) saturate(1.6);box-shadow:inset 0 1.5px 0 #fff,inset 0 -16px 36px -20px rgba(120,140,230,.28),0 26px 54px -30px rgba(40,55,120,.45)}
+html.look-glass .hud::after{opacity:.35}
+html.look-glass{--sand:#b8742f;--amber:#e0703f}
+html.look-glass .sxi svg{filter:none}
+html.look-glass .lb.g b{color:#b8742f}
+html.look-glass .lb.g.sel b{color:#e0703f}
+html.look-glass .lb.pl .chip b,html.look-glass .lb.pj{text-shadow:none}
+html.look-glass .lb.pj{background:linear-gradient(180deg,color-mix(in srgb,var(--c) 16%,#fff),rgba(255,255,255,.88));color:#1c2547;border-color:color-mix(in srgb,var(--c) 60%,transparent);box-shadow:0 6px 14px -8px rgba(40,55,120,.5)}
+html.look-glass .lb.pj.hot,html.look-glass .lb.pj:hover{border-color:var(--c)}
+`; document.head.appendChild(st);
+  /* every stylesheet of the interface was drawn light-on-dark. Under the glass look each colour is turned once, by what it does:
+     light text → ink (a lighter one for secondary text), a «lighter tone of the axis colour» → a deeper tone of it, dark halos → white halos,
+     dark panels and veils → white frosted glass, dark drop shadows → soft blue ones, faint white hairlines → faint cobalt ones.
+     Colours that carry meaning (the axes, amber, the buttons' dark text on a bright fill) stay. The console (.ctl) is already drawn for it. */
+  const SKIP = /(^|,\s*)(\.ctl\b|html\.look-glass|html\.wall-on|#an-root|\.adm\b|\.adm-|\.notes|\.langmsg|\.wall\b|\.wc\b|\.wg\b)/;
+  const RX = /rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:\s*[,/]\s*([\d.]+%?))?\s*\)|#[0-9a-fA-F]{3,8}\b|\bwhite\b|\bblack\b/g;
+  const parse = t => { if (t === "white") return [255, 255, 255, 1]; if (t === "black") return [0, 0, 0, 1];
+    if (t[0] === "#") { let h = t.slice(1); if (h.length <= 4) h = h.split("").map(c => c + c).join(""); const v = [0, 2, 4].map(k => parseInt(h.substr(k, 2), 16)); v.push(h.length === 8 ? parseInt(h.substr(6, 2), 16) / 255 : 1); return v; }
+    const m = /rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:\s*[,/]\s*([\d.]+%?))?/.exec(t); let a = m[4] == null ? 1 : m[4].endsWith("%") ? parseFloat(m[4]) / 100 : +m[4]; return [+m[1], +m[2], +m[3], a]; };
+  const rgba = (r, g, b, a) => a >= 1 ? `rgb(${r},${g},${b})` : `rgba(${r},${g},${b},${+a.toFixed(3)})`;
+  const turn = (t, kind, sel) => { const [r, g, b, a] = parse(t), mx = Math.max(r, g, b), mn = Math.min(r, g, b), L = (.2126 * r + .7152 * g + .0722 * b) / 255, sat = mx ? (mx - mn) / mx : 0;
+    const light = L > .78 && sat < .25, dark = L < .16, darkish = L < .3 && !(sat > .6 && mx > 150);
+    if (a === 0) return t;
+    if (kind === "text") { if (light) return L > .9 ? rgba(28, 37, 71, Math.max(a, .6)) : rgba(75, 86, 131, Math.max(a, .7)); return t; }
+    if (kind === "svg") { if (light) return a < .5 ? rgba(61, 92, 192, Math.min(.45, a * 1.4 + .05)) : rgba(28, 37, 71, a);
+      if (dark && !/\.on\b|text\b|\.phb/.test(sel)) return rgba(255, 255, 255, Math.max(a, .86)); return t; }
+    if (kind === "stroke") { if (light) return a < .5 ? rgba(61, 92, 192, Math.min(.42, a * 1.5 + .05)) : rgba(28, 37, 71, a); if (dark) return /\.tt\b/.test(sel) ? rgba(255, 255, 255, .9) : rgba(61, 92, 192, Math.min(.35, a)); return t; }
+    if (kind === "bg") { if (darkish) return rgba(248, 250, 255, +(a * .8).toFixed(3)); return t; }
+    if (kind === "tsh") { if (dark) return rgba(255, 255, 255, Math.min(1, a * .95)); return t; }
+    if (kind === "bsh") { if (dark) return rgba(40, 55, 120, +(a * .4).toFixed(3)); return t; }
+    if (kind === "var") { if (dark) return rgba(255, 255, 255, Math.max(a, .82)); return t; }
+    if (kind === "line") { if (light && a < .4) return rgba(61, 92, 192, Math.min(.32, a * 1.6 + .06)); if (dark) return rgba(61, 92, 192, .2); return t; }
+    return t; };
+  const MIXW = /color-mix\(in srgb,\s*(var\(--[\w-]+(?:,[^()]*(?:\([^()]*\))?)?\))\s*(\d+)%\s*,\s*(#fff|#ffffff|white)\)/g;
+  const MIXD = /color-mix\(in srgb,\s*(var\(--[\w-]+(?:,[^()]*(?:\([^()]*\))?)?\))\s*(\d+)%\s*,\s*(#0[0-9a-fA-F]{5}|rgba\(\s*\d{1,2},\s*\d{1,2},\s*\d{1,2}[^)]*\))\)/g;
+  const ONE = /^\s*(rgba?\([^()]*\)|#[0-9a-fA-F]{3,8})\s*$/;
+  const val = (v, kind, sel) => { let o = v; if (kind === "var" && !ONE.test(o)) return v;
+    if (kind === "text" || kind === "svg" || kind === "stroke") o = o.replace(MIXW, (m, c, n) => `color-mix(in srgb,${c} ${Math.min(+n, 68)}%,#1c2547)`);
+    if (kind === "bg" || kind === "svg") o = o.replace(MIXD, (m, c, n) => `color-mix(in srgb,${c} ${Math.round(+n * .6)}%,rgba(255,255,255,.9))`);
+    if (kind === "text" && /^var\(--(c|lc)\b[^)]*\)$/.test(o.trim())) o = `color-mix(in srgb,${o.trim()} 74%,#1c2547)`;
+    return o.replace(RX, t => turn(t, kind, sel)); };
+  const KIND = {"color": "text", "-webkit-text-fill-color": "text", "caret-color": "text", "-webkit-text-stroke-color": "text", "fill": "svg", "stroke": "stroke", "background-color": "bg", "background-image": "bg",
+    "text-shadow": "tsh", "box-shadow": "bsh", "border-top-color": "line", "border-right-color": "line", "border-bottom-color": "line", "border-left-color": "line", "outline-color": "line"};
+  const SH = {"background": "bg", "border": "line", "border-top": "line", "border-bottom": "line", "border-left": "line", "border-right": "line", "border-inline-start": "line", "border-inline-end": "line", "border-block-start": "line", "border-block-end": "line", "border-color": "line"};
+  const doRule = r => { const sel = r.selectorText || ""; if (SKIP.test(sel)) return; const d = r.style, ch = [];
+    for (let i = 0; i < d.length; i++) { const p = d[i], k = KIND[p] || (p.startsWith("--") && !/^(:root|html|body)/.test(sel) ? "var" : null); if (!k) continue; const v = d.getPropertyValue(p); if (!v) continue; const nv = val(v, k, sel); if (nv !== v) ch.push([p, nv, d.getPropertyPriority(p)]); }
+    for (const p in SH) { const v = d.getPropertyValue(p); if (!v || v.indexOf("var(") < 0) continue; let lh = false; for (let i = 0; i < d.length; i++) if (d[i].startsWith(p === "background" ? "background-" : p.replace(/-color$/, "")) && d.getPropertyValue(d[i])) { lh = true; break; }
+      if (lh) continue; const nv = val(v, SH[p], sel); if (nv !== v) ch.push([p, nv, d.getPropertyPriority(p)]); }
+    ch.forEach(([p, v, pr]) => { try { d.setProperty(p, v, pr); } catch (e) {} }); };
+  const walk = rules => { for (const r of rules) { if (r.style && r.selectorText != null) doRule(r); if (r.cssRules && r.cssRules.length) walk(r.cssRules); } };
+  const done = new WeakSet();
+  const sweep = () => { for (const sh of document.styleSheets) { if (done.has(sh)) continue; let rs = null; try { rs = sh.cssRules; } catch (e) { continue; } done.add(sh); try { walk(rs); } catch (e) {} } };
+  sweep(); setTimeout(sweep, 0);
+  new MutationObserver(() => sweep()).observe(document.head, {childList: true});
+  new MutationObserver(() => sweep()).observe(document.body || document.documentElement, {childList: true});
+  /* the digital map underneath, every time; its theme switch is not offered (the glass look replaces both looks) */
+  H.classList.add("look-glass-fixed");
+})();
+
+/* ================= v142 lab: the 4-metre wall (7680×1080 · four screens of 1 m) =================
+   Amr (17 Oct): «العرض ٤ متر وانا عاوز ايد اللي واقف توصل لكل حاجة» · «اليمين واليسار تكون دايما داتا ليها علاقة بالمرحلة اللي احنا فيها،
+   بطريقة البنتو جريد زي عرض المنتدى».
+   · the two middle screens are the map and everything that is touched (the floating console and what opens from it);
+   · the outer screens are for reading only: bento cards in light glass that follow the stage — home, an axis, a governorate, a project
+     (also the stop the show is on), a year. Right: the numbers and key points. Left: the photos of the projects concerned.
+   On by itself when the console is used on a screen at least three times wider than tall (?wall=1 forces it, ?wall=0 turns it off). */
+if (WALL) (() => {
+  const H = document.documentElement, app = $("app"); H.classList.add("wall-on"); if (QS.has("test")) H.classList.add("wall-still");   /* screenshots: the cards without their entry */
+  const L2 = (ar, en) => EN ? en : ar, NF = n => String(n);
+  const st = document.createElement("style"); st.textContent = `
+html.wall-on{--wW:25%}
+html.wall-on #top .brand,html.wall-on #aroma{visibility:hidden!important}
+html.wall-on .stx{left:var(--wW);right:var(--wW)}
+.wall{position:absolute;top:0;bottom:0;width:var(--wW);z-index:30;box-sizing:border-box;padding:1.5rem 1.7rem 1.7rem;display:flex;flex-direction:column;gap:1rem;pointer-events:none;direction:${EN ? "ltr" : "rtl"};
+  font-family:var(--f-head);color:#1c2547;background:linear-gradient(180deg,rgba(242,244,250,.55),rgba(242,244,250,.3));-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.wall.wl{left:0;border-inline-start:1px solid rgba(255,255,255,.7)}.wall.wr{right:0;border-inline-end:1px solid rgba(255,255,255,.7)}
+.wall .wh{flex:none;display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;min-height:5.4rem}
+.wall .wh .tt{min-width:0}
+.wall .wh small{display:flex;align-items:center;gap:.5rem;font:600 .95rem var(--f-head);color:#3d5cc0;letter-spacing:.02em}
+.wall .wh small i{width:.55rem;height:.55rem;border-radius:50%;background:var(--c,#3d5cc0);box-shadow:0 0 0 .22rem color-mix(in srgb,var(--c,#3d5cc0) 22%,transparent)}
+.wall .wh h2{margin:.25rem 0 0;font:800 2.35rem/1.15 var(--f-head);color:#1c2547;text-wrap:balance;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.wall .wh .br{flex:none;text-align:end}
+.wall .wh .br b{display:block;font:800 1.45rem/1.1 var(--f-head);color:#2a3b86}
+.wall .wh .br span{font:500 .85rem var(--f-body,inherit);color:#6c769b}
+.wall .wg{flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:1rem}
+.wc{position:relative;min-width:0;min-height:0;overflow:hidden;border-radius:1.5rem;padding:1.15rem 1.3rem;box-sizing:border-box;display:flex;flex-direction:column;gap:.45rem;
+  background:linear-gradient(140deg,rgba(255,255,255,.86),rgba(255,255,255,.58) 60%,rgba(238,242,255,.7));border:1px solid rgba(255,255,255,.95);
+  box-shadow:inset 0 1.5px 0 #fff,inset 0 -18px 40px -26px rgba(120,140,230,.3),0 22px 44px -30px rgba(40,55,120,.5);animation:wcIn .55s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--i,0) * 45ms)}
+html:not(.lite) .wc{-webkit-backdrop-filter:blur(16px) saturate(1.5);backdrop-filter:blur(16px) saturate(1.5)}
+.wg.out .wc{animation:wcOut .22s ease both}
+html.wall-still .wc,html.lite .wc{animation:none!important}
+@keyframes wcIn{from{opacity:0;transform:translateY(14px) scale(.97)}}
+@keyframes wcOut{to{opacity:0;transform:scale(.98)}}
+.wc .k{font:600 .92rem var(--f-head);color:#4b5683;display:flex;align-items:center;gap:.45rem;min-width:0}
+.wc .k span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wc .n{font:700 3.6rem/1 var(--f-num);color:#1c2547;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.wc .n.s{font-size:2.5rem}.wc .n.xs{font-size:1.9rem}
+.wc .u{font:500 1rem/1.35 var(--f-body,inherit);color:#4b5683}
+.wc .t{font:700 1.3rem/1.3 var(--f-head);color:#1c2547;text-wrap:balance}
+.wc .p{font:400 1.06rem/1.6 var(--f-body,inherit);color:#33406b;overflow:hidden;display:-webkit-box;-webkit-line-clamp:var(--cl,5);-webkit-box-orient:vertical}
+.wc .sp{flex:1;min-height:0}
+.wc.g{background:linear-gradient(150deg,#6a86e0,#3d5cc0 52%,#2a3b86);border-color:rgba(255,255,255,.45);color:#fff;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.5),0 26px 50px -28px rgba(42,59,134,.75)}
+.wc.g .k,.wc.g .u{color:rgba(255,255,255,.82)}.wc.g .n,.wc.g .t{color:#fff}
+.wc.e{background:linear-gradient(150deg,#f6b089,#ee9873 55%,#e07a4f);border-color:rgba(255,255,255,.5);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.6),0 26px 50px -28px rgba(224,112,63,.7)}
+.wc.e .k,.wc.e .u{color:rgba(58,24,6,.75)}.wc.e .n,.wc.e .t{color:#3a1806}
+.wc.a{background:linear-gradient(135deg,rgba(203,237,249,.92),rgba(227,213,236,.88) 52%,rgba(251,213,187,.9))}
+.wc.x{background:linear-gradient(150deg,color-mix(in srgb,var(--c) 24%,#fff),rgba(255,255,255,.72) 70%);border-color:color-mix(in srgb,var(--c) 34%,#fff)}
+.wc.xs{background:linear-gradient(150deg,var(--c),color-mix(in srgb,var(--c) 70%,#1c2547));border-color:rgba(255,255,255,.45);color:#fff}
+.wc.xs .k,.wc.xs .u{color:rgba(255,255,255,.85)}.wc.xs .n,.wc.xs .t{color:#fff}
+.wc .ic{flex:none;width:2.6rem;height:2.6rem;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.85);border:1.5px solid var(--c);box-shadow:0 0 0 .3rem color-mix(in srgb,var(--c) 14%,transparent)}
+.wc .ic svg{width:1.4rem;height:1.4rem;fill:none;stroke:color-mix(in srgb,var(--c) 80%,#1c2547);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.wc.xs .ic{background:rgba(255,255,255,.95);border-color:#fff}
+.wc .bar{height:.55rem;border-radius:1rem;background:rgba(61,92,192,.12);overflow:hidden}.wc .bar i{display:block;height:100%;border-radius:inherit;background:var(--c,#3d5cc0)}
+.wc .stk{display:flex;height:.8rem;border-radius:1rem;overflow:hidden;background:rgba(61,92,192,.1)}.wc .stk i{display:block;height:100%}
+.wc .three{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
+.wc .three b{display:block;font:700 2.2rem/1 var(--f-num);color:#1c2547}.wc .three span{display:flex;align-items:center;gap:.35rem;font:500 .92rem var(--f-head);color:#4b5683}
+.wc .three span i{width:.6rem;height:.6rem;border-radius:50%}
+.wc .yr{flex:1;min-height:0;display:flex;align-items:flex-end;gap:.32rem;direction:ltr;padding-top:.4rem}
+.wc .yr div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.25rem;height:100%;min-width:0}
+.wc .yr i{display:block;width:100%;min-height:3px;border-radius:.3rem .3rem .1rem .1rem;background:rgba(61,92,192,.22)}
+.wc .yr div.on i{background:linear-gradient(180deg,#5b78d6,#3d5cc0)}.wc .yr div.cur i{background:linear-gradient(180deg,#f6b089,#e07a4f)}
+.wc .yr em{font:600 .7rem var(--f-num);font-style:normal;color:#6c769b}.wc .yr div.cur em{color:#e07a4f}
+.wc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.55rem;min-height:0;overflow:hidden}
+.wc ol li{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.25rem .7rem}
+.wc ol li .nm{font:600 1.02rem/1.3 var(--f-head);color:#1c2547;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:.5rem}
+.wc ol li .nm i{flex:none;width:.6rem;height:.6rem;border-radius:50%;background:var(--c,#3d5cc0)}
+.wc ol li b{font:700 1.05rem var(--f-num);color:#2a3b86}
+.wc ol li .bar{grid-column:1/-1;height:.4rem}
+.wc ol.pl li{grid-template-columns:minmax(0,1fr)}.wc ol.pl li .nm{white-space:normal;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical}
+.wc .lgw{display:flex;align-items:center;gap:.9rem;min-width:0}.wc .lgw .lg{--lgh:4.2rem;flex:none}
+.wc .lgw .t{font-size:1.15rem}
+.wc .chip{align-self:flex-start;display:inline-flex;align-items:center;gap:.45rem;padding:.3rem .8rem .3rem .45rem;border-radius:2rem;background:rgba(255,255,255,.88);font:600 .92rem var(--f-head);color:color-mix(in srgb,var(--c) 70%,#1c2547)}
+.wc .chip svg{width:1.1rem;height:1.1rem;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.wc.hero .t{font-size:2rem;line-height:1.25;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.wc.ph{padding:0;border-width:1.5px;background:linear-gradient(135deg,rgba(203,237,249,.7),rgba(227,213,236,.6),rgba(251,213,187,.7))}
+.wc.ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s}
+.wc.ph img.ok{opacity:1}
+.wc.ph .wcap{position:absolute;inset-inline:0;bottom:0;padding:2.2rem 1.1rem .85rem;background:linear-gradient(180deg,transparent,rgba(16,24,58,.72));color:#fff;display:flex;flex-direction:column;gap:.2rem}
+.wc.ph .wcap b{font:700 1.05rem/1.3 var(--f-head);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.wc.ph .wcap span{display:flex;align-items:center;gap:.4rem;font:500 .82rem var(--f-head);opacity:.88}
+.wc.ph .wcap span i{width:.5rem;height:.5rem;border-radius:50%;background:var(--c)}
+.wc.ph .wait{position:absolute;inset:0;display:grid;place-items:center}
+.wc.ph .wait svg{width:3rem;height:3rem;fill:none;stroke:color-mix(in srgb,var(--c,#3d5cc0) 60%,#fff);stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;opacity:.8}
+.wc.ph img.ok + .wait{display:none}
+.wc.no{align-items:center;justify-content:center;text-align:center}
+.wc.no .ic{width:4rem;height:4rem}.wc.no .ic svg{width:2rem;height:2rem}
+`; document.head.appendChild(st);
+  const mk = (id, cls) => { const e = document.createElement("aside"); e.id = id; e.className = "wall " + cls; e.innerHTML = '<div class="wh"></div><div class="wg"></div>'; app.appendChild(e); return e; };
+  const WL = mk("wallL", "wl"), WR = mk("wallR", "wr");
+  const yearNow = () => clamp(Math.floor(S.T + 1e-6), 2014, 2030);
+  const KD = p => p.kd === "e" ? 2 : p.kd === "p" ? 1 : 0;
+  const KDC = ["#22a35c", "#3d5cc0", "#ee9873"], KDN = [L2("منفّذ", "Done"), L2("مستمر", "Ongoing"), L2("جارٍ التنفيذ", "In progress")];
+  const cv = i => `--c:${SECC[i]}`;
+  const card = (cls, span, body, i, style) => `<div class="wc ${cls}" style="grid-column:span ${span[0]};grid-row:span ${span[1]};--i:${i};${style || ""}">${body}</div>`;
+  const yearsHTML = (pred, label) => { const a = YEARS.map(() => 0); for (let i = 0; i < NP; i++) { const p = P[i]; if (pred(p) && fpass(p)) a[clamp(p.y, 2014, 2030) - 2014]++; }
+    const mx = Math.max(1, ...a), yn = yearNow();
+    return `<div class="k"><span>${label}</span></div><div class="yr">${a.map((v, j) => `<div class="${YEARS[j] === yn ? "cur" : YEARS[j] < yn ? "on" : ""}"><i style="height:${Math.round(6 + 94 * v / mx)}%"></i><em>${String(YEARS[j]).slice(2)}</em></div>`).join("")}</div>`; };
+  const statusHTML = ids => { const c = [0, 0, 0]; ids.forEach(i => c[KD(P[i])]++); const n = Math.max(1, ids.length);
+    return `<div class="k"><span>${L2("حالة التنفيذ", "Status")}</span></div><div class="sp"></div><div class="three">${c.map((v, j) => `<div><b>${NF(v)}</b><span><i style="background:${KDC[j]}"></i>${KDN[j]}</span></div>`).join("")}</div>
+      <div class="stk">${c.map((v, j) => `<i style="width:${(100 * v / n).toFixed(1)}%;background:${KDC[j]}"></i>`).join("")}</div>`; };
+  const topList = (pairs, max, color) => { const mx = Math.max(1, ...pairs.map(q => q[1]));
+    return `<ol>${pairs.slice(0, max).map(([nm, v, c]) => `<li style="${c ? "--c:" + c : ""}"><span class="nm">${c ? "<i></i>" : ""}${esc(nm)}</span><b>${NF(v)}</b><span class="bar"><i style="width:${(100 * v / mx).toFixed(1)}%;${color ? "background:" + color : ""}"></i></span></li>`).join("")}</ol>`; };
+  const visIds = pred => { const o = []; for (let i = 0; i < NP; i++) if (stat.vis[i] && pred(P[i])) o.push(i); return o; };
+  const govPairs = ids => { const m = {}; ids.forEach(i => P[i].g.forEach(g => m[g] = (m[g] || 0) + 1)); return Object.keys(m).map(g => [GN[g] || g, m[g]]).sort((a, b) => b[1] - a[1]); };
+  const mnPairs = ids => { const m = {}; ids.forEach(i => { const k = P[i].mn; if (k) m[k] = (m[k] || 0) + 1; }); return Object.keys(m).map(k => [k, m[k]]).sort((a, b) => b[1] - a[1]); };
+  const projList = (ids, max) => `<ol class="pl">${ids.slice().sort((a, b) => (P[b].tr || 0) - (P[a].tr || 0) || P[b].y - P[a].y).slice(0, max).map(i => `<li style="${cv(P[i].sc)}"><span class="nm"><i></i>${esc(P[i].n)}</span></li>`).join("")}</ol>`;
+
+  /* ---- the stage the map is in ---- */
+  function stage(){
+    const pi = S.selP >= 0 ? S.selP : (S.show && sim.on && sim.pi >= 0 ? sim.pi : -1);
+    if (pi >= 0) return {k: "p", pi};
+    if (S.selG) return {k: "g", g: S.selG};
+    if (S.sec >= 0) return {k: "a", s: S.sec};
+    if (S.playing || (typeof TLS !== "undefined" && TLS.open)) return {k: "y", y: yearNow()};
+    return {k: "h"};
+  }
+  const keyOf = s => [s.k, s.pi, s.g, s.s, s.y, S.show ? 1 : 0, s.k === "h" || s.k === "a" || s.k === "g" ? yearNow() : "", EN ? 1 : 0].join("|");
+
+  /* ---- the right screen: numbers and key points ---- */
+  function right(s){
+    const yn = yearNow(), showK = S.show ? L2("وضع العرض · ", "Show · ") : "";
+    let kick = "", title = "", c = "#3d5cc0", cards = [];
+    if (s.k === "p") {
+      const p = P[s.pi], kd = KD(p); c = SECC[p.sc];
+      kick = showK + L2("مشروع", "Project"); title = SECS[p.sc].n;
+      const loc = p.admLoc ? (GNF(p.g[0]) || "—") : LCF(p.lc) || (p.g[0] ? GNF(p.g[0]) : (p.nat ? L2("على مستوى الجمهورية", "Nationwide") : "—"));
+      const when = p.yd === 0 ? [L2("سنة الانتهاء أو التشغيل", "Completion / opening"), String(p.y)] : p.yd === 1 ? [L2("البداية", "Started"), String(p.y)] : [L2("التوقيت", "Timing"), L2("جارٍ حاليًا", "Under way")];
+      const cost = p.cd && p.cd !== "—" ? p.cd : L2("غير محددة", "Not stated"), ds = p.bf || p.sm || "";
+      cards.push(card("xs hero", [4, 1], `<span class="chip">${svgI(p.sc)}${esc(SECS[p.sc].n)}</span><div class="sp"></div><div class="t">${esc(p.n)}</div><div class="u">${esc(loc)}</div>`, 0, cv(p.sc)));
+      cards.push(card("", [2, 1], `<div class="k"><span>${L2("الجهة", "Entity")}</span></div><div class="sp"></div><div class="lgw">${lgHTML(p.mn, "") || ""}<div class="t">${esc(p.mn || "—")}</div></div>`, 1));
+      cards.push(card("a", [1, 1], `<div class="k"><span>${when[0]}</span></div><div class="sp"></div><div class="n ${when[1].length > 5 ? "xs" : "s"}">${esc(when[1])}</div>`, 2));
+      cards.push(card("", [1, 1], `<div class="k"><span>${L2("الحالة", "Status")}</span></div><div class="sp"></div><div class="t" style="color:${KDC[kd]}">${esc(stLabel(p))}</div><div class="stk"><i style="width:100%;background:${KDC[kd]}"></i></div>`, 3));
+      cards.push(card("e", [ds ? 1 : 4, 1], `<div class="k"><span>${L2("التكلفة", "Cost")}</span></div><div class="sp"></div><div class="t">${esc(cost)}</div>`, 4));
+      if (ds) cards.push(card("", [3, 1], `<div class="k"><span>${L2("نبذة", "About")}</span></div><div class="p" style="--cl:4">${esc(ds)}</div>`, 5));
+    } else if (s.k === "g") {
+      const ids = visIds(p => p.g.includes(s.g)); kick = L2("محافظة", "Governorate"); title = GNF(s.g);
+      const by = SECS.map((x, i) => [x.n, ids.filter(j => P[j].sc === i).length, SECC[i]]).sort((a, b) => b[1] - a[1]);
+      cards.push(card("g", [2, 1], `<div class="k"><span>${L2("مشروعات المحافظة حتى ", "Projects up to ") + yn}</span></div><div class="sp"></div><div class="n">${NF(ids.length)}</div><div class="u">${L2("مشروعًا · ", "projects · ") + NF(mnPairs(ids).length) + L2(" جهة", " entities")}</div>`, 0));
+      cards.push(card("", [2, 2], `<div class="k"><span>${L2("حسب المحور", "By axis")}</span></div>${topList(by, 6)}`, 1));
+      cards.push(card("a", [2, 1], statusHTML(ids), 2));
+      cards.push(card("", [2, 1], yearsHTML(p => p.g.includes(s.g), L2("المشروعات حسب السنة", "Projects by year")), 3));
+      cards.push(card("", [2, 1], `<div class="k"><span>${L2("أكثر الجهات", "Leading entities")}</span></div>${topList(mnPairs(ids), 3, "#3c8ca4")}`, 4));
+    } else if (s.k === "a") {
+      const ids = visIds(p => p.sc === s.s), all = Math.max(1, visIds(() => true).length); c = SECC[s.s];
+      kick = L2("محور", "Axis"); title = SECS[s.s].n;
+      cards.push(card("xs", [2, 1], `<div class="k"><span class="ic">${svgI(s.s)}</span><span>${L2("مشروعات المحور حتى ", "Projects up to ") + yn}</span></div><div class="sp"></div><div class="n">${NF(ids.length)}</div><div class="u">${Math.round(100 * ids.length / all)}% ${L2("من كل المشروعات على الخريطة", "of all projects on the map")}</div>`, 0, cv(s.s)));
+      cards.push(card("a", [2, 1], statusHTML(ids), 1));
+      cards.push(card("", [2, 1], yearsHTML(p => p.sc === s.s, L2("المشروعات حسب السنة", "Projects by year")), 2, cv(s.s)));
+      cards.push(card("", [2, 1], `<div class="k"><span>${L2("أكثر المحافظات", "Leading governorates")}</span></div>${topList(govPairs(ids), 4, SECC[s.s])}`, 3));
+      cards.push(card("", [2, 1], `<div class="k"><span>${L2("أكثر الجهات", "Leading entities")}</span></div>${topList(mnPairs(ids), 3, "#3c8ca4")}`, 4));
+      cards.push(card("x", [2, 1], `<div class="k"><span>${L2("من أبرز المشروعات", "Highlights")}</span></div>${projList(ids, 4)}`, 5, cv(s.s)));
+    } else if (s.k === "y") {
+      const ids = visIds(() => true), now = ids.filter(i => P[i].y === s.y);
+      kick = L2("الزمن", "Timeline"); title = L2("مصر في ", "Egypt in ") + s.y;
+      cards.push(card("e", [2, 1], `<div class="k"><span>${L2("السنة", "Year")}</span></div><div class="sp"></div><div class="n">${s.y}</div><div class="u">${NF(ids.length) + L2(" مشروعًا على الخريطة بنهايتها", " projects on the map by its end")}</div>`, 0));
+      cards.push(card("g", [2, 1], `<div class="k"><span>${L2("ما تحقق في هذه السنة", "Delivered this year")}</span></div><div class="sp"></div><div class="n">${NF(now.length)}</div><div class="u">${L2("مشروعًا", "projects")}</div>`, 1));
+      cards.push(card("", [4, 1], yearsHTML(() => true, L2("المشروعات حسب السنة", "Projects by year")), 2));
+      cards.push(card("", [2, 1], `<div class="k"><span>${L2("حسب المحور في ", "By axis in ") + s.y}</span></div>${topList(SECS.map((x, i) => [x.n, now.filter(j => P[j].sc === i).length, SECC[i]]).sort((a, b) => b[1] - a[1]), 3)}`, 3));
+      cards.push(card("a", [2, 1], `<div class="k"><span>${L2("من مشروعات ", "Projects of ") + s.y}</span></div>${projList(now, 4)}`, 4));
+    } else {
+      const ids = visIds(() => true), n = Math.max(1, ids.length);
+      kick = L2("الرئيسية", "Home"); title = L2("مصر 2014 – 2030", "Egypt 2014 – 2030");
+      cards.push(card("g", [2, 1], `<div class="k"><span>${L2("مشروعات على الخريطة حتى ", "Projects on the map up to ") + yn}</span></div><div class="sp"></div><div class="n">${NF(ids.length)}</div><div class="u">${L2("في ", "in ") + NF(govPairs(ids).length) + L2(" محافظة · ", " governorates · ") + NF(mnPairs(ids).length) + L2(" جهة", " entities")}</div>`, 0));
+      cards.push(card("a", [2, 1], statusHTML(ids), 1));
+      SECS.forEach((x, i) => { const v = ids.filter(j => P[j].sc === i).length;
+        cards.push(card("x", [1, 1], `<div class="k"><span class="ic">${svgI(i)}</span></div><div class="sp"></div><div class="n s">${NF(v)}</div><div class="u">${esc(x.n)}</div><div class="bar"><i style="width:${(100 * v / n).toFixed(1)}%"></i></div>`, 2 + i, cv(i))); });
+      cards.push(card("", [2, 1], yearsHTML(() => true, L2("المشروعات حسب السنة", "Projects by year")), 8));
+    }
+    return {head: `<div class="tt" style="--c:${c}"><small><i></i>${esc(kick)}</small><h2>${esc(title)}</h2></div><div class="br"><b>${L2("مسيرة التنمية", "The Development Journey")}</b><span>${L2("رئاسة مجلس الوزراء", "The Cabinet of Egypt")}</span></div>`, body: cards.join("")};
+  }
+
+  /* ---- the left screen: the photos of what is on the map ---- */
+  const PH = () => typeof EGPH !== "undefined" && EGPH.state && EGPH.state.loaded;
+  const phCount = p => { try { return PH() ? EGPH.count(p) || 0 : 0; } catch (e) { return 0; } };
+  let rot = 0, phSlots = [];
+  const SPANS = [[2, 2], [1, 1], [1, 1], [1, 1], [1, 1], [2, 1], [2, 1]];
+  function left(s){
+    let kick = L2("صور المشروعات", "Project photos"), title = "", items = [], c = "#3d5cc0";
+    const scope = s.k === "p" ? null : s.k === "g" ? (p => p.g.includes(s.g)) : s.k === "a" ? (p => p.sc === s.s) : s.k === "y" ? (p => p.y === s.y) : (() => true);
+    if (s.k === "p") { const p = P[s.pi]; c = SECC[p.sc]; title = p.n; const l = PH() ? (EGPH.list(p) || []) : [];
+      items = l.slice(0, 7).map(o => ({o, pi: s.pi, cap: o.cap || ""})); }
+    else { let ids = visIds(scope).filter(i => phCount(P[i]) > 0).sort((a, b) => (P[b].tr || 0) - (P[a].tr || 0) || P[b].y - P[a].y);
+      if (s.k === "y" && !ids.length) ids = visIds(() => true).filter(i => phCount(P[i]) > 0);
+      title = s.k === "g" ? GNF(s.g) : s.k === "a" ? SECS[s.s].n : s.k === "y" ? L2("مشروعات ", "Projects of ") + s.y : L2("من مشروعات مسيرة التنمية", "From the journey's projects");
+      if (s.k === "a") c = SECC[s.s];
+      const n = ids.length, off = n > 7 ? (rot * 7) % n : 0;
+      for (let j = 0; j < Math.min(7, n); j++) { const pi = ids[(off + j) % n], l = EGPH.list(P[pi]); if (l && l[0]) items.push({o: l[0], pi, cap: P[pi].n}); } }
+    phSlots = [];
+    const cards = items.map((it, j) => { const p = P[it.pi]; phSlots.push(it);
+      return card("ph", SPANS[j], `<img alt="" data-j="${j}"><span class="wait">${svgI(p.sc)}</span><div class="wcap"><b>${esc(s.k === "p" ? (it.cap || p.n) : p.n)}</b><span><i></i>${esc(SECS[p.sc].n)}${s.k === "p" ? "" : " · " + esc(String(p.y))}</span></div>`, j, cv(p.sc)); });
+    if (!items.length) {
+      const p = s.k === "p" ? P[s.pi] : null, sc = p ? p.sc : s.k === "a" ? s.s : -1;
+      cards.push(card("a no", [4, 1], `${sc >= 0 ? `<span class="ic" style="${cv(sc)}">${svgI(sc)}</span>` : ""}<div class="t">${PH() ? L2("لا توجد صور لهذا المشروع بعد", "No photos for this project yet") : L2("الصور بتتحمّل…", "Loading photos…")}</div>`, 0));
+      if (s.k !== "p") cards.push(card("", [4, 2], `<div class="k"><span>${L2("مشروعات في هذه المرحلة", "Projects at this stage")}</span></div>${projList(visIds(scope), 8)}`, 1));
+    } else if (items.length < 7) {
+      const used = items.reduce((a, it, j) => a + SPANS[j][0] * SPANS[j][1], 0), rest = 12 - used;
+      if (rest >= 2 && s.k === "p") { const p = P[s.pi]; cards.push(card("x", [rest >= 4 ? 4 : 2, rest >= 4 ? Math.floor(rest / 4) : 1], `<div class="k"><span>${L2("عن المشروع", "About")}</span></div><div class="p" style="--cl:6">${esc(p.bf || p.sm || p.n)}</div>`, items.length, cv(p.sc))); }
+    }
+    return {head: `<div class="tt" style="--c:${c}"><small><i></i>${esc(kick)}</small><h2>${esc(title)}</h2></div>`, body: cards.join("")};
+  }
+  /* photos arrive one by one: each card takes its picture when it is ready */
+  function fillPhotos(){ WL.querySelectorAll("img[data-j]").forEach(im => { const it = phSlots[+im.dataset.j]; if (!it) return; const u = it.o.url; if (!u || /#ph-/.test(u)) return; if (im.getAttribute("src") !== u) { im.onload = () => im.classList.add("ok"); im.src = u; } }); }
+
+  function put(el, d, k){ const g = el.querySelector(".wg"), h = el.querySelector(".wh");
+    if (el.dataset.k === k) return; const first = !el.dataset.k; el.dataset.k = k;
+    const go = () => { h.innerHTML = d.head; g.innerHTML = d.body; g.classList.remove("out"); if (el === WL) fillPhotos(); };
+    if (first) go(); else { g.classList.add("out"); setTimeout(go, 200); } }
+  let last = "", lastPh = -1, t0 = 0;
+  function tick(){ try {
+    const s = stage(), k = keyOf(s), ph = PH() ? 1 : 0;
+    if (k !== last || ph !== lastPh) { last = k; lastPh = ph; rot = 0; t0 = performance.now(); put(WR, right(s), k + "|" + ph); put(WL, left(s), k + "|" + ph + "|0"); }
+    else if (s.k !== "p" && performance.now() - t0 > 14000) { t0 = performance.now(); rot++; put(WL, left(s), k + "|" + ph + "|" + rot); }
+    fillPhotos();
+  } catch (e) { if (!tick.err) { tick.err = 1; console.warn("wall:", e && e.message, e && e.stack && e.stack.slice(0, 300)); } } }
+  setInterval(tick, 400); setTimeout(tick, 50);
+  if (QS.has("test")) window.__wall = {PH, stage, keyOf, left, right, get last(){ return [last, lastPh]; }};
+})();
+
 /* ================= v140 lab: every control of the map in one place, for the 4-metre touch wall (7680×1080) =================
    ?ctl=float — one glass console the presenter drags with a finger to wherever he stands (a long press on the map calls it there),
                 that shrinks to a round puck; the lists panel and the show controls follow it.
@@ -27494,7 +27814,7 @@ html.ctl-deck.ctl-lists #colL{top:auto;bottom:var(--ctlLB,12rem);height:var(--ct
   const barsH = `<div class="bars">` + YEARS.map((y, i) => `<button type="button" data-k="yr" data-y="${y}" aria-label="${y}"><i></i></button>`).join("") + `</div>`;
   const timeH = `<div class="ctime"><button type="button" class="play" data-k="play" aria-label="${T("تشغيل")}">${sv("play", 28)}</button>${barsH}<div class="yr"><b>2026</b><small>${T("السنة")}</small></div><button type="button" class="tlx" data-k="tlx" aria-pressed="false">${sv("up", 20)}${T("اكشف السنة")}</button></div>`;
   const viewH = `<div class="segs"><div class="seg" data-g="mode"><button type="button" data-k="mode" data-m="surface">${sv("surf", 20)}${T("السطح")}</button><button type="button" data-k="mode" data-m="density">${sv("dens", 20)}${T("الكثافة")}</button><button type="button" data-k="mode" data-m="layers">${sv("lay", 20)}${T("الطبقات")}</button></div>
-    <div class="seg" data-g="theme"><button type="button" data-k="theme" data-t="twin">${T("رقمي")}</button><button type="button" data-k="theme" data-t="sand">${T("رملي")}</button><button type="button" data-k="lang">${EN ? "عربي" : "EN"}</button></div></div>`;
+    <div class="seg" data-g="theme">${LOOK === "glass" ? "" : `<button type="button" data-k="theme" data-t="twin">${T("رقمي")}</button><button type="button" data-k="theme" data-t="sand">${T("رملي")}</button>`}<button type="button" data-k="lang">${EN ? "عربي" : "English"}</button></div></div>`;
   const camH = `<div class="cam"><div class="joy" data-k="joy"><span class="a" style="top:10px;left:50%;margin-left:-6px">▲</span><span class="a" style="bottom:10px;left:50%;margin-left:-6px">▼</span><span class="a" style="left:12px;top:50%;margin-top:-8px">◀</span><span class="a" style="right:12px;top:50%;margin-top:-8px">▶</span><span class="k"></span></div>
     <div class="cbt"><button type="button" data-h="zi" aria-label="${T("تقريب")}">${sv("zi", 24)}</button><button type="button" data-h="zo" aria-label="${T("تبعيد")}">${sv("zo", 24)}</button><button type="button" data-h="rl" aria-label="${T("لف")}">${sv("rl", 24)}</button><button type="button" data-h="rr" aria-label="${T("لف")}">${sv("rr", 24)}</button></div></div>`;
   if (FLOAT) el.innerHTML = `<div class="cbox"><div class="chd"><span class="grip" data-k="grip" title="${T("اسحب لتحريك اللوحة")}">${sv("grip", 26)}</span><b>${T("لوحة التحكم")}</b><span class="sp"></span>
@@ -27510,15 +27830,19 @@ html.ctl-deck.ctl-lists #colL{top:auto;bottom:var(--ctlLB,12rem);height:var(--ct
   /* ---- where the console stands (float): remembered on this screen, never off it ---- */
   let pos = null; try { pos = JSON.parse(localStorage.getItem("egymap.ctl") || "null"); } catch (e) {}
   const app = $("app");
-  function place(x, y, anim){ const A = app.getBoundingClientRect(), r = el.getBoundingClientRect(), w = r.width || 660, h = r.height || 560;
-    x = clamp(x, 8, A.width - w - 8); y = clamp(y, 8, A.height - h - 8); el.classList.toggle("drag", !anim); el.style.setProperty("--cx", x + "px"); el.style.setProperty("--cy", y + "px"); pos = {x: x / A.width, y: y / A.height};
+  /* v142: on the wall the console keeps to the two middle screens (the outer ones are for reading) and never sits across the seam of two screens */
+  const zone = () => { const A = app.getBoundingClientRect(), a = $("wallL"), b = $("wallR"); return [a ? a.getBoundingClientRect().right - A.left + 8 : 8, b ? b.getBoundingClientRect().left - A.left - 8 : A.width - 8]; };
+  const seams = () => { if (typeof WALL === "undefined" || !WALL) return []; const Wd = app.getBoundingClientRect().width; return [1, 2, 3].map(k => Wd * k / 4); };
+  const snapB = (l, w) => { for (const b of seams()) if (l < b - 2 && l + w > b + 2) l = (b - l) > w / 2 ? b - w - 16 : b + 16; return l; };
+  function place(x, y, anim){ const A = app.getBoundingClientRect(), r = el.getBoundingClientRect(), w = r.width || 660, h = r.height || 560, Z = zone();
+    x = clamp(snapB(x, w), Z[0], Z[1] - w); y = clamp(y, 8, A.height - h - 8); el.classList.toggle("drag", !anim); el.style.setProperty("--cx", x + "px"); el.style.setProperty("--cy", y + "px"); pos = {x: x / A.width, y: y / A.height};
     try { localStorage.setItem("egymap.ctl", JSON.stringify(pos)); } catch (e) {} }
-  if (FLOAT) setTimeout(() => { const A = app.getBoundingClientRect(); if (pos) place(pos.x * A.width, pos.y * A.height, false); else place(A.width * 0.5 + 420, A.height, false); }, 60);
+  if (FLOAT) setTimeout(() => { const A = app.getBoundingClientRect(); if (pos) place(pos.x * A.width, pos.y * A.height, false); else place(seams().length ? A.width * 0.5 + 60 : A.width * 0.5 + 420, A.height, false); }, 60);
   /* drag by the grip (finger or mouse) */
   if (FLOAT) { const g = Q(".grip"); let d = null;
     g.addEventListener("pointerdown", e => { e.preventDefault(); e.stopPropagation(); act(); const r = el.getBoundingClientRect(), A = app.getBoundingClientRect(); d = {id: e.pointerId, ox: e.clientX - r.left + A.left, oy: e.clientY - r.top + A.top}; try { g.setPointerCapture(e.pointerId); } catch (x) {} el.classList.add("drag"); });
     g.addEventListener("pointermove", e => { if (!d || e.pointerId !== d.id) return; place(e.clientX - d.ox, e.clientY - d.oy, false); });
-    const end = e => { if (!d || (e && e.pointerId !== d.id)) return; d = null; el.classList.remove("drag"); };
+    const end = e => { if (!d || (e && e.pointerId !== d.id)) return; d = null; el.classList.remove("drag"); const r = el.getBoundingClientRect(), A = app.getBoundingClientRect(); place(r.left - A.left, r.top - A.top, true); };
     ["pointerup", "pointercancel", "lostpointercapture"].forEach(ev => g.addEventListener(ev, end)); }
   /* a long press on the map calls the console to where the finger is */
   if (FLOAT) { let lp = null;
@@ -27578,11 +27902,18 @@ html.ctl-deck.ctl-lists #colL{top:auto;bottom:var(--ctlLB,12rem);height:var(--ct
   function follow(){
     const A = app.getBoundingClientRect(), r = el.querySelector(el.classList.contains("min") ? ".puck" : ".cbox").getBoundingClientRect();
     if (!FLOAT) { const w = el.querySelector(".cbox").offsetWidth || 2400, k = Math.min(1, (A.width - 24) / w); if (Math.abs(k - (+el.style.getPropertyValue("--ds") || 1)) > 0.005) el.style.setProperty("--ds", k.toFixed(3)); }
-    if (FLOAT && !el.classList.contains("drag") && r.height && (r.bottom > A.bottom + 1 || r.right > A.right + 1 || r.top < A.top - 1 || r.left < A.left - 1)) place(r.left - A.left, r.top - A.top, true);   /* never off the screen (after a resize or a change of size) */
+    const Z = zone();
+    if (FLOAT && !el.classList.contains("drag") && r.height && (r.bottom > A.bottom + 1 || r.right - A.left > Z[1] + 1 || r.top < A.top - 1 || r.left - A.left < Z[0] - 1)) place(r.left - A.left, r.top - A.top, true);   /* never off the screen (after a resize or a change of size) */
     if (H.classList.contains("ctl-lists") && colL) { const w = colL.offsetWidth || 330;
-      if (FLOAT) { const left = r.left - A.left > w + 24 ? r.left - A.left - w - 14 : r.right - A.left + 14; colL.style.left = left + "px"; }
+      if (FLOAT) { const rl = r.left - A.left, rr = r.right - A.left; let left = seams().length ? (rr + 14 + w <= Z[1] ? rr + 14 : rl - w - 14) : (rl - Z[0] > w + 24 ? rl - w - 14 : rr + 14); left = clamp(snapB(left, w), Z[0], Z[1] - w); colL.style.left = left + "px"; }
       else { colL.style.left = (r.left - A.left) + "px"; H.style.setProperty("--ctlLB", (A.bottom - r.top + 12) + "px"); H.style.setProperty("--ctlLH", Math.max(320, r.top - A.top - 96) + "px"); } }
-    const sx = document.querySelector(".stxc"); if (sx && FLOAT && !sx.hidden) { const cx = r.left + r.width / 2, sw = sx.offsetWidth || 700; sx.style.left = clamp(cx, sw / 2 + 8, innerWidth - sw / 2 - 8) + "px";
+    /* the search panel with its keyboard opens beside the console, at the height of its foot, not across the whole screen */
+    const sr = $("srch"); if (sr && !sr.hidden && FLOAT) { const rl = r.left - A.left, rr = r.right - A.left, lists = H.classList.contains("ctl-lists") && colL ? colL.getBoundingClientRect() : null;
+      const lr = lists && lists.width ? [lists.left - A.left, lists.right - A.left] : null; const roomL = (lr && lr[1] <= rl + 1 ? lr[0] : rl) - 14 - Z[0], roomR = Z[1] - (lr && lr[0] >= rr - 1 ? lr[1] : rr) - 14;
+      const want = 900, toL = seams().length ? roomL >= 640 || roomL >= roomR : roomL >= Math.min(want, roomR) || roomL >= roomR; let w = Math.max(560, Math.min(want, toL ? roomL : roomR));
+      let left = toL ? (lr && lr[1] <= rl + 1 ? lr[0] : rl) - 14 - w : (lr && lr[0] >= rr - 1 ? lr[1] : rr) + 14; left = clamp(snapB(left, w), Z[0], Z[1] - w);
+      sr.style.right = "auto"; sr.style.left = left + "px"; sr.style.width = w + "px"; sr.style.bottom = Math.max(8, A.bottom - r.bottom) + "px"; }
+    const sx = document.querySelector(".stxc"); if (sx && FLOAT && !sx.hidden) { const cx = r.left + r.width / 2, sw = sx.offsetWidth || 700; sx.style.left = (A.left + clamp(snapB(cx - A.left - sw / 2, sw) + sw / 2, Z[0] + sw / 2, Z[1] - sw / 2)) + "px";
       sx.style.bottom = (innerHeight - r.bottom < 190 ? innerHeight - r.top + 14 : 14) + "px"; }
   }
   setInterval(() => { try { sync(); follow(); } catch (e) {} }, 200);

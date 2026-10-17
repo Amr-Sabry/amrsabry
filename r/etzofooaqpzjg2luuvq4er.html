@@ -7,8 +7,9 @@
 <meta name="theme-color" content="#0a2530">
 <title>مسيرة التنمية</title>
 <link rel="stylesheet" href="/r/egymap/lib/fonts.css">
-<style>:root{color-scheme:dark}html,body{margin:0;height:100%;background:#0a1c44}[hidden]{display:none!important}</style>
+<style>:root{color-scheme:light}html,body{margin:0;height:100%;background:#eef1f8}[hidden]{display:none!important}</style>
 <script>window.EG_BASE="/r/egymap/";window.EG_HOSTED=true</script>
+<script>window.AromaMascot={say:function(){}};window.EG_LOOK="glass";window.EG_CTL="float"</script>
 <script src="/r/egymap/ph/photos.js"></script>
 <script>
 /* comment tool (aroma-notes.js): the mascot and his button stay away with ?kiosk and while the show is running */
@@ -1365,7 +1366,7 @@ html[data-lang="en"] #bLang{font-family:"Madani Arabic","Noto Kufi Arabic","Mada
 <script>
 (function(){
   var base = window.EG_BASE, tries = 0;
-  function part(i){ return fetch(base + "applab/app." + i + ".txt?v=fa9ca9cd44").then(function(r){ if (!r.ok) throw new Error(r.status); return r.blob(); }); }
+  function part(i){ return fetch(base + "applab/app." + i + ".txt?v=bc3c8ae04f").then(function(r){ if (!r.ok) throw new Error(r.status); return r.blob(); }); }
   function go(){
     Promise.all([part(0), part(1)]).then(function(b){
       var s = document.createElement("script"); s.src = URL.createObjectURL(new Blob(b, {type: "text/javascript"})); document.body.appendChild(s);
@@ -1582,4 +1583,4 @@ html[data-lang="en"] #bLang{font-family:"Madani Arabic","Noto Kufi Arabic","Mada
 
 </script>
 </body></html>
-<!-- egymap room v140 -->
+<!-- egymap room v142 -->

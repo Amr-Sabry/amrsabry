@@ -707,7 +707,10 @@ const $ = id => document.getElementById(id);
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const coarse = matchMedia("(pointer: coarse)").matches;
 const QS = new URLSearchParams(location.search);
-const CTLM = (QS.get("ctl") || "").toLowerCase();   /* v140 lab: float | deck */
+const CTLM = (QS.get("ctl") || window.EG_CTL || "").toLowerCase();
+const WALL = (() => { const w = String(QS.get("wall") || window.EG_WALL || "auto").toLowerCase(); if (w === "0" || w === "off") return false; if (w === "1" || w === "on") return true; return !!CTLM && innerWidth / Math.max(1, innerHeight) >= 3; })();   /* v142 lab: the 4-metre wall */
+const LOOK = (QS.get("look") || window.EG_LOOK || "").toLowerCase();   /* v141 lab: glass */
+var GLASS_PASS = null;   /* v140 lab: float | deck */
 const EGB = window.EG_BASE || "";      /* where the files beside the page live: "" (artifact, offline package) or "/r/<project>/" in an Aroma Hub room */
 const lerp = (a, b, t) => a + (b - a) * t;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -723,7 +726,7 @@ function lcDetail(p){ const t = String(p.lc || "").trim(); if (!t) return ""; co
 const REGION = {"EG-C":"u","EG-ALX":"u","EG-PTS":"u","EG-SUZ":"u","EG-DT":"l","EG-DK":"l","EG-KFS":"l","EG-BH":"l","EG-GH":"l","EG-SHR":"l","EG-MNF":"l","EG-KB":"l","EG-IS":"l","EG-GZ":"s","EG-FYM":"s","EG-BNS":"s","EG-MN":"s","EG-AST":"s","EG-SHG":"s","EG-KN":"s","EG-LX":"s","EG-ASN":"s","EG-MT":"f","EG-WAD":"f","EG-BA":"f","EG-SIN":"f","EG-JS":"f"};
 /* one colour per sector, used by beams, layers, ring arcs and the interface */
 /* v128: one colour per axis (the same colours as the axis story) */
-const SECC = ["#ff5d5d", "#f2e64a", "#3fe07f", "#b388ff", "#4aa8ff", "#3de8d6"];
+const SECC = LOOK === "glass" ? ["#e0524f", "#d4920f", "#22a35c", "#8a5fe0", "#2f7fe0", "#14a596"] : ["#ff5d5d", "#f2e64a", "#3fe07f", "#b388ff", "#4aa8ff", "#3de8d6"];
 const ICON = [
   '<path d="M3 21V10l6 4V10l6 4V6h6v15z"/><path d="M7 17h2M12 17h2M17 17h2"/>',
   '<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
@@ -2107,7 +2110,7 @@ const THEME = {
 };
 const CITY_I = cityGlow.map(L => L.intensity);
 function applyTheme(name){
-  const T = THEME[name] ? name : "sand", t = THEME[T]; S.theme = T;
+  const T = LOOK === "glass" ? "twin" : THEME[name] ? name : "sand", t = THEME[T]; S.theme = T;
   document.documentElement.dataset.map = T;
   const tw = T === "twin";
   TU.uTwin.value = tw ? 1 : 0;
