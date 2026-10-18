@@ -442,6 +442,10 @@ svg.fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-in
 .gcs text{font-family:var(--f-display);paint-order:stroke;stroke-linejoin:round}
 .gcs .lnm{font-size:10px;font-weight:600;fill:#1c2547;stroke:rgba(255,255,255,.95);stroke-width:3px;text-anchor:middle;direction:rtl;unicode-bidi:plaintext}
 .d3on .fpan,.d3on .gcb,.d3on .gcz{opacity:0!important;pointer-events:none}
+.mapc.zm>svg.ov,.mapc.zm>svg.fx,.mapc.zm>.pins,.mapc.zm>svg.sh,.mapc.zm .fpan{opacity:0!important;transition:opacity .2s ease!important}
+.zming #links{opacity:0!important;transition:opacity .2s}
+.mapc.z>svg.grd{opacity:0!important}
+#imcap[src*="cap_t4"]{filter:brightness(.84) contrast(1.16) saturate(.86)}
 .gcon #calls,.gcon #links{opacity:0!important;transition:opacity .4s}
 /* ===== /center fx v2 ===== */
 </style>
@@ -614,7 +618,7 @@ map.innerHTML=`<svg class="sh" id="sh"></svg><div class="world" id="world"><img 
 stage.appendChild(map);
 const LINKS=document.createElementNS('http://www.w3.org/2000/svg','svg');LINKS.id='links';LINKS.setAttribute('viewBox','0 0 1600 900');stage.appendChild(LINKS);
 const LOOKN={1:'ستالايت طبيعي · تدريج ليلي',4:'ستالايت نهاري'};
-function setLook(n){look=n;imeg.src=`img/eg_t${n}.webp`;lkn.textContent=LOOKN[n];document.querySelectorAll('[data-look]').forEach(b=>b.classList.toggle('on',+b.dataset.look===n))}
+function setLook(n){look=n;imeg.src=`img/eg_t${n}.webp`;{const ic=document.getElementById('imcap');ic&&(ic.src=`img/cap_t${n}.webp`)}lkn.textContent=LOOKN[n];document.querySelectorAll('[data-look]').forEach(b=>b.classList.toggle('on',+b.dataset.look===n))}
 
 /* ---------- side cards: keep, move, swap content, add or remove by id ---------- */
 const CARDS={};
@@ -691,7 +695,7 @@ function fxHtml(keys,old){let h='',g='';const st=SL[step],cols=new Set();
   keys.forEach(key=>{const B=BUILD[key];if(!B)return;
     if(key==='grow')h+=`<g class="${old?'lo':''}">${(B.zones||[]).map(({z})=>`<path class="zbr" d="${z._d||(z._d=rings(z.g).map(r=>pth(r)+'Z').join(''))}"/>`).join('')}</g>`;
     (B.lines||[]).forEach(l=>{if(l.dash)return;const L=l._L??(l._L=plen(l.p));if(L<30)return;const n=Math.max(1,Math.round(L/320)),per=100/n,dash=Math.min(per*.45,42/L*100),d=l._d||(l._d=pth(l.p));
-      const da=`${dash.toFixed(3)} ${(per-dash).toFixed(3)}`,sty=`--t:${(Math.max(1.4,L/(l.rail?220:160))).toFixed(2)}s;--dl:-${(Math.random()*L/160).toFixed(2)}s`,c=l.rail?'rl':'r';
+      const da=`${dash.toFixed(3)} ${(per-dash).toFixed(3)}`,sty=`--t:${(Math.max(1.4,L/(l.rail?220:160))).toFixed(2)}s;--dl:-${(Math.random()*L/160).toFixed(2)}s`,c=l.rail||l.mono?'rl':'r';
       h+=`<g class="${old?'lo':''}"><path class="rn ${c}1" d="${d}" pathLength="100" stroke-dasharray="${da}" stroke-width="${(l.w*6).toFixed(1)}" style="${sty}"/><path class="rn ${c}2" d="${d}" pathLength="100" stroke-dasharray="${da}" stroke-width="${(l.w*2.6).toFixed(1)}" style="${sty}"/><path class="rn ${c}3" d="${d}" pathLength="100" stroke-dasharray="${da}" stroke-width="${(l.w*1.1).toFixed(1)}" style="${sty}"/></g>`});
     const N=B.nodes||[];if(!N.length)return;
     const og=old||B.og,grp=['','',''];N.forEach((n,i)=>{const[x,y]=S(...n.p),id=og?'hg'+String(n.c).replace('#','').toLowerCase():'ygr';if(og)cols.add(n.c);   /* fid: layers whose colour is the client's code glow in their own colours */
@@ -832,37 +836,51 @@ const AXN=['الطريق الساحلي الدولي (رفح / السلوم)','�
   'الزعفرانة / بني سويف (الكريمات) – العلمين','رأس غارب / (بني مزار): / (الواحات البحرية – سيوة) / و: (بني مزار) / رأس الحكمة','ملوي / الفرافرة',
   'طريق الصعيد / البحر الأحمر (سفاجا / الخارجة) / أرقين (أسيوط) – الداخلة – جنوبًا','مرسى علم – أدفو','رأس بناس / وادي أسوان / حلفا'];
 map.insertAdjacentHTML('beforeend',`<div class="fpan axl" id="axl"><div class="fph"><i></i>المحاور العرضية المقترحة</div><ol>${AXN.map((t,i)=>`<li><b>${i+1}</b><span>${t}</span></li>`).join('')}</ol></div>`);
-const GC={x0:30.8,x1:31.83,y0:29.855,y1:30.305};
-function gcBuild(){if(!window.CMD||!CMD.mono)return'';const M=CMD.mono,L=CMD.lrt,W0=725,top=12,k=W0/((GC.x1-GC.x0)*Math.cos(30.08*Math.PI/180)),
-    P=(lo,la)=>[(lo-GC.x0)*Math.cos(30.08*Math.PI/180)*k+10,(GC.y1-la)*k+top],H0=top+(GC.y1-GC.y0)*k,ph=pts=>pts.map((p,i)=>(i?'L':'M')+P(p[0],p[1]).map(v=>v.toFixed(1)).join(',')).join('');
-  let g='',ln='',nd='';const items=[],dots=[],f=v=>v.toFixed(1);
-  /* context: the Nile, metro line 3 and the high-speed line 1, as on the client's maps */
-  rings(GEO.nile||{type:'MultiLineString',coordinates:[]}).forEach(r=>{const q=r.filter(p=>p[0]>GC.x0-.1&&p[0]<GC.x1+.1&&p[1]>GC.y0-.1&&p[1]<GC.y1+.1);if(q.length>1)g+=`<path class="gnl" d="${ph(q)}"/>`});
-  M.ctx.forEach(c=>{g+=`<path class="gcx${c.dash?' ds':''}" d="${ph(c.pts)}" style="stroke:${c.dash?'#1fae5b':'#2fae5f'}"/>`;if(c.end){const[x,y]=P(...c.end[1]);nd+=`<circle class="gce" cx="${f(x)}" cy="${f(y)}" r="4.2"/>`;items.push({x,y,r:4.2,t:c.end[0],big:0})}
-    if(c.n){const a=P(...c.pts[Math.floor(c.pts.length*(c.dash?.45:.3))]);g+=`<text class="gcn" x="${f(a[0])}" y="${f(a[1]+(c.dash?16:-9))}">${c.n}</text>`}});
-  [...(M.areas||[]),...(L.areas||[])].forEach(a=>{const[x,y]=P(a[1],a[2]);g+=`<text class="gar" x="${f(x)}" y="${f(y)}">${a[0]}</text>`});
-  const net=(R,mono)=>R.routes.forEach(r=>{[{pts:r.pts,st:r.st},...(r.br||[])].forEach(s=>{const d=ph(s.pts);
-      ln+=mono?`<path class="gmo" d="${d}" style="stroke:${r.col}"/>`:`<path class="glc" d="${d}"/><path class="glr" d="${d}" style="stroke:${r.col}"/><path class="glt" d="${d}"/>`;
-      s.st.forEach(q=>{const[x,y]=P(q[0],q[1]);dots.push({x:x-5,y:y-5,w:10,h:10});nd+=`<circle class="${mono?'gsm':'gsl'}" cx="${f(x)}" cy="${f(y)}" r="${mono?4.6:4}" style="${mono?'fill':'stroke'}:${r.col}"/>`;if(q[2])items.push({x,y,r:4.6,t:q[2]})})})});
-  net(L,0);net(M,1);
-  const sn=new Set(),its=items.filter(o=>!sn.has(o.t)&&sn.add(o.t)).sort((a,b)=>a.x-b.x),res=lplace(its,W0+20,H0+8,[],[],dots);
-  return`<svg class="gcs" viewBox="0 0 ${W0+20} ${f(H0+8)}">${g}${ln}${nd}${labHtml(res.map(o=>Object.assign(o,{k:'nm'})))}</svg>`}
-map.insertAdjacentHTML('beforeend',`<div class="fpan gcp" id="gcp"><div class="fph"><i></i>القاهرة الكبرى · المونوريل والقطار الكهربائي الخفيف LRT</div><div class="gcm"></div>
-  <div class="gck"><span><i style="background:#2a3b86"></i>مونوريل غرب النيل · <b>43.8</b> كم · <b>13</b> محطة</span><span><i style="background:#ee9873"></i>مونوريل شرق النيل · <b>56.5</b> كم · <b>22</b> محطة</span><span class="gtt">إجمالي المونوريل <b>100.3</b> كم · <b>35</b> محطة</span></div>
-  <div class="gck"><span><i class="lr" style="--c:#2a3b86"></i>LRT المرحلتان الأولى والثانية · حوالي <b>70</b> كم · <b>12</b> محطة · افتتاح يوليو 2022</span><span><i class="lr" style="--c:#8e9be6"></i>الثالثة · <b>20.4</b> كم · <b>4</b> محطات</span><span><i class="lr" style="--c:#3c8ca4"></i>الرابعة · <b>16</b> كم · <b>3</b> محطات</span><span><i class="lr" style="--c:#ee9873"></i>الخامسة · <b>7.8</b> كم · <b>1</b> محطة</span></div></div>
-  <button class="gcb" id="gcb" type="button"><i></i>القاهرة الكبرى · المونوريل و LRT</button><i class="gcz" id="gcz"></i>`);
-const GCS={on:0,t:0,man:0,step:-1};
-function gcShow(on){const p=document.getElementById('gcp');if(!p)return;if(on&&!p._b){p.querySelector('.gcm').innerHTML=gcBuild();p._b=1}
-  const[cx,cy]=S(31.3,30.07),z=document.getElementById('gcz'),a=S(GC.x0,GC.y1),b=S(GC.x1,GC.y0);p.style.transformOrigin=`${(cx-p.offsetLeft).toFixed(0)}px ${(cy-p.offsetTop).toFixed(0)}px`;
-  Object.assign(z.style,{left:a[0]+'px',top:a[1]+'px',width:(b[0]-a[0])+'px',height:(b[1]-a[1])+'px'});GCS.on=on?1:0;p.classList.toggle('on',!!on);z.classList.toggle('on',!!on);document.getElementById('gcb').classList.toggle('act',!!on);
-  stage.classList.toggle('gcon',!!on)}
-function gcCycle(){clearTimeout(GCS.t);const tk=GCS.step;const sh=()=>{if(GCS.step!==tk||GCS.man)return;gcShow(1);GCS.t=setTimeout(()=>{if(GCS.step!==tk||GCS.man)return;gcShow(0);GCS.t=setTimeout(sh,11000)},17000)};GCS.t=setTimeout(sh,2600)}
-document.getElementById('gcb').addEventListener('click',e=>{e.stopPropagation();GCS.man=1;clearTimeout(GCS.t);gcShow(!GCS.on)});
-function fidPanels(st){const one=st.cur.length<=4,rd=one&&st.cur.includes('roads'),rl=one&&st.cur.includes('rail'),k=KEEP.has('roads')?1:drawK;
-  document.getElementById('axl').classList.toggle('on',rd&&k>=.6);
-  document.getElementById('gcb').classList.toggle('on',rl);
-  if(GCS.step!==step){GCS.step=step;GCS.man=0;clearTimeout(GCS.t);if(GCS.on)gcShow(0);GCS.arm=rl?1:0}
-  if(rl&&GCS.arm&&drawK>=1){GCS.arm=0;GCS.t=setTimeout(gcCycle,(SL[step].on.length?D3DUR:0)+400)}}
+function fidPanels(st){const one=st.cur.length<=4,rd=one&&st.cur.includes('roads'),k=KEEP.has('roads')?1:drawK;
+  document.getElementById('axl').classList.toggle('on',rd&&k>=.6)}
+/* ===== fid v2 (Amr 18:57: «طريقة ظهور المونوريل غبية · زود سلايد بمعلومات · التزم بالأسلوب»): a slide of its own for the monorail
+   and the LRT, in the deck's style — the camera flies into Greater Cairo on a zoom-10 satellite, the lines draw themselves with every
+   station named as on the client's maps 49 and 50, cards on the right, the photos fly out of their stations, 2D → 3D → 2D ===== */
+if(window.CMD&&CMD.mono){const M=CMD.mono,L=CMD.lrt,PC2={'#2a3b86':'#2a3b86','#ee9873':'#cf5a26','#8e9be6':'#5561c4','#3c8ca4':'#2a7a91'},ml=[],mn=[],seen=new Set(),
+    RPm=c=>`repeating-linear-gradient(90deg,#fff 0 4px,${c} 4px 8px)`;
+  const stn=(q,col,mono)=>{const id=q[2]||(q[0].toFixed(3)+','+q[1].toFixed(3));if(seen.has(id))return;seen.add(id);mn.push({p:[q[0],q[1]],r:mono?4.4:4.2,c:col,ring:1,n:q[2]||'',lc:'pill',lcol:PC2[col]||col})};
+  M.ctx.forEach(c=>{ml.push(c.dash?{p:c.pts,c:'#1fae5b',w:2.4,dash:1}:{p:c.pts,c:'#2fae5f',w:3,mono:1});if(c.end&&!seen.has(c.end[0])){seen.add(c.end[0]);mn.push({p:c.end[1],r:4.6,c:'#e11d48',n:c.end[0],lc:'pill',lcol:'#1a7a43'})}});
+  L.routes.forEach(r=>[{pts:r.pts,st:r.st},...(r.br||[])].forEach(s=>{ml.push({p:s.pts,c:r.col,w:3.4,rail:1});s.st.forEach(q=>stn(q,r.col,0))}));
+  M.routes.forEach(r=>{ml.push({p:r.pts,c:r.col,w:5.4,mono:1});r.st.forEach(q=>stn(q,r.col,1))});
+  const KM=[[31.775,30.315,'16 كم · 3 محطات'],[31.62,29.9,'20.4 كم · 4 محطات'],[31.81,29.86,'7.8 كم · 1 محطة'],[31.58,30.205,'حوالي 70 كم · 12 محطة'],[31.5,29.97,'56.5 كم · 22 محطة'],[30.92,30.05,'43.8 كم · 13 محطة']];
+  BUILD.metro={leg:[['#2a3b86','مونوريل غرب النيل'],['#ee9873','مونوريل شرق النيل'],[RPm('#2a3b86'),'LRT المرحلتان 1 و2'],[RPm('#8e9be6'),'المرحلة 3'],[RPm('#3c8ca4'),'المرحلة 4'],[RPm('#ee9873'),'المرحلة 5'],['#2fae5f','مترو الخط الثالث'],['#1fae5b','القطار السريع']],
+    lines:ml,nodes:mn,og:1,
+    marks:[...[...(M.areas||[]),...(L.areas||[])].filter((a,i,A)=>A.findIndex(b=>b[0]===a[0])===i).map(a=>({p:[a[1],a[2]],t:a[0],k:'area'})),...KM.map(q=>({p:[q[0],q[1]],t:q[2],k:'km'}))]};
+  ORDER.splice(ORDER.indexOf('rail')+1,0,'metro');
+  const MS={hd:['المونوريل والقطار الكهربائي الخفيف','القاهرة الكبرى والعاصمة الإدارية الجديدة'],map:['المونوريل و LRT','القاهرة الكبرى · مونوريل 100.3 كم · 35 محطة'],cam:'cairo',
+    on:['metro'],cur:['metro'],
+    right:[['t',[0,0,3,2],'grad',C.title('المونوريل و LRT','نقل جماعي كهربائي يربط القاهرة الكبرى بالعاصمة الإدارية','tram-front',28),'tram-front'],
+     ['a',[0,2,2,2],'dark',C.big('tram-front','إجمالي المونوريل','100.3','كم'),'tram-front'],
+     ['b',[2,2,1,1],'dark2',C.sm('map-pin','محطات المونوريل','35','محطة',38)],
+     ['c',[2,3,1,1],'mint',C.sm('train-front','LRT 1 و2','70','كم',38)],
+     ['d',[0,4,1,1],'dark',C.sm('arrow-right-left','شرق النيل','56.5','كم',36)],
+     ['e',[1,4,1,1],'dark',C.sm('arrow-right-left','غرب النيل','43.8','كم',36)],
+     ['f',[2,4,1,1],'vio',C.sm('map-pin','محطات LRT','12','محطة',38)]],
+    call:{ll:[31.7359,29.9801],dx:-40,dy:150,n:'100.3',b:'كم مونوريل · 35 محطة',s:'يلتقي بالـ LRT في مدينة الفنون والثقافة',card:'a'},
+    photos:ph(PA,[['p56_monoe_a','مونوريل شرق النيل',[31.4146,30.0034]],['p56_monow','الاستعداد لافتتاح مونوريل غرب النيل',[31.0157,30.0304]],['p56_monoe_b','محطة جيهان السادات · مونوريل شرق النيل',[31.397,30.008]],
+      ['p56_lrt_b','القطار الكهربائي الخفيف LRT',[31.4357,30.136]],['p56_lrt_a','افتتاح المرحلتين الأولى والثانية من LRT',[31.6079,30.1667]]])};
+  const ri=SL.findIndex(s=>s.cur.length===1&&s.cur[0]==='rail');SL.splice(ri+1,0,MS);}
+/* the camera: Egypt for every slide, Greater Cairo for the metro slide; it flies between them (anchored zoom), the overlay steps aside
+   while it moves and redraws on the new view; the zoom-10 satellite of Cairo fades in over the zoom-7 one */
+document.getElementById('world').insertAdjacentHTML('beforeend','<img class="cap" id="imcap" alt="" style="left:736px;top:384px;width:192px;height:160px">');
+{const ic=document.getElementById('imcap');ic.src=`img/cap_t${look===1?1:4}.webp`}
+const CAM0=cam,ZMS=1500;
+function camOf(st){if(st&&st.cam==='cairo'){const a=W(30.79,30.31),b=W(31.86,29.84),s=Math.min((MAPBOX.width-36)/(b[0]-a[0]),(MAPBOX.height-210)/(b[1]-a[1]));return{s,cx:(a[0]+b[0])/2,cy:(a[1]+b[1])/2+8/s,z:1}}return CAM0}
+function camReset(){STATIC.s=null;Object.values(BUILD).forEach(B=>{(B.lines||[]).forEach(l=>{l._d=null;l._L=null});(B.zones||[]).forEach(({z})=>{z._d=null})});GW.n=-1;for(const k in LABC)delete LABC[k]}
+function camGo(st){const T=camOf(st),A=cam;if(T.s===A.s&&T.cx===A.cx&&T.cy===A.cy)return 0;
+  cancelAnimationFrame(camGo.a);map.classList.add('zm');stage.classList.add('zming');map.classList.toggle('z',!!T.z);const t0=performance.now(),la=Math.log(A.s),lb=Math.log(T.s);
+  const f=t=>{const k=Math.min(1,(t-t0)/ZMS),e=ease3(k),s=Math.exp(la+(lb-la)*e),w=Math.abs(lb-la)<1e-6?e:(1/s-1/A.s)/(1/T.s-1/A.s);
+    cam={s,cx:A.cx+(T.cx-A.cx)*w,cy:A.cy+(T.cy-A.cy)*w,z:T.z};
+    world.style.transform=`translate(${MAPBOX.width/2-cam.cx*cam.s}px,${MAPBOX.height/2-cam.cy*cam.s}px) scale(${cam.s})`;
+    if(k<1){camGo.a=requestAnimationFrame(f);return}
+    cam=T;camReset();draw();const o=FXO();o&&(o.innerHTML=fxHtml(SL[step].on.filter(q=>!SL[step].cur.includes(q)),1));
+    requestAnimationFrame(()=>{map.classList.remove('zm');stage.classList.remove('zming')})};
+  camGo.a=requestAnimationFrame(f);return ZMS}
 /* ===== /client-matched layers ===== */
 /* ===== growth counter: 2014 → 2026, 7% → 14%, the new areas grow out one after another (nearest to Cairo first) ===== */
 const GORD=(()=>{const c=[31.24,30.04],d=GROW.map((z,j)=>{const q=cen(z.g);return[j,Math.hypot(q[0]-c[0],q[1]-c[1])]}).sort((a,b)=>a[1]-b[1]),r=[];d.forEach(([j],n)=>r[j]=n);return r})();
@@ -889,7 +907,7 @@ function growCounter(st){const yc=document.getElementById('yc');if(!yc)return;co
 /* ===== map loader: a line under the map title that fills while the map is still moving (2D draw → 3D → back to 2D) ===== */
 const D3DUR=350+1150+2900+1150+520;
 function drawMs(st,keepGrow){let ms=st.cur.length>4?2600:2200;if(st.cur.includes('grow')&&!keepGrow&&st.cur.length<ORDER.length)ms=Math.max(ms,5200);return ms}
-window.MAPDUR=i=>{const st=SL[i];return drawMs(st,i===step&&KEEP.has('grow'))+(st.on.length?D3DUR:0)};
+window.MAPDUR=i=>{const st=SL[i];return drawMs(st,i===step&&KEEP.has('grow'))+(st.on.length?D3DUR:0)+(((st.cam||'')!==((SL[i-1]&&SL[i-1].cam)||''))?ZMS:0)};
 document.querySelector('.mapc .mtitle').insertAdjacentHTML('beforeend','<i class="mld"><b></b></i>');
 function mapLoad(T){const m=document.querySelector('.mld');if(!m)return;const b=m.firstChild;m._tok=(m._tok||0)+1;m.className='mld run';b.style.transition='none';b.style.width='0';void b.offsetWidth;
   if(T>0){b.style.transition=`width ${T}ms linear`;b.style.width='100%'}}
@@ -898,7 +916,7 @@ function mapDone(){const m=document.querySelector('.mld');if(!m||!m.classList.co
 /* ===== /map loader ===== */
 /* ===== 3D layer view: the map and every layer on it as a stack of floating sheets ===== */
 const D3={on:false,auto:0,el:null,rx:52,rz:-24,g:1,n:0,gap:50,sc:.7,ty:40,tx:34};
-const LAYN={valley:'المعمور 2014',grow:'التوسع حتى 2026',roads:'الطرق والمحاور',nile:'محاور النيل',rail:'القطار السريع',ports:'الموانئ والمطارات',power:'محطات الكهرباء',water:'المياه والتحلية',cities:'المدن الجديدة',agri:'الاستصلاح والصوامع'};
+const LAYN={valley:'المعمور 2014',grow:'التوسع حتى 2026',roads:'الطرق والمحاور',nile:'محاور النيل',rail:'القطار السريع',metro:'المونوريل و LRT',ports:'الموانئ والمطارات',power:'محطات الكهرباء',water:'المياه والتحلية',cities:'المدن الجديدة',agri:'الاستصلاح والصوامع'};
 const egD=()=>rings(GEO.egypt).map(r=>pth(r)+'Z').join('');
 function d3Sheet(keys,cur){let h=`<path d="${egD()}" fill="rgba(255,255,255,.07)" stroke="rgba(255,255,255,.55)" stroke-width="1.2"/>`;
   keys.forEach(key=>{const B=BUILD[key];
@@ -919,13 +937,13 @@ function d3Build(enter){const st=SL[step];let el=D3.el;
   if(!el){el=D3.el=document.createElement('div');el.className='l3d';el.innerHTML='<div class="l3s"></div><div class="l3h">اسحب للتدوير · العجلة للمسافة بين الطبقات</div>';map.appendChild(el);d3Drag(el)}
   const keys=ORDER.filter(k=>st.on.includes(k)),pts=st.photos.map((p,k)=>p.ll?[p.ll,k]:null).filter(Boolean);
   const sheets=[];
-  const wc=world.cloneNode(true);wc.removeAttribute('id');{const im=wc.querySelector('img');im.removeAttribute('id');if(look===4)im.style.filter='brightness(.84) contrast(1.16) saturate(.86)'}
+  const wc=world.cloneNode(true);wc.removeAttribute('id');wc.querySelectorAll('img').forEach(q=>q.removeAttribute('id'));{const im=wc.querySelector('img');if(look===4)im.style.filter='brightness(.84) contrast(1.16) saturate(.86)'}
   sheets.push({base:1,html:`<svg class="grd">${gridSvg('g3',4,56,2,46,1)}</svg><svg class="ov">${staticLayer()}</svg>`,name:'الخريطة',col:'#ffffff'});
   const grp=[];keys.forEach(k=>{if((k==='valley'||k==='grow')&&grp.length&&grp[grp.length-1].b)grp[grp.length-1].k.push(k);else grp.push({k:[k],b:k==='valley'||k==='grow'})});
   grp.forEach(g=>{const ks=g.k,cur=ks.some(k=>st.cur.includes(k)),nm=g.b?(ks.includes('grow')?'المعمور · 7% + 7% = 14%':'المعمور 2014 · 7%'):(LAYN[ks[0]]||ks[0]);
     sheets.push({html:`<svg class="ov">${d3Sheet(ks,cur)}</svg>`,name:nm,col:d3Col(ks[ks.length-1]),cur:cur&&st.cur.length<ORDER.length})});
   const pst=pastPts(step);if(pts.length||pst.length)sheets.push({html:`<svg class="ov"><path d="${egD()}" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.45)" stroke-width="1"/>${pst.map(ll=>{const[x,y]=S(...ll);return`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="#fff" stroke="#1c2547" stroke-opacity=".6" stroke-width="2"/>`}).join('')}${pts.map(([ll,k])=>{const[x,y]=S(...ll);return`<g transform="translate(${x.toFixed(1)},${y.toFixed(1)})"><circle r="13" fill="#3558e6" stroke="#fff" stroke-width="2"/><text y="4.6" text-anchor="middle" font-size="13" font-weight="700" fill="#fff" font-family="Readex Pro,sans-serif">${k+1}</text></g>`}).join('')}</svg>`,name:'أماكن الصور',col:'#ffd23f'});
-  const n=sheets.length,[ax,ay]=S(25.4,30.2);D3.n=n;D3.gap=clamp(430/Math.max(1,n-1),38,120);D3.ty=Math.round(26+((n-1)*D3.gap+(sheets.some(t=>t.cur)?D3.gap*.9:0))*Math.sin(D3.rx*Math.PI/180)*D3.sc*.5);
+  const n=sheets.length,[ax,ay]=cam.z?[64,MAPBOX.height*.3]:S(25.4,30.2);D3.n=n;D3.gap=clamp(430/Math.max(1,n-1),38,120);D3.ty=Math.round(26+((n-1)*D3.gap+(sheets.some(t=>t.cur)?D3.gap*.9:0))*Math.sin(D3.rx*Math.PI/180)*D3.sc*.5);
   const sc=el.firstChild;sc.innerHTML=sheets.map((t,i)=>`<div class="pl${t.base?' base':''}${t.cur?' cur':''}" style="--i:${i}">${t.html}<div class="c3w" style="left:${ax.toFixed(0)}px;top:${ay.toFixed(0)}px"><span class="c3${t.cur?' cur':''}"><i style="background:${t.col}"></i>${t.name}</span></div></div>`).join('');
   sc.firstChild.insertBefore(wc,sc.firstChild.querySelector('svg.ov'));
   if(enter){d3Vars(1);el.classList.remove('on');void el.offsetWidth;requestAnimationFrame(()=>requestAnimationFrame(()=>{el.classList.add('on');map.classList.add('d3x');setTimeout(()=>d3Vars(0),60)}))}
@@ -966,7 +984,7 @@ function go(i){if(i===step||i<0||i>=SL.length)return;KEEP=new Set(step>=0&&SL[st
   clearTimeout(window.__nwT);window.__nwT=setTimeout(()=>pms.querySelectorAll('.pm.nw').forEach(m=>m.classList.remove('nw')),PT0+5*PHS+700);linkRun(PT0+5*PHS+PHF+300);
   zls.innerHTML=st.zoneLabels?GROW.map((z,k)=>{const c=cen(z.g);return`<div class="zl" data-lon="${c[0]}" data-lat="${c[1]}"><b>${k+1}</b></div>`}).join(''):'';
   const c=st.call;calls.innerHTML=c?`<div class="co"><div class="bx"><span class="n" style="width:auto;min-width:26px;padding:0 7px;border-radius:13px">${c.n}</span><span class="t"><b>${c.b}</b><span>${c.s}</span></span></div></div>`:'';
-  drawK=0;draw();{const o=FXO();o&&(o.innerHTML=fxHtml(st.on.filter(k=>!st.cur.includes(k)),1))}{const c=FXC();c&&KEEP.size&&(c.innerHTML=fxHtml(st.cur.filter(k=>KEEP.has(k)),0))}setTimeout(()=>{drawIn(st.cur.length>4?2600:2200);calls.firstChild&&calls.firstChild.classList.add('in');coCount();cycle()},450);
+  drawK=0;draw();{const o=FXO();o&&(o.innerHTML=fxHtml(st.on.filter(k=>!st.cur.includes(k)),1))}{const c=FXC();c&&KEEP.size&&(c.innerHTML=fxHtml(st.cur.filter(k=>KEEP.has(k)),0))}setTimeout(()=>{drawIn(st.cur.length>4?2600:2200);calls.firstChild&&calls.firstChild.classList.add('in');coCount();cycle()},450+camGo(st));
   if(D3.on)d3Build(0);
   /* motion v2: the next slide's photos load and decode now */
   try{const PRE=window.__pre||(window.__pre={});[SL[i+1],SL[i+2]].forEach(s=>s&&s.photos.forEach(p=>{if(PRE[p.img])return;const im=new Image();im.decoding='async';im.src='img/'+p.img+'.webp';PRE[p.img]=im;im.decode&&im.decode().catch(()=>{})}))}catch(e){}
