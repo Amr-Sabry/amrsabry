@@ -1674,7 +1674,7 @@ function MAPCARD(el,r,c,live){
     const [tt,...hint]=String(c.title).split(' · '), sm=c.loc||r.w<480, sp=sm?null:(B&&B.sp), t=document.createElement('div');t.className='mtitle'+(sm?' sm':'');
     t.innerHTML=`${sp&&sp.h?`<div class="mtk"><span class="axc">${sp.ax||''}</span>${sp.h}</div>`:''}<div class="mtt"><span class="mti">${ICON(c.tic||'map',22)}</span><b>${tt}</b></div>${hint.length?`<div class="mth">${ICON('pointer',15)}${hint.join(' · ')}</div>`:''}`;el.appendChild(t)}
   if(c.legend){const l=document.createElement('div');l.className='mleg';l.innerHTML=c.legend.map(x=>`<span><i style="background:${x[0]}"></i>${x[1]}</span>`).join('');el.appendChild(l)}
-  if(c.mode==='layers'){const l=document.createElement('div');l.className='mleg';l.innerHTML='<span><i style="background:#ee9873"></i>تم إنشاؤه</span><span><i style="background:#3d5cc0"></i>الطبقة الحالية</span>';if(!c.legend)el.appendChild(l)}
+  if(c.mode==='layers'){const l=document.createElement('div');l.className='mleg';l.innerHTML='<span><i style="background:#ee9873"></i>تم إنشاؤه</span><span><i style="background:#3d5cc0"></i>المحور الحالي</span>';if(!c.legend)el.appendChild(l)}
 }
 
 /* ---------- stage fit, controls ---------- */

@@ -124,7 +124,7 @@
           enter:()=>{zEl&&zEl.classList.add('zcur','zon');focus(new Set([z.id,...cities.map(d=>d.id)]))},
           leave:(fin)=>{zEl&&zEl.classList.remove('zcur');unfocus()}})});
       return {stops,end:()=>{sel('.zn.z-grow').forEach(e=>e.classList.add('zon'))},
-        summary:`<div class="k">الطبقة 1 · الأرض</div><div class="t"><b class="num">${Z.length}</b> مناطق توسع خارج الوادي والدلتا</div>`};
+        summary:`<div class="k">المحور 1 · الأرض</div><div class="t"><b class="num">${Z.length}</b> مناطق توسع خارج الوادي والدلتا</div>`};
     }
     if(s===0){
       const nile=(GEO.nile||[]).map(n=>n.g).filter(Boolean);
@@ -151,11 +151,11 @@
     }
     if(s===8||s===7){
       /* the layers come in one after another over the whole country, then the camera visits the places where they meet */
-      for(let l=1;l<=7;l++) stops.push({col:l===7?MINT:VIO,chip:`<div class="k">الطبقة ${l} من 7</div><div class="t"><span class="ic">${ICON(LI[l-1],22)}</span>${LN[l-1]}</div>`,
+      for(let l=1;l<=7;l++) stops.push({col:l===7?MINT:VIO,chip:`<div class="k">المحور ${l} من 7</div><div class="t"><span class="ic">${ICON(LI[l-1],22)}</span>${LN[l-1]}</div>`,
         enter:()=>ctx.step(l===7?(s===8?8:7):l),hold:l===7?1600:1200});
       (CL||[]).slice(0,4).forEach((cl,i)=>{const ids=new Set(Object.values(cl.steps||{}).flat()), nd=NODES.filter(d=>ids.has(d.id)), byL={};nd.forEach(d=>{byL[d.L]=(byL[d.L]||0)+1});
         const labs=nd.filter(d=>d.hub||d.L===4).slice(0,8).map(d=>nodeLab(d,'',MINT));
-        stops.push({col:MINT,chip:`<div class="k">حيث تلتقي الطبقات · ${i+1} من 4</div><div class="t">${cl.n}</div><div class="pl">${Object.entries(byL).map(([l,n])=>`<span>${ICON(LI[l-1],14)}<b>${n}</b>${LN[l-1]}</span>`).join('')}</div>`,
+        stops.push({col:MINT,chip:`<div class="k">حيث تلتقي المحاور · ${i+1} من 4</div><div class="t">${cl.n}</div><div class="pl">${Object.entries(byL).map(([l,n])=>`<span>${ICON(LI[l-1],14)}<b>${n}</b>${LN[l-1]}</span>`).join('')}</div>`,
           view:()=>{const p=P(cl.c);const w=(A.r.w-44)/(cl.z||4);return [p[0],p[1],w]},labs,
           enter:()=>focus(ids),leave:()=>unfocus()})});
       return {stops,delay:900,start:()=>ctx.step(0),end:()=>ctx.step(s)};

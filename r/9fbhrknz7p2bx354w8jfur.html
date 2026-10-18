@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <base href="/r/forum/"><script>(function(){var H=history;['replaceState','pushState'].forEach(function(k){var o=H[k];H[k]=function(s,t,u){if(typeof u==='string'&&u.charAt(0)==='#')u=location.pathname+location.search+u;return o.call(H,s,t,u)}})})();</script>
-<title>منتدى مصر 2026 · الطبقات السبع</title>
+<title>منتدى مصر 2026 · المحاور السبعة</title>
 <style>:root{color-scheme:light;box-sizing:border-box}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -1114,7 +1114,7 @@ function header(sp){
   return `<div class="hd"><div class="gov"><img src="${IMG('emblem')}" alt="شعار الجمهورية"><div><span>جمهورية مصر العربية</span><span>رئاسة مجلس الوزراء</span></div></div><div class="sep"></div>${sp.ax?`<div class="ax">${sp.ax}</div>`:''}<div class="ttl"><b>${sp.h||''}</b>${sp.hs?`<i>${sp.hs}</i>`:''}</div>${sp.L!=null?layerTrack(sp.L):''}<div class="forum"><img src="${IMG('logo-sym')}" alt=""><span>منتدى مصر<small>2026</small></span></div></div>`;
 }
 /* the seven layers as a track in the header: built layers violet, the current one mint; the closing scene lights all seven */
-function layerTrack(L){return `<div class="lt" aria-label="${L>=8?'الطبقات السبع معًا':`الطبقة ${L} من 7`}">${LYR.map((y,i)=>{const k=i+1, c=L>=8?'cur':(k<L?'done':(k===L?'cur':''));return `<i class="${c}" title="${k} · ${y.s}"></i>`}).join('')}</div>`}
+function layerTrack(L){return `<div class="lt" aria-label="${L>=8?'المحاور السبعة معًا':`المحور ${L} من 7`}">${LYR.map((y,i)=>{const k=i+1, c=L>=8?'cur':(k<L?'done':(k===L?'cur':''));return `<i class="${c}" title="${k} · ${y.s}"></i>`}).join('')}</div>`}
 function cleanup(){live.forEach(f=>f());live=[]}
 /* the card's own icon, drawn large and faint behind its content */
 const WM_TYPES={text:1,kpi:1,list:1,kpi2:1,title:1,cq:1,glance:1};/* the question card carries no background icon */
@@ -1686,7 +1686,7 @@ function MAPCARD(el,r,c,live){
     const [tt,...hint]=String(c.title).split(' · '), sm=c.loc||r.w<480, sp=sm?null:(B&&B.sp), t=document.createElement('div');t.className='mtitle'+(sm?' sm':'');
     t.innerHTML=`${sp&&sp.h?`<div class="mtk"><span class="axc">${sp.ax||''}</span>${sp.h}</div>`:''}<div class="mtt"><span class="mti">${ICON(c.tic||'map',22)}</span><b>${tt}</b></div>${hint.length?`<div class="mth">${ICON('pointer',15)}${hint.join(' · ')}</div>`:''}`;el.appendChild(t)}
   if(c.legend){const l=document.createElement('div');l.className='mleg';l.innerHTML=c.legend.map(x=>`<span><i style="background:${x[0]}"></i>${x[1]}</span>`).join('');el.appendChild(l)}
-  if(c.mode==='layers'&&!c.legend){const s=c.s, it=s===0?[['#3c8ca4','المعمور حتى 2014']]:s>=7?[['#3d5cc0',s===8?'الطبقات السبع معًا':'كل ما بُني في الطبقات الست']]:[...(s>1?[['#ee9873','الطبقات السابقة']]:[['#3c8ca4','المعمور حتى 2014']]),['#3d5cc0','الطبقة الحالية'],...(s>=3&&s<=6?[['#ffffff','ما تعتمد عليه']]:[])];
+  if(c.mode==='layers'&&!c.legend){const s=c.s, it=s===0?[['#3c8ca4','المعمور حتى 2014']]:s>=7?[['#3d5cc0',s===8?'المحاور السبعة معًا':'كل ما بُني في المحاور الستة']]:[...(s>1?[['#ee9873','المحاور السابقة']]:[['#3c8ca4','المعمور حتى 2014']]),['#3d5cc0','المحور الحالي'],...(s>=3&&s<=6?[['#ffffff','ما تعتمد عليه']]:[])];
     const l=document.createElement('div');l.className='mleg';l.innerHTML=it.map(x=>`<span><i style="background:${x[0]}"></i>${x[1]}</span>`).join('');el.appendChild(l)}
 }
 

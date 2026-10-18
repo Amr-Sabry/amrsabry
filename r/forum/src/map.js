@@ -16,7 +16,7 @@ const STEPS=[
  {n:'الإنسان',t:'بناء الإنسان والخدمات',m:'الهدف ليس بناء مدن فقط، وإنما تحسين جودة حياة المواطنين وتأهيل الإنسان.',k:['universities','classrooms','insurance']},
  {n:'الإنتاج',t:'إطلاق النشاط الاقتصادي والإنتاج',m:'الاستثمارات السابقة تتيح فرصًا للإنتاج والتصدير والتشغيل.',k:['reclaim','silos','industry_jobs']},
  {n:'المواطن',t:'المواطن والعائد من التنمية',m:'ما الذي تغيّر فعليًا في حياة المواطن وفي قدرة الاقتصاد المصري؟',k:[]},
- {n:'الصورة الكاملة',t:'مصر شبكة واحدة',m:'الطبقات السبع معًا: عمران وبنية أساسية وإنسان وإنتاج في شبكة واحدة مترابطة.',k:['investment']}
+ {n:'الصورة الكاملة',t:'مصر شبكة واحدة',m:'المحاور السبعة معًا: عمران وبنية أساسية وإنسان وإنتاج في شبكة واحدة مترابطة.',k:['investment']}
 ];
 const FINAL='ما تحقق لم يكن مجموعة من المشروعات المنفصلة، وإنما عملية متكاملة لإعادة تشكيل خريطة التنمية في مصر.';
 const LNAMES=['مصر 2014','الأرض','الربط','الطاقة والمياه والمرافق','المجتمعات العمرانية','الإنسان والخدمات','الإنتاج','المواطن والعائد'];
@@ -166,7 +166,7 @@ function addCaption(stage,o){
   const lg=document.createElement('div');lg.className='leg';lg.innerHTML=LNAMES.slice(1).map((n,i)=>`<div data-l="${i+1}"><i style="background:${o.th.L[i+1]}"></i>${n}</div>`).join('');stage.appendChild(lg);
   const f=document.createElement('div');f.className='fin';f.textContent=FINAL;stage.appendChild(f);
   return s=>{const st=STEPS[s];
-    d.querySelector('.n span').textContent=s===0?'قبل البداية':(s===8?'القفلة':`الطبقة ${s} من 7`);
+    d.querySelector('.n span').textContent=s===0?'قبل البداية':(s===8?'القفلة':`المحور ${s} من 7`);
     d.querySelector('.t').textContent=st.t; d.querySelector('.m').textContent=st.m;
     d.style.setProperty('--s-acc',o.th.L[Math.min(s,7)]||o.th.text);
     const keys=(s===7&&o.cit7)?['hayah','units','insurance','industry_jobs','tourism_rev','time']:(st.k||[]);
