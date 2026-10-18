@@ -46,15 +46,17 @@ function resume(){if(!paused)return;r0=rNow();paused=false;
 /* ---------------------------------------------------------------- map scenarios: start / end / learned length */
 var LSK='fctl-dur-'+DECK, DUR={};
 try{DUR=JSON.parse(localStorage.getItem(LSK)||'{}')||{}}catch(e){}
-var DUR0=W.RC_DUR0||{};
+/* lengths measured headlessly (18 Oct) for every map scenario, so the bar is right on the first showing */
+var DUR0_EXACT=false;
+var DUR0=(W.RC_DUR0||{"v3":{"4:2":2812,"11:2":5810,"13:0":9535,"21:2":5844,"25:3":2830,"32:0":3793,"33:5":6206,"40:2":2920,"42:2":3418,"47:2":6067,"57:5":5503,"58:3":2523,"60:5":6712,"72:2":5544,"77:5":5714,"101:4":3942,"102:7":7479,"102:8":5433,"103:3":5389,"108:2":6657,"118:4":3552,"128:2":2504,"132:4":4229,"136:5":3577,"140:5":4780,"153:7":5843,"154:4":3006,"159:4":4176,"175:2":2883,"179:4":8749,"206:4":7553,"207:2":6854,"217:4":3572,"229:4":11869,"234:4":3768,"235:5":2358},"axes":{"1010:0":23890,"1011:0":37712,"11:2":3026,"21:2":2609,"22:0":24534,"1020:0":31738,"32:0":2676,"33:5":2565,"34:0":15789,"35:2":16606,"39:0":30796,"40:0":31663,"40:2":3117,"41:2":16160,"42:0":6944,"42:2":2782,"43:2":4594,"44:2":5190,"45:2":4858,"47:0":17586,"47:2":4729,"48:0":75632,"49:0":43244,"50:0":82763,"51:2":17568,"52:2":19235,"57:5":2245,"58:0":25031,"58:3":2741,"60:0":5099,"60:5":2273,"64:0":34129,"68:0":31952,"1030:0":22530,"88:0":37331,"93:2":4918,"94:4":5140,"101:4":2404,"102:7":3213,"102:8":3048,"103:0":28218,"103:3":3039,"105:2":4794,"108:0":4972,"108:2":2559,"76:0":27956,"77:0":4926,"77:5":2852,"79:2":4713,"153:7":2750,"154:0":18247,"154:4":2306,"159:0":4838,"159:4":2567,"118:4":2729,"120:0":14927,"1040:0":15019,"7:0":25676,"8:0":28984,"13:0":3046,"14:0":23099,"25:0":5110,"25:3":2588,"1050:0":15398,"179:4":4485,"181:0":32416,"192:0":26861,"201:0":33442,"206:4":2931,"1060:0":23666,"132:4":2939,"134:0":23532,"136:0":5554,"136:5":2646,"140:0":4954,"140:5":2660,"146:0":21744,"169:0":17865,"214:0":34381,"217:0":4622,"217:4":2358,"220:2":4708,"229:4":3203,"232:0":33578,"234:2":4864,"234:4":2276,"235:0":5161,"235:5":2394,"1070:0":29652,"1080:0":28616}})[DECK]||{};
 var active=[];
 function cardOf(el){return (el&&el.closest&&el.closest('.bc'))||el}
 function keyOf(el){var c=cardOf(el),i=-1;
   try{if(typeof B!=='undefined'&&B&&B.cards)i=B.cards.findIndex(function(cc){return cc.el===c})}catch(e){}
   return curId()+':'+i}
 var ANIM=W.ANIM={
-  start:function(el,est){var c=cardOf(el);active=active.filter(function(a){return a.c!==c&&a.c.isConnected});
-    var k=keyOf(c),kn=DUR[k]||DUR0[k];active.push({c:c,k:k,t0:vnow(),est:kn||est||0,known:!!kn});push(1)},
+  start:function(el,est,exact){var c=cardOf(el);active=active.filter(function(a){return a.c!==c&&a.c.isConnected});
+    var k=keyOf(c),kn=exact?0:(DUR[k]||DUR0[k]);active.push({c:c,k:k,t0:vnow(),est:kn||est||0,known:!!DUR[k]||!!exact||(!!kn&&DUR0_EXACT)});push(1)},
   end:function(el){var c=cardOf(el),a=active.find(function(x){return x.c===c});if(!a)return;
     DUR[a.k]=Math.round(vnow()-a.t0);try{localStorage.setItem(LSK,JSON.stringify(DUR))}catch(e){}
     active=active.filter(function(x){return x!==a});push(1)},
@@ -93,13 +95,13 @@ function forumAdapter(){
 function centerAdapter(){
   var msOf=function(i){return (SL[i].cur||[]).length>4?2600:2200};
   var mapEl=function(){return D.querySelector('.mapc')||D.getElementById('stage')};
-  var startAnim=function(i){var el=mapEl(),ms=msOf(i)+450;ANIM.start(el,ms);setTimeout(function(){ANIM.end(el)},ms)};
+  var startAnim=function(i){var el=mapEl(),ms=msOf(i)+450;ANIM.start(el,ms,1);setTimeout(function(){ANIM.end(el)},ms)};
   return {
-    slides:function(){return SL.map(function(s,i){return {i:i,n:i+1,t:txt(s.hd[0]),s:txt(s.hd[1]),ax:txt((s.map||[])[0]||''),steps:[''],map:true}})},
+    slides:function(){return SL.map(function(s,i){return {i:i,n:i+1,t:txt(s.hd[0]),s:txt(s.hd[1]),ax:'',steps:[''],map:true}})},
     cur:function(){return {i:step,k:0,max:0}},
     id:function(){return String(step)},
     go:function(i){go(i)},next:function(){go(step+1)},prev:function(){go(step-1)},
-    replay:function(){var i=step;drawK=0;draw();var el=mapEl();ANIM.start(el,msOf(i)+450);
+    replay:function(){var i=step;drawK=0;draw();var el=mapEl();ANIM.start(el,msOf(i)+450,1);
       setTimeout(function(){drawIn(msOf(i));setTimeout(function(){ANIM.end(el)},msOf(i))},450)},
     hasMap:function(){return true},
     hook:function(){var o=W.go;W.go=function(i){var s=step,r=o.apply(this,arguments);if(step!==s)startAnim(step);push(1);return r}}

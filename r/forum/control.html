@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>منتدى مصر 2026 · لوحة التحكم</title>
+<link rel="stylesheet" href="lib/fonts.css" onerror="this.remove()">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Readex+Pro:wght@300;400;500;600;700&display=swap">
 <style>
 /* The control window for the three forum decks: open the show on the big screen from here, then jump to any slide or card,
@@ -171,9 +172,9 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(440px,1.05fr)
 /* where the three decks live: next to this page offline, or the hub rooms online */
 var OFF=location.protocol==='file:'||/\/offline\//.test(location.pathname);
 var DECKS={
-  v3:    {n:'V3 Update',          s:'العرض حسب القطاعات', url:OFF?'forum-v3/v3-update.html':'/r/bacq9ed85gvpu47x2iusyj.html'},
-  axes:  {n:'المحاور السبعة',     s:'محور ورا محور',       url:OFF?'forum-v3/7-axes.html':'/r/9fbhrknz7p2bx354w8jfur.html'},
-  center:{n:'الخريطة في المنتصف', s:'13 سلايد',            url:OFF?'center-map/center-map.html':'/r/knva3dcbti4kedhdf9icnf.html'}
+  v3:    {n:'V3 Update',          s:'العرض حسب القطاعات', url:OFF?'forum-v3/v3-update.html':'/r/bacq9ed85gvpu47x2iusyj'},
+  axes:  {n:'المحاور السبعة',     s:'محور ورا محور',       url:OFF?'forum-v3/7-axes.html':'/r/9fbhrknz7p2bx354w8jfur'},
+  center:{n:'الخريطة في المنتصف', s:'13 سلايد',            url:OFF?'center-map/center-map.html':'/r/knva3dcbti4kedhdf9icnf'}
 };
 var $=function(id){return document.getElementById(id)};
 var LS={get:function(k,d){try{var v=localStorage.getItem(k);return v==null?d:v}catch(e){return d}},set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
