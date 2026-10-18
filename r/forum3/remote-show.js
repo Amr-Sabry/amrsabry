@@ -41,7 +41,7 @@ function resume(){if(!paused)return;r0=rNow();paused=false;
   held.forEach(function(a){try{a.play()}catch(e){}});held=[];
   D.documentElement.classList.remove('rc-paused');push(1)}
 /* any key or click on the presentation itself carries on first (a frozen slide would swallow the next build) */
-['keydown','pointerdown'].forEach(function(t){W.addEventListener(t,function(){if(paused)resume()},true)});
+W.addEventListener('pointerdown',function(){if(paused)resume()},true);      /* keys: see «the remote» below */
 
 /* ---------------------------------------------------------------- map scenarios: start / end / learned length */
 var LSK='fctl-dur-'+DECK, DUR={};
@@ -49,7 +49,7 @@ try{DUR=JSON.parse(localStorage.getItem(LSK)||'{}')||{}}catch(e){}
 /* lengths measured headlessly at real speed (18 Oct) for every map scenario, so the bar is close on the first showing;
    the length learned on this machine replaces it after the first run */
 var DUR0_EXACT=false;
-var DUR0=(W.RC_DUR0||{"v3":{"4:2":2448,"11:2":2289,"13:0":2373,"21:2":2417,"25:3":2362,"32:0":2441,"33:5":2203,"40:2":2335,"42:2":2236,"47:2":2277,"57:5":2229,"58:3":2404,"60:5":2269,"72:2":2308,"77:5":2247,"101:4":2602,"102:7":2389,"102:8":2325,"103:3":2264,"108:2":2309,"118:4":2490,"128:2":2412,"132:4":2308,"136:5":2288,"140:5":2337,"153:7":2224,"154:4":2312,"159:4":2258,"175:2":2242,"179:4":2430,"206:4":2230,"207:2":2495,"217:4":2275,"229:4":2293,"234:4":2359,"235:5":2200},"axes":{"1010:0":22165,"1020:0":31656,"34:0":14231,"40:0":30950,"40:2":4053,"43:2":4563,"47:0":17418,"47:2":2742,"50:0":38869,"57:5":2347,"64:0":32420,"94:4":5017,"103:0":27180,"103:3":2376,"76:0":22187,"153:7":2911,"118:4":2844,"13:0":2941,"192:0":26011,"1060:0":20839,"134:0":20147,"146:0":20364,"217:0":4502,"217:4":2237,"232:0":31864,"1070:0":26698,"1011:0":37545,"21:2":2580,"32:0":2483,"35:2":12549,"41:2":11781,"44:2":5224,"48:0":48729,"51:2":14401,"58:0":24847,"58:3":2385,"68:0":31970,"88:0":32704,"101:4":3080,"105:2":4583,"77:0":4876,"77:5":2332,"154:0":16991,"154:4":2541,"120:0":15356,"7:0":25238,"14:0":22277,"25:0":4961,"25:3":2223,"179:4":3082,"201:0":31093,"136:0":4987,"136:5":2247,"169:0":16471,"220:2":4705,"234:2":4862,"234:4":2283,"1080:0":27484,"11:2":2357,"22:0":23279,"33:5":2660,"39:0":30294,"42:0":4868,"42:2":2353,"45:2":5121,"49:0":29045,"52:2":12301,"60:0":4978,"60:5":2373,"1030:0":26246,"93:2":4658,"102:7":2409,"102:8":2438,"108:0":4821,"108:2":2687,"79:2":4645,"159:0":4691,"159:4":2242,"1040:0":14260,"8:0":28276,"1050:0":16974,"181:0":28922,"206:4":2840,"132:4":2527,"140:0":4930,"140:5":2275,"214:0":32388,"229:4":3283,"235:0":4963,"235:5":2326}})[DECK]||{};
+var DUR0=(W.RC_DUR0||{"v3":{"4:2":2785,"11:2":2796,"21:2":3590,"32:0":3042,"35:2":14434,"41:2":11173,"48:0":56499,"51:2":15974,"58:3":2224,"77:0":5206,"77:5":2367,"102:7":3107,"102:8":2718,"108:0":5222,"108:2":2366,"128:2":2760,"136:0":5355,"136:5":2601,"153:7":3239,"206:4":2880,"217:0":4537,"217:4":2320,"33:5":3229,"39:0":30960,"42:0":5169,"42:2":2253,"49:0":23129,"52:2":15827,"60:0":5162,"60:5":2499,"72:2":3613,"103:3":2276,"118:4":3185,"132:4":2404,"140:0":5067,"140:5":2236,"154:4":2651,"175:2":2899,"207:2":2278,"234:2":4971,"234:4":2819,"13:0":3306,"25:0":5207,"25:3":2370,"34:0":15494,"40:0":31100,"40:2":2769,"47:0":17335,"47:2":2341,"50:0":41266,"57:5":2880,"101:4":2397,"159:0":5015,"159:4":2249,"179:4":3913,"229:4":2480,"235:0":5081,"235:5":2356},"axes":{"1010:0":22165,"1020:0":31656,"34:0":14231,"40:0":30950,"40:2":4053,"43:2":4563,"47:0":17418,"47:2":2742,"50:0":38869,"57:5":2347,"64:0":32420,"94:4":5017,"103:0":27180,"103:3":2376,"76:0":22187,"153:7":2911,"118:4":2844,"13:0":2941,"192:0":26011,"1060:0":20839,"134:0":20147,"146:0":20364,"217:0":4502,"217:4":2237,"232:0":31864,"1070:0":26698,"1011:0":37545,"21:2":2580,"32:0":2483,"35:2":12549,"41:2":11781,"44:2":5224,"48:0":48729,"51:2":14401,"58:0":24847,"58:3":2385,"68:0":31970,"88:0":32704,"101:4":3080,"105:2":4583,"77:0":4876,"77:5":2332,"154:0":16991,"154:4":2541,"120:0":15356,"7:0":25238,"14:0":22277,"25:0":4961,"25:3":2223,"179:4":3082,"201:0":31093,"136:0":4987,"136:5":2247,"169:0":16471,"220:2":4705,"234:2":4862,"234:4":2283,"1080:0":27484,"11:2":2357,"22:0":23279,"33:5":2660,"39:0":30294,"42:0":4868,"42:2":2353,"45:2":5121,"49:0":29045,"52:2":12301,"60:0":4978,"60:5":2373,"1030:0":26246,"93:2":4658,"102:7":2409,"102:8":2438,"108:0":4821,"108:2":2687,"79:2":4645,"159:0":4691,"159:4":2242,"1040:0":14260,"8:0":28276,"1050:0":16974,"181:0":28922,"206:4":2840,"132:4":2527,"140:0":4930,"140:5":2275,"214:0":32388,"229:4":3283,"235:0":4963,"235:5":2326}})[DECK]||{};
 var active=[];
 function cardOf(el){return (el&&el.closest&&el.closest('.bc'))||el}
 function keyOf(el){var c=cardOf(el),i=-1;
@@ -117,7 +117,8 @@ function black(on){if(!blk){blk=D.createElement('div');blk.style.cssText='positi
 /* ---------------------------------------------------------------- talking to the control window */
 var SID=Math.random().toString(36).slice(2,9), bc=null, peer=null, seen=[], lastSent='', sentSlides=false;
 try{bc=new BroadcastChannel('forum-ctl')}catch(e){}
-function post(m){m.ns='fctl';m.from='show';m.deck=DECK;m.sid=SID;m.title=D.title;
+var sigN=0;
+function post(m){m.ns='fctl';m.from='show';m.deck=DECK;m.sid=SID;m.title=D.title;if(m.t==='sig')m.n=++sigN;
   try{bc&&bc.postMessage(m)}catch(e){}
   var to=[];if(peer)to.push(peer);try{if(W.opener&&!W.opener.closed&&to.indexOf(W.opener)<0)to.push(W.opener)}catch(e){}
   to.forEach(function(w){try{w.postMessage(m,'*')}catch(e){}})}
@@ -127,6 +128,8 @@ function push(force){var s=state();if(!s)return;var j=JSON.stringify(s);if(!forc
 function hello(){if(!A)return;var sl=[];try{sl=A.slides()}catch(e){console.error(e)}post({t:'hello',slides:sl});sentSlides=true;push(1)}
 function handle(m){if(!m||m.ns!=='fctl'||m.from!=='ctl')return;if(m.deck&&m.deck!==DECK&&m.deck!=='*')return;
   if(m.mid){if(seen.indexOf(m.mid)>=0)return;seen.push(m.mid);if(seen.length>60)seen.shift()}
+  if(m.c==='learn'){learning=!!m.on;return}
+  if(m.c==='cfg'){if(m.cfg&&m.cfg.map){RCFG=m.cfg;try{localStorage.setItem(RK,JSON.stringify(RCFG))}catch(e){}}return}
   if(!A){return}
   var c=m.c;
   if(c==='hello'){hello();return}
@@ -139,6 +142,38 @@ W.addEventListener('message',function(e){var m=e.data;if(m&&m.ns==='fctl'&&m.fro
 if(bc)bc.onmessage=function(e){handle(e.data)};
 /* heartbeat on the real clock: every 250 ms while a scenario runs or the deck is paused, else every 1.5 s */
 var beat=0;(function tick(){beat++;var s=state();if(s&&(s.anim||s.paused||beat%6===0))push(1);rST(tick,250)})();
+
+/* ---------------------------------------------------------------- the remote (Amr, 18 Oct: «ريموت أبل يقلب»)
+   Every key or media button that reaches this window goes through one map: the Siri Remote (through SiriMote / Remote Buddy:
+   media next / previous / play-pause, or arrows and Enter), presenter clickers (Page Down / Up), the keyboard. The control window can
+   teach it any other button («علّم الريموت»); the map is kept in localStorage (shared with the control window) and sent over. */
+var RK='fctl-remote', RCFG={map:{},swap:false}, learning=false, aud=null;
+function rload(){try{var c=JSON.parse(localStorage.getItem(RK)||'null');if(c&&c.map)RCFG=c}catch(e){}}
+rload();W.addEventListener('storage',function(e){if(e.key===RK)rload()});
+var RDEF={'k:ArrowLeft':'next','k:ArrowDown':'next','k:PageDown':'next','k:Space':'next','k:Enter':'next','k:NumpadEnter':'next','m:nexttrack':'next','m:seekforward':'next',
+  'k:ArrowRight':'prev','k:ArrowUp':'prev','k:PageUp':'prev','k:Backspace':'prev','m:previoustrack':'prev','m:seekbackward':'prev',
+  'm:play':'pause','m:pause':'pause','m:playpause':'pause','m:stop':'pause','k:KeyP':'pause','k:KeyB':'black','k:Period':'black','k:KeyR':'replay'};
+function ract(s){var a=RCFG.map[s];if(a)return a==='none'?null:a;if(RCFG.swap){if(s==='k:ArrowLeft')return 'prev';if(s==='k:ArrowRight')return 'next'}return RDEF[s]||null}
+function ksig(e){var k=e.key||'';if(k==='MediaTrackNext')return 'm:nexttrack';if(k==='MediaTrackPrevious')return 'm:previoustrack';if(k==='MediaPlayPause')return 'm:playpause';if(k==='MediaStop')return 'm:stop';return 'k:'+(e.code||k)}
+function doAct(a,s){post({t:'sig',sig:s,act:a});if(learning||!A)return;
+  if(a==='pause'){paused?resume():pause();return} if(a==='black'){black();return}
+  if(paused)resume();try{if(a==='next')A.next();else if(a==='prev')A.prev();else if(a==='replay')A.replay()}catch(e){console.error(e)}push(1)}
+W.addEventListener('keydown',function(e){var t=e.target;if(t&&(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName||'')))return;
+  var s=ksig(e),a=ract(s);
+  if(learning){e.preventDefault();e.stopImmediatePropagation();post({t:'sig',sig:s,act:a});return}
+  if(!a){if(paused)resume();return}      /* other keys carry on to the deck (f = full screen, Home, End) */
+  e.preventDefault();e.stopImmediatePropagation();if(e.repeat)return;doAct(a,s)},true);
+/* media buttons reach a page only while it plays something: a silent loop starts with the first touch or key */
+function silentWav(sec){var sr=8000,n=sr*sec,b=new ArrayBuffer(44+n),v=new DataView(b),w=function(o,s){for(var i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
+  w(0,'RIFF');v.setUint32(4,36+n,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr,true);v.setUint16(32,1,true);v.setUint16(34,8,true);w(36,'data');v.setUint32(40,n,true);
+  for(var i=0;i<n;i++)v.setUint8(44+i,128);return URL.createObjectURL(new Blob([b],{type:'audio/wav'}))}
+function media(){if(!('mediaSession' in navigator))return;
+  try{if(!aud){aud=new Audio(silentWav(10));aud.loop=true}var p=aud.play();if(p&&p.catch)p.catch(function(){})}catch(e){}
+  try{navigator.mediaSession.metadata=new MediaMetadata({title:D.title||'منتدى مصر 2026',artist:'الريموت'})}catch(e){}
+  ['play','pause','previoustrack','nexttrack','seekbackward','seekforward','stop'].forEach(function(n){try{navigator.mediaSession.setActionHandler(n,function(){var s='m:'+n,a=ract(s);
+    if(learning||!a)post({t:'sig',sig:s,act:a});else doAct(a,s);try{aud.play().catch(function(){});navigator.mediaSession.playbackState='playing'}catch(e){}})}catch(e){}});
+  try{navigator.mediaSession.playbackState='playing'}catch(e){}}
+['pointerdown','keydown'].forEach(function(t){W.addEventListener(t,function(){media()},{capture:true,once:true})});
 
 function boot(){
   try{if(typeof SLIDES!=='undefined'&&typeof ORDER!=='undefined'&&typeof show==='function')A=forumAdapter();

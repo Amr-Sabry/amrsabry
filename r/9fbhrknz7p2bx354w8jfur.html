@@ -796,6 +796,14 @@ em{color:var(--cobalt)}
 .slide.out.push .bc.wait{opacity:0!important}
 .slide.out.push .hd{visibility:visible}
 .slide.push .bc{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+/* card morph v5: inside a slide a card's old content scales with its frame and hands over to the new one (no blank frame, no cut) */
+.bc>.in.old2,.bc>.in.fresh2,.bc>.in.grow2{transform-origin:100% 0}
+.bc>.in.old2,.bc>.wm.old2{opacity:1;transition:scale 1s var(--mv),opacity .35s ease .1s!important;pointer-events:none}
+.bc>.in.old2.go2,.bc>.wm.old2.go2{opacity:0!important}
+.bc>.in.fresh2,.bc>.wm.fresh2{opacity:0!important;transition:none!important}
+.bc>.in.grow2,.bc>.wm.grow2,.bc.mv>.in.grow2,.bc.mv>.wm.grow2{transition:scale 1s var(--mv),opacity .5s ease .35s!important;transition-delay:0s,.35s!important}
+.bc>.mghost{position:absolute;inset:0;z-index:6;pointer-events:none;border-radius:inherit;overflow:hidden;transition:opacity .7s ease}
+.bc>.mghost.out{opacity:0}
 /* ===== /motion v2 ===== */
 </style>
 
@@ -857,7 +865,7 @@ function pill(str,o={}){
   const parts=t.split(/(\[\[.+?\]\])/);
   const numPill=(n,u,k)=>`<span class="pp n${k?' k':''}"><b>${n}</b>${u?`<i>${u}</i>`:''}</span>`;
   parts.forEach(pt=>{
-    if(!pt) return;
+    if(!pt||/^[\s.،,؛:]+$/.test(pt)) return;      /* a lone full stop after the last pill would sit on a line of its own */
     if(pt.startsWith('[[')){const inner=pt.slice(2,-2).replace(/^[(\s]+|[)\s.،,]+$/g,''), w=inner.split(' ');
       const m=inner.match(/^(نحو |أكثر من |حوالي )?(\d[\d,.]*)\s+(.+)$/);
       if(m&&m[3].split(' ').length<=3){if(m[1])out.push(m[1].trim());out.push(numPill(m[2],m[3],1));return}
@@ -1031,11 +1039,12 @@ function photoHTML(c){
 
 /* ---------- fitting and motion ---------- */
 function autofit(el){
-  const inn=el.querySelector(':scope>.in:not(.old)'); if(!inn) return;
+  const inn=el.querySelector(':scope>.in:not(.old):not(.old2)'); if(!inn) return;
   inn.querySelectorAll('.num,.axn').forEach(n=>{let fs=parseFloat(n.style.fontSize)||parseFloat(getComputedStyle(n).fontSize),i=0;while(n.scrollWidth>n.clientWidth+1&&i<24){fs*=.93;n.style.fontSize=fs+'px';i++}});
   /* a big numeral's line box hangs a little below its glyphs; allow that slack inside the card padding */
   const slack=()=>Math.min(22,Math.max(0,...[...inn.querySelectorAll('.num')].map(n=>parseFloat(getComputedStyle(n).fontSize)*.16),...[...inn.querySelectorAll('.ttl1,.wk')].map(n=>parseFloat(getComputedStyle(n).fontSize)*.1)));
-  const over=()=>inn.scrollHeight>inn.clientHeight+2+slack()||inn.scrollWidth>inn.clientWidth+2;
+  const pov=()=>[...inn.querySelectorAll('.para')].some(p=>{const cs=getComputedStyle(p),R=p.getBoundingClientRect();if(!R.width||!p.offsetWidth)return false;const s=R.width/p.offsetWidth,L=R.left+(parseFloat(cs.paddingLeft)||0)*s,Rr=R.right-(parseFloat(cs.paddingRight)||0)*s;return [...p.querySelectorAll('.pp')].some(x=>{const b=x.getBoundingClientRect();return b.width&&(b.left<L-1||b.right>Rr+1)})});      /* card morph v5 */ /* pills never wrap: one that runs into the pie's room is an overflow */
+  const over=()=>inn.scrollHeight>inn.clientHeight+2+slack()||inn.scrollWidth>inn.clientWidth+2||pov();
   const FLOOR={para:15,ttl1:20,sub:13,lab:13.5,lst:14,qt:18,axl:16,axs:12.5,kick:12,pre:13};
   const nums=[...inn.querySelectorAll('.num,.axn')].map(n=>[n,parseFloat(n.style.fontSize)||parseFloat(getComputedStyle(n).fontSize)]);
   let i=0;
@@ -1076,7 +1085,7 @@ function tourRun(el,tg,delay){
   let i=0;const next=()=>{if(!el.isConnected)return;if(i<tiles.length){go(i++);el._tt=setTimeout(next,c.every||2600)}else{go(-1)}};
   el._tt=setTimeout(next,delay+900)}
 function post(el,delay,again){
-  const inn=el.querySelector(':scope>.in:not(.old)'); if(!inn) return;
+  const inn=el.querySelector(':scope>.in:not(.old):not(.old2)'); if(!inn) return;
   setTimeout(()=>el.classList.add('go'),Math.max(0,delay-200));
   if(again){inn.querySelectorAll('.cv').forEach(sp=>sp.textContent=fmt(+sp.dataset.v))}
   const tg=inn.querySelector('.tg'); if(tg&&!again) tourRun(el,tg,delay);
@@ -1212,7 +1221,8 @@ function paint(cc,r,again){
   setCls(el,`bc ${c.bg||'dark'} ${sizeCls({w:(r.w-52)/k+52,h:(r.h-48)/k+48})}${c.cls?' '+c.cls:''}${type==='whatif'?' wi':type==='wq'?' wqc':''}`);
   const cs=getComputedStyle(el), pt=parseFloat(cs.paddingTop), pr=parseFloat(cs.paddingRight), pb=parseFloat(cs.paddingBottom), pl=parseFloat(cs.paddingLeft);
   const iw=(r.w-pl-pr)/k, ih=(r.h-pt-pb)/k;
-  el.querySelectorAll(':scope>.in:not(.old),:scope>.wm:not(.old)').forEach(x=>{if(again){x.classList.add('old');setTimeout(()=>x.remove(),260)}else x.remove()});
+  const r0=cc.r, s0=again===2&&r0&&r0.w&&r0.h?Math.max(.86,Math.min(1.16,Math.sqrt(Math.min(r.w/r0.w,r.h/r0.h)))):1, olds=[];
+  el.querySelectorAll(':scope>.in:not(.old):not(.old2),:scope>.wm:not(.old):not(.old2)').forEach(x=>{if(again===2){x.classList.add('old2');olds.push(x);setTimeout(()=>x.remove(),1150)}else if(again){x.classList.add('old');setTimeout(()=>x.remove(),260)}else x.remove()});
   const inn=document.createElement('div'); inn.className='in'+(again?' fresh':'');
   inn.style.cssText=`position:absolute;top:${pt/k}px;right:${pr/k}px;width:${iw}px;height:${ih}px;${k!==1?`zoom:${k};`:''}`;
   inn.innerHTML=CARD[type](c,{x:r.x,y:r.y,w:iw+52,h:ih+48});
@@ -1220,8 +1230,10 @@ function paint(cc,r,again){
   el.appendChild(inn);
   const wm=wmark(type,c,r); if(wm){el.insertAdjacentHTML('beforeend',wm);if(again)el.lastChild.classList.add('fresh')}
   autofit(el);
-  if(el.dataset.ovf==='1'&&k>1.02){cc.kmax=Math.max(1,k*.82);return paint(cc,r,again)}
-  if(again) requestAnimationFrame(()=>requestAnimationFrame(()=>el.querySelectorAll(':scope>.fresh').forEach(x=>x.classList.remove('fresh'))));
+  if(el.dataset.ovf==='1'&&k>1.02){cc.kmax=Math.max(1,k*.82);if(again===2)el.querySelectorAll(':scope>.fresh2').forEach(x=>x.remove());return paint(cc,r,again)}
+  if(again===2){const nw=[...el.querySelectorAll(':scope>.fresh')];nw.forEach(x=>{x.classList.remove('fresh');x.classList.add('fresh2');if(x.classList.contains('in'))x.style.scale=(1/s0).toFixed(4)});
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{olds.forEach(x=>{if(x.classList.contains('in'))x.style.scale=s0.toFixed(4);x.classList.add('go2')});nw.forEach(x=>{x.classList.remove('fresh2');x.classList.add('grow2');x.style.scale='';setTimeout(()=>x.classList.remove('grow2'),1100)})}))}
+  else if(again) requestAnimationFrame(()=>requestAnimationFrame(()=>el.querySelectorAll(':scope>.fresh').forEach(x=>x.classList.remove('fresh'))));
   if(type==='plist'&&B&&B.L._pick) setTimeout(()=>B.L._pick&&B.L._pick(),30);
 }
 let B=null;
@@ -1288,9 +1300,9 @@ function setStep(k,init){
       post(el,(init&&B.morph?1150+ord*80:d+600),!!cc.posted); cc.posted=1;
     } else if(!sameR(cc.r,r)){
       place(el,r);el.classList.add('mv');clearTimeout(el._mv);el._mv=setTimeout(()=>el.classList.remove('mv'),1150);
-      if(cc.type==='map') b.tm.push(setTimeout(()=>paint(cc,r,1),1050));
+      if(cc.type==='map') b.tm.push(setTimeout(()=>{const g=document.createElement('div');g.className='mghost';[...el.childNodes].forEach(n=>g.appendChild(n));paint(cc,r,1);el.appendChild(g);requestAnimationFrame(()=>requestAnimationFrame(()=>g.classList.add('out')));setTimeout(()=>g.remove(),800)},1050));
       if(cc.type==='photo') b.tm.push(setTimeout(()=>panFit(el),1100));
-      else if(!/^(photo|model)$/.test(cc.type)){paint(cc,r,1);post(el,420,1)}
+      else if(!/^(photo|model)$/.test(cc.type)){paint(cc,r,2);post(el,420,1)}
     }
     cc.r=r;
   });
@@ -1307,7 +1319,7 @@ function hiLine(li){const s=li.closest('.slide'), on=!li.classList.contains('on'
   s.querySelectorAll('.mapc [data-lid]').forEach(p=>p.style.opacity=!on||ids.includes(p.dataset.lid)?1:.12)}
 /* clicking a governorate on an interactive map fills the slide's project list */
 function pickGov(L,c,n){
-  if(!L) return; const ul=L.querySelector('.in:not(.old) [data-pl]'), h=L.querySelector('.in:not(.old) [data-ph]'); if(!ul) return;
+  if(!L) return; const ul=L.querySelector('.in:not(.old):not(.old2) [data-pl]'), h=L.querySelector('.in:not(.old):not(.old2) [data-ph]'); if(!ul) return;
   const items=c.list[n]||[];
   const U=c.unitW||['مشروع','مشروعات']; h.innerHTML=c.headN?`${n} · ${c.headN[n]}`:`${n} · ${items.length} ${items.length>2&&items.length<11?U[1]:U[0]}`;
   ul.style.gridTemplateColumns=items.length>7?'1fr 1fr':'1fr';ul.style.columnGap='18px';
@@ -1323,7 +1335,7 @@ function pickGov(L,c,n){
 }
 /* clicking a point on a map fills the slide's detail card with that place's project data */
 function pickPt(L,c,n){
-  if(!L) return; const ul=L.querySelector('.in:not(.old) [data-pl]'), h=L.querySelector('.in:not(.old) [data-ph]'); if(!ul) return;
+  if(!L) return; const ul=L.querySelector('.in:not(.old):not(.old2) [data-pl]'), h=L.querySelector('.in:not(.old):not(.old2) [data-ph]'); if(!ul) return;
   const it=c.info[n]||[]; h.innerHTML=(c._no&&c._no[n]?`<span class="nb">${c._no[n]}</span>`:'')+(c.infoPre||'')+n;
   ul.style.gridTemplateColumns='1fr';
   ul.innerHTML=it.map(([ic,t],i)=>`<li style="opacity:0;transform:translateY(6px);transition:all .45s var(--settle) ${i*60}ms">${ICON(ic,20)}<span>${t}</span></li>`).join('');
@@ -1333,7 +1345,7 @@ function pickPt(L,c,n){
   L.querySelectorAll('.mapc g.pin').forEach(x=>{const on=x.dataset.n===n;x.classList.toggle('sel',on);if(on)x.parentNode.appendChild(x)});
   L._pick=()=>pickPt(L,c,n);
 }
-function autofitList(el){const inn=el.querySelector(':scope>.in:not(.old)'),ul=inn&&inn.querySelector('[data-pl]');if(!ul)return;let f=parseFloat(ul.style.fontSize)||18,i=0;ul.style.fontSize=f+'px';while(inn.scrollHeight>inn.clientHeight+2&&i<14&&f>12.5){f*=.94;ul.style.fontSize=f+'px';i++}}
+function autofitList(el){const inn=el.querySelector(':scope>.in:not(.old):not(.old2)'),ul=inn&&inn.querySelector('[data-pl]');if(!ul)return;let f=parseFloat(ul.style.fontSize)||18,i=0;ul.style.fontSize=f+'px';while(inn.scrollHeight>inn.clientHeight+2&&i<14&&f>12.5){f*=.94;ul.style.fontSize=f+'px';i++}}
 /* ---------- map cards: the lab's engine drawn inside a card (layers), or a plain governorate map (bubbles / classes) ---------- */
 const MAPTH={bg:'none',sea:'none',land:'none',coast:'#ffffff',coastW:1.8,gov:'rgba(255,255,255,.55)',govW:.8,nb:'none',nbs:'rgba(28,37,71,.2)',nile:'#3d5cc0',nileW:1.4,water:'rgba(61,92,192,.55)',valley:'rgba(61,92,192,.55)',valleyS:'#ffffff',grow:'#ee9873',growOp:.4,zoneText:'#2a3b86',text:'#1c2547',sub:'rgba(28,37,71,.62)',halo:'#ffffff',labelSize:13.5,
   L:['#3c8ca4','#3d5cc0','#ee9873','#ee9873','#ee9873','#ee9873','#ee9873','#3d5cc0'],roadDash:null,lineW:{road:1.2,hsr:2.6,lrt:2.2,mono:2.2},linkW:1,nodeS:'none',pulseC:'#ffffff'};
@@ -1716,7 +1728,7 @@ document.getElementById('view').addEventListener('click',e=>{if(e.target.closest
 <script src="src/lt/mapdata.js"></script>
 <script src="src/lt/match.js"></script>
 <script>
-window.__qa=()=>[...curLayer.querySelectorAll('.bc')].map((el,i)=>{const n=el.querySelector(':scope>.in:not(.old)');return n?{i,ovf:el.dataset.ovf||'',sh:n.scrollHeight,ch:n.clientHeight,sw:n.scrollWidth,cw:n.clientWidth,c:el.className}:{i}}).filter(x=>x.ovf||x.sw>x.cw+2);
+window.__qa=()=>[...curLayer.querySelectorAll('.bc')].map((el,i)=>{const n=el.querySelector(':scope>.in:not(.old):not(.old2)');return n?{i,ovf:el.dataset.ovf||'',sh:n.scrollHeight,ch:n.clientHeight,sw:n.scrollWidth,cw:n.clientWidth,c:el.className}:{i}}).filter(x=>x.ovf||x.sw>x.cw+2);
 const h=+(location.hash||'').slice(1);
 document.fonts&&document.fonts.ready.then(()=>{});
 show(ORDER.includes(h)?h:ORDER[0]);

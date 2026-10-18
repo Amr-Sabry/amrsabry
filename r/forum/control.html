@@ -90,6 +90,24 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(440px,1.05fr)
 .tools button{display:flex;align-items:center;justify-content:center;gap:9px;height:46px;border-radius:13px;background:var(--glass);border:1px solid var(--line);font:500 14px var(--fd);color:var(--mute)}
 .tools button:hover{color:var(--ink);background:var(--glass2)}
 #black.on{background:#000;color:#fff;border-color:rgba(255,255,255,.3)}
+.tools{grid-template-columns:1fr 1fr 1fr}
+#rbtn.on{color:var(--ink);border-color:rgba(182,242,220,.5);background:rgba(182,242,220,.08)}
+#rbtn i{width:8px;height:8px;border-radius:50%;background:var(--dim)}#rbtn.live i{background:var(--ok);box-shadow:0 0 0 3px rgba(79,209,161,.2)}
+/* the remote panel */
+#rmt{border-radius:18px;padding:16px 18px;background:var(--glass);border:1px solid var(--line);display:flex;flex-direction:column;gap:12px}
+#rmt[hidden]{display:none}
+#rmt .rh{display:flex;align-items:center;gap:10px}#rmt .rh b{font:600 15px var(--fd)}#rmt .rh span{margin-inline-start:auto;font-size:13px;color:var(--mute)}
+#rmt .rrow{display:flex;flex-wrap:wrap;gap:8px}
+#rmt .rrow button{padding:9px 14px;border-radius:11px;background:var(--glass2);border:1px solid var(--line);font:500 13.5px var(--fd)}
+#rmt .rrow button.pri{background:linear-gradient(135deg,var(--vio),var(--blue));border-color:transparent;color:#fff}
+#rmt .rmap{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+#rmt .rmap div{border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--line);padding:9px 10px;font-size:12.5px;color:var(--mute);min-height:58px}
+#rmt .rmap div b{display:block;color:var(--ink);font:600 13px var(--fd);margin-bottom:3px}
+#rmt .rmap div.now{border-color:rgba(238,152,115,.7);background:rgba(238,152,115,.12);box-shadow:0 0 0 3px rgba(238,152,115,.12)}
+#rlast{font-size:13px;color:var(--mute)}#rlast b{color:var(--mint);font:600 13.5px var(--fd)}
+#rlearnp{border-radius:12px;padding:12px 14px;background:rgba(238,152,115,.12);border:1px solid rgba(238,152,115,.45);font:600 15px var(--fd);display:flex;align-items:center;gap:10px}
+#rlearnp[hidden]{display:none}#rlearnp button{margin-inline-start:auto;padding:7px 12px;border-radius:9px;background:var(--glass2);border:1px solid var(--line);font:500 13px var(--fd)}
+#rmt .rhelp{font-size:12.5px;line-height:1.85;color:var(--dim)}#rmt .rhelp b{color:var(--mute)}
 #upnext{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;background:var(--glass);border:1px dashed var(--line);color:var(--mute);font-size:13.5px}
 #upnext b{color:var(--ink);font:500 14px var(--fd);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .keys{color:var(--dim);font-size:12px;line-height:1.9}
@@ -156,9 +174,18 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(440px,1.05fr)
     <div class="tools">
       <button id="open" type="button"><svg class="i" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8M12 17v4"/></svg>فتح شاشة العرض</button>
       <button id="black" type="button"><svg class="i" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>شاشة سوداء</button>
+      <button id="rbtn" type="button"><i></i>الريموت</button>
+    </div>
+    <div id="rmt" hidden>
+      <div class="rh"><b>ريموت أبل · أي ريموت</b><span id="rst">مش متفعّل</span></div>
+      <div class="rmap" id="rmap"></div>
+      <div id="rlearnp" hidden><span id="rlq">دوس الزرار…</span><button type="button" id="rskip">تخطّي</button></div>
+      <div id="rlast">آخر زرار وصل: <b>—</b></div>
+      <div class="rrow"><button type="button" id="ron" class="pri">تفعيل أزرار الميديا</button><button type="button" id="rlearn">علّم الريموت</button><button type="button" id="rswap">الاتجاه</button><button type="button" id="rreset">الإعدادات الأصلية</button></div>
+      <div class="rhelp"><b>Siri Remote على الماك:</b> يتوصل بالماك نفسه بالبلوتوث (مش بالـ Apple TV)، ومعاه برنامج <b>SiriMote</b> المجاني (أو Remote Buddy) عشان أزراره توصل للمتصفح. بعد كده اضغط «تفعيل أزرار الميديا» مرة، ولو حاجة مش ماشية اضغط «علّم الريموت» ودوس الزرار اللي عاوزه لكل أمر — اللوحة بتحفظه.<br>أي ريموت بريزنتيشن (Page Down / Page Up) أو كيبورد شغال على طول.</div>
     </div>
     <div id="upnext"><span>اللي بعده:</span><b id="nxt">—</b></div>
-    <div class="keys">من الكيبورد هنا: <kbd>←</kbd> / <kbd>Space</kbd> التالي · <kbd>→</kbd> السابق · <kbd>P</kbd> إيقاف/استكمال · <kbd>R</kbd> إعادة التحريك · <kbd>B</kbd> شاشة سوداء</div>
+    <div class="keys">من الكيبورد أو الريموت: <kbd>←</kbd> / <kbd>↓</kbd> / <kbd>Space</kbd> / <kbd>Page Down</kbd> التالي · <kbd>→</kbd> / <kbd>↑</kbd> / <kbd>Page Up</kbd> السابق · <kbd>P</kbd> إيقاف/استكمال · <kbd>R</kbd> إعادة التحريك · <kbd>B</kbd> شاشة سوداء</div>
   </section>
   <aside id="list" class="panel">
     <div class="lh"><b>كل السلايدات</b><span id="cnt"></span><input id="q" type="search" placeholder="دوّر على سلايد…"></div>
@@ -203,11 +230,13 @@ function openShow(){var w=null;
 $('open').onclick=openShow;
 
 /* ---------- messages from the show ---------- */
+var seenSig=[];      /* a signal arrives twice (postMessage and BroadcastChannel): count it once */
 function onMsg(m,src){if(!m||m.ns!=='fctl'||m.from!=='show'||!DECKS[m.deck])return;
   var d=info[m.deck]||(info[m.deck]={});var fresh=!d.seen||Date.now()-d.seen>4500;d.seen=Date.now();d.sid=m.sid;
   if(src&&(m.deck===sel||!SHOW))SHOW=src;
   if(m.t==='hello'){d.slides=m.slides;if(m.deck===sel)buildList()}
   if(m.t==='state'){d.st=m;d.rt=performance.now();if(!d.slides)send('hello')}
+  if(m.t==='sig'){var sk=m.sid+':'+m.n;if(seenSig.indexOf(sk)>=0)return;seenSig.push(sk);if(seenSig.length>40)seenSig.shift();gotSig(m.sig,m.act,true);return}
   if(fresh)tabs();
   if(m.deck===sel)render()}
 window.addEventListener('message',function(e){onMsg(e.data,e.source)});
@@ -278,11 +307,55 @@ $('prev').onclick=function(){send('prev')};
 $('replay').onclick=function(){send('replay')};
 $('pause').onclick=function(){send('toggle')};
 $('black').onclick=function(){send('black')};
+/* ---------- the remote (Amr, 18 Oct: «ريموت أبل يقلب»): one map for keys and media buttons, shared with the show windows ---------- */
+var RK='fctl-remote', RCFG={map:{},swap:false}, aud=null, mediaOn=false, learnI=-1;
+try{var rc0=JSON.parse(localStorage.getItem(RK)||'null');if(rc0&&rc0.map)RCFG=rc0}catch(e){}
+var RDEF={'k:ArrowLeft':'next','k:ArrowDown':'next','k:PageDown':'next','k:Space':'next','k:Enter':'next','k:NumpadEnter':'next','m:nexttrack':'next','m:seekforward':'next',
+  'k:ArrowRight':'prev','k:ArrowUp':'prev','k:PageUp':'prev','k:Backspace':'prev','m:previoustrack':'prev','m:seekbackward':'prev',
+  'm:play':'pause','m:pause':'pause','m:playpause':'pause','m:stop':'pause','k:KeyP':'pause','k:KeyB':'black','k:Period':'black','k:KeyR':'replay'};
+var ACTS=[['next','التالي'],['prev','السابق'],['pause','إيقاف الحركة'],['black','شاشة سوداء']];
+function ract(s){var a=RCFG.map[s];if(a)return a==='none'?null:a;if(RCFG.swap){if(s==='k:ArrowLeft')return 'prev';if(s==='k:ArrowRight')return 'next'}return RDEF[s]||null}
+function ksig(e){var k=e.key||'';if(k==='MediaTrackNext')return 'm:nexttrack';if(k==='MediaTrackPrevious')return 'm:previoustrack';if(k==='MediaPlayPause')return 'm:playpause';if(k==='MediaStop')return 'm:stop';return 'k:'+(e.code||k)}
+var SN={'k:ArrowLeft':'سهم شمال','k:ArrowRight':'سهم يمين','k:ArrowUp':'سهم فوق','k:ArrowDown':'سهم تحت','k:PageDown':'Page Down','k:PageUp':'Page Up','k:Space':'مسافة','k:Enter':'Enter','k:NumpadEnter':'Enter','k:Backspace':'Backspace','k:Escape':'Esc',
+  'm:nexttrack':'التالي (ميديا)','m:previoustrack':'السابق (ميديا)','m:play':'تشغيل (ميديا)','m:pause':'إيقاف (ميديا)','m:playpause':'تشغيل/إيقاف (ميديا)','m:seekforward':'تقديم (ميديا)','m:seekbackward':'ترجيع (ميديا)','m:stop':'Stop (ميديا)'};
+function sname(s){return SN[s]||s.replace(/^k:(Key|Digit)?/,'').replace(/^m:/,'ميديا ')}
+function keysFor(a){var out=[];Object.keys(RCFG.map).forEach(function(s){if(RCFG.map[s]===a)out.push(s)});Object.keys(RDEF).forEach(function(s){if(!RCFG.map[s]&&ract(s)===a&&out.indexOf(s)<0)out.push(s)});
+  if(RCFG.swap){if(a==='next'&&out.indexOf('k:ArrowRight')<0&&!RCFG.map['k:ArrowRight'])out.unshift('k:ArrowRight');if(a==='prev'&&out.indexOf('k:ArrowLeft')<0&&!RCFG.map['k:ArrowLeft'])out.unshift('k:ArrowLeft')}
+  var pr=function(s){return RCFG.map[s]?0:/Arrow/.test(s)?1:/Page/.test(s)?2:/^m:/.test(s)?4:3};out.sort(function(x,y){return pr(x)-pr(y)});
+  return out}
+function rsave(){try{localStorage.setItem(RK,JSON.stringify(RCFG))}catch(e){}send('cfg',{cfg:RCFG,deck:'*'});rrender()}
+function rrender(){$('rmap').innerHTML=ACTS.map(function(x,i){return '<div class="'+(i===learnI?'now':'')+'"><b>'+x[1]+'</b>'+keysFor(x[0]).slice(0,4).map(sname).join(' · ')+'</div>'}).join('');
+  $('rswap').textContent=RCFG.swap?'الاتجاه: سهم يمين = التالي':'الاتجاه: سهم شمال = التالي';
+  $('rst').textContent=mediaOn?'أزرار الميديا متفعّلة':'أزرار الميديا مش متفعّلة';$('rbtn').classList.toggle('live',mediaOn)}
+function doAct(a){if(a==='next'){send('next');startTimer()}else if(a==='prev')send('prev');else if(a==='pause')send('toggle');else if(a==='black')send('black');else if(a==='replay')send('replay')}
+function gotSig(s,a,fromShow){var lb=$('rlast').querySelector('b');lb.textContent=sname(s)+(fromShow?' (من شاشة العرض)':'');
+  if(learnI>=0){var act=ACTS[learnI][0];Object.keys(RCFG.map).forEach(function(k){if(RCFG.map[k]===act&&k!==s&&RDEF[k]!==act)delete RCFG.map[k]});RCFG.map[s]=act;toast(ACTS[learnI][1]+' = '+sname(s));learnNext();return true}
+  return false}
+function learnNext(){learnI++;if(learnI>=ACTS.length){learnI=-1;$('rlearnp').hidden=true;send('learn',{on:false,deck:'*'});rsave();toast('اتحفظ — الريموت جاهز');return}
+  $('rlq').textContent='دوس الزرار اللي عاوزه «'+ACTS[learnI][1]+'»';$('rlearnp').hidden=false;rrender()}
+$('rlearn').onclick=function(){media();learnI=-1;send('learn',{on:true,deck:'*'});learnNext()};
+$('rskip').onclick=function(){learnNext()};
+$('rswap').onclick=function(){RCFG.swap=!RCFG.swap;rsave()};
+$('rreset').onclick=function(){RCFG={map:{},swap:false};rsave();toast('رجعت الإعدادات الأصلية')};
+$('rbtn').onclick=function(){var p=$('rmt');p.hidden=!p.hidden;$('rbtn').classList.toggle('on',!p.hidden);rrender()};
+$('ron').onclick=function(){media();toast(mediaOn?'أزرار الميديا متفعّلة':'المتصفح ده مش بيدعم أزرار الميديا')};
+/* media buttons reach a page only while it plays something: a silent loop, started by a click */
+function silentWav(sec){var sr=8000,n=sr*sec,b=new ArrayBuffer(44+n),v=new DataView(b),w=function(o,s){for(var i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
+  w(0,'RIFF');v.setUint32(4,36+n,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr,true);v.setUint16(32,1,true);v.setUint16(34,8,true);w(36,'data');v.setUint32(40,n,true);
+  for(var i=0;i<n;i++)v.setUint8(44+i,128);return URL.createObjectURL(new Blob([b],{type:'audio/wav'}))}
+function media(){if(!('mediaSession' in navigator)){rrender();return}
+  try{if(!aud){aud=new Audio(silentWav(10));aud.loop=true}var p=aud.play();if(p&&p.catch)p.catch(function(){})}catch(e){}
+  try{navigator.mediaSession.metadata=new MediaMetadata({title:'منتدى مصر 2026 · لوحة التحكم',artist:'الريموت'})}catch(e){}
+  ['play','pause','previoustrack','nexttrack','seekbackward','seekforward','stop'].forEach(function(n){try{navigator.mediaSession.setActionHandler(n,function(){var s='m:'+n;
+    if(!gotSig(s,ract(s),false)){var a=ract(s);if(a)doAct(a)}try{aud.play().catch(function(){});navigator.mediaSession.playbackState='playing'}catch(e){}})}catch(e){}});
+  try{navigator.mediaSession.playbackState='playing'}catch(e){}mediaOn=true;rrender()}
+addEventListener('pointerdown',function(){if(!mediaOn)media()},{capture:true,once:true});
+/* a pressed button gives up the focus, so Enter / Space from a remote never press it a second time */
+addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('button');if(b&&b.blur)setTimeout(function(){b.blur()},0)},true);
 addEventListener('keydown',function(e){if(e.target.closest&&e.target.closest('input'))return;
-  var k=e.key,c=e.code;
-  if(k==='ArrowLeft'||k==='PageDown'||k===' '||k==='Enter'){e.preventDefault();send('next');startTimer()}
-  else if(k==='ArrowRight'||k==='PageUp'||k==='Backspace'){e.preventDefault();send('prev')}
-  else if(c==='KeyP'){send('toggle')}else if(c==='KeyR'){send('replay')}else if(c==='KeyB'||k==='.'){send('black')}});
+  var s=ksig(e);if(gotSig(s,ract(s),false)){e.preventDefault();return}
+  var a=ract(s);if(!a)return;e.preventDefault();if(e.repeat)return;doAct(a)});
+rrender();
 
 /* ---------- clocks ---------- */
 var t0=+LS.get('fctl-t0',0)||0;
