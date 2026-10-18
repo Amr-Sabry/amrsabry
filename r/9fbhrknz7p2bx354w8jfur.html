@@ -834,7 +834,7 @@ em{color:var(--cobalt)}
 <script src="https://unpkg.com/lucide@0.453.0/dist/umd/lucide.min.js"></script>
 <script src="src/map.js"></script>
 <script src="src/ctx.js"></script>
-<script src="src/lt/routes.js"></script>
+<script src="src/lt/routes.js?v=t1"></script>
 <script src="src/sites.js"></script>
 <script src="src/models.js"></script>
 <script>
@@ -1739,7 +1739,7 @@ let tx=null;addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:
 const ui=document.getElementById('ui');let idleT;const wake=()=>{ui.classList.remove('idle');clearTimeout(idleT);idleT=setTimeout(()=>ui.classList.add('idle'),2600)};addEventListener('mousemove',wake);addEventListener('keydown',wake);wake();
 document.getElementById('view').addEventListener('click',e=>{if(e.target.closest('#ui,.mapc,[data-int]'))return;go(e.clientX<innerWidth/2?1:-1)});
 </script>
-<script src="src/lt/slides.js"></script>
+<script src="src/lt/slides.js?v=t1"></script>
 <script src="src/story.js"></script>
 <script src="src/brand.js"></script>
 <script src="src/lt/mapcam.js"></script>

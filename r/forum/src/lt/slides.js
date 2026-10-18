@@ -335,7 +335,7 @@ S({n:33,...H01T,cards:[
 
 /* 34 — interactive map: roads and axes */
 S({n:34,...H01T,cards:[
-  ['map',[0,0,7,6],{mode:'route',net:'roads',view:'egypt',title:'أبرز شبكات الطرق والمحاور · مسارات تمثيلية',tic:'route'}],
+  ['map',[0,0,7,6],{mode:'route',net:'roads',view:'egypt',title:'أبرز شبكات الطرق والمحاور العرضية والطولية',tic:'route'}],
   ['title',[7,0,5,2],{bg:'dark',k:'الخريطة التفاعلية',ki:'map-pinned',t:'مواقع أبرز شبكات المحاور والطرق',fs:36}],
   ['list',[7,2,5,4],{bg:'dark2',h:'المحاور العرضية المقترحة',ic:'git-commit-horizontal',fs:15,items:[
     ['circle-dot','1 – الطريق الساحلي الدولي (رفح / السلوم)'],['circle-dot','2 – العوجا / الإسماعيلية / طنطا / وادي النطرون / طريق الجيش / السلوم'],['circle-dot','3 – طابا / السويس / القاهرة / طريق الجيش'],
@@ -380,7 +380,7 @@ S({n:38,...H01T,cards:RD.map(([k,cap],i)=>['photo',[8-(i%3)*4,Math.floor(i/3)*2,
 /* 39 — Nile axes */
 const NAX=DATA.nodes.filter(n=>n.t==='nileaxis').map(n=>[n.n,n.p[0],n.p[1],1]);
 S({n:39,...H01T,cards:[
-  ['map',[0,0,6,6],{mode:'route',net:'nile',view:'egypt',title:'توزيع تخطيطي للمحاور على النيل · محور كل 25 كم',tic:'waypoints'}],
+  ['map',[0,0,6,6],{mode:'route',net:'nile',view:'egypt',title:'المحاور على النيل · منفذة وجارية ومستقبلية',tic:'waypoints'}],
   ['title',[6,0,6,2],{bg:'dark',k:'المحاور على النيل',ki:'waypoints',t:'مضاعفة عدد المحاور المنفذة على النيل لربط القطاع الغربي بالشرق لنهر النيل وتحقيق التنمية المتكاملة',fs:28}],
   ['kpi',[9,2,3,4],{bg:'grad',ic:'waypoints',l:'محور تم وجاري تنفيذه',v:35,u:'محورًا'}],
   ['kpi',[6,2,3,2],{bg:'mint',ic:'circle-check',l:'تم الانتهاء من',v:16,u:'محورًا منهم'}],
@@ -389,7 +389,7 @@ S({n:39,...H01T,cards:[
 
 /* 40 — interactive map: Nile axes */
 S({n:40,...H01T,cards:[
-  ['map',[0,0,7,6],{mode:'route',net:'nile',view:'egypt',title:'محاور النيل · توزيع تخطيطي · اضغط على الخط',tic:'waypoints'}],
+  ['map',[0,0,7,6],{mode:'route',net:'nile',view:'egypt',title:'محاور النيل · اضغط على الفرع',tic:'waypoints'}],
   ['title',[7,0,5,2],{bg:'dark',k:'الخريطة التفاعلية',ki:'map-pinned',t:'توقيع على الخريطة محاور النيل',fs:36}],
   ['model',[7,2,5,4],{id:90,name:'محور عدلي منصور على النيل',opt:{el:.42,zoom:1.35}}],
 ]});
