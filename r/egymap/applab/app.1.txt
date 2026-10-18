@@ -23491,7 +23491,7 @@ function resize(){
   camera.aspect = W / Hh; camera.updateProjectionMatrix();
   KP = clamp(Hh / 1080, 0.72, 2.2); U.uKP.value = KP;
   U.uScale.value = Hh * PR * 0.5 / Math.tan(camera.fov * Math.PI / 360); U.uRes.value.set(W * PR, Hh * PR);
-  beamMat.uniforms.uPx.value = 2.3 * PR * KP; ringMat.uniforms.uPx.value = 8.5 * PR * KP;
+  beamMat.uniforms.uPx.value = (LOOK === "glass" ? 3.6 : 2.3) * PR * KP;      /* v145: the beams read on the light look */ ringMat.uniforms.uPx.value = 8.5 * PR * KP;
   if (composer) { composer.setPixelRatio(PR); composer.setSize(W, Hh); }
   reserve(true);
 }
@@ -27498,7 +27498,7 @@ html.wall-on{--wW:25%}
 .wall{font-size:calc(16px * var(--wk,1))}
 html.wall-on #top .brand,html.wall-on #aroma{visibility:hidden!important}
 html.wall-on .stx{left:var(--wW);right:var(--wW)}
-html.wall-on #tls{display:none!important}
+html.wall-on .tls-ghost{display:none!important}
 .wall{position:absolute;top:0;bottom:0;width:var(--wW);z-index:30;box-sizing:border-box;padding:1.5em 1.7em 1.7em;display:flex;flex-direction:column;gap:1em;pointer-events:none;direction:${EN ? "ltr" : "rtl"};
   font-family:var(--f-head);color:#1c2547;background:linear-gradient(180deg,rgba(242,244,250,.55),rgba(242,244,250,.3));-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 .wall.wl{left:0;border-inline-start:1px solid rgba(255,255,255,.7)}.wall.wr{right:0;border-inline-end:1px solid rgba(255,255,255,.7)}
@@ -27572,6 +27572,23 @@ html.wall-still .wc,html.lite .wc{animation:none!important}
 .wc.ph img.ok + .wait{display:none}
 .wc.no{align-items:center;justify-content:center;text-align:center}
 .wc.no .ic{width:4em;height:4em}.wc.no .ic svg{width:2em;height:2em}
+/* v145 (Amr: «عدّل»): read from four or five metres — no text under about 26 px on a 1080 screen, fewer lines per card */
+.wall .wh{min-height:7em}.wall .wh small{font-size:1.45em}.wall .wh h2{font-size:3em}
+.wall .wh .br b{font-size:1.75em}.wall .wh .br span{font-size:1.15em}
+.wc{padding:1.3em 1.5em;gap:.55em}
+.wc .k{font-size:1.6em;gap:.5em}.wc .k .ic{font-size:.62em}
+.wc .n{font-size:5.4em}.wc .n.s{font-size:3.9em}.wc .n.xs{font-size:2.7em}
+.wc .u{font-size:1.55em}.wc .t{font-size:1.9em}.wc .p{font-size:1.55em;line-height:1.5}
+.wc .ic{width:3.3em;height:3.3em}.wc .ic svg{width:1.75em;height:1.75em}
+.wc .three b{font-size:3.1em}.wc .three span{font-size:1.4em}
+.wc .yr em{font-size:1.1em}
+.wc ol{gap:.75em}.wc ol li .nm{font-size:1.6em}.wc ol li b{font-size:1.65em}.wc ol li .bar{height:.5em}
+.wc .lgw .lg{--lgh:5.2em}.wc .lgw .t{font-size:1.7em}
+.wc .chip{font-size:1.35em}
+.wc.hero .t{font-size:2.8em}
+.wc.ph .wcap{padding:3em 1.3em 1em}.wc.ph .wcap b{font-size:1.6em}.wc.ph .wcap span{font-size:1.25em}
+.wc.no .t{font-size:1.9em}
+.wc .stk.ax{height:1em;margin-top:.3em;background:rgba(255,255,255,.25)}
 `; document.head.appendChild(st);
   const mk = (id, cls) => { const e = document.createElement("aside"); e.id = id; e.className = "wall " + cls; e.innerHTML = '<div class="wh"></div><div class="wg"></div>'; app.appendChild(e); return e; };
   const WL = mk("wallL", "wl"), WR = mk("wallR", "wr");
@@ -27588,6 +27605,7 @@ html.wall-still .wc,html.lite .wc{animation:none!important}
       <div class="stk">${c.map((v, j) => `<i style="width:${(100 * v / n).toFixed(1)}%;background:${KDC[j]}"></i>`).join("")}</div>`; };
   const topList = (pairs, max, color) => { const mx = Math.max(1, ...pairs.map(q => q[1]));
     return `<ol>${pairs.slice(0, max).map(([nm, v, c]) => `<li style="${c ? "--c:" + c : ""}"><span class="nm">${c ? "<i></i>" : ""}${esc(nm)}</span><b>${NF(v)}</b><span class="bar"><i style="width:${(100 * v / mx).toFixed(1)}%;${color ? "background:" + color : ""}"></i></span></li>`).join("")}</ol>`; };
+  const axBar = ids => { const c = SECS.map(() => 0); ids.forEach(i => c[P[i].sc]++); const n = Math.max(1, ids.length); return `<div class="stk ax">${c.map((v, a) => v ? `<i style="width:${(100 * v / n).toFixed(1)}%;background:${SECC[a]}"></i>` : "").join("")}</div>`; };
   const visIds = pred => { const o = []; for (let i = 0; i < NP; i++) if (stat.vis[i] && pred(P[i])) o.push(i); return o; };
   const govPairs = ids => { const m = {}; ids.forEach(i => P[i].g.forEach(g => m[g] = (m[g] || 0) + 1)); return Object.keys(m).map(g => [GN[g] || g, m[g]]).sort((a, b) => b[1] - a[1]); };
   const mnPairs = ids => { const m = {}; ids.forEach(i => { const k = P[i].mn; if (k) m[k] = (m[k] || 0) + 1; }); return Object.keys(m).map(k => [k, m[k]]).sort((a, b) => b[1] - a[1]); };
@@ -27624,7 +27642,7 @@ html.wall-still .wc,html.lite .wc{animation:none!important}
     } else if (s.k === "g") {
       const ids = visIds(p => p.g.includes(s.g)); kick = L2("محافظة", "Governorate"); title = GNF(s.g);
       const by = SECS.map((x, i) => [x.n, ids.filter(j => P[j].sc === i).length, SECC[i]]).sort((a, b) => b[1] - a[1]);
-      cards.push(card("g", [2, 1], `<div class="k"><span>${L2("مشروعات المحافظة حتى ", "Projects up to ") + yn}</span></div><div class="sp"></div><div class="n">${NF(ids.length)}</div><div class="u">${L2("مشروعًا · ", "projects · ") + NF(mnPairs(ids).length) + L2(" جهة", " entities")}</div>`, 0));
+      cards.push(card("g", [2, 1], `<div class="k"><span>${L2("مشروعات المحافظة حتى ", "Projects up to ") + yn}</span></div><div class="sp"></div><div class="n">${NF(ids.length)}</div><div class="u">${L2("مشروعًا · ", "projects · ") + NF(mnPairs(ids).length) + L2(" جهة", " entities")}</div>${axBar(ids)}`, 0));
       cards.push(card("", [2, 2], `<div class="k"><span>${L2("حسب المحور", "By axis")}</span></div>${topList(by, 6)}`, 1));
       cards.push(card("a", [2, 1], statusHTML(ids), 2));
       cards.push(card("", [2, 1], yearsHTML(p => p.g.includes(s.g), L2("المشروعات حسب السنة", "Projects by year")), 3));
@@ -27632,12 +27650,12 @@ html.wall-still .wc,html.lite .wc{animation:none!important}
     } else if (s.k === "a") {
       const ids = visIds(p => p.sc === s.s), all = Math.max(1, visIds(() => true).length); c = SECC[s.s];
       kick = L2("محور", "Axis"); title = SECS[s.s].n;
-      cards.push(card("xs", [2, 1], `<div class="k"><span class="ic">${svgI(s.s)}</span><span>${L2("مشروعات المحور حتى ", "Projects up to ") + yn}</span></div><div class="sp"></div><div class="n">${NF(ids.length)}</div><div class="u">${Math.round(100 * ids.length / all)}% ${L2("من كل المشروعات على الخريطة", "of all projects on the map")}</div>`, 0, cv(s.s)));
+      cards.push(card("xs", [2, 1], `<div class="k"><span class="ic">${svgI(s.s)}</span><span>${L2("مشروعات المحور حتى ", "Projects up to ") + yn}</span></div><div class="sp"></div><div class="n">${NF(ids.length)}</div><div class="u">${Math.round(100 * ids.length / all)}% ${L2("من كل المشروعات على الخريطة", "of all projects on the map")}</div><div class="stk ax"><i style="width:${(100 * ids.length / all).toFixed(1)}%;background:#fff"></i></div>`, 0, cv(s.s)));
       cards.push(card("a", [2, 1], statusHTML(ids), 1));
       cards.push(card("", [2, 1], yearsHTML(p => p.sc === s.s, L2("المشروعات حسب السنة", "Projects by year")), 2, cv(s.s)));
-      cards.push(card("", [2, 1], `<div class="k"><span>${L2("أكثر المحافظات", "Leading governorates")}</span></div>${topList(govPairs(ids), 4, SECC[s.s])}`, 3));
+      cards.push(card("", [2, 1], `<div class="k"><span>${L2("أكثر المحافظات", "Leading governorates")}</span></div>${topList(govPairs(ids), 3, SECC[s.s])}`, 3));
       cards.push(card("", [2, 1], `<div class="k"><span>${L2("أكثر الجهات", "Leading entities")}</span></div>${topList(mnPairs(ids), 3, "#3c8ca4")}`, 4));
-      cards.push(card("x", [2, 1], `<div class="k"><span>${L2("من أبرز المشروعات", "Highlights")}</span></div>${projList(ids, 4)}`, 5, cv(s.s)));
+      cards.push(card("x", [2, 1], `<div class="k"><span>${L2("من أبرز المشروعات", "Highlights")}</span></div>${projList(ids, 3)}`, 5, cv(s.s)));
     } else if (s.k === "y") {
       const ax = s.s >= 0 ? s.s : -1, inAx = p => ax < 0 || p.sc === ax, ids = visIds(inAx), now = ids.filter(i => P[i].y === s.y); if (ax >= 0) c = SECC[ax];
       kick = ax >= 0 ? L2("الزمن · ", "Timeline · ") + SECS[ax].n : L2("الزمن", "Timeline"); title = L2("مصر في ", "Egypt in ") + s.y;
@@ -27645,11 +27663,11 @@ html.wall-still .wc,html.lite .wc{animation:none!important}
       cards.push(card("g", [2, 1], `<div class="k"><span>${L2("ما تحقق في هذه السنة", "Delivered this year")}</span></div><div class="sp"></div><div class="n">${NF(now.length)}</div><div class="u">${L2("مشروعًا", "projects")}</div>`, 1));
       cards.push(card("", [4, 1], yearsHTML(inAx, L2("المشروعات حسب السنة", "Projects by year")), 2));
       cards.push(card("", [2, 1], `<div class="k"><span>${L2("حسب المحور في ", "By axis in ") + s.y}</span></div>${topList(SECS.map((x, i) => [x.n, now.filter(j => P[j].sc === i).length, SECC[i]]).sort((a, b) => b[1] - a[1]), 3)}`, 3));
-      cards.push(card("a", [2, 1], `<div class="k"><span>${L2("من مشروعات ", "Projects of ") + s.y}</span></div>${projList(now, 4)}`, 4));
+      cards.push(card("a", [2, 1], `<div class="k"><span>${L2("من مشروعات ", "Projects of ") + s.y}</span></div>${projList(now, 3)}`, 4));
     } else {
       const ids = visIds(() => true), n = Math.max(1, ids.length);
       kick = L2("الرئيسية", "Home"); title = L2("مصر 2014 – 2030", "Egypt 2014 – 2030");
-      cards.push(card("g", [2, 1], `<div class="k"><span>${L2("مشروعات على الخريطة حتى ", "Projects on the map up to ") + yn}</span></div><div class="sp"></div><div class="n">${NF(ids.length)}</div><div class="u">${L2("في ", "in ") + NF(govPairs(ids).length) + L2(" محافظة · ", " governorates · ") + NF(mnPairs(ids).length) + L2(" جهة", " entities")}</div>`, 0));
+      cards.push(card("g", [2, 1], `<div class="k"><span>${L2("مشروعات على الخريطة حتى ", "Projects on the map up to ") + yn}</span></div><div class="sp"></div><div class="n">${NF(ids.length)}</div><div class="u">${L2("في ", "in ") + NF(govPairs(ids).length) + L2(" محافظة · ", " governorates · ") + NF(mnPairs(ids).length) + L2(" جهة", " entities")}</div>${axBar(ids)}`, 0));
       cards.push(card("a", [2, 1], statusHTML(ids), 1));
       SECS.forEach((x, i) => { const v = ids.filter(j => P[j].sc === i).length;
         cards.push(card("x", [1, 1], `<div class="k"><span class="ic">${svgI(i)}</span></div><div class="sp"></div><div class="n s">${NF(v)}</div><div class="u">${esc(x.n)}</div><div class="bar"><i style="width:${(100 * v / n).toFixed(1)}%"></i></div>`, 2 + i, cv(i))); });
@@ -27790,6 +27808,11 @@ if (CTLM === "float" || CTLM === "deck") (() => {
 html.ctl-on #top .tools,html.ctl-on #modes,html.ctl-on #dock,html.ctl-on #tl,html.ctl-on .axl,html.ctl-on #railR,html.ctl-on #camhud{visibility:hidden!important;pointer-events:none!important}
 html.ctl-on #colL{display:none}
 html.ctl-on.ctl-lists #colL{display:flex;transition:left .45s cubic-bezier(.2,.85,.25,1),top .45s cubic-bezier(.2,.85,.25,1)}
+/* v145 (Amr: «مش عاوز كروب، صممها بطريقة تخليني أعرف أستعرض»): the lists beside the console never run off the screen — the column takes the
+   screen's height and scrolls under the finger; the gauge keeps its size, the lists below it keep a usable height and scroll inside */
+html.ctl-on.ctl-lists #colL{top:12px;bottom:12px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:thin;padding-bottom:4px;transform:scale(var(--ks,1));transform-origin:50% 0;height:calc((100% - 24px) / var(--ks,1))}
+html.ctl-on.ctl-lists #colL>*{flex:none}
+html.ctl-on.ctl-lists #colL>*:not(.radar){flex:1 0 auto;min-height:min(36rem,calc(100% - 2rem))}
 html.ctl-deck.ctl-lists #colL{top:auto;bottom:var(--ctlLB,12rem);height:var(--ctlLH,40rem)}
 .ctl{position:absolute;z-index:40;direction:rtl;font-family:var(--f-head);color:#1c2547;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
 .ctl.float{left:var(--cx,60%);top:var(--cy,40%);transform:scale(var(--ks,1));transform-origin:0 0;transition:left .5s cubic-bezier(.2,.85,.25,1),top .5s cubic-bezier(.2,.85,.25,1)}
@@ -27980,6 +28003,12 @@ html.ctl-deck.ctl-lists #colL{top:auto;bottom:var(--ctlLB,12rem);height:var(--ct
     if (H.classList.contains("ctl-lists") && colL) { const w = colL.offsetWidth || 330;
       if (FLOAT) { const rl = r.left - A.left, rr = r.right - A.left; let left = seams().length ? (rr + 14 + w <= Z[1] ? rr + 14 : rl - w - 14) : (rl - Z[0] > w + 24 ? rl - w - 14 : rr + 14); left = clamp(snapB(left, w), Z[0], Z[1] - w); colL.style.left = left + "px"; }
       else { colL.style.left = (r.left - A.left) + "px"; H.style.setProperty("--ctlLB", (A.bottom - r.top + 12) + "px"); H.style.setProperty("--ctlLH", Math.max(320, r.top - A.top - 96) + "px"); } }
+    /* v145: «اكشف السنة» opens its stage beside the console (on the wall: on the other middle screen), scaled to fit, never cut */
+    const tl = $("tls"); if (tl && FLOAT) { if (TLS.open && !tl.hidden) { const rl = r.left - A.left, rr = r.right - A.left, mid = A.width / 2, sm = seams().length;
+        let L0 = Z[0], L1 = rl - 14, R0 = rr + 14, R1 = Z[1]; if (sm) { if (rl >= mid - 2) L1 = Math.min(L1, mid - 16); else if (rr <= mid + 2) R0 = Math.max(R0, mid + 16); }
+        const useL = L1 - L0 >= R1 - R0, x0 = useL ? L0 : R0, w = Math.max(300, (useL ? L1 : R1) - x0), h0 = tl.offsetHeight || 420, k = Math.max(.3, Math.min(1, A.height * .5 / h0, w / 900));
+        tl.style.left = x0 + "px"; tl.style.right = "auto"; tl.style.width = (w / k).toFixed(0) + "px"; tl.style.bottom = "14px"; tl.style.transformOrigin = "0 100%"; tl.style.scale = k < .999 ? k.toFixed(3) : "";      /* the scale property: the stage's own entry animation drives transform */
+      } else if (tl.style.left) { tl.style.left = tl.style.right = tl.style.width = tl.style.bottom = tl.style.scale = ""; } }
     /* the search panel with its keyboard opens beside the console, at the height of its foot, not across the whole screen */
     const sr = $("srch"); if (sr && !sr.hidden && FLOAT) { const rl = r.left - A.left, rr = r.right - A.left, lists = H.classList.contains("ctl-lists") && colL ? colL.getBoundingClientRect() : null;
       const lr = lists && lists.width ? [lists.left - A.left, lists.right - A.left] : null; const roomL = (lr && lr[1] <= rl + 1 ? lr[0] : rl) - 14 - Z[0], roomR = Z[1] - (lr && lr[0] >= rr - 1 ? lr[1] : rr) - 14;
@@ -27990,6 +28019,20 @@ html.ctl-deck.ctl-lists #colL{top:auto;bottom:var(--ctlLB,12rem);height:var(--ct
       sx.style.bottom = (innerHeight - r.bottom < 190 ? innerHeight - r.top + 14 : 14) + "px"; }
   }
   /* v144 (Amr: «شيل الأزرار الكبيرة بتاعت المحاور اللي بتبان أول ما نعمل لوود، لأنها موجودة جوه لوحة التحكم»): the axes' big opening tiles never show with the console */
+  /* v145 (Amr: «عدّل»): an exhibition wall plays by itself — after two minutes with no touch the show starts (?idle=<seconds>, 0 = never);
+     the first touch stops it and the map goes back home. A small glass pill tells the visitor the wall can be touched. */
+  const IDLE = (QS.has("idle") ? +QS.get("idle") : 120) * 1000, hint = document.createElement("div"); let lastAct = performance.now(), attract = false;
+  hint.className = "ctl-hint"; hint.hidden = true; hint.innerHTML = `<i></i>${T("المس الشاشة للتحكم في الخريطة")}`; $("app").appendChild(hint);
+  { const hs = document.createElement("style"); hs.textContent = `.ctl-hint{position:absolute;z-index:41;left:50%;bottom:calc(26px * var(--wk,1));transform:translateX(-50%);pointer-events:none;display:flex;align-items:center;gap:.6em;
+    padding:.7em 1.4em;border-radius:3em;font:700 calc(24px * var(--wk,1)) var(--f-head);color:#1c2547;background:linear-gradient(140deg,rgba(255,255,255,.7),rgba(255,255,255,.4));border:1px solid #fff;
+    box-shadow:inset 0 1.5px 0 #fff,0 18px 40px -22px rgba(40,55,120,.55);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);animation:ctlHint 2.6s ease-in-out infinite}
+  .ctl-hint i{width:.7em;height:.7em;border-radius:50%;background:#ee9873;box-shadow:0 0 0 .3em rgba(238,152,115,.3)}
+  @keyframes ctlHint{50%{transform:translateX(-50%) translateY(-6px)}}`; document.head.appendChild(hs); }
+  const touched = () => { lastAct = performance.now(); if (!attract) return; attract = false; hint.hidden = true; el.classList.remove("min");
+    setTimeout(() => { if (!S.show) { const t = dk("home"); if (t) t.click(); } }, 350); };
+  ["pointerdown", "keydown", "wheel"].forEach(ev => addEventListener(ev, touched, true));
+  setInterval(() => { if (attract && !S.show) { attract = false; hint.hidden = true; }
+    if (IDLE > 0 && !attract && !S.show && performance.now() - lastAct > IDLE && !(typeof admEl !== "undefined" && admEl && !admEl.hidden)) { attract = true; hint.hidden = false; try { $("bShow").click(); } catch (e) {} } }, 1000);
   const noBig = () => { if (document.querySelector(".axl.big")) try { axlDock(); } catch (e) {} };
   setInterval(() => { try { noBig(); sync(); follow(); } catch (e) {} }, 200); setTimeout(noBig, 0);
   sync();
