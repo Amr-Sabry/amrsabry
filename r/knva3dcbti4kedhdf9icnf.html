@@ -4,7 +4,7 @@
 <meta name="robots" content="noindex,nofollow">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<base href="/r/forum3/"><script src="remote-show.js?v=3" data-deck="center"></script>
+<base href="/r/forum3/"><script src="remote-show.js?v=4" data-deck="center"></script>
 <title>منتدى مصر 2026 · الخريطة في المنتصف</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -297,26 +297,46 @@ svg.fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-in
 /* breathing growth area (the added 7%, 7% → 14%) */
 .fx .zbr{fill:#ffc08a;stroke:#fff1e4;stroke-width:2.2;stroke-linejoin:round;animation:zbr 3.6s ease-in-out infinite}
 @keyframes zbr{0%,100%{fill-opacity:0;stroke-opacity:.15}50%{fill-opacity:.5;stroke-opacity:.95}}
+/* map loader under the title */
+.mapc .mtitle{overflow:hidden;padding-bottom:16px}
+.mtitle .mld{position:absolute;left:14px;right:14px;bottom:6px;height:3px;border-radius:2px;direction:rtl;background:rgba(42,59,134,.12);opacity:0;transition:opacity .4s ease}
+.mtitle .mld.run{opacity:1}
+.mtitle .mld b{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(270deg,#ffd23f,#ff7a38);box-shadow:0 0 8px rgba(255,170,40,.8)}
+.mtitle .mld.done b{background:#2c57ec;box-shadow:0 0 6px rgba(44,87,236,.6)}
+/* growth counter */
+.yc{position:absolute;top:14px;left:14px;z-index:5;min-width:208px;padding:10px 14px 11px;border-radius:18px;font-family:var(--f-display);color:var(--ink);pointer-events:none;
+  -webkit-backdrop-filter:blur(10px) saturate(1.9);backdrop-filter:blur(10px) saturate(1.9);background:linear-gradient(160deg,rgba(255,255,255,.8),rgba(255,255,255,.5));
+  box-shadow:inset 0 1px 0 #fff,inset 0 0 0 1px rgba(255,255,255,.55),0 10px 24px -12px rgba(28,37,71,.45);opacity:0;transform:translateY(-8px);transition:opacity .5s ease,transform .6s var(--settle)}
+.yc.on{opacity:1;transform:none}
+.ych{display:flex;align-items:baseline;justify-content:space-between;gap:12px;direction:ltr}
+.ych span{font-size:12px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.ych b{font-size:34px;font-weight:700;line-height:1;color:var(--indigo);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.ycb{display:flex;height:8px;margin:8px 0 7px;border-radius:999px;overflow:hidden;background:rgba(42,59,134,.1);direction:ltr}
+.ycb i{display:block;height:100%}
+.ycb i.a{width:50%;background:#2c57ec}
+.ycb i.b{width:0;background:#ff7a38;box-shadow:0 0 10px rgba(255,122,56,.8)}
+.ycp{font-size:13px;color:var(--ink2)}
+.ycp b{font-size:17px;font-weight:700;color:#ff7a38;font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate}
 /* 3D layer view */
 .l3d{position:absolute;inset:0;z-index:4;border-radius:inherit;overflow:hidden;perspective:2100px;perspective-origin:50% 26%;cursor:grab;touch-action:none;
-  background:radial-gradient(70% 60% at 50% 38%,#2a3a7c,#121a45 62%,#0a0f2c);opacity:0;transition:opacity .45s ease}
+  background:radial-gradient(rgba(42,59,134,.13) 1px,rgba(42,59,134,0) 1.5px) 0 0/22px 22px,radial-gradient(80% 70% at 50% 38%,#f7f9fd,#eaeff8 70%,#e6ebf6);opacity:0;transition:opacity .8s ease}
 .l3d.on{opacity:1}
 .l3d.drag{cursor:grabbing}
 .l3s{position:absolute;inset:0;transform-style:preserve-3d;transform:translate(var(--tx,0px),var(--ty,0px)) scale(var(--sc,1)) rotateX(var(--rx,0deg)) rotateZ(var(--rz,0deg));transition:transform 1.15s cubic-bezier(.65,0,.25,1)}
 .l3s .pl{position:absolute;inset:0;transform-style:preserve-3d;transform:translateZ(calc(var(--i)*var(--gap,0px) + var(--lift,0px)));transition:transform 1.15s cubic-bezier(.65,0,.25,1) calc(var(--i)*55ms)}
 .l3s .pl>svg{overflow:visible}
-.l3s .pl:not(.base)>svg{filter:drop-shadow(0 0 1px rgba(0,0,0,.35))}
+.l3s .pl:not(.base)>svg{filter:drop-shadow(0 1px 1.5px rgba(28,37,71,.3))}
 .l3d.drag .l3s,.l3d.drag .pl,.l3d.drag .c3w{transition:none!important}
 .l3s .pl.cur{--lift:calc(var(--gap,0px)*.9)}
 .l3s .pl.cur>svg{filter:drop-shadow(0 0 6px rgba(255,214,64,.55))}
 .l3s .pl:not(.cur):not(.base)>svg{opacity:.72;transition:opacity .6s}
 .c3w{position:absolute;width:0;height:0;transform-style:preserve-3d;transform:rotateZ(calc(var(--rz,0deg)*-1)) rotateX(calc(var(--rx,0deg)*-1));transition:transform 1.15s cubic-bezier(.65,0,.25,1)}
-.c3{position:absolute;left:0;bottom:-12px;display:flex;align-items:center;gap:7px;white-space:nowrap;font:600 13px/1 var(--f-display);color:#fff;padding:6px 11px 7px;border-radius:999px;
-  background:rgba(14,20,52,.62);box-shadow:inset 0 0 0 1px rgba(255,255,255,.28),0 6px 16px -6px rgba(0,0,0,.6);opacity:0;transition:opacity .5s ease .6s}
+.c3{position:absolute;left:0;bottom:-12px;display:flex;align-items:center;gap:7px;white-space:nowrap;font:600 13px/1 var(--f-display);color:var(--ink);padding:6px 11px 7px;border-radius:999px;
+  background:linear-gradient(160deg,rgba(255,255,255,.95),rgba(255,255,255,.72));box-shadow:inset 0 0 0 1px rgba(255,255,255,.85),0 6px 16px -6px rgba(28,37,71,.42);opacity:0;transition:opacity .5s ease .6s}
 .l3d.on .c3{opacity:1}
-.c3 i{width:10px;height:10px;border-radius:50%;display:block;box-shadow:0 0 0 1.5px rgba(255,255,255,.7)}
+.c3 i{width:10px;height:10px;border-radius:50%;display:block;box-shadow:0 0 0 1.5px rgba(28,37,71,.22)}
 .c3.cur{background:#ffd23f;color:#1c2547;box-shadow:0 0 18px rgba(255,200,40,.75)}
-.l3h{position:absolute;top:16px;left:16px;font:500 12px var(--f-display);color:rgba(255,255,255,.72);padding:6px 11px;border-radius:999px;background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+.l3h{position:absolute;bottom:62px;left:16px;font:500 12px var(--f-display);color:var(--ink2);padding:6px 11px;border-radius:999px;background:rgba(255,255,255,.66);box-shadow:inset 0 0 0 1px rgba(42,59,134,.14)}
 .d3on #links{opacity:0!important}
 /* ===== /center fx v2 ===== */
 </style>
@@ -523,7 +543,7 @@ function draw(){
   world.style.transform=`translate(${MAPBOX.width/2-cam.cx*cam.s}px,${MAPBOX.height/2-cam.cy*cam.s}px) scale(${cam.s})`;
   const st=SL[step];let zs='',ls='',ns='',nc='';if(drawK===0){const c=FXC();c&&(c.innerHTML='');if(D3.auto)d3Kill();d3Cancel()}
   st.on.forEach(key=>{const B=BUILD[key],cur=st.cur.includes(key),k=cur&&!KEEP.has(key)?drawK:1,dim=cur?1:.9;   /* center fx v2: earlier layers stay; a layer already on screen never redraws */
-    (B.zones||[]).forEach(({z,c,op})=>{zs+=`<path class="${c}" d="${rings(z.g).map(r=>pth(r)+'Z').join('')}" fill-opacity="${op*k*dim}" stroke-opacity="${.9*k*dim}"/>`});
+    (B.zones||[]).forEach(({z,c,op},j,A)=>{let kk=k,tf='';if(key==='grow'&&k<1){const t=clamp((k-GORD[j]/A.length*.62)/.38,0,1),e=ease3(t);kk=Math.min(1,e*1.4);const[cx,cy]=S(...cen(z.g));tf=` transform="translate(${cx.toFixed(1)},${cy.toFixed(1)}) scale(${(.15+.85*e).toFixed(3)}) translate(${(-cx).toFixed(1)},${(-cy).toFixed(1)})"`}zs+=`<path class="${c}"${tf} d="${rings(z.g).map(r=>pth(r)+'Z').join('')}" fill-opacity="${op*kk*dim}" stroke-opacity="${.9*kk*dim}"/>`});
     (B.lines||[]).forEach(l=>{const L=plen(l.p),d=pth(l.p),o=L*(1-k);ls+=`<g opacity="${dim}"><path class="rtg" d="${d}" stroke="#1c2547" stroke-width="${l.w*2.6}" opacity=".28" stroke-dasharray="${L} ${L}" stroke-dashoffset="${o}"/><path class="rt" d="${d}" stroke="${l.c}" stroke-width="${l.w}" stroke-dasharray="${L} ${L}" stroke-dashoffset="${o}"/></g>`});
     const N=B.nodes||[];N.forEach((n,i)=>{const t=clamp((k-i/N.length*.7)/.3,0,1);if(t<=0)return;const[x,y]=S(...n.p);const o=`<circle class="nd" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(n.r*t).toFixed(1)}" fill="${n.c}" opacity="${dim}"/>`;if(cur)nc+=o;else ns+=o});
   });
@@ -533,7 +553,7 @@ function draw(){
     const X=clamp(c.dx>0?x+c.dx:x+c.dx-w,12,MAPBOX.width-w-12),Y=clamp(y+c.dy-h/2,70,MAPBOX.height-h-60);
     co.style.transform=`translate(${X}px,${Y}px)`;coR={x:X,y:Y,w,h};const ex=x<X?X:X+w,ey=clamp(y,Y+8,Y+h-8);
     s+=`<path class="ld" d="M${x},${y}L${ex},${ey}" opacity="${drawK}"/><circle class="ldd" cx="${x}" cy="${y}" r="4"/>`}
-  ov.innerHTML=s;
+  ov.innerHTML=s;growCounter(st);
   const pos=el=>{const[x,y]=S(+el.dataset.lon,+el.dataset.lat);el.style.transform=`translate(${x}px,${y}px)`;el._x=x;el._y=y};
   pms.querySelectorAll('.pm').forEach(pos);zls.querySelectorAll('.zl').forEach(pos);
   links();
@@ -579,14 +599,32 @@ function phBack(el,k){el.classList.remove('lit');el.classList.add('back');if(el.
   else el.style.transform='scale(.03)';
   setTimeout(()=>el.remove(),k*PHS+840)}
 /* ===== /center fx v2 ===== */
+/* ===== growth counter: 2014 → 2026, 7% → 14%, the new areas grow out one after another (nearest to Cairo first) ===== */
+const GORD=(()=>{const c=[31.24,30.04],d=GROW.map((z,j)=>{const q=cen(z.g);return[j,Math.hypot(q[0]-c[0],q[1]-c[1])]}).sort((a,b)=>a[1]-b[1]),r=[];d.forEach(([j],n)=>r[j]=n);return r})();
+map.insertAdjacentHTML('beforeend','<div class="yc" id="yc"><div class="ych"><span>2014</span><b id="ycy">2014</b><span>2026</span></div><div class="ycb"><i class="a"></i><i class="b" id="ycb"></i></div><div class="ycp">المعمور <b id="ycp">7%</b> من مساحة مصر</div></div>');
+const ease3=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+function growCounter(st){const yc=document.getElementById('yc');if(!yc)return;const on=st.cur.includes('grow')&&st.cur.length<ORDER.length;yc.classList.toggle('on',on);if(!on)return;
+  const e=KEEP.has('grow')?1:ease3(clamp(drawK,0,1));document.getElementById('ycy').textContent=2014+Math.round(12*e);
+  document.getElementById('ycp').textContent=(e>=1?'14':(7+7*e).toFixed(1))+'%';document.getElementById('ycb').style.width=(50*e)+'%'}
+/* ===== /growth counter ===== */
+/* ===== map loader: a line under the map title that fills while the map is still moving (2D draw → 3D → back to 2D) ===== */
+const D3DUR=350+1150+2900+1150+520;
+function drawMs(st,keepGrow){let ms=st.cur.length>4?2600:2200;if(st.cur.includes('grow')&&!keepGrow&&st.cur.length<ORDER.length)ms=Math.max(ms,4600);return ms}
+window.MAPDUR=i=>{const st=SL[i];return drawMs(st,i===step&&KEEP.has('grow'))+(st.on.length?D3DUR:0)};
+document.querySelector('.mapc .mtitle').insertAdjacentHTML('beforeend','<i class="mld"><b></b></i>');
+function mapLoad(T){const m=document.querySelector('.mld');if(!m)return;const b=m.firstChild;m._tok=(m._tok||0)+1;m.className='mld run';b.style.transition='none';b.style.width='0';void b.offsetWidth;
+  if(T>0){b.style.transition=`width ${T}ms linear`;b.style.width='100%'}}
+function mapDone(){const m=document.querySelector('.mld');if(!m||!m.classList.contains('run'))return;const b=m.firstChild,tk=m._tok;m.classList.add('done');b.style.transition='width .3s ease';b.style.width='100%';
+  setTimeout(()=>{if(m._tok===tk)m.classList.remove('run')},900)}
+/* ===== /map loader ===== */
 /* ===== 3D layer view: the map and every layer on it as a stack of floating sheets ===== */
 const D3={on:false,auto:0,el:null,rx:52,rz:-24,g:1,n:0,gap:50,sc:.7,ty:40,tx:34};
 const LAYN={valley:'المعمور 2014',grow:'التوسع حتى 2026',roads:'الطرق والمحاور',nile:'محاور النيل',rail:'القطار السريع',ports:'الموانئ والمطارات',power:'محطات الكهرباء',water:'المياه والتحلية',cities:'المدن الجديدة',agri:'الاستصلاح والصوامع'};
 const egD=()=>rings(GEO.egypt).map(r=>pth(r)+'Z').join('');
-function d3Sheet(keys,cur){let h=`<path d="${egD()}" fill="rgba(140,165,255,.07)" stroke="rgba(255,255,255,.4)" stroke-width="1.2"/>`;
+function d3Sheet(keys,cur){let h=`<path d="${egD()}" fill="rgba(61,92,192,.05)" stroke="rgba(42,59,134,.32)" stroke-width="1.2"/>`;
   keys.forEach(key=>{const B=BUILD[key];
   (B.zones||[]).forEach(({z,c,op})=>{h+=`<path class="${c}" d="${rings(z.g).map(r=>pth(r)+'Z').join('')}" fill-opacity="${Math.min(.95,op*1.3).toFixed(2)}" stroke-opacity=".95"/>`});
-  (B.lines||[]).forEach(l=>{const d=pth(l.p);h+=`<path class="rtg" d="${d}" stroke="#060a24" stroke-width="${(l.w*2.6).toFixed(1)}"/><path class="rt" d="${d}" stroke="${l.c}" stroke-width="${(l.w*1.2).toFixed(1)}"/>`});
+  (B.lines||[]).forEach(l=>{const d=pth(l.p);h+=`<path class="rtg" d="${d}" stroke="#1c2547" stroke-width="${(l.w*2.6).toFixed(1)}"/><path class="rt" d="${d}" stroke="${l.c}" stroke-width="${(l.w*1.2).toFixed(1)}"/>`});
   const N=(B.nodes||[]).map(n=>{const[x,y]=S(...n.p);return`<circle class="nd" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(n.r*1.15).toFixed(1)}" fill="${n.c}"/>`}).join('');
   h+=cur?`<g class="ndc">${N}</g>`:N});
   return h+`<g class="fx">${fxHtml(keys,!cur)}</g>`}
@@ -607,16 +645,16 @@ function d3Build(enter){const st=SL[step];let el=D3.el;
   const grp=[];keys.forEach(k=>{if((k==='valley'||k==='grow')&&grp.length&&grp[grp.length-1].b)grp[grp.length-1].k.push(k);else grp.push({k:[k],b:k==='valley'||k==='grow'})});
   grp.forEach(g=>{const ks=g.k,cur=ks.some(k=>st.cur.includes(k)),nm=g.b?(ks.includes('grow')?'المعمور · 7% + 7% = 14%':'المعمور 2014 · 7%'):(LAYN[ks[0]]||ks[0]);
     sheets.push({html:`<svg class="ov">${d3Sheet(ks,cur)}</svg>`,name:nm,col:d3Col(ks[ks.length-1]),cur:cur&&st.cur.length<ORDER.length})});
-  const pst=pastPts(step);if(pts.length||pst.length)sheets.push({html:`<svg class="ov"><path d="${egD()}" fill="rgba(140,165,255,.05)" stroke="rgba(255,255,255,.35)" stroke-width="1"/>${pst.map(ll=>{const[x,y]=S(...ll);return`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="#fff" stroke="#1c2547" stroke-opacity=".6" stroke-width="2"/>`}).join('')}${pts.map(([ll,k])=>{const[x,y]=S(...ll);return`<g transform="translate(${x.toFixed(1)},${y.toFixed(1)})"><circle r="13" fill="#3558e6" stroke="#fff" stroke-width="2"/><text y="4.6" text-anchor="middle" font-size="13" font-weight="700" fill="#fff" font-family="Readex Pro,sans-serif">${k+1}</text></g>`}).join('')}</svg>`,name:'أماكن الصور',col:'#ffd23f'});
+  const pst=pastPts(step);if(pts.length||pst.length)sheets.push({html:`<svg class="ov"><path d="${egD()}" fill="rgba(61,92,192,.04)" stroke="rgba(42,59,134,.28)" stroke-width="1"/>${pst.map(ll=>{const[x,y]=S(...ll);return`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="#fff" stroke="#1c2547" stroke-opacity=".6" stroke-width="2"/>`}).join('')}${pts.map(([ll,k])=>{const[x,y]=S(...ll);return`<g transform="translate(${x.toFixed(1)},${y.toFixed(1)})"><circle r="13" fill="#3558e6" stroke="#fff" stroke-width="2"/><text y="4.6" text-anchor="middle" font-size="13" font-weight="700" fill="#fff" font-family="Readex Pro,sans-serif">${k+1}</text></g>`}).join('')}</svg>`,name:'أماكن الصور',col:'#ffd23f'});
   const n=sheets.length,[ax,ay]=S(25.4,30.2);D3.n=n;D3.gap=clamp(430/Math.max(1,n-1),38,120);D3.ty=Math.round(26+((n-1)*D3.gap+(sheets.some(t=>t.cur)?D3.gap*.9:0))*Math.sin(D3.rx*Math.PI/180)*D3.sc*.5);
   const sc=el.firstChild;sc.innerHTML=sheets.map((t,i)=>`<div class="pl${t.base?' base':''}${t.cur?' cur':''}" style="--i:${i}">${t.html}<div class="c3w" style="left:${ax.toFixed(0)}px;top:${ay.toFixed(0)}px"><span class="c3${t.cur?' cur':''}"><i style="background:${t.col}"></i>${t.name}</span></div></div>`).join('');
   sc.firstChild.insertBefore(wc,sc.firstChild.firstChild);
   if(enter){d3Vars(1);el.classList.remove('on');void el.offsetWidth;requestAnimationFrame(()=>requestAnimationFrame(()=>{el.classList.add('on');setTimeout(()=>d3Vars(0),60)}))}
   else{el.classList.add('on');d3Vars(0)}}
-function d3Cancel(){clearTimeout(D3.a1);clearTimeout(D3.a2)}
+function d3Cancel(){clearTimeout(D3.a1);clearTimeout(D3.a2);clearTimeout(D3.a3)}
 function d3Kill(){d3Cancel();D3.auto=0;if(!D3.on&&!D3.el)return;D3.on=false;clearTimeout(D3.t);const b=document.getElementById('b3d');b&&(b.classList.remove('on'),b.setAttribute('aria-pressed',false));stage.classList.remove('d3on');if(D3.el){const el=D3.el;D3.el=null;el.classList.remove('on');setTimeout(()=>el.remove(),480)}}
 /* every slide: 2D, then the new layer rises in 3D, then back to 2D */
-function d3Auto(){const st=SL[step];if(!st.on.length||D3.on)return;d3Cancel();d3Toggle(true,1);D3.a2=setTimeout(()=>{if(D3.auto&&D3.on)d3Toggle(false)},1150+2900)}
+function d3Auto(){const st=SL[step];if(!st.on.length||D3.on)return;d3Cancel();d3Toggle(true,1);D3.a2=setTimeout(()=>{if(D3.auto&&D3.on){d3Toggle(false);D3.a3=setTimeout(mapDone,1670)}},1150+2900)}
 function d3Toggle(force,auto){if(force==null&&D3.on&&D3.auto){D3.auto=0;d3Cancel();return}   /* pressing 3D during the automatic view keeps it open */
   const on=force==null?!D3.on:!!force;if(on===D3.on)return;D3.on=on;D3.auto=on&&auto?1:0;if(!auto)d3Cancel();
   const b=document.getElementById('b3d');b&&(b.classList.toggle('on',on),b.setAttribute('aria-pressed',on));stage.classList.toggle('d3on',on);
@@ -627,10 +665,10 @@ window.d3Toggle=d3Toggle;
 
 /* ---------- step change ---------- */
 let drawAnim=null;
-function drawIn(ms){const t0=performance.now();cancelAnimationFrame(drawAnim);{const c=FXC();c&&!KEEP.size&&(c.innerHTML='')}const f=t=>{drawK=Math.min(1,(t-t0)/ms);draw();if(drawK<1)drawAnim=requestAnimationFrame(f);else{const c=FXC();if(c){if(KEEP.size)c.insertAdjacentHTML('beforeend',fxHtml(SL[step].cur.filter(k=>!KEEP.has(k)),0));else c.innerHTML=fxHtml(SL[step].cur,0)}KEEP=new Set();d3Cancel();D3.a1=setTimeout(d3Auto,350)}};drawAnim=requestAnimationFrame(f)}
+function drawIn(ms){{const s0=SL[step];if(s0.cur.includes('grow')&&!KEEP.has('grow')&&s0.cur.length<ORDER.length)ms=Math.max(ms,4600);mapLoad(ms+(s0.on.length&&!D3.on?D3DUR:0))}const t0=performance.now();cancelAnimationFrame(drawAnim);{const c=FXC();c&&!KEEP.size&&(c.innerHTML='')}const f=t=>{drawK=Math.min(1,(t-t0)/ms);draw();if(drawK<1)drawAnim=requestAnimationFrame(f);else{const c=FXC();if(c){if(KEEP.size)c.insertAdjacentHTML('beforeend',fxHtml(SL[step].cur.filter(k=>!KEEP.has(k)),0));else c.innerHTML=fxHtml(SL[step].cur,0)}KEEP=new Set();d3Cancel();if(!SL[step].on.length||D3.on)mapDone();D3.a1=setTimeout(d3Auto,350)}};drawAnim=requestAnimationFrame(f)}
 function progress(i){return`<div class="row"><b>${SL[i].hd[0]}</b><span>${i+1} / ${SL.length}</span></div><div class="tk2">${SL.map((_,j)=>`<i class="${j<i?'d':j===i?'c':''}"></i>`).join('')}</div>`}
 function go(i){if(i===step||i<0||i>=SL.length)return;KEEP=new Set(step>=0&&SL[step]?SL[step].on.filter(k=>SL[i].cur.includes(k)):[]);step=i;const st=SL[i];
-  cnt.textContent=`${i+1} / ${SL.length}`;
+  cnt.textContent=`${i+1} / ${SL.length}`;mapLoad(0);
   hdt.textContent=st.hd[0];hds.textContent=st.hd[1];mtt.textContent=st.map[0];mts.textContent=st.map[1];
   const keep=new Set();
   st.right.forEach(([id,cell,cls,html,wm],k)=>{keep.add('r'+id);place('r'+id,cell,(id[0]==='z'?'zc ':'')+cls,html,k*60,wm)});

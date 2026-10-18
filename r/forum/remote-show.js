@@ -94,7 +94,8 @@ function forumAdapter(){
     hook:function(){['show','setStep'].forEach(function(f){var o=W[f];if(typeof o!=='function')return;W[f]=function(){var r=o.apply(this,arguments);push(1);return r}})}
   }}
 function centerAdapter(){
-  var msOf=function(i){return (SL[i].cur||[]).length>4?2600:2200};
+  var dms=function(i){return (SL[i].cur||[]).length>4?2600:2200};   /* mapdur v1 */
+  var msOf=function(i){try{if(typeof W.MAPDUR==='function')return W.MAPDUR(i)}catch(e){}return dms(i)};
   var mapEl=function(){return D.querySelector('.mapc')||D.getElementById('stage')};
   var startAnim=function(i){var el=mapEl(),ms=msOf(i)+450;ANIM.start(el,ms,1);setTimeout(function(){ANIM.end(el)},ms)};
   return {
@@ -103,7 +104,7 @@ function centerAdapter(){
     id:function(){return String(step)},
     go:function(i){go(i)},next:function(){go(step+1)},prev:function(){go(step-1)},
     replay:function(){var i=step;drawK=0;draw();var el=mapEl();ANIM.start(el,msOf(i)+450,1);
-      setTimeout(function(){drawIn(msOf(i));setTimeout(function(){ANIM.end(el)},msOf(i))},450)},
+      setTimeout(function(){drawIn(dms(i));setTimeout(function(){ANIM.end(el)},msOf(i))},450)},
     hasMap:function(){return true},
     hook:function(){var o=W.go;W.go=function(i){var s=step,r=o.apply(this,arguments);if(step!==s)startAnim(step);push(1);return r}}
   }}
