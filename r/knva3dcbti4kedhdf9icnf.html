@@ -314,8 +314,8 @@ svg.fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-in
 .mleg{flex-wrap:wrap;justify-content:flex-end;row-gap:6px;max-width:calc(100% - 150px);border-radius:16px}
 /* names and marks on the map */
 .ov .labs text{font-family:var(--f-display);paint-order:stroke;stroke-linejoin:round}
-.ov .lnm{font-size:10.5px;font-weight:600;fill:#1c2547;stroke:rgba(255,255,255,.92);stroke-width:3px;direction:rtl;unicode-bidi:plaintext}
-.ov .lnm.b{font-size:11.5px;font-weight:700}
+.ov .lnm{font-size:10px;font-weight:600;fill:#1c2547;stroke:rgba(255,255,255,.92);stroke-width:3px;direction:rtl;unicode-bidi:plaintext;text-anchor:middle}
+.ov .lnm.b{font-size:11px;font-weight:700}
 .ov .lnum{fill:#fff;stroke:#1c2547;stroke-width:1.6}
 .ov .lnt{font-size:12px;font-weight:700;fill:#1c2547;text-anchor:middle}
 .ov .lkm{fill:rgba(255,255,255,.9);stroke:rgba(255,122,56,.9);stroke-width:1.2}
@@ -388,6 +388,56 @@ svg.fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-in
 .c3.cur{background:#ffd23f;color:#1c2547;box-shadow:0 0 18px rgba(255,200,40,.75)}
 .l3h{position:absolute;bottom:62px;left:16px;font:500 12px var(--f-display);color:var(--ink2);padding:6px 11px;border-radius:999px;background:rgba(255,255,255,.66);box-shadow:inset 0 0 0 1px rgba(42,59,134,.14)}
 .d3on #links{opacity:0!important}
+/* fid v1: every client name on the map, the axes list, Greater Cairo's monorail and LRT */
+.ov .lld,.gcs .lld{fill:none;stroke:#14204a;stroke-opacity:.7;stroke-width:.9}
+.ov .lpb,.gcs .lpb{stroke:rgba(255,255,255,.92);stroke-width:1}
+.ov .labs .lpt,.gcs .lpt{font-size:10px;font-weight:700;fill:#fff;stroke:none;text-anchor:middle;direction:rtl;unicode-bidi:plaintext}
+.ov .labs .lps{font-size:9.5px;font-weight:500;fill:#fff;fill-opacity:.93;stroke:none;text-anchor:middle;direction:rtl;unicode-bidi:plaintext}
+.ov .lar{font-size:13px;font-weight:600;fill:#1c2547;fill-opacity:.6;stroke:rgba(255,255,255,.5);stroke-width:3px;text-anchor:middle;letter-spacing:.4px}
+.ov .lar.sea{fill:#fff;fill-opacity:.88;stroke:rgba(20,32,74,.42)}
+.ov .lzl{font-size:10.5px;font-weight:700;fill:#7a2e0a;stroke:rgba(255,255,255,.92);stroke-width:3px;text-anchor:middle;direction:rtl;unicode-bidi:plaintext}
+.fpan{position:absolute;z-index:6;opacity:0;pointer-events:none;border-radius:16px;color:#1c2547;
+  background:linear-gradient(160deg,rgba(255,255,255,.95),rgba(255,255,255,.84));box-shadow:inset 0 0 0 1px rgba(255,255,255,.9),0 14px 32px -14px rgba(20,32,74,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.fpan.on{opacity:1}
+.fph{display:flex;align-items:center;gap:8px;font:700 13px var(--f-display);padding:9px 12px 5px}
+.fph i{width:16px;height:4px;border-radius:2px;background:linear-gradient(90deg,#ff7a38,#ffd23f);flex:none}
+.axl{left:12px;bottom:78px;width:262px;transform:translateY(10px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
+.axl.on{transform:none}
+.axl ol{list-style:none;margin:0;padding:1px 10px 9px;display:flex;flex-direction:column;gap:3px}
+.axl li{display:flex;gap:6px;align-items:flex-start;font:500 10.5px/1.38 var(--f-display)}
+.axl li b{flex:none;width:17px;height:17px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 1.5px #1c2547;font:700 10px/17px var(--f-display);text-align:center}
+.gcp{left:10px;right:10px;bottom:72px;transform:scale(.05);transition:opacity .45s ease,transform .95s cubic-bezier(.65,0,.25,1)}
+.gcp.on{transform:none}
+.gcp .gcm svg{display:block;width:100%;height:auto}
+.gck{display:flex;flex-wrap:wrap;gap:3px 14px;padding:0 12px 6px;font:500 10.5px var(--f-display)}
+.gck span{display:flex;align-items:center;gap:5px}
+.gck i{width:16px;height:5px;border-radius:3px;display:block;flex:none}
+.gck i.lr{background:repeating-linear-gradient(90deg,#fff 0 2px,var(--c) 2px 6px);box-shadow:0 0 0 1px var(--c)}
+.gck .gtt{font-weight:700}
+.gck b{font-weight:700;color:#c2410c}
+.gcb{position:absolute;left:14px;top:14px;z-index:7;display:none;align-items:center;gap:7px;border:0;cursor:pointer;font:600 12px var(--f-display);color:#1c2547;padding:7px 12px;border-radius:999px;
+  background:rgba(255,255,255,.9);box-shadow:inset 0 0 0 1px rgba(42,59,134,.18),0 6px 16px -8px rgba(20,32,74,.5);transition:background .3s}
+.gcb.on{display:flex}
+.gcb i{width:9px;height:9px;border-radius:50%;background:#ee9873;box-shadow:0 0 0 3px rgba(238,152,115,.3)}
+.gcb.act{background:#ffd23f}
+.gcz{position:absolute;z-index:5;border:1.6px dashed #1c2547;border-radius:5px;opacity:0;transition:opacity .5s;pointer-events:none;background:rgba(255,210,63,.18)}
+.gcz.on{opacity:.95}
+.gcs .gnl{fill:none;stroke:#5aa9e6;stroke-width:3.2;stroke-opacity:.6;stroke-linecap:round}
+.gcs .gcx{fill:none;stroke-width:3;stroke-linecap:round;stroke-opacity:.85}
+.gcs .gcx.ds{stroke-dasharray:2 5}
+.gcs .gcn{font-size:10px;font-weight:600;fill:#1a7a43;text-anchor:middle}
+.gcs .gar{font-size:12px;font-style:italic;font-weight:600;fill:#1c2547;fill-opacity:.36;text-anchor:middle}
+.gcs .gmo{fill:none;stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+.gcs .glc{fill:none;stroke:#1c2547;stroke-opacity:.32;stroke-width:6.6;stroke-linecap:round;stroke-linejoin:round}
+.gcs .glr{fill:none;stroke-width:4.4;stroke-linecap:round;stroke-linejoin:round}
+.gcs .glt{fill:none;stroke:#fff;stroke-width:1.4;stroke-dasharray:1.2 5}
+.gcs .gsm{stroke:#fff;stroke-width:1.6}
+.gcs .gsl{fill:#fff;stroke-width:2.2}
+.gcs .gce{fill:#e11d48;stroke:#fff;stroke-width:1.5}
+.gcs text{font-family:var(--f-display);paint-order:stroke;stroke-linejoin:round}
+.gcs .lnm{font-size:10px;font-weight:600;fill:#1c2547;stroke:rgba(255,255,255,.95);stroke-width:3px;text-anchor:middle;direction:rtl;unicode-bidi:plaintext}
+.d3on .fpan,.d3on .gcb,.d3on .gcz{opacity:0!important;pointer-events:none}
+.gcon #calls,.gcon #links{opacity:0!important;transition:opacity .4s}
 /* ===== /center fx v2 ===== */
 </style>
 </head>
@@ -405,7 +455,7 @@ svg.fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-in
 
 <script src="https://cdn.jsdelivr.net/npm/lucide@0.453.0/dist/umd/lucide.min.js"></script>
 <script src="geo.js"></script>
-<script src="mapdata.js"></script><script src="cmdata.js"></script>
+<script src="mapdata.js"></script><script src="cmdata.js?v=fid1"></script>
 <script>
 (function(){const r=GEO.egypt.coordinates[0][0];GEO.egypt.coordinates[0][0]=r.filter(p=>!(p[0]>31.25&&p[0]<31.5&&p[1]>21.996&&p[1]<22.25))})();
 /* ---------- grid: 12 x 6 on 1600 x 900; cells are [col,row,w,h] counted from the right (RTL) ---------- */
@@ -639,7 +689,7 @@ function fxHtml(keys,old){let h='',g='';const st=SL[step],cols=new Set();
       const da=`${dash.toFixed(3)} ${(per-dash).toFixed(3)}`,sty=`--t:${(Math.max(1.4,L/(l.rail?220:160))).toFixed(2)}s;--dl:-${(Math.random()*L/160).toFixed(2)}s`,c=l.rail?'rl':'r';
       h+=`<g class="${old?'lo':''}"><path class="rn ${c}1" d="${d}" pathLength="100" stroke-dasharray="${da}" stroke-width="${(l.w*6).toFixed(1)}" style="${sty}"/><path class="rn ${c}2" d="${d}" pathLength="100" stroke-dasharray="${da}" stroke-width="${(l.w*2.6).toFixed(1)}" style="${sty}"/><path class="rn ${c}3" d="${d}" pathLength="100" stroke-dasharray="${da}" stroke-width="${(l.w*1.1).toFixed(1)}" style="${sty}"/></g>`});
     const N=B.nodes||[];if(!N.length)return;
-    const grp=['','',''];N.forEach((n,i)=>{const[x,y]=S(...n.p),id=old?'hg'+String(n.c).replace('#','').toLowerCase():'ygr';if(old)cols.add(n.c);
+    const og=old||B.og,grp=['','',''];N.forEach((n,i)=>{const[x,y]=S(...n.p),id=og?'hg'+String(n.c).replace('#','').toLowerCase():'ygr';if(og)cols.add(n.c);   /* fid: layers whose colour is the client's code glow in their own colours */
       grp[i%3]+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(old?n.r*1.5+5:n.r*1.6+6).toFixed(1)}" fill="url(#${id})"/>`});
     h+=`<g class="${old?'ho':'hc'}">${grp.map((x,i)=>x?`<g class="hg d${i}">${x}</g>`:'').join('')}</g>`});
   cols.forEach(c=>{const hx=String(c).replace('#','').toLowerCase();g+=`<radialGradient id="hg${hx}"><stop offset="0" stop-color="${c}" stop-opacity=".95"/><stop offset=".5" stop-color="${c}" stop-opacity=".4"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></radialGradient>`});
@@ -669,28 +719,31 @@ const ZCAT=[['green','#3c8ca4','التوسع الزراعي'],['cream','#e6c58a'
 const ZCC=Object.fromEntries(ZCAT.map(q=>[q[0],q[1]]));
 const mixC=(a,b,t)=>{const h=c=>[1,3,5].map(i=>parseInt(c.slice(i,i+2),16)),A=h(a),B=h(b);return'#'+A.map((v,i)=>Math.round(v+(B[i]-v)*t).toString(16).padStart(2,'0')).join('')};
 const HSRN={F:0,R:0};
+const SEAS=[{p:[29.6,32.35],t:'البحر المتوسط',k:'sea'},{p:[35.75,26.1],t:'البحر الأحمر',k:'sea'}];
 if(window.CMD){const D=window.CMD,PG=p=>({g:{type:'Polygon',coordinates:[p]}});
   BUILD.valley.zones=D.zones.aqua.map(p=>({z:PG(p),c:'zv',op:.7}));
   BUILD.grow.zones=ZCAT.flatMap(([k])=>(D.zones[k]||[]).map(p=>({z:PG(p),c:'zg',op:.58,cat:k})));
+  BUILD.grow.marks=(D.zlab||[]).map(q=>({p:[q[0],q[1]],t:q[2],k:'zl'}));   /* fid: the 19 place names of the client's built-up map */
   BUILD.roads={leg:[['#ff7a38','المحاور العرضية المقترحة'],['#2449e0','المحاور الطولية'],['#eef1ff','ممر التنمية – د. فاروق الباز']],
     lines:[...D.roads.red.map(p=>({p,c:'#ff7a38',w:2.1})),...D.roads.blue.map(p=>({p,c:'#2449e0',w:2.6})),...D.roads.corr.map(p=>({p,c:'#eef1ff',w:1.5,dash:1}))],
-    marks:[...D.roads.num.map(q=>({p:[q[0],q[1]],t:q[2],k:'num'})),...D.roads.km.map(q=>({p:[q[0],q[1]],t:q[2],k:'km'})),...D.roads.pl.map(q=>({p:[q[0],q[1]],t:q[2],k:'pl'}))]};
+    marks:[...D.roads.num.map(q=>({p:[q[0],q[1]],t:q[2],k:'num'})),...D.roads.km.map(q=>({p:[q[0],q[1]],t:q[2],k:'km'})),...D.roads.pl.map(q=>({p:[q[0],q[1]],t:q[2],k:'pl'})),
+      ...[['الصحراء الغربية',27.6,26.4],['الصحراء الشرقية',32.9,27.2],['سيناء',33.8,29.6]].map(q=>({p:[q[1],q[2]],t:q[0],k:'area'})),...SEAS]};
   const NC={Y:'#ffe066',M:'#ff4fa0',C:'#22d3ee'},cnt=k=>D.nile.filter(q=>q[3]===k).length;
   BUILD.nile={leg:[[NC.Y,`محاور منفذة · ${cnt('Y')}`,'dot'],[NC.M,`محاور جارية · ${cnt('M')}`,'dot'],[NC.C,`محاور مستقبلية · ${cnt('C')}`,'dot']],
-    nodes:D.nile.map(q=>({p:[q[0],q[1]],r:3.6,c:NC[q[3]],n:q[2]})),nolab:1};
-  const HC=['#2449e0','#14b8a6','#ff7a38'],hl=[],hn=[],seen=new Set(),RP=c=>`repeating-linear-gradient(90deg,#fff 0 4px,${c} 4px 8px)`;
-  D.hsr.forEach((r,i)=>{const col=HC[i%3];hl.push({p:r.pts,c:col,w:3.4,rail:1});r.br.forEach(b=>hl.push({p:b.pts,c:col,w:2.6,rail:1}));
+    nodes:D.nile.map(q=>({p:[q[0],q[1]],r:3.6,c:NC[q[3]],n:q[2],lcol:NC[q[3]],lh:'#14204a',side:q[4]})),marks:SEAS,og:1};   /* fid: all 72 names, coloured by status, on their bank as on the client's map */
+  const HC=['#1fae5b','#2449e0','#ffd23f'],FC='#f07a1a',RG='#8bd450',hl=[],hn=[],seen=new Set(),RP=c=>`repeating-linear-gradient(90deg,#fff 0 4px,${c} 4px 8px)`;   /* fid: the client's line colours (1 green, 2 blue, 3 yellow), fast stations orange, regional green */
+  D.hsr.forEach((r,i)=>{const col=HC[i%3];hl.push({p:r.pts,c:col,w:3.4,rail:1});r.br.forEach(b=>hl.push(b.ext?{p:b.pts,c:'#39e46b',w:2.6,dash:1}:{p:b.pts,c:col,w:2.6,rail:1}));
     [...r.st,...r.br.flatMap(b=>b.st)].forEach(q=>{if(!q[2]||seen.has(q[2]))return;seen.add(q[2]);const F=q[3]==='F';HSRN[F?'F':'R']++;
-      hn.push({p:[q[0],q[1]],r:F?5.2:3.3,c:F?'#ffffff':col,ring:!F,n:q[2],big:F})})});
-  BUILD.rail={leg:[[RP('#2449e0'),'الخط الأول'],[RP('#14b8a6'),'الخط الثاني'],[RP('#ff7a38'),'الخط الثالث'],['#ffffff',`محطات سريعة · ${HSRN.F}`,'dot']],lines:hl,nodes:hn,labF:1};
+      hn.push({p:[q[0],q[1]],r:F?5:3.6,c:F?FC:RG,n:q[2],big:F,lc:'pill',lcol:F?'#e8650f':'#1e6b3f'})})});
+  BUILD.rail={leg:[[RP(HC[0]),'الخط الأول'],[RP(HC[1]),'الخط الثاني'],[RP(HC[2]),'الخط الثالث'],['#39e46b','مسار الامتداد'],[FC,`محطات سريعة · ${HSRN.F}`,'dot'],[RG,`محطات إقليمية · ${HSRN.R}`,'dot']],lines:hl,nodes:hn,og:1};
   BUILD.ports={leg:[['#22d3ee',`موانئ بحرية · ${D.ports.length}`,'dot'],['#ffffff','موانئ جافة ومراكز لوجيستية','dot'],['#ff7a38',`مطارات · ${D.air.length}`,'dot']],
     lines:LT('canal').map(l=>({p:l.p,c:'#ff7a38',w:3.4})),
-    nodes:[...D.ports.map(q=>({p:[q[1],q[2]],r:6,c:'#22d3ee',n:q[0],big:1})),...D.dry.map(q=>({p:[q[1],q[2]],r:4.6,c:'#ffffff',n:q[0]})),...D.air.map(q=>({p:[q[1],q[2]],r:4.4,c:'#ff7a38',n:q[0]}))]};
-  const PC={'حراري':'#ff7a38','رياح':'#22d3ee','شمسي':'#ffe066','نووي':'#a78bfa'},pc=t=>D.pw.filter(q=>q[1]===t).length;
-  BUILD.power={leg:Object.keys(PC).map(t=>[PC[t],`${t} · ${pc(t)}`,'dot']),nodes:D.pw.map(q=>({p:[q[4],q[5]],r:clamp(Math.sqrt(q[3])/4.4,4,13),c:PC[q[1]]||'#ff7a38',n:q[0],big:q[3]>=1400}))};
+    nodes:[...D.ports.map(q=>({p:[q[1],q[2]],r:6,c:'#22d3ee',n:q[0],big:1,lcol:'#0b6b86',lh:'rgba(255,255,255,.95)'})),...D.dry.map(q=>({p:[q[1],q[2]],r:4.6,c:'#ffffff',n:q[0]})),...D.air.map(q=>({p:[q[1],q[2]],r:4.4,c:'#ff7a38',n:q[0],lcol:'#b23a06',lh:'rgba(255,255,255,.95)'}))]};
+  const PC={'حراري':'#b4532a','رياح':'#1f9d55','شمسي':'#e0a40b','نووي':'#2b3a8f'},pc=t=>D.pw.filter(q=>q[1]===t).length;   /* fid: the client's colours by type */
+  BUILD.power={leg:Object.keys(PC).map(t=>[PC[t],`${t} · ${pc(t)}`,'dot']),nodes:D.pw.map(q=>({p:[q[4],q[5]],r:clamp(Math.sqrt(q[3])/4.4,4,13),c:PC[q[1]]||'#b4532a',n:q[0],n2:`${q[3]} ميجاوات`,lc:'pill',lcol:PC[q[1]]||'#b4532a',big:q[3]>=1400})),og:1};   /* fid: name and capacity on every station, as on the client's map */
   const g4=D.cities.filter(q=>q[3]===4),gx=D.cities.filter(q=>q[3]!==4);
   BUILD.cities={leg:[['#e0337e',`الجيل الرابع · ${g4.length}`,'dot'],['#ffffff',`الأجيال الأول – الثالث · ${gx.length}`,'dot']],
-    nodes:[...gx.map(q=>({p:[q[1],q[2]],r:3.4,c:'#ffffff',n:q[0]})),...g4.map(q=>({p:[q[1],q[2]],r:5.6,c:'#e0337e',n:q[0],big:1}))]};
+    nodes:[...gx.map(q=>({p:[q[1],q[2]],r:3.4,c:'#ffffff',n:q[0]})),...g4.map(q=>({p:[q[1],q[2]],r:5.6,c:'#e0337e',n:q[0],big:1,lcol:'#a3155a',lh:'rgba(255,255,255,.95)'}))]};
   BUILD.agri.zones=(D.zones.green||[]).map(p=>({z:PG(p),c:'za',op:.34}));BUILD.agri.leg=[['za','التوسع الزراعي'],['#1fae5b','صوامع','dot']];
   /* the map titles and cards that described the old schematic data */
   const sl=(i,f)=>{try{f(SL[i])}catch(e){}};
@@ -707,25 +760,97 @@ if(window.CMD){const D=window.CMD,PG=p=>({g:{type:'Polygon',coordinates:[p]}});
 /* each callout is tied to the card that carries the same figure, and points at the real place on its layer */
 {const CK={1:'a',2:'c',4:'a',5:'a',6:'b',7:'a',9:'d',10:'a',11:'a',12:'a'};Object.entries(CK).forEach(([i,c])=>{const s=SL[+i];if(s&&s.call)s.call.card=c});
  if(SL[6]&&SL[6].call)SL[6].call.ll=[31.08,27.18]}   /* line 2 at Assiut station */
-/* names on the map: the current layer's points, placed so they never cover each other or the cards on the map */
+/* names on the map (fid v1, Amr 17:52: «كل المعلومات والمسميات زي ما هي عند العميل حتى لو مزدحمة»): every name on the client's map is shown.
+   Each label sits next to its point; when that space is taken it is pushed out along a thin leader, and when nothing is free it still
+   goes where it overlaps least — a name is never dropped. Pills carry the client's colour code (fast / regional stations, power by type). */
 const LABC={};
 function labRects(){const R=[],add=el=>{if(el&&el.offsetWidth&&getComputedStyle(el).opacity!=='0'&&!el.hidden)R.push({x:el.offsetLeft-4,y:el.offsetTop-4,w:el.offsetWidth+8,h:el.offsetHeight+8})};
   add(map.querySelector('.mtitle'));add(document.getElementById('mleg'));add(map.querySelector('.lookname'));const yc=document.getElementById('yc');if(yc&&yc.classList.contains('on'))add(yc);
-  if(coR)R.push({x:coR.x-6,y:coR.y-6,w:coR.w+12,h:coR.h+12});pms.querySelectorAll('.pm:not(.past)').forEach(m=>{if(m._x!=null)R.push({x:m._x-16,y:m._y-16,w:32,h:32})});return R}
+  map.querySelectorAll('.axl.on').forEach(add);
+  if(coR)R.push({x:coR.x-6,y:coR.y-6,w:coR.w+12,h:coR.h+12});pms.querySelectorAll('.pm').forEach(m=>{if(m._x==null)return;const e=m.classList.contains('past')?7:14;R.push({x:m._x-e,y:m._y-e,w:2*e,h:2*e})});return R}
 const LABCV=document.createElement('canvas').getContext('2d');function tw(t,f){LABCV.font=f;return LABCV.measureText(t).width}
-function labPlace(key){const B=BUILD[key],out=[],W0=MAPBOX.width,H0=MAPBOX.height,blk=labRects(),hit=(a,b)=>!(a.x+a.w<b.x||b.x+b.w<a.x||a.y+a.h<b.y||b.y+b.h<a.y),ok=b=>b.x>8&&b.y>8&&b.x+b.w<W0-8&&b.y+b.h<H0-8&&!blk.some(r=>hit(r,b))&&!out.some(o=>hit(o.b,b));
-  (B.marks||[]).forEach(m=>{const[x,y]=S(...m.p);if(m.k==='num'){const b={x:x-11,y:y-11,w:22,h:22};if(ok(b))out.push({k:'num',x,y,t:m.t,b})}
-    else{const w=tw(m.t,"700 11px 'Readex Pro'")+14,b={x:x-w/2,y:y-9,w,h:18};if(ok(b))out.push({k:m.k,x,y,t:m.t,b})}});
-  if(!B.nolab){const N=(B.nodes||[]).filter(n=>n.n&&(!B.labF||n.big)).map(n=>({n,xy:S(...n.p)})).sort((a,b)=>(b.n.big?1:0)-(a.n.big?1:0)||b.n.r-a.n.r);
-    const dn=new Set();N.forEach(({n,xy:[x,y]})=>{if(dn.has(n.n))return;dn.add(n.n);const w=tw(n.n,(n.big?'700 11.5px':'600 10.5px')+" 'Readex Pro'")+8,h=15,r=n.r+3,c=[{x:x+r,y:y-h/2,a:'s'},{x:x-r-w,y:y-h/2,a:'e'},{x:x-w/2,y:y-r-h,a:'m'},{x:x-w/2,y:y+r,a:'m'}];
-      for(const q of c){const b={x:q.x,y:q.y,w,h};if(ok(b)){out.push({k:'nm',t:n.n,b,a:q.a,big:n.big});break}}})}
-  return out}
-function labSvg(st){if(st.cur.length>4)return'';let h='';st.cur.forEach(key=>{const k=KEEP.has(key)?1:drawK;if(k<.55)return;const ck=step+':'+key;const L=LABC[ck]||(drawK>=1||KEEP.has(key)?(LABC[ck]=labPlace(key)):labPlace(key));
-    const op=clamp((k-.55)/.45,0,1).toFixed(2);h+=`<g class="labs" opacity="${op}">`;L.forEach(o=>{const b=o.b;
-      if(o.k==='num')h+=`<circle class="lnum" cx="${o.x.toFixed(1)}" cy="${o.y.toFixed(1)}" r="10.5"/><text class="lnt" x="${o.x.toFixed(1)}" y="${(o.y+4.2).toFixed(1)}">${o.t}</text>`;
-      else if(o.k==='km')h+=`<rect class="lkm" x="${b.x.toFixed(1)}" y="${b.y.toFixed(1)}" width="${b.w.toFixed(1)}" height="${b.h}" rx="9"/><text class="lkt" x="${(b.x+b.w/2).toFixed(1)}" y="${(b.y+12.6).toFixed(1)}">${o.t}</text>`;
-      else if(o.k==='pl')h+=`<text class="lpl" x="${(b.x+b.w/2).toFixed(1)}" y="${(b.y+13).toFixed(1)}">${o.t}</text>`;
-      else h+=`<text class="lnm${o.big?' b':''}" x="${(o.a==='e'?b.x+b.w:o.a==='m'?b.x+b.w/2:b.x).toFixed(1)}" y="${(b.y+10.6).toFixed(1)}" text-anchor="${o.a==='e'?'end':o.a==='m'?'middle':'start'}">${o.t}</text>`});h+='</g>'});return h}
+const LF={nm:"600 10px 'Readex Pro'",b:"700 11px 'Readex Pro'",pill:"700 10px 'Readex Pro'",sub:"500 9.5px 'Readex Pro'",area:"600 13px 'Readex Pro'",zl:"700 10.5px 'Readex Pro'",km:"700 11px 'Readex Pro'"};
+const lov=(a,b)=>Math.max(0,Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x))*Math.max(0,Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y));
+/* items: {x,y,r,t,t2,cls,side,big}; fixed: boxes already taken; returns the items with b (box) and d (leader length) */
+function lplace(items,W0,H0,fixed,blk,dots){const out=fixed.slice(),res=[],D=[0,9,18,29,42,57,74,94,116,140,166,195];
+  items.forEach(it=>{const pill=it.cls==='pill',f=pill?LF.pill:it.big?LF.b:LF.nm;let w=tw(it.t,f)+(pill?12:6);if(it.t2)w=Math.max(w,tw(it.t2,LF.sub)+12);
+    const h=it.t2?27:pill?16:14,r0=(it.r||3)+2.5,x=it.x,y=it.y;let best=null;
+    const tr=(bx,by,d,pen)=>{if(bx<3||by<3||bx+w>W0-3||by+h>H0-3)return;const b={x:bx,y:by,w,h};let s=0;
+      for(let i=0;i<out.length;i++)s+=lov(out[i],b)*10;for(let i=0;i<blk.length;i++)s+=lov(blk[i],b)*6;for(let i=0;i<dots.length;i++)s+=lov(dots[i],b)*1.4;
+      s+=d*1.1+pen;if(!best||s<best.s)best={b,s,d,clean:s===d*1.1+pen}};
+    const sp=it.side==='W'?[0,40]:it.side==='E'?[40,0]:[0,0];   /* [right, left] penalty: west-bank names go left, east-bank names go right */
+    if(it.ctr)tr(x-w/2,y-h/2,0,0);
+    for(const d of D){const e=d*.72;
+      tr(x+r0+d,y-h/2,d,sp[0]);tr(x-r0-d-w,y-h/2,d,sp[1]);tr(x-w/2,y-r0-d-h,d,6);tr(x-w/2,y+r0+d,d,6);
+      tr(x+r0+e,y-r0-e-h,d,sp[0]+3);tr(x-r0-e-w,y-r0-e-h,d,sp[1]+3);tr(x+r0+e,y+r0+e,d,sp[0]+3);tr(x-r0-e-w,y+r0+e,d,sp[1]+3);
+      if(d){for(const k of(d>50?[-1,1,-2,2,-3,3,-4,4]:[-1,1,-2,2])){tr(x+r0+d,y-h/2+k*(h+2),d+Math.abs(k)*5,sp[0]);tr(x-r0-d-w,y-h/2+k*(h+2),d+Math.abs(k)*5,sp[1])}
+        if(d>40)for(let a=15;a<360;a+=30){const c=Math.cos(a*Math.PI/180),q=Math.sin(a*Math.PI/180);tr(x+c*(r0+d)-w/2+c*w/2,y+q*(r0+d)-h/2+q*h/2,d+4,(c>0?sp[0]:sp[1])+2)}}
+      if(best&&best.clean)break}
+    if(!best){const b={x:clamp(x+r0,3,W0-w-3),y:clamp(y-h/2,3,H0-h-3),w,h};best={b,d:0}}
+    out.push(best.b);res.push(Object.assign({},it,{b:best.b,d:best.d,f}))});
+  return res}
+function labPlace(key){const B=BUILD[key],W0=MAPBOX.width,H0=MAPBOX.height,blk=labRects(),fixed=[],marks=[];
+  (B.marks||[]).forEach(m=>{if(m.k==='zl')return;const[x,y]=S(...m.p);let b;
+    if(m.k==='num')b={x:x-11,y:y-11,w:22,h:22};
+    else if(m.k==='area'||m.k==='sea'){const w=tw(m.t,LF.area)+8;b={x:x-w/2,y:y-10,w,h:20}}
+    else{const w=tw(m.t,LF.km)+14;b={x:x-w/2,y:y-9,w,h:18}}
+    fixed.push(b);marks.push({k:m.k,x,y,t:m.t,b})});
+  const dots=[],items=[],seen=new Set();(B.marks||[]).forEach(m=>{if(m.k!=='zl')return;const[x,y]=S(...m.p);items.push({x,y,r:0,t:m.t,zl:1,ctr:1,big:1})});
+  (B.nodes||[]).forEach(n=>{const[x,y]=S(...n.p);dots.push({x:x-n.r,y:y-n.r,w:2*n.r,h:2*n.r});
+    if(!n.n)return;const id=n.n+'|'+(n.n2||'')+'|'+n.c;if(seen.has(id))return;seen.add(id);items.push({x,y,r:n.r,t:n.n,t2:n.n2,cls:n.lc,col:n.lcol,halo:n.lh,big:n.big,side:n.side})});
+  items.sort((a,b)=>(b.big?1:0)-(a.big?1:0)||a.y-b.y);
+  return marks.concat(lplace(items,W0,H0,fixed,blk,dots).map(o=>Object.assign(o,{k:o.zl?'zl':'nm'})))}
+function labHtml(L){let h='',ld='';const f=v=>v.toFixed(1);
+  L.forEach(o=>{const b=o.b;
+    if(o.k==='num'){h+=`<circle class="lnum" cx="${f(o.x)}" cy="${f(o.y)}" r="10.5"/><text class="lnt" x="${f(o.x)}" y="${f(o.y+4.2)}">${o.t}</text>`;return}
+    if(o.k==='km'){h+=`<rect class="lkm" x="${f(b.x)}" y="${f(b.y)}" width="${f(b.w)}" height="${b.h}" rx="9"/><text class="lkt" x="${f(b.x+b.w/2)}" y="${f(b.y+12.6)}">${o.t}</text>`;return}
+    if(o.k==='pl'){h+=`<text class="lpl" x="${f(b.x+b.w/2)}" y="${f(b.y+13)}">${o.t}</text>`;return}
+    if(o.k==='area'||o.k==='sea'){h+=`<text class="lar${o.k==='sea'?' sea':''}" x="${f(b.x+b.w/2)}" y="${f(b.y+14)}">${o.t}</text>`;return}
+    const cx=b.x+b.w/2;
+    if(o.d>0){const px=clamp(o.x,b.x,b.x+b.w),py=clamp(o.y,b.y,b.y+b.h),a=Math.atan2(py-o.y,px-o.x),rr=(o.r||3)+.5;ld+=`M${f(o.x+Math.cos(a)*rr)},${f(o.y+Math.sin(a)*rr)}L${f(px)},${f(py)}`}
+    if(o.cls==='pill'){h+=`<rect class="lpb" x="${f(b.x)}" y="${f(b.y)}" width="${f(b.w)}" height="${b.h}" rx="${o.t2?6:8}" style="fill:${o.col}"/><text class="lpt" x="${f(cx)}" y="${f(b.y+(o.t2?11.6:11.4))}">${o.t}</text>`+(o.t2?`<text class="lps" x="${f(cx)}" y="${f(b.y+23)}">${o.t2}</text>`:'');return}
+    if(o.k==='zl'){h+=`<text class="lzl" x="${f(cx)}" y="${f(b.y+10.6)}">${o.t}</text>`;return}
+    h+=`<text class="lnm${o.big?' b':''}" x="${f(cx)}" y="${f(b.y+10.6)}"${o.col?` style="fill:${o.col};stroke:${o.halo||'#14204a'}"`:''}>${o.t}</text>`});
+  return (ld?`<path class="lld" d="${ld}"/>`:'')+h}
+function labSvg(st){fidPanels(st);if(st.cur.length>4)return'';let h='';st.cur.forEach(key=>{const k=KEEP.has(key)?1:drawK;if(k<.55)return;const fin=drawK>=1||KEEP.has(key),ck=step+':'+key+(fin?':f':':p');
+    const L=LABC[ck]||(LABC[ck]=labPlace(key));
+    h+=`<g class="labs" opacity="${clamp((k-.55)/.45,0,1).toFixed(2)}">${labHtml(L)}</g>`});return h}
+/* the 9 transverse axes as the client lists them (roads slide), and Greater Cairo's monorail and LRT (rail slide) */
+const AXN=['الطريق الساحلي الدولي (رفح / السلوم)','العوجا / الإسماعيلية / طنطا / وادي النطرون / طريق الجيش / السلوم','طابا / السويس / القاهرة / طريق الجيش',
+  'الزعفرانة / بني سويف (الكريمات) – العلمين','رأس غارب / (بني مزار): / (الواحات البحرية – سيوة) / و: (بني مزار) / رأس الحكمة','ملوي / الفرافرة',
+  'طريق الصعيد / البحر الأحمر (سفاجا / الخارجة) / أرقين (أسيوط) – الداخلة – جنوبًا','مرسى علم – أدفو','رأس بناس / وادي أسوان / حلفا'];
+map.insertAdjacentHTML('beforeend',`<div class="fpan axl" id="axl"><div class="fph"><i></i>المحاور العرضية المقترحة</div><ol>${AXN.map((t,i)=>`<li><b>${i+1}</b><span>${t}</span></li>`).join('')}</ol></div>`);
+const GC={x0:30.8,x1:31.83,y0:29.855,y1:30.305};
+function gcBuild(){if(!window.CMD||!CMD.mono)return'';const M=CMD.mono,L=CMD.lrt,W0=725,top=12,k=W0/((GC.x1-GC.x0)*Math.cos(30.08*Math.PI/180)),
+    P=(lo,la)=>[(lo-GC.x0)*Math.cos(30.08*Math.PI/180)*k+10,(GC.y1-la)*k+top],H0=top+(GC.y1-GC.y0)*k,ph=pts=>pts.map((p,i)=>(i?'L':'M')+P(p[0],p[1]).map(v=>v.toFixed(1)).join(',')).join('');
+  let g='',ln='',nd='';const items=[],dots=[],f=v=>v.toFixed(1);
+  /* context: the Nile, metro line 3 and the high-speed line 1, as on the client's maps */
+  rings(GEO.nile||{type:'MultiLineString',coordinates:[]}).forEach(r=>{const q=r.filter(p=>p[0]>GC.x0-.1&&p[0]<GC.x1+.1&&p[1]>GC.y0-.1&&p[1]<GC.y1+.1);if(q.length>1)g+=`<path class="gnl" d="${ph(q)}"/>`});
+  M.ctx.forEach(c=>{g+=`<path class="gcx${c.dash?' ds':''}" d="${ph(c.pts)}" style="stroke:${c.dash?'#1fae5b':'#2fae5f'}"/>`;if(c.end){const[x,y]=P(...c.end[1]);nd+=`<circle class="gce" cx="${f(x)}" cy="${f(y)}" r="4.2"/>`;items.push({x,y,r:4.2,t:c.end[0],big:0})}
+    if(c.n){const a=P(...c.pts[Math.floor(c.pts.length*(c.dash?.45:.3))]);g+=`<text class="gcn" x="${f(a[0])}" y="${f(a[1]+(c.dash?16:-9))}">${c.n}</text>`}});
+  [...(M.areas||[]),...(L.areas||[])].forEach(a=>{const[x,y]=P(a[1],a[2]);g+=`<text class="gar" x="${f(x)}" y="${f(y)}">${a[0]}</text>`});
+  const net=(R,mono)=>R.routes.forEach(r=>{[{pts:r.pts,st:r.st},...(r.br||[])].forEach(s=>{const d=ph(s.pts);
+      ln+=mono?`<path class="gmo" d="${d}" style="stroke:${r.col}"/>`:`<path class="glc" d="${d}"/><path class="glr" d="${d}" style="stroke:${r.col}"/><path class="glt" d="${d}"/>`;
+      s.st.forEach(q=>{const[x,y]=P(q[0],q[1]);dots.push({x:x-5,y:y-5,w:10,h:10});nd+=`<circle class="${mono?'gsm':'gsl'}" cx="${f(x)}" cy="${f(y)}" r="${mono?4.6:4}" style="${mono?'fill':'stroke'}:${r.col}"/>`;if(q[2])items.push({x,y,r:4.6,t:q[2]})})})});
+  net(L,0);net(M,1);
+  const sn=new Set(),its=items.filter(o=>!sn.has(o.t)&&sn.add(o.t)).sort((a,b)=>a.x-b.x),res=lplace(its,W0+20,H0+8,[],[],dots);
+  return`<svg class="gcs" viewBox="0 0 ${W0+20} ${f(H0+8)}">${g}${ln}${nd}${labHtml(res.map(o=>Object.assign(o,{k:'nm'})))}</svg>`}
+map.insertAdjacentHTML('beforeend',`<div class="fpan gcp" id="gcp"><div class="fph"><i></i>القاهرة الكبرى · المونوريل والقطار الكهربائي الخفيف LRT</div><div class="gcm"></div>
+  <div class="gck"><span><i style="background:#2a3b86"></i>مونوريل غرب النيل · <b>43.8</b> كم · <b>13</b> محطة</span><span><i style="background:#ee9873"></i>مونوريل شرق النيل · <b>56.5</b> كم · <b>22</b> محطة</span><span class="gtt">إجمالي المونوريل <b>100.3</b> كم · <b>35</b> محطة</span></div>
+  <div class="gck"><span><i class="lr" style="--c:#2a3b86"></i>LRT المرحلتان الأولى والثانية · حوالي <b>70</b> كم · <b>12</b> محطة · افتتاح يوليو 2022</span><span><i class="lr" style="--c:#8e9be6"></i>الثالثة · <b>20.4</b> كم · <b>4</b> محطات</span><span><i class="lr" style="--c:#3c8ca4"></i>الرابعة · <b>16</b> كم · <b>3</b> محطات</span><span><i class="lr" style="--c:#ee9873"></i>الخامسة · <b>7.8</b> كم · <b>1</b> محطة</span></div></div>
+  <button class="gcb" id="gcb" type="button"><i></i>القاهرة الكبرى · المونوريل و LRT</button><i class="gcz" id="gcz"></i>`);
+const GCS={on:0,t:0,man:0,step:-1};
+function gcShow(on){const p=document.getElementById('gcp');if(!p)return;if(on&&!p._b){p.querySelector('.gcm').innerHTML=gcBuild();p._b=1}
+  const[cx,cy]=S(31.3,30.07),z=document.getElementById('gcz'),a=S(GC.x0,GC.y1),b=S(GC.x1,GC.y0);p.style.transformOrigin=`${(cx-p.offsetLeft).toFixed(0)}px ${(cy-p.offsetTop).toFixed(0)}px`;
+  Object.assign(z.style,{left:a[0]+'px',top:a[1]+'px',width:(b[0]-a[0])+'px',height:(b[1]-a[1])+'px'});GCS.on=on?1:0;p.classList.toggle('on',!!on);z.classList.toggle('on',!!on);document.getElementById('gcb').classList.toggle('act',!!on);
+  stage.classList.toggle('gcon',!!on)}
+function gcCycle(){clearTimeout(GCS.t);const tk=GCS.step;const sh=()=>{if(GCS.step!==tk||GCS.man)return;gcShow(1);GCS.t=setTimeout(()=>{if(GCS.step!==tk||GCS.man)return;gcShow(0);GCS.t=setTimeout(sh,11000)},17000)};GCS.t=setTimeout(sh,2600)}
+document.getElementById('gcb').addEventListener('click',e=>{e.stopPropagation();GCS.man=1;clearTimeout(GCS.t);gcShow(!GCS.on)});
+function fidPanels(st){const one=st.cur.length<=4,rd=one&&st.cur.includes('roads'),rl=one&&st.cur.includes('rail'),k=KEEP.has('roads')?1:drawK;
+  document.getElementById('axl').classList.toggle('on',rd&&k>=.6);
+  document.getElementById('gcb').classList.toggle('on',rl);
+  if(GCS.step!==step){GCS.step=step;GCS.man=0;clearTimeout(GCS.t);if(GCS.on)gcShow(0);GCS.arm=rl?1:0}
+  if(rl&&GCS.arm&&drawK>=1){GCS.arm=0;GCS.t=setTimeout(gcCycle,(SL[step].on.length?D3DUR:0)+400)}}
 /* ===== /client-matched layers ===== */
 /* ===== growth counter: 2014 → 2026, 7% → 14%, the new areas grow out one after another (nearest to Cairo first) ===== */
 const GORD=(()=>{const c=[31.24,30.04],d=GROW.map((z,j)=>{const q=cen(z.g);return[j,Math.hypot(q[0]-c[0],q[1]-c[1])]}).sort((a,b)=>a[1]-b[1]),r=[];d.forEach(([j],n)=>r[j]=n);return r})();
