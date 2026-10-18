@@ -683,7 +683,7 @@ if(window.CMD){const D=window.CMD,PG=p=>({g:{type:'Polygon',coordinates:[p]}});
     [...r.st,...r.br.flatMap(b=>b.st)].forEach(q=>{if(!q[2]||seen.has(q[2]))return;seen.add(q[2]);const F=q[3]==='F';HSRN[F?'F':'R']++;
       hn.push({p:[q[0],q[1]],r:F?5.2:3.3,c:F?'#ffffff':col,ring:!F,n:q[2],big:F})})});
   BUILD.rail={leg:[[RP('#2449e0'),'الخط الأول'],[RP('#14b8a6'),'الخط الثاني'],[RP('#ff7a38'),'الخط الثالث'],['#ffffff',`محطات سريعة · ${HSRN.F}`,'dot']],lines:hl,nodes:hn,labF:1};
-  BUILD.ports={leg:[['#22d3ee',`موانئ بحرية · ${D.ports.length}`,'dot'],['#ffffff',`موانئ جافة ومراكز لوجيستية · ${D.dry.length}`,'dot'],['#ff7a38',`مطارات · ${D.air.length}`,'dot']],
+  BUILD.ports={leg:[['#22d3ee',`موانئ بحرية · ${D.ports.length}`,'dot'],['#ffffff','موانئ جافة ومراكز لوجيستية','dot'],['#ff7a38',`مطارات · ${D.air.length}`,'dot']],
     lines:LT('canal').map(l=>({p:l.p,c:'#ff7a38',w:3.4})),
     nodes:[...D.ports.map(q=>({p:[q[1],q[2]],r:6,c:'#22d3ee',n:q[0],big:1})),...D.dry.map(q=>({p:[q[1],q[2]],r:4.6,c:'#ffffff',n:q[0]})),...D.air.map(q=>({p:[q[1],q[2]],r:4.4,c:'#ff7a38',n:q[0]}))]};
   const PC={'حراري':'#ff7a38','رياح':'#22d3ee','شمسي':'#ffe066','نووي':'#a78bfa'},pc=t=>D.pw.filter(q=>q[1]===t).length;
@@ -695,9 +695,12 @@ if(window.CMD){const D=window.CMD,PG=p=>({g:{type:'Polygon',coordinates:[p]}});
   /* the map titles and cards that described the old schematic data */
   const sl=(i,f)=>{try{f(SL[i])}catch(e){}};
   sl(4,s=>{s.map=['شبكة الطرق والمحاور','9 محاور عرضية · محاور طولية · ممر التنمية']});
-  sl(5,s=>{s.map=['محاور على النيل','منفذة · جارية · مستقبلية'];const d=s.right.find(r=>r[0]==='d');if(d)d[3]=C.txt('info','على الخريطة',`${D.nile.length} محورًا: ${cnt('Y')} منفذ · ${cnt('M')} جارٍ · ${cnt('C')} مستقبلي`,19)});
+  sl(5,s=>{s.map=['محاور على النيل','منفذة · جارية · مستقبلية'];   /* larger-number rule: 72 on the client's map against 35 in the text */
+    const a=s.right.find(r=>r[0]==='a');if(a)a[3]=C.big('git-commit-horizontal','محاور على النيل',String(D.nile.length),'محور');
+    const d=s.right.find(r=>r[0]==='d');if(d)d[3]=C.txt('circle-check','تم وجاري تنفيذه',`${cnt('Y')+cnt('M')} محورًا · منها ${cnt('Y')} تم الانتهاء منها`,19);
+    if(s.call){s.call.n=String(D.nile.length);s.call.s=`${cnt('Y')} منفذ · ${cnt('M')} جارٍ · ${cnt('C')} مستقبلي`}});
   sl(6,s=>{s.map=['القطار السريع',`3 خطوط · ${HSRN.F} محطة سريعة و${HSRN.R} إقليمية`];const e=s.right.find(r=>r[0]==='e');if(e)e[3]=C.sm('map-pin','محطات',String(HSRN.F+HSRN.R),'محطة',40)});
-  sl(7,s=>{s.map=['الموانئ والمطارات',`${D.ports.length} ميناء · ${D.dry.length} جاف ولوجيستي · ${D.air.length} مطار`]});
+  sl(7,s=>{s.map=['الموانئ والمطارات',`${D.ports.length} ميناء · 33 ميناء جاف · ${D.air.length} مطار`]});   /* larger-number rule: 33 dry ports (text) against 13 marks */
   sl(10,s=>{s.map=['المدن الجديدة','مواقع تقريبية حسب الجيل']});
   sl(11,s=>{s.map=['الاستصلاح الزراعي والصوامع','التوسع الزراعي كما في خريطة المعمور']});
 }
