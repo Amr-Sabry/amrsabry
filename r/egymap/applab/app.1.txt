@@ -25963,7 +25963,7 @@ function pvBuild(pi){
   /* a pulsing ring that rises through the model, in the sector colour */
   { const c = tint.clone().lerp(new THREE.Color(1, 1, 1), .3), m = new THREE.MeshBasicMaterial({color: c, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide}); B.own.push(m);
     const sc = new THREE.Mesh(new THREE.RingGeometry(.97, 1, 72, 1).rotateX(-Math.PI / 2), m); sc.visible = false; B.sc.add(sc); B.scanM = sc; }
-  B.mode = B.hasLook ? (S.theme === "sand" ? "real" : "holo") : "holo"; if (B.hasLook && PV.look) B.mode = PV.look;
+  B.mode = B.hasLook ? (S.theme === "sand" || LOOK === "glass" ? "real" : "holo") : "holo"; if (B.hasLook && PV.look) B.mode = PV.look;
   if (B.look) B.look(B.mode); pvSt.classList.toggle("holo", B.mode === "holo");
   PV.B = B; pvCapText(B); PV.cam = PV.cam || new THREE.PerspectiveCamera(32, 1, 1, 1e5); pvSize();
   pvEl.querySelector("#pvLk").hidden = !B.hasLook; pvSyncCt();
@@ -26329,6 +26329,7 @@ function shOpen(pi){ if (pi < 0 || inShow()) return; act(); PV.sr = true; pvOpen
 if (QS.has("test")) window.__sr = {open: shOpen, get car(){ return SRS.car; }, get stage(){ return PV.B && PV.B.car; }};
 
 function pvMap(p){ return !!(p && p.onMap && !(typeof EGM_MAP_HOLD !== "undefined" && EGM_MAP_HOLD[p.i])); }
+if (QS.has("test")) setTimeout(() => { window.__pv = {open: pi => pvOpen(pi), close: () => pvClose(), has: pi => pvHas(P[pi]), get on(){ return PV.on; }}; }, 0);
 function pvHas(p){ return !!(p && (model3dFor(p.i) || (typeof ADM !== "undefined" && ADM.models && ADM.models[p.i]))); }
 function pvToMap(){
   const pi = PV.pi; if (pi < 0 || !pvMap(P[pi])) return; act(); pvClose(); showSim(pi); rememberView(); diveTo(pi); pvCardSync();
@@ -27432,6 +27433,7 @@ html.look-glass .lb.g.sel b{color:#e0703f}
 html.look-glass .lb.pl .chip b,html.look-glass .lb.pj{text-shadow:none}
 html.look-glass .lb.pj{background:linear-gradient(180deg,color-mix(in srgb,var(--c) 16%,#fff),rgba(255,255,255,.88));color:#1c2547;border-color:color-mix(in srgb,var(--c) 60%,transparent);box-shadow:0 6px 14px -8px rgba(40,55,120,.5)}
 html.look-glass .lb.pj.hot,html.look-glass .lb.pj:hover{border-color:var(--c)}
+html.look-glass .pv-st.holo canvas{filter:brightness(.5) saturate(1.8)!important}
 `; document.head.appendChild(st);
   /* every stylesheet of the interface was drawn light-on-dark. Under the glass look each colour is turned once, by what it does:
      light text → ink (a lighter one for secondary text), a «lighter tone of the axis colour» → a deeper tone of it, dark halos → white halos,
@@ -27499,6 +27501,16 @@ html.wall-on{--wW:25%}
 html.wall-on #top .brand,html.wall-on #aroma{visibility:hidden!important}
 html.wall-on .stx{left:var(--wW);right:var(--wW)}
 html.wall-on .tls-ghost{display:none!important}
+/* v146 (Amr: «لما أضغط على معاينة المجسم تكون دايمًا في الأجناب اللي عملناها، ومهم جدًا تراعي الشفافية»): the model preview and the project
+   showroom open on the left side screen (the photos make way), as clear glass over the sky — the model stands on it, nothing opaque behind */
+html.wall-on .hud.pv{left:0!important;right:auto!important;top:0!important;bottom:0!important;width:var(--wW)!important;height:auto!important;z-index:33!important;
+  border-radius:0!important;border:0!important;border-inline-end:1px solid rgba(255,255,255,.75)!important;padding:1.4rem 1.6rem 1.6rem!important;
+  background:linear-gradient(160deg,rgba(255,255,255,.3),rgba(255,255,255,.1) 55%,rgba(238,242,255,.18))!important;-webkit-backdrop-filter:blur(8px) saturate(1.4);backdrop-filter:blur(8px) saturate(1.4);box-shadow:none!important}
+html.wall-on .hud.pv.sr{inset:0 auto 0 0!important}
+html.wall-on .hud.pv .pv-st{background:none!important;border:1px solid rgba(255,255,255,.55)!important;border-radius:1.2rem!important}
+html.wall-on .hud.pv.sr .pv-st{border:0!important}
+html.wall-on:has(#pv:not([hidden])) #wallL>*{opacity:0;transition:opacity .3s}
+html.wall-on #wallL>*{transition:opacity .3s}
 .wall{position:absolute;top:0;bottom:0;width:var(--wW);z-index:30;box-sizing:border-box;padding:1.5em 1.7em 1.7em;display:flex;flex-direction:column;gap:1em;pointer-events:none;direction:${EN ? "ltr" : "rtl"};
   font-family:var(--f-head);color:#1c2547;background:linear-gradient(180deg,rgba(242,244,250,.55),rgba(242,244,250,.3));-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 .wall.wl{left:0;border-inline-start:1px solid rgba(255,255,255,.7)}.wall.wr{right:0;border-inline-end:1px solid rgba(255,255,255,.7)}
