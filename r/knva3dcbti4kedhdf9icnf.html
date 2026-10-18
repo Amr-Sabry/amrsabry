@@ -395,6 +395,11 @@ svg.fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-in
 .ov .labs .lps{font-size:9.5px;font-weight:500;fill:#fff;fill-opacity:.93;stroke:none;text-anchor:middle;direction:rtl;unicode-bidi:plaintext}
 .ov .lar{font-size:13px;font-weight:600;fill:#1c2547;fill-opacity:.6;stroke:rgba(255,255,255,.5);stroke-width:3px;text-anchor:middle;letter-spacing:.4px}
 .ov .lar.sea{fill:#fff;fill-opacity:.88;stroke:rgba(20,32,74,.42)}
+.ov .lrd{fill:none;stroke:#1c2547;stroke-width:1.2;stroke-opacity:.85}
+.ov .lra{fill:#1c2547;fill-opacity:.9}
+.ov .labs .lrt{font-size:10px;font-weight:600;fill:#1c2547;stroke:rgba(255,255,255,.9);stroke-width:3px;text-anchor:middle;direction:rtl;unicode-bidi:plaintext}
+.ov .lct{fill:#2fbf5b;stroke:#14204a;stroke-width:1.3}
+.ov .labs .lctt{font-size:9.5px;font-weight:600;fill:#14532d;stroke:rgba(255,255,255,.92);stroke-width:3px;text-anchor:middle;direction:rtl;unicode-bidi:plaintext}
 .ov .lzl{font-size:10.5px;font-weight:700;fill:#7a2e0a;stroke:rgba(255,255,255,.92);stroke-width:3px;text-anchor:middle;direction:rtl;unicode-bidi:plaintext}
 .fpan{position:absolute;z-index:6;opacity:0;pointer-events:none;border-radius:16px;color:#1c2547;
   background:linear-gradient(160deg,rgba(255,255,255,.95),rgba(255,255,255,.84));box-shadow:inset 0 0 0 1px rgba(255,255,255,.9),0 14px 32px -14px rgba(20,32,74,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
@@ -720,6 +725,9 @@ const ZCC=Object.fromEntries(ZCAT.map(q=>[q[0],q[1]]));
 const mixC=(a,b,t)=>{const h=c=>[1,3,5].map(i=>parseInt(c.slice(i,i+2),16)),A=h(a),B=h(b);return'#'+A.map((v,i)=>Math.round(v+(B[i]-v)*t).toString(16).padStart(2,'0')).join('')};
 const HSRN={F:0,R:0};
 const SEAS=[{p:[29.6,32.35],t:'البحر المتوسط',k:'sea'},{p:[35.75,26.1],t:'البحر الأحمر',k:'sea'}];
+/* fid: the road names with their arrows and the coastal / oasis towns of the client's Nile-axes map, and the «اتجاه» arrows of the client's line-2 map (placed from the client's maps) */
+const NRD=[["الدولي الساحلي",29.014,31.401,28.478,31.106],["الدائري الإقليمي",30.058,29.981,30.615,29.945],["طريق شركات البترول",28.046,29.682,28.664,29.645],["6 أكتوبر / الواحات",28.906,29.055,29.448,29.004],["الصعيد الحر",31.713,29.507,31.324,29.374],["الكريمات / الزعفرانة",31.845,29.301,32.443,29.058],["النفق / شرم الشيخ",33.468,29.67,32.903,29.523],["الشيخ فضل / رأس غارب",31.95,28.507,31.481,28.229],["المنيا / رأس غارب",31.949,28.062,31.215,28.104],["ديروط / الفرافرة",29.185,27.544,29.751,27.398],["الصحراوي الشرقي",31.796,27.595,31.086,27.336],["الخارجة / أسيوط",30.002,26.504,30.674,26.456],["الخارجة / الداخلة",29.703,25.444,30.228,25.137],["الواحات / شرق العوينات",28.238,24.545,28.884,24.458],["الخارجة / باريس / مفارق درب الأربعين / توشكى",31.439,23.946,30.192,23.683],["الصعيد / البحر الأحمر",32.95,27.111,32.401,26.774],["قنا / سفاجا",33.522,26.242,33.153,26.239],["قفط / القصير",33.911,25.708,33.484,25.763],["إدفو / مرسى علم",34.074,25.125,33.486,24.793],["الصعيد الغربي",32.118,24.592,32.646,24.524],["أسوان / برنيس",33.969,24.041,34.396,23.794]].map(q=>({p:[q[1],q[2]],tip:[q[3],q[4]],t:q[0],k:'rd'})),HRD=[["اتجاه / الإسكندرية",29.79,29.719,30.332,29.633],["اتجاه / مرسى مطروح",29.134,29.46,29.931,29.369],["اتجاه / بورسعيد",32.112,29.487,31.377,29.438],["اتجاه / العريش",29.059,28.958,29.601,28.887],["اتجاه / السويس",32.153,28.905,31.418,29.065],["اتجاه / البحر الأحمر",32.312,28.006,31.654,28.275],["اتجاه / الواحات البحرية",29.143,27.605,29.8,27.594],["اتجاه / الخارجة",30.233,26.162,30.736,26.058],["اتجاه / باريس",31.241,25.65,31.784,25.376],["اتجاه / الداخلة",29.657,25.157,30.275,25.443],["اتجاه / وادي الجديد",31.362,24.644,30.759,24.534],["اتجاه / مرسى علم",34.145,24.893,33.333,25.012],["اتجاه / أسوان",30.791,22.647,31.356,22.53]].map(q=>({p:[q[1],q[2]],tip:[q[3],q[4]],t:q[0],k:'rd'})),
+  NCT=[["مطروح",27.24,31.35],["العلمين",28.95,30.83],["الإسكندرية",29.92,31.2],["بورسعيد",32.3,31.26],["العريش",33.8,31.13],["الإسماعيلية",32.27,30.6],["السويس",32.55,29.97],["رأس غارب",33.08,28.36],["الطور",33.62,28.24],["نويبع",34.67,29.03],["دهب",34.51,28.5],["شرم الشيخ",34.33,27.91],["الغردقة",33.81,27.26],["سفاجا",33.94,26.75],["القصير",34.28,26.1],["مرسى علم",34.89,25.07],["الواحات البحرية",28.86,28.35],["الفرافرة",27.97,27.06],["الداخلة",28.98,25.52],["الخارجة",30.55,25.45]].map(q=>({p:[q[1],q[2]],t:q[0],k:'ct'}));
 if(window.CMD){const D=window.CMD,PG=p=>({g:{type:'Polygon',coordinates:[p]}});
   BUILD.valley.zones=D.zones.aqua.map(p=>({z:PG(p),c:'zv',op:.7}));
   BUILD.grow.zones=ZCAT.flatMap(([k])=>(D.zones[k]||[]).map(p=>({z:PG(p),c:'zg',op:.58,cat:k})));
@@ -730,12 +738,12 @@ if(window.CMD){const D=window.CMD,PG=p=>({g:{type:'Polygon',coordinates:[p]}});
       ...[['الصحراء الغربية',27.6,26.4],['الصحراء الشرقية',32.9,27.2],['سيناء',33.8,29.6]].map(q=>({p:[q[1],q[2]],t:q[0],k:'area'})),...SEAS]};
   const NC={Y:'#ffe066',M:'#ff4fa0',C:'#22d3ee'},cnt=k=>D.nile.filter(q=>q[3]===k).length;
   BUILD.nile={leg:[[NC.Y,`محاور منفذة · ${cnt('Y')}`,'dot'],[NC.M,`محاور جارية · ${cnt('M')}`,'dot'],[NC.C,`محاور مستقبلية · ${cnt('C')}`,'dot']],
-    nodes:D.nile.map(q=>({p:[q[0],q[1]],r:3.6,c:NC[q[3]],n:q[2],lcol:NC[q[3]],lh:'#14204a',side:q[4]})),marks:SEAS,og:1};   /* fid: all 72 names, coloured by status, on their bank as on the client's map */
+    nodes:D.nile.map(q=>({p:[q[0],q[1]],r:3.6,c:NC[q[3]],n:q[2],lcol:NC[q[3]],lh:'#14204a',side:q[4]})),marks:[...SEAS,...NRD,...NCT],og:1};   /* fid: all 72 names, coloured by status, on their bank as on the client's map */
   const HC=['#1fae5b','#2449e0','#ffd23f'],FC='#f07a1a',RG='#8bd450',hl=[],hn=[],seen=new Set(),RP=c=>`repeating-linear-gradient(90deg,#fff 0 4px,${c} 4px 8px)`;   /* fid: the client's line colours (1 green, 2 blue, 3 yellow), fast stations orange, regional green */
   D.hsr.forEach((r,i)=>{const col=HC[i%3];hl.push({p:r.pts,c:col,w:3.4,rail:1});r.br.forEach(b=>hl.push(b.ext?{p:b.pts,c:'#39e46b',w:2.6,dash:1}:{p:b.pts,c:col,w:2.6,rail:1}));
     [...r.st,...r.br.flatMap(b=>b.st)].forEach(q=>{if(!q[2]||seen.has(q[2]))return;seen.add(q[2]);const F=q[3]==='F';HSRN[F?'F':'R']++;
       hn.push({p:[q[0],q[1]],r:F?5:3.6,c:F?FC:RG,n:q[2],big:F,lc:'pill',lcol:F?'#e8650f':'#1e6b3f'})})});
-  BUILD.rail={leg:[[RP(HC[0]),'الخط الأول'],[RP(HC[1]),'الخط الثاني'],[RP(HC[2]),'الخط الثالث'],['#39e46b','مسار الامتداد'],[FC,`محطات سريعة · ${HSRN.F}`,'dot'],[RG,`محطات إقليمية · ${HSRN.R}`,'dot']],lines:hl,nodes:hn,og:1};
+  BUILD.rail={leg:[[RP(HC[0]),'الخط الأول'],[RP(HC[1]),'الخط الثاني'],[RP(HC[2]),'الخط الثالث'],['#39e46b','مسار الامتداد'],[FC,`محطات سريعة · ${HSRN.F}`,'dot'],[RG,`محطات إقليمية · ${HSRN.R}`,'dot']],lines:hl,nodes:hn,marks:HRD,og:1};
   BUILD.ports={leg:[['#22d3ee',`موانئ بحرية · ${D.ports.length}`,'dot'],['#ffffff','موانئ جافة ومراكز لوجيستية','dot'],['#ff7a38',`مطارات · ${D.air.length}`,'dot']],
     lines:LT('canal').map(l=>({p:l.p,c:'#ff7a38',w:3.4})),
     nodes:[...D.ports.map(q=>({p:[q[1],q[2]],r:6,c:'#22d3ee',n:q[0],big:1,lcol:'#0b6b86',lh:'rgba(255,255,255,.95)'})),...D.dry.map(q=>({p:[q[1],q[2]],r:4.6,c:'#ffffff',n:q[0]})),...D.air.map(q=>({p:[q[1],q[2]],r:4.4,c:'#ff7a38',n:q[0],lcol:'#b23a06',lh:'rgba(255,255,255,.95)'}))]};
@@ -790,12 +798,13 @@ function lplace(items,W0,H0,fixed,blk,dots){const out=fixed.slice(),res=[],D=[0,
     out.push(best.b);res.push(Object.assign({},it,{b:best.b,d:best.d,f}))});
   return res}
 function labPlace(key){const B=BUILD[key],W0=MAPBOX.width,H0=MAPBOX.height,blk=labRects(),fixed=[],marks=[];
-  (B.marks||[]).forEach(m=>{if(m.k==='zl')return;const[x,y]=S(...m.p);let b;
+  (B.marks||[]).forEach(m=>{if(m.k==='zl'||m.k==='ct')return;const[x,y]=S(...m.p);let b;
+    if(m.k==='rd'){const w=tw(m.t,LF.nm)+6;b={x:x-w/2,y:y-7,w,h:14};const[tx,ty]=S(...m.tip);fixed.push(b);marks.push({k:'rd',x,y,t:m.t,b,tx,ty});return}
     if(m.k==='num')b={x:x-11,y:y-11,w:22,h:22};
     else if(m.k==='area'||m.k==='sea'){const w=tw(m.t,LF.area)+8;b={x:x-w/2,y:y-10,w,h:20}}
     else{const w=tw(m.t,LF.km)+14;b={x:x-w/2,y:y-9,w,h:18}}
     fixed.push(b);marks.push({k:m.k,x,y,t:m.t,b})});
-  const dots=[],items=[],seen=new Set();(B.marks||[]).forEach(m=>{if(m.k!=='zl')return;const[x,y]=S(...m.p);items.push({x,y,r:0,t:m.t,zl:1,ctr:1,big:1})});
+  const dots=[],items=[],seen=new Set();(B.marks||[]).forEach(m=>{if(m.k==='ct'){const[x,y]=S(...m.p);dots.push({x:x-3,y:y-3,w:6,h:6});items.push({x,y,r:3,t:m.t,ct:1});return}if(m.k!=='zl')return;const[x,y]=S(...m.p);items.push({x,y,r:0,t:m.t,zl:1,ctr:1,big:1})});
   (B.nodes||[]).forEach(n=>{const[x,y]=S(...n.p);dots.push({x:x-n.r,y:y-n.r,w:2*n.r,h:2*n.r});
     if(!n.n)return;const id=n.n+'|'+(n.n2||'')+'|'+n.c;if(seen.has(id))return;seen.add(id);items.push({x,y,r:n.r,t:n.n,t2:n.n2,cls:n.lc,col:n.lcol,halo:n.lh,big:n.big,side:n.side})});
   items.sort((a,b)=>(b.big?1:0)-(a.big?1:0)||a.y-b.y);
@@ -804,12 +813,15 @@ function labHtml(L){let h='',ld='';const f=v=>v.toFixed(1);
   L.forEach(o=>{const b=o.b;
     if(o.k==='num'){h+=`<circle class="lnum" cx="${f(o.x)}" cy="${f(o.y)}" r="10.5"/><text class="lnt" x="${f(o.x)}" y="${f(o.y+4.2)}">${o.t}</text>`;return}
     if(o.k==='km'){h+=`<rect class="lkm" x="${f(b.x)}" y="${f(b.y)}" width="${f(b.w)}" height="${b.h}" rx="9"/><text class="lkt" x="${f(b.x+b.w/2)}" y="${f(b.y+12.6)}">${o.t}</text>`;return}
+    if(o.k==='rd'){const L=o.tx<b.x+b.w/2,sx=L?b.x:b.x+b.w,sy=b.y+b.h,a=Math.atan2(o.ty-sy,o.tx-sx),ah=(d)=>`${f(o.tx-6*Math.cos(a+d))},${f(o.ty-6*Math.sin(a+d))}`;
+      h+=`<path class="lrd" d="M${f(L?b.x+b.w:b.x)},${f(sy)}L${f(sx)},${f(sy)}L${f(o.tx)},${f(o.ty)}"/><path class="lra" d="M${ah(.45)}L${f(o.tx)},${f(o.ty)}L${ah(-.45)}Z"/><text class="lrt" x="${f(b.x+b.w/2)}" y="${f(b.y+10.4)}">${o.t}</text>`;return}
     if(o.k==='pl'){h+=`<text class="lpl" x="${f(b.x+b.w/2)}" y="${f(b.y+13)}">${o.t}</text>`;return}
     if(o.k==='area'||o.k==='sea'){h+=`<text class="lar${o.k==='sea'?' sea':''}" x="${f(b.x+b.w/2)}" y="${f(b.y+14)}">${o.t}</text>`;return}
     const cx=b.x+b.w/2;
     if(o.d>0){const px=clamp(o.x,b.x,b.x+b.w),py=clamp(o.y,b.y,b.y+b.h),a=Math.atan2(py-o.y,px-o.x),rr=(o.r||3)+.5;ld+=`M${f(o.x+Math.cos(a)*rr)},${f(o.y+Math.sin(a)*rr)}L${f(px)},${f(py)}`}
     if(o.cls==='pill'){h+=`<rect class="lpb" x="${f(b.x)}" y="${f(b.y)}" width="${f(b.w)}" height="${b.h}" rx="${o.t2?6:8}" style="fill:${o.col}"/><text class="lpt" x="${f(cx)}" y="${f(b.y+(o.t2?11.6:11.4))}">${o.t}</text>`+(o.t2?`<text class="lps" x="${f(cx)}" y="${f(b.y+23)}">${o.t2}</text>`:'');return}
     if(o.k==='zl'){h+=`<text class="lzl" x="${f(cx)}" y="${f(b.y+10.6)}">${o.t}</text>`;return}
+    if(o.ct){h+=`<circle class="lct" cx="${f(o.x)}" cy="${f(o.y)}" r="3"/><text class="lctt" x="${f(cx)}" y="${f(b.y+10.6)}">${o.t}</text>`;return}
     h+=`<text class="lnm${o.big?' b':''}" x="${f(cx)}" y="${f(b.y+10.6)}"${o.col?` style="fill:${o.col};stroke:${o.halo||'#14204a'}"`:''}>${o.t}</text>`});
   return (ld?`<path class="lld" d="${ld}"/>`:'')+h}
 function labSvg(st){fidPanels(st);if(st.cur.length>4)return'';let h='';st.cur.forEach(key=>{const k=KEEP.has(key)?1:drawK;if(k<.55)return;const fin=drawK>=1||KEEP.has(key),ck=step+':'+key+(fin?':f':':p');
