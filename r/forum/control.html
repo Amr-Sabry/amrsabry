@@ -182,7 +182,7 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(440px,1.05fr)
       <div id="rlearnp" hidden><span id="rlq">دوس الزرار…</span><button type="button" id="rskip">تخطّي</button></div>
       <div id="rlast">آخر زرار وصل: <b>—</b></div>
       <div class="rrow"><button type="button" id="ron" class="pri">تفعيل أزرار الميديا</button><button type="button" id="rlearn">علّم الريموت</button><button type="button" id="rswap">الاتجاه</button><button type="button" id="rreset">الإعدادات الأصلية</button></div>
-      <div class="rhelp"><b>Siri Remote على الماك:</b> يتوصل بالماك نفسه بالبلوتوث (مش بالـ Apple TV)، ومعاه برنامج <b>SiriMote</b> المجاني (أو Remote Buddy) عشان أزراره توصل للمتصفح. بعد كده اضغط «تفعيل أزرار الميديا» مرة، ولو حاجة مش ماشية اضغط «علّم الريموت» ودوس الزرار اللي عاوزه لكل أمر — اللوحة بتحفظه.<br>أي ريموت بريزنتيشن (Page Down / Page Up) أو كيبورد شغال على طول.</div>
+      <div class="rhelp"><b>ريموت أبل:</b> اضغط «تفعيل أزرار الميديا» مرة، وبعدها <b>Play ضغطة واحدة = التالي</b>، و<b>ضغطتين بسرعة = السابق</b>. زراير الصوت مش بتوصل للمتصفح نفسه؛ عشان «صوت +» يبقى التالي و«صوت −» يبقى السابق، فعّل إعداد Karabiner اللي في فولدر <b>remote-mac</b>.<br>أي ريموت بريزنتيشن (Page Down / Page Up) أو كيبورد شغال على طول، وأي زرار تاني: «علّم الريموت».</div>
     </div>
     <div id="upnext"><span>اللي بعده:</span><b id="nxt">—</b></div>
     <div class="keys">من الكيبورد أو الريموت: <kbd>←</kbd> / <kbd>↓</kbd> / <kbd>Space</kbd> / <kbd>Page Down</kbd> التالي · <kbd>→</kbd> / <kbd>↑</kbd> / <kbd>Page Up</kbd> السابق · <kbd>P</kbd> إيقاف/استكمال · <kbd>R</kbd> إعادة التحريك · <kbd>B</kbd> شاشة سوداء</div>
@@ -312,7 +312,7 @@ var RK='fctl-remote', RCFG={map:{},swap:false}, aud=null, mediaOn=false, learnI=
 try{var rc0=JSON.parse(localStorage.getItem(RK)||'null');if(rc0&&rc0.map)RCFG=rc0}catch(e){}
 var RDEF={'k:ArrowLeft':'next','k:ArrowDown':'next','k:PageDown':'next','k:Space':'next','k:Enter':'next','k:NumpadEnter':'next','m:nexttrack':'next','m:seekforward':'next',
   'k:ArrowRight':'prev','k:ArrowUp':'prev','k:PageUp':'prev','k:Backspace':'prev','m:previoustrack':'prev','m:seekbackward':'prev',
-  'm:play':'pause','m:pause':'pause','m:playpause':'pause','m:stop':'pause','k:KeyP':'pause','k:KeyB':'black','k:Period':'black','k:KeyR':'replay'};
+  'm:play':'next','m:pause':'next','m:playpause':'next','m:stop':'pause','k:KeyP':'pause','k:KeyB':'black','k:Period':'black','k:KeyR':'replay'};
 var ACTS=[['next','التالي'],['prev','السابق'],['pause','إيقاف الحركة'],['black','شاشة سوداء']];
 function ract(s){var a=RCFG.map[s];if(a)return a==='none'?null:a;if(RCFG.swap){if(s==='k:ArrowLeft')return 'prev';if(s==='k:ArrowRight')return 'next'}return RDEF[s]||null}
 function ksig(e){var k=e.key||'';if(k==='MediaTrackNext')return 'm:nexttrack';if(k==='MediaTrackPrevious')return 'm:previoustrack';if(k==='MediaPlayPause')return 'm:playpause';if(k==='MediaStop')return 'm:stop';return 'k:'+(e.code||k)}
@@ -339,6 +339,9 @@ $('rswap').onclick=function(){RCFG.swap=!RCFG.swap;rsave()};
 $('rreset').onclick=function(){RCFG={map:{},swap:false};rsave();toast('رجعت الإعدادات الأصلية')};
 $('rbtn').onclick=function(){var p=$('rmt');p.hidden=!p.hidden;$('rbtn').classList.toggle('on',!p.hidden);rrender()};
 $('ron').onclick=function(){media();toast(mediaOn?'أزرار الميديا متفعّلة':'المتصفح ده مش بيدعم أزرار الميديا')};
+/* Play = next; two quick presses = back (the Mac hears only Play and the volume from the Apple remote) */
+var pp=null;function playPress(a,s){if(!/^m:(play|pause|playpause)$/.test(s)||a!=='next'){doAct(a);return}
+  if(pp){clearTimeout(pp);pp=null;doAct('prev');return} pp=setTimeout(function(){pp=null;doAct('next')},380)}
 /* media buttons reach a page only while it plays something: a silent loop, started by a click */
 function silentWav(sec){var sr=8000,n=sr*sec,b=new ArrayBuffer(44+n),v=new DataView(b),w=function(o,s){for(var i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
   w(0,'RIFF');v.setUint32(4,36+n,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr,true);v.setUint16(32,1,true);v.setUint16(34,8,true);w(36,'data');v.setUint32(40,n,true);
@@ -347,14 +350,14 @@ function media(){if(!('mediaSession' in navigator)){rrender();return}
   try{if(!aud){aud=new Audio(silentWav(10));aud.loop=true}var p=aud.play();if(p&&p.catch)p.catch(function(){})}catch(e){}
   try{navigator.mediaSession.metadata=new MediaMetadata({title:'منتدى مصر 2026 · لوحة التحكم',artist:'الريموت'})}catch(e){}
   ['play','pause','previoustrack','nexttrack','seekbackward','seekforward','stop'].forEach(function(n){try{navigator.mediaSession.setActionHandler(n,function(){var s='m:'+n;
-    if(!gotSig(s,ract(s),false)){var a=ract(s);if(a)doAct(a)}try{aud.play().catch(function(){});navigator.mediaSession.playbackState='playing'}catch(e){}})}catch(e){}});
+    if(!gotSig(s,ract(s),false)){var a=ract(s);if(a)playPress(a,s)}try{aud.play().catch(function(){});navigator.mediaSession.playbackState='playing'}catch(e){}})}catch(e){}});
   try{navigator.mediaSession.playbackState='playing'}catch(e){}mediaOn=true;rrender()}
 addEventListener('pointerdown',function(){if(!mediaOn)media()},{capture:true,once:true});
 /* a pressed button gives up the focus, so Enter / Space from a remote never press it a second time */
 addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('button');if(b&&b.blur)setTimeout(function(){b.blur()},0)},true);
 addEventListener('keydown',function(e){if(e.target.closest&&e.target.closest('input'))return;
   var s=ksig(e);if(gotSig(s,ract(s),false)){e.preventDefault();return}
-  var a=ract(s);if(!a)return;e.preventDefault();if(e.repeat)return;doAct(a)});
+  var a=ract(s);if(!a)return;e.preventDefault();if(e.repeat)return;playPress(a,s)});
 rrender();
 
 /* ---------- clocks ---------- */

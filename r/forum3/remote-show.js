@@ -152,7 +152,7 @@ function rload(){try{var c=JSON.parse(localStorage.getItem(RK)||'null');if(c&&c.
 rload();W.addEventListener('storage',function(e){if(e.key===RK)rload()});
 var RDEF={'k:ArrowLeft':'next','k:ArrowDown':'next','k:PageDown':'next','k:Space':'next','k:Enter':'next','k:NumpadEnter':'next','m:nexttrack':'next','m:seekforward':'next',
   'k:ArrowRight':'prev','k:ArrowUp':'prev','k:PageUp':'prev','k:Backspace':'prev','m:previoustrack':'prev','m:seekbackward':'prev',
-  'm:play':'pause','m:pause':'pause','m:playpause':'pause','m:stop':'pause','k:KeyP':'pause','k:KeyB':'black','k:Period':'black','k:KeyR':'replay'};
+  'm:play':'next','m:pause':'next','m:playpause':'next','m:stop':'pause','k:KeyP':'pause','k:KeyB':'black','k:Period':'black','k:KeyR':'replay'};
 function ract(s){var a=RCFG.map[s];if(a)return a==='none'?null:a;if(RCFG.swap){if(s==='k:ArrowLeft')return 'prev';if(s==='k:ArrowRight')return 'next'}return RDEF[s]||null}
 function ksig(e){var k=e.key||'';if(k==='MediaTrackNext')return 'm:nexttrack';if(k==='MediaTrackPrevious')return 'm:previoustrack';if(k==='MediaPlayPause')return 'm:playpause';if(k==='MediaStop')return 'm:stop';return 'k:'+(e.code||k)}
 function doAct(a,s){post({t:'sig',sig:s,act:a});if(learning||!A)return;
@@ -162,7 +162,11 @@ W.addEventListener('keydown',function(e){var t=e.target;if(t&&(t.isContentEditab
   var s=ksig(e),a=ract(s);
   if(learning){e.preventDefault();e.stopImmediatePropagation();post({t:'sig',sig:s,act:a});return}
   if(!a){if(paused)resume();return}      /* other keys carry on to the deck (f = full screen, Home, End) */
-  e.preventDefault();e.stopImmediatePropagation();if(e.repeat)return;doAct(a,s)},true);
+  e.preventDefault();e.stopImmediatePropagation();if(e.repeat)return;playPress(a,s)},true);
+/* Amr (18 Oct 10:54): the Mac only hears Play and the volume from the remote. Play = next; two quick presses = back.
+   (The volume keys never reach a web page; see «remote-mac» in the offline folder for turning them into Page Down / Up.) */
+var pp=null;function playPress(a,s){if(!/^m:(play|pause|playpause)$/.test(s)||a!=='next'){doAct(a,s);return}
+  if(pp){rCT(pp);pp=null;doAct('prev',s);return} pp=rST(function(){pp=null;doAct('next',s)},380)}
 /* media buttons reach a page only while it plays something: a silent loop starts with the first touch or key */
 function silentWav(sec){var sr=8000,n=sr*sec,b=new ArrayBuffer(44+n),v=new DataView(b),w=function(o,s){for(var i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
   w(0,'RIFF');v.setUint32(4,36+n,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr,true);v.setUint16(32,1,true);v.setUint16(34,8,true);w(36,'data');v.setUint32(40,n,true);
@@ -171,7 +175,7 @@ function media(){if(!('mediaSession' in navigator))return;
   try{if(!aud){aud=new Audio(silentWav(10));aud.loop=true}var p=aud.play();if(p&&p.catch)p.catch(function(){})}catch(e){}
   try{navigator.mediaSession.metadata=new MediaMetadata({title:D.title||'منتدى مصر 2026',artist:'الريموت'})}catch(e){}
   ['play','pause','previoustrack','nexttrack','seekbackward','seekforward','stop'].forEach(function(n){try{navigator.mediaSession.setActionHandler(n,function(){var s='m:'+n,a=ract(s);
-    if(learning||!a)post({t:'sig',sig:s,act:a});else doAct(a,s);try{aud.play().catch(function(){});navigator.mediaSession.playbackState='playing'}catch(e){}})}catch(e){}});
+    if(learning||!a)post({t:'sig',sig:s,act:a});else playPress(a,s);try{aud.play().catch(function(){});navigator.mediaSession.playbackState='playing'}catch(e){}})}catch(e){}});
   try{navigator.mediaSession.playbackState='playing'}catch(e){}}
 ['pointerdown','keydown'].forEach(function(t){W.addEventListener(t,function(){media()},{capture:true,once:true})});
 
