@@ -445,6 +445,10 @@ svg.fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-in
 .mapc.zm>svg.ov,.mapc.zm>svg.fx,.mapc.zm>.pins,.mapc.zm>svg.sh,.mapc.zm .fpan{opacity:0!important;transition:opacity .2s ease!important}
 .zming #links{opacity:0!important;transition:opacity .2s}
 .mapc.z>svg.grd{opacity:0!important}
+.zc.ax{padding:9px 10px}
+.zc.ax .zn{width:22px;height:22px;font-size:12px;flex:none}
+.zc.ax .zt{font-size:11px;font-weight:600;line-height:1.3;text-wrap:pretty;margin-top:6px}
+#links .axr{fill:none;stroke:#ffd23f;stroke-width:3;filter:drop-shadow(0 0 6px rgba(255,200,40,.9))}
 #imcap[src*="cap_t4"]{filter:brightness(.84) contrast(1.16) saturate(.86)}
 .gcon #calls,.gcon #links{opacity:0!important;transition:opacity .4s}
 /* ===== /center fx v2 ===== */
@@ -675,7 +679,7 @@ function links(){const st=SL[step];let h='';const cr=(x1,y1,x2,y2)=>{const m=(x1
   st.photos.forEach((p,i)=>{if(!p.ll)return;const m=pms.querySelector(`[data-i="${i}"]`);if(!m||m._x==null)return;const lv=phLive(CARDS['ph'+i]);if(lv===0)return;const b=lv||box(p.cell),sx=lv?Math.min(MAPBOX.left-7,b.left+b.width+7):MAPBOX.left-7,sy=b.top+Math.min(b.height/2,60),tx=MAPBOX.left+m._x,ty=MAPBOX.top+m._y;
     const on=i===lit%st.photos.length?' lit':'';h+=`<path class="p${on}" d="${cr(sx,sy,tx,ty)}"/><circle class="pd${on}" cx="${sx}" cy="${sy}" r="4"/>`});
   (window.__back||[]).forEach(o=>{const b=phLive(o.el);if(!b)return;const[x0,y0]=S(...o.ll);h+=`<path class="p" d="${cr(b.left+b.width+7,b.top+Math.min(b.height/2,60),MAPBOX.left+x0,MAPBOX.top+y0)}"/>`});
-  LINKS.innerHTML=h}
+  h+=axLinks(st);LINKS.innerHTML=h}
 
 /* photos (and zone cards) take turns */
 let litT=null;
@@ -684,6 +688,7 @@ function setLit(i){const st=SL[step];lit=i;const pi=i%st.photos.length,zi=i%GROW
   st.photos.forEach((p,j)=>{const c=CARDS['ph'+j];c&&c.classList.toggle('lit',j===pi)});
   pms.querySelectorAll('.pm').forEach(m=>m.classList.toggle('lit',+m.dataset.i===pi));
   if(st.zoneLabels)GROW.forEach((z,j)=>{const c=CARDS['rz'+j];if(c){c.classList.toggle('grad',j===zi);c.classList.toggle('dark2',j!==zi)}});
+  if(st.axisCards)for(let j=0;j<9;j++){const c=CARDS['rz'+j];if(c){c.classList.toggle('grad',j===i%9);c.classList.toggle('dark2',j!==i%9)}}
   links()}
 
 /* ===== center fx v2 ===== */
@@ -835,9 +840,18 @@ function labSvg(st){fidPanels(st);if(st.cur.length>4)return'';let h='';st.cur.fo
 const AXN=['الطريق الساحلي الدولي (رفح / السلوم)','العوجا / الإسماعيلية / طنطا / وادي النطرون / طريق الجيش / السلوم','طابا / السويس / القاهرة / طريق الجيش',
   'الزعفرانة / بني سويف (الكريمات) – العلمين','رأس غارب / (بني مزار): / (الواحات البحرية – سيوة) / و: (بني مزار) / رأس الحكمة','ملوي / الفرافرة',
   'طريق الصعيد / البحر الأحمر (سفاجا / الخارجة) / أرقين (أسيوط) – الداخلة – جنوبًا','مرسى علم – أدفو','رأس بناس / وادي أسوان / حلفا'];
-map.insertAdjacentHTML('beforeend',`<div class="fpan axl" id="axl"><div class="fph"><i></i>المحاور العرضية المقترحة</div><ol>${AXN.map((t,i)=>`<li><b>${i+1}</b><span>${t}</span></li>`).join('')}</ol></div>`);
-function fidPanels(st){const one=st.cur.length<=4,rd=one&&st.cur.includes('roads'),k=KEEP.has('roads')?1:drawK;
-  document.getElementById('axl').classList.toggle('on',rd&&k>=.6)}
+/* fid v3 (Amr 19:11: «ليه ما بتطلعش ده على شكل كروت»): the 9 axes get a slide of their own, as numbered cards (like the growth-area cards)
+   tied to their numbers on the roads map; the in-map list panel is gone */
+{const ri=SL.findIndex(s=>s.cur.length===1&&s.cur[0]==='roads');if(ri>=0){const R=SL[ri];
+  SL.splice(ri+1,0,{hd:['المحاور العرضية','9 محاور عرضية مقترحة'],map:['المحاور العرضية المقترحة','رقم كل محور على الخريطة'],on:R.on.slice(),cur:['roads'],axisCards:1,
+    right:[...AXN.map((t,i)=>['z'+i,[i%3,Math.floor(i/3),1,1],'dark2 ax',`<span class="zn">${i+1}</span><span class="zt">${t}</span>`]),
+      ['t',[0,3,3,2],'grad',C.title('9 محاور · رقم كل محور على الخريطة','المحاور العرضية المقترحة','route',34),'route']],
+    photos:ph(PB,[['p36_tunnel','أنفاق قناة السويس',[32.33,30.6]],['p38_awja','طريق الإسماعيلية – العوجة',[33.4,30.72]],['p38_reg','الطريق الدائري الإقليمي',[31.0,30.32]],
+      ['p38_asy','طريق هضبة أسيوط الغربية',[30.95,27.15]],['p38_sw','طريق الصعيد الصحراوي الغربي',[31.6,25.9]]])})}}
+function axLinks(st){if(!st.axisCards||!window.CMD)return'';let h='';const cr=(x1,y1,x2,y2)=>{const m=(x1+x2)/2;return`M${x1},${y1}C${m},${y1} ${m},${y2} ${x2},${y2}`};
+  CMD.roads.num.forEach(q=>{const i=+q[2]-1;if(!(i>=0)||!CARDS['rz'+i])return;const b=box([i%3,Math.floor(i/3),1,1]),[x,y]=S(q[0],q[1]),on=i===lit%9,X=MAPBOX.left+x,Y=MAPBOX.top+y;
+    h+=`<path class="p${on?' lit':''}" style="stroke:var(--ember)" d="${cr(b.left,b.top+26,X,Y)}"/>`+(on?`<circle class="axr" cx="${X.toFixed(1)}" cy="${Y.toFixed(1)}" r="15"/>`:'')});return h}
+function fidPanels(st){}
 /* ===== fid v2 (Amr 18:57: «طريقة ظهور المونوريل غبية · زود سلايد بمعلومات · التزم بالأسلوب»): a slide of its own for the monorail
    and the LRT, in the deck's style — the camera flies into Greater Cairo on a zoom-10 satellite, the lines draw themselves with every
    station named as on the client's maps 49 and 50, cards on the right, the photos fly out of their stations, 2D → 3D → 2D ===== */
