@@ -878,7 +878,7 @@ function camGo(st){const T=camOf(st),A=cam;if(T.s===A.s&&T.cx===A.cx&&T.cy===A.c
     cam={s,cx:A.cx+(T.cx-A.cx)*w,cy:A.cy+(T.cy-A.cy)*w,z:T.z};
     world.style.transform=`translate(${MAPBOX.width/2-cam.cx*cam.s}px,${MAPBOX.height/2-cam.cy*cam.s}px) scale(${cam.s})`;
     if(k<1){camGo.a=requestAnimationFrame(f);return}
-    cam=T;camReset();draw();const o=FXO();o&&(o.innerHTML=fxHtml(SL[step].on.filter(q=>!SL[step].cur.includes(q)),1));
+    cam=T;camReset();draw();const o=FXO();o&&(o.innerHTML=fxHtml(SL[step].on.filter(q=>!SL[step].cur.includes(q)),1));if(D3.on)d3Build(0);
     requestAnimationFrame(()=>{map.classList.remove('zm');stage.classList.remove('zming')})};
   camGo.a=requestAnimationFrame(f);return ZMS}
 /* ===== /client-matched layers ===== */
@@ -964,7 +964,7 @@ window.d3Toggle=d3Toggle;
 let drawAnim=null;
 function drawIn(ms){{const s0=SL[step];if(s0.cur.includes('grow')&&!KEEP.has('grow')&&s0.cur.length<ORDER.length)ms=Math.max(ms,5200);mapLoad(ms+(s0.on.length&&!D3.on?D3DUR:0))}const t0=performance.now();cancelAnimationFrame(drawAnim);{const c=FXC();c&&!KEEP.size&&(c.innerHTML='')}const f=t=>{drawK=Math.min(1,(t-t0)/ms);draw();if(drawK<1)drawAnim=requestAnimationFrame(f);else{const c=FXC();if(c){if(KEEP.size)c.insertAdjacentHTML('beforeend',fxHtml(SL[step].cur.filter(k=>!KEEP.has(k)),0));else c.innerHTML=fxHtml(SL[step].cur,0)}KEEP=new Set();d3Cancel();if(!SL[step].on.length||D3.on)mapDone();D3.a1=setTimeout(d3Auto,350)}};drawAnim=requestAnimationFrame(f)}
 function progress(i){return`<div class="row"><b>${SL[i].hd[0]}</b><span>${i+1} / ${SL.length}</span></div><div class="tk2">${SL.map((_,j)=>`<i class="${j<i?'d':j===i?'c':''}"></i>`).join('')}</div>`}
-function go(i){if(i===step||i<0||i>=SL.length)return;KEEP=new Set(step>=0&&SL[step]?SL[step].on.filter(k=>SL[i].cur.includes(k)):[]);step=i;const st=SL[i];
+function go(i){if(i===step||i<0||i>=SL.length)return;cancelAnimationFrame(drawAnim);d3Cancel();KEEP=new Set(step>=0&&SL[step]?SL[step].on.filter(k=>SL[i].cur.includes(k)):[]);step=i;const st=SL[i];
   cnt.textContent=`${i+1} / ${SL.length}`;mapLoad(0);
   hdt.textContent=st.hd[0];hds.textContent=st.hd[1];mtt.textContent=st.map[0];mts.textContent=st.map[1];
   const keep=new Set();
