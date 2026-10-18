@@ -321,13 +321,18 @@ svg.fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-in
 .l3d{position:absolute;inset:0;z-index:4;border-radius:inherit;overflow:hidden;perspective:2100px;perspective-origin:50% 26%;cursor:grab;touch-action:none;
   background:transparent;opacity:0;transition:opacity .8s ease}
 /* the map card wears the map title's glass; in 3D the flat map steps aside so the card shows through */
-.bc.mapc{--sheen:.4;--fill:linear-gradient(150deg,rgba(40,64,165,.92),rgba(80,106,208,.82) 52%,rgba(168,178,240,.72))}
+.bc.mapc{--sheen:.32;--fill:radial-gradient(120% 80% at 50% -10%,rgba(132,160,245,.42),rgba(132,160,245,0) 60%),linear-gradient(180deg,rgba(40,66,176,.95),rgba(29,45,128,.96) 78%,rgba(36,54,140,.96))}
 .mapc>.mbg{position:absolute;inset:-25%;z-index:0;pointer-events:none;will-change:transform;
-  background:radial-gradient(26% 22% at 24% 26%,rgba(240,150,112,.66),rgba(240,150,112,0) 70%),radial-gradient(30% 26% at 76% 72%,rgba(190,234,250,.32),rgba(190,234,250,0) 70%),radial-gradient(22% 20% at 70% 18%,rgba(246,196,206,.28),rgba(246,196,206,0) 70%);
+  background:radial-gradient(24% 20% at 74% 22%,rgba(240,150,112,.5),rgba(240,150,112,0) 70%),radial-gradient(30% 26% at 26% 78%,rgba(120,220,240,.26),rgba(120,220,240,0) 70%),radial-gradient(22% 20% at 30% 20%,rgba(183,192,243,.3),rgba(183,192,243,0) 70%);
   animation:mbg 22s ease-in-out infinite alternate}
 @keyframes mbg{0%{transform:translate(0,0) rotate(0deg) scale(1)}50%{transform:translate(7%,5%) rotate(9deg) scale(1.06)}100%{transform:translate(-5%,8%) rotate(-7deg) scale(.97)}}
-.mapc>.world,.mapc>svg.ov,.mapc>svg.fx,.mapc>.pins,.mapc>svg.sh{transition:opacity .6s ease}
-.mapc.d3x>.world,.mapc.d3x>svg.ov,.mapc.d3x>svg.fx,.mapc.d3x>.pins,.mapc.d3x>svg.sh{opacity:0!important}
+.mapc>svg.grd{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.grd .gmi{fill:none;stroke:rgba(255,255,255,.1);stroke-width:.8}
+.grd .gma{fill:none;stroke:rgba(255,255,255,.24);stroke-width:1.1}
+.grd text{fill:rgba(255,255,255,.6);font:500 10.5px var(--f-display);direction:ltr;unicode-bidi:plaintext}
+.l3s .pl>svg.grd{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.mapc>.world,.mapc>svg.ov,.mapc>svg.fx,.mapc>.pins,.mapc>svg.sh,.mapc>svg.grd{transition:opacity .6s ease}
+.mapc.d3x>.world,.mapc.d3x>svg.ov,.mapc.d3x>svg.fx,.mapc.d3x>.pins,.mapc.d3x>svg.sh,.mapc.d3x>svg.grd{opacity:0!important}
 .l3d.on{opacity:1}
 .l3d.drag{cursor:grabbing}
 .l3s{position:absolute;inset:0;transform-style:preserve-3d;transform:translate(var(--tx,0px),var(--ty,0px)) scale(var(--sc,1)) rotateX(var(--rx,0deg)) rotateZ(var(--rz,0deg));transition:transform 1.15s cubic-bezier(.65,0,.25,1)}
@@ -607,9 +612,20 @@ function phBack(el,k){el.classList.remove('lit');el.classList.add('back');if(el.
   else el.style.transform='scale(.03)';
   setTimeout(()=>el.remove(),k*PHS+840)}
 /* ===== /center fx v2 ===== */
+/* ===== map graticule: longitude / latitude lines on the map card, on the same projection, so they tilt with the 3D camera ===== */
+function gridSvg(id,x0,x1,y0,y1,fade){let mi='',ma='',lb='';const f=v=>v.toFixed(1),W0=MAPBOX.width,H0=MAPBOX.height;
+  for(let lo=Math.ceil(x0);lo<=x1;lo++){const a=S(lo,y0),b=S(lo,y1),d=`M${f(a[0])},${f(a[1])}L${f(b[0])},${f(b[1])}`;if(lo%5===0)ma+=d;else mi+=d;
+    if(lo%5===0&&!fade){const x=S(lo,25)[0];if(x>30&&x<W0-30)lb+=`<text x="${f(x)}" y="${H0-56}" text-anchor="middle">${lo}°E</text>`}}
+  for(let la=Math.ceil(y0);la<=y1;la++){const a=S(x0,la),b=S(x1,la),d=`M${f(a[0])},${f(a[1])}L${f(b[0])},${f(b[1])}`;if(la%5===0)ma+=d;else mi+=d;
+    if(la%5===0&&!fade){const y=S(30,la)[1];if(y>110&&y<H0-80)lb+=`<text x="12" y="${f(y-4)}">${la}°N</text>`}}
+  const m=fade?`<defs><radialGradient id="${id}r" gradientUnits="userSpaceOnUse" cx="${W0/2}" cy="${H0*.48}" r="${W0*1.05}"><stop offset=".45" stop-color="#fff"/><stop offset="1" stop-color="#000"/></radialGradient><mask id="${id}m" maskUnits="userSpaceOnUse" x="${-W0*2}" y="${-H0*2}" width="${W0*5}" height="${H0*5}"><rect x="${-W0*2}" y="${-H0*2}" width="${W0*5}" height="${H0*5}" fill="url(#${id}r)"/></mask></defs>`:'';
+  return m+`<g${fade?` mask="url(#${id}m)"`:''}><path class="gmi" d="${mi}"/><path class="gma" d="${ma}"/></g>${lb}`}
+if(!map.querySelector('.mbg'))map.insertAdjacentHTML('afterbegin','<i class="mbg"></i>');
+map.querySelector('.mbg').insertAdjacentHTML('afterend',`<svg class="grd">${gridSvg('g2',18,42,16,36,0)}</svg>`);
+/* ===== /map graticule ===== */
 /* ===== growth counter: 2014 → 2026, 7% → 14%, the new areas grow out one after another (nearest to Cairo first) ===== */
 const GORD=(()=>{const c=[31.24,30.04],d=GROW.map((z,j)=>{const q=cen(z.g);return[j,Math.hypot(q[0]-c[0],q[1]-c[1])]}).sort((a,b)=>a[1]-b[1]),r=[];d.forEach(([j],n)=>r[j]=n);return r})();
-map.insertAdjacentHTML('afterbegin','<i class="mbg"></i>');
+if(!map.querySelector('.mbg'))map.insertAdjacentHTML('afterbegin','<i class="mbg"></i>');
 map.insertAdjacentHTML('beforeend','<div class="yc" id="yc"><div class="ych"><span>2014</span><b id="ycy">2014</b><span>2026</span></div><div class="ycb"><i class="a"></i><i class="b" id="ycb"></i></div><div class="ycp">المعمور <b id="ycp">7%</b> من مساحة مصر</div></div>');
 const ease3=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
 function growCounter(st){const yc=document.getElementById('yc');if(!yc)return;const on=st.cur.includes('grow')&&st.cur.length<ORDER.length;yc.classList.toggle('on',on);if(!on)return;
@@ -650,14 +666,14 @@ function d3Build(enter){const st=SL[step];let el=D3.el;
   const keys=ORDER.filter(k=>st.on.includes(k)),pts=st.photos.map((p,k)=>p.ll?[p.ll,k]:null).filter(Boolean);
   const sheets=[];
   const wc=world.cloneNode(true);wc.removeAttribute('id');{const im=wc.querySelector('img');im.removeAttribute('id');if(look===4)im.style.filter='brightness(.84) contrast(1.16) saturate(.86)'}
-  sheets.push({base:1,html:`<svg class="ov">${staticLayer()}</svg>`,name:'الخريطة',col:'#ffffff'});
+  sheets.push({base:1,html:`<svg class="grd">${gridSvg('g3',4,56,2,46,1)}</svg><svg class="ov">${staticLayer()}</svg>`,name:'الخريطة',col:'#ffffff'});
   const grp=[];keys.forEach(k=>{if((k==='valley'||k==='grow')&&grp.length&&grp[grp.length-1].b)grp[grp.length-1].k.push(k);else grp.push({k:[k],b:k==='valley'||k==='grow'})});
   grp.forEach(g=>{const ks=g.k,cur=ks.some(k=>st.cur.includes(k)),nm=g.b?(ks.includes('grow')?'المعمور · 7% + 7% = 14%':'المعمور 2014 · 7%'):(LAYN[ks[0]]||ks[0]);
     sheets.push({html:`<svg class="ov">${d3Sheet(ks,cur)}</svg>`,name:nm,col:d3Col(ks[ks.length-1]),cur:cur&&st.cur.length<ORDER.length})});
   const pst=pastPts(step);if(pts.length||pst.length)sheets.push({html:`<svg class="ov"><path d="${egD()}" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.45)" stroke-width="1"/>${pst.map(ll=>{const[x,y]=S(...ll);return`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="#fff" stroke="#1c2547" stroke-opacity=".6" stroke-width="2"/>`}).join('')}${pts.map(([ll,k])=>{const[x,y]=S(...ll);return`<g transform="translate(${x.toFixed(1)},${y.toFixed(1)})"><circle r="13" fill="#3558e6" stroke="#fff" stroke-width="2"/><text y="4.6" text-anchor="middle" font-size="13" font-weight="700" fill="#fff" font-family="Readex Pro,sans-serif">${k+1}</text></g>`}).join('')}</svg>`,name:'أماكن الصور',col:'#ffd23f'});
   const n=sheets.length,[ax,ay]=S(25.4,30.2);D3.n=n;D3.gap=clamp(430/Math.max(1,n-1),38,120);D3.ty=Math.round(26+((n-1)*D3.gap+(sheets.some(t=>t.cur)?D3.gap*.9:0))*Math.sin(D3.rx*Math.PI/180)*D3.sc*.5);
   const sc=el.firstChild;sc.innerHTML=sheets.map((t,i)=>`<div class="pl${t.base?' base':''}${t.cur?' cur':''}" style="--i:${i}">${t.html}<div class="c3w" style="left:${ax.toFixed(0)}px;top:${ay.toFixed(0)}px"><span class="c3${t.cur?' cur':''}"><i style="background:${t.col}"></i>${t.name}</span></div></div>`).join('');
-  sc.firstChild.insertBefore(wc,sc.firstChild.firstChild);
+  sc.firstChild.insertBefore(wc,sc.firstChild.querySelector('svg.ov'));
   if(enter){d3Vars(1);el.classList.remove('on');void el.offsetWidth;requestAnimationFrame(()=>requestAnimationFrame(()=>{el.classList.add('on');map.classList.add('d3x');setTimeout(()=>d3Vars(0),60)}))}
   else{el.classList.add('on');map.classList.add('d3x');d3Vars(0)}}
 function d3Cancel(){clearTimeout(D3.a1);clearTimeout(D3.a2);clearTimeout(D3.a3)}
