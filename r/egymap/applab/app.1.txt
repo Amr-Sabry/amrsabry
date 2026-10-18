@@ -27895,7 +27895,112 @@ html.ctl-deck.ctl-lists #colL{top:auto;bottom:var(--ctlLB,12rem);height:var(--ct
 .ctl.deck .dside{display:grid}
 @media (max-width:900px){.ctl{display:none}}
 `; document.head.appendChild(st); }
-  const el = document.createElement("div"); el.className = "ctl " + CTLM; el.id = "ctl"; el.setAttribute("role", "toolbar"); el.setAttribute("aria-label", T("لوحة التحكم"));
+  /* ---- v146 (Amr, 18 Oct: «عاوز لوحة التحكم تكون بالأسلوب ده» — radial menus): the floating console as one round wheel.
+     Centre: back (or close, or the year and its play key, or the camera stick). Inner ring: eight sections. A section with choices opens
+     an outer arc of them beside it (the axes with their counts, the years, the camera, the view). Light glass; the open section is ringed in ember. */
+  const RS = 720, RC = RS / 2, R0 = 94, R1 = 228, R2 = 240, R3 = 336;
+  const pol = (r, a) => [RC + r * Math.cos(a * Math.PI / 180), RC + r * Math.sin(a * Math.PI / 180)];
+  const arcP = (r0, r1, a0, a1) => { const L = a1 - a0 > 180 ? 1 : 0, [x0, y0] = pol(r1, a0), [x1, y1] = pol(r1, a1), [x2, y2] = pol(r0, a1), [x3, y3] = pol(r0, a0);
+    return `M${x0.toFixed(1)} ${y0.toFixed(1)}A${r1} ${r1} 0 ${L} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}L${x2.toFixed(1)} ${y2.toFixed(1)}A${r0} ${r0} 0 ${L} 0 ${x3.toFixed(1)} ${y3.toFixed(1)}Z`; };
+  const ico = (k, x, y, s) => `<svg x="${(x - s / 2).toFixed(1)}" y="${(y - s / 2).toFixed(1)}" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" class="ri">${IC[k] || k}</svg>`;
+  const txt = (s, x, y, cls) => `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" class="${cls || "rl"}">${esc(s)}</text>`;
+  /* the eight sections, clockwise from the top */
+  const SECTS = [
+    {k: "show", ic: "show", t: T("وضع العرض"), cls: "em"},
+    {k: "sec", s: "axes", ic: '<path d="M11 3.6a8.4 8.4 0 1 0 9.4 9.4H11z"/><path d="M14 2.4v7.6h7.6A7.6 7.6 0 0 0 14 2.4z"/>', t: T("المحاور")},
+    {k: "sec", s: "time", ic: '<circle cx="12" cy="12" r="8.4"/><path d="M12 7.2V12l3.4 2.2"/>', t: T("الزمن")},
+    {k: "sec", s: "cam", ic: '<path d="M4 8.5h3l1.6-2.5h6.8L17 8.5h3v10H4z"/><circle cx="12" cy="13.2" r="3.4"/>', t: T("الكاميرا")},
+    {k: "sec", s: "view", ic: "lay", t: T("طريقة العرض")},
+    {k: "lists", ic: "list", t: T("القوائم")},
+    {k: "search", ic: "search", t: T("بحث")},
+    {k: "home", ic: "home", t: T("الرئيسية")}
+  ];
+  /* the outer arcs: [section, centre angle, items] */
+  const yrsW = 11.6, axW = 30, camW = 33, viewW = 30;
+  const AXS = [T("الاقتصاد"), T("الطاقة"), T("المياه والغذاء"), T("بناء الإنسان"), T("البنية التحتية"), T("الأمن والقانون")];      /* short names for the arc */
+  function subArc(name, mid, items){ const tot = items.reduce((a, it) => a + it.w, 0); let a = mid - tot / 2, h = "";
+    items.forEach(it => { const a0 = a, a1 = a + it.w, am = (a0 + a1) / 2; a = a1;
+      h += `<g class="${it.cls || ""}" ${it.attr || ""}><path class="f" d="${arcP(R2, R3, a0 + .35, a1 - .35)}"/>${it.draw(am)}</g>`; });
+    return `<g class="sub s-${name}">${h}</g>`; }
+  const axItems = AXN.map((n, i) => ({w: axW, cls: "chip", attr: `data-k="ax" data-a="${i}" style="--c:${SECC[i]}"`, draw: am => { const [mx, my] = pol((R2 + R3) / 2, am), ix = mx, iy = my - 25, cx = mx, cy = my + 1, nx = mx, ny = my + 25;      /* stacked upright at the centre of the piece: reads the same all round the wheel */
+    return `<svg x="${(ix - 12).toFixed(1)}" y="${(iy - 12).toFixed(1)}" width="24" height="24" viewBox="0 0 24 24" class="ri ax" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${axIc(i)}</svg>${txt("0", cx, cy, "cnt")}${txt(AXS[i], nx, ny, "rs")}`; }}));
+  const yrItems = [{w: 24, cls: "pseg", attr: 'data-k="play"', draw: am => { const [x, y] = pol((R2 + R3) / 2, am); return `<g class="play" transform="translate(${(x - 14).toFixed(1)} ${(y - 28).toFixed(1)})">${sv("play", 28)}</g>${txt(T("تشغيل"), x, y + 16, "rs")}`; }}]
+    .concat(YEARS.map(yv => ({w: yrsW, cls: "yseg", attr: `data-k="yr" data-y="${yv}"`, draw: am => { const [x, y] = pol((R2 + R3) / 2, am); return txt(String(yv).slice(2), x, y, "ry"); }})))
+    .concat([{w: 26, cls: "tlx", attr: 'data-k="tlx" aria-pressed="false"', draw: am => { const [x, y] = pol((R2 + R3) / 2, am); return ico("up", x, y - 13, 26) + txt(T("اكشف السنة"), x, y + 15, "rs"); }}]);
+  const camItems = [["zi", T("تقريب")], ["zo", T("تبعيد")], ["rl", T("لف يمين")], ["rr", T("لف شمال")]].map(([h, t]) => ({w: camW, attr: `data-h="${h}"`, draw: am => { const [x, y] = pol((R2 + R3) / 2, am); return ico(h, x, y - 13, 28) + txt(t, x, y + 17, "rs"); }}));
+  const viewItems = [["surface", "surf", T("السطح")], ["density", "dens", T("الكثافة")], ["layers", "lay", T("الطبقات")]].map(([m, i, t]) => ({w: viewW, attr: `data-k="mode" data-m="${m}"`, draw: am => { const [x, y] = pol((R2 + R3) / 2, am); return ico(i, x, y - 13, 28) + txt(t, x, y + 17, "rs"); }}))
+    .concat([{w: viewW, attr: 'data-k="lang"', draw: am => { const [x, y] = pol((R2 + R3) / 2, am); return txt(EN ? "عربي" : "English", x, y, "rl"); }}]);
+  function radialHTML(){
+    let main = "";
+    SECTS.forEach((sc, i) => { const am = -90 + 45 * i, a0 = am - 22.5, a1 = am + 22.5, [ix, iy] = pol((R0 + R1) / 2 - 14, am), [tx, ty] = pol((R0 + R1) / 2 + 30, am);
+      main += `<g class="ms ${sc.cls || ""}${sc.s ? " m-" + sc.s : ""}" data-k="${sc.k}"${sc.s ? ` data-s="${sc.s}"` : ""}${sc.k === "lists" || sc.k === "show" ? ' aria-pressed="false"' : ""}><path class="f" d="${arcP(R0, R1, a0 + .5, a1 - .5)}"/>${ico(sc.ic, ix, iy, 32)}${txt(sc.t, tx, ty)}</g>`; });
+    const subs = subArc("axes", -45, axItems) + subArc("time", 0, yrItems) + `<g class="cbt">${subArc("cam", 45, camItems)}</g>` + `<g class="seg">${subArc("view", 90, viewItems)}</g>`;
+    const ut = [["grip", "grip", T("اسحب لتحريك اللوحة")], ["fs", "fs", T("ملء الشاشة")], ["set", "gear", T("الإعدادات")], ["min", "min", T("تصغير")]].map(([k, i, t], j) => { const [x, y] = pol(R3 - 34, 158 + j * 16);      /* the free stretch on the left, between the view arc and the axes arc */
+      return `<button type="button" class="ru${k === "grip" ? " grip" : ""}" data-k="${k}" title="${t}" style="left:${(x - 29).toFixed(0)}px;top:${(y - 29).toFixed(0)}px">${sv(i, 24)}</button>`; }).join("");
+    return `<div class="cbox rbox"><div class="rbg"></div><svg class="rsv" viewBox="0 0 ${RS} ${RS}" width="${RS}" height="${RS}">
+      <defs><radialGradient id="rgEm" cx="50%" cy="65%" r="70%"><stop offset="0" stop-color="#ffc89f"/><stop offset=".6" stop-color="#f4a07a"/><stop offset="1" stop-color="#ee9873"/></radialGradient>
+      <linearGradient id="rgCo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7590e2"/><stop offset="1" stop-color="#3d5cc0"/></linearGradient></defs>
+      ${subs}<g class="main">${main}</g></svg>
+      <div class="rc"><button type="button" class="rcb" data-k="back">${sv("back", 30)}<span>${T("رجوع")}</span></button>
+        <button type="button" class="rcx" data-k="close"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg><span>${T("إغلاق")}</span></button>
+        <button type="button" class="rcy yr" data-k="play"><b>2026</b><small>${T("السنة")}</small></button>
+        <div class="joy" data-k="joy"><span class="k"></span></div></div>${ut}</div>
+      <button type="button" class="puck" data-k="restore" aria-label="${T("لوحة التحكم")}">${sv("grip", 30)}<br>${T("تحكم")}</button>`;
+  }
+  { const st = document.createElement("style"); st.textContent = `
+.ctl.float.rad{pointer-events:none}.ctl.rad .puck{pointer-events:auto}
+.ctl.rad .cbox.rbox{position:relative;width:${RS}px;height:${RS}px;padding:0;border:0;background:none;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;pointer-events:none}
+.ctl.rad .cbox.rbox::before{display:none}
+.ctl.rad .rbg{position:absolute;left:${RC - R1 - 4}px;top:${RC - R1 - 4}px;width:${2 * R1 + 8}px;height:${2 * R1 + 8}px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,255,255,.2),rgba(255,255,255,.08) 70%);-webkit-backdrop-filter:blur(16px) saturate(1.7);backdrop-filter:blur(16px) saturate(1.7);
+  box-shadow:0 30px 70px -30px rgba(10,20,60,.65),0 0 0 1.5px rgba(255,255,255,.9),inset 0 1.5px 0 #fff}
+html.lite .ctl.rad .rbg{background:rgba(255,255,255,.55)}
+.ctl.rad .rsv{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+.ctl.rad .rsv [data-k],.ctl.rad .rsv [data-h]{pointer-events:auto;cursor:pointer}
+.ctl.rad path.f{fill:rgba(255,255,255,.4);stroke:rgba(255,255,255,.95);stroke-width:3;stroke-linejoin:round;transition:fill .2s,stroke .2s}
+.ctl.rad .ri{color:#2a3b86}
+.ctl.rad .rl{fill:#1c2547;font:700 15px var(--f-head);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.ctl.rad .rs{fill:#2a3b86;font:700 12px var(--f-head);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.ctl.rad .ry{fill:#2a3b86;font:700 15px var(--f-num);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.ctl.rad .cnt{fill:#1c2547;font:700 21px var(--f-num);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.ctl.rad g[data-k],.ctl.rad g[data-h]{transform-box:fill-box;transform-origin:center;transition:transform .12s}
+.ctl.rad g[data-k]:active,.ctl.rad g[data-h]:active{transform:scale(.965)}
+.ctl.rad .ms.em path.f{fill:url(#rgEm);stroke:rgba(255,236,214,.95)}.ctl.rad .ms.em .ri{color:#3a1806}.ctl.rad .ms.em .rl{fill:#3a1806}
+.ctl.rad .ms[aria-pressed="true"] path.f,.ctl.rad .sub g[aria-pressed="true"] path.f,.ctl.rad .sub g.on path.f{fill:url(#rgCo)}
+.ctl.rad .ms[aria-pressed="true"] .ri,.ctl.rad .sub g[aria-pressed="true"] .ri,.ctl.rad .sub g.on .ri{color:#fff}
+.ctl.rad .ms[aria-pressed="true"] text,.ctl.rad .sub g[aria-pressed="true"] text,.ctl.rad .sub g.on text{fill:#fff}
+.ctl.rad .ms.em[aria-pressed="true"] path.f{fill:#e2744a}
+.ctl.rad .ms.open path.f{fill:rgba(255,255,255,.72);stroke:#ee9873;stroke-width:4.5}
+.ctl.rad .sub{opacity:0;pointer-events:none;transform-box:view-box;transform-origin:${RC}px ${RC}px;transform:scale(.9);transition:opacity .22s,transform .3s cubic-bezier(.2,.85,.25,1)}
+.ctl.rad .sub path.f{fill:rgba(255,255,255,.62)}
+.ctl.rad.o-axes .s-axes,.ctl.rad.o-time .s-time,.ctl.rad.o-cam .s-cam,.ctl.rad.o-view .s-view{opacity:1;transform:none}
+.ctl.rad.o-axes .s-axes [data-k],.ctl.rad.o-time .s-time [data-k],.ctl.rad.o-cam .s-cam [data-h],.ctl.rad.o-view .s-view [data-k]{pointer-events:auto}
+.ctl.rad:not(.o-axes) .s-axes *,.ctl.rad:not(.o-time) .s-time *,.ctl.rad:not(.o-cam) .s-cam *,.ctl.rad:not(.o-view) .s-view *{pointer-events:none!important}
+.ctl.rad .chip path.f{fill:color-mix(in srgb,var(--c) 17%,rgba(255,255,255,.72))}
+.ctl.rad .chip .ri.ax{color:color-mix(in srgb,var(--c) 82%,#1c2547)}.ctl.rad .chip .ri.ax svg,.ctl.rad .chip .ri.ax *{stroke:currentColor}
+.ctl.rad .chip.on path.f{fill:var(--c)}.ctl.rad .chip.on text{fill:#fff}.ctl.rad .chip.on .ri.ax{color:#fff}
+.ctl.rad .yseg.f path.f{fill:rgba(255,255,255,.4)}.ctl.rad .yseg.f .ry{fill:#7a84ad}
+.ctl.rad .yseg.on path.f{fill:url(#rgEm)}.ctl.rad .yseg.on .ry{fill:#3a1806}
+.ctl.rad .pseg path.f{fill:url(#rgEm)}.ctl.rad .pseg .play{color:#3a1806}.ctl.rad .pseg .rs{fill:#3a1806}
+.ctl.rad .tlx[aria-pressed="true"] path.f{fill:url(#rgCo)}.ctl.rad .tlx[aria-pressed="true"] .ri{color:#fff}.ctl.rad .tlx[aria-pressed="true"] text{fill:#fff}
+.ctl.rad .cbt g.on path.f{fill:url(#rgCo)}.ctl.rad .cbt g.on .ri{color:#fff}.ctl.rad .cbt g.on text{fill:#fff}
+.ctl.rad .rc{position:absolute;left:${RC - R0 + 8}px;top:${RC - R0 + 8}px;width:${2 * (R0 - 8)}px;height:${2 * (R0 - 8)}px;border-radius:50%;pointer-events:auto;
+  background:radial-gradient(circle at 50% 35%,rgba(255,255,255,.95),rgba(232,236,252,.8));border:1.5px solid #fff;box-shadow:0 10px 26px -12px rgba(30,40,110,.6),inset 0 -8px 18px -10px rgba(110,130,220,.4)}
+.ctl.rad .rc>*{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:0;background:none;border-radius:50%;padding:0;font:800 15px var(--f-head);color:#1c2547}
+.ctl.rad .rcb{display:flex}.ctl.rad .rcb svg{transform:scaleX(-1)}
+.ctl.rad .rcb.off{opacity:.4}
+.ctl.rad.o-axes .rcb,.ctl.rad.o-view .rcb,.ctl.rad.o-time .rcb,.ctl.rad.o-cam .rcb{display:none}
+.ctl.rad.o-axes .rcx,.ctl.rad.o-view .rcx{display:flex}
+.ctl.rad.o-time .rcy{display:flex}.ctl.rad .rcy b{font:700 38px/1 var(--f-num)}.ctl.rad .rcy small{font-size:12px;color:#3d5cc0}
+.ctl.rad.o-cam .joy{display:block;width:auto;height:auto;border:0;background:radial-gradient(circle at 50% 40%,rgba(255,255,255,.95),rgba(205,215,250,.55) 70%)}
+.ctl.rad .joy .k{position:absolute;left:50%;top:50%;width:62px;height:62px;margin:-31px;border-radius:50%;border:1px solid #fff;background:radial-gradient(circle at 50% 35%,#fff,#c9d2f6);box-shadow:0 6px 14px -6px rgba(30,40,110,.6);pointer-events:none}
+.ctl.rad .ru{position:absolute;width:58px;height:58px;border-radius:50%;display:grid;place-items:center;pointer-events:auto;color:#2a3b86;border:1.5px solid #fff;
+  background:radial-gradient(circle at 50% 35%,rgba(255,255,255,.9),rgba(226,231,250,.7));box-shadow:0 10px 22px -12px rgba(30,40,110,.6);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.ctl.rad .ru.grip{cursor:grab;color:#3d5cc0}.ctl.rad.drag .ru.grip{cursor:grabbing}
+.ctl.rad .ru:active{transform:scale(.95)}
+`; document.head.appendChild(st); }
+
+  const el = document.createElement("div"); el.className = "ctl " + CTLM + (FLOAT ? " rad" : ""); el.id = "ctl"; el.setAttribute("role", "toolbar"); el.setAttribute("aria-label", T("لوحة التحكم"));
   const navH = `<div class="cnav"><button type="button" class="btn" data-k="back">${sv("back")}${T("رجوع")}</button><button type="button" class="btn" data-k="home">${sv("home")}${T("الرئيسية")}</button><button type="button" class="btn" data-k="search">${sv("search")}${T("بحث")}</button>${FLOAT ? `<button type="button" class="btn em" data-k="show">${sv("show")}${T("وضع العرض")}</button>` : ""}</div>`;
   const axH = `<div class="cax">` + AXN.map((n, a) => `<button type="button" class="chip" data-k="ax" data-a="${a}" style="--c:${SECC[a]}"><span class="i">${axIc(a)}</span><b>0</b><span>${n}</span></button>`).join("") + `</div>`;
   const barsH = `<div class="bars">` + YEARS.map((y, i) => `<button type="button" data-k="yr" data-y="${y}" aria-label="${y}"><i></i></button>`).join("") + `</div>`;
@@ -27904,11 +28009,7 @@ html.ctl-deck.ctl-lists #colL{top:auto;bottom:var(--ctlLB,12rem);height:var(--ct
     <div class="seg" data-g="theme">${LOOK === "glass" ? "" : `<button type="button" data-k="theme" data-t="twin">${T("رقمي")}</button><button type="button" data-k="theme" data-t="sand">${T("رملي")}</button>`}<button type="button" data-k="lang">${EN ? "عربي" : "English"}</button></div></div>`;
   const camH = `<div class="cam"><div class="joy" data-k="joy"><span class="a" style="top:10px;left:50%;margin-left:-6px">▲</span><span class="a" style="bottom:10px;left:50%;margin-left:-6px">▼</span><span class="a" style="left:12px;top:50%;margin-top:-8px">◀</span><span class="a" style="right:12px;top:50%;margin-top:-8px">▶</span><span class="k"></span></div>
     <div class="cbt"><button type="button" data-h="zi" aria-label="${T("تقريب")}">${sv("zi", 24)}</button><button type="button" data-h="zo" aria-label="${T("تبعيد")}">${sv("zo", 24)}</button><button type="button" data-h="rl" aria-label="${T("لف")}">${sv("rl", 24)}</button><button type="button" data-h="rr" aria-label="${T("لف")}">${sv("rr", 24)}</button></div></div>`;
-  if (FLOAT) el.innerHTML = `<div class="cbox"><div class="chd"><span class="grip" data-k="grip" title="${T("اسحب لتحريك اللوحة")}">${sv("grip", 26)}</span><b>${T("لوحة التحكم")}</b><span class="sp"></span>
-      <button type="button" class="hb" data-k="lists" aria-pressed="false" title="${T("القوائم")}">${sv("list", 24)}</button><button type="button" class="hb" data-k="fs" title="${T("ملء الشاشة")}">${sv("fs", 22)}</button><button type="button" class="hb" data-k="set" title="${T("الإعدادات")}">${sv("gear", 24)}</button><button type="button" class="hb" data-k="min" title="${T("تصغير")}">${sv("min", 24)}</button></div>
-      ${navH}<div class="sec"><small>${T("المحاور الستة")}</small>${axH}</div><div class="sec"><small>${T("الزمن")}</small>${timeH}</div>
-      <div class="sec"><small>${T("طريقة العرض والكاميرا")}</small><div class="cview">${viewH}${camH}</div></div></div>
-      <button type="button" class="puck" data-k="restore" aria-label="${T("لوحة التحكم")}">${sv("grip", 30)}<br>${T("تحكم")}</button>`;
+  if (FLOAT) el.innerHTML = radialHTML();
   else el.innerHTML = `<div class="cbox"><div class="sec">${navH}</div><div class="sec">${axH}</div><div class="sec">${timeH}</div><div class="sec"><div class="cview">${viewH}</div></div><div class="sec">${camH}</div>
       <div class="sec"><div class="dside"><button type="button" class="hb" data-k="lists" aria-pressed="false" style="width:58px;height:58px">${sv("list", 24)}</button><button type="button" class="hb" data-k="fs" style="width:58px;height:58px">${sv("fs", 22)}</button><button type="button" class="hb" data-k="set" style="width:58px;height:58px">${sv("gear", 24)}</button><button type="button" class="btn em" data-k="show" style="min-height:58px;font-size:13px;padding:0 4px">${sv("show", 22)}</button></div></div></div>`;
   $("app").appendChild(el);
@@ -27961,6 +28062,7 @@ html.ctl-deck.ctl-lists #colL{top:auto;bottom:var(--ctlLB,12rem);height:var(--ct
   el.addEventListener("pointerdown", e => e.stopPropagation());
   el.addEventListener("click", e => { const b = e.target.closest("[data-k]"); if (!b || !el.contains(b)) return; const k = b.dataset.k; act();
     if (k === "back" || k === "home" || k === "search") { const t = dk(k); if (t) t.click(); }
+    else if (k === "sec" || k === "close") { const sn = b.dataset.s, was = k === "sec" && el.classList.contains("o-" + sn); ["axes", "time", "cam", "view"].forEach(x => el.classList.remove("o-" + x)); QA(".ms.open").forEach(m => m.classList.remove("open")); if (k === "sec" && !was) { el.classList.add("o-" + sn); b.classList.add("open"); } }
     else if (k === "show") $("bShow").click();
     else if (k === "ax") { const t = AXL.btn[+b.dataset.a]; if (t) t.click(); }
     else if (k === "play") $("bPlay").click();
@@ -27982,8 +28084,9 @@ html.ctl-deck.ctl-lists #colL{top:auto;bottom:var(--ctlLB,12rem);height:var(--ct
     const py = perYear(), mx = Math.max(1, ...py), y = clamp(Math.floor(S.T), 2014, 2030);
     const s = [S.sec, y, S.playing, S.mode, S.theme, TLS.open, !!S.show, H.classList.contains("ctl-lists"), dk("back") && dk("back").classList.contains("off"), py.join(","), (stat.secCnt || []).join(",")].join("|");
     if (s === sig) return; sig = s;
-    chips.forEach((c, a) => { const n = String((stat.secCnt || [])[a] || 0); const bb = c.querySelector("b"); if (bb.textContent !== n) bb.textContent = n; c.classList.toggle("on", S.sec === a); c.setAttribute("aria-pressed", String(S.sec === a)); });
+    chips.forEach((c, a) => { const n = String((stat.secCnt || [])[a] || 0); const bb = c.querySelector("b,.cnt"); if (bb.textContent !== n) bb.textContent = n; c.classList.toggle("on", S.sec === a); c.setAttribute("aria-pressed", String(S.sec === a)); });
     bars.forEach((b, i) => { const yy = YEARS[i]; b.querySelector("i").style.height = Math.max(7, py[i] / mx * 100) + "%"; b.classList.toggle("on", yy === y); b.classList.toggle("f", yy > NOW_Y); });
+    QA(".yseg").forEach(g => { const yy = +g.dataset.y; g.classList.toggle("on", yy === y); g.classList.toggle("f", yy > NOW_Y); });
     yrB.textContent = y; playB.innerHTML = sv(S.playing ? "pause" : "play", 28); tlxB.setAttribute("aria-pressed", String(!!TLS.open));
     QA('.seg [data-k="mode"]').forEach(b => b.setAttribute("aria-pressed", String(b.dataset.m === S.mode)));
     QA('.seg [data-k="theme"]').forEach(b => b.setAttribute("aria-pressed", String(b.dataset.t === S.theme)));
