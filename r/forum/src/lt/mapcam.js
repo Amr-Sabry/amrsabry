@@ -102,7 +102,7 @@
       if(!ok){n.lb.remove();return} block.push(b); near.push(n)});
     near.forEach((n,i)=>{n.pa=lk.append('path').attr('class','mclk').attr('pathLength',1).style('transition-delay',(i*.18)+'s');n.lb.style.transitionDelay=(i*.18+.3)+'s'});
     const tm=[], later=(f,ms)=>tm.push(setTimeout(f,ms));
-    function reveal(){el.classList.add('mc-on');foot.querySelectorAll('.cv').forEach(sp=>{if(typeof countUp==='function'&&!RM)countUp(sp,150)});
+    function reveal(){window.ANIM&&ANIM.end(el);el.classList.add('mc-on');foot.querySelectorAll('.cv').forEach(sp=>{if(typeof countUp==='function'&&!RM)countUp(sp,150)});
       lay.classList.add('on');ov.classed('on',true)}
     later(()=>plate.classList.add('on'),250);
     /* fly in, then drift; railways and roads are travelled end to end and back */
@@ -118,7 +118,7 @@
         else view={c:[p1[0]+A*Math.sin(2*Math.PI*s/T1),p1[1]+A*.6*Math.sin(2*Math.PI*s/T2)],k:k1*(1+.045*Math.sin(2*Math.PI*s/T3)),f:F1,arr:1}}
       apply(); raf=requestAnimationFrame(tick)}
     if(RM){view={c:PP?PP[0]:p1,k:k1,f:F1,arr:1};apply();reveal();plate.classList.add('on')}
-    else raf=requestAnimationFrame(tick);
+    else{raf=requestAnimationFrame(tick);window.ANIM&&ANIM.start(el,450+DUR+200)}
     cc.kill.push(()=>{alive=false;cancelAnimationFrame(raf);tm.forEach(clearTimeout)});
   }
   window.MAPCAM=MAPCAM;

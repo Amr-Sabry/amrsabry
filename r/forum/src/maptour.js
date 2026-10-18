@@ -75,11 +75,12 @@
     const plan=build(api); if(!plan||!plan.stops||!plan.stops.length){lay.remove();mini.remove();chip.remove();return}
     const replay=document.createElement('button');replay.type='button';replay.className='mback mt-re';replay.setAttribute('data-int','');replay.innerHTML=`${ICON('rotate-ccw',15)}إعادة الجولة`;
     replay.onclick=ev=>{ev.stopPropagation();const cc=typeof B!=='undefined'&&B&&B.cards.find(x=>x.el===el);if(!cc)return;played&&played.delete(c);paint(cc,cc.pr)};el.appendChild(replay);
-    const finish=()=>{plan.stops.forEach(s=>s.leave&&s.leave(1));plan.end&&plan.end();labs.forEach(o=>o.d.classList.remove('on'));setChip(plan.summary||'');
+    const finish=()=>{window.ANIM&&ANIM.end(el);plan.stops.forEach(s=>s.leave&&s.leave(1));plan.end&&plan.end();labs.forEach(o=>o.d.classList.remove('on'));setChip(plan.summary||'');
       if(leg)leg.classList.remove('mt-off');el.classList.add('mt-done');apply({k:1,x:0,y:0})};
     setTimeout(async()=>{if(dead)return;
       apply({k:1,x:0,y:0});
       if(fast){finish();return}
+      window.ANIM&&ANIM.start(el,(plan.delay??1500)+plan.stops.reduce((t,s)=>t+(s.view?(s.dur||1800):0)+(s.hold||2300),0)+1560);
       setTimeout(()=>played&&played.add(c),1500);
       await wait(plan.delay??1500);
       if(leg)leg.classList.add('mt-off');

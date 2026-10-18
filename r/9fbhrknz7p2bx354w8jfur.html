@@ -4,7 +4,7 @@
 <meta name="robots" content="noindex,nofollow">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<base href="/r/forum/"><script>(function(){var H=history;['replaceState','pushState'].forEach(function(k){var o=H[k];H[k]=function(s,t,u){if(typeof u==='string'&&u.charAt(0)==='#')u=location.pathname+location.search+u;return o.call(H,s,t,u)}})})();</script>
+<base href="/r/forum/"><script src="remote-show.js?v=3" data-deck="axes"></script><script>(function(){var H=history;['replaceState','pushState'].forEach(function(k){var o=H[k];H[k]=function(s,t,u){if(typeof u==='string'&&u.charAt(0)==='#')u=location.pathname+location.search+u;return o.call(H,s,t,u)}})})();</script>
 <title>منتدى مصر 2026 · المحاور السبعة</title>
 <style>:root{color-scheme:light;box-sizing:border-box}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
@@ -1490,12 +1490,13 @@ function routeMap(el,r,c,ctx,live){
       /* on a network, the overview keeps only the line ends that matter: the first line's start and every line's end */
       if(!AN&&q.lab&&RT.length>1&&(o.fdim||!q.end||(j===0&&si===0&&oi>0)))q.lab.d.classList.add('dim')})});if(!o.grp)tag(o);if(!o.ch)chip(o);if(o.nlab)o.nlab.d.classList.add('on');if(RT.length>1&&o.tgl)o.tgl.d.classList.add('dim')});
     SITES.forEach(s=>{s.g.select('.rr0').attr('r',11);s.g.select('.rr1').attr('r',20);s.lab.d.classList.add('on')});
-    total();MK.forEach(o=>o.d.classList.add('on'));svg.classed('rgon',true);el.classList.add('rdone')};
+    total();MK.forEach(o=>o.d.classList.add('on'));svg.classed('rgon',true);el.classList.add('rdone');window.ANIM&&ANIM.end(el)};
   /* ---- the sequence ---- */
   setTimeout(async()=>{if(dead)return;
     const tp=el.querySelector('.mtitle');BX=[20,tp?tp.offsetTop+tp.offsetHeight+12:20,r.w-20,r.h-20];
     const eb=ctx.path.bounds(EGY), V0=fitV([eb[0],eb[1]],BX,.04);
     if(fast||c.instant){apply(V0);finish();apply(finalV());requestAnimationFrame(declutter);return}
+    window.ANIM&&ANIM.start(el);
     apply(V0);setTimeout(()=>played&&played.add(c),1500);
     await wait(650);
     svg.classed('rgon',true);

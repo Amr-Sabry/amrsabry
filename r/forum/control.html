@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>منتدى مصر 2026 · لوحة التحكم</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Readex+Pro:wght@300;400;500;600;700&display=swap">
+<style>
+/* The control window for the three forum decks: open the show on the big screen from here, then jump to any slide or card,
+   step through, and replay / pause the map scenarios with a bar that says when the current one ends. */
+:root{
+  --bg:#05060a;--ink:#f4f5fa;--mute:#9a9cb4;--dim:#5d6078;--line:rgba(255,255,255,.08);--glass:rgba(255,255,255,.045);--glass2:rgba(255,255,255,.075);
+  --mint:#b6f2dc;--vio:#6e6df2;--vio2:#8f8ef7;--blue:#3d5cc0;--sun:#ee9873;--ok:#4fd1a1;--bad:#f2777a;
+  --fd:"Readex Pro","IBM Plex Sans Arabic","Geeza Pro","Segoe UI",Tahoma,sans-serif;--ft:"IBM Plex Sans Arabic","Readex Pro","Geeza Pro","Segoe UI",Tahoma,sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1)}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:15px/1.5 var(--ft)}
+body{background:radial-gradient(1200px 700px at 85% -10%,rgba(110,109,242,.16),transparent 60%),radial-gradient(900px 600px at 0% 110%,rgba(61,92,192,.14),transparent 60%),var(--bg);display:flex;flex-direction:column;overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:disabled{opacity:.35;cursor:default}
+svg.i{width:1.15em;height:1.15em;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.num{font-family:var(--fd);font-variant-numeric:tabular-nums}
+
+/* header */
+header{display:flex;align-items:center;gap:18px;padding:14px 22px;border-bottom:1px solid var(--line);flex:none;flex-wrap:wrap}
+.brand{display:flex;flex-direction:column;line-height:1.2}
+.brand b{font:600 17px var(--fd)}.brand span{font-size:12.5px;color:var(--mute)}
+#decks{display:flex;gap:6px;background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:5px;margin-inline-start:10px}
+#decks button{display:flex;align-items:center;gap:9px;padding:8px 14px;border-radius:10px;font:500 14px var(--fd);color:var(--mute);transition:background .3s,color .3s}
+#decks button:hover{color:var(--ink)}
+#decks button.on{background:linear-gradient(135deg,var(--vio),var(--blue));color:#fff;box-shadow:0 6px 20px -8px rgba(110,109,242,.8)}
+#decks button i{width:8px;height:8px;border-radius:50%;background:var(--dim);flex:none}
+#decks button i.live{background:var(--ok);box-shadow:0 0 0 3px rgba(79,209,161,.18)}
+.sp{flex:1}
+.pill{display:flex;align-items:center;gap:8px;padding:7px 13px;border-radius:999px;background:var(--glass);border:1px solid var(--line);font-size:13px;color:var(--mute);white-space:nowrap}
+.pill i{width:8px;height:8px;border-radius:50%;background:var(--bad)}
+.pill.ok{color:var(--ink)}.pill.ok i{background:var(--ok);box-shadow:0 0 0 3px rgba(79,209,161,.2)}
+#timer{cursor:pointer}#timer b{font:600 15px var(--fd);color:var(--ink)}
+#clock{font:500 15px var(--fd);color:var(--mute)}
+
+/* layout */
+main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(440px,1.05fr) minmax(360px,1fr);gap:18px;padding:18px 22px 20px}
+.panel{background:var(--glass);border:1px solid var(--line);border-radius:22px;min-height:0}
+#now{display:flex;flex-direction:column;gap:14px;padding:22px;overflow:auto}
+.nowtop{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:13.5px}
+#no{font:600 13.5px var(--fd);color:var(--ink);background:var(--glass2);border-radius:999px;padding:4px 12px}
+#axc{color:var(--mint);font:500 13.5px var(--fd)}
+#ttl{margin:0;font:600 30px/1.3 var(--fd);letter-spacing:-.2px;min-height:39px}
+#sub{margin:-6px 0 0;color:var(--mute);font-size:15px;min-height:22px}
+.lbl{font:500 12.5px var(--fd);color:var(--dim);letter-spacing:.3px;margin-bottom:8px}
+#steps{display:flex;flex-wrap:wrap;gap:8px}
+#steps button{display:flex;align-items:center;gap:8px;max-width:100%;padding:9px 12px 9px 14px;border-radius:12px;background:var(--glass);border:1px solid var(--line);text-align:start;transition:background .25s,border-color .25s,transform .25s var(--ease)}
+#steps button:hover{background:var(--glass2);transform:translateY(-1px)}
+#steps button b{font:600 13px var(--fd);width:24px;height:24px;border-radius:7px;display:grid;place-items:center;background:rgba(255,255,255,.07);flex:none}
+#steps button span{font-size:13px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:230px}
+#steps button.done b{background:rgba(110,109,242,.35)}
+#steps button.cur{border-color:rgba(182,242,220,.55);background:rgba(182,242,220,.08)}
+#steps button.cur b{background:var(--mint);color:#0b1020}#steps button.cur span{color:var(--ink)}
+.navb{display:grid;grid-template-columns:1fr 1.5fr;gap:12px}
+.navb button{display:flex;align-items:center;justify-content:center;gap:10px;height:66px;border-radius:16px;font:600 18px var(--fd);background:var(--glass2);border:1px solid var(--line);transition:transform .2s var(--ease),filter .2s}
+.navb button:active{transform:scale(.98)}
+.navb .pri{background:linear-gradient(135deg,var(--vio),var(--blue));border-color:transparent;box-shadow:0 14px 34px -16px rgba(110,109,242,.9)}
+.navb small{font:400 12px var(--ft);opacity:.75}
+
+/* the map scenario card */
+#anim{border-radius:18px;padding:16px 18px;background:rgba(61,92,192,.09);border:1px solid rgba(61,92,192,.28);display:flex;flex-direction:column;gap:12px;transition:background .4s,border-color .4s}
+#anim.idle{background:var(--glass);border-color:var(--line)}
+#anim.paused{background:rgba(238,152,115,.09);border-color:rgba(238,152,115,.35)}
+.ah{display:flex;align-items:center;gap:10px}
+.ah .ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:rgba(61,92,192,.25);color:#c9d3ff}
+#anim.paused .ah .ic{background:rgba(238,152,115,.22);color:#ffd3c0}
+.ah b{font:600 15px var(--fd)}.ah #astat{color:var(--mute);font-size:13.5px;margin-inline-start:auto}
+.bar{position:relative;height:12px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden}
+.bar i{position:absolute;inset:0 auto 0 0;right:0;left:auto;width:0;border-radius:inherit;background:linear-gradient(270deg,var(--mint),#7fb4ff)}
+#anim.paused .bar i{background:linear-gradient(270deg,#ffc6a8,var(--sun))}
+.bar.ind i{width:35%!important;animation:ind 1.4s linear infinite;background:linear-gradient(270deg,transparent,var(--mint),transparent)}
+@keyframes ind{from{right:-35%}to{right:100%}}
+#anim.paused .bar.ind i{animation-play-state:paused}
+.arow{display:flex;align-items:baseline;gap:10px;color:var(--mute);font-size:13.5px}
+.arow #aend{font:600 22px var(--fd);color:var(--ink)}
+.arow #aend small{font:400 13px var(--ft);color:var(--mute);margin-inline-start:4px}
+.arow #atot{margin-inline-start:auto}
+.abtn{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.abtn button{display:flex;align-items:center;justify-content:center;gap:9px;height:50px;border-radius:13px;background:var(--glass2);border:1px solid var(--line);font:600 15px var(--fd);transition:background .25s}
+.abtn button:hover:not(:disabled){background:rgba(255,255,255,.12)}
+#pause.on{background:rgba(238,152,115,.2);border-color:rgba(238,152,115,.45);color:#ffd9c8}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tools button{display:flex;align-items:center;justify-content:center;gap:9px;height:46px;border-radius:13px;background:var(--glass);border:1px solid var(--line);font:500 14px var(--fd);color:var(--mute)}
+.tools button:hover{color:var(--ink);background:var(--glass2)}
+#black.on{background:#000;color:#fff;border-color:rgba(255,255,255,.3)}
+#upnext{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;background:var(--glass);border:1px dashed var(--line);color:var(--mute);font-size:13.5px}
+#upnext b{color:var(--ink);font:500 14px var(--fd);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.keys{color:var(--dim);font-size:12px;line-height:1.9}
+.keys kbd{font:500 11.5px var(--fd);background:var(--glass2);border:1px solid var(--line);border-radius:6px;padding:1px 7px;color:var(--mute)}
+
+/* slide list */
+#list{display:flex;flex-direction:column;overflow:hidden}
+.lh{display:flex;align-items:center;gap:10px;padding:16px 18px 12px;border-bottom:1px solid var(--line)}
+.lh b{font:600 15px var(--fd)}.lh span{color:var(--mute);font-size:13px}
+#q{margin-inline-start:auto;width:170px;background:var(--glass);border:1px solid var(--line);border-radius:10px;padding:7px 11px;color:var(--ink);font:inherit;font-size:13.5px;outline:none}
+#q:focus{border-color:rgba(182,242,220,.45)}
+#rows{overflow:auto;padding:8px 10px 18px;scroll-behavior:smooth}
+.sec{font:600 12.5px var(--fd);color:var(--mint);padding:14px 10px 6px;letter-spacing:.2px}
+.sl{border-radius:14px;padding:9px 10px;display:grid;grid-template-columns:38px 1fr auto;gap:10px;align-items:center;cursor:pointer;transition:background .2s}
+.sl:hover{background:var(--glass)}
+.sl .n{font:600 13px var(--fd);color:var(--mute);width:34px;height:30px;border-radius:9px;display:grid;place-items:center;background:rgba(255,255,255,.05)}
+.sl .tx{min-width:0}.sl .tx b{display:block;font:500 14px var(--fd);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sl .tx small{display:block;color:var(--dim);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sl .mp{color:#8ea2ff;opacity:.8}
+.sl.cur{background:linear-gradient(90deg,rgba(110,109,242,.05),rgba(110,109,242,.2));box-shadow:inset -3px 0 0 var(--vio2)}
+.sl.cur .n{background:var(--vio);color:#fff}
+.sl.past .tx b{color:var(--mute)}
+.pills{grid-column:2/4;display:flex;flex-wrap:wrap;gap:5px;margin-top:2px}
+.pills button{font:500 11.5px var(--fd);min-width:26px;height:24px;padding:0 7px;border-radius:7px;background:rgba(255,255,255,.05);color:var(--mute)}
+.pills button:hover{background:rgba(255,255,255,.12);color:var(--ink)}
+.pills button.on{background:var(--mint);color:#0b1020}
+.empty{padding:40px 24px;color:var(--mute);text-align:center;line-height:1.9}
+.empty b{display:block;color:var(--ink);font:600 17px var(--fd);margin-bottom:4px}
+
+/* toast */
+#toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,20px);opacity:0;background:rgba(20,22,34,.95);border:1px solid var(--line);border-radius:12px;padding:10px 16px;font-size:13.5px;transition:all .35s var(--ease);pointer-events:none;z-index:9}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+@media (max-width:980px){body{overflow:auto}main{grid-template-columns:1fr}#list{max-height:70vh}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><b>منتدى مصر 2026</b><span>لوحة التحكم · نافذة المقدّم</span></div>
+  <nav id="decks"></nav>
+  <div class="sp"></div>
+  <div id="conn" class="pill"><i></i><span>شاشة العرض مش مفتوحة</span></div>
+  <div id="timer" class="pill" title="اضغط للتصفير">مدة العرض <b class="num">00:00</b></div>
+  <div id="clock" class="num">--:--</div>
+</header>
+<main>
+  <section id="now" class="panel">
+    <div class="nowtop"><span id="no" class="num">—</span><span id="axc"></span></div>
+    <h1 id="ttl">افتح شاشة العرض</h1>
+    <p id="sub">اضغط «فتح شاشة العرض» تحت، اسحب النافذة للشاشة الكبيرة وكبّرها ملء الشاشة.</p>
+    <div><div class="lbl">الكروت في السلايد · اضغط أي كارت للرجوع له</div><div id="steps"></div></div>
+    <div class="navb">
+      <button id="prev" type="button"><svg class="i" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>السابق</button>
+      <button id="next" type="button" class="pri">التالي<svg class="i" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+    </div>
+    <div id="anim" class="idle">
+      <div class="ah"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/></svg></span><b>حركة الخريطة</b><span id="astat">مفيش حركة دلوقتي</span></div>
+      <div class="bar" id="bar"><i id="abar"></i></div>
+      <div class="arow"><span id="aend" class="num">—</span><span id="atot"></span></div>
+      <div class="abtn">
+        <button id="replay" type="button"><svg class="i" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>إعادة التحريك</button>
+        <button id="pause" type="button"><svg class="i" viewBox="0 0 24 24" id="pic"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg><span id="ptx">إيقاف</span></button>
+      </div>
+    </div>
+    <div class="tools">
+      <button id="open" type="button"><svg class="i" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8M12 17v4"/></svg>فتح شاشة العرض</button>
+      <button id="black" type="button"><svg class="i" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>شاشة سوداء</button>
+    </div>
+    <div id="upnext"><span>اللي بعده:</span><b id="nxt">—</b></div>
+    <div class="keys">من الكيبورد هنا: <kbd>←</kbd> / <kbd>Space</kbd> التالي · <kbd>→</kbd> السابق · <kbd>P</kbd> إيقاف/استكمال · <kbd>R</kbd> إعادة التحريك · <kbd>B</kbd> شاشة سوداء</div>
+  </section>
+  <aside id="list" class="panel">
+    <div class="lh"><b>كل السلايدات</b><span id="cnt"></span><input id="q" type="search" placeholder="دوّر على سلايد…"></div>
+    <div id="rows"><div class="empty"><b>لسه مفيش اتصال</b>افتح شاشة العرض من الزرار، أو لو مفتوحة في نافذة تانية في نفس المتصفح هتتوصل لوحدها خلال ثانيتين.</div></div>
+  </aside>
+</main>
+<div id="toast"></div>
+<script>
+(function(){
+'use strict';
+/* where the three decks live: next to this page offline, or the hub rooms online */
+var OFF=location.protocol==='file:'||/\/offline\//.test(location.pathname);
+var DECKS={
+  v3:    {n:'V3 Update',          s:'العرض حسب القطاعات', url:OFF?'forum-v3/v3-update.html':'/r/bacq9ed85gvpu47x2iusyj.html'},
+  axes:  {n:'المحاور السبعة',     s:'محور ورا محور',       url:OFF?'forum-v3/7-axes.html':'/r/9fbhrknz7p2bx354w8jfur.html'},
+  center:{n:'الخريطة في المنتصف', s:'13 سلايد',            url:OFF?'center-map/center-map.html':'/r/knva3dcbti4kedhdf9icnf.html'}
+};
+var $=function(id){return document.getElementById(id)};
+var LS={get:function(k,d){try{var v=localStorage.getItem(k);return v==null?d:v}catch(e){return d}},set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+var sel=LS.get('fctl-deck','axes'); if(!DECKS[sel]) sel='axes';
+var SHOW=null;               /* the presentation window */
+var info={};                 /* per deck: {slides, st, seen, sid} */
+var bc=null; try{bc=new BroadcastChannel('forum-ctl')}catch(e){}
+function mid(){return Math.random().toString(36).slice(2)+Date.now().toString(36)}
+function send(c,x){var m={ns:'fctl',from:'ctl',c:c,deck:sel,mid:mid()};if(x)for(var k in x)m[k]=x[k];
+  try{bc&&bc.postMessage(m)}catch(e){}
+  try{if(SHOW&&!SHOW.closed)SHOW.postMessage(m,'*')}catch(e){}}
+function toast(t){var el=$('toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(function(){el.classList.remove('on')},1800)}
+
+/* ---------- deck tabs ---------- */
+function tabs(){$('decks').innerHTML=Object.keys(DECKS).map(function(k){var d=DECKS[k],live=info[k]&&Date.now()-info[k].seen<4500;
+  return '<button type="button" data-d="'+k+'" class="'+(k===sel?'on':'')+'"><i class="'+(live?'live':'')+'"></i>'+d.n+'</button>'}).join('')}
+$('decks').addEventListener('click',function(e){var b=e.target.closest('button[data-d]');if(!b)return;pick(b.dataset.d,true)});
+function pick(k,nav){sel=k;LS.set('fctl-deck',k);tabs();render();
+  var live=info[k]&&Date.now()-info[k].seen<4500;
+  if(nav&&!live&&anyLive()) openShow();   /* the show window is on another deck: take it to this one */
+  else if(live) send('hello')}
+function anyLive(){return Object.keys(info).some(function(k){return Date.now()-info[k].seen<4500})}
+function openShow(){var w=null;
+  try{w=window.open(DECKS[sel].url,'forum-show','popup=yes,width=1280,height=720,left=80,top=60')}catch(e){}
+  if(w){SHOW=w;toast('شاشة العرض اتفتحت · اسحبها للشاشة الكبيرة وكبّرها ملء الشاشة')}else toast('المتصفح منع فتح نافذة جديدة · اسمح بالـ pop-ups للصفحة دي')}
+$('open').onclick=openShow;
+
+/* ---------- messages from the show ---------- */
+function onMsg(m,src){if(!m||m.ns!=='fctl'||m.from!=='show'||!DECKS[m.deck])return;
+  var d=info[m.deck]||(info[m.deck]={});var fresh=!d.seen||Date.now()-d.seen>4500;d.seen=Date.now();d.sid=m.sid;
+  if(src&&(m.deck===sel||!SHOW))SHOW=src;
+  if(m.t==='hello'){d.slides=m.slides;if(m.deck===sel)buildList()}
+  if(m.t==='state'){d.st=m;d.rt=performance.now();if(!d.slides)send('hello')}
+  if(fresh)tabs();
+  if(m.deck===sel)render()}
+window.addEventListener('message',function(e){onMsg(e.data,e.source)});
+if(bc)bc.onmessage=function(e){onMsg(e.data,null)};
+
+/* ---------- the slide list ---------- */
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+var MAPI='<svg class="i mp" viewBox="0 0 24 24"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>';
+function buildList(){var d=info[sel];var R=$('rows');
+  if(!d||!d.slides){R.innerHTML='<div class="empty"><b>«'+esc(DECKS[sel].n)+'» مش مفتوح</b>اضغط «فتح شاشة العرض» يفتح العرض ده في نافذة العرض.</div>';$('cnt').textContent='';return}
+  var q=$('q').value.trim(),h='',lastAx=null;
+  d.slides.forEach(function(s){if(q&&(s.t+' '+s.s+' '+s.ax+' '+(s.i+1)).indexOf(q)<0)return;
+    if(s.ax!==lastAx&&!q){lastAx=s.ax;if(s.ax)h+='<div class="sec">'+esc(s.ax)+'</div>'}
+    h+='<div class="sl" data-i="'+s.i+'"><span class="n num">'+(s.i+1)+'</span><div class="tx"><b>'+esc(s.t||'—')+'</b>'+(s.s?'<small>'+esc(s.s)+'</small>':'')+'</div>'+(s.map?MAPI:'<span></span>')+
+      (s.steps.length>1?'<div class="pills">'+s.steps.map(function(t,k){return '<button type="button" data-i="'+s.i+'" data-k="'+k+'" title="'+esc(t)+'">'+(k+1)+'</button>'}).join('')+'</div>':'')+'</div>'});
+  R.innerHTML=h||'<div class="empty">مفيش نتيجة</div>';$('cnt').textContent=d.slides.length+' سلايد';lastCur=-1;render()}
+$('q').addEventListener('input',buildList);
+$('rows').addEventListener('click',function(e){var p=e.target.closest('.pills button');if(p){send('go',{i:+p.dataset.i,k:+p.dataset.k});startTimer();return}
+  var r=e.target.closest('.sl');if(r){send('go',{i:+r.dataset.i,k:0});startTimer()}});
+$('steps').addEventListener('click',function(e){var b=e.target.closest('button[data-k]');if(!b)return;var d=info[sel];if(!d||!d.st)return;send('go',{i:d.st.cur.i,k:+b.dataset.k});startTimer()});
+
+/* ---------- render the current state ---------- */
+var lastCur=-1,lastK=-1;
+function fmt(ms){var s=Math.max(0,Math.round(ms/1000));return s<60?s+'':Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+function render(){var d=info[sel],live=d&&Date.now()-d.seen<4500;
+  var c=$('conn');c.classList.toggle('ok',!!live);
+  c.querySelector('span').textContent=live?'متصل · '+DECKS[sel].n:(anyLive()?'شاشة العرض على عرض تاني':'شاشة العرض مش مفتوحة');
+  ['prev','next','replay','pause','black'].forEach(function(id){$(id).disabled=!live});
+  if(!d||!d.st||!d.slides){if(!live){$('ttl').textContent=DECKS[sel].n;$('sub').textContent='اضغط «فتح شاشة العرض» تحت، اسحب النافذة للشاشة الكبيرة وكبّرها ملء الشاشة.';$('no').textContent='—';$('axc').textContent='';$('steps').innerHTML='';$('nxt').textContent='—'}
+    anim(null);return}
+  var st=d.st,cu=st.cur||{},s=d.slides[cu.i]||{};
+  $('no').textContent='سلايد '+(cu.i+1)+' من '+d.slides.length;$('axc').textContent=s.ax||'';
+  $('ttl').textContent=s.t||'—';$('sub').textContent=s.s||'';
+  if(cu.i!==lastCur||cu.k!==lastK){
+    var steps=s.steps||[''];
+    $('steps').innerHTML=steps.length>1?steps.map(function(t,k){return '<button type="button" data-k="'+k+'" class="'+(k===cu.k?'cur':k<cu.k?'done':'')+'"><b class="num">'+(k+1)+'</b><span>'+esc(t||('كارت '+(k+1)))+'</span></button>'}).join(''):'<span style="color:var(--dim);font-size:13px">السلايد ده كارت واحد</span>';
+    var nx=(steps.length>1&&cu.k<steps.length-1)?'كارت '+(cu.k+2)+' · '+(steps[cu.k+1]||''):(d.slides[cu.i+1]?'سلايد '+(cu.i+2)+' · '+d.slides[cu.i+1].t:'آخر العرض');
+    $('nxt').textContent=nx;
+    document.querySelectorAll('#rows .sl').forEach(function(r){var i=+r.dataset.i;r.classList.toggle('cur',i===cu.i);r.classList.toggle('past',i<cu.i);
+      r.querySelectorAll('.pills button').forEach(function(p){p.classList.toggle('on',i===cu.i&&+p.dataset.k===cu.k)})});
+    if(cu.i!==lastCur){var r=document.querySelector('#rows .sl[data-i="'+cu.i+'"]');if(r){var R=$('rows'),top=r.offsetTop-R.offsetTop-R.clientHeight*.3;R.scrollTo({top:top,behavior:lastCur<0?'auto':'smooth'})}}
+    lastCur=cu.i;lastK=cu.k}
+  $('pause').classList.toggle('on',!!st.paused);
+  $('ptx').textContent=st.paused?'استكمال':'إيقاف';
+  $('pic').innerHTML=st.paused?'<path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5Z"/>':'<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>';
+  $('black').classList.toggle('on',!!st.black);
+  anim(st)}
+/* the bar runs smoothly between heartbeats */
+function anim(st){var A=$('anim'),bar=$('bar'),fill=$('abar');
+  var a=st&&st.anim;A.classList.toggle('idle',!a&&!(st&&st.paused));A.classList.toggle('paused',!!(st&&st.paused));
+  $('replay').disabled=!(st&&(st.map||a));
+  if(!a){bar.classList.remove('ind');fill.style.width=st&&st.map?'100%':'0';fill.style.opacity=st&&st.map?'.25':'1';
+    $('astat').textContent=st&&st.paused?'العرض متوقف':(st&&st.map?'الحركة خلصت · تقدر تعيدها':'مفيش خريطة في السلايد ده');
+    $('aend').innerHTML='—';$('atot').textContent='';return}
+  fill.style.opacity='1';
+  var d=info[sel],el=st.paused?0:(performance.now()-(d.rt||performance.now())),t=a.t+el;
+  if(a.dur>0){var rem=Math.max(0,a.dur-t);bar.classList.remove('ind');fill.style.width=Math.min(100,t/a.dur*100)+'%';
+    $('aend').innerHTML=(rem<500?'بتخلص دلوقتي':'تخلص بعد '+fmt(rem)+'<small>'+(rem>=60000?'دقيقة':'ثانية')+'</small>');
+    $('atot').textContent='المدة كلها '+fmt(a.dur)+(a.dur>=60000?' د':' ث')+(a.known?'':' تقريبًا');
+    $('astat').textContent=st.paused?'متوقفة · اضغط استكمال':'شغالة'}
+  else{bar.classList.add('ind');$('aend').innerHTML='شغالة من '+fmt(t)+'<small>ثانية</small>';$('atot').textContent='المدة بتتحفظ بعد أول مرة';$('astat').textContent=st.paused?'متوقفة · اضغط استكمال':'شغالة'}}
+(function loop(){var d=info[sel];if(d&&d.st&&d.st.anim&&!d.st.paused)anim(d.st);requestAnimationFrame(loop)})();
+setInterval(function(){tabs();render()},1500);
+
+/* ---------- controls ---------- */
+$('next').onclick=function(){send('next');startTimer()};
+$('prev').onclick=function(){send('prev')};
+$('replay').onclick=function(){send('replay')};
+$('pause').onclick=function(){send('toggle')};
+$('black').onclick=function(){send('black')};
+addEventListener('keydown',function(e){if(e.target.closest&&e.target.closest('input'))return;
+  var k=e.key,c=e.code;
+  if(k==='ArrowLeft'||k==='PageDown'||k===' '||k==='Enter'){e.preventDefault();send('next');startTimer()}
+  else if(k==='ArrowRight'||k==='PageUp'||k==='Backspace'){e.preventDefault();send('prev')}
+  else if(c==='KeyP'){send('toggle')}else if(c==='KeyR'){send('replay')}else if(c==='KeyB'||k==='.'){send('black')}});
+
+/* ---------- clocks ---------- */
+var t0=+LS.get('fctl-t0',0)||0;
+function startTimer(){if(!t0){t0=Date.now();LS.set('fctl-t0',t0)}}
+$('timer').onclick=function(){t0=0;LS.set('fctl-t0',0);$('timer').querySelector('b').textContent='00:00';toast('اتصفّر العدّاد')};
+setInterval(function(){var n=new Date();$('clock').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+  if(t0){var s=Math.floor((Date.now()-t0)/1000);$('timer').querySelector('b').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}},500);
+
+tabs();render();send('hello');
+})();
+</script>
+</body>
+</html>
