@@ -804,6 +804,14 @@ em{color:var(--cobalt)}
 .bc>.in.grow2,.bc>.wm.grow2,.bc.mv>.in.grow2,.bc.mv>.wm.grow2{transition:scale 1s var(--mv),opacity .5s ease .35s!important;transition-delay:0s,.35s!important}
 .bc>.mghost{position:absolute;inset:0;z-index:6;pointer-events:none;border-radius:inherit;overflow:hidden;transition:opacity .7s ease}
 .bc>.mghost.out{opacity:0}
+/* fixed header v6 */
+#hdx{position:absolute;left:0;top:0;right:0;height:88px;z-index:40;pointer-events:none;transition:opacity .6s var(--mv)}
+#hdx .hd{pointer-events:auto}
+#hdx.off{opacity:0}
+.hd .hdyn{display:flex;align-items:center;gap:18px;flex:1 1 auto;min-width:0;transition:opacity .55s ease .1s,transform .65s var(--mv) .05s}
+.hd .hdyn.hx-out{position:absolute;opacity:0;transform:translateY(-10px);transition:opacity .3s ease,transform .45s var(--mv)}
+.hd .hdyn.hx-in{opacity:0;transform:translateY(10px);transition:none}
+.mapc .lbx{opacity:0!important;transition:opacity .25s ease!important}
 /* ===== /motion v2 ===== */
 </style>
 
@@ -1118,9 +1126,22 @@ const SLIDES={}; const ORDER=[];
 function S(spec){SLIDES[spec.n]=spec}
 let cur=null, curLayer=null, live=[];
 const stage=document.getElementById('stage');
+/* the header stays put above the slides; only its middle (axis chip, title, axis track) changes */
+function hdrSet(sp){
+  let H=document.getElementById('hdx'); if(!H){H=document.createElement('div');H.id='hdx';stage.appendChild(H)}
+  const html=header(sp); if(!html){H.classList.add('off');return} H.classList.remove('off');
+  if(!H.firstElementChild){H.innerHTML=html;return}
+  const tmp=document.createElement('div');tmp.innerHTML=html;const nh=tmp.firstElementChild, oh=H.firstElementChild;
+  const od=oh.querySelector(':scope>.hdyn:not(.hx-out)'), nd=nh.querySelector(':scope>.hdyn'); if(!od||!nd){H.innerHTML=html;return}
+  if(od.innerHTML===nd.innerHTML) return;
+  oh.querySelectorAll(':scope>.hdyn.hx-out').forEach(x=>x.remove());
+  od.style.left=od.offsetLeft+'px';od.style.top=od.offsetTop+'px';od.style.width=od.offsetWidth+'px';od.style.height=od.offsetHeight+'px';
+  od.classList.add('hx-out');setTimeout(()=>od.remove(),520);
+  nd.classList.add('hx-in');od.after(nd);requestAnimationFrame(()=>requestAnimationFrame(()=>nd.classList.remove('hx-in')));
+}
 function header(sp){
   if(sp.full) return '';
-  return `<div class="hd"><div class="gov"><img src="${IMG('emblem')}" alt="شعار الجمهورية"><div><span>جمهورية مصر العربية</span><span>رئاسة مجلس الوزراء</span></div></div><div class="sep"></div>${sp.ax?`<div class="ax">${sp.ax}</div>`:''}<div class="ttl"><b>${sp.h||''}</b>${sp.hs?`<i>${sp.hs}</i>`:''}</div>${sp.L!=null?layerTrack(sp.L):''}<div class="forum"><img src="${IMG('logo-sym')}" alt=""><span>منتدى مصر<small>2026</small></span></div></div>`;
+  return `<div class="hd"><div class="gov"><img src="${IMG('emblem')}" alt="شعار الجمهورية"><div><span>جمهورية مصر العربية</span><span>رئاسة مجلس الوزراء</span></div></div><div class="sep"></div><div class="hdyn">${sp.ax?`<div class="ax">${sp.ax}</div>`:''}<div class="ttl"><b>${sp.h||''}</b>${sp.hs?`<i>${sp.hs}</i>`:''}</div>${sp.L!=null?layerTrack(sp.L):''}</div><div class="forum"><img src="${IMG('logo-sym')}" alt=""><span>منتدى مصر<small>2026</small></span></div></div>`;
 }
 /* the seven layers as a track in the header: built layers violet, the current one mint; the closing scene lights all seven */
 function layerTrack(L){return `<div class="lt" aria-label="${L>=8?'المحاور السبعة معًا':`المحور ${L} من 7`}">${LYR.map((y,i)=>{const k=i+1, c=L>=8?'cur':(k<L?'done':(k===L?'cur':''));return `<i class="${c}" title="${k} · ${y.s}"></i>`}).join('')}</div>`}
@@ -1248,9 +1269,9 @@ function show(n,dir){
   const gh=[];
   /* motion v4: push — the old slide slides out, the new one slides in from the other side (direction varies with the content) */
   const pv=old&&old._sp, newSec=!pv||(pv.ax||'')!==(sp.ax||'')||!!sp.full!==!!pv.full; window.__pk=(window.__pk||0)+1;
-  let pd=newSec?'u':['l','u','l','d'][window.__pk%4]; if(dir<0) pd={l:'r',r:'l',u:'d',d:'u'}[pd];
+  let pd=dir<0?'r':'l';      /* side push + fixed header v6 */ /* next always comes in from one side, back from the other (no up / down, nothing random) */
   if(old){old.classList.add('out','push','to-'+pd);old.classList.remove('on');setTimeout(()=>old.remove(),RM?0:1250)}
-  const L=document.createElement('div');L.className='slide'+(old&&!RM?' push pushin from-'+pd:'');L._sp=sp;L.innerHTML=header(sp);stage.appendChild(L);curLayer=L;
+  const L=document.createElement('div');L.className='slide'+(old&&!RM?' push pushin from-'+pd:'');L._sp=sp;L.innerHTML='';hdrSet(sp);stage.appendChild(L);curLayer=L;
   if(old&&!RM){requestAnimationFrame(()=>requestAnimationFrame(()=>{L.classList.remove('from-'+pd);setTimeout(()=>L.classList.remove('pushin','push'),1200)}))}
   const P=plan(sp);
   B={sp,L,P,step:-1,max:P.max,tm:[],cards:(sp.cards||[]).map((cd,i)=>{const [type,g,c]=cd;
@@ -1737,5 +1758,24 @@ if(document.fonts) document.fonts.ready.then(()=>{if(curLayer){const n=cur;curLa
 <script>/* hub room: the deck fits the space left under the comment strip */
 addEventListener('resize',function(){var v=document.getElementById('view'),s=document.getElementById('stage');if(!v||!s)return;var vw=v.clientWidth,vh=v.clientHeight,sc=Math.min(vw/1600,vh/900);s.style.transform='translate('+(vw-1600*sc)/2+'px,'+(vh-900*sc)/2+'px) scale('+sc+')'});</script>
 
+<script>/* label guard v6: no map name under the title chip, the legend or a panel, and none on top of another */
+(function(){
+  const OV='.mtitle,.mleg,.rleg,.rpanel,.mt-chip.on,.mt-mini.on,.rmini.on,.mcft,.mcp.on,.mt-re,.rre';
+  const LB='svg text,svg g.co,.mt-l>span,.mcnl>span';
+  const hit=(a,b,p)=>a.left<b.right+p&&b.left<a.right+p&&a.top<b.bottom+p&&b.top<a.bottom+p;
+  function pass(){const L=typeof curLayer!=='undefined'&&curLayer;if(!L||document.hidden)return;
+    L.querySelectorAll('.mapc').forEach(m=>{
+      const ov=[...m.querySelectorAll(OV)].filter(e=>{const s=getComputedStyle(e);return s.display!=='none'&&s.visibility!=='hidden'&&+s.opacity>.05}).map(e=>e.getBoundingClientRect()).filter(r=>r.width&&r.height);
+      const kept=[];
+      m.querySelectorAll(LB).forEach(e=>{if(e.closest('g.co')&&e.tagName.toLowerCase()==='text')return;if(e.closest('.mt-mini,.rmini,.mtitle,.mleg,.rleg,.rpanel'))return;
+        const was=e.classList.contains('lbx'),r=e.getBoundingClientRect();
+        if(!r.width||!r.height)return;
+        let bad=ov.some(o=>hit(r,o,3));      /* under a panel: hidden even before it fades in, so it never flashes */
+        if(!bad&&!e.matches('svg g.co')){const s=getComputedStyle(e);if(was||(+s.opacity>=.05&&s.visibility!=='hidden')){bad=kept.some(k=>hit(r,k,1));if(!bad)kept.push(r)}}
+        if(bad!==was)e.classList.toggle('lbx',bad)})})}
+  let q=0;const soon=()=>{if(q)return;q=requestAnimationFrame(()=>{q=0;pass()})};
+  setInterval(pass,250);
+  new MutationObserver(soon).observe(document.getElementById('stage')||document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','opacity']});
+})();</script>
 </body>
 </html>
