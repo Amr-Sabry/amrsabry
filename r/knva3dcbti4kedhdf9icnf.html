@@ -265,6 +265,19 @@ body{font-family:var(--f-body);direction:rtl;-webkit-font-smoothing:antialiased;
 .ov .ldd{fill:#ffd23f;stroke:#fff}
 svg.fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
 .fx .yh{animation:yh 1.8s ease-in-out infinite}
+.fx .hg{animation:hgc 2.1s ease-in-out infinite}
+.fx .hg.d1{animation-delay:-.7s}
+.fx .hg.d2{animation-delay:-1.4s}
+@keyframes hgc{0%,100%{opacity:.3}50%{opacity:.95}}
+.fx .ho .hg{animation-name:hgo;animation-duration:2.8s}
+@keyframes hgo{0%,100%{opacity:.18}50%{opacity:.7}}
+.fx .rl1{stroke:#7dd3fc;opacity:.3}
+.fx .rl2{stroke:#bdf3ff;opacity:.9}
+.fx .rl3{stroke:#ffffff}
+.pm.past b{animation:ppg 2.6s ease-in-out infinite}
+.pm.past:nth-child(3n) b{animation-delay:-.9s}
+.pm.past:nth-child(3n+1) b{animation-delay:-1.7s}
+@keyframes ppg{0%,100%{box-shadow:0 0 0 2px rgba(28,37,71,.6),0 0 0 0 rgba(255,255,255,0)}50%{box-shadow:0 0 0 2px rgba(28,37,71,.6),0 0 12px 4px rgba(255,255,255,.9)}}
 @keyframes yh{0%,100%{opacity:.3}50%{opacity:.85}}
 .fx .rn{fill:none;stroke-linecap:round;animation:run var(--t) linear infinite;animation-delay:var(--dl)}
 .fx .r1{stroke:#ffa800;opacity:.32}
@@ -581,7 +594,7 @@ function draw(){
   const st=SL[step];let zs='',ls='',ns='',nc='';if(drawK===0){const c=FXC();c&&(c.innerHTML='');if(D3.auto)d3Kill();d3Cancel()}
   st.on.forEach(key=>{const B=BUILD[key],cur=st.cur.includes(key),k=cur&&!KEEP.has(key)?drawK:1,dim=cur?1:.9;   /* center fx v2: earlier layers stay; a layer already on screen never redraws */
     (B.zones||[]).forEach(({z,c,op,cat},j,A)=>{const wipe=key==='grow'&&k<1&&!st.zoneLabels,kk=wipe?1:k,zd=z._d||(z._d=rings(z.g).map(r=>pth(r)+'Z').join('')),fc=cat&&st.zoneLabels&&ZCC[cat]?` style="fill:${mixC('#ff7a38',ZCC[cat],clamp(drawK*1.4,0,1))}"`:'';zs+=(wipe&&j===0?gwOpen(A,k):'')+`<path class="${c}"${fc} d="${zd}" fill-opacity="${op*kk*dim}" stroke-opacity="${.9*kk*dim}"/>`+(wipe&&j===A.length-1?'</g>':'')});
-    (B.lines||[]).forEach(l=>{const L=l._L??(l._L=plen(l.p)),d=l._d||(l._d=pth(l.p)),o=L*(1-k);if(l.dash){ls+=`<path class="rt" d="${d}" stroke="${l.c}" stroke-width="${l.w}" stroke-dasharray="5 4" opacity="${(dim*k*.9).toFixed(2)}"/>`;return}ls+=`<g opacity="${dim}"><path class="rtg" d="${d}" stroke="#1c2547" stroke-width="${l.w*2.6}" opacity=".28" stroke-dasharray="${L} ${L}" stroke-dashoffset="${o}"/><path class="rt" d="${d}" stroke="${l.c}" stroke-width="${l.w}" stroke-dasharray="${L} ${L}" stroke-dashoffset="${o}"/></g>`});
+    (B.lines||[]).forEach(l=>{const L=l._L??(l._L=plen(l.p)),d=l._d||(l._d=pth(l.p)),o=L*(1-k);if(l.dash){ls+=`<path class="rt" d="${d}" stroke="${l.c}" stroke-width="${l.w}" stroke-dasharray="5 4" opacity="${(dim*k*.9).toFixed(2)}"/>`;return}if(l.rail){ls+=`<g opacity="${dim}"><path class="rtg" d="${d}" stroke="#0f1838" stroke-width="${l.w+3.6}" opacity=".62" stroke-dasharray="${L} ${L}" stroke-dashoffset="${o}"/><path class="rt" d="${d}" stroke="${l.c}" stroke-width="${l.w+.8}" stroke-dasharray="${L} ${L}" stroke-dashoffset="${o}"/><path d="${d}" fill="none" stroke="#fff" stroke-width="${(l.w*.55).toFixed(1)}" stroke-dasharray="5 5" opacity="${(k*.95).toFixed(2)}"/></g>`;return}ls+=`<g opacity="${dim}"><path class="rtg" d="${d}" stroke="#1c2547" stroke-width="${l.w*2.6}" opacity=".28" stroke-dasharray="${L} ${L}" stroke-dashoffset="${o}"/><path class="rt" d="${d}" stroke="${l.c}" stroke-width="${l.w}" stroke-dasharray="${L} ${L}" stroke-dashoffset="${o}"/></g>`});
     const N=B.nodes||[];N.forEach((n,i)=>{const t=clamp((k-i/N.length*.7)/.3,0,1);if(t<=0)return;const[x,y]=S(...n.p);const o=`<circle class="nd" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(n.r*t).toFixed(1)}" fill="${n.c}" opacity="${dim}"${n.ring?` style="fill:#fff;stroke:${n.c};stroke-width:2"`:''}/>`;if(cur)nc+=o;else ns+=o});
   });
   let s=staticLayer()+zs+ls+ns+(nc?`<g class="ndc">${nc}</g>`:'');
@@ -619,14 +632,18 @@ let KEEP=new Set();   /* current layers that were already on screen on the previ
 function pastPts(i){const seen=new Set(SL[i].photos.filter(p=>p.ll).map(p=>p.ll.join())),out=[];for(let j=0;j<i;j++)SL[j].photos.forEach(p=>{if(!p.ll)return;const k=p.ll.join();if(!seen.has(k)){seen.add(k);out.push(p.ll)}});return out}
 const PHS=450,PHF=1250;   /* one photo every 450 ms, each flight 1.25 s */
 const FXO=()=>document.getElementById('fxo'),FXC=()=>document.getElementById('fxc');
-function fxHtml(keys,old){let h='';const st=SL[step];
+function fxHtml(keys,old){let h='',g='';const st=SL[step],cols=new Set();
   keys.forEach(key=>{const B=BUILD[key];if(!B)return;
-    if(key==='grow')h+=`<g class="${old?'lo':''}">${(B.zones||[]).map(({z})=>`<path class="zbr" d="${rings(z.g).map(r=>pth(r)+'Z').join('')}"/>`).join('')}</g>`;
-    (B.lines||[]).forEach(l=>{const L=plen(l.p);if(L<30)return;const n=Math.max(1,Math.round(L/320)),per=100/n,dash=Math.min(per*.45,42/L*100),d=pth(l.p);
-      const da=`${dash.toFixed(3)} ${(per-dash).toFixed(3)}`,sty=`--t:${(Math.max(1.4,L/160)).toFixed(2)}s;--dl:-${(Math.random()*L/160).toFixed(2)}s`;
-      h+=`<g class="${old?'lo':''}"><path class="rn r1" d="${d}" pathLength="100" stroke-dasharray="${da}" stroke-width="${(l.w*6).toFixed(1)}" style="${sty}"/><path class="rn r2" d="${d}" pathLength="100" stroke-dasharray="${da}" stroke-width="${(l.w*2.6).toFixed(1)}" style="${sty}"/><path class="rn r3" d="${d}" pathLength="100" stroke-dasharray="${da}" stroke-width="${(l.w*1.1).toFixed(1)}" style="${sty}"/></g>`});
-    if(!old){const N=B.nodes||[];if(N.length)h+=`<g class="yh">${N.map(n=>{const[x,y]=S(...n.p);return`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(n.r*1.5+4).toFixed(1)}" fill="url(#ygr)"/>`}).join('')}</g>`}
-  });return h}
+    if(key==='grow')h+=`<g class="${old?'lo':''}">${(B.zones||[]).map(({z})=>`<path class="zbr" d="${z._d||(z._d=rings(z.g).map(r=>pth(r)+'Z').join(''))}"/>`).join('')}</g>`;
+    (B.lines||[]).forEach(l=>{if(l.dash)return;const L=l._L??(l._L=plen(l.p));if(L<30)return;const n=Math.max(1,Math.round(L/320)),per=100/n,dash=Math.min(per*.45,42/L*100),d=l._d||(l._d=pth(l.p));
+      const da=`${dash.toFixed(3)} ${(per-dash).toFixed(3)}`,sty=`--t:${(Math.max(1.4,L/(l.rail?220:160))).toFixed(2)}s;--dl:-${(Math.random()*L/160).toFixed(2)}s`,c=l.rail?'rl':'r';
+      h+=`<g class="${old?'lo':''}"><path class="rn ${c}1" d="${d}" pathLength="100" stroke-dasharray="${da}" stroke-width="${(l.w*6).toFixed(1)}" style="${sty}"/><path class="rn ${c}2" d="${d}" pathLength="100" stroke-dasharray="${da}" stroke-width="${(l.w*2.6).toFixed(1)}" style="${sty}"/><path class="rn ${c}3" d="${d}" pathLength="100" stroke-dasharray="${da}" stroke-width="${(l.w*1.1).toFixed(1)}" style="${sty}"/></g>`});
+    const N=B.nodes||[];if(!N.length)return;
+    const grp=['','',''];N.forEach((n,i)=>{const[x,y]=S(...n.p),id=old?'hg'+String(n.c).replace('#','').toLowerCase():'ygr';if(old)cols.add(n.c);
+      grp[i%3]+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(old?n.r*1.5+5:n.r*1.6+6).toFixed(1)}" fill="url(#${id})"/>`});
+    h+=`<g class="${old?'ho':'hc'}">${grp.map((x,i)=>x?`<g class="hg d${i}">${x}</g>`:'').join('')}</g>`});
+  cols.forEach(c=>{const hx=String(c).replace('#','').toLowerCase();g+=`<radialGradient id="hg${hx}"><stop offset="0" stop-color="${c}" stop-opacity=".95"/><stop offset=".5" stop-color="${c}" stop-opacity=".4"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></radialGradient>`});
+  return (g?`<defs>${g}</defs>`:'')+h}
 function phFrom(el,cell,ll){if(ll){const b=box(cell),[x,y]=S(...ll);el.style.transform=`translate(${(MAPBOX.left+x-(b.left+b.width/2)).toFixed(1)}px,${(MAPBOX.top+y-(b.top+b.height/2)).toFixed(1)}px) scale(.03)`}else el.style.transform='scale(.03)';
   requestAnimationFrame(()=>requestAnimationFrame(()=>{el.style.transform=''}))}
 function phLive(el){if(!el||!el.isConnected)return null;if(getComputedStyle(el).opacity==='0')return 0;const sr=stage.getBoundingClientRect(),q=sr.width/1600||1,r=el.getBoundingClientRect();return{left:(r.left-sr.left)/q,top:(r.top-sr.top)/q,width:r.width/q,height:r.height/q}}
@@ -661,11 +678,11 @@ if(window.CMD){const D=window.CMD,PG=p=>({g:{type:'Polygon',coordinates:[p]}});
   const NC={Y:'#ffe066',M:'#ff4fa0',C:'#22d3ee'},cnt=k=>D.nile.filter(q=>q[3]===k).length;
   BUILD.nile={leg:[[NC.Y,`محاور منفذة · ${cnt('Y')}`,'dot'],[NC.M,`محاور جارية · ${cnt('M')}`,'dot'],[NC.C,`محاور مستقبلية · ${cnt('C')}`,'dot']],
     nodes:D.nile.map(q=>({p:[q[0],q[1]],r:3.6,c:NC[q[3]],n:q[2]})),nolab:1};
-  const HC=['#2449e0','#ffffff','#ff7a38'],hl=[],hn=[],seen=new Set();
-  D.hsr.forEach((r,i)=>{const col=HC[i%3];hl.push({p:r.pts,c:col,w:3.4});r.br.forEach(b=>hl.push({p:b.pts,c:col,w:2.6}));
+  const HC=['#2449e0','#14b8a6','#ff7a38'],hl=[],hn=[],seen=new Set(),RP=c=>`repeating-linear-gradient(90deg,#fff 0 4px,${c} 4px 8px)`;
+  D.hsr.forEach((r,i)=>{const col=HC[i%3];hl.push({p:r.pts,c:col,w:3.4,rail:1});r.br.forEach(b=>hl.push({p:b.pts,c:col,w:2.6,rail:1}));
     [...r.st,...r.br.flatMap(b=>b.st)].forEach(q=>{if(!q[2]||seen.has(q[2]))return;seen.add(q[2]);const F=q[3]==='F';HSRN[F?'F':'R']++;
       hn.push({p:[q[0],q[1]],r:F?5.2:3.3,c:F?'#ffffff':col,ring:!F,n:q[2],big:F})})});
-  BUILD.rail={leg:[['#2449e0','الخط الأول'],['#ffffff','الخط الثاني'],['#ff7a38','الخط الثالث'],['#ffffff',`محطات سريعة · ${HSRN.F}`,'dot']],lines:hl,nodes:hn,labF:1};
+  BUILD.rail={leg:[[RP('#2449e0'),'الخط الأول'],[RP('#14b8a6'),'الخط الثاني'],[RP('#ff7a38'),'الخط الثالث'],['#ffffff',`محطات سريعة · ${HSRN.F}`,'dot']],lines:hl,nodes:hn,labF:1};
   BUILD.ports={leg:[['#22d3ee',`موانئ بحرية · ${D.ports.length}`,'dot'],['#ffffff',`موانئ جافة ومراكز لوجيستية · ${D.dry.length}`,'dot'],['#ff7a38',`مطارات · ${D.air.length}`,'dot']],
     lines:LT('canal').map(l=>({p:l.p,c:'#ff7a38',w:3.4})),
     nodes:[...D.ports.map(q=>({p:[q[1],q[2]],r:6,c:'#22d3ee',n:q[0],big:1})),...D.dry.map(q=>({p:[q[1],q[2]],r:4.6,c:'#ffffff',n:q[0]})),...D.air.map(q=>({p:[q[1],q[2]],r:4.4,c:'#ff7a38',n:q[0]}))]};
@@ -746,7 +763,7 @@ const egD=()=>rings(GEO.egypt).map(r=>pth(r)+'Z').join('');
 function d3Sheet(keys,cur){let h=`<path d="${egD()}" fill="rgba(255,255,255,.07)" stroke="rgba(255,255,255,.55)" stroke-width="1.2"/>`;
   keys.forEach(key=>{const B=BUILD[key];
   (B.zones||[]).forEach(({z,c,op})=>{h+=`<path class="${c}" d="${rings(z.g).map(r=>pth(r)+'Z').join('')}" fill-opacity="${Math.min(.95,op*1.3).toFixed(2)}" stroke-opacity=".95"/>`});
-  (B.lines||[]).forEach(l=>{const d=pth(l.p);h+=`<path class="rtg" d="${d}" stroke="#1c2547" stroke-width="${(l.w*2.6).toFixed(1)}"/><path class="rt" d="${d}" stroke="${l.c}" stroke-width="${(l.w*1.2).toFixed(1)}"/>`});
+  (B.lines||[]).forEach(l=>{const d=l._d||pth(l.p);h+=`<path class="rtg" d="${d}" stroke="#1c2547" stroke-width="${(l.w*2.6).toFixed(1)}"/><path class="rt" d="${d}" stroke="${l.c}" stroke-width="${(l.w*1.2).toFixed(1)}"${l.dash?' stroke-dasharray="5 4"':''}/>${l.rail?`<path d="${d}" fill="none" stroke="#fff" stroke-width="${(l.w*.55).toFixed(1)}" stroke-dasharray="5 5"/>`:''}`});
   const N=(B.nodes||[]).map(n=>{const[x,y]=S(...n.p);return`<circle class="nd" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(n.r*1.15).toFixed(1)}" fill="${n.c}"/>`}).join('');
   h+=cur?`<g class="ndc">${N}</g>`:N});
   return h+`<g class="fx">${fxHtml(keys,!cur)}</g>`}
