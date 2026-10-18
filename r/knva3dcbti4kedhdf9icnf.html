@@ -556,7 +556,7 @@ function draw(){
   world.style.transform=`translate(${MAPBOX.width/2-cam.cx*cam.s}px,${MAPBOX.height/2-cam.cy*cam.s}px) scale(${cam.s})`;
   const st=SL[step];let zs='',ls='',ns='',nc='';if(drawK===0){const c=FXC();c&&(c.innerHTML='');if(D3.auto)d3Kill();d3Cancel()}
   st.on.forEach(key=>{const B=BUILD[key],cur=st.cur.includes(key),k=cur&&!KEEP.has(key)?drawK:1,dim=cur?1:.9;   /* center fx v2: earlier layers stay; a layer already on screen never redraws */
-    (B.zones||[]).forEach(({z,c,op},j,A)=>{let kk=k,tf='';if(key==='grow'&&k<1){const t=clamp((k-GORD[j]/A.length*.62)/.38,0,1),e=ease3(t);kk=Math.min(1,e*1.4);const[cx,cy]=S(...cen(z.g));tf=` transform="translate(${cx.toFixed(1)},${cy.toFixed(1)}) scale(${(.15+.85*e).toFixed(3)}) translate(${(-cx).toFixed(1)},${(-cy).toFixed(1)})"`}zs+=`<path class="${c}"${tf} d="${rings(z.g).map(r=>pth(r)+'Z').join('')}" fill-opacity="${op*kk*dim}" stroke-opacity="${.9*kk*dim}"/>`});
+    (B.zones||[]).forEach(({z,c,op},j,A)=>{const wipe=key==='grow'&&k<1,kk=wipe?1:k;zs+=(wipe&&j===0?gwOpen(A,k):'')+`<path class="${c}" d="${rings(z.g).map(r=>pth(r)+'Z').join('')}" fill-opacity="${op*kk*dim}" stroke-opacity="${.9*kk*dim}"/>`+(wipe&&j===A.length-1?'</g>':'')});
     (B.lines||[]).forEach(l=>{const L=plen(l.p),d=pth(l.p),o=L*(1-k);ls+=`<g opacity="${dim}"><path class="rtg" d="${d}" stroke="#1c2547" stroke-width="${l.w*2.6}" opacity=".28" stroke-dasharray="${L} ${L}" stroke-dashoffset="${o}"/><path class="rt" d="${d}" stroke="${l.c}" stroke-width="${l.w}" stroke-dasharray="${L} ${L}" stroke-dashoffset="${o}"/></g>`});
     const N=B.nodes||[];N.forEach((n,i)=>{const t=clamp((k-i/N.length*.7)/.3,0,1);if(t<=0)return;const[x,y]=S(...n.p);const o=`<circle class="nd" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(n.r*t).toFixed(1)}" fill="${n.c}" opacity="${dim}"/>`;if(cur)nc+=o;else ns+=o});
   });
@@ -628,13 +628,22 @@ const GORD=(()=>{const c=[31.24,30.04],d=GROW.map((z,j)=>{const q=cen(z.g);retur
 if(!map.querySelector('.mbg'))map.insertAdjacentHTML('afterbegin','<i class="mbg"></i>');
 map.insertAdjacentHTML('beforeend','<div class="yc" id="yc"><div class="ych"><span>2014</span><b id="ycy">2014</b><span>2026</span></div><div class="ycb"><i class="a"></i><i class="b" id="ycb"></i></div><div class="ycp">المعمور <b id="ycp">7%</b> من مساحة مصر</div></div>');
 const ease3=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+/* growth wipe: each new area is revealed by a soft spreading wipe from a seed inside it, in a random (seeded) order across the years */
+const GW={};
+function gwOpen(A,k){if(GW.n!==A.length){GW.n=A.length;let q=20261014;const rnd=()=>(q=(q*1103515245+12345)%2147483648)/2147483648;
+    const ord=A.map((_,j)=>j);for(let i=ord.length-1;i>0;i--){const r=Math.floor(rnd()*(i+1));[ord[i],ord[r]]=[ord[r],ord[i]]}GW.rank=[];ord.forEach((j,n)=>GW.rank[j]=n);
+    GW.seeds=A.map(({z})=>{let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;rings(z.g).forEach(r=>r.forEach(p=>{const[x,y]=S(p[0],p[1]);x0=Math.min(x0,x);y0=Math.min(y0,y);x1=Math.max(x1,x);y1=Math.max(y1,y)}));
+      const cx=x0+(x1-x0)*(.3+.4*rnd()),cy=y0+(y1-y0)*(.3+.4*rnd());return{cx,cy,R:Math.max(Math.hypot(cx-x0,cy-y0),Math.hypot(cx-x1,cy-y0),Math.hypot(cx-x0,cy-y1),Math.hypot(cx-x1,cy-y1))*1.25+6}})}
+  let c='';A.forEach((_,j)=>{const o=GW.rank[j]/A.length*.66,t=clamp((k-o)/.34,0,1),e=ease3(t);if(e<=0)return;const g=GW.seeds[j];c+=`<circle cx="${g.cx.toFixed(1)}" cy="${g.cy.toFixed(1)}" r="${(g.R*e).toFixed(1)}" fill="url(#gwg)"/>`});
+  return `<defs><radialGradient id="gwg"><stop offset=".62" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient><mask id="gwm" maskUnits="userSpaceOnUse" x="-60" y="-60" width="${MAPBOX.width+120}" height="${MAPBOX.height+120}">${c}</mask></defs><g mask="url(#gwm)">`}
+
 function growCounter(st){const yc=document.getElementById('yc');if(!yc)return;const on=st.cur.includes('grow')&&st.cur.length<ORDER.length;yc.classList.toggle('on',on);if(!on)return;
   const e=KEEP.has('grow')?1:ease3(clamp(drawK,0,1));document.getElementById('ycy').textContent=2014+Math.round(12*e);
   document.getElementById('ycp').textContent=(e>=1?'14':(7+7*e).toFixed(1))+'%';document.getElementById('ycb').style.width=(50*e)+'%'}
 /* ===== /growth counter ===== */
 /* ===== map loader: a line under the map title that fills while the map is still moving (2D draw → 3D → back to 2D) ===== */
 const D3DUR=350+1150+2900+1150+520;
-function drawMs(st,keepGrow){let ms=st.cur.length>4?2600:2200;if(st.cur.includes('grow')&&!keepGrow&&st.cur.length<ORDER.length)ms=Math.max(ms,4600);return ms}
+function drawMs(st,keepGrow){let ms=st.cur.length>4?2600:2200;if(st.cur.includes('grow')&&!keepGrow&&st.cur.length<ORDER.length)ms=Math.max(ms,5200);return ms}
 window.MAPDUR=i=>{const st=SL[i];return drawMs(st,i===step&&KEEP.has('grow'))+(st.on.length?D3DUR:0)};
 document.querySelector('.mapc .mtitle').insertAdjacentHTML('beforeend','<i class="mld"><b></b></i>');
 function mapLoad(T){const m=document.querySelector('.mld');if(!m)return;const b=m.firstChild;m._tok=(m._tok||0)+1;m.className='mld run';b.style.transition='none';b.style.width='0';void b.offsetWidth;
@@ -690,7 +699,7 @@ window.d3Toggle=d3Toggle;
 
 /* ---------- step change ---------- */
 let drawAnim=null;
-function drawIn(ms){{const s0=SL[step];if(s0.cur.includes('grow')&&!KEEP.has('grow')&&s0.cur.length<ORDER.length)ms=Math.max(ms,4600);mapLoad(ms+(s0.on.length&&!D3.on?D3DUR:0))}const t0=performance.now();cancelAnimationFrame(drawAnim);{const c=FXC();c&&!KEEP.size&&(c.innerHTML='')}const f=t=>{drawK=Math.min(1,(t-t0)/ms);draw();if(drawK<1)drawAnim=requestAnimationFrame(f);else{const c=FXC();if(c){if(KEEP.size)c.insertAdjacentHTML('beforeend',fxHtml(SL[step].cur.filter(k=>!KEEP.has(k)),0));else c.innerHTML=fxHtml(SL[step].cur,0)}KEEP=new Set();d3Cancel();if(!SL[step].on.length||D3.on)mapDone();D3.a1=setTimeout(d3Auto,350)}};drawAnim=requestAnimationFrame(f)}
+function drawIn(ms){{const s0=SL[step];if(s0.cur.includes('grow')&&!KEEP.has('grow')&&s0.cur.length<ORDER.length)ms=Math.max(ms,5200);mapLoad(ms+(s0.on.length&&!D3.on?D3DUR:0))}const t0=performance.now();cancelAnimationFrame(drawAnim);{const c=FXC();c&&!KEEP.size&&(c.innerHTML='')}const f=t=>{drawK=Math.min(1,(t-t0)/ms);draw();if(drawK<1)drawAnim=requestAnimationFrame(f);else{const c=FXC();if(c){if(KEEP.size)c.insertAdjacentHTML('beforeend',fxHtml(SL[step].cur.filter(k=>!KEEP.has(k)),0));else c.innerHTML=fxHtml(SL[step].cur,0)}KEEP=new Set();d3Cancel();if(!SL[step].on.length||D3.on)mapDone();D3.a1=setTimeout(d3Auto,350)}};drawAnim=requestAnimationFrame(f)}
 function progress(i){return`<div class="row"><b>${SL[i].hd[0]}</b><span>${i+1} / ${SL.length}</span></div><div class="tk2">${SL.map((_,j)=>`<i class="${j<i?'d':j===i?'c':''}"></i>`).join('')}</div>`}
 function go(i){if(i===step||i<0||i>=SL.length)return;KEEP=new Set(step>=0&&SL[step]?SL[step].on.filter(k=>SL[i].cur.includes(k)):[]);step=i;const st=SL[i];
   cnt.textContent=`${i+1} / ${SL.length}`;mapLoad(0);
