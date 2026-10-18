@@ -1747,7 +1747,7 @@ document.getElementById('view').addEventListener('click',e=>{if(e.target.closest
 <script src="src/lt/maptour2.js"></script>
 <script src="src/lt/iso.js"></script>
 <script src="src/lt/mapdata.js"></script>
-<script src="src/lt/match.js"></script>
+<script src="src/lt/match.js?v=zg1"></script>
 <script>
 window.__qa=()=>[...curLayer.querySelectorAll('.bc')].map((el,i)=>{const n=el.querySelector(':scope>.in:not(.old):not(.old2)');return n?{i,ovf:el.dataset.ovf||'',sh:n.scrollHeight,ch:n.clientHeight,sw:n.scrollWidth,cw:n.clientWidth,c:el.className}:{i}}).filter(x=>x.ovf||x.sw>x.cw+2);
 const h=+(location.hash||'').slice(1);

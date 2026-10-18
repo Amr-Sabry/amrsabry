@@ -152,18 +152,39 @@ if(typeof RTS!=='undefined'&&RTS.nile&&window.MDATA&&MDATA.nile39){const D=MDATA
 
 /* 12 · the built-up map: the client's planning map traced zone by zone (valley and delta, agricultural expansion,
    oases and proposed areas, new cities, industry and mining, tourism), with the places the client names on it */
+/* ===== zone glow v1: the zones light up category by category, in step with the legend ===== */
+function zoneGlow(el,gz,lg){
+  if(!document.getElementById('zglow')){const s=document.createElement('style');s.id='zglow';s.textContent=
+   'svg .zones .zc{transition:opacity .8s ease,filter .8s ease}'+
+   'svg .zones.cyc .zc:not(.on){opacity:.55}'+
+   'svg .zones .zc.on{filter:drop-shadow(0 0 1.5px #fff) drop-shadow(0 0 9px var(--zc)) brightness(1.16)}'+
+   'svg .zones .zc.on path{animation:zbreath 2.6s ease-in-out infinite}'+
+   '@keyframes zbreath{0%,100%{fill-opacity:.78}50%{fill-opacity:1}}'+
+   '.zleg span{transition:opacity .6s ease}'+
+   '.zleg.cyc span:not(.on){opacity:.42}'+
+   '.zleg span.on{font-weight:700}'+
+   '.zleg span i{transition:box-shadow .6s ease}'+
+   '.zleg span.on i{box-shadow:0 0 0 1.5px #fff,0 0 10px 3px var(--zc,#fff)!important}';
+   document.head.appendChild(s)}
+  const ks=[...gz.querySelectorAll('.zc')].filter(n=>n.childNodes.length).map(n=>n.dataset.k);if(!ks.length)return;
+  const set=k=>{const all=k==='*';gz.classList.toggle('cyc',!!k&&!all);lg.classList.toggle('cyc',!!k&&!all);
+    gz.querySelectorAll('.zc').forEach(n=>n.classList.toggle('on',all||n.dataset.k===k));
+    lg.querySelectorAll('span').forEach(n=>n.classList.toggle('on',!all&&n.dataset.k===k))};
+  let i=-1,t=0;const tick=()=>{if(!el.isConnected){clearInterval(t);return}i=(i+1)%(ks.length+1);set(i<ks.length?ks[i]:'*')};
+  setTimeout(()=>{if(!el.isConnected)return;tick();t=setInterval(tick,2600)},3000)}
+/* ===== /zone glow v1 ===== */
 window.zoneMap=function(el,r,c,ctx){const Z=window.MDATA&&MDATA[c.zones];if(!Z)return;
   const P=ctx.proj, base=ctx.world.select('g'), g=d3.select(base.node().parentNode).insert('g',()=>base.node().nextSibling).attr('class','zones'), gl=ctx.ov.append('g').attr('class','zlab');
   const CL=[['cream','#e6c58a','الواحات ومناطق التنمية المقترحة'],['green','#3c8ca4','التوسع الزراعي'],['aqua','#a7dcd6','الوادي والدلتا'],
             ['orange','#ee9873','التنمية العمرانية والمدن الجديدة'],['purple','#2a3b86','مناطق صناعية وتعدينية'],['magenta','#8e9be6','التنمية السياحية']];
-  CL.forEach(([k,col],ci)=>(Z[k]||[]).forEach((p,i)=>{g.append('path').attr('d','M'+p.map(q=>P(q).map(v=>v.toFixed(1)).join(',')).join('L')+'Z')
+  CL.forEach(([k,col],ci)=>{const gk=g.append('g').attr('class','zc').attr('data-k',k).style('--zc',col);(Z[k]||[]).forEach((p,i)=>{gk.append('path').attr('d','M'+p.map(q=>P(q).map(v=>v.toFixed(1)).join(',')).join('L')+'Z')
     .attr('fill',col).attr('fill-opacity',k==='aqua'?.75:.82).attr('stroke','#ffffff').attr('stroke-width',.7).attr('stroke-opacity',.9)
-    .style('opacity',0).transition().delay(500+ci*260+i*12).duration(700).style('opacity',1)}));
+    .style('opacity',0).transition().delay(500+ci*260+i*12).duration(700).style('opacity',1)})});
   (MDATA[c.zones+'lab']||[]).forEach((q,i)=>{const p=P([q[0],q[1]]);
     gl.append('text').attr('x',p[0]).attr('y',p[1]).attr('text-anchor','middle').attr('dy','.35em').attr('font-size',Math.max(10.5,Math.min(13,r.w/64))).attr('font-weight',600)
       .attr('fill','#1c2547').attr('stroke','#ffffff').attr('stroke-width',3.2).attr('paint-order','stroke').style('font-family','Readex Pro').text(q[2])
       .style('opacity',0).transition().delay(2200+i*40).duration(500).style('opacity',1)});
-  const lg=document.createElement('div');lg.className='rleg zleg';lg.innerHTML=CL.map(([k,col,t])=>`<span><i style="background:${col};border-radius:4px;box-shadow:0 0 0 1.5px #fff,0 1px 3px rgba(28,37,71,.35)"></i>${t}</span>`).join('');el.appendChild(lg)};
+  const lg=document.createElement('div');lg.className='rleg zleg';lg.innerHTML=CL.map(([k,col,t])=>`<span data-k="${k}" style="--zc:${col}"><i style="background:${col};border-radius:4px;box-shadow:0 0 0 1.5px #fff,0 1px 3px rgba(28,37,71,.35)"></i>${t}</span>`).join('');el.appendChild(lg);zoneGlow(el,g.node(),lg)};
 (()=>{const cd=card(12);if(cd){cd[2].mode='zones';cd[2].zones='zones12';delete cd[2].s}})();
 
 window.__matched=[58,64,68,88,49,50,48,34,39,12];
