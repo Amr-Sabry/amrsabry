@@ -259,6 +259,34 @@ body{font-family:var(--f-body);direction:rtl;-webkit-font-smoothing:antialiased;
 .bc>.gf{position:absolute;inset:0;z-index:0;border-radius:inherit;pointer-events:none;opacity:1;transition:opacity .5s var(--ease)}
 .bc>.gf.off{opacity:0}
 /* ===== /motion v2 ===== */
+/* ===== center fx v1: layers stay, yellow glow points, light runs on the lines, photos fly from their points ===== */
+.ov .ndc{filter:drop-shadow(0 0 3px rgba(255,214,64,.95))}
+.ov .ndc .nd{stroke:#fff6c8}
+.ov .ldd{fill:#ffd23f;stroke:#fff}
+svg.fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+.fx .yh{animation:yh 1.8s ease-in-out infinite}
+@keyframes yh{0%,100%{opacity:.3}50%{opacity:.85}}
+.fx .rn{fill:none;stroke-linecap:round;animation:run var(--t) linear infinite;animation-delay:var(--dl)}
+.fx .r1{stroke:#ffa800;opacity:.32}
+.fx .r2{stroke:#ffd23f;opacity:.95}
+.fx .r3{stroke:#fffef6}
+.fx .lo{opacity:.55}
+.fx #fxc{animation:fxin .9s ease both}
+@keyframes fxin{from{opacity:0}}
+@keyframes run{from{stroke-dashoffset:100}to{stroke-dashoffset:0}}
+.pm.lit b{background:#ffd23f;color:var(--indigo);transform:scale(1.3);animation:pmg 1.6s ease-in-out infinite}
+@keyframes pmg{0%,100%{box-shadow:0 0 0 5px rgba(255,210,63,.32),0 0 18px 3px rgba(255,196,30,.75)}50%{box-shadow:0 0 0 9px rgba(255,210,63,.18),0 0 34px 9px rgba(255,196,30,.95)}}
+.pm.bye{opacity:0;transition:opacity .35s ease .3s}
+.pm.nw b{animation:pmin .6s var(--settle) both;animation-delay:var(--pd,0ms)}
+@keyframes pmin{from{transform:scale(0)}}
+.bc.ph.lit{box-shadow:var(--bevel),var(--lift),inset 0 0 0 3px #ffcf33,0 0 26px -4px rgba(255,196,30,.75)}
+.bc.ph.lit .pn{background:#ffd23f;color:var(--indigo)}
+#links .p.lit{stroke:#f0b400;opacity:1}
+#links .pd.lit{fill:#ffd23f}
+.bc.ph.fly{transition:opacity .35s ease var(--d,0ms),transform 1.05s cubic-bezier(.5,0,.15,1) var(--d,0ms),box-shadow .5s!important}
+.bc.ph.back{transition:opacity .3s ease .28s,transform .58s cubic-bezier(.55,0,.8,.25)!important;pointer-events:none}
+.flying #links .p,.flying #links .pd{opacity:0!important}
+/* ===== /center fx v1 ===== */
 </style>
 </head>
 <body data-mascot-lines="الخريطة في النص… والحكاية حواليها|دوس السهم وشوف مصر بتكبر|من 7% لـ 14%… ركّز في اللون المنت">
@@ -424,7 +452,7 @@ let look=1, step=-1, cam=fit(), drawK=1, lit=0;
 stage.innerHTML=`<div class="hd"><div class="ttl"><b id="hdt"></b><i id="hds"></i></div><div class="forum"><img src="img/logo.webp" alt=""><span>منتدى مصر<small>2026</small></span></div></div>`;
 const map=document.createElement('div');map.className='bc mapc shown';Object.assign(map.style,px(MAPBOX));
 map.innerHTML=`<svg class="sh" id="sh"></svg><div class="world" id="world"><img class="eg" id="imeg" alt="" style="left:0;top:0;width:1536px;height:1536px"></div>
-<svg class="ov" id="ov"></svg><div class="pins" id="zls"></div><div class="pins" id="pms"></div><div class="pins" id="calls"></div>
+<svg class="ov" id="ov"></svg><svg class="fx" id="fx"><defs><radialGradient id="ygr"><stop offset="0" stop-color="#ffe066" stop-opacity=".95"/><stop offset=".45" stop-color="#ffd23f" stop-opacity=".42"/><stop offset="1" stop-color="#ffd23f" stop-opacity="0"/></radialGradient></defs><g id="fxo"></g><g id="fxc"></g></svg><div class="pins" id="zls"></div><div class="pins" id="pms"></div><div class="pins" id="calls"></div>
 <div class="mtitle"><span class="mi">${ICON('map')}</span><div><b id="mtt"></b><i id="mts"></i></div></div><div class="mleg" id="mleg"></div><div class="lookname" id="lkn"></div>`;
 stage.appendChild(map);
 const LINKS=document.createElementNS('http://www.w3.org/2000/svg','svg');LINKS.id='links';LINKS.setAttribute('viewBox','0 0 1600 900');stage.appendChild(LINKS);
@@ -461,13 +489,13 @@ function staticLayer(){if(STATIC.s)return STATIC.s;const egW=rings(GEO.egypt).ma
 let coR=null;
 function draw(){
   world.style.transform=`translate(${MAPBOX.width/2-cam.cx*cam.s}px,${MAPBOX.height/2-cam.cy*cam.s}px) scale(${cam.s})`;
-  const st=SL[step];let zs='',ls='',ns='';
-  st.on.forEach(key=>{const B=BUILD[key],cur=st.cur.includes(key),k=cur?drawK:1,dim=cur?1:.38;
+  const st=SL[step];let zs='',ls='',ns='',nc='';if(drawK===0){const c=FXC();c&&(c.innerHTML='')}
+  st.on.forEach(key=>{const B=BUILD[key],cur=st.cur.includes(key),k=cur?drawK:1,dim=cur?1:.9;   /* center fx v1: earlier layers stay */
     (B.zones||[]).forEach(({z,c,op})=>{zs+=`<path class="${c}" d="${rings(z.g).map(r=>pth(r)+'Z').join('')}" fill-opacity="${op*k*dim}" stroke-opacity="${.9*k*dim}"/>`});
     (B.lines||[]).forEach(l=>{const L=plen(l.p),d=pth(l.p),o=L*(1-k);ls+=`<g opacity="${dim}"><path class="rtg" d="${d}" stroke="#1c2547" stroke-width="${l.w*2.6}" opacity=".28" stroke-dasharray="${L} ${L}" stroke-dashoffset="${o}"/><path class="rt" d="${d}" stroke="${l.c}" stroke-width="${l.w}" stroke-dasharray="${L} ${L}" stroke-dashoffset="${o}"/></g>`});
-    const N=B.nodes||[];N.forEach((n,i)=>{const t=clamp((k-i/N.length*.7)/.3,0,1);if(t<=0)return;const[x,y]=S(...n.p);ns+=`<circle class="nd" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(n.r*t).toFixed(1)}" fill="${n.c}" opacity="${dim}"/>`});
+    const N=B.nodes||[];N.forEach((n,i)=>{const t=clamp((k-i/N.length*.7)/.3,0,1);if(t<=0)return;const[x,y]=S(...n.p);const o=`<circle class="nd" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(n.r*t).toFixed(1)}" fill="${n.c}" opacity="${dim}"/>`;if(cur)nc+=o;else ns+=o});
   });
-  let s=staticLayer()+zs+ls+ns;
+  let s=staticLayer()+zs+ls+ns+(nc?`<g class="ndc">${nc}</g>`:'');
   const co=calls.firstChild;coR=null;
   if(co&&st.call){const c=st.call,[x,y]=S(...c.ll),bx=co.firstChild,w=bx.offsetWidth,h=bx.offsetHeight;
     const X=clamp(c.dx>0?x+c.dx:x+c.dx-w,12,MAPBOX.width-w-12),Y=clamp(y+c.dy-h/2,70,MAPBOX.height-h-60);
@@ -496,9 +524,26 @@ function setLit(i){const st=SL[step];lit=i;const pi=i%st.photos.length,zi=i%GROW
   if(st.zoneLabels)GROW.forEach((z,j)=>{const c=CARDS['rz'+j];if(c){c.classList.toggle('grad',j===zi);c.classList.toggle('dark2',j!==zi)}});
   links()}
 
+/* ===== center fx v1 ===== */
+const FXO=()=>document.getElementById('fxo'),FXC=()=>document.getElementById('fxc');
+function fxHtml(keys,old){let h='';const st=SL[step];
+  keys.forEach(key=>{const B=BUILD[key];if(!B)return;
+    (B.lines||[]).forEach(l=>{const L=plen(l.p);if(L<30)return;const n=Math.max(1,Math.round(L/320)),per=100/n,dash=Math.min(per*.45,42/L*100),d=pth(l.p);
+      const da=`${dash.toFixed(3)} ${(per-dash).toFixed(3)}`,sty=`--t:${(Math.max(1.4,L/160)).toFixed(2)}s;--dl:-${(Math.random()*L/160).toFixed(2)}s`;
+      h+=`<g class="${old?'lo':''}"><path class="rn r1" d="${d}" pathLength="100" stroke-dasharray="${da}" stroke-width="${(l.w*6).toFixed(1)}" style="${sty}"/><path class="rn r2" d="${d}" pathLength="100" stroke-dasharray="${da}" stroke-width="${(l.w*2.6).toFixed(1)}" style="${sty}"/><path class="rn r3" d="${d}" pathLength="100" stroke-dasharray="${da}" stroke-width="${(l.w*1.1).toFixed(1)}" style="${sty}"/></g>`});
+    if(!old){const N=B.nodes||[];if(N.length)h+=`<g class="yh">${N.map(n=>{const[x,y]=S(...n.p);return`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(n.r*1.5+4).toFixed(1)}" fill="url(#ygr)"/>`}).join('')}</g>`}
+  });return h}
+function phFrom(el,cell,ll){const b=box(cell),[x,y]=S(...ll);el.style.transform=`translate(${(MAPBOX.left+x-(b.left+b.width/2)).toFixed(1)}px,${(MAPBOX.top+y-(b.top+b.height/2)).toFixed(1)}px) scale(.05)`;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{el.style.transform=''}))}
+function phBack(el){el.classList.remove('lit');el.classList.add('back');
+  if(el._ll){const[x,y]=S(...el._ll),cx=el.offsetLeft+el.offsetWidth/2,cy=el.offsetTop+el.offsetHeight/2;el.style.transform=`translate(${(MAPBOX.left+x-cx).toFixed(1)}px,${(MAPBOX.top+y-cy).toFixed(1)}px) scale(.05)`}
+  else el.style.transform='scale(.9)';
+  el.style.opacity='0';setTimeout(()=>el.remove(),950)}
+/* ===== /center fx v1 ===== */
+
 /* ---------- step change ---------- */
 let drawAnim=null;
-function drawIn(ms){const t0=performance.now();cancelAnimationFrame(drawAnim);const f=t=>{drawK=Math.min(1,(t-t0)/ms);draw();if(drawK<1)drawAnim=requestAnimationFrame(f)};drawAnim=requestAnimationFrame(f)}
+function drawIn(ms){const t0=performance.now();cancelAnimationFrame(drawAnim);{const c=FXC();c&&(c.innerHTML='')}const f=t=>{drawK=Math.min(1,(t-t0)/ms);draw();if(drawK<1)drawAnim=requestAnimationFrame(f);else{const c=FXC();c&&(c.innerHTML=fxHtml(SL[step].cur,0))}};drawAnim=requestAnimationFrame(f)}
 function progress(i){return`<div class="row"><b>${SL[i].hd[0]}</b><span>${i+1} / ${SL.length}</span></div><div class="tk2">${SL.map((_,j)=>`<i class="${j<i?'d':j===i?'c':''}"></i>`).join('')}</div>`}
 function go(i){if(i===step||i<0||i>=SL.length)return;step=i;const st=SL[i];
   cnt.textContent=`${i+1} / ${SL.length}`;
@@ -506,15 +551,19 @@ function go(i){if(i===step||i<0||i>=SL.length)return;step=i;const st=SL[i];
   const keep=new Set();
   st.right.forEach(([id,cell,cls,html,wm],k)=>{keep.add('r'+id);place('r'+id,cell,(id[0]==='z'?'zc ':'')+cls,html,k*60,wm)});
   keep.add('pg');place('pg',[0,5,3,1],'pg dark',progress(i),200);
-  st.photos.forEach((p,k)=>{keep.add('ph'+k);place('ph'+k,p.cell,'ph'+(p.bw?' bw':''),`<img src="img/${p.img}.webp" alt="${p.cap}">${p.ll?`<span class="pn">${k+1}</span>`:''}${p.yr?`<span class="yr${p.bw?'':' n'}">${p.yr}</span>`:''}<div class="cap">${p.cap}</div>`,120+k*70)});
+  stage.classList.add('flying');clearTimeout(window.__flyT);window.__flyT=setTimeout(()=>stage.classList.remove('flying'),1700);
+  Object.keys(CARDS).filter(id=>/^ph\d/.test(id)).forEach(id=>{const el=CARDS[id];delete CARDS[id];phBack(el)});
+  st.photos.forEach((p,k)=>{keep.add('ph'+k);const pel=place('ph'+k,p.cell,'ph fly'+(p.bw?' bw':''),`<img src="img/${p.img}.webp" alt="${p.cap}">${p.ll?`<span class="pn">${k+1}</span>`:''}${p.yr?`<span class="yr${p.bw?'':' n'}">${p.yr}</span>`:''}<div class="cap">${p.cap}</div>`,330+k*85);pel._ll=p.ll;if(p.ll)phFrom(pel,p.cell,p.ll)});
   drop(keep);
   const legs=[];st.cur.forEach(k=>BUILD[k].leg.forEach(l=>legs.push(l)));
   mleg.innerHTML=(st.cur.length>4?[]:legs).map(([c,n,t])=>c==='zv'||c==='zg'||c==='za'?`<span><i style="height:12px;width:16px;border-radius:3px;background:${c==='zv'?'#3d5cc0':c==='zg'?'#ee9873':'rgba(255,255,255,.9)'}"></i>${n}</span>`:`<span><i style="background:${c};${t==='dot'?'width:11px;height:11px;border-radius:50%':''}"></i>${n}</span>`).join('')+(st.photos.some(p=>p.ll)?`<span><i class="pmk"></i>مكان الصورة</span>`:'');
   mleg.hidden=!mleg.innerHTML;
-  pms.innerHTML=st.photos.map((p,k)=>p.ll?`<div class="pm" data-i="${k}" data-lon="${p.ll[0]}" data-lat="${p.ll[1]}"><b>${k+1}</b></div>`:'').join('');
+  pms.querySelectorAll('.pm:not(.bye)').forEach(m=>{m.classList.add('bye');m.classList.remove('lit','nw');m.removeAttribute('data-i');setTimeout(()=>m.remove(),700)});
+  pms.insertAdjacentHTML('beforeend',st.photos.map((p,k)=>p.ll?`<div class="pm nw" data-i="${k}" data-lon="${p.ll[0]}" data-lat="${p.ll[1]}" style="--pd:${330+k*85}ms"><b>${k+1}</b></div>`:'').join(''));
+  clearTimeout(window.__nwT);window.__nwT=setTimeout(()=>pms.querySelectorAll('.pm.nw').forEach(m=>m.classList.remove('nw')),1500);
   zls.innerHTML=st.zoneLabels?GROW.map((z,k)=>{const c=cen(z.g);return`<div class="zl" data-lon="${c[0]}" data-lat="${c[1]}"><b>${k+1}</b></div>`}).join(''):'';
   const c=st.call;calls.innerHTML=c?`<div class="co"><div class="bx"><span class="n" style="width:auto;min-width:26px;padding:0 7px;border-radius:13px">${c.n}</span><span class="t"><b>${c.b}</b><span>${c.s}</span></span></div></div>`:'';
-  drawK=0;draw();setTimeout(()=>{drawIn(st.cur.length>4?2600:2200);calls.firstChild&&calls.firstChild.classList.add('in');cycle()},450);
+  drawK=0;draw();{const o=FXO();o&&(o.innerHTML=fxHtml(st.on.filter(k=>!st.cur.includes(k)),1))}setTimeout(()=>{drawIn(st.cur.length>4?2600:2200);calls.firstChild&&calls.firstChild.classList.add('in');cycle()},450);
   /* motion v2: the next slide's photos load and decode now */
   try{const PRE=window.__pre||(window.__pre={});[SL[i+1],SL[i+2]].forEach(s=>s&&s.photos.forEach(p=>{if(PRE[p.img])return;const im=new Image();im.decoding='async';im.src='img/'+p.img+'.webp';PRE[p.img]=im;im.decode&&im.decode().catch(()=>{})}))}catch(e){}
 }
