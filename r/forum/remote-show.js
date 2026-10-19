@@ -85,16 +85,78 @@ function esave(){try{localStorage.setItem(EK,JSON.stringify(EDT))}catch(e){}}
 var SKIP='.out,.gone,.bye,.old,.old2,script,style,noscript,svg,#rc-edbar,#ui,button,input,textarea,select';
 function dead(n){var p=n.parentElement;return !p||!!p.closest(SKIP)}
 function tnodes(root){var out=[],w=D.createTreeWalker(root||D.body,NodeFilter.SHOW_TEXT,null),n;while((n=w.nextNode())){if(n.nodeValue.trim()&&!dead(n))out.push(n)}return out}
-function origOf(n){return ORIG.has(n)?ORIG.get(n):n.nodeValue.trim()}
+function origOf(n){if(ORIG.has(n))return ORIG.get(n);var t=n.nodeValue.trim();return nOrig(n,t)}
+/* ---------------------------------------------------------------- number edits drive the charts (num edit v1, Amr 19 Oct:
+   «لما بغير في النسب المفروض يغير في ال pichart او اي رسوم بيانية ولو فيه ايقونات بتعبر عن عدد … تتغير معانا»)
+   A number edited in a forum deck card is written into the card's data (not laid over the text) and the card is drawn again, so the
+   counter counts to it and its pie, ring, bars, columns and icon rows follow. Per slide in localStorage «fctl-num-<deck>»:
+   {slide id: [[card index, path, original value, new value]]}; the original is kept, so ↺ puts it back. */
+var NK='fctl-num-'+DECK, NUM={}, NF=new WeakSet(), NRX=/\d[\d,]*(?:\.\d+)?/g;
+function nload(){try{NUM=JSON.parse(localStorage.getItem(NK)||'{}')||{}}catch(e){NUM={}}}
+nload();W.addEventListener('storage',function(e){if(e.key===NK)nload()});
+function nsave(){try{localStorage.setItem(NK,JSON.stringify(NUM))}catch(e){}}
+function nNorm(s){return String(s==null?'':s).replace(/[٠-٩]/g,function(d){return d.charCodeAt(0)-1632}).replace(/[۰-۹]/g,function(d){return d.charCodeAt(0)-1776}).replace(/٫/g,'.').replace(/٬/g,',')}
+function nTok(s){return String(s).match(NRX)||[]}
+function nVal(t){var v=+String(t).replace(/,/g,'');return isFinite(v)?v:null}
+function nFmt(v,like){return (String(like).indexOf(',')>=0||Math.abs(v)>=10000)?Number(v).toLocaleString('en-US',{maximumFractionDigits:6}):String(v)}
+function nOn(){return typeof SLIDES!=='undefined'&&typeof B!=='undefined'&&!!B&&typeof W.paint==='function'&&typeof W.prep==='function'}
+/* one number changed and nothing else (spaces and % aside) */
+function nDiff(o,t){o=nNorm(o);t=nNorm(t);var a=nTok(o),b=nTok(t);if(!a.length||a.length!==b.length)return null;
+  var sk=function(s){return s.replace(NRX,'#').replace(/[%\s]/g,'')};if(sk(o)!==sk(t))return null;
+  var k=-1;for(var i=0;i<a.length;i++)if(nVal(a[i])!==nVal(b[i])){if(k>=0)return null;k=i}
+  return k<0?null:{from:nVal(a[k]),to:nVal(b[k])}}
+function nCard(n){if(!nOn())return null;var p=n.parentElement,el=p&&p.closest('.bc');if(!el)return null;
+  for(var i=0;i<B.cards.length;i++)if(B.cards[i].el===el)return B.cards[i];return null}
+/* the text a node was drawn with (before any text laid over it) */
+function dataTxt(n){if(!ORIG.has(n))return n.nodeValue.trim();for(var i=RPL.length-1;i>=0;i--)if(RPL[i][0]===n)return String(RPL[i][1]).trim();return ORIG.get(n)}
+function nWalk(o,p,fn){if(o==null||typeof o!=='object')return;
+  (Array.isArray(o)?o.map(function(_,i){return i}):Object.keys(o)).forEach(function(k){if(typeof k==='string'&&k[0]==='_')return;var v=o[k],q=p.concat([k]);
+    if(typeof v==='number')fn('n',q,v);else if(typeof v==='string')fn('s',q,v);else nWalk(v,q,fn)})}
+/* which value of the card's data the number on screen came from: a value (v, n) first, else a number written in its text */
+function nTarget(n,d){var cc=nCard(n);if(!cc||!cc.c||/^(map|model|photo|kin)$/.test(cc.type))return null;
+  var nums=[],strs=[];nWalk(cc.c,[],function(ty,q,v){var key=q[q.length-1];
+    if(ty==='n'&&(key==='v'||key==='n')&&v===d.from)nums.push(q);
+    else if(ty==='s'&&/^(t|sub|l|s|pre|k|h|lab)$/.test(key))nTok(v).forEach(function(x,i){if(nVal(x)===d.from)strs.push(q.concat(['#'+i]))})});
+  var cand=nums.length?nums:strs;if(!cand.length)return null;
+  var idx=0,ns=tnodes(cc.el);for(var i=0;i<ns.length&&ns[i]!==n;i++)if(nTok(nNorm(dataTxt(ns[i]))).map(nVal).indexOf(d.from)>=0)idx++;
+  return {cc:cc,p:cand[Math.min(idx,cand.length-1)]}}
+function nPut(c,p,v){var o=c;for(var i=0;i<p.length-1;i++){var k=p[i],nx=p[i+1];
+    if(typeof nx==='string'&&nx[0]==='#'){var ti=+nx.slice(1),j=-1;o[k]=String(o[k]).replace(NRX,function(m){j++;return j===ti?nFmt(v,m):m});return}
+    o=o[k];if(o==null)return}
+  o[p[p.length-1]]=v}
+function nRepaint(cc){var r=cc.r||cc.pr||cc.r0;if(!r)return;var on=!cc.el.classList.contains('wait');
+  try{W.paint(cc,r,on?1:0);if(on)W.post(cc.el,60,false)}catch(e){console.error(e)}}
+/* shown = the text the node was drawn with, t = the new text → true when the change went into the data */
+function nEdit(n,shown,t){if(!nOn())return false;var d=nDiff(shown,t);if(!d)return false;var tg=nTarget(n,d);if(!tg)return false;
+  var id=curId(),L=NUM[id]||[],key=JSON.stringify([tg.cc.i,tg.p]),r=null;
+  for(var i=0;i<L.length;i++)if(JSON.stringify([L[i][0],L[i][1]])===key){r=L[i];break}
+  if(!r){r=[tg.cc.i,tg.p,d.from,d.to];L.push(r)}else r[3]=d.to;
+  if(r[3]===r[2])L.splice(L.indexOf(r),1);
+  if(L.length)NUM[id]=L;else delete NUM[id];nsave();
+  nPut(tg.cc.c,tg.p,d.to);nRepaint(tg.cc);return true}
+/* before a slide is drawn its saved numbers go into its cards */
+function nApply(n){var L=NUM[String(n)];if(!L||!L.length||typeof SLIDES==='undefined'||!SLIDES[n])return;var sp=W.prep(SLIDES[n]);
+  L.forEach(function(r){var cd=(sp.cards||[])[r[0]];if(cd&&cd[2])try{nPut(cd[2],r[1],r[3])}catch(e){}})}
+function nReset(id){var L=NUM[id];if(!L)return;delete NUM[id];nsave();if(!nOn()||String(cur)!==String(id))return;
+  L.forEach(function(r){var cc=B.cards[r[0]];if(cc&&cc.c){nPut(cc.c,r[1],r[2]);nRepaint(cc)}})}
+function nBoot(){if(!nOn()||!NUM[String(cur)])return;nApply(cur);var seen={};NUM[String(cur)].forEach(function(r){var cc=B.cards[r[0]];if(cc&&!seen[r[0]]){seen[r[0]]=1;nRepaint(cc)}})}
+/* a number drawn from edited data still answers to its original text in the panel and the saved text edits */
+function nOrig(n,t){var L=NUM[curId()];if(!L||!L.length||!/\d/.test(t))return t;var cc=nCard(n);if(!cc)return t;
+  for(var i=0;i<L.length;i++){var r=L[i];if(r[0]!==cc.i)continue;var hit=false,out=t.replace(NRX,function(m){if(!hit&&nVal(m)===r[3]){hit=true;return nFmt(r[2],m)}return m});if(hit)return out}
+  return t}
+
 function occOf(node){var o=origOf(node),c=0,all=tnodes();for(var i=0;i<all.length;i++){if(all[i]===node)return c;if(origOf(all[i])===o)c++}return 0}
 function setTxt(n,o,t){if(!ORIG.has(n)){ORIG.set(n,o);RPL.push([n,n.nodeValue])}var v=n.nodeValue,a=v.match(/^\s*/)[0],b=v.match(/\s*$/)[0];if(v!==a+t+b)n.nodeValue=a+t+b}
-function eApply(){var L=EDT[curId()];if(!L||!L.length)return;applying=true;
+function eApply(){var L=EDT[curId()];if(!L||!L.length)return;applying=true;var mv=[];
   try{var cnt={};tnodes().forEach(function(n){var o=origOf(n),c=cnt[o]||0;cnt[o]=c+1;if(n.parentElement&&n.parentElement.isContentEditable)return;
-    for(var i=0;i<L.length;i++){var e=L[i];if(e[0]===o&&e[2]===c){if(n.nodeValue.trim()!==e[1])setTxt(n,o,e[1]);break}}})}catch(e){console.error(e)}
-  applying=false}
+    for(var i=0;i<L.length;i++){var e=L[i];if(e[0]===o&&e[2]===c){if(!NF.has(n)&&nDiff(o,e[1])&&nCard(n)){mv.push([n,e]);break}if(n.nodeValue.trim()!==e[1])setTxt(n,o,e[1]);break}}})}catch(e){console.error(e)}
+  applying=false;
+  if(mv.length){var id=curId(),ch=false;mv.forEach(function(x){var n=x[0],e=x[1];if(!n.isConnected)return;
+      if(nEdit(n,e[0],e[1])){EDT[id]=(EDT[id]||[]).filter(function(y){return y!==e});ch=true}else{NF.add(n);applying=true;try{setTxt(n,e[0],e[1])}finally{applying=false}}});
+    if(ch){if(EDT[id]&&!EDT[id].length)delete EDT[id];esave();push(1)}}}
 function eSoon(){if(eQ)return;eQ=rRAF(function(){eQ=0;eApply()})}
 try{new MutationObserver(function(){if(!applying)eSoon()}).observe(D.documentElement,{childList:true,subtree:true,characterData:true})}catch(e){}
-function eReset(){var id=curId();delete EDT[id];esave();RPL=RPL.filter(function(p){var n=p[0];if(n.isConnected){n.nodeValue=p[1];ORIG.delete(n);return false}return false});push(1)}
+function eReset(){var id=curId();delete EDT[id];esave();nReset(id);RPL=RPL.filter(function(p){var n=p[0];if(n.isConnected){n.nodeValue=p[1];ORIG.delete(n);return false}return false});push(1)}
 function txEl(t){var el=t&&t.nodeType===1?t:t&&t.parentElement;while(el&&el!==D.body){if(el.closest(SKIP))return null;
     for(var c=el.firstChild;c;c=c.nextSibling)if(c.nodeType===3&&c.nodeValue.trim())return el;el=el.parentElement}return null}
 function blockOf(el){while(el&&el.parentElement&&el.parentElement!==D.body&&getComputedStyle(el).display==='inline'&&!el.parentElement.closest(SKIP))el=el.parentElement;return el}
@@ -104,19 +166,21 @@ function eBegin(el){eCommit();var ns=tnodes(el);if(!ns.length)return;eAct=el;eSn
 function eCommit(cancel){if(!eAct)return;var el=eAct,sn=eSnap;eAct=null;eSnap=null;el.contentEditable='false';el.removeAttribute('contenteditable');
   if(cancel){sn.forEach(function(s){if(s.n.isConnected)s.n.nodeValue=s.v});return}
   var now=tnodes(el),id=curId(),L=EDT[id]||(EDT[id]=[]),put=function(o,c,t){L=L.filter(function(e){return !(e[0]===o&&e[2]===c)});if(t!==o)L.push([o,t,c]);EDT[id]=L};
-  if(now.length===sn.length&&now.every(function(n,i){return n===sn[i].n}))sn.forEach(function(s){var t=s.n.nodeValue.trim();if(t!==s.v.trim()||ORIG.has(s.n))put(s.o,s.c,t);if(!ORIG.has(s.n)&&t!==s.o){ORIG.set(s.n,s.o);RPL.push([s.n,s.v])}});
+  if(now.length===sn.length&&now.every(function(n,i){return n===sn[i].n}))sn.forEach(function(s){var t=s.n.nodeValue.trim();if(t!==s.v.trim()&&nEdit(s.n,ORIG.has(s.n)?dataTxt(s.n):s.v.trim(),t)){put(s.o,s.c,s.o);return}if(t!==s.v.trim()||ORIG.has(s.n))put(s.o,s.c,t);if(!ORIG.has(s.n)&&t!==s.o){ORIG.set(s.n,s.o);RPL.push([s.n,s.v])}});
   else{var t=(el.textContent||'').replace(/\s+/g,' ').trim();sn.forEach(function(s,i){put(s.o,s.c,i?'':t)});}
   if(!EDT[id].length)delete EDT[id];esave();eApply();push(1)}
 /* text edit v2: the control window edits the slide's text (list, set, outline) */
 function eList(){var all=tnodes(),cnt={},cards=[],L=EDT[curId()]||[],out=[];
   all.forEach(function(n){var o=origOf(n),c=cnt[o]||0;cnt[o]=c+1;var p=n.parentElement,card=p.closest('.bc'),k=-1;
     if(card){k=cards.indexOf(card);if(k<0){cards.push(card);k=cards.length-1}}
-    var e=L.find(function(x){return x[0]===o&&x[2]===c});out.push({o:o,c:c,v:e?e[1]:o,k:k,w:!!(card&&card.classList.contains('wait'))})});
+    var e=L.find(function(x){return x[0]===o&&x[2]===c});out.push({o:o,c:c,v:e?e[1]:n.nodeValue.trim(),k:k,w:!!(card&&card.classList.contains('wait'))})});
   return out}
 /* the list waits until the slide's text stops moving (numbers counting up), at most 4 s */
 var eLast=0;try{new MutationObserver(function(ms){for(var i=0;i<ms.length;i++){var t=ms[i].target,el=t.nodeType===1?t:t.parentElement;if(el&&!el.closest('svg')){eLast=rNow();break}}}).observe(D.documentElement,{childList:true,subtree:true,characterData:true})}catch(e){}
 function eTexts(){var t0=rNow();(function w(){if(rNow()-eLast>450||rNow()-t0>4000)post({t:'texts',id:curId(),items:eList()});else rST(w,120)})()}
 function eSet(o,c,t){var id=curId();t=String(t==null?'':t).replace(/\s+/g,' ').trim();
+  var cn={},hn=null;tnodes().forEach(function(n){var oo=origOf(n),k=cn[oo]||0;cn[oo]=k+1;if(!hn&&oo===o&&k===c)hn=n});
+  if(hn&&nEdit(hn,dataTxt(hn),t)){var L0=(EDT[id]||[]).filter(function(e){return !(e[0]===o&&e[2]===c)});if(L0.length)EDT[id]=L0;else delete EDT[id];esave();push(1);return}
   var L=(EDT[id]||[]).filter(function(e){return !(e[0]===o&&e[2]===c)});if(t!==o)L.push([o,t,c]);if(L.length)EDT[id]=L;else delete EDT[id];esave();
   var cnt={};tnodes().forEach(function(n){var oo=origOf(n),cc=cnt[oo]||0;cnt[oo]=cc+1;if(oo===o&&cc===c){if(t===o){if(ORIG.has(n))setTxt(n,o,o)}else setTxt(n,o,t)}});
   push(1)}
@@ -166,7 +230,7 @@ function forumAdapter(){
       if(!any){var n=cur,k=B.step;curLayer&&curLayer.remove();curLayer=null;show(n);if(k)setStep(k)}},
     hasMap:function(){return !!(B&&B.cards.some(function(cc){return (cc.type==='map'||cc.type==='model')&&!cc.el.classList.contains('wait')}))},
     hook:function(){var os=W.show;if(typeof os==='function')W.show=function(n,dir){if(!force&&hid(n)){var d=dir<0?-1:1,j=ORDER.indexOf(n);
-        while(j>=0&&j<ORDER.length&&hid(ORDER[j]))j+=d;if(j<0||j>=ORDER.length||ORDER[j]===cur)return;arguments[0]=ORDER[j]}return os.apply(this,arguments)};
+        while(j>=0&&j<ORDER.length&&hid(ORDER[j]))j+=d;if(j<0||j>=ORDER.length||ORDER[j]===cur)return;arguments[0]=ORDER[j]}try{nApply(arguments[0])}catch(e){console.error(e)}return os.apply(this,arguments)};
       ['show','setStep'].forEach(function(f){var o=W[f];if(typeof o!=='function')return;W[f]=function(){var r=o.apply(this,arguments);push(1);return r}})}
   }}
 function centerAdapter(){
@@ -266,7 +330,7 @@ function media(){if(!('mediaSession' in navigator))return;
 function boot(){
   try{if(typeof SLIDES!=='undefined'&&typeof ORDER!=='undefined'&&typeof show==='function')A=forumAdapter();
       else if(typeof SL!=='undefined'&&typeof go==='function')A=centerAdapter()}catch(e){console.error(e)}
-  if(!A)return;A.hook();try{eUI()}catch(e){console.error(e)}hello()}
+  if(!A)return;A.hook();try{nBoot()}catch(e){console.error(e)}try{eUI()}catch(e){console.error(e)}hello()}
 if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',function(){rST(boot,0)});else rST(boot,0);
 W.RC={pause:pause,resume:resume,isPaused:function(){return paused},now:vnow,deck:DECK,state:state,black:black};
 })();
