@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Forum Control · promo master</title>
+<style>
+/* Promo master for the forum control panel (Amr 19 Oct 11:38 / 11:41: «برومو بالانجليزي … اشتغل على الكود اللي انت بانيته واستعرض بتفكيك اللايرز»).
+   The real control.html and slide-editor.html run inside this page; render(t) moves a camera over them, opens their tiles in depth
+   and lays the captions on top. Rendered frame by frame (cap: promo_render.py), so every frame is exact. */
+*{box-sizing:border-box}
+html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:#05060a}
+body{font-family:"Inter Display","Inter",system-ui,sans-serif;color:#f4f5fa}
+#bg{position:absolute;inset:0;background:
+  radial-gradient(900px 600px at 70% 30%,rgba(110,109,242,.22),transparent 62%),
+  radial-gradient(800px 600px at 15% 90%,rgba(61,92,192,.18),transparent 60%),
+  linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px) 0 0/100% 60px,
+  linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px) 0 0/60px 100%,#05060a}
+.fr{position:absolute;left:0;top:0;width:2400px;height:1350px;border:0;transform-origin:0 0;background:transparent}
+#show{position:absolute;left:0;top:0;width:1600px;height:900px;border:0;opacity:.001;z-index:-1}
+#labs{position:absolute;inset:0;pointer-events:none}
+.lab{position:absolute;display:flex;align-items:center;gap:10px;font:600 18px/1 "Inter",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#fff;white-space:nowrap;
+  padding:9px 14px 9px 12px;border-radius:999px;background:rgba(10,11,20,.78);border:1px solid rgba(255,255,255,.18);box-shadow:0 10px 30px -10px rgba(0,0,0,.8)}
+.lab i{width:9px;height:9px;border-radius:50%;background:#b6f2dc;box-shadow:0 0 0 4px rgba(182,242,220,.18)}
+.lab b{font-weight:500;color:#9a9cb4;letter-spacing:.12em}
+#capbg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(1500px 620px at 0% 100%,rgba(5,6,10,.94),rgba(5,6,10,.7) 38%,rgba(5,6,10,0) 72%);opacity:0}
+#cap{position:absolute;left:96px;bottom:92px;width:1100px}
+#cap .k{font:600 17px/1 "Inter",sans-serif;letter-spacing:.28em;text-transform:uppercase;color:#b6f2dc;margin-bottom:18px;display:flex;align-items:center;gap:12px}
+#cap .k:before{content:'';width:34px;height:2px;background:#b6f2dc}
+#cap .h{font:700 76px/1.02 "Inter Display","Inter",sans-serif;letter-spacing:-.02em;text-shadow:0 6px 40px rgba(0,0,0,.6)}
+#cap .h span{display:inline-block;will-change:transform}
+#cap .s{margin-top:16px;font:400 26px/1.35 "Inter",sans-serif;color:#c9cbe0;max-width:900px}
+#title{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+#title .k{font:600 18px/1 "Inter",sans-serif;letter-spacing:.42em;color:#b6f2dc;text-transform:uppercase}
+#title .h{font:800 168px/0.95 "Inter Display","Inter",sans-serif;letter-spacing:-.04em;margin:26px 0 22px}
+#title .h span{display:inline-block;background:linear-gradient(180deg,#fff 30%,#b9bbf7);-webkit-background-clip:text;background-clip:text;color:transparent;padding:0 .06em}
+#title .s{font:400 30px/1.3 "Inter",sans-serif;color:#c9cbe0}
+#title .bar{width:0;height:3px;margin:30px auto 0;background:linear-gradient(90deg,transparent,#8f8ef7,#b6f2dc,transparent)}
+#end{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+#end .h{font:800 120px/1 "Inter Display","Inter",sans-serif;letter-spacing:-.04em;background:linear-gradient(180deg,#fff 30%,#b9bbf7);-webkit-background-clip:text;background-clip:text;color:transparent}
+#end .chips{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;max-width:1300px;margin:40px auto 34px}
+#end .chips span{font:500 22px/1 "Inter",sans-serif;padding:14px 22px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#e6e7f3}
+#end .f{font:600 17px/1 "Inter",sans-serif;letter-spacing:.32em;color:#9a9cb4;text-transform:uppercase}
+#vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(130% 100% at 50% 50%,transparent 60%,rgba(0,0,0,.55))}
+#fade{position:absolute;inset:0;background:#000;pointer-events:none;opacity:0}
+</style>
+</head>
+<body>
+<div id="bg"></div>
+<iframe id="show" src="/r/bacq9ed85gvpu47x2iusyj"></iframe>
+<iframe id="ctl" class="fr" src="control.html?promo=1"></iframe>
+<iframe id="ed" class="fr" src="about:blank"></iframe>
+<div id="labs"></div>
+<div id="title"><div><div class="k">Egypt Forum 2026 · V3 Update</div><div class="h" id="th">Forum Control</div><div class="s">One window to run the whole show.</div><div class="bar" id="tbar"></div></div></div>
+<div id="capbg"></div><div id="cap"><div class="k" id="ck"></div><div class="h" id="ch"></div><div class="s" id="cs"></div></div>
+<div id="end"><div><div class="h">Forum Control</div><div class="chips" id="echips"></div><div class="f">Egypt Forum 2026 · built by Aroma Studios</div></div></div>
+<div id="vig"></div><div id="fade"></div>
+<script>
+/* ------------------------------------------------------------------ helpers */
+var $=function(id){return document.getElementById(id)};
+var cl=function(v,a,b){return Math.max(a,Math.min(b,v))};
+var E={io:function(x){x=cl(x,0,1);return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2},out:function(x){x=cl(x,0,1);return 1-Math.pow(1-x,3)},in:function(x){x=cl(x,0,1);return x*x*x},
+  back:function(x){x=cl(x,0,1);var c=1.4;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)}};
+function seg(t,a,b){return cl((t-a)/(b-a),0,1)}
+function lerp(a,b,k){return a+(b-a)*k}
+/* the UI sits at (400,225) inside its 2400 x 1350 frame; the camera looks at a UI point (ux,uy) at scale s */
+function cam(el,ux,uy,s,op){var X=960-(400+ux)*s,Y=540-(225+uy)*s;el.style.transform='translate('+X.toFixed(2)+'px,'+Y.toFixed(2)+'px) scale('+s.toFixed(4)+')';el.style.opacity=op==null?1:op;el._c={X:X,Y:Y,s:s}}
+function split(el,txt){el.innerHTML=txt.split(' ').map(function(w){return '<span>'+w+'</span>'}).join(' ')}
+/* words come up one after another */
+function words(el,k){var sp=el.querySelectorAll('span'),n=sp.length;sp.forEach(function(s,i){var q=E.out(cl(k*(n+2)-i,0,1));s.style.opacity=q;s.style.transform='translateY('+((1-q)*40).toFixed(1)+'px)';s.style.filter='blur('+((1-q)*8).toFixed(1)+'px)'})}
+
+/* ------------------------------------------------------------------ the two documents */
+var C=null,ED=null,EDD=null;
+function inject(doc,css){var s=doc.createElement('style');s.textContent=css;doc.head.appendChild(s);doc.documentElement.classList.add('promo')}
+var UICSS='html.promo{width:2400px;height:1350px;background:transparent!important;perspective:2600px;perspective-origin:1200px 520px;overflow:hidden}'+
+  'html.promo body{position:absolute;left:400px;top:225px;width:1600px!important;height:900px!important;overflow:visible!important;transform-style:preserve-3d;transform-origin:800px 450px;border-radius:26px}'+
+  'html.promo main,html.promo #stack,html.promo #side{transform-style:preserve-3d}'+
+  'html.promo .tile,html.promo header,html.promo .ph,html.promo .panel{transition:none!important}'+
+  'html.promo .tile,html.promo .panel{will-change:transform}';
+function ready(){C=$('ctl').contentDocument;ED=$('ed').contentDocument}
+function docs(){try{C=$('ctl').contentDocument;ED=$('ed').contentDocument}catch(e){}}
+
+/* ------------------------------------------------------------------ the control's layers */
+var CT=[['header','The deck switcher','header'],['#tnow','Live preview','on the big screen now'],['#tnext','Up next','in greyscale'],['#nav','Next / Back',''],['#info','Slide & cards',''],
+  ['#anim','Map scenarios',''],['#side>.tile:nth-child(2)','Tools',''],['#list','Every slide','']];
+function explodeUI(doc,list,e,rx,rz,sc,lift){var b=doc.body;b.style.transform='rotateX('+rx.toFixed(2)+'deg) rotateZ('+rz.toFixed(2)+'deg) scale('+sc.toFixed(4)+')';
+  list.forEach(function(x,i){var el=doc.querySelector(x[0]);if(!el)return;var k=E.io(cl(e*(list.length*0.35+1)-i*0.35,0,1));el.style.transform=k?'translateZ('+(k*(lift[i]||140)).toFixed(1)+'px)':'';
+    el.style.boxShadow=k?'0 '+(30*k).toFixed(0)+'px '+(70*k).toFixed(0)+'px -20px rgba(0,0,0,.85)':''})}
+function labels(frame,doc,list,k,dot){var L=$('labs'),h='';if(k<=0||!doc){L.innerHTML='';return}var c=frame._c;
+  list.forEach(function(x,i){var el=doc.querySelector(x[0]);if(!el||!x[1])return;var r=el.getBoundingClientRect(),q=E.out(cl(k*(list.length*0.4+1)-i*0.4,0,1));if(q<=0)return;
+    var px=cl(c.X+r.left*c.s+18,24,1500),py=cl(c.Y+r.top*c.s-24,24,1000);h+='<div class="lab" style="left:'+px.toFixed(0)+'px;top:'+py.toFixed(0)+'px;opacity:'+q.toFixed(3)+';transform:translateY('+((1-q)*16).toFixed(1)+'px)"><i></i>'+x[1]+(x[2]?'<b>· '+x[2]+'</b>':'')+'</div>'});
+  L.innerHTML=h}
+function caption(k0,kk,h,s,k){var c=$('cap');$('capbg').style.opacity=Math.max(0,k);if(k<=0){c.style.opacity=0;return}c.style.opacity=1;if(c._h!==h){split($('ch'),h);c._h=h}$('ck').textContent=kk;$('cs').textContent=s||'';
+  words($('ch'),k0);$('ck').style.opacity=E.out(k0*3);$('cs').style.opacity=E.out((k0-0.4)*2.5);c.style.transform='translateY('+((1-E.out(k))*30).toFixed(1)+'px)';c.style.opacity=E.out(k)}
+
+/* ------------------------------------------------------------------ the deck inside the editor: every card a layer */
+function deckDoc(){try{return ED.getElementById('deck').contentDocument}catch(e){return null}}
+var DKCSS='html.promo body{overflow:visible!important;perspective:2200px;perspective-origin:50% 45%}html.promo #stage{transform-style:preserve-3d}html.promo .slide{transform-style:preserve-3d}'+
+  'html.promo .bc{will-change:transform}html.promo #ed-ov{display:none}.plab{position:absolute;font:600 22px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#fff;background:rgba(10,11,20,.82);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:12px 18px;white-space:nowrap;pointer-events:none;z-index:99}';
+function deckExplode(e,rx,rz){var d=deckDoc();if(!d)return;var L=d.querySelector('.slide:last-of-type')||d.querySelector('.slide');if(!L)return;
+  if(!d.documentElement.classList.contains('promo'))inject(d,DKCSS);
+  L.style.transformOrigin='800px 450px';L.style.transform=e>0?'rotateX('+rx+'deg) rotateZ('+rz+'deg)':'';
+  var cards=[].slice.call(L.querySelectorAll(':scope>.bc'));cards.forEach(function(el,i){var k=E.io(cl(e*(cards.length*0.3+1)-i*0.3,0,1));el.style.transform=k?'translateZ('+(k*(80+i*70)).toFixed(1)+'px)':'';
+    el.style.boxShadow=k?'0 30px 60px -20px rgba(20,24,60,'+(0.55*k).toFixed(2)+')':''})}
+
+/* ------------------------------------------------------------------ the timeline */
+var T=60;
+var EV=[];  /* actions on the real UI: [time, function, ms to wait] */
+function click(doc,sel){var el=doc&&doc.querySelector(sel);if(el)el.click();return !!el}
+EV.push([15.6,function(){click(C,'#rows .sl[data-i="14"]')},2600]);
+EV.push([16.2,function(){click(C,'#next')},1500]);
+EV.push([16.6,function(){click(C,'#next')},3800]);
+EV.push([20.6,function(){click(C,'#steps button[data-k="0"]')},4200]);
+EV.push([25.6,function(){var r=C.querySelector('#rows .sl[data-i="20"]');if(r)r.scrollIntoView({block:'center'});click(C,'#rows .sl[data-i="20"] .pills button[data-k="2"]')},4200]);
+EV.push([28.4,function(){click(C,'#rows .sl[data-i="21"] .hb')},900]);
+EV.push([31.6,function(){click(C,'#rows .sl[data-i="21"] .hb');click(C,'#rows .sl[data-i="47"]')},7000]);
+EV.push([34.6,function(){click(C,'#pause')},800]);
+EV.push([36.4,function(){click(C,'#pause');click(C,'#rows .sl[data-i="14"]')},2500]);
+EV.push([37.4,function(){click(C,'#black')},1200]);
+EV.push([38.8,function(){click(C,'#rbtn')},700]);
+EV.push([40.2,function(){click(C,'#rclose');click(C,'#black')},600]);
+EV.push([48.6,function(){var d=deckDoc();if(!d)return;var el=[].slice.call(d.querySelectorAll('.bc')).find(function(b){return b.querySelector('.cv[data-v="50"]')});if(!el)return;var r=el.getBoundingClientRect();
+  var o={clientX:r.left+r.width*.3,clientY:r.top+r.height*.25,bubbles:true,pointerId:1};el.dispatchEvent(new PointerEvent('pointerdown',o));d.defaultView.dispatchEvent(new PointerEvent('pointerup',o))},1200]);
+EV.push([50.2,function(){var i=ED.querySelector('#pp .fld[data-p="v"] input');if(!i)return;i.focus();i.value='30';i.dispatchEvent(new Event('input',{bubbles:true}));setTimeout(function(){i.blur()},450)},3200]);
+EV.push([52.3,function(){var d=deckDoc();if(!d)return;var el=[].slice.call(d.querySelectorAll('.bc')).find(function(b){return b.querySelector('.cv[data-v="30"]')});if(!el)return;var r=el.getBoundingClientRect(),W=d.defaultView;
+  var x=r.left+r.width/2,y=r.top+r.height/2;el.dispatchEvent(new PointerEvent('pointerdown',{clientX:x,clientY:y,bubbles:true}));
+  for(var k=1;k<=12;k++)W.dispatchEvent(new PointerEvent('pointermove',{clientX:x+k*10,clientY:y+k*6,bubbles:true}));W.dispatchEvent(new PointerEvent('pointerup',{clientX:x+120,clientY:y+72,bubbles:true}))},2600]);
+EV.push([53.6,function(){click(ED,'#pp .sw button[data-bg="mint"]')},2400]);
+var fired=0;
+function events(t){var w=0;while(fired<EV.length&&EV[fired][0]<=t){try{EV[fired][1]()}catch(e){console.error(e)}w+=EV[fired][2];fired++}return w}
+
+function render(t){
+  docs();
+  if(C&&!C.documentElement.classList.contains('promo'))inject(C,UICSS);
+  var ctl=$('ctl'),ed=$('ed'),w=events(t);
+  /* 1 · title */
+  var tk=seg(t,0.2,1.6),tout=seg(t,4.2,5.0);$('title').style.opacity=1-E.in(tout);
+  if(!$('th')._s){split($('th'),'Forum Control');$('th')._s=1}
+  var sp=$('th').querySelectorAll('span');sp.forEach(function(s,i){var q=E.back(cl(tk*2-i*0.35,0,1));s.style.transform='translateY('+((1-q)*80).toFixed(1)+'px) scale('+(0.9+0.1*q).toFixed(3)+')';s.style.opacity=cl(q,0,1)});
+  $('title').querySelector('.k').style.opacity=E.out(seg(t,0.8,1.8));$('title').querySelector('.s').style.opacity=E.out(seg(t,1.4,2.4));$('tbar').style.width=(E.io(seg(t,1.6,3.4))*620)+'px';
+  $('title').style.transform='scale('+(1+0.04*tout)+')';
+  /* 2 · the panel, then its layers */
+  var ex=0,rx=0,rz=0,sc=1,camX=800,camY=450,camS=1.2,cop=E.out(seg(t,4.6,5.8)),lab=0;
+  if(t<15.5){camS=lerp(1.32,1.2,E.out(seg(t,4.6,6.4)));var tl=E.io(seg(t,6.8,9.2));rx=46*tl;rz=-22*tl;sc=1-0.2*tl;ex=seg(t,8.6,11.4);rz+=8*E.io(seg(t,11,15.4));lab=seg(t,10.6,12.6)*(1-seg(t,14.6,15.3))}
+  else if(t<18.4){var ba=E.io(seg(t,15.5,17.4));rx=46*(1-ba);rz=-14*(1-ba);sc=0.8+0.2*ba;ex=1-seg(t,15.5,16.8)}
+  /* 3 · on screen now / next */
+  if(t>=17.6&&t<24.4){var zi=E.io(seg(t,17.6,19))*(1-E.io(seg(t,22.8,24.4)));camX=lerp(800,700,zi);camY=lerp(450,250,zi);camS=lerp(1.2,1.72,zi)}
+  /* 4 · slides, cards, hide */
+  if(t>=24.4&&t<31.6){var zl=E.io(seg(t,24.4,25.6))*(1-E.io(seg(t,30.4,31.6)));camX=lerp(800,250,zl);camY=lerp(450,470,zl);camS=lerp(1.2,1.85,zl)}
+  /* 5 · map scenario */
+  if(t>=31.6&&t<37.2){var zm=E.io(seg(t,31.6,32.8))*(1-E.io(seg(t,36.2,37.2)));camX=lerp(800,820,zm);camY=lerp(450,640,zm);camS=lerp(1.2,1.9,zm)}
+  /* 6 · black, remote */
+  if(t>=37.2&&t<40.6){var zt=E.io(seg(t,37.2,38))*(1-E.io(seg(t,39.8,40.6)));camX=lerp(800,800,zt);camY=lerp(450,560,zt);camS=lerp(1.2,1.42,zt)}
+  explodeUI(C,CT,ex,rx,rz,sc,[60,150,200,120,110,160,130,90]);
+  /* 7 · the editor */
+  var eo=E.io(seg(t,40.4,41.6))*(1-E.in(seg(t,55,55.8)));
+  cam(ctl,camX,camY,camS,cop*(1-E.io(seg(t,40.4,41.4))));
+  var ex2=0,rx2=0,rz2=0,sc2=1,eX=800,eY=450,eS=1.2,dex=0,lab2=0;
+  if(t>=40.4){
+    var tl2=E.io(seg(t,42,43.6))*(1-E.io(seg(t,46.2,47.4)));rx2=42*tl2;rz2=18*tl2;sc2=1-0.26*tl2;ex2=seg(t,42.8,44.6)*(1-seg(t,45.6,46.6));lab2=seg(t,43.6,44.6)*(1-seg(t,45.4,45.9));
+    var zc=E.io(seg(t,47.2,48.2));eX=lerp(800,820,zc);eY=lerp(450,430,zc);eS=lerp(1.2,1.5,zc);
+    var dk=seg(t,44.6,46.2)*(1-seg(t,47.6,48.4));dex=E.io(dk)}
+  if(ED&&ED.body&&ED.getElementById('ppp')){if(!ED.documentElement.classList.contains('promo')){inject(ED,UICSS);try{ED.defaultView.dispatchEvent(new Event('resize'))}catch(e){}}
+    explodeUI(ED,[['header','Slide picker · undo · reset',''],['#lyp','Layers','every card'],['#cvw','Canvas','the slide itself'],['#ppp','Properties','place · colour · icon · text · numbers']],ex2,rx2,rz2,sc2,[60,170,110,200]);
+    deckExplode(dex,dex*38,dex*-16)}
+  cam(ed,eX,eY,eS,eo);
+  if(t<40.4)labels(ctl,C,CT,lab);else labels(ed,ED,[['header','Slide picker · undo · reset',''],['#lyp','Layers','every card'],['#cvw','Canvas','the slide itself'],['#ppp','Properties','place · colour · icon · text · numbers']],lab2);
+  /* captions */
+  var CAPS=[[6.0,10.4,'The control panel','Built in code. Opened up.','A second window that runs the V3 deck on the big screen.'],
+    [18.6,20.4,'Live','See what’s on screen.','A live copy of the slide and card the audience sees.'],
+    [20.6,23.8,'Up next','Know what comes next.','The next card or slide, in greyscale, so you never mix them up.'],
+    [25.0,28.2,'Navigate','Any slide. Any card.','Jump straight to it from the list or the card chips.'],
+    [28.4,31.2,'Hide','Hide a slide in one click.','Next and Back skip it. One more click brings it back.'],
+    [32.4,36.2,'Map scenarios','Replay, pause — and know when it ends.','A loader counts down every map animation.'],
+    [37.6,40.2,'On stage','Black screen. Any remote.','Apple remote, clickers, keyboard — teach it any button.'],
+    [41.2,44.4,'Slide editor','Every slide, Canva-style.','A pencil on every slide opens it layer by layer.'],
+    [44.6,47.2,'Layers','Every card is a layer.','Pick it on the slide or in the list.'],
+    [48.6,52.2,'Numbers','Change a number. The chart follows.','Pies, rings, bars, icon counts and counters redraw from the data.'],
+    [52.3,55.0,'Layout','Drag. Resize. Recolour.','Snap to the 12 × 6 bento grid — live on the big screen.']];
+  var cur=null;CAPS.forEach(function(c){if(t>=c[0]-0.05&&t<c[1]+0.35)cur=c});
+  if(cur){var k0=seg(t,cur[0],cur[0]+1.1),kin=Math.min(seg(t,cur[0],cur[0]+0.35),1-seg(t,cur[1],cur[1]+0.35));caption(k0,cur[2],cur[3],cur[4],kin)}else caption(0,'','','',0);
+  /* 8 · end */
+  var en=seg(t,55.6,57);$('end').style.opacity=E.out(en)*(1-seg(t,59.4,60));
+  if(!$('echips')._s){$('echips').innerHTML=['Live preview','Up next in greyscale','Any slide, any card','Hide slides','Map timing','Black screen','Any remote','Canva-style editor','Numbers drive charts','Works offline'].map(function(x){return '<span>'+x+'</span>'}).join('');$('echips')._s=1}
+  [].slice.call($('echips').children).forEach(function(s,i){var q=E.out(cl(seg(t,56,58.6)*12-i,0,1));s.style.opacity=q;s.style.transform='translateY('+((1-q)*24)+'px)'});
+  $('fade').style.opacity=seg(t,59.3,60);
+  return w}
+window.render=render;window.__ready=function(){try{ready();var b=C&&C.querySelector('#decks button[data-d=v3]');if(b&&!b.classList.contains('on'))b.click();return !!(C&&C.getElementById('rows')&&C.querySelector('#rows .sl'))}catch(e){return false}};
+window.__openEditor=function(){$('ed').src='slide-editor.html?deck=v3&i=73'};
+</script>
+</body>
+</html>
