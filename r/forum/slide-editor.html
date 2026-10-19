@@ -174,7 +174,9 @@ var DECKS={
 };
 var Q=new URLSearchParams(location.search), DK=DECKS[Q.get('deck')]?Q.get('deck'):'v3', I=Math.max(0,+Q.get('i')||0);
 var $=function(id){return document.getElementById(id)};
-var SKEY='fctl-spec-'+DK, NKEY='fctl-num-'+DK;
+/* ns mode v1: ?ns=<name> keeps this window's storage apart (the promo's live copy) */
+var NS=(Q.get('ns')||'').replace(/[^a-z0-9_-]/gi,''), SFX=NS?'~'+NS:'';
+var SKEY='fctl-spec-'+DK+SFX, NKEY='fctl-num-'+DK+SFX;
 function lsGet(k){try{return JSON.parse(localStorage.getItem(k)||'{}')||{}}catch(e){return {}}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){toast('مساحة الحفظ في المتصفح خلصت')}}
 var SPEC=lsGet(SKEY), NUM=lsGet(NKEY);
@@ -184,7 +186,7 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return
 function toast(t){var el=$('toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(function(){el.classList.remove('on')},1800)}
 function send(c,x){var m={ns:'fctl-ed',from:'editor',c:c};if(x)for(var k in x)m[k]=x[k];try{$('deck').contentWindow.postMessage(m,'*')}catch(e){}}
 $('dk').textContent=DECKS[DK].n;document.title='محرر السلايد · '+DECKS[DK].n;
-$('back').href='control.html';
+$('back').href='control.html'+(NS?'?ns='+NS:'');
 
 /* ---------- names ---------- */
 var TN={title:'عنوان',text:'نص',kpi:'رقم',kpi2:'رقمين',ft:'قبل وبعد',ring:'دائرة نسبة',bars:'أعمدة',pict2:'أيقونات عدّ',glance:'أرقام سريعة',list:'لستة',plist:'لستة مشروعات',
@@ -208,7 +210,7 @@ function ar(n){return String(n)}
 
 /* ---------- the deck ---------- */
 var deck=$('deck');
-function loadDeck(){$('ld').hidden=false;ready=false;var u=DECKS[DK].url;deck.src=u+(u.indexOf('?')<0?'?':'&')+'edit=1'}
+function loadDeck(){$('ld').hidden=false;ready=false;var u=DECKS[DK].url;deck.src=u+(u.indexOf('?')<0?'?':'&')+'edit=1'+(NS?'&ns='+NS:'')}
 window.addEventListener('message',function(e){var m=e.data;if(!m||m.ns!=='fctl-ed'||m.from!=='deck'||e.source!==deck.contentWindow)return;
   if(m.t==='ready'){if(!m.ok){unsupported();return}ready=true;send('slides');send('swatches');send('open',{i:I});return}
   if(m.t==='unsupported'){unsupported();return}
@@ -228,7 +230,7 @@ function unsupported(){$('ld').hidden=false;$('ld').innerHTML='<span><b>المح
 var SLN=0;
 function navBtns(){$('sprev').disabled=I<=0;$('snext').disabled=SLN&&I>=SLN-1}
 function goSlide(i){if(i<0||(SLN&&i>=SLN))return;flushTyping();I=i;SEL=null;FOCUSP=null;$('slsel').value=String(i);navBtns();
-  try{history.replaceState(null,'','?deck='+DK+'&i='+i)}catch(e){}$('ld').hidden=false;$('ld').innerHTML='<span><b>بيحمّل السلايد…</b></span>';send('open',{i:i})}
+  try{history.replaceState(null,'','?deck='+DK+'&i='+i+(NS?'&ns='+NS:''))}catch(e){}$('ld').hidden=false;$('ld').innerHTML='<span><b>بيحمّل السلايد…</b></span>';send('open',{i:i})}
 $('sprev').onclick=function(){goSlide(I-1)};$('snext').onclick=function(){goSlide(I+1)};
 $('slsel').onchange=function(){goSlide(+this.value)};
 

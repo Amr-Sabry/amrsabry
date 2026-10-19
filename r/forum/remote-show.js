@@ -11,6 +11,8 @@
 'use strict';
 var W=window, D=document, P=W.performance;
 var me=D.currentScript, DECK=(me&&me.dataset.deck)||'deck';
+/* ns mode v1: ?ns=<name> keeps this window's storage and messages apart (the promo's live copy) */
+var NS=(new URLSearchParams(location.search).get('ns')||'').replace(/[^a-z0-9_-]/gi,''), KD=DECK+(NS?'~'+NS:'');
 var rNow=P.now.bind(P), rRAF=W.requestAnimationFrame.bind(W), rCAF=W.cancelAnimationFrame.bind(W),
     rST=W.setTimeout.bind(W), rCT=W.clearTimeout.bind(W);
 var RATE=+(new URLSearchParams(location.search).get('rcspeed'))||1;
@@ -48,7 +50,7 @@ function resume(){if(!paused)return;r0=rNow();paused=false;
 W.addEventListener('pointerdown',function(){if(paused)resume()},true);      /* keys: see «the remote» below */
 
 /* ---------------------------------------------------------------- map scenarios: start / end / learned length */
-var LSK='fctl-dur-'+DECK, DUR={};
+var LSK='fctl-dur-'+KD, DUR={};
 try{DUR=JSON.parse(localStorage.getItem(LSK)||'{}')||{}}catch(e){}
 /* lengths measured headlessly at real speed (18 Oct) for every map scenario, so the bar is close on the first showing;
    the length learned on this machine replaces it after the first run */
@@ -73,7 +75,7 @@ function animState(){active=active.filter(function(a){return a.c.isConnected});
   return best}
 
 /* ---------------------------------------------------------------- hidden slides (slide hide v1): Next / Back skip them, a direct jump still opens one */
-var HK='fctl-hide-'+DECK, HIDE={}, force=0;
+var HK='fctl-hide-'+KD, HIDE={}, force=0;
 function hload(){try{HIDE=JSON.parse(localStorage.getItem(HK)||'{}')||{}}catch(e){HIDE={}}}
 hload();W.addEventListener('storage',function(e){if(e.key===HK){hload();push(1)}});
 function hid(n){return !!HIDE[String(n)]}
@@ -82,7 +84,7 @@ function hid(n){return !!HIDE[String(n)]}
    The «تعديل النص» button (control window, the deck's bar or the E key) puts the show in edit mode: hover marks a text, a click makes
    it editable, Enter keeps it, Esc puts it back. Each change is kept per slide (original text, its occurrence on the slide → new text)
    in localStorage «fctl-edit-<deck>» and laid over the slide whenever it is drawn again, so it survives rebuilds, reloads and replays. */
-var EK='fctl-edit-'+DECK, EDT={}, editing=false, ORIG=new WeakMap(), RPL=[], eAct=null, eSnap=null, eHov=null, applying=false, eQ=0;
+var EK='fctl-edit-'+KD, EDT={}, editing=false, ORIG=new WeakMap(), RPL=[], eAct=null, eSnap=null, eHov=null, applying=false, eQ=0;
 function eload(){try{EDT=JSON.parse(localStorage.getItem(EK)||'{}')||{}}catch(e){EDT={}}}
 eload();W.addEventListener('storage',function(e){if(e.key===EK){eload();eSoon()}});
 function esave(){try{localStorage.setItem(EK,JSON.stringify(EDT))}catch(e){}}
@@ -95,7 +97,7 @@ function origOf(n){if(ORIG.has(n))return ORIG.get(n);var t=n.nodeValue.trim();re
    A number edited in a forum deck card is written into the card's data (not laid over the text) and the card is drawn again, so the
    counter counts to it and its pie, ring, bars, columns and icon rows follow. Per slide in localStorage «fctl-num-<deck>»:
    {slide id: [[card index, path, original value, new value]]}; the original is kept, so ↺ puts it back. */
-var NK='fctl-num-'+DECK, NUM={}, NF=new WeakSet(), NRX=/\d[\d,]*(?:\.\d+)?/g;
+var NK='fctl-num-'+KD, NUM={}, NF=new WeakSet(), NRX=/\d[\d,]*(?:\.\d+)?/g;
 function nload(){try{NUM=JSON.parse(localStorage.getItem(NK)||'{}')||{}}catch(e){NUM={}}}
 nload();W.addEventListener('storage',function(e){if(e.key===NK)nload()});
 function nsave(){try{localStorage.setItem(NK,JSON.stringify(NUM))}catch(e){}}
@@ -149,7 +151,7 @@ function nBoot(){if(!nOn())return;var k=String(cur);if(NUM[k]||SPEC[k])reShow()}
    «لما اضغط edit على سلايد يفتح السلايد في صفحة كانفا تقدر تضغط فيه على اي لاير وتغيره»)
    localStorage «fctl-spec-<deck>»: {slide n: {card | 'hdr': {g:[col,row,cols,rows], f:{'path': value}}}}; numbers stay in «fctl-num-<deck>».
    Before a slide is drawn the originals are put back, then the editor's changes and the numbers are laid over them. */
-var SK='fctl-spec-'+DECK, SPEC={}, NAP={};
+var SK='fctl-spec-'+KD, SPEC={}, NAP={};
 function sload(){try{SPEC=JSON.parse(localStorage.getItem(SK)||'{}')||{}}catch(e){SPEC={}}}
 sload();
 function pget(o,p){for(var i=0;i<p.length;i++){if(o==null||typeof o!=='object')return undefined;o=o[p[i]]}return o}
@@ -391,7 +393,7 @@ function black(on){if(!blk){blk=D.createElement('div');blk.style.cssText='positi
 
 /* ---------------------------------------------------------------- talking to the control window */
 var SID=Math.random().toString(36).slice(2,9), bc=null, peer=null, seen=[], lastSent='', sentSlides=false;
-try{bc=new BroadcastChannel('forum-ctl')}catch(e){}
+try{bc=new BroadcastChannel('forum-ctl'+(NS?'~'+NS:''))}catch(e){}
 var sigN=0;
 function post(m){if(PV||ED)return;m.ns='fctl';m.from='show';m.deck=DECK;m.sid=SID;m.title=D.title;if(m.t==='sig')m.n=++sigN;
   try{bc&&bc.postMessage(m)}catch(e){}

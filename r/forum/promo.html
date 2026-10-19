@@ -42,12 +42,15 @@ body{font-family:"Inter Display","Inter",system-ui,sans-serif;color:#f4f5fa}
 #end .f{font:600 17px/1 "Inter",sans-serif;letter-spacing:.32em;color:#9a9cb4;text-transform:uppercase}
 #vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(130% 100% at 50% 50%,transparent 60%,rgba(0,0,0,.55))}
 #fade{position:absolute;inset:0;background:#000;pointer-events:none;opacity:0}
+#tc{position:absolute;right:28px;bottom:22px;font:500 14px/1 "Inter",sans-serif;letter-spacing:.14em;color:rgba(255,255,255,.45);display:none}
+html.live #tc{display:block}
 </style>
+<script>/* the promo runs on its own copy of everything (?ns=promo): start it clean */try{Object.keys(localStorage).forEach(function(k){if(/~promo$/.test(k))localStorage.removeItem(k)})}catch(e){}if(!/[?&]render=1/.test(location.search))document.documentElement.classList.add("live")</script>
 </head>
 <body>
 <div id="bg"></div>
-<iframe id="show" src="/r/bacq9ed85gvpu47x2iusyj"></iframe>
-<iframe id="ctl" class="fr" src="control.html?promo=1"></iframe>
+<iframe id="show" src="/r/bacq9ed85gvpu47x2iusyj?ns=promo"></iframe>
+<iframe id="ctl" class="fr" src="control.html?promo=1&ns=promo"></iframe>
 <iframe id="ed" class="fr" src="about:blank"></iframe>
 <div id="labs"></div>
 <div id="title"><div><div class="k">Egypt Forum 2026 · V3 Update</div><div class="h" id="th">Forum Control</div><div class="s">One window to run the whole show.</div><div class="bar" id="tbar"></div></div></div>
@@ -185,7 +188,14 @@ function render(t){
   $('fade').style.opacity=seg(t,59.3,60);
   return w}
 window.render=render;window.__ready=function(){try{ready();var b=C&&C.querySelector('#decks button[data-d=v3]');if(b&&!b.classList.contains('on'))b.click();return !!(C&&C.getElementById('rows')&&C.querySelector('#rows .sl'))}catch(e){return false}};
-window.__openEditor=function(){$('ed').src='slide-editor.html?deck=v3&i=73'};
+window.__openEditor=function(){$('ed').src='slide-editor.html?deck=v3&i=73&ns=promo'};
+/* live preview (Amr 19 Oct 12:01: «وريني لايف بريفيو وانت شغال»): plays in real time in the browser and starts over at the end */
+(function(){if(!document.documentElement.classList.contains('live'))return;var tc=document.createElement('div');tc.id='tc';document.body.appendChild(tc);
+  var t0=0,go=false,opened=false,since=performance.now();
+  function fmt(t){t=Math.max(0,t);return '00:'+String(Math.floor(t)).padStart(2,'0')}
+  (function loop(now){requestAnimationFrame(loop);
+    if(!go){if(window.__ready&&window.__ready()){if(!opened){opened=true;window.__openEditor();since=now}if(now-since>6000){go=true;t0=now}}try{render(2.8)}catch(e){}tc.textContent='LIVE PREVIEW · LOADING';return}
+    var t=(now-t0)/1000;if(t>=60){location.reload();return}try{render(t)}catch(e){}tc.textContent='LIVE PREVIEW · '+fmt(t)+' / 01:00'})(performance.now())})();
 </script>
 </body>
 </html>

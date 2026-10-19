@@ -339,12 +339,15 @@ var DECKS={
   axes:  {n:'المحاور السبعة',     s:'محور ورا محور',       url:OFF?'forum-v3/7-axes.html':'/r/9fbhrknz7p2bx354w8jfur'},
   center:{n:'الخريطة في المنتصف', s:'13 سلايد',            url:OFF?'center-map/center-map.html':'/r/knva3dcbti4kedhdf9icnf'}
 };
+/* ns mode v1: ?ns=<name> keeps this window's storage and messages apart (the promo's live copy) */
+var NS=(new URLSearchParams(location.search).get('ns')||'').replace(/[^a-z0-9_-]/gi,''), SFX=NS?'~'+NS:'';
+function nsq(u){return NS?u+(u.indexOf('?')<0?'?':'&')+'ns='+NS:u}
 var $=function(id){return document.getElementById(id)};
 var LS={get:function(k,d){try{var v=localStorage.getItem(k);return v==null?d:v}catch(e){return d}},set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
-var sel=LS.get('fctl-deck','axes'); if(!DECKS[sel]) sel='axes';
+var sel=LS.get('fctl-deck'+SFX,'axes'); if(!DECKS[sel]) sel='axes';
 var SHOW=null;               /* the presentation window */
 var info={};                 /* per deck: {slides, st, seen, sid} */
-var bc=null; try{bc=new BroadcastChannel('forum-ctl')}catch(e){}
+var bc=null; try{bc=new BroadcastChannel('forum-ctl'+SFX)}catch(e){}
 function mid(){return Math.random().toString(36).slice(2)+Date.now().toString(36)}
 function send(c,x){var m={ns:'fctl',from:'ctl',c:c,deck:sel,mid:mid()};if(x)for(var k in x)m[k]=x[k];
   try{bc&&bc.postMessage(m)}catch(e){}
@@ -355,13 +358,13 @@ function toast(t){var el=$('toast');el.textContent=t;el.classList.add('on');clea
 function tabs(){$('decks').innerHTML=Object.keys(DECKS).map(function(k){var d=DECKS[k],live=info[k]&&Date.now()-info[k].seen<4500;
   return '<button type="button" data-d="'+k+'" class="'+(k===sel?'on':'')+'"><i class="'+(live?'live':'')+'"></i>'+d.n+'</button>'}).join('')}
 $('decks').addEventListener('click',function(e){var b=e.target.closest('button[data-d]');if(!b)return;pick(b.dataset.d,true)});
-function pick(k,nav){sel=k;LS.set('fctl-deck',k);tabs();pvLoad();render();
+function pick(k,nav){sel=k;LS.set('fctl-deck'+SFX,k);tabs();pvLoad();render();
   var live=info[k]&&Date.now()-info[k].seen<4500;
   if(nav&&!live&&anyLive()) openShow();   /* the show window is on another deck: take it to this one */
   else if(live) send('hello')}
 function anyLive(){return Object.keys(info).some(function(k){return Date.now()-info[k].seen<4500})}
 function openShow(){var w=null;
-  try{w=window.open(DECKS[sel].url,'forum-show','popup=yes,width=1280,height=720,left=80,top=60')}catch(e){}
+  try{w=window.open(nsq(DECKS[sel].url),'forum-show'+SFX,'popup=yes,width=1280,height=720,left=80,top=60')}catch(e){}
   if(w){SHOW=w;toast('شاشة العرض اتفتحت · اسحبها للشاشة الكبيرة وكبّرها ملء الشاشة')}else toast('المتصفح منع فتح نافذة جديدة · اسمح بالـ pop-ups للصفحة دي')}
 $('open').onclick=openShow;
 
@@ -370,7 +373,7 @@ var seenSig=[];      /* a signal arrives twice (postMessage and BroadcastChannel
 function onMsg(m,src){if(!m||m.ns!=='fctl'||m.from!=='show'||!DECKS[m.deck])return;
   var d=info[m.deck]||(info[m.deck]={});var fresh=!d.seen||Date.now()-d.seen>4500;d.seen=Date.now();d.sid=m.sid;
   if(src&&(m.deck===sel||!SHOW))SHOW=src;
-  if(m.hide&&JSON.stringify(m.hide)!==JSON.stringify(d.hide||null)){d.hide=m.hide;LS.set('fctl-hide-'+m.deck,JSON.stringify(m.hide));if(m.deck===sel&&m.t!=='hello'&&d.slides)buildList()}
+  if(m.hide&&JSON.stringify(m.hide)!==JSON.stringify(d.hide||null)){d.hide=m.hide;LS.set('fctl-hide-'+m.deck+SFX,JSON.stringify(m.hide));if(m.deck===sel&&m.t!=='hello'&&d.slides)buildList()}
   if(m.t==='texts'){if(m.deck===sel&&ED.open)edBuild(m);return}
   if(m.t==='hello'){d.slides=m.slides;if(m.deck===sel)buildList()}
   if(m.t==='state'){d.st=m;d.rt=performance.now();if(!d.slides)send('hello')}
@@ -387,10 +390,10 @@ var EYE='<svg viewBox="0 0 24 24"><path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.7
 var PEN='<svg viewBox="0 0 24 24"><path d="M21.17 6.81a1 1 0 0 0-3.98-3.98L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z"/><path d="m15 5 4 4"/></svg>';
 /* ed v1 (Amr 19 Oct 11:20: «كل سلايد … يكون فيه ايقونة edit هي اللي بتنقلني للتحكم في لاير»): the slide opens in the layer editor */
 function openEditor(i){if(sel==='center'){toast('المحرر شغال على V3 Update والمحاور السبعة');return}
-  var w=null;try{w=window.open('slide-editor.html?deck='+sel+'&i='+(i||0),'forum-editor')}catch(e){}if(!w)toast('المتصفح منع فتح نافذة جديدة · اسمح بالـ pop-ups للصفحة دي');else try{w.focus()}catch(e){}}
-function hideOf(k){var d=info[k];if(d&&d.hide)return d.hide;try{return JSON.parse(localStorage.getItem('fctl-hide-'+k)||'{}')||{}}catch(e){return {}}}
+  var w=null;try{w=window.open('slide-editor.html?deck='+sel+'&i='+(i||0)+(NS?'&ns='+NS:''),'forum-editor'+SFX)}catch(e){}if(!w)toast('المتصفح منع فتح نافذة جديدة · اسمح بالـ pop-ups للصفحة دي');else try{w.focus()}catch(e){}}
+function hideOf(k){var d=info[k];if(d&&d.hide)return d.hide;try{return JSON.parse(localStorage.getItem('fctl-hide-'+k+SFX)||'{}')||{}}catch(e){return {}}}
 function hidN(s){return !!hideOf(sel)[String(s.n)]}
-function setHide(h){var d=info[sel]||(info[sel]={});d.hide=h;LS.set('fctl-hide-'+sel,JSON.stringify(h));send('hide',{hide:h});buildList()}
+function setHide(h){var d=info[sel]||(info[sel]={});d.hide=h;LS.set('fctl-hide-'+sel+SFX,JSON.stringify(h));send('hide',{hide:h});buildList()}
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 var MAPI='<svg class="i mp" viewBox="0 0 24 24"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>';
 function buildList(){var d=info[sel];var R=$('rows');
@@ -552,8 +555,8 @@ rrender();
 
 /* ---------- preview frames (bento v1, Amr 19 Oct: «ومهم يكون فيه preview»): two silent copies of the deck (?preview=1), one on the
    slide / card that is on the big screen and one on what comes next. Each stops its own clock once its slide has settled. ---------- */
-var PVON=LS.get('fctl-pv','1')!=='0', PVS={};
-function pvUrl(){var u=DECKS[sel].url;return u+(u.indexOf('?')<0?'?':'&')+'preview=1'}
+var PVON=LS.get('fctl-pv'+SFX,'1')!=='0', PVS={};
+function pvUrl(){var u=nsq(DECKS[sel].url);return u+(u.indexOf('?')<0?'?':'&')+'preview=1'}
 function pvLoad(){document.body.classList.toggle('nopv',!PVON);$('pvtog').classList.toggle('off',!PVON);$('pvph').textContent=PVON?'بتحمّل…':'المعاينة مقفولة · اضغط العين فوق';
   ['pvnow','pvnext'].forEach(function(id){var f=$(id),want=PVON?pvUrl():'about:blank';if(f.dataset.u===want)return;f.dataset.u=want;f.classList.remove('ready');PVS[id]='';f.src=want})}
 ['pvnow','pvnext'].forEach(function(id){$(id).addEventListener('load',function(){var f=$(id);if(!f.dataset.u||f.dataset.u==='about:blank')return;PVS[id]='';pvSync();setTimeout(function(){f.classList.add('ready')},900)})});
@@ -562,14 +565,14 @@ function pvSync(){var d=info[sel],st=d&&d.st,cu=(st&&st.cur)||{i:0,k:0},sl=d&&d.
   if(sl&&st){var s=sl[now.i]||{},n=(s.steps||['']).length;if(now.k<n-1)nx={i:now.i,k:now.k+1};else{var j=now.i+1;while(sl[j]&&hidN(sl[j]))j++;if(sl[j])nx={i:j,k:0}}}
   else nx={i:now.i+1,k:0};
   $('tnext').classList.toggle('end',!nx);pvSend('pvnow',now);pvSend('pvnext',nx)}
-$('pvtog').onclick=function(e){e.stopPropagation();PVON=!PVON;LS.set('fctl-pv',PVON?'1':'0');pvLoad();pvSync();toast(PVON?'المعاينة اشتغلت':'المعاينة اتقفلت · بتوفّر جهد الجهاز')};
+$('pvtog').onclick=function(e){e.stopPropagation();PVON=!PVON;LS.set('fctl-pv'+SFX,PVON?'1':'0');pvLoad();pvSync();toast(PVON?'المعاينة اشتغلت':'المعاينة اتقفلت · بتوفّر جهد الجهاز')};
 $('tnext').onclick=function(){if($('next').disabled){toast('افتح شاشة العرض الأول');return}send('next');startTimer()};
 pvLoad();
 
 /* ---------- clocks ---------- */
-var t0=+LS.get('fctl-t0',0)||0;
-function startTimer(){if(!t0){t0=Date.now();LS.set('fctl-t0',t0)}}
-$('timer').onclick=function(){t0=0;LS.set('fctl-t0',0);$('timer').querySelector('b').textContent='00:00';toast('اتصفّر العدّاد')};
+var t0=+LS.get('fctl-t0'+SFX,0)||0;
+function startTimer(){if(!t0){t0=Date.now();LS.set('fctl-t0'+SFX,t0)}}
+$('timer').onclick=function(){t0=0;LS.set('fctl-t0'+SFX,0);$('timer').querySelector('b').textContent='00:00';toast('اتصفّر العدّاد')};
 setInterval(function(){var n=new Date();$('clock').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
   if(t0){var s=Math.floor((Date.now()-t0)/1000);$('timer').querySelector('b').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}},500);
 
