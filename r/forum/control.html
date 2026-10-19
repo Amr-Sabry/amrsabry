@@ -356,7 +356,11 @@ $('black').onclick=function(){send('black')};
 $('edit').onclick=function(){edOpen(!ED.open)};
 /* text edit v2: every text of the slide in its own field; typing changes the show at once */
 var ED={open:false,id:null,items:[],t:{}};
-function edOpen(on){ED.open=on;$('edp').hidden=!on;$('list').hidden=on;$('edit').classList.toggle('on',on);if(on){ED.id=null;$('erows').innerHTML='<div class="empty">بيحمّل النصوص…</div>';send('texts')}}
+/* text edit v3: an older show window (no text editing in it) is named instead of waiting forever */
+var OLDSHOW='<div class="empty"><b style="color:#ffd23f;display:block;margin-bottom:6px">شاشة العرض شغالة بنسخة قديمة</b>اضغط على شاشة العرض واعمل ريفرش (Cmd + R)، أو اقفلها وافتحها تاني من «فتح شاشة العرض»، وبعدين افتح «تعديل النص» تاني.</div>';
+function edOpen(on){ED.open=on;$('edp').hidden=!on;$('list').hidden=on;$('edit').classList.toggle('on',on);if(on){ED.id=null;var d=info[sel];
+  if(d&&d.st&&!('edits' in d.st)){$('erows').innerHTML=OLDSHOW;return}
+  $('erows').innerHTML='<div class="empty">بيحمّل النصوص…</div>';send('texts');clearTimeout(ED.w);ED.w=setTimeout(function(){if(ED.open&&ED.id==null)$('erows').innerHTML=OLDSHOW},6000)}}
 function edFit(t){t.style.height='auto';t.style.height=(t.scrollHeight+2)+'px'}
 function edBuild(m){var j0=JSON.stringify(m.items||[]),fo=document.activeElement&&document.activeElement.closest&&document.activeElement.closest('#erows');if(m.id===ED.id&&(j0===ED.j||fo))return;ED.j=j0;var d=info[sel],cu=d&&d.st&&d.st.cur||{},s=d&&d.slides&&d.slides[cu.i]||{};ED.id=m.id;ED.items=m.items||[];
   $('ecnt').textContent=(s.t?'سلايد '+(cu.i+1)+' · '+s.t:'');var h='',lk=null,n=0,ch=0;
