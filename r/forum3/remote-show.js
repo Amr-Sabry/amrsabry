@@ -14,6 +14,8 @@ var me=D.currentScript, DECK=(me&&me.dataset.deck)||'deck';
 var rNow=P.now.bind(P), rRAF=W.requestAnimationFrame.bind(W), rCAF=W.cancelAnimationFrame.bind(W),
     rST=W.setTimeout.bind(W), rCT=W.clearTimeout.bind(W);
 var RATE=+(new URLSearchParams(location.search).get('rcspeed'))||1;
+/* pv mode v1: ?preview=1 = a silent copy inside the control window (see «preview» near the end) */
+var PV=/[?&]preview=1(&|$)/.test(location.search);
 
 /* ---------------------------------------------------------------- the pausable clock */
 var paused=false, base=0, r0=rNow(), held=[];
@@ -59,7 +61,7 @@ var ANIM=W.ANIM={
   start:function(el,est,exact){var c=cardOf(el);active=active.filter(function(a){return a.c!==c&&a.c.isConnected});
     var k=keyOf(c),kn=exact?0:(DUR[k]||DUR0[k]);active.push({c:c,k:k,t0:vnow(),est:kn||est||0,known:!!DUR[k]||!!exact||(!!kn&&DUR0_EXACT)});push(1)},
   end:function(el){var c=cardOf(el),a=active.find(function(x){return x.c===c});if(!a)return;
-    DUR[a.k]=Math.round(vnow()-a.t0);try{localStorage.setItem(LSK,JSON.stringify(DUR))}catch(e){}
+    DUR[a.k]=Math.round(vnow()-a.t0);if(!PV)try{localStorage.setItem(LSK,JSON.stringify(DUR))}catch(e){}
     active=active.filter(function(x){return x!==a});push(1)},
   list:function(){return active},dur:function(){return DUR}};
 function animState(){active=active.filter(function(a){return a.c.isConnected});
@@ -260,7 +262,7 @@ function black(on){if(!blk){blk=D.createElement('div');blk.style.cssText='positi
 var SID=Math.random().toString(36).slice(2,9), bc=null, peer=null, seen=[], lastSent='', sentSlides=false;
 try{bc=new BroadcastChannel('forum-ctl')}catch(e){}
 var sigN=0;
-function post(m){m.ns='fctl';m.from='show';m.deck=DECK;m.sid=SID;m.title=D.title;if(m.t==='sig')m.n=++sigN;
+function post(m){if(PV)return;m.ns='fctl';m.from='show';m.deck=DECK;m.sid=SID;m.title=D.title;if(m.t==='sig')m.n=++sigN;
   try{bc&&bc.postMessage(m)}catch(e){}
   var to=[];if(peer)to.push(peer);try{if(W.opener&&!W.opener.closed&&to.indexOf(W.opener)<0)to.push(W.opener)}catch(e){}
   to.forEach(function(w){try{w.postMessage(m,'*')}catch(e){}})}
@@ -268,7 +270,7 @@ function state(){if(!A)return null;var c={};try{c=A.cur()}catch(e){}
   return {t:'state',edit:editing,edits:(EDT[curId()]||[]).length,hide:HIDE,cur:c,paused:paused,black:!!(blk&&blk.style.opacity==='1'),anim:animState(),map:(function(){try{return A.hasMap()}catch(e){return false}})()}}
 function push(force){var s=state();if(!s)return;var j=JSON.stringify(s);if(!force&&j===lastSent&&!s.anim)return;lastSent=j;post(s)}
 function hello(){if(!A)return;var sl=[];try{sl=A.slides()}catch(e){console.error(e)}post({t:'hello',slides:sl,hide:HIDE});sentSlides=true;push(1)}
-function handle(m){if(!m||m.ns!=='fctl'||m.from!=='ctl')return;if(m.deck&&m.deck!==DECK&&m.deck!=='*')return;
+function handle(m){if(PV||!m||m.ns!=='fctl'||m.from!=='ctl')return;if(m.deck&&m.deck!==DECK&&m.deck!=='*')return;
   if(m.mid){if(seen.indexOf(m.mid)>=0)return;seen.push(m.mid);if(seen.length>60)seen.shift()}
   if(m.c==='learn'){learning=!!m.on;return}
   if(m.c==='cfg'){if(m.cfg&&m.cfg.map){RCFG=m.cfg;try{localStorage.setItem(RK,JSON.stringify(RCFG))}catch(e){}}return}
@@ -300,7 +302,7 @@ var RDEF={'k:ArrowLeft':'next','k:ArrowDown':'next','k:PageDown':'next','k:Space
   'm:play':'next','m:pause':'next','m:playpause':'next','m:stop':'pause','k:KeyP':'pause','k:KeyB':'black','k:Period':'black','k:KeyR':'replay','k:KeyE':'edit'};
 function ract(s){var a=RCFG.map[s];if(a)return a==='none'?null:a;if(RCFG.swap){if(s==='k:ArrowLeft')return 'prev';if(s==='k:ArrowRight')return 'next'}return RDEF[s]||null}
 function ksig(e){var k=e.key||'';if(k==='MediaTrackNext')return 'm:nexttrack';if(k==='MediaTrackPrevious')return 'm:previoustrack';if(k==='MediaPlayPause')return 'm:playpause';if(k==='MediaStop')return 'm:stop';return 'k:'+(e.code||k)}
-function doAct(a,s){post({t:'sig',sig:s,act:a});if(learning||!A)return;
+function doAct(a,s){if(PV)return;post({t:'sig',sig:s,act:a});if(learning||!A)return;
   if(a==='pause'){paused?resume():pause();return} if(a==='black'){black();return} if(a==='edit'){editMode();return}
   if(paused)resume();try{if(a==='next')A.next();else if(a==='prev')A.prev();else if(a==='replay')A.replay()}catch(e){console.error(e)}push(1)}
 W.addEventListener('keydown',function(e){var t=e.target;
@@ -319,7 +321,7 @@ var pp=null;function playPress(a,s){if(!/^m:(play|pause|playpause)$/.test(s)||a!
 function silentWav(sec){var sr=8000,n=sr*sec,b=new ArrayBuffer(44+n),v=new DataView(b),w=function(o,s){for(var i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
   w(0,'RIFF');v.setUint32(4,36+n,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr,true);v.setUint16(32,1,true);v.setUint16(34,8,true);w(36,'data');v.setUint32(40,n,true);
   for(var i=0;i<n;i++)v.setUint8(44+i,128);return URL.createObjectURL(new Blob([b],{type:'audio/wav'}))}
-function media(){if(!('mediaSession' in navigator))return;
+function media(){if(PV||!('mediaSession' in navigator))return;
   try{if(!aud){aud=new Audio(silentWav(10));aud.loop=true}var p=aud.play();if(p&&p.catch)p.catch(function(){})}catch(e){}
   try{navigator.mediaSession.metadata=new MediaMetadata({title:D.title||'منتدى مصر 2026',artist:'الريموت'})}catch(e){}
   ['play','pause','previoustrack','nexttrack','seekbackward','seekforward','stop'].forEach(function(n){try{navigator.mediaSession.setActionHandler(n,function(){var s='m:'+n,a=ract(s);
@@ -327,10 +329,18 @@ function media(){if(!('mediaSession' in navigator))return;
   try{navigator.mediaSession.playbackState='playing'}catch(e){}}
 ['pointerdown','keydown'].forEach(function(t){W.addEventListener(t,function(){media()},{capture:true,once:true})});
 
+/* ---------------------------------------------------------------- preview (pv mode v1, Amr 19 Oct: «مهم يكون فيه preview»)
+   Inside the control window's frames: shows the slide / card the control asks for, then stops its clock once the slide has settled. */
+var pvQ=null, pvT=0;
+if(PV){(function(){var s=D.createElement('style');s.textContent='#ui,#prog,#rc-edbar,#aroma-mascot,.aroma-notes{display:none!important}*{cursor:default!important}';(D.head||D.documentElement).appendChild(s)})();
+  W.addEventListener('message',function(e){var m=e.data;if(m&&m.ns==='fctl-pv'&&e.source===W.parent)pvGo(m)})}
+function pvGo(m){if(!A){pvQ=m;return}pvQ=null;rCT(pvT);if(paused)resume();
+  try{force=1;try{A.go(m.i,m.k)}finally{force=0}}catch(e){console.error(e)}
+  var ms=m.settle||((function(){try{return A.hasMap()}catch(e){return false}})()?6500:3200);pvT=rST(function(){pause()},ms)}
 function boot(){
   try{if(typeof SLIDES!=='undefined'&&typeof ORDER!=='undefined'&&typeof show==='function')A=forumAdapter();
       else if(typeof SL!=='undefined'&&typeof go==='function')A=centerAdapter()}catch(e){console.error(e)}
-  if(!A)return;A.hook();try{nBoot()}catch(e){console.error(e)}try{eUI()}catch(e){console.error(e)}hello()}
+  if(!A)return;A.hook();if(PV&&pvQ)rST(function(){pvQ&&pvGo(pvQ)},0);try{nBoot()}catch(e){console.error(e)}try{eUI()}catch(e){console.error(e)}hello()}
 if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',function(){rST(boot,0)});else rST(boot,0);
 W.RC={pause:pause,resume:resume,isPaused:function(){return paused},now:vnow,deck:DECK,state:state,black:black};
 })();
