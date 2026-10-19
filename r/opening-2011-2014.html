@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>روف كت 2011–2014</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;600;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one 16:9 film frame with cinema bars; HUD + year ride the top bar, supers ride the bottom bar; toolbar under the frame */
+:root{
+  --ink:#070707; --bar:#000; --paper:#f3efe6; --muted:#9d978c; --alarm:#e3342f; --alarm-deep:#5e1110; --dawn:#fbf6ea;
+  --display:"Alexandria","Noto Kufi Arabic","Segoe UI",Tahoma,sans-serif;
+  --text:"IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:var(--ink);color:var(--paper);font-family:var(--text)}
+#app{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+#stage{position:relative;width:min(100%,calc((100vh - 84px) * 16 / 9));aspect-ratio:16/9;background:#000;overflow:hidden;container-type:inline-size}
+#vid{position:absolute;inset:0;isolation:isolate;z-index:0}
+#vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none;opacity:0;transform:scale(var(--z,1.08));filter:grayscale(.55) sepia(.22) contrast(1.22) brightness(.84)}
+#vid iframe.on{opacity:1}
+#grade{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,transparent 42%,rgba(0,0,0,.78) 100%),linear-gradient(180deg,rgba(60,14,6,.16),rgba(0,0,0,.08))}
+#grain{position:absolute;inset:0;width:100%;height:100%;mix-blend-mode:overlay;opacity:.17;pointer-events:none;image-rendering:pixelated}
+.bar{position:absolute;left:0;right:0;height:11.5%;background:var(--bar);display:flex;align-items:center;justify-content:space-between;padding-inline:3.2cqw;z-index:3}
+.bar.top{top:0}.bar.bottom{bottom:0}
+#hud{display:flex;align-items:center;gap:1.2cqw;transition:opacity .6s}
+#hud.off{opacity:0}
+#hud .lbl{font-size:1.15cqw;color:var(--muted);letter-spacing:.02em}
+#hud .val{display:flex;align-items:baseline;gap:.5cqw;font-family:var(--display);font-variant-numeric:tabular-nums}
+#hud b{font-size:2.5cqw;font-weight:800;color:var(--paper);transition:color .4s;direction:ltr;unicode-bidi:isolate}
+#hud small{font-size:1.05cqw;color:var(--muted)}
+#hud .meter{width:13cqw;height:.32cqw;background:#262321;position:relative;overflow:hidden}
+#hud .meter i{position:absolute;top:0;bottom:0;right:0;width:100%;background:var(--paper);transition:background .4s}
+#hud.low b{color:var(--alarm)}
+#hud.low .meter i{background:var(--alarm)}
+#yr{font-family:var(--display);font-weight:900;font-size:3.1cqw;color:transparent;-webkit-text-stroke:.08cqw var(--paper);letter-spacing:.06em;font-variant-numeric:tabular-nums;opacity:.85}
+#lower{display:flex;align-items:center;gap:1.4cqw;clip-path:inset(0 0 0 100%);transition:clip-path .55s cubic-bezier(.2,.7,.1,1)}
+#lower.in{clip-path:inset(0 0 0 0)}
+#ld{font-family:var(--display);font-weight:600;font-size:1.25cqw;background:var(--alarm);color:#fff;padding:.35cqw .9cqw;white-space:nowrap}
+#lh{font-family:var(--display);font-weight:800;font-size:2.35cqw;line-height:1.15;color:var(--paper);text-wrap:balance}
+#ctrBar{font-size:1cqw;color:var(--muted);font-variant-numeric:tabular-nums}
+#card{position:absolute;inset:0;z-index:5;background:#000;display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .4s,background 1.6s}
+#card.on{opacity:1}
+#card.dawn{background:var(--dawn)}
+.open,.chap,.big,.end{text-align:center;display:grid;gap:1.4cqw;justify-items:center}
+.open .range{font-family:var(--display);font-weight:900;font-size:10cqw;letter-spacing:.02em;font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate}
+.open .range i{font-style:normal;color:var(--alarm);font-weight:400;margin:0 1.5cqw}
+.open .sub{font-size:2.4cqw;color:var(--muted);opacity:0;animation:rise .9s .9s forwards}
+.chap .y{font-family:var(--display);font-weight:900;font-size:17cqw;line-height:1;letter-spacing:.03em;animation:slam .5s cubic-bezier(.2,1.4,.4,1) both}
+.chap .w{font-family:var(--display);font-weight:600;font-size:3.6cqw;color:var(--alarm);opacity:0;animation:rise .6s .35s forwards}
+.big .when{font-size:1.9cqw;color:var(--muted)}
+.big .num{font-family:var(--display);font-weight:900;font-size:19cqw;line-height:.95;color:var(--alarm);font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate}
+.big .unit{font-family:var(--display);font-weight:600;font-size:3cqw;margin-top:-.6cqw}
+.big .l1,.big .l2{opacity:0;transition:opacity .7s}
+.big .l1{font-family:var(--display);font-weight:800;font-size:3.1cqw}
+.big .l2{font-size:1.9cqw;color:var(--muted)}
+.big .show{opacity:1}
+.end .line{font-family:var(--display);font-weight:800;font-size:3.6cqw;opacity:0;transform:translateY(1cqw);transition:opacity .6s,transform .6s}
+.end .line.lead{font-size:8cqw;font-weight:900}
+.end .line.show{opacity:1;transform:none}
+.end.gone .line{opacity:0}
+.end .final{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:5.4cqw;color:var(--ink);opacity:0;transition:opacity 1.4s}
+.end .final.show{opacity:1}
+#flash{position:absolute;inset:0;background:#fff;opacity:0;z-index:6;pointer-events:none}
+#flash.go{animation:flash .45s ease-out}
+#flash.go.soft{animation:flashsoft .25s ease-out}
+#start{position:absolute;inset:0;z-index:8;background:#000;border:0;color:var(--paper);display:grid;place-items:center;align-content:center;gap:1.6cqw;cursor:pointer;font-family:var(--display)}
+#start .t{font-weight:900;font-size:6cqw;direction:ltr;unicode-bidi:isolate}
+#start .p{font-weight:600;font-size:2cqw;border:.12cqw solid var(--alarm);padding:1cqw 2.6cqw;color:#fff;background:var(--alarm-deep)}
+#start .n{font-size:1.25cqw;color:var(--muted);font-family:var(--text)}
+#start:focus-visible .p{outline:2px solid #fff;outline-offset:4px}
+#start[hidden]{display:none}
+#tools{width:min(100%,calc((100vh - 84px) * 16 / 9));display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;font-size:13px;color:var(--muted)}
+#tools button{font:inherit;color:var(--paper);background:#1a1817;border:1px solid #33302c;padding:6px 12px;cursor:pointer}
+#tools button:hover{border-color:var(--alarm)}
+#tools button:focus-visible{outline:2px solid var(--alarm);outline-offset:2px}
+#tools .sp{flex:1}
+#ctr{font-variant-numeric:tabular-nums;color:var(--paper)}
+@keyframes rise{from{opacity:0;transform:translateY(.8cqw)}to{opacity:1;transform:none}}
+@keyframes slam{from{opacity:0;transform:scale(1.25);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+@keyframes flash{0%{opacity:.85}100%{opacity:0}}
+@keyframes flashsoft{0%{opacity:.28}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.chap .y{animation:none}#lower{transition:none}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="stage">
+    <div id="vid"></div>
+    <div id="grade"></div>
+    <canvas id="grain" width="320" height="180"></canvas>
+    <div class="bar top">
+      <div id="hud" class="off"><span class="lbl">الاحتياطي الأجنبي</span><span class="val"><b id="hv">36.0</b><small>مليار $</small></span><span class="meter"><i id="hm"></i></span></div>
+      <div id="yr">2011</div>
+    </div>
+    <div class="bar bottom">
+      <div id="lower"><span id="ld"></span><span id="lh"></span></div>
+      <div id="ctrBar"></div>
+    </div>
+    <div id="card"></div>
+    <div id="flash"></div>
+    <button id="start" type="button"><span class="t">2011 → 2014</span><span class="p">▶ شغّل الروف كت</span><span class="n">حوالي دقيقة وربع · شغّل الصوت</span></button>
+  </div>
+  <div id="tools">
+    <button id="restart" type="button">⟲ من الأول</button>
+    <button id="snd" type="button">الصوت: شغّال</button>
+    <span id="ctr">—</span>
+    <span class="sp"></span>
+    <span>روف كت للمعاينة · المقاطع بتتعرض من يوتيوب ومحتاجة ترخيص قبل العرض</span>
+  </div>
+</div>
+<script>
+(function(){
+var SEQ=[
+{t:'card',kind:'open',dur:3000},
+{t:'card',kind:'chap',y:'2011',w:'الانفلات',dur:1300},
+{t:'shot',id:'HydxUysxsfk',s:5,d:1.3,y:'2011',tag:'الأمن',date:'يناير 2011',head:'فراغ أمني… وحرائق في قلب القاهرة',hud:35.6},
+{t:'shot',id:'HydxUysxsfk',s:35,d:1.2,y:'2011'},
+{t:'shot',id:'HydxUysxsfk',s:72,d:1.2,y:'2011'},
+{t:'shot',id:'Q5fcFOumegs',s:11,d:1.8,z:1.36,y:'2011',tag:'الأمن',date:'يناير 2011',head:'اقتحام السجون والأقسام: 23 ألف هارب',hud:35},
+{t:'shot',id:'wTOf0x-eGU0',s:15,d:1.8,y:'2011',tag:'التراث',date:'يناير 2011',head:'حتى المتحف المصري لم يسلم من النهب',hud:34.2},
+{t:'shot',id:'VOjS-cIf_H8',s:24,d:1.9,z:1.36,y:'2011',tag:'الاقتصاد',date:'مارس 2011',head:'البورصة تُغلق 55 يومًا وتخسر 49% في عام',hud:30},
+{t:'shot',id:'LngCbfe4ax4',s:14,d:1.3,y:'2011',tag:'الطاقة',date:'2011',head:'خط الغاز يُفجَّر 10 مرات في عام واحد',hud:27},
+{t:'shot',id:'d0wBwDYqPGs',s:2,d:1.1,y:'2011'},
+{t:'shot',id:'LngCbfe4ax4',s:27,d:1.1,y:'2011'},
+{t:'shot',id:'k7r8-9jYW8M',s:90,d:1.3,y:'2011',tag:'التراث',date:'ديسمبر 2011',head:'حريق المجمع العلمي المصري',hud:18.1},
+{t:'shot',id:'k7r8-9jYW8M',s:24,d:1.1,y:'2011'},
+{t:'card',kind:'chap',y:'2012',w:'النزيف',dur:1300},
+{t:'shot',id:'kjxq6W_d2GE',s:6,d:1.3,y:'2012',tag:'المجتمع',date:'فبراير 2012',head:'كارثة استاد بورسعيد: 74 قتيلًا',hud:16.4},
+{t:'shot',id:'kjxq6W_d2GE',s:23,d:1.2,y:'2012'},
+{t:'shot',id:'qJzZHNNMaHc',s:22,d:1.3,y:'2012',tag:'الإرهاب',date:'أغسطس 2012',head:'رفح: استشهاد 16 جنديًا وقت الإفطار',hud:15.6},
+{t:'shot',id:'DIOFynK11oE',s:15,d:1.2,y:'2012'},
+{t:'shot',id:'vtw-bEH6wTE',s:122,d:1.8,y:'2012',tag:'الصحة',date:'أكتوبر 2012',head:'إضراب الأطباء… والمستشفيات تحت الضغط',hud:15.4},
+{t:'shot',id:'u_G9F4maTNA',s:4,d:1.9,y:'2012',tag:'النقل',date:'نوفمبر 2012',head:'قطار منفلوط يدهس أتوبيس مدرسة: أكثر من 50 ضحية',hud:15.2},
+{t:'shot',id:'OJJPeqDCUgc',s:11,d:1.3,z:1.36,y:'2012',tag:'المجتمع',date:'2012',head:'3,817 احتجاجًا في عام واحد',hud:15.1},
+{t:'shot',id:'OJJPeqDCUgc',s:34,d:1.1,z:1.36,y:'2012'},
+{t:'shot',id:'Uml5RowzSKs',s:13,d:1.3,y:'2012',tag:'الاقتصاد',date:'ديسمبر 2012',head:'المركزي: الاحتياطي بلغ «الحد الحرج»',hud:15.0},
+{t:'shot',id:'Uml5RowzSKs',s:44,d:1.1,y:'2012'},
+{t:'card',kind:'chap',y:'2013',w:'حافة الهاوية',dur:1300},
+{t:'shot',id:'p26wtTPmAUc',s:2,d:1.8,y:'2013',tag:'النقل',date:'يناير 2013',head:'قطار المجندين بالبدرشين: 19 قتيلًا',hud:13.8},
+{t:'shot',id:'zh9lZ4GmSBI',s:12,d:1.3,y:'2013',tag:'الأمن',date:'يناير 2013',head:'طوارئ وحظر تجول في مدن القناة',hud:13.6},
+{t:'shot',id:'zh9lZ4GmSBI',s:2,d:1.1,y:'2013'},
+{t:'shot',id:'kMzztasqpdQ',s:11,d:1.3,y:'2013',tag:'الاقتصاد',date:'2013',head:'الدولار في السوق السوداء يقترب من 8 جنيهات',hud:13.5},
+{t:'shot',id:'kMzztasqpdQ',s:26,d:1.1,y:'2013'},
+{t:'shot',id:'YBrxvjW06ro',s:80,d:1.3,z:1.36,y:'2013',tag:'المعيشة',date:'2013',head:'أزمة العيش… وطوابير أمام المخابز'},
+{t:'shot',id:'YBrxvjW06ro',s:12,d:1.1,z:1.36,y:'2013'},
+{t:'shot',id:'Usk4KllkeF8',s:24,d:1.8,z:1.36,y:'2013',tag:'العمل',date:'2013',head:'البطالة 13.4%: 3.6 مليون بلا عمل'},
+{t:'shot',id:'NUSWegoojSo',s:165,d:1.3,y:'2013',tag:'السياحة',date:'2013',head:'الإيرادات من 12.5 إلى 5.9 مليار دولار'},
+{t:'shot',id:'N9VLBaZS6Pk',s:34,d:1.1,y:'2013'},
+{t:'shot',id:'7u94-H2HNlw',s:8,d:1.0,y:'2013'},
+{t:'shot',id:'NUSWegoojSo',s:355,d:1.1,y:'2013'},
+{t:'card',kind:'big',dur:5200},
+{t:'shot',id:'ouphn8YCi6c',s:1,d:1.3,y:'2013',tag:'الطاقة',date:'يونيو 2013',head:'طوابير الوقود: مخزون السولار يكفي 8 أيام'},
+{t:'shot',id:'_madKh62jpM',s:3,d:1.2,y:'2013'},
+{t:'shot',id:'jmilZxq8_rU',s:23,d:1.3,y:'2013',tag:'المجتمع',date:'أغسطس 2013',head:'الاعتداء على 42 كنيسة في 3 أيام'},
+{t:'shot',id:'jmilZxq8_rU',s:47,d:1.1,y:'2013'},
+{t:'shot',id:'OWkKirbz5CU',s:14,d:1.3,y:'2013',tag:'الإرهاب',date:'2013',head:'سيناء: عمليات إرهابية متتالية'},
+{t:'shot',id:'OWkKirbz5CU',s:34,d:1.1,y:'2013'},
+{t:'shot',id:'FiyA_LB2k6s',s:12,d:1.3,y:'2013',tag:'الإرهاب',date:'ديسمبر 2013',head:'تفجير مديرية أمن الدقهلية'},
+{t:'shot',id:'FiyA_LB2k6s',s:22,d:1.1,y:'2013'},
+{t:'card',kind:'chap',y:'2014',w:'الظلام',dur:1300},
+{t:'shot',id:'tuLDd-07YuE',s:11,d:1.3,y:'2014',tag:'الإرهاب',date:'يناير 2014',head:'تفجير مديرية أمن القاهرة… ومتحف الفن الإسلامي'},
+{t:'shot',id:'tuLDd-07YuE',s:35,d:1.2,y:'2014'},
+{t:'shot',id:'_ng9ByjZw2A',s:10,d:1.2,z:1.36,y:'2014',tag:'الطاقة',date:'صيف 2014',head:'انقطاع الكهرباء حتى 8 ساعات يوميًا'},
+{t:'shot',id:'_ng9ByjZw2A',s:34,d:1.5,z:1.36,y:'2014'},
+{t:'shot',id:'Rh-zJq4-4AM',s:25,d:1.8,y:'2014',tag:'الإرهاب',date:'أكتوبر 2014',head:'كرم القواديس: استشهاد 31 جنديًا'},
+{t:'card',kind:'end',dur:8000}
+];
+var LEAD=8.0,OFF=6.6;
+var $=function(s){return document.querySelector(s)};
+var vid=$('#vid'),card=$('#card'),lower=$('#lower'),ld=$('#ld'),lh=$('#lh'),hud=$('#hud'),hv=$('#hv'),hm=$('#hm'),yr=$('#yr'),flash=$('#flash'),ctr=$('#ctr'),ctrBar=$('#ctrBar'),startBtn=$('#start');
+var SHOTS=SEQ.filter(function(x){return x.t==='shot'});
+SHOTS.forEach(function(s,i){s.n=i+1});
+var total=0;SEQ.forEach(function(it){it.at=total;total+=(it.t==='card'?it.dur:Math.round(it.d*1000))});
+var run=0,uid=0,zTop=1,players=new Map(),hudVal=36,hudRaf=0,timers=[],inShot=false,soundOn=true;
+function later(fn,ms,token){var h=setTimeout(function(){if(token===run)fn()},Math.max(0,ms));timers.push(h);return h}
+
+/* ---------- YouTube players over postMessage ---------- */
+function startAt(sh){return Math.max(0,sh.s-OFF)}
+function embedUrl(sh){
+  var p=new URLSearchParams({enablejsapi:'1',autoplay:'1',mute:'1',controls:'0',start:String(Math.floor(startAt(sh))),playsinline:'1',rel:'0',iv_load_policy:'3',cc_load_policy:'0',disablekb:'1',fs:'0',modestbranding:'1',origin:location.origin});
+  return 'https://www.youtube.com/embed/'+sh.id+'?'+p.toString();
+}
+function post(p,func,args){try{p.el.contentWindow.postMessage(JSON.stringify({event:'command',func:func,args:args||[]}),'*')}catch(e){}}
+function noCaptions(p){post(p,'unloadModule',['captions']);post(p,'unloadModule',['cc'])}
+function prepare(sh){
+  if(!sh)return null;
+  if(players.has(sh))return players.get(sh);
+  var el=document.createElement('iframe');
+  var p={el:el,sh:sh,id:++uid,ready:false,shown:false};
+  el.allow='autoplay; encrypted-media';
+  el.referrerPolicy='strict-origin-when-cross-origin';
+  el.style.setProperty('--z',sh.z||1.08);
+  el.src=embedUrl(sh);
+  vid.appendChild(el);
+  players.set(sh,p);
+  el.addEventListener('load',function(){
+    var tries=0;
+    p.hs=setInterval(function(){
+      if(p.ready||tries++>40){clearInterval(p.hs);return}
+      try{el.contentWindow.postMessage(JSON.stringify({event:'listening',id:p.id,channel:'widget'}),'*')}catch(e){}
+    },250);
+  });
+  return p;
+}
+function markReady(p){if(p.ready)return;p.ready=true;post(p,'mute');noCaptions(p);setTimeout(function(){noCaptions(p)},900)}
+window.addEventListener('message',function(e){
+  if(typeof e.data!=='string')return;
+  var d;try{d=JSON.parse(e.data)}catch(err){return}
+  var p=null;players.forEach(function(q){if(q.el.contentWindow===e.source)p=q});
+  if(!p)return;
+  if(d.event==='onReady'||d.event==='initialDelivery'||d.event==='infoDelivery')markReady(p);
+});
+function dropShown(keep){
+  players.forEach(function(q,k){if(q!==keep&&q.shown){clearInterval(q.hs);q.el.remove();players.delete(k)}});
+}
+function dropAll(){
+  players.forEach(function(q,k){clearInterval(q.hs);q.el.remove();players.delete(k)});
+}
+function setHud(v){hudVal=v;hv.textContent=v.toFixed(1);hm.style.width=(v/36*100)+'%';hud.classList.toggle('low',v<20)}
+function tweenHud(to,ms){
+  cancelAnimationFrame(hudRaf);
+  var from=hudVal,s0=performance.now();
+  (function step(now){var k=Math.min(1,(now-s0)/ms);var e=1-Math.pow(1-k,3);setHud(from+(to-from)*e);if(k<1)hudRaf=requestAnimationFrame(step)})(s0);
+}
+
+/* ---------- sound ---------- */
+var AC=null,master=null,droneGain=null;
+function initAudio(){
+  if(AC)return;
+  try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){return}
+  master=AC.createGain();master.gain.value=soundOn?0.9:0;master.connect(AC.destination);
+  var f=AC.createBiquadFilter();f.type='lowpass';f.frequency.value=170;f.Q.value=7;
+  droneGain=AC.createGain();droneGain.gain.value=0;
+  [[55,'sawtooth',.16],[55.7,'sawtooth',.16],[82.4,'sine',.12]].forEach(function(v){var o=AC.createOscillator();o.type=v[1];o.frequency.value=v[0];var g=AC.createGain();g.gain.value=v[2];o.connect(g);g.connect(f);o.start()});
+  var lfo=AC.createOscillator();lfo.frequency.value=.08;var lg=AC.createGain();lg.gain.value=80;lfo.connect(lg);lg.connect(f.frequency);lfo.start();
+  f.connect(droneGain);droneGain.connect(master);
+}
+function droneTo(v,sec){if(!AC)return;droneGain.gain.cancelScheduledValues(AC.currentTime);droneGain.gain.setTargetAtTime(v,AC.currentTime,(sec||2)/3)}
+function thump(vol){if(!AC)return;var t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.frequency.setValueAtTime(95,t);o.frequency.exponentialRampToValueAtTime(36,t+.4);g.gain.setValueAtTime(vol||.55,t);g.gain.exponentialRampToValueAtTime(.001,t+.7);o.connect(g);g.connect(master);o.start(t);o.stop(t+.75)}
+function hit(vol){if(!AC)return;var dur=1.4,b=AC.createBuffer(1,AC.sampleRate*dur,AC.sampleRate),d=b.getChannelData(0);for(var i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,4);var s=AC.createBufferSource();s.buffer=b;var f=AC.createBiquadFilter();f.type='lowpass';f.frequency.value=1100;var g=AC.createGain();g.gain.value=vol||.45;s.connect(f);f.connect(g);g.connect(master);s.start();thump(.7)}
+function tick(){if(!AC)return;var t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain(),f=AC.createBiquadFilter();o.type='square';o.frequency.value=1500;f.type='highpass';f.frequency.value=900;g.gain.setValueAtTime(.05,t);g.gain.exponentialRampToValueAtTime(.0005,t+.035);o.connect(f);f.connect(g);g.connect(master);o.start(t);o.stop(t+.05)}
+function pad(){if(!AC)return;var t=AC.currentTime;[220,277.2,329.6,440].forEach(function(hz,i){var o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=hz;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.07-i*.01,t+2.2);g.gain.linearRampToValueAtTime(0,t+7);o.connect(g);g.connect(master);o.start(t);o.stop(t+7.2)})}
+
+/* ---------- grain ---------- */
+var gc=$('#grain'),gx=gc.getContext('2d'),img=gx.createImageData(320,180);
+function grain(){var a=img.data;for(var i=0;i<a.length;i+=4){var v=Math.random()*255;a[i]=a[i+1]=a[i+2]=v;a[i+3]=255}gx.putImageData(img,0,0)}
+grain();
+if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches)setInterval(grain,42);
+
+/* ---------- supers ---------- */
+function showLower(sh){
+  if(!sh.head)return;
+  lower.classList.remove('in');
+  ld.textContent=sh.tag+' · '+sh.date;lh.textContent=sh.head;
+  void lower.offsetWidth;lower.classList.add('in');
+}
+function hideLower(){lower.classList.remove('in')}
+function softFlash(){flash.classList.remove('go','soft');void flash.offsetWidth;flash.classList.add('go','soft')}
+function doFlash(){flash.classList.remove('go','soft');void flash.offsetWidth;flash.classList.add('go')}
+
+/* ---------- cards ---------- */
+function showCard(c,token){
+  inShot=false;hideLower();ctrBar.textContent='';
+  card.classList.remove('dawn');
+  if(c.kind==='open'){
+    card.innerHTML='<div class="open"><div class="range">2011<i>→</i>2014</div><div class="sub">أربع سنوات على الحافة</div></div>';
+    droneTo(.55,3);
+  }else if(c.kind==='chap'){
+    card.innerHTML='<div class="chap"><div class="y">'+c.y+'</div><div class="w">'+c.w+'</div></div>';
+    yr.textContent=c.y;doFlash();hit(.4);
+  }else if(c.kind==='big'){
+    card.innerHTML='<div class="big"><div class="when">مارس 2013 · الاحتياطي الأجنبي</div><div class="num" id="bn">36.0</div><div class="unit">مليار دولار</div><div class="l1" id="b1">يكفي 3 شهور واردات فقط</div><div class="l2" id="b2">موديز تخفّض التصنيف إلى Caa1 · التخفيض الائتماني الخامس عشر منذ 2011</div></div>';
+    var bn=$('#bn'),s0=performance.now();
+    (function step(now){if(token!==run)return;var k=Math.min(1,(now-s0)/2600),e=1-Math.pow(1-k,4);bn.textContent=(36-(36-13.4)*e).toFixed(1);if(k<1)requestAnimationFrame(step)})(s0);
+    tweenHud(13.4,2600);
+    later(function(){hit(.55);doFlash();$('#b1').classList.add('show')},2700,token);
+    later(function(){$('#b2').classList.add('show')},3900,token);
+    later(function(){hud.classList.add('off')},6000,token);
+  }else if(c.kind==='end'){
+    hud.classList.add('off');
+    card.innerHTML='<div class="end" id="endbox"><div class="line lead">4 سنوات</div><div class="line">17 تخفيضًا للتصنيف الائتماني</div><div class="line">احتياطي في القاع</div><div class="line">السياحة بأقل من نصف دخلها</div><div class="final" id="fin">ومن هنا… بدأ البناء</div></div>';
+    var lines=card.querySelectorAll('.line');
+    lines.forEach(function(l,i){later(function(){l.classList.add('show');thump(.35)},300+i*800,token)});
+    later(function(){$('#endbox').classList.add('gone');droneTo(0,1.5)},4400,token);
+    later(function(){card.classList.add('dawn');$('#fin').classList.add('show');pad()},5200,token);
+  }
+  card.classList.add('on');
+  later(function(){dropShown(null)},450,token);
+}
+
+/* ---------- shots ---------- */
+function showShot(sh,token){
+  var p=prepare(sh);
+  p.shown=true;
+  p.el.style.zIndex=++zTop;p.el.classList.add('on');
+  card.classList.remove('on');
+  inShot=true;yr.textContent=sh.y;
+  showLower(sh);
+  ctr.textContent='لقطة '+sh.n+' / '+SHOTS.length;ctrBar.textContent=sh.n+' / '+SHOTS.length;
+  if(typeof sh.hud==='number'){hud.classList.remove('off');tweenHud(sh.hud,sh.d*1000)}
+  if(sh.head){thump(.32);softFlash()}else{tick()}
+  later(function(){dropShown(p)},350,token);
+}
+
+/* ---------- timeline ---------- */
+function finish(){
+  inShot=false;
+  startBtn.querySelector('.p').textContent='⟲ شغّل تاني';
+  startBtn.hidden=false;
+}
+function reset(){
+  run++;timers.forEach(clearTimeout);timers=[];cancelAnimationFrame(hudRaf);
+  dropAll();inShot=false;
+  setHud(36);hud.classList.add('off');hideLower();card.classList.remove('on','dawn');card.innerHTML='';yr.textContent='2011';ctr.textContent='—';ctrBar.textContent='';
+}
+function start(){
+  initAudio();if(AC&&AC.state==='suspended')AC.resume();
+  reset();startBtn.hidden=true;
+  var token=run;
+  SEQ.forEach(function(it){
+    later(function(){if(it.t==='card')showCard(it,token);else showShot(it,token)},it.at,token);
+    if(it.t==='shot')later(function(){prepare(it)},it.at-LEAD*1000,token);
+  });
+  later(finish,total,token);
+}
+startBtn.addEventListener('click',start);
+$('#restart').addEventListener('click',start);
+$('#snd').addEventListener('click',function(){soundOn=!soundOn;this.textContent=soundOn?'الصوت: شغّال':'الصوت: مقفول';if(master)master.gain.setTargetAtTime(soundOn?.9:0,AC.currentTime,.05)});
+setHud(36);
+})();
+</script>
+</body>
+</html>
