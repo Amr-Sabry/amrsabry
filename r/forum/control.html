@@ -307,7 +307,7 @@ body.nopv .frame iframe+.ph{display:grid}
         <button id="open" type="button"><svg class="i" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8M12 17v4"/></svg>فتح شاشة العرض</button>
         <button id="black" type="button"><svg class="i" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>شاشة سوداء</button>
         <button id="rbtn" type="button"><i></i>الريموت</button>
-        <button id="edit" type="button" title="يفتح السلايد اللي على الشاشة في محرر الليرز"><svg class="i" viewBox="0 0 24 24"><path d="M21.17 6.81a1 1 0 0 0-3.98-3.98L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z"/><path d="m15 5 4 4"/></svg>تعديل السلايد</button>
+        <button id="edit" type="button" title="يفتح السلايد اللي على الشاشة في محرر الـ Layers"><svg class="i" viewBox="0 0 24 24"><path d="M21.17 6.81a1 1 0 0 0-3.98-3.98L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z"/><path d="m15 5 4 4"/></svg>تعديل السلايد</button>
       </div>
     </section>
   </div>
@@ -404,7 +404,7 @@ function buildList(){var d=info[sel];var R=$('rows');
   d.slides.forEach(function(s){if(q&&(s.t+' '+s.s+' '+s.ax+' '+(s.i+1)).indexOf(q)<0)return;
     if(s.ax!==lastAx&&!q){lastAx=s.ax;if(s.ax)h+='<div class="sec">'+esc(s.ax)+'</div>'}
     var hz=hidN(s);h+='<div class="sl'+(hz?' hid':'')+'" data-i="'+s.i+'"><span class="n num">'+(s.i+1)+'</span><div class="tx"><b>'+esc(s.t||'—')+'</b>'+(s.s?'<small>'+esc(s.s)+'</small>':'')+'</div>'+(s.map?MAPI:'<span></span>')+
-      '<button type="button" class="eb" data-e="'+s.i+'" title="تعديل السلايد (الليرز)"'+(sel==='center'?' hidden':'')+'>'+PEN+'</button>'+
+      '<button type="button" class="eb" data-e="'+s.i+'" title="تعديل السلايد (Layers)"'+(sel==='center'?' hidden':'')+'>'+PEN+'</button>'+
       '<button type="button" class="hb" data-h="'+esc(String(s.n))+'" title="'+(hz?'إظهار السلايد':'إخفاء السلايد (التالي والسابق يعدّوه)')+'">'+(hz?EYEX:EYE)+'</button>'+
       (s.steps.length>1?'<div class="pills">'+s.steps.map(function(t,k){return '<button type="button" data-i="'+s.i+'" data-k="'+k+'" title="'+esc(t)+'">'+(k+1)+'</button>'}).join('')+'</div>':'')+'</div>'});
   var nh=d.slides.filter(hidN).length;R.innerHTML=h||'<div class="empty">مفيش نتيجة</div>';$('cnt').textContent=d.slides.length+' سلايد'+(nh?' · '+nh+' مخفي':'');$('hall').hidden=!nh;lastCur=-1;render()}

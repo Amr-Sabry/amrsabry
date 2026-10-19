@@ -152,7 +152,7 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:270px minmax(0,1fr) 
   <a class="btn" id="back" href="control.html" style="text-decoration:none;color:inherit"><svg class="i" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8M12 17v4"/></svg>لوحة التحكم</a>
 </header>
 <main>
-  <aside class="panel" id="lyp"><div class="ph"><b>الليرز</b><span id="lcnt"></span></div><div class="scroll" id="lyr"></div></aside>
+  <aside class="panel" id="lyp"><div class="ph"><b>Layers</b><span id="lcnt"></span></div><div class="scroll" id="lyr"></div></aside>
   <section id="cvw">
     <div id="cv"><div id="pg"><iframe id="deck" title="السلايد"></iframe><div id="ld"><span><b>بيحمّل السلايد…</b>ثواني</span></div></div></div>
     <div class="zb">
@@ -305,7 +305,7 @@ var ICS=['hash','map','map-pin','route','train-front','ship','plane','anchor','c
 function props(){var P=$('pp');
   if(!L){P.innerHTML='<div class="empty">بيحمّل…</div>';return}
   if(SEL==null){$('pht').textContent='السلايد';var n=nslide();
-    P.innerHTML='<div class="empty"><svg class="i" viewBox="0 0 24 24"><path d="M14 4.1 12 6"/><path d="m5.1 8-2.9-.8"/><path d="m6 12-1.9 2"/><path d="M7.2 2.2 8 5.1"/><path d="M9.037 9.69a.498.498 0 0 1 .653-.653l11 4.5a.5.5 0 0 1-.074.949l-4.349 1.041a1 1 0 0 0-.74.739l-1.04 4.35a.5.5 0 0 1-.95.074z"/></svg><b>'+esc(L.title||'سلايد '+(L.i+1))+'</b>اضغط على أي كارت أو نص في السلايد، أو اختار من الليرز.</div>'+
+    P.innerHTML='<div class="empty"><svg class="i" viewBox="0 0 24 24"><path d="M14 4.1 12 6"/><path d="m5.1 8-2.9-.8"/><path d="m6 12-1.9 2"/><path d="M7.2 2.2 8 5.1"/><path d="M9.037 9.69a.498.498 0 0 1 .653-.653l11 4.5a.5.5 0 0 1-.074.949l-4.349 1.041a1 1 0 0 0-.74.739l-1.04 4.35a.5.5 0 0 1-.95.074z"/></svg><b>'+esc(L.title||'سلايد '+(L.i+1))+'</b>اضغط على أي كارت أو نص في السلايد، أو اختار من الـ Layers.</div>'+
       '<div class="tip"><b>كل تعديل بيتحفظ لوحده</b> وبيظهر على شاشة العرض على طول. الأرقام اللي بتغيّرها بيتغيّر معاها الرسم (الـ pie والأعمدة والأيقونات والعداد).'+(n?'<br>في السلايد ده '+n+' تعديل.':'')+'</div>';return}
   var c=cardOf(SEL);if(!c){SEL=null;props();return}
   $('pht').textContent=TN[c.type]||c.type;var h='';
