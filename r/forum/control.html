@@ -121,7 +121,7 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(440px,1.05fr)
 #q:focus{border-color:rgba(182,242,220,.45)}
 #rows{overflow:auto;padding:8px 10px 18px;scroll-behavior:smooth}
 .sec{font:600 12.5px var(--fd);color:var(--mint);padding:14px 10px 6px;letter-spacing:.2px}
-.sl{border-radius:14px;padding:9px 10px;display:grid;grid-template-columns:38px 1fr auto;gap:10px;align-items:center;cursor:pointer;transition:background .2s}
+.sl{border-radius:14px;padding:9px 10px;display:grid;grid-template-columns:38px 1fr auto auto;gap:10px;align-items:center;cursor:pointer;transition:background .2s}
 .sl:hover{background:var(--glass)}
 .sl .n{font:600 13px var(--fd);color:var(--mute);width:34px;height:30px;border-radius:9px;display:grid;place-items:center;background:rgba(255,255,255,.05)}
 .sl .tx{min-width:0}.sl .tx b{display:block;font:500 14px var(--fd);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -130,7 +130,16 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(440px,1.05fr)
 .sl.cur{background:linear-gradient(90deg,rgba(110,109,242,.05),rgba(110,109,242,.2));box-shadow:inset -3px 0 0 var(--vio2)}
 .sl.cur .n{background:var(--vio);color:#fff}
 .sl.past .tx b{color:var(--mute)}
-.pills{grid-column:2/4;display:flex;flex-wrap:wrap;gap:5px;margin-top:2px}
+/* slide hide v1 */
+.sl .hb{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:var(--mute);background:transparent;opacity:.55;transition:opacity .2s,background .2s,color .2s}
+.sl:hover .hb{opacity:1}.sl .hb:hover{background:rgba(255,255,255,.1);color:var(--ink)}
+.sl .hb svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sl.hid{opacity:.5}.sl.hid .tx b{text-decoration:line-through;text-decoration-thickness:1.5px}
+.sl.hid .hb{opacity:1;color:#ff9a7a;background:rgba(255,122,56,.14)}
+.sl.hid .n{background:rgba(255,122,56,.14);color:#ff9a7a}
+#hall{font:500 12px var(--fd);color:#ff9a7a;background:rgba(255,122,56,.12);border-radius:8px;padding:5px 9px;white-space:nowrap}
+#hall[hidden]{display:none}
+.pills{grid-column:2/5;display:flex;flex-wrap:wrap;gap:5px;margin-top:2px}
 .pills button{font:500 11.5px var(--fd);min-width:26px;height:24px;padding:0 7px;border-radius:7px;background:rgba(255,255,255,.05);color:var(--mute)}
 .pills button:hover{background:rgba(255,255,255,.12);color:var(--ink)}
 .pills button.on{background:var(--mint);color:#0b1020}
@@ -188,7 +197,7 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(440px,1.05fr)
     <div class="keys">من الكيبورد أو الريموت: <kbd>←</kbd> / <kbd>↓</kbd> / <kbd>Space</kbd> / <kbd>Page Down</kbd> التالي · <kbd>→</kbd> / <kbd>↑</kbd> / <kbd>Page Up</kbd> السابق · <kbd>P</kbd> إيقاف/استكمال · <kbd>R</kbd> إعادة التحريك · <kbd>B</kbd> شاشة سوداء</div>
   </section>
   <aside id="list" class="panel">
-    <div class="lh"><b>كل السلايدات</b><span id="cnt"></span><input id="q" type="search" placeholder="دوّر على سلايد…"></div>
+    <div class="lh"><b>كل السلايدات</b><span id="cnt"></span><button type="button" id="hall" hidden>إظهار الكل</button><input id="q" type="search" placeholder="دوّر على سلايد…"></div>
     <div id="rows"><div class="empty"><b>لسه مفيش اتصال</b>افتح شاشة العرض من الزرار، أو لو مفتوحة في نافذة تانية في نفس المتصفح هتتوصل لوحدها خلال ثانيتين.</div></div>
   </aside>
 </main>
@@ -234,6 +243,7 @@ var seenSig=[];      /* a signal arrives twice (postMessage and BroadcastChannel
 function onMsg(m,src){if(!m||m.ns!=='fctl'||m.from!=='show'||!DECKS[m.deck])return;
   var d=info[m.deck]||(info[m.deck]={});var fresh=!d.seen||Date.now()-d.seen>4500;d.seen=Date.now();d.sid=m.sid;
   if(src&&(m.deck===sel||!SHOW))SHOW=src;
+  if(m.hide&&JSON.stringify(m.hide)!==JSON.stringify(d.hide||null)){d.hide=m.hide;LS.set('fctl-hide-'+m.deck,JSON.stringify(m.hide));if(m.deck===sel&&m.t!=='hello'&&d.slides)buildList()}
   if(m.t==='hello'){d.slides=m.slides;if(m.deck===sel)buildList()}
   if(m.t==='state'){d.st=m;d.rt=performance.now();if(!d.slides)send('hello')}
   if(m.t==='sig'){var sk=m.sid+':'+m.n;if(seenSig.indexOf(sk)>=0)return;seenSig.push(sk);if(seenSig.length>40)seenSig.shift();gotSig(m.sig,m.act,true);return}
@@ -243,6 +253,12 @@ window.addEventListener('message',function(e){onMsg(e.data,e.source)});
 if(bc)bc.onmessage=function(e){onMsg(e.data,null)};
 
 /* ---------- the slide list ---------- */
+/* slide hide v1: the hidden slides of each deck (kept here and in the deck, shared through localStorage) */
+var EYE='<svg viewBox="0 0 24 24"><path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/></svg>',
+    EYEX='<svg viewBox="0 0 24 24"><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c4.29 0 8.04 2.6 9.94 6.65a1 1 0 0 1 0 .7 10.8 10.8 0 0 1-1.63 2.62"/><path d="M14.08 14.16a3 3 0 0 1-4.17-4.17"/><path d="M17.48 17.5A10.75 10.75 0 0 1 2.06 12.35a1 1 0 0 1 0-.7 10.8 10.8 0 0 1 4.45-5.14"/><path d="m2 2 20 20"/></svg>';
+function hideOf(k){var d=info[k];if(d&&d.hide)return d.hide;try{return JSON.parse(localStorage.getItem('fctl-hide-'+k)||'{}')||{}}catch(e){return {}}}
+function hidN(s){return !!hideOf(sel)[String(s.n)]}
+function setHide(h){var d=info[sel]||(info[sel]={});d.hide=h;LS.set('fctl-hide-'+sel,JSON.stringify(h));send('hide',{hide:h});buildList()}
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 var MAPI='<svg class="i mp" viewBox="0 0 24 24"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>';
 function buildList(){var d=info[sel];var R=$('rows');
@@ -250,11 +266,15 @@ function buildList(){var d=info[sel];var R=$('rows');
   var q=$('q').value.trim(),h='',lastAx=null;
   d.slides.forEach(function(s){if(q&&(s.t+' '+s.s+' '+s.ax+' '+(s.i+1)).indexOf(q)<0)return;
     if(s.ax!==lastAx&&!q){lastAx=s.ax;if(s.ax)h+='<div class="sec">'+esc(s.ax)+'</div>'}
-    h+='<div class="sl" data-i="'+s.i+'"><span class="n num">'+(s.i+1)+'</span><div class="tx"><b>'+esc(s.t||'—')+'</b>'+(s.s?'<small>'+esc(s.s)+'</small>':'')+'</div>'+(s.map?MAPI:'<span></span>')+
+    var hz=hidN(s);h+='<div class="sl'+(hz?' hid':'')+'" data-i="'+s.i+'"><span class="n num">'+(s.i+1)+'</span><div class="tx"><b>'+esc(s.t||'—')+'</b>'+(s.s?'<small>'+esc(s.s)+'</small>':'')+'</div>'+(s.map?MAPI:'<span></span>')+
+      '<button type="button" class="hb" data-h="'+esc(String(s.n))+'" title="'+(hz?'إظهار السلايد':'إخفاء السلايد (التالي والسابق يعدّوه)')+'">'+(hz?EYEX:EYE)+'</button>'+
       (s.steps.length>1?'<div class="pills">'+s.steps.map(function(t,k){return '<button type="button" data-i="'+s.i+'" data-k="'+k+'" title="'+esc(t)+'">'+(k+1)+'</button>'}).join('')+'</div>':'')+'</div>'});
-  R.innerHTML=h||'<div class="empty">مفيش نتيجة</div>';$('cnt').textContent=d.slides.length+' سلايد';lastCur=-1;render()}
+  var nh=d.slides.filter(hidN).length;R.innerHTML=h||'<div class="empty">مفيش نتيجة</div>';$('cnt').textContent=d.slides.length+' سلايد'+(nh?' · '+nh+' مخفي':'');$('hall').hidden=!nh;lastCur=-1;render()}
 $('q').addEventListener('input',buildList);
-$('rows').addEventListener('click',function(e){var p=e.target.closest('.pills button');if(p){send('go',{i:+p.dataset.i,k:+p.dataset.k});startTimer();return}
+$('hall').addEventListener('click',function(){setHide({});toast('كل السلايدات ظاهرة')});
+$('rows').addEventListener('click',function(e){var hb=e.target.closest('.hb');if(hb){e.stopPropagation();var h=Object.assign({},hideOf(sel)),k=hb.dataset.h;if(h[k])delete h[k];else h[k]=1;setHide(h);
+    toast(h[k]?'السلايد اتخفى · التالي والسابق هيعدّوه':'السلايد رجع');return}
+  var p=e.target.closest('.pills button');if(p){send('go',{i:+p.dataset.i,k:+p.dataset.k});startTimer();return}
   var r=e.target.closest('.sl');if(r){send('go',{i:+r.dataset.i,k:0});startTimer()}});
 $('steps').addEventListener('click',function(e){var b=e.target.closest('button[data-k]');if(!b)return;var d=info[sel];if(!d||!d.st)return;send('go',{i:d.st.cur.i,k:+b.dataset.k});startTimer()});
 
@@ -273,7 +293,8 @@ function render(){var d=info[sel],live=d&&Date.now()-d.seen<4500;
   if(cu.i!==lastCur||cu.k!==lastK){
     var steps=s.steps||[''];
     $('steps').innerHTML=steps.length>1?steps.map(function(t,k){return '<button type="button" data-k="'+k+'" class="'+(k===cu.k?'cur':k<cu.k?'done':'')+'"><b class="num">'+(k+1)+'</b><span>'+esc(t||('كارت '+(k+1)))+'</span></button>'}).join(''):'<span style="color:var(--dim);font-size:13px">السلايد ده كارت واحد</span>';
-    var nx=(steps.length>1&&cu.k<steps.length-1)?'كارت '+(cu.k+2)+' · '+(steps[cu.k+1]||''):(d.slides[cu.i+1]?'سلايد '+(cu.i+2)+' · '+d.slides[cu.i+1].t:'آخر العرض');
+    var nj=cu.i+1;while(d.slides[nj]&&hidN(d.slides[nj]))nj++;
+    var nx=(steps.length>1&&cu.k<steps.length-1)?'كارت '+(cu.k+2)+' · '+(steps[cu.k+1]||''):(d.slides[nj]?'سلايد '+(nj+1)+' · '+d.slides[nj].t:'آخر العرض');
     $('nxt').textContent=nx;
     document.querySelectorAll('#rows .sl').forEach(function(r){var i=+r.dataset.i;r.classList.toggle('cur',i===cu.i);r.classList.toggle('past',i<cu.i);
       r.querySelectorAll('.pills button').forEach(function(p){p.classList.toggle('on',i===cu.i&&+p.dataset.k===cu.k)})});

@@ -68,6 +68,12 @@ function animState(){active=active.filter(function(a){return a.c.isConnected});
   active.forEach(function(a){var t=now-a.t0,rem=a.est?Math.max(0,a.est-t):-1;if(!best||rem>best.rem)best={t:t,dur:a.est,rem:rem,known:a.known}});
   return best}
 
+/* ---------------------------------------------------------------- hidden slides (slide hide v1): Next / Back skip them, a direct jump still opens one */
+var HK='fctl-hide-'+DECK, HIDE={}, force=0;
+function hload(){try{HIDE=JSON.parse(localStorage.getItem(HK)||'{}')||{}}catch(e){HIDE={}}}
+hload();W.addEventListener('storage',function(e){if(e.key===HK){hload();push(1)}});
+function hid(n){return !!HIDE[String(n)]}
+
 /* ---------------------------------------------------------------- deck adapters */
 var A=null;
 function txt(h){var d=D.createElement('div');d.innerHTML=String(h||'').replace(/\[\[|\]\]/g,'').replace(/<br\s*\/?>/gi,' ');return (d.textContent||'').replace(/\s+/g,' ').trim()}
@@ -91,7 +97,9 @@ function forumAdapter(){
         if(cc.type==='model'&&W.MAPCAM){W.MAPCAM(cc,cc.pr);any=true}else if(cc.type==='map'){paint(cc,cc.pr);any=true}});
       if(!any){var n=cur,k=B.step;curLayer&&curLayer.remove();curLayer=null;show(n);if(k)setStep(k)}},
     hasMap:function(){return !!(B&&B.cards.some(function(cc){return (cc.type==='map'||cc.type==='model')&&!cc.el.classList.contains('wait')}))},
-    hook:function(){['show','setStep'].forEach(function(f){var o=W[f];if(typeof o!=='function')return;W[f]=function(){var r=o.apply(this,arguments);push(1);return r}})}
+    hook:function(){var os=W.show;if(typeof os==='function')W.show=function(n,dir){if(!force&&hid(n)){var d=dir<0?-1:1,j=ORDER.indexOf(n);
+        while(j>=0&&j<ORDER.length&&hid(ORDER[j]))j+=d;if(j<0||j>=ORDER.length||ORDER[j]===cur)return;arguments[0]=ORDER[j]}return os.apply(this,arguments)};
+      ['show','setStep'].forEach(function(f){var o=W[f];if(typeof o!=='function')return;W[f]=function(){var r=o.apply(this,arguments);push(1);return r}})}
   }}
 function centerAdapter(){
   var dms=function(i){return (SL[i].cur||[]).length>4?2600:2200};   /* mapdur v1 */
@@ -106,7 +114,8 @@ function centerAdapter(){
     replay:function(){var i=step;drawK=0;draw();var el=mapEl();ANIM.start(el,msOf(i)+450,1);
       setTimeout(function(){drawIn(dms(i));setTimeout(function(){ANIM.end(el)},msOf(i))},450)},
     hasMap:function(){return true},
-    hook:function(){var o=W.go;W.go=function(i){var s=step,r=o.apply(this,arguments);if(step!==s)startAnim(step);push(1);return r}}
+    hook:function(){var o=W.go;W.go=function(i){if(!force&&typeof i==='number'&&i!==step&&hid(i+1)){var d=i>=step?1:-1,j=i;while(j>=0&&j<SL.length&&hid(j+1))j+=d;
+        if(j<0||j>=SL.length||j===step)return;i=j}var s=step,r=o.call(this,i);if(step!==s)startAnim(step);push(1);return r}}
   }}
 function curId(){try{return A?A.id():'?'}catch(e){return '?'}}
 
@@ -124,9 +133,9 @@ function post(m){m.ns='fctl';m.from='show';m.deck=DECK;m.sid=SID;m.title=D.title
   var to=[];if(peer)to.push(peer);try{if(W.opener&&!W.opener.closed&&to.indexOf(W.opener)<0)to.push(W.opener)}catch(e){}
   to.forEach(function(w){try{w.postMessage(m,'*')}catch(e){}})}
 function state(){if(!A)return null;var c={};try{c=A.cur()}catch(e){}
-  return {t:'state',cur:c,paused:paused,black:!!(blk&&blk.style.opacity==='1'),anim:animState(),map:(function(){try{return A.hasMap()}catch(e){return false}})()}}
+  return {t:'state',hide:HIDE,cur:c,paused:paused,black:!!(blk&&blk.style.opacity==='1'),anim:animState(),map:(function(){try{return A.hasMap()}catch(e){return false}})()}}
 function push(force){var s=state();if(!s)return;var j=JSON.stringify(s);if(!force&&j===lastSent&&!s.anim)return;lastSent=j;post(s)}
-function hello(){if(!A)return;var sl=[];try{sl=A.slides()}catch(e){console.error(e)}post({t:'hello',slides:sl});sentSlides=true;push(1)}
+function hello(){if(!A)return;var sl=[];try{sl=A.slides()}catch(e){console.error(e)}post({t:'hello',slides:sl,hide:HIDE});sentSlides=true;push(1)}
 function handle(m){if(!m||m.ns!=='fctl'||m.from!=='ctl')return;if(m.deck&&m.deck!==DECK&&m.deck!=='*')return;
   if(m.mid){if(seen.indexOf(m.mid)>=0)return;seen.push(m.mid);if(seen.length>60)seen.shift()}
   if(m.c==='learn'){learning=!!m.on;return}
@@ -136,8 +145,9 @@ function handle(m){if(!m||m.ns!=='fctl'||m.from!=='ctl')return;if(m.deck&&m.deck
   if(c==='hello'){hello();return}
   if(c==='pause'){pause();return} if(c==='resume'){resume();return} if(c==='toggle'){paused?resume():pause();return}
   if(c==='black'){black(m.on);return}
+  if(c==='hide'){HIDE=m.hide||{};try{localStorage.setItem(HK,JSON.stringify(HIDE))}catch(e){}push(1);return}
   if(paused&&/^(go|next|prev|replay)$/.test(c))resume();
-  try{if(c==='go')A.go(m.i,m.k);else if(c==='next')A.next();else if(c==='prev')A.prev();else if(c==='replay')A.replay()}catch(e){console.error(e)}
+  try{if(c==='go'){force=1;try{A.go(m.i,m.k)}finally{force=0}}else if(c==='next')A.next();else if(c==='prev')A.prev();else if(c==='replay')A.replay()}catch(e){console.error(e)}
   push(1)}
 W.addEventListener('message',function(e){var m=e.data;if(m&&m.ns==='fctl'&&m.from==='ctl'){if(e.source)peer=e.source;handle(m)}});
 if(bc)bc.onmessage=function(e){handle(e.data)};
