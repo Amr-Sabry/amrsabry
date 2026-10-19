@@ -419,7 +419,7 @@ function reset(){run++;timers.forEach(clearTimeout);timers=[];cancelAnimationFra
   tl={prog:0,shown:0,chips:{}};hd.classList.add('off');hax.textContent='2011'}
 function start(skip){
   skip=typeof skip==='number'?skip:0;
-  initAudio();if(AC&&AC.state==='suspended')AC.resume();reset();var tk=run,PREP=skip?0:4500;
+  initAudio();if(AC&&AC.state==='suspended')AC.resume();reset();var tk=run,PREP=4500;
   var plan=[];var t=PREP+INTRO*1000;
   SEQ.forEach(function(ev,i){plan.push({at:t,ev:ev,i:i});t+=(ev.d||(ev.shots?D_VID:D_NUM))*1000});
   var tSum=t,tFin=t+SUM*1000,tEnd=tFin+FIN*1000;
