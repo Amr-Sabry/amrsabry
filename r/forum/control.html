@@ -91,6 +91,22 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(440px,1.05fr)
 .tools button:hover{color:var(--ink);background:var(--glass2)}
 #black.on{background:#000;color:#fff;border-color:rgba(255,255,255,.3)}
 .tools{grid-template-columns:1fr 1fr 1fr 1fr}
+/* text edit v2: the slide's text, edited from here */
+#edp{display:flex;flex-direction:column;overflow:hidden}#edp[hidden],#list[hidden]{display:none}
+#edp .eh{display:flex;align-items:center;gap:10px;padding:16px 18px 12px;border-bottom:1px solid var(--line)}
+#edp .eh b{font:600 15px var(--fd)}#edp .eh span{color:var(--mute);font-size:13px}
+#edp .eh button{font:500 12.5px var(--fd);border-radius:9px;padding:6px 11px;background:var(--glass2);color:var(--ink)}
+#edp .eh #eall{margin-inline-start:auto;color:#ffd23f;background:rgba(255,210,63,.12)}#edp .eh #eall[hidden]{display:none}
+#erows{overflow:auto;padding:10px 14px 20px;display:flex;flex-direction:column;gap:6px}
+#erows .eg{font:600 12px var(--fd);color:var(--mint);margin:10px 4px 2px;display:flex;gap:8px;align-items:center}#erows .eg small{color:var(--dim);font-weight:400}
+#erows .ef{display:grid;grid-template-columns:1fr 30px;gap:6px;align-items:start}
+#erows textarea{width:100%;resize:none;overflow:hidden;min-height:38px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:11px;padding:8px 11px;color:var(--ink);font:500 14px/1.45 var(--fd);outline:none;direction:rtl;transition:border-color .2s,background .2s}
+#erows textarea:focus{border-color:rgba(255,210,63,.7);background:rgba(255,210,63,.06)}
+#erows .ef.chg textarea{border-color:rgba(255,210,63,.45)}
+#erows .ef small{grid-column:1;color:var(--dim);font-size:11.5px;padding:0 6px 2px}
+#erows .ef .er{width:30px;height:30px;margin-top:4px;border-radius:9px;display:grid;place-items:center;color:var(--dim);background:transparent;visibility:hidden}
+#erows .ef.chg .er{visibility:visible;color:#ffd23f}#erows .ef .er:hover{background:rgba(255,255,255,.08)}
+#erows .empty{color:var(--dim);padding:20px;text-align:center}
 /* text edit v1 */
 #edit.on{background:#ffd23f;color:#1c2547;border-color:#ffd23f}
 #erst{margin-inline-start:auto;font:500 12px var(--fd);color:#ffd23f;background:rgba(255,210,63,.12);border-radius:999px;padding:4px 11px}
@@ -188,7 +204,7 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(440px,1.05fr)
       <button id="open" type="button"><svg class="i" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8M12 17v4"/></svg>فتح شاشة العرض</button>
       <button id="black" type="button"><svg class="i" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>شاشة سوداء</button>
       <button id="rbtn" type="button"><i></i>الريموت</button>
-      <button id="edit" type="button" title="تعديل أي نص في السلايد (E على شاشة العرض)"><svg class="i" viewBox="0 0 24 24"><path d="M21.17 6.81a1 1 0 0 0-3.98-3.98L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z"/><path d="m15 5 4 4"/></svg>تعديل النص</button>
+      <button id="edit" type="button" title="تعديل نصوص السلايد من هنا"><svg class="i" viewBox="0 0 24 24"><path d="M21.17 6.81a1 1 0 0 0-3.98-3.98L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z"/><path d="m15 5 4 4"/></svg>تعديل النص</button>
     </div>
     <div id="rmt" hidden>
       <div class="rh"><b>ريموت أبل · أي ريموت</b><span id="rst">مش متفعّل</span></div>
@@ -201,6 +217,7 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(440px,1.05fr)
     <div id="upnext"><span>اللي بعده:</span><b id="nxt">—</b></div>
     <div class="keys">من الكيبورد أو الريموت: <kbd>←</kbd> / <kbd>↓</kbd> / <kbd>Space</kbd> / <kbd>Page Down</kbd> التالي · <kbd>→</kbd> / <kbd>↑</kbd> / <kbd>Page Up</kbd> السابق · <kbd>P</kbd> إيقاف/استكمال · <kbd>R</kbd> إعادة التحريك · <kbd>B</kbd> شاشة سوداء</div>
   </section>
+<aside id="edp" class="panel" hidden><div class="eh"><b>نصوص السلايد</b><span id="ecnt"></span><button type="button" id="eall" hidden>رجّع كل نصوص السلايد</button><button type="button" id="eclose">رجوع للسلايدات</button></div><div id="erows"><div class="empty">بيحمّل النصوص…</div></div></aside>
   <aside id="list" class="panel">
     <div class="lh"><b>كل السلايدات</b><span id="cnt"></span><button type="button" id="hall" hidden>إظهار الكل</button><input id="q" type="search" placeholder="دوّر على سلايد…"></div>
     <div id="rows"><div class="empty"><b>لسه مفيش اتصال</b>افتح شاشة العرض من الزرار، أو لو مفتوحة في نافذة تانية في نفس المتصفح هتتوصل لوحدها خلال ثانيتين.</div></div>
@@ -249,6 +266,7 @@ function onMsg(m,src){if(!m||m.ns!=='fctl'||m.from!=='show'||!DECKS[m.deck])retu
   var d=info[m.deck]||(info[m.deck]={});var fresh=!d.seen||Date.now()-d.seen>4500;d.seen=Date.now();d.sid=m.sid;
   if(src&&(m.deck===sel||!SHOW))SHOW=src;
   if(m.hide&&JSON.stringify(m.hide)!==JSON.stringify(d.hide||null)){d.hide=m.hide;LS.set('fctl-hide-'+m.deck,JSON.stringify(m.hide));if(m.deck===sel&&m.t!=='hello'&&d.slides)buildList()}
+  if(m.t==='texts'){if(m.deck===sel&&ED.open)edBuild(m);return}
   if(m.t==='hello'){d.slides=m.slides;if(m.deck===sel)buildList()}
   if(m.t==='state'){d.st=m;d.rt=performance.now();if(!d.slides)send('hello')}
   if(m.t==='sig'){var sk=m.sid+':'+m.n;if(seenSig.indexOf(sk)>=0)return;seenSig.push(sk);if(seenSig.length>40)seenSig.shift();gotSig(m.sig,m.act,true);return}
@@ -304,12 +322,13 @@ function render(){var d=info[sel],live=d&&Date.now()-d.seen<4500;
     document.querySelectorAll('#rows .sl').forEach(function(r){var i=+r.dataset.i;r.classList.toggle('cur',i===cu.i);r.classList.toggle('past',i<cu.i);
       r.querySelectorAll('.pills button').forEach(function(p){p.classList.toggle('on',i===cu.i&&+p.dataset.k===cu.k)})});
     if(cu.i!==lastCur){var r=document.querySelector('#rows .sl[data-i="'+cu.i+'"]');if(r){var R=$('rows'),top=r.offsetTop-R.offsetTop-R.clientHeight*.3;R.scrollTo({top:top,behavior:lastCur<0?'auto':'smooth'})}}
+    if(ED.open&&cu.i!==lastCur)send('texts');
     lastCur=cu.i;lastK=cu.k}
   $('pause').classList.toggle('on',!!st.paused);
   $('ptx').textContent=st.paused?'استكمال':'إيقاف';
   $('pic').innerHTML=st.paused?'<path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5Z"/>':'<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>';
   $('black').classList.toggle('on',!!st.black);
-  $('edit').classList.toggle('on',!!st.edit);$('erst').hidden=!st.edits;$('erst').textContent='رجّع النص الأصلي ('+(st.edits||0)+')';
+  $('edit').classList.toggle('on',ED.open||!!st.edit);$('erst').hidden=!st.edits;$('erst').textContent='رجّع النص الأصلي ('+(st.edits||0)+')';
   anim(st)}
 /* the bar runs smoothly between heartbeats */
 function anim(st){var A=$('anim'),bar=$('bar'),fill=$('abar');
@@ -334,7 +353,28 @@ $('prev').onclick=function(){send('prev')};
 $('replay').onclick=function(){send('replay')};
 $('pause').onclick=function(){send('toggle')};
 $('black').onclick=function(){send('black')};
-$('edit').onclick=function(){var d=info[sel],on=!(d&&d.st&&d.st.edit);send('edit',{on:on});toast(on?'وضع التعديل شغال · اضغط على أي نص في شاشة العرض':'وضع التعديل اتقفل')};
+$('edit').onclick=function(){edOpen(!ED.open)};
+/* text edit v2: every text of the slide in its own field; typing changes the show at once */
+var ED={open:false,id:null,items:[],t:{}};
+function edOpen(on){ED.open=on;$('edp').hidden=!on;$('list').hidden=on;$('edit').classList.toggle('on',on);if(on){ED.id=null;$('erows').innerHTML='<div class="empty">بيحمّل النصوص…</div>';send('texts')}}
+function edFit(t){t.style.height='auto';t.style.height=(t.scrollHeight+2)+'px'}
+function edBuild(m){var j0=JSON.stringify(m.items||[]),fo=document.activeElement&&document.activeElement.closest&&document.activeElement.closest('#erows');if(m.id===ED.id&&(j0===ED.j||fo))return;ED.j=j0;var d=info[sel],cu=d&&d.st&&d.st.cur||{},s=d&&d.slides&&d.slides[cu.i]||{};ED.id=m.id;ED.items=m.items||[];
+  $('ecnt').textContent=(s.t?'سلايد '+(cu.i+1)+' · '+s.t:'');var h='',lk=null,n=0,ch=0;
+  ED.items.forEach(function(it,j){if(it.k!==lk){lk=it.k;n++;h+='<div class="eg">'+(it.k<0?'العنوان':'كارت '+(it.k+1))+(it.w?'<small>(لسه ما ظهرش)</small>':'')+'</div>'}
+    var c=it.v!==it.o;if(c)ch++;
+    h+='<div class="ef'+(c?' chg':'')+'" data-j="'+j+'"><textarea rows="1" spellcheck="false">'+esc(it.v)+'</textarea><button type="button" class="er" title="رجّع الأصل">↺</button>'+(c?'<small>الأصل: '+esc(it.o)+'</small>':'')+'</div>'});
+  $('erows').innerHTML=h||'<div class="empty">مفيش نصوص تتعدل في السلايد ده</div>';$('eall').hidden=!ch;
+  document.querySelectorAll('#erows textarea').forEach(edFit)}
+function edSend(j,v){var it=ED.items[j];if(!it)return;it.v=v;send('settext',{o:it.o,oc:it.c,v:v});
+  var f=document.querySelector('#erows .ef[data-j="'+j+'"]');if(f){var c=v.replace(/\s+/g,' ').trim()!==it.o;f.classList.toggle('chg',c);var sm=f.querySelector('small');
+    if(c&&!sm){f.insertAdjacentHTML('beforeend','<small>الأصل: '+esc(it.o)+'</small>')}else if(!c&&sm)sm.remove()}
+  $('eall').hidden=!ED.items.some(function(x){return x.v.replace(/\s+/g,' ').trim()!==x.o})}
+$('erows').addEventListener('input',function(e){var t=e.target;if(t.tagName!=='TEXTAREA')return;edFit(t);var j=+t.parentElement.dataset.j;clearTimeout(ED.t[j]);ED.t[j]=setTimeout(function(){edSend(j,t.value)},280)});
+$('erows').addEventListener('keydown',function(e){if(e.target.tagName==='TEXTAREA'&&e.key==='Enter'&&!e.shiftKey){e.preventDefault();e.target.blur()}e.stopPropagation()});
+$('erows').addEventListener('focusin',function(e){var t=e.target;if(t.tagName!=='TEXTAREA')return;var it=ED.items[+t.parentElement.dataset.j];if(it)send('hl',{o:it.o,oc:it.c})});
+$('erows').addEventListener('click',function(e){var b=e.target.closest('.er');if(!b)return;var f=b.parentElement,j=+f.dataset.j,it=ED.items[j];if(!it)return;f.querySelector('textarea').value=it.o;edFit(f.querySelector('textarea'));edSend(j,it.o)});
+$('eclose').onclick=function(){edOpen(false)};
+$('eall').onclick=function(){send('editreset');toast('رجعت كل نصوص السلايد لأصلها')};
 $('erst').onclick=function(){send('editreset');toast('رجع النص الأصلي في السلايد ده')};
 /* ---------- the remote (Amr, 18 Oct: «ريموت أبل يقلب»): one map for keys and media buttons, shared with the show windows ---------- */
 var RK='fctl-remote', RCFG={map:{},swap:false}, aud=null, mediaOn=false, learnI=-1;
