@@ -205,13 +205,19 @@ body.nopv .frame iframe+.ph{display:grid}
 .sec{font:600 12px var(--fd);color:var(--mint);padding:14px 10px 6px;letter-spacing:.2px}
 .sl{border-radius:14px;padding:8px 9px;display:grid;grid-template-columns:36px 1fr auto auto auto;gap:9px;align-items:center;cursor:pointer;transition:background .2s}
 /* thumbs v1: a picture of each slide beside its number (the slide after its last card) */
-.sl.wt{grid-template-columns:36px 104px 1fr auto auto auto}
-.sl .th{grid-row:span 2;align-self:start;width:104px;height:58.5px;border-radius:8px;object-fit:cover;display:block;background:#11131d;box-shadow:0 0 0 1px rgba(255,255,255,.1),0 6px 14px -8px rgba(0,0,0,.8);transition:box-shadow .2s,transform .2s}
+.sl.wt{grid-template-columns:36px 104px minmax(0,1fr) 32px;grid-template-rows:auto auto;row-gap:7px;align-items:start}
+.sl.wt .n{grid-column:1;grid-row:1;margin-top:2px}
+.sl.wt .thw{grid-column:2;grid-row:1;position:relative;display:block;width:104px;height:58.5px}
+.sl .th{width:104px;height:58.5px;border-radius:8px;object-fit:cover;display:block;background:#11131d;box-shadow:0 0 0 1px rgba(255,255,255,.1),0 6px 14px -8px rgba(0,0,0,.8);transition:box-shadow .2s,transform .2s}
+.sl .tmp{position:absolute;left:4px;top:4px;width:20px;height:20px;border-radius:6px;display:grid;place-items:center;background:rgba(10,12,22,.8);color:#8ea2ff;pointer-events:none}
+.sl .tmp svg{width:13px;height:13px;opacity:1}
+.sl.wt .tx{grid-column:3;grid-row:1;align-self:center}
+.sl.wt .tx b{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.35}
+.sl.wt .acts{grid-column:4;grid-row:1/span 2;display:flex;flex-direction:column;gap:4px;align-items:center}
+.sl.wt .pills{grid-column:2/4;grid-row:2;margin-top:0}
 .sl:hover .th{transform:scale(1.03)}
 .sl.cur .th{box-shadow:0 0 0 2px var(--vio2),0 6px 14px -8px rgba(0,0,0,.8)}
 .sl.hid .th{filter:grayscale(1);opacity:.55}
-.sl.wt .pills{grid-column:3/7}
-.sl.wt .n{align-self:start;margin-top:2px}
 .sl:hover{background:var(--glass)}
 .sl .n{font:600 12.5px var(--fd);color:var(--mute);width:34px;height:28px;border-radius:9px;display:grid;place-items:center;background:rgba(255,255,255,.05)}
 .sl .tx{min-width:0}.sl .tx b{display:block;font:500 13.5px var(--fd);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -413,10 +419,13 @@ function buildList(){var d=info[sel];var R=$('rows');
   var q=$('q').value.trim(),h='',lastAx=null;
   d.slides.forEach(function(s){if(q&&(s.t+' '+s.s+' '+s.ax+' '+(s.i+1)).indexOf(q)<0)return;
     if(s.ax!==lastAx&&!q){lastAx=s.ax;if(s.ax)h+='<div class="sec">'+esc(s.ax)+'</div>'}
-    var hz=hidN(s);var tu=thumbOf(s);h+='<div class="sl'+(hz?' hid':'')+(tu?' wt':'')+'" data-i="'+s.i+'"><span class="n num">'+(s.i+1)+'</span>'+(tu?'<img class="th" loading="lazy" decoding="async" alt="" src="'+tu+'" onerror="this.style.visibility=\'hidden\'">':'')+'<div class="tx"><b>'+esc(s.t||'—')+'</b>'+(s.s?'<small>'+esc(s.s)+'</small>':'')+'</div>'+(s.map?MAPI:'<span></span>')+
-      '<button type="button" class="eb" data-e="'+s.i+'" title="تعديل السلايد (Layers)"'+(sel==='center'?' hidden':'')+'>'+PEN+'</button>'+
-      '<button type="button" class="hb" data-h="'+esc(String(s.n))+'" title="'+(hz?'إظهار السلايد':'إخفاء السلايد (التالي والسابق يعدّوه)')+'">'+(hz?EYEX:EYE)+'</button>'+
-      (s.steps.length>1?'<div class="pills">'+s.steps.map(function(t,k){return '<button type="button" data-i="'+s.i+'" data-k="'+k+'" title="'+esc(t)+'">'+(k+1)+'</button>'}).join('')+'</div>':'')+'</div>'});
+    var hz=hidN(s),tu=thumbOf(s),tx='<div class="tx"><b>'+esc(s.t||'—')+'</b>'+(s.s?'<small>'+esc(s.s)+'</small>':'')+'</div>',
+      eb='<button type="button" class="eb" data-e="'+s.i+'" title="تعديل السلايد (Layers)"'+(sel==='center'?' hidden':'')+'>'+PEN+'</button>',
+      hb='<button type="button" class="hb" data-h="'+esc(String(s.n))+'" title="'+(hz?'إظهار السلايد':'إخفاء السلايد (التالي والسابق يعدّوه)')+'">'+(hz?EYEX:EYE)+'</button>',
+      pl=s.steps.length>1?'<div class="pills">'+s.steps.map(function(t,k){return '<button type="button" data-i="'+s.i+'" data-k="'+k+'" title="'+esc(t)+'">'+(k+1)+'</button>'}).join('')+'</div>':'';
+    h+='<div class="sl'+(hz?' hid':'')+(tu?' wt':'')+'" data-i="'+s.i+'"><span class="n num">'+(s.i+1)+'</span>'+
+      (tu?'<span class="thw"><img class="th" loading="lazy" decoding="async" alt="" src="'+tu+'" onerror="this.style.visibility=\'hidden\'">'+(s.map?'<i class="tmp">'+MAPI+'</i>':'')+'</span>'+tx+'<div class="acts">'+eb+hb+'</div>'
+         :tx+(s.map?MAPI:'<span></span>')+eb+hb)+pl+'</div>'});
   var nh=d.slides.filter(hidN).length;R.innerHTML=h||'<div class="empty">مفيش نتيجة</div>';$('cnt').textContent=d.slides.length+' سلايد'+(nh?' · '+nh+' مخفي':'');$('hall').hidden=!nh;lastCur=-1;render()}
 $('q').addEventListener('input',buildList);
 $('hall').addEventListener('click',function(){setHide({});toast('كل السلايدات ظاهرة')});
