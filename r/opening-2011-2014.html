@@ -71,6 +71,7 @@ body{font-family:var(--f-body);direction:rtl;-webkit-font-smoothing:antialiased}
 .bc::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:1.6px;z-index:7;pointer-events:none;
   background:linear-gradient(135deg,rgba(255,255,255,.98),rgba(255,255,255,.18) 30%,rgba(255,255,255,.04) 58%,rgba(255,255,255,.55) 86%,rgba(255,255,255,.9));
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.bc{background:rgba(236,240,248,.7)}
 .bc>.bg{position:absolute;inset:0;opacity:0;transition:opacity .8s var(--mv)}
 .bg.frost{background:var(--g-frost)}.bg.cobalt{background:var(--g-cobalt)}.bg.teal{background:var(--g-teal)}.bg.aurora{background:var(--g-aurora)}
 .bc[data-skin=frost]>.bg.frost,.bc[data-skin=cobalt]>.bg.cobalt,.bc[data-skin=teal]>.bg.teal,.bc[data-skin=aurora]>.bg.aurora{opacity:1}
@@ -209,6 +210,8 @@ var LAY={
 
 /* ---------- foreign reserves, end of month, US$ bn (Central Bank of Egypt via Ahram Online / Reuters / AP) ---------- */
 var RES=[[0,36.0],[3.97,28.0],[4.97,27.2],[8.97,24.01],[10.97,20.2],[11.97,18.12],[12.97,16.35],[22.97,15.035],[23.97,15.014],[24.97,13.613],[25.97,13.508],[26.97,13.42],[29.97,14.9],[30.97,18.88],[35.97,17.031],[47.97,15.33]];
+var RESL=['ديسمبر 2010','أبريل 2011','مايو 2011','سبتمبر 2011','نوفمبر 2011','ديسمبر 2011','يناير 2012','نوفمبر 2012','ديسمبر 2012','يناير 2013','فبراير 2013','مارس 2013','يونيو 2013','يوليو 2013','ديسمبر 2013','ديسمبر 2014'];
+function lastKnown(m){var k=0;for(var i=0;i<RES.length;i++){if(RES[i][0]<=m+.001)k=i}return k}
 function resAt(m){if(m<=RES[0][0])return RES[0][1];for(var i=1;i<RES.length;i++){if(m<=RES[i][0]){var a=RES[i-1],b=RES[i];return a[1]+(b[1]-a[1])*(m-a[0])/(b[0]-a[0])}}return RES[RES.length-1][1]}
 
 /* ---------- the story: every beat sits on the timeline at its month (0 = January 2011) ---------- */
@@ -219,7 +222,7 @@ var SEQ=[
 {y:'2011',m:.93,lay:'N',date:'يناير 2011',dom:A,ic:'lock-open',n:23000,u:'سجين هاربون من السجون',sub:'من أصل نحو <b>80 ألفًا</b>',head:'اقتحام السجون وهروب آلاف السجناء'},
 {y:'2011',m:.96,lay:'B',date:'يناير 2011',dom:T,n:470,u:'مقبوضًا عليهم في أعمال سلب بالقاهرة',head:'اقتحام المتحف المصري وأعمال سلب ونهب',shots:[{id:'wTOf0x-eGU0',s:15},{id:'wTOf0x-eGU0',s:46}]},
 {y:'2011',m:1.15,lay:'C',date:'5 فبراير 2011',dom:E,n:10,u:'تفجيرات لخط الغاز في 2011',head:'أول تفجير لخط تصدير الغاز… وتتوالى التفجيرات',shots:[{id:'8C1XaJE43wU',s:11},{id:'PipSU-RZAXg',s:44}]},
-{y:'2011',m:2.73,lay:'D',date:'مارس 2011',dom:EC,n:55,u:'يومًا إغلاق البورصة',sub:'وخسرت <b>49%</b> من قيمتها في 2011',head:'البورصة تُغلق… وتفقد نصف قيمتها',shots:[{id:'VOjS-cIf_H8',s:32},{id:'VOjS-cIf_H8',s:26}]},
+{y:'2011',m:2.73,lay:'D',date:'مارس 2011',dom:EC,n:55,u:'يومًا إغلاق البورصة',sub:'وخسرت <b>49%</b> من قيمتها في 2011',head:'البورصة تُغلق… وتفقد نصف قيمتها',shots:[{id:'VOjS-cIf_H8',s:32,z:1.22},{id:'VOjS-cIf_H8',s:26,z:1.22}]},
 {y:'2011',m:6.0,lay:'M',date:'2011',dom:TO,pre:'−',n:33,sf:'%',u:'تراجع أعداد السائحين',sub:'من <b>14.7</b> إلى <b>9.8</b> مليون سائح',head:'السياحة تفقد ثلث زوارها'},
 {y:'2011',m:10.0,lay:'N',date:'خلال 2011',dom:EC,n:9,u:'تخفيضات للتصنيف الائتماني',sub:'من وكالات التصنيف الثلاث',head:'التصنيف الائتماني يتراجع مرة بعد مرة'},
 {y:'2011',m:11.55,lay:'A',date:'17 ديسمبر 2011',dom:T,ic:'book-open',n:1798,raw:1,u:'سنة تأسيس المجمع العلمي',head:'حريق المجمع العلمي المصري',shots:[{id:'k7r8-9jYW8M',s:13},{id:'k7r8-9jYW8M',s:24}]},
@@ -229,26 +232,26 @@ var SEQ=[
 {y:'2012',m:14.15,lay:'C',date:'مارس 2012',dom:E,n:13,u:'تفجيرًا لخط الغاز في 13 شهرًا',head:'خط الغاز يُستهدف مرة بعد مرة',shots:[{id:'Us8M9qNpBTo',s:4},{id:'0tTcQZMEVLs',s:35}]},
 {y:'2012',m:18.0,lay:'M',date:'صيف 2012',dom:PW,n:5,sf:'+',u:'ساعات انقطاع يوميًا في القرى',sub:'وحتى <b>90 دقيقة</b> في المدن',head:'الكهرباء تنقطع… والصيف يطول'},
 {y:'2012',m:19.15,lay:'D',date:'5 أغسطس 2012',dom:TR,n:16,u:'شهيدًا من حرس الحدود',head:'هجوم رفح الأول وقت الإفطار',shots:[{id:'qJzZHNNMaHc',s:22},{id:'DIOFynK11oE',s:15}]},
-{y:'2012',m:21.0,lay:'A',date:'2012',dom:S,ic:'megaphone',n:3817,u:'احتجاجًا اجتماعيًا وعماليًا',sub:'حتى المستشفيات دخلت في إضراب',head:'موجة احتجاجات وإضرابات لا تتوقف',shots:[{id:'vtw-bEH6wTE',s:90}]},
+{y:'2012',m:21.0,lay:'M',date:'2012',dom:S,ic:'megaphone',n:3817,u:'احتجاجًا اجتماعيًا وعماليًا',sub:'حتى المستشفيات دخلت في إضراب',head:'موجة احتجاجات وإضرابات لا تتوقف'},
 {y:'2012',m:22.55,lay:'N',date:'17 نوفمبر 2012',dom:TP,n:50,sf:'+',u:'ضحية أغلبهم أطفال',head:'قطار منفلوط يصطدم بأتوبيس مدرسة'},
-{y:'2012',m:23.97,lay:'B',date:'30 ديسمبر 2012',dom:EC,ic:'landmark',n:3,u:'شهور واردات فقط',sub:'وأول مزاد للدولار عند <b>6.24</b> جنيه',head:'المركزي: الاحتياطي عند «الحد الأدنى الحرج»',shots:[{id:'Uml5RowzSKs',s:42},{id:'tdQ3mQ0BZws',s:88}]},
+{y:'2012',m:23.97,lay:'B',date:'30 ديسمبر 2012',dom:EC,ic:'landmark',n:3,u:'شهور واردات فقط',sub:'وأول مزاد للدولار عند <b>6.24</b> جنيه',head:'المركزي: الاحتياطي عند «الحد الأدنى الحرج»',shots:[{id:'Uml5RowzSKs',s:42,z:1.26},{id:'tdQ3mQ0BZws',s:88}]},
 
-{y:'2013',m:24.48,lay:'C',date:'15 يناير 2013',dom:TP,n:19,u:'مجندًا',sub:'و<b>103</b> مصابين',head:'حادث قطار المجندين بالبدرشين',shots:[{id:'p26wtTPmAUc',s:5},{id:'p26wtTPmAUc',s:17}]},
-{y:'2013',m:24.87,lay:'D',date:'27 يناير 2013',dom:A,n:3,u:'محافظات تحت الطوارئ وحظر التجول',sub:'بورسعيد والسويس والإسماعيلية · <b>30 يومًا</b>',head:'طوارئ وحظر تجول في مدن القناة',shots:[{id:'Q5fcFOumegs',s:12,z:1.4},{id:'zh9lZ4GmSBI',s:3}]},
+{y:'2013',m:24.48,lay:'C',date:'15 يناير 2013',dom:TP,n:19,u:'مجندًا',sub:'و<b>103</b> مصابين',head:'حادث قطار المجندين بالبدرشين',shots:[{id:'p26wtTPmAUc',s:5,z:1.26},{id:'p26wtTPmAUc',s:17,z:1.26}]},
+{y:'2013',m:24.87,lay:'D',date:'27 يناير 2013',dom:A,n:3,u:'محافظات تحت الطوارئ وحظر التجول',sub:'بورسعيد والسويس والإسماعيلية · <b>30 يومًا</b>',head:'طوارئ وحظر تجول في مدن القناة',shots:[{id:'Q5fcFOumegs',s:12,z:1.4},{id:'zh9lZ4GmSBI',s:3,z:1.26}]},
 {y:'2013',m:26.5,lay:'M',date:'مارس 2013',dom:S,ic:'megaphone',n:44,u:'احتجاجًا كل يوم',sub:'<b>1,354</b> احتجاجًا في شهر واحد',head:'ذروة الاحتجاجات'},
 {y:'2013',m:26.97,lay:'X',res:1,date:'مارس 2013',dom:EC,ic:'landmark',n:13.4,dec:1,u:'مليار دولار · أدنى مستوى',head:'يكفي <em>3 شهور واردات</em>… وموديز تخفّض التصنيف إلى Caa1',chips:[0,11.97,26.97],d:4.4},
-{y:'2013',m:27.5,lay:'A',date:'النصف الأول 2013',dom:EC,ic:'banknote',n:8,u:'جنيهات للدولار في السوق السوداء',sub:'والسعر الرسمي نحو <b>7</b> جنيهات',head:'الجنيه تحت الضغط',shots:[{id:'kMzztasqpdQ',s:17},{id:'kMzztasqpdQ',s:27}]},
+{y:'2013',m:27.5,lay:'A',date:'النصف الأول 2013',dom:EC,ic:'banknote',n:8,u:'جنيهات للدولار في السوق السوداء',sub:'والسعر الرسمي نحو <b>7</b> جنيهات',head:'الجنيه تحت الضغط',shots:[{id:'kMzztasqpdQ',s:17,z:1.26},{id:'kMzztasqpdQ',s:27,z:1.26}]},
 {y:'2013',m:29.8,lay:'B',date:'يونيو 2013',dom:E,ic:'fuel',n:8,u:'أيام فقط مخزون السولار',head:'طوابير الوقود تشل الشوارع',shots:[{id:'ouphn8YCi6c',s:2},{id:'qiCKXab3vDw',s:22}]},
-{y:'2013',m:31.0,lay:'C',date:'2013',dom:TO,n:5.9,dec:1,u:'مليار دولار إيرادات السياحة',sub:'مقابل <b>12.5</b> مليار في 2010',head:'انهيار إيرادات السياحة',shots:[{id:'7u94-H2HNlw',s:46},{id:'NUSWegoojSo',s:176}]},
+{y:'2013',m:31.0,lay:'C',date:'2013',dom:TO,n:5.9,dec:1,u:'مليار دولار إيرادات السياحة',sub:'مقابل <b>12.5</b> مليار في 2010',head:'انهيار إيرادات السياحة',shots:[{id:'7u94-H2HNlw',s:46,z:1.26},{id:'NUSWegoojSo',s:176}]},
 {y:'2013',m:31.5,lay:'N',date:'14 – 16 أغسطس 2013',dom:S,ic:'flame',n:42,u:'كنيسة تعرضت للاعتداء',sub:'في <b>ثلاثة أيام</b>',head:'موجة اعتداءات على الكنائس'},
 {y:'2013',m:31.6,lay:'D',date:'19 أغسطس 2013',dom:TR,n:25,u:'مجندًا',head:'مذبحة رفح الثانية',shots:[{id:'OWkKirbz5CU',s:2},{id:'OWkKirbz5CU',s:41}]},
 {y:'2013',m:32.5,lay:'M',date:'العام المالي 2012/2013',dom:EC,ic:'scale',n:13.8,dec:1,sf:'%',u:'عجز الموازنة من الناتج المحلي',sub:'والدين العام يقترب من <b>90%</b>',head:'عجز قياسي في الموازنة'},
 {y:'2013',m:34.3,lay:'N',date:'نوفمبر 2013',dom:L,n:13,sf:'%',u:'معدل التضخم',sub:'الأعلى منذ 2010',head:'الأسعار تشتعل'},
 {y:'2013',m:34.5,lay:'M',date:'نهاية 2013',dom:J,n:3.65,dec:2,u:'مليون عاطل',sub:'البطالة من <b>8.9%</b> إلى <b>13.4%</b>',head:'البطالة تقفز'},
-{y:'2013',m:35.77,lay:'A',date:'24 ديسمبر 2013',dom:TR,n:16,u:'شهيدًا',sub:'و<b>134</b> مصابًا',head:'تفجير مديرية أمن الدقهلية',shots:[{id:'IFAR8NwbVII',s:6},{id:'FiyA_LB2k6s',s:4}]},
+{y:'2013',m:35.77,lay:'A',date:'24 ديسمبر 2013',dom:TR,n:16,u:'شهيدًا',sub:'و<b>134</b> مصابًا',head:'تفجير مديرية أمن الدقهلية',shots:[{id:'IFAR8NwbVII',s:6},{id:'FiyA_LB2k6s',s:4,z:1.26}]},
 
 {y:'2014',m:36.77,lay:'B',date:'24 يناير 2014',dom:TR,n:4,u:'تفجيرات في يوم واحد',head:'تفجير مديرية أمن القاهرة… ومتحف الفن الإسلامي',shots:[{id:'tuLDd-07YuE',s:12},{id:'eCgYQHZelE4',s:26}]},
-{y:'2014',m:43.6,lay:'C',date:'أغسطس 2014',dom:PW,n:8,u:'ساعات انقطاع يوميًا',sub:'والطلب يفوق القدرة المتاحة',head:'أسوأ أزمة كهرباء',shots:[{id:'n_yjxxPwciw',s:8},{id:'n_yjxxPwciw',s:128}]},
+{y:'2014',m:43.6,lay:'C',date:'أغسطس 2014',dom:PW,n:8,u:'ساعات انقطاع يوميًا',sub:'والطلب يفوق القدرة المتاحة',head:'أسوأ أزمة كهرباء',shots:[{id:'n_yjxxPwciw',s:128},{id:'n_yjxxPwciw',s:146}]},
 {y:'2014',m:44.1,lay:'N',date:'4 سبتمبر 2014',dom:PW,ic:'power-off',n:50,sf:'%',u:'انخفاض إنتاج الكهرباء',sub:'المترو يتوقف وقنوات تخرج من البث',head:'إظلام شامل على مستوى الجمهورية'},
 {y:'2014',m:45.77,lay:'M',date:'24 أكتوبر 2014',dom:TR,n:31,u:'شهيدًا',head:'هجوم كرم القواديس'},
 {y:'2014',m:47.97,lay:'X',res:1,date:'ديسمبر 2014',dom:EC,ic:'landmark',n:15.3,dec:1,u:'مليار دولار',head:'أربع سنوات… والاحتياطي يكفي <em>شهرين ونصف</em> من الواردات',chips:[0,11.97,26.97,47.97],d:4.4}
@@ -291,8 +294,8 @@ function ttlHTML(ev,r){var strip=r.h<=150;var fs=strip?24:Math.round(Math.max(26
 /* ---------- timeline card ---------- */
 var NS='http://www.w3.org/2000/svg',tl={prog:0,shown:0,chips:{}},EVM=SEQ.map(function(e){return e.m});
 function tlBuild(){
-  var n=setIn(cL,'<div class="tlh"><i data-lucide="landmark"></i><span class="lbl">الاحتياطي من النقد الأجنبي<small>مليار دولار · نهاية كل شهر</small></span><span class="val"><span class="dl" id="tdl">0%</span><b id="tval">36.0</b><small>مليار $</small></span></div><svg id="tlsvg"></svg><div class="tlchips" id="tlchips"></div>','',200);
-  tl.svg=n.querySelector('#tlsvg');tl.val=n.querySelector('#tval');tl.dl=n.querySelector('#tdl');tl.chipBox=n.querySelector('#tlchips');tl.chips={};icons();tlDraw()}
+  var n=setIn(cL,'<div class="tlh"><i data-lucide="landmark"></i><span class="lbl">الاحتياطي من النقد الأجنبي<small>مليار دولار · نهاية كل شهر</small></span><span class="val"><span class="dl" id="tdl">0%</span><b id="tval">36.0</b><small>مليار $ · <span id="twhen">ديسمبر 2010</span></small></span></div><svg id="tlsvg"></svg><div class="tlchips" id="tlchips"></div>','',200);
+  tl.svg=n.querySelector('#tlsvg');tl.val=n.querySelector('#tval');tl.dl=n.querySelector('#tdl');tl.when=n.querySelector('#twhen');tl.chipBox=n.querySelector('#tlchips');tl.chips={};icons();tlDraw()}
 function tlGeom(){var r=rect.tl||TLR;var g={W:r.w,H:r.h,l:34,r:r.w-34,t:62,b:r.h-44};g.x=function(m){return g.r-(m/48)*(g.r-g.l)};var lo=10,hi=38;g.y=function(v){return g.b-(v-lo)/(hi-lo)*(g.b-g.t)};return g}
 function el(n,a,p){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
 function tlDraw(){
@@ -313,6 +316,7 @@ function tlDraw(){
   var gr=el('g',{'clip-path':'url(#gc)'},s);
   el('path',{d:d+'L'+g.x(48)+' '+g.b+'L'+g.x(0)+' '+g.b+'Z',fill:'url(#ga)'},gr);
   el('path',{d:d,fill:'none',stroke:'#3d5cc0','stroke-width':3.2,'stroke-linejoin':'round','stroke-linecap':'round'},gr);
+  RES.forEach(function(p){el('circle',{cx:g.x(p[0]),cy:g.y(p[1]),r:3.4,fill:'#3d5cc0',stroke:'#fff','stroke-width':1.6},gr)});
   /* event dots on the axis */
   tl.dots=EVM.map(function(m){return el('circle',{cx:g.x(m),cy:g.b,r:3.6,fill:'rgba(28,37,71,.18)'},s)});
   tl.ph=el('line',{x1:0,x2:0,y1:0,y2:g.b,stroke:'#3d5cc0','stroke-width':1.4,'stroke-dasharray':'3 4',opacity:.7},s);
@@ -324,14 +328,14 @@ function tlUpdate(m,idx){var g=tlGeom(),x=g.x(m),v=resAt(m);tl.prog=m;tl.idx=idx
   tl.clip.setAttribute('x',x);tl.clip.setAttribute('width',Math.max(0,g.r-x+4));
   tl.ph.setAttribute('x1',x);tl.ph.setAttribute('x2',x);tl.ph.setAttribute('y1',g.y(v));tl.ph.setAttribute('y2',g.b);
   tl.end.setAttribute('cx',x);tl.end.setAttribute('cy',g.y(v));tl.cur.setAttribute('cx',x);
-  tl.val.textContent=v.toFixed(1);var dp=Math.round((v-36)/36*100);tl.dl.textContent=(dp<0?'−':'')+Math.abs(dp)+'%';tl.dl.style.visibility=dp<0?'visible':'hidden';
+  var kk=lastKnown(m),kv=RES[kk][1];tl.val.textContent=kv.toFixed(1);tl.when.textContent=RESL[kk];var dp=Math.round((kv-36)/36*100);tl.dl.textContent=(dp<0?'−':'')+Math.abs(dp)+'%';tl.dl.style.visibility=dp<0?'visible':'hidden';
   var cy=Math.min(3,Math.floor(m/12));tl.years.forEach(function(t,i){t.setAttribute('fill',i===cy?'#3d5cc0':(i<cy?'rgba(28,37,71,.5)':'rgba(28,37,71,.28)'))});
   tl.dots.forEach(function(c,i){var mm=EVM[i];if(idx!=null&&i===idx){c.setAttribute('r',5);c.setAttribute('fill','rgba(238,152,115,.9)')}else{c.setAttribute('r',3.6);c.setAttribute('fill',mm<=m+.01?'rgba(28,37,71,.55)':'rgba(28,37,71,.16)')}})}
 var tlRaf=0;function tlGo(to,idx,ms){cancelAnimationFrame(tlRaf);var from=tl.prog,t0=performance.now();(function f(now){var k=Math.min(1,(now-t0)/ms),e=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;tlUpdate(from+(to-from)*e,idx);if(k<1)tlRaf=requestAnimationFrame(f)})(t0)}
 /* redraw while the card glides so the curve stretches with it */
 var gRaf=0;function tlFollow(ms){cancelAnimationFrame(gRaf);var t0=performance.now();(function f(now){var done=now-t0>=ms;rect.tl=done&&cL._t?cL._t:{x:cL.offsetLeft,y:cL.offsetTop,w:cL.offsetWidth,h:cL.offsetHeight};tlDraw();if(!done)gRaf=requestAnimationFrame(f)})(t0)}
 function tlChip(m,on){if(!tl.chipBox)return;var key=String(m);var c=tl.chips[key];
-  if(on&&!c){c=document.createElement('div');c.className='vchip'+(m>20?' low':'');var lab=m===0?'يناير 2011':m===11.97?'ديسمبر 2011':m===26.97?'مارس 2013':'ديسمبر 2014';c.innerHTML='<b>'+resAt(m).toFixed(1)+'</b>'+lab;c.dataset.m=m;tl.chipBox.appendChild(c);tl.chips[key]=c;tlChipsPos();requestAnimationFrame(function(){requestAnimationFrame(function(){c.classList.add('on')})})}
+  if(on&&!c){c=document.createElement('div');c.className='vchip'+(m>20?' low':'');var lab=m===0?'ديسمبر 2010':m===11.97?'ديسمبر 2011':m===26.97?'مارس 2013':'ديسمبر 2014';c.innerHTML='<b>'+resAt(m).toFixed(1)+'</b>'+lab;c.dataset.m=m;tl.chipBox.appendChild(c);tl.chips[key]=c;tlChipsPos();requestAnimationFrame(function(){requestAnimationFrame(function(){c.classList.add('on')})})}
   if(!on&&c){c.classList.remove('on');delete tl.chips[key];setTimeout(function(){c.remove()},600)}}
 function tlChipsPos(){var g=tlGeom();for(var k in tl.chips){var c=tl.chips[k],m=+c.dataset.m;c.style.left=g.x(m)+'px';c.style.top=(g.y(resAt(m))-10)+'px'}}
 function tlChipsOnly(list){for(var k in tl.chips){if(list.indexOf(+k)<0)tlChip(+k,false)}list.forEach(function(m){tlChip(m,true)})}
@@ -403,7 +407,7 @@ function beatSummary(tk){
 function beatFinal(tk){
   var r=FULL();[cT,cS3,cS4,cL].forEach(function(el){place(el,r);show(el,false)});cancelAnimationFrame(gRaf);
   place(cK,r);skin(cK,'cobalt');show(cK,true);
-  var n=setIn(cK,'<div class="k1">بعد أربع سنوات على الحافة</div><div class="big">من هنا <em>بدأ التحدي</em></div><div class="line"></div>','fin',900);
+  var n=setIn(cK,'<div class="k1">بعد أربع سنوات على الحافة</div><div class="big">من هنا <em>بدأ التحدي</em></div>','fin',900);
   setTimeout(function(){n.classList.add('go')},950);setYear('2014');bedTo(0,2.5);swell();setTimeout(dropAll,1200)}
 
 /* ---------- run ---------- */
