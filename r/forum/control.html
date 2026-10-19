@@ -201,7 +201,7 @@ body.nopv .frame iframe+.ph{display:grid}
 #q:focus{border-color:rgba(182,242,220,.45)}
 #rows{overflow:auto;padding:8px 8px 18px;scroll-behavior:smooth;flex:1;min-height:0}
 .sec{font:600 12px var(--fd);color:var(--mint);padding:14px 10px 6px;letter-spacing:.2px}
-.sl{border-radius:14px;padding:8px 9px;display:grid;grid-template-columns:36px 1fr auto auto;gap:9px;align-items:center;cursor:pointer;transition:background .2s}
+.sl{border-radius:14px;padding:8px 9px;display:grid;grid-template-columns:36px 1fr auto auto auto;gap:9px;align-items:center;cursor:pointer;transition:background .2s}
 .sl:hover{background:var(--glass)}
 .sl .n{font:600 12.5px var(--fd);color:var(--mute);width:34px;height:28px;border-radius:9px;display:grid;place-items:center;background:rgba(255,255,255,.05)}
 .sl .tx{min-width:0}.sl .tx b{display:block;font:500 13.5px var(--fd);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -211,6 +211,10 @@ body.nopv .frame iframe+.ph{display:grid}
 .sl.cur .n{background:var(--vio);color:#fff}
 .sl.past .tx b{color:var(--mute)}
 /* slide hide v1 */
+/* ed v1: the pencil opens the slide in the layer editor */
+.sl .eb{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:var(--mute);background:transparent;opacity:.55;transition:opacity .2s,background .2s,color .2s}
+.sl:hover .eb{opacity:1}.sl .eb:hover{background:rgba(143,142,247,.18);color:#fff}.sl .eb svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sl .eb[hidden]{display:none}
 .sl .hb{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:var(--mute);background:transparent;opacity:.55;transition:opacity .2s,background .2s,color .2s}
 .sl:hover .hb{opacity:1}.sl .hb:hover{background:rgba(255,255,255,.1);color:var(--ink)}
 .sl .hb svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -219,7 +223,7 @@ body.nopv .frame iframe+.ph{display:grid}
 .sl.hid .n{background:rgba(255,122,56,.14);color:#ff9a7a}
 #hall{font:500 12px var(--fd);color:#ff9a7a;background:rgba(255,122,56,.12);border-radius:8px;padding:5px 9px;white-space:nowrap}
 #hall[hidden]{display:none}
-.pills{grid-column:2/5;display:flex;flex-wrap:wrap;gap:5px;margin-top:2px}
+.pills{grid-column:2/6;display:flex;flex-wrap:wrap;gap:5px;margin-top:2px}
 .pills button{font:500 11.5px var(--fd);min-width:26px;height:24px;padding:0 7px;border-radius:7px;background:rgba(255,255,255,.05);color:var(--mute)}
 .pills button:hover{background:rgba(255,255,255,.12);color:var(--ink)}
 .pills button.on{background:var(--mint);color:#0b1020}
@@ -301,7 +305,7 @@ body.nopv .frame iframe+.ph{display:grid}
         <button id="open" type="button"><svg class="i" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8M12 17v4"/></svg>فتح شاشة العرض</button>
         <button id="black" type="button"><svg class="i" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>شاشة سوداء</button>
         <button id="rbtn" type="button"><i></i>الريموت</button>
-        <button id="edit" type="button" title="تعديل نصوص وأرقام السلايد من هنا"><svg class="i" viewBox="0 0 24 24"><path d="M21.17 6.81a1 1 0 0 0-3.98-3.98L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z"/><path d="m15 5 4 4"/></svg>تعديل النص</button>
+        <button id="edit" type="button" title="يفتح السلايد اللي على الشاشة في محرر الليرز"><svg class="i" viewBox="0 0 24 24"><path d="M21.17 6.81a1 1 0 0 0-3.98-3.98L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z"/><path d="m15 5 4 4"/></svg>تعديل السلايد</button>
       </div>
     </section>
   </div>
@@ -380,6 +384,10 @@ if(bc)bc.onmessage=function(e){onMsg(e.data,null)};
 /* slide hide v1: the hidden slides of each deck (kept here and in the deck, shared through localStorage) */
 var EYE='<svg viewBox="0 0 24 24"><path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/></svg>',
     EYEX='<svg viewBox="0 0 24 24"><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c4.29 0 8.04 2.6 9.94 6.65a1 1 0 0 1 0 .7 10.8 10.8 0 0 1-1.63 2.62"/><path d="M14.08 14.16a3 3 0 0 1-4.17-4.17"/><path d="M17.48 17.5A10.75 10.75 0 0 1 2.06 12.35a1 1 0 0 1 0-.7 10.8 10.8 0 0 1 4.45-5.14"/><path d="m2 2 20 20"/></svg>';
+var PEN='<svg viewBox="0 0 24 24"><path d="M21.17 6.81a1 1 0 0 0-3.98-3.98L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z"/><path d="m15 5 4 4"/></svg>';
+/* ed v1 (Amr 19 Oct 11:20: «كل سلايد … يكون فيه ايقونة edit هي اللي بتنقلني للتحكم في لاير»): the slide opens in the layer editor */
+function openEditor(i){if(sel==='center'){toast('المحرر شغال على V3 Update والمحاور السبعة');return}
+  var w=null;try{w=window.open('slide-editor.html?deck='+sel+'&i='+(i||0),'forum-editor')}catch(e){}if(!w)toast('المتصفح منع فتح نافذة جديدة · اسمح بالـ pop-ups للصفحة دي');else try{w.focus()}catch(e){}}
 function hideOf(k){var d=info[k];if(d&&d.hide)return d.hide;try{return JSON.parse(localStorage.getItem('fctl-hide-'+k)||'{}')||{}}catch(e){return {}}}
 function hidN(s){return !!hideOf(sel)[String(s.n)]}
 function setHide(h){var d=info[sel]||(info[sel]={});d.hide=h;LS.set('fctl-hide-'+sel,JSON.stringify(h));send('hide',{hide:h});buildList()}
@@ -391,12 +399,13 @@ function buildList(){var d=info[sel];var R=$('rows');
   d.slides.forEach(function(s){if(q&&(s.t+' '+s.s+' '+s.ax+' '+(s.i+1)).indexOf(q)<0)return;
     if(s.ax!==lastAx&&!q){lastAx=s.ax;if(s.ax)h+='<div class="sec">'+esc(s.ax)+'</div>'}
     var hz=hidN(s);h+='<div class="sl'+(hz?' hid':'')+'" data-i="'+s.i+'"><span class="n num">'+(s.i+1)+'</span><div class="tx"><b>'+esc(s.t||'—')+'</b>'+(s.s?'<small>'+esc(s.s)+'</small>':'')+'</div>'+(s.map?MAPI:'<span></span>')+
+      '<button type="button" class="eb" data-e="'+s.i+'" title="تعديل السلايد (الليرز)"'+(sel==='center'?' hidden':'')+'>'+PEN+'</button>'+
       '<button type="button" class="hb" data-h="'+esc(String(s.n))+'" title="'+(hz?'إظهار السلايد':'إخفاء السلايد (التالي والسابق يعدّوه)')+'">'+(hz?EYEX:EYE)+'</button>'+
       (s.steps.length>1?'<div class="pills">'+s.steps.map(function(t,k){return '<button type="button" data-i="'+s.i+'" data-k="'+k+'" title="'+esc(t)+'">'+(k+1)+'</button>'}).join('')+'</div>':'')+'</div>'});
   var nh=d.slides.filter(hidN).length;R.innerHTML=h||'<div class="empty">مفيش نتيجة</div>';$('cnt').textContent=d.slides.length+' سلايد'+(nh?' · '+nh+' مخفي':'');$('hall').hidden=!nh;lastCur=-1;render()}
 $('q').addEventListener('input',buildList);
 $('hall').addEventListener('click',function(){setHide({});toast('كل السلايدات ظاهرة')});
-$('rows').addEventListener('click',function(e){var hb=e.target.closest('.hb');if(hb){e.stopPropagation();var h=Object.assign({},hideOf(sel)),k=hb.dataset.h;if(h[k])delete h[k];else h[k]=1;setHide(h);
+$('rows').addEventListener('click',function(e){var eb=e.target.closest('.eb');if(eb){e.stopPropagation();openEditor(+eb.dataset.e);return}var hb=e.target.closest('.hb');if(hb){e.stopPropagation();var h=Object.assign({},hideOf(sel)),k=hb.dataset.h;if(h[k])delete h[k];else h[k]=1;setHide(h);
     toast(h[k]?'السلايد اتخفى · التالي والسابق هيعدّوه':'السلايد رجع');return}
   var p=e.target.closest('.pills button');if(p){send('go',{i:+p.dataset.i,k:+p.dataset.k});startTimer();return}
   var r=e.target.closest('.sl');if(r){send('go',{i:+r.dataset.i,k:0});startTimer()}});
@@ -408,7 +417,7 @@ function fmt(ms){var s=Math.max(0,Math.round(ms/1000));return s<60?s+'':Math.flo
 function render(){var d=info[sel],live=d&&Date.now()-d.seen<4500;
   var c=$('conn');c.classList.toggle('ok',!!live);
   c.querySelector('span').textContent=live?'متصل · '+DECKS[sel].n:(anyLive()?'شاشة العرض على عرض تاني':'شاشة العرض مش مفتوحة');
-  ['prev','next','replay','pause','black','edit'].forEach(function(id){$(id).disabled=!live});
+  ['prev','next','replay','pause','black'].forEach(function(id){$(id).disabled=!live});$('edit').disabled=sel==='center';
   $('lv').classList.toggle('on',!!live);$('lvt').textContent=live?'على الشاشة دلوقتي':'معاينة';
   if(!d||!d.st||!d.slides){if(!live){$('ttl').textContent=DECKS[sel].n;$('sub').textContent='اضغط «فتح شاشة العرض»، اسحب النافذة للشاشة الكبيرة وكبّرها ملء الشاشة.';$('no').textContent='—';$('axc').textContent='';$('steps').innerHTML='';$('nxt').textContent=PVON?'السلايد التاني':'—';$('lvs').textContent='· شاشة العرض مش مفتوحة';$('dprog').firstChild.style.width='0'}
     ['bpz','bbk','bed'].forEach(function(id){$(id).hidden=true});$('tnow').classList.remove('blk');lastCur=-1;
@@ -435,7 +444,7 @@ function render(){var d=info[sel],live=d&&Date.now()-d.seen<4500;
   $('pic').innerHTML=st.paused?'<path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5Z"/>':'<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>';
   $('black').classList.toggle('on',!!st.black);$('tnow').classList.toggle('blk',!!st.black);
   $('bpz').hidden=!st.paused;$('bbk').hidden=!st.black;$('bed').hidden=!st.edit;
-  $('edit').classList.toggle('on',ED.open||!!st.edit);$('erst').hidden=!st.edits;$('erst').textContent='رجّع النص الأصلي ('+(st.edits||0)+')';
+  $('edit').classList.toggle('on',!!st.edit);$('erst').hidden=!st.edits;$('erst').textContent='رجّع النص الأصلي ('+(st.edits||0)+')';
   anim(st);pvSync()}
 /* the bar runs smoothly between heartbeats */
 function anim(st){var A=$('anim'),bar=$('bar'),fill=$('abar');
@@ -460,7 +469,7 @@ $('prev').onclick=function(){send('prev')};
 $('replay').onclick=function(){send('replay')};
 $('pause').onclick=function(){send('toggle')};
 $('black').onclick=function(){send('black')};
-$('edit').onclick=function(){edOpen(!ED.open)};
+$('edit').onclick=function(){var d=info[sel],cu=d&&d.st&&d.st.cur;openEditor(cu?cu.i:0)};
 /* text edit v2: every text of the slide in its own field; typing changes the show at once */
 var ED={open:false,id:null,items:[],t:{}};
 /* text edit v3: an older show window (no text editing in it) is named instead of waiting forever */
