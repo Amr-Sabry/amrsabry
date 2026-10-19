@@ -74,6 +74,58 @@ function hload(){try{HIDE=JSON.parse(localStorage.getItem(HK)||'{}')||{}}catch(e
 hload();W.addEventListener('storage',function(e){if(e.key===HK){hload();push(1)}});
 function hid(n){return !!HIDE[String(n)]}
 
+/* ---------------------------------------------------------------- text edit (text edit v1, Amr 19 Oct: «امكانية الايديت على اي نص في السلايد من خلال زر ايديت»)
+   The «تعديل النص» button (control window, the deck's bar or the E key) puts the show in edit mode: hover marks a text, a click makes
+   it editable, Enter keeps it, Esc puts it back. Each change is kept per slide (original text, its occurrence on the slide → new text)
+   in localStorage «fctl-edit-<deck>» and laid over the slide whenever it is drawn again, so it survives rebuilds, reloads and replays. */
+var EK='fctl-edit-'+DECK, EDT={}, editing=false, ORIG=new WeakMap(), RPL=[], eAct=null, eSnap=null, eHov=null, applying=false, eQ=0;
+function eload(){try{EDT=JSON.parse(localStorage.getItem(EK)||'{}')||{}}catch(e){EDT={}}}
+eload();W.addEventListener('storage',function(e){if(e.key===EK){eload();eSoon()}});
+function esave(){try{localStorage.setItem(EK,JSON.stringify(EDT))}catch(e){}}
+var SKIP='.out,.gone,.bye,.old,.old2,script,style,noscript,svg,#rc-edbar,#ui,button,input,textarea,select';
+function dead(n){var p=n.parentElement;return !p||!!p.closest(SKIP)}
+function tnodes(root){var out=[],w=D.createTreeWalker(root||D.body,NodeFilter.SHOW_TEXT,null),n;while((n=w.nextNode())){if(n.nodeValue.trim()&&!dead(n))out.push(n)}return out}
+function origOf(n){return ORIG.has(n)?ORIG.get(n):n.nodeValue.trim()}
+function occOf(node){var o=origOf(node),c=0,all=tnodes();for(var i=0;i<all.length;i++){if(all[i]===node)return c;if(origOf(all[i])===o)c++}return 0}
+function setTxt(n,o,t){if(!ORIG.has(n)){ORIG.set(n,o);RPL.push([n,n.nodeValue])}var v=n.nodeValue,a=v.match(/^\s*/)[0],b=v.match(/\s*$/)[0];if(v!==a+t+b)n.nodeValue=a+t+b}
+function eApply(){var L=EDT[curId()];if(!L||!L.length)return;applying=true;
+  try{var cnt={};tnodes().forEach(function(n){var o=origOf(n),c=cnt[o]||0;cnt[o]=c+1;if(n.parentElement&&n.parentElement.isContentEditable)return;
+    for(var i=0;i<L.length;i++){var e=L[i];if(e[0]===o&&e[2]===c){if(n.nodeValue.trim()!==e[1])setTxt(n,o,e[1]);break}}})}catch(e){console.error(e)}
+  applying=false}
+function eSoon(){if(eQ)return;eQ=rRAF(function(){eQ=0;eApply()})}
+try{new MutationObserver(function(){if(!applying)eSoon()}).observe(D.documentElement,{childList:true,subtree:true,characterData:true})}catch(e){}
+function eReset(){var id=curId();delete EDT[id];esave();RPL=RPL.filter(function(p){var n=p[0];if(n.isConnected){n.nodeValue=p[1];ORIG.delete(n);return false}return false});push(1)}
+function txEl(t){var el=t&&t.nodeType===1?t:t&&t.parentElement;while(el&&el!==D.body){if(el.closest(SKIP))return null;
+    for(var c=el.firstChild;c;c=c.nextSibling)if(c.nodeType===3&&c.nodeValue.trim())return el;el=el.parentElement}return null}
+function blockOf(el){while(el&&el.parentElement&&el.parentElement!==D.body&&getComputedStyle(el).display==='inline'&&!el.parentElement.closest(SKIP))el=el.parentElement;return el}
+function pickAt(e){var els=[];try{els=D.elementsFromPoint(e.clientX,e.clientY)}catch(x){els=[e.target]}for(var i=0;i<els.length;i++){var el=txEl(els[i]);if(el)return blockOf(el)}return null}
+function eBegin(el){eCommit();var ns=tnodes(el);if(!ns.length)return;eAct=el;eSnap=ns.map(function(n){return {n:n,o:origOf(n),c:occOf(n),v:n.nodeValue}});
+  el.contentEditable='true';el.spellcheck=false;el.focus();try{var r=D.createRange();r.selectNodeContents(el);var s=W.getSelection();s.removeAllRanges();s.addRange(r)}catch(e){}}
+function eCommit(cancel){if(!eAct)return;var el=eAct,sn=eSnap;eAct=null;eSnap=null;el.contentEditable='false';el.removeAttribute('contenteditable');
+  if(cancel){sn.forEach(function(s){if(s.n.isConnected)s.n.nodeValue=s.v});return}
+  var now=tnodes(el),id=curId(),L=EDT[id]||(EDT[id]=[]),put=function(o,c,t){L=L.filter(function(e){return !(e[0]===o&&e[2]===c)});if(t!==o)L.push([o,t,c]);EDT[id]=L};
+  if(now.length===sn.length&&now.every(function(n,i){return n===sn[i].n}))sn.forEach(function(s){var t=s.n.nodeValue.trim();if(t!==s.v.trim()||ORIG.has(s.n))put(s.o,s.c,t);if(!ORIG.has(s.n)&&t!==s.o){ORIG.set(s.n,s.o);RPL.push([s.n,s.v])}});
+  else{var t=(el.textContent||'').replace(/\s+/g,' ').trim();sn.forEach(function(s,i){put(s.o,s.c,i?'':t)});}
+  if(!EDT[id].length)delete EDT[id];esave();eApply();push(1)}
+function editMode(on){editing=on==null?!editing:!!on;if(!editing)eCommit();D.documentElement.classList.toggle('rc-edit',editing);
+  if(eHov){eHov.classList.remove('rce-h');eHov=null}push(1)}
+(function(){var st=D.createElement('style');st.textContent=
+  'html.rc-edit .rce-h{outline:1.5px dashed rgba(255,200,40,.95)!important;outline-offset:2px;cursor:text!important}'+
+  'html.rc-edit [contenteditable="true"]{outline:2px solid #ffd23f!important;outline-offset:3px;background:rgba(255,210,63,.16)!important;cursor:text!important;caret-color:#ff7a38;-webkit-user-select:text;user-select:text}'+
+  '#rc-edbar{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:2147483645;display:none;align-items:center;gap:10px;font:600 13px/1.2 "Readex Pro",system-ui,sans-serif;direction:rtl;background:#ffd23f;color:#1c2547;padding:8px 16px;border-radius:999px;box-shadow:0 10px 26px -10px rgba(0,0,0,.55)}'+
+  'html.rc-edit #rc-edbar{display:flex}#rc-edbar small{font-weight:500;opacity:.75}'+
+  '#rc-edb svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}html.rc-edit #rc-edb{background:#ffd23f!important;color:#1c2547!important}';
+  (D.head||D.documentElement).appendChild(st)})();
+function eUI(){if(!D.getElementById('rc-edbar')){var b=D.createElement('div');b.id='rc-edbar';b.innerHTML='✎ وضع تعديل النص <small>اضغط على أي نص · Enter حفظ · Esc تراجع · E خروج</small>';D.body.appendChild(b)}
+  var ui=D.getElementById('ui');if(ui&&!D.getElementById('rc-edb')){var k=ui.querySelector('button'),x=D.createElement('button');x.id='rc-edb';x.type='button';x.title='تعديل النص (E)';if(k)x.className=k.className;
+    x.innerHTML='<svg viewBox="0 0 24 24"><path d="M21.17 6.81a1 1 0 0 0-3.98-3.98L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z"/><path d="m15 5 4 4"/></svg>';
+    x.addEventListener('click',function(e){e.stopPropagation();editMode()});ui.appendChild(x)}}
+W.addEventListener('mousemove',function(e){if(!editing)return;var el=pickAt(e);if(el===eHov)return;if(eHov)eHov.classList.remove('rce-h');eHov=el&&el!==eAct?el:null;if(eHov)eHov.classList.add('rce-h')},true);
+['pointerdown','mousedown','mouseup','click','dblclick'].forEach(function(t){W.addEventListener(t,function(e){if(!editing)return;var tg=e.target;
+  if(tg&&tg.closest&&tg.closest('#rc-edb,#ui,#rc-edbar'))return;
+  if(eAct&&(eAct.contains(tg)||(function(){var p=pickAt(e);return p&&(p===eAct||eAct.contains(p))})())){e.stopPropagation();if(!eAct.contains(tg)&&t==='click'){try{var r=D.caretRangeFromPoint(e.clientX,e.clientY);if(r){var s=W.getSelection();s.removeAllRanges();s.addRange(r)}}catch(x){}}return}
+  e.stopPropagation();e.preventDefault();if(t!=='click')return;var el=pickAt(e);if(el){if(eHov===el){el.classList.remove('rce-h');eHov=null}eBegin(el)}else eCommit()},true)});
+
 /* ---------------------------------------------------------------- deck adapters */
 var A=null;
 function txt(h){var d=D.createElement('div');d.innerHTML=String(h||'').replace(/\[\[|\]\]/g,'').replace(/<br\s*\/?>/gi,' ');return (d.textContent||'').replace(/\s+/g,' ').trim()}
@@ -133,7 +185,7 @@ function post(m){m.ns='fctl';m.from='show';m.deck=DECK;m.sid=SID;m.title=D.title
   var to=[];if(peer)to.push(peer);try{if(W.opener&&!W.opener.closed&&to.indexOf(W.opener)<0)to.push(W.opener)}catch(e){}
   to.forEach(function(w){try{w.postMessage(m,'*')}catch(e){}})}
 function state(){if(!A)return null;var c={};try{c=A.cur()}catch(e){}
-  return {t:'state',hide:HIDE,cur:c,paused:paused,black:!!(blk&&blk.style.opacity==='1'),anim:animState(),map:(function(){try{return A.hasMap()}catch(e){return false}})()}}
+  return {t:'state',edit:editing,edits:(EDT[curId()]||[]).length,hide:HIDE,cur:c,paused:paused,black:!!(blk&&blk.style.opacity==='1'),anim:animState(),map:(function(){try{return A.hasMap()}catch(e){return false}})()}}
 function push(force){var s=state();if(!s)return;var j=JSON.stringify(s);if(!force&&j===lastSent&&!s.anim)return;lastSent=j;post(s)}
 function hello(){if(!A)return;var sl=[];try{sl=A.slides()}catch(e){console.error(e)}post({t:'hello',slides:sl,hide:HIDE});sentSlides=true;push(1)}
 function handle(m){if(!m||m.ns!=='fctl'||m.from!=='ctl')return;if(m.deck&&m.deck!==DECK&&m.deck!=='*')return;
@@ -145,6 +197,7 @@ function handle(m){if(!m||m.ns!=='fctl'||m.from!=='ctl')return;if(m.deck&&m.deck
   if(c==='hello'){hello();return}
   if(c==='pause'){pause();return} if(c==='resume'){resume();return} if(c==='toggle'){paused?resume():pause();return}
   if(c==='black'){black(m.on);return}
+  if(c==='edit'){editMode(m.on);return} if(c==='editreset'){eReset();return}
   if(c==='hide'){HIDE=m.hide||{};try{localStorage.setItem(HK,JSON.stringify(HIDE))}catch(e){}push(1);return}
   if(paused&&/^(go|next|prev|replay)$/.test(c))resume();
   try{if(c==='go'){force=1;try{A.go(m.i,m.k)}finally{force=0}}else if(c==='next')A.next();else if(c==='prev')A.prev();else if(c==='replay')A.replay()}catch(e){console.error(e)}
@@ -163,13 +216,16 @@ function rload(){try{var c=JSON.parse(localStorage.getItem(RK)||'null');if(c&&c.
 rload();W.addEventListener('storage',function(e){if(e.key===RK)rload()});
 var RDEF={'k:ArrowLeft':'next','k:ArrowDown':'next','k:PageDown':'next','k:Space':'next','k:Enter':'next','k:NumpadEnter':'next','m:nexttrack':'next','m:seekforward':'next',
   'k:ArrowRight':'prev','k:ArrowUp':'prev','k:PageUp':'prev','k:Backspace':'prev','m:previoustrack':'prev','m:seekbackward':'prev',
-  'm:play':'next','m:pause':'next','m:playpause':'next','m:stop':'pause','k:KeyP':'pause','k:KeyB':'black','k:Period':'black','k:KeyR':'replay'};
+  'm:play':'next','m:pause':'next','m:playpause':'next','m:stop':'pause','k:KeyP':'pause','k:KeyB':'black','k:Period':'black','k:KeyR':'replay','k:KeyE':'edit'};
 function ract(s){var a=RCFG.map[s];if(a)return a==='none'?null:a;if(RCFG.swap){if(s==='k:ArrowLeft')return 'prev';if(s==='k:ArrowRight')return 'next'}return RDEF[s]||null}
 function ksig(e){var k=e.key||'';if(k==='MediaTrackNext')return 'm:nexttrack';if(k==='MediaTrackPrevious')return 'm:previoustrack';if(k==='MediaPlayPause')return 'm:playpause';if(k==='MediaStop')return 'm:stop';return 'k:'+(e.code||k)}
 function doAct(a,s){post({t:'sig',sig:s,act:a});if(learning||!A)return;
-  if(a==='pause'){paused?resume():pause();return} if(a==='black'){black();return}
+  if(a==='pause'){paused?resume():pause();return} if(a==='black'){black();return} if(a==='edit'){editMode();return}
   if(paused)resume();try{if(a==='next')A.next();else if(a==='prev')A.prev();else if(a==='replay')A.replay()}catch(e){console.error(e)}push(1)}
-W.addEventListener('keydown',function(e){var t=e.target;if(t&&(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName||'')))return;
+W.addEventListener('keydown',function(e){var t=e.target;
+  if(t&&t.isContentEditable){if(e.key==='Enter'){e.preventDefault();eCommit()}else if(e.key==='Escape'){e.preventDefault();eCommit(true)}e.stopImmediatePropagation();return}
+  if(editing&&e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();editMode(false);return}
+  if(t&&(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName||'')))return;
   var s=ksig(e),a=ract(s);
   if(learning){e.preventDefault();e.stopImmediatePropagation();post({t:'sig',sig:s,act:a});return}
   if(!a){if(paused)resume();return}      /* other keys carry on to the deck (f = full screen, Home, End) */
@@ -193,7 +249,7 @@ function media(){if(!('mediaSession' in navigator))return;
 function boot(){
   try{if(typeof SLIDES!=='undefined'&&typeof ORDER!=='undefined'&&typeof show==='function')A=forumAdapter();
       else if(typeof SL!=='undefined'&&typeof go==='function')A=centerAdapter()}catch(e){console.error(e)}
-  if(!A)return;A.hook();hello()}
+  if(!A)return;A.hook();try{eUI()}catch(e){console.error(e)}hello()}
 if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',function(){rST(boot,0)});else rST(boot,0);
 W.RC={pause:pause,resume:resume,isPaused:function(){return paused},now:vnow,deck:DECK,state:state,black:black};
 })();
