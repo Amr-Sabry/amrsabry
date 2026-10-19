@@ -204,6 +204,14 @@ body.nopv .frame iframe+.ph{display:grid}
 #rows{overflow:auto;padding:8px 8px 18px;scroll-behavior:smooth;flex:1;min-height:0}
 .sec{font:600 12px var(--fd);color:var(--mint);padding:14px 10px 6px;letter-spacing:.2px}
 .sl{border-radius:14px;padding:8px 9px;display:grid;grid-template-columns:36px 1fr auto auto auto;gap:9px;align-items:center;cursor:pointer;transition:background .2s}
+/* thumbs v1: a picture of each slide beside its number (the slide after its last card) */
+.sl.wt{grid-template-columns:36px 104px 1fr auto auto auto}
+.sl .th{grid-row:span 2;align-self:start;width:104px;height:58.5px;border-radius:8px;object-fit:cover;display:block;background:#11131d;box-shadow:0 0 0 1px rgba(255,255,255,.1),0 6px 14px -8px rgba(0,0,0,.8);transition:box-shadow .2s,transform .2s}
+.sl:hover .th{transform:scale(1.03)}
+.sl.cur .th{box-shadow:0 0 0 2px var(--vio2),0 6px 14px -8px rgba(0,0,0,.8)}
+.sl.hid .th{filter:grayscale(1);opacity:.55}
+.sl.wt .pills{grid-column:3/7}
+.sl.wt .n{align-self:start;margin-top:2px}
 .sl:hover{background:var(--glass)}
 .sl .n{font:600 12.5px var(--fd);color:var(--mute);width:34px;height:28px;border-radius:9px;display:grid;place-items:center;background:rgba(255,255,255,.05)}
 .sl .tx{min-width:0}.sl .tx b{display:block;font:500 13.5px var(--fd);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -337,10 +345,12 @@ body.nopv .frame iframe+.ph{display:grid}
 /* where the three decks live: next to this page offline, or the hub rooms online */
 var OFF=location.protocol==='file:'||/\/offline\//.test(location.pathname);
 var DECKS={
-  v3:    {n:'V3 Update',          s:'العرض حسب القطاعات', url:OFF?'forum-v3/v3-update.html':'/r/bacq9ed85gvpu47x2iusyj'},
-  axes:  {n:'المحاور السبعة',     s:'محور ورا محور',       url:OFF?'forum-v3/7-axes.html':'/r/9fbhrknz7p2bx354w8jfur'},
-  center:{n:'الخريطة في المنتصف', s:'13 سلايد',            url:OFF?'center-map/center-map.html':'/r/knva3dcbti4kedhdf9icnf'}
+  v3:    {n:'V3 Update',          s:'العرض حسب القطاعات', url:OFF?'forum-v3/v3-update.html':'/r/bacq9ed85gvpu47x2iusyj',th:'thumbs/v3'},
+  axes:  {n:'المحاور السبعة',     s:'محور ورا محور',       url:OFF?'forum-v3/7-axes.html':'/r/9fbhrknz7p2bx354w8jfur',th:'thumbs/axes'},
+  center:{n:'الخريطة في المنتصف', s:'13 سلايد',            url:OFF?'center-map/center-map.html':'/r/knva3dcbti4kedhdf9icnf',th:'thumbs/center'}
 };
+/* thumbs v1 */
+function thumbOf(s){var d=DECKS[sel];return d&&d.th?d.th+'/'+encodeURIComponent(String(s.n))+'.webp?v=1':''}
 /* ns mode v1: ?ns=<name> keeps this window's storage and messages apart (the promo's live copy) */
 var NS=(new URLSearchParams(location.search).get('ns')||'').replace(/[^a-z0-9_-]/gi,''), SFX=NS?'~'+NS:'';
 function nsq(u){return NS?u+(u.indexOf('?')<0?'?':'&')+'ns='+NS:u}
@@ -403,7 +413,7 @@ function buildList(){var d=info[sel];var R=$('rows');
   var q=$('q').value.trim(),h='',lastAx=null;
   d.slides.forEach(function(s){if(q&&(s.t+' '+s.s+' '+s.ax+' '+(s.i+1)).indexOf(q)<0)return;
     if(s.ax!==lastAx&&!q){lastAx=s.ax;if(s.ax)h+='<div class="sec">'+esc(s.ax)+'</div>'}
-    var hz=hidN(s);h+='<div class="sl'+(hz?' hid':'')+'" data-i="'+s.i+'"><span class="n num">'+(s.i+1)+'</span><div class="tx"><b>'+esc(s.t||'—')+'</b>'+(s.s?'<small>'+esc(s.s)+'</small>':'')+'</div>'+(s.map?MAPI:'<span></span>')+
+    var hz=hidN(s);var tu=thumbOf(s);h+='<div class="sl'+(hz?' hid':'')+(tu?' wt':'')+'" data-i="'+s.i+'"><span class="n num">'+(s.i+1)+'</span>'+(tu?'<img class="th" loading="lazy" decoding="async" alt="" src="'+tu+'" onerror="this.style.visibility=\'hidden\'">':'')+'<div class="tx"><b>'+esc(s.t||'—')+'</b>'+(s.s?'<small>'+esc(s.s)+'</small>':'')+'</div>'+(s.map?MAPI:'<span></span>')+
       '<button type="button" class="eb" data-e="'+s.i+'" title="تعديل السلايد (Layers)"'+(sel==='center'?' hidden':'')+'>'+PEN+'</button>'+
       '<button type="button" class="hb" data-h="'+esc(String(s.n))+'" title="'+(hz?'إظهار السلايد':'إخفاء السلايد (التالي والسابق يعدّوه)')+'">'+(hz?EYEX:EYE)+'</button>'+
       (s.steps.length>1?'<div class="pills">'+s.steps.map(function(t,k){return '<button type="button" data-i="'+s.i+'" data-k="'+k+'" title="'+esc(t)+'">'+(k+1)+'</button>'}).join('')+'</div>':'')+'</div>'});
