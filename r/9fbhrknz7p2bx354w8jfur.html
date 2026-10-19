@@ -1066,10 +1066,32 @@ function curScale(){const m=/scale\(([\d.]+)\)/.exec(stage.style.transform);retu
 function countUp(sp,delay){
   const raw=sp.dataset.v, v=+raw, dec=(raw.split('.')[1]||'').length, f=d3.format(v>=10000?`,.${dec}f`:`.${dec}f`);
   if(/^(19|20)\d\d$/.test(raw)) return;                 /* years never count */
-  const zm=parseFloat(getComputedStyle(sp.closest('.in')||sp).zoom)||1;
-  sp.style.minWidth=sp.getBoundingClientRect().width/curScale()/zm+'px';
-  sp.textContent=f(0);
-  setTimeout(()=>{const t0=performance.now(),D=1200;const tick=t=>{const p=Math.min(1,(t-t0)/D),e=1-Math.pow(1-p,3);sp.textContent=p<1?f(v*e):fmt(v);if(p<1)requestAnimationFrame(tick)};requestAnimationFrame(tick)},delay);
+  /* count fix v1 (Amr 19 Oct «فليكر مع العداد»): the face has no tabular figures, so a counting number changed width every frame and shook
+     its pill, its unit and its neighbours. It now counts inside a box as wide as its widest step (the final text with every digit set to
+     the widest digit it can reach, measured on hidden copies in one layout pass); when it lands the box eases back to the final width and is released. */
+  const fin=fmt(v), wide=countBox(sp,fin,dec);
+  sp.style.width=wide[1]+'px';sp.textContent=f(0);
+  setTimeout(()=>{const t0=performance.now(),D=1200;const tick=t=>{if(!sp.isConnected)return;const p=Math.min(1,(t-t0)/D),e=1-Math.pow(1-p,3);sp.textContent=p<1?f(v*e):fin;
+    if(p<1){requestAnimationFrame(tick);return}
+    if(wide[1]-wide[0]<.5){sp.style.width='';return}
+    sp.style.transition='width .45s var(--settle,ease-out)';sp.style.width=wide[0]+'px';setTimeout(()=>{if(sp.style.width===wide[0]+'px'){sp.style.transition='';sp.style.width=''}},520)};requestAnimationFrame(tick)},delay);
+}
+/* [final width, widest width the count will show]: digit widths are measured once (ten of each, on hidden copies, one layout pass);
+   the widest step is the widest number not above the final one with its separators (same length, or shorter) */
+function countBox(sp,fin,dec){
+  sp.style.minWidth='';sp.style.width='';sp.style.transition='';sp.textContent=fin;
+  const par=sp.parentNode, CH='0123456789,.', ks=[fin].concat(CH.split('').map(c=>c.repeat(10))).map(t=>{const k=sp.cloneNode(false);k.removeAttribute('data-v');
+    k.textContent=t;k.style.cssText='position:absolute;visibility:hidden;width:auto;min-width:0;pointer-events:none';par.insertBefore(k,sp.nextSibling);return k});
+  const ws=ks.map(k=>k.offsetWidth);ks.forEach(k=>k.remove());
+  const W={};CH.split('').forEach((c,i)=>W[c]=ws[i+1]/10);
+  const wd=(a,b)=>{let m=0;for(let d=a;d<=b;d++)m=Math.max(m,W[d]);return m}, WD=wd(0,9), ds=fin.replace(/[^\d]/g,''), n=ds.length;
+  const seps=[...fin].reduce((x,c)=>x+(/\d/.test(c)?0:(W[c]||0)),0), K=fin.split('.')[0].replace(/,/g,'').length, grp=fin.indexOf(',')>=0;
+  let best=0, pre=0;
+  for(let i=0;i<n;i++){const lo=i===0&&K>1?1:0, hi=+ds[i]-1;if(hi>=lo)best=Math.max(best,seps+pre+wd(lo,hi)+(n-1-i)*WD);pre+=W[ds[i]]}
+  best=Math.max(best,seps+pre);
+  for(let k=1;k<K;k++)best=Math.max(best,(k>1?wd(1,9)+(k-1)*WD:WD)+(grp?Math.floor((k-1)/3)*W[',']:0)+(dec?W['.']+dec*WD:0));
+  const corr=ws[0]-(seps+pre);
+  return [ws[0],Math.max(ws[0],Math.ceil(best+corr))];
 }
 const SEG=typeof Intl!=='undefined'&&Intl.Segmenter?new Intl.Segmenter('ar',{granularity:'grapheme'}):null;
 /* typewriter for Arabic: whole words are kept intact (splitting letters into separate boxes breaks their joins and ligatures);

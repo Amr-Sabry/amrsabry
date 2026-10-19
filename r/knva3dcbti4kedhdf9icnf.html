@@ -903,7 +903,12 @@ map.insertAdjacentHTML('beforeend','<div class="yc" id="yc"><div class="ych"><sp
 const ease3=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
 /* callout number counts up when the callout comes in */
 function coCount(){const n=document.querySelector('#calls .co .bx .n');if(!n)return;const m=/^([+]?)(\d+(?:\.\d+)?)(%?)$/.exec(n.textContent.trim());if(!m)return;
-  const v=+m[2],dec=(m[2].split('.')[1]||'').length,t0=performance.now()+750,f=t=>{if(!n.isConnected)return;const k=clamp((t-t0)/1400,0,1),e=1-Math.pow(1-k,3);n.textContent=m[1]+(v*e).toFixed(dec)+m[3];if(k<1)requestAnimationFrame(f)};n.textContent=m[1]+(0).toFixed(dec)+m[3];requestAnimationFrame(f)}
+  /* count fix v1: the callout number counts inside a box as wide as its widest step, so the callout does not twitch; released when it lands */
+  const fin=n.textContent.trim(),par=n.parentNode,ks='0123456789'.split('').map(d=>fin.replace(/\d/g,d)).concat([fin]).map(t=>{const k=n.cloneNode(false);k.textContent=t;
+    k.style.cssText='position:absolute;visibility:hidden;min-width:0;pointer-events:none;animation:none';par.appendChild(k);return k}),ws=ks.map(k=>k.offsetWidth);ks.forEach(k=>k.remove());
+  const wf=ws[ws.length-1],wm=Math.max.apply(null,ws);n.style.minWidth=wm+'px';
+  const v=+m[2],dec=(m[2].split('.')[1]||'').length,t0=performance.now()+750,f=t=>{if(!n.isConnected)return;const k=clamp((t-t0)/1400,0,1),e=1-Math.pow(1-k,3);n.textContent=m[1]+(v*e).toFixed(dec)+m[3];if(k<1){requestAnimationFrame(f);return}
+    n.style.transition=(n.style.transition?n.style.transition+',':'')+'min-width .45s ease-out';n.style.minWidth=wf+'px';setTimeout(()=>{n.style.minWidth=''},520)};n.textContent=m[1]+(0).toFixed(dec)+m[3];requestAnimationFrame(f)}
 
 /* growth wipe: each new area is revealed by a soft spreading wipe from a seed inside it, in a random (seeded) order across the years */
 const GW={};
