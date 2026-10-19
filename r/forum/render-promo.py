@@ -7,10 +7,10 @@ shell with a graphics card.
 
   pip install playwright imageio-ffmpeg
   python -m playwright install chromium
-  python render-promo.py --music music.mp3 --workers auto
+  python render-promo.py --workers auto
 
---music: the Artlist track «Signal to Noise» (Michael Oates) as downloaded (mp3). It is cut to the shots here (the hit lands on the
-         title, the drop on «غيّر الرقم», the breakdown on the return to the big screen, a hit on the feature bento, a fade at the end).
+--music: a path or URL to the track (default: promo-music.mp3 next to the promo on the hub, an original AI track made for it with
+         Artlist, no copyright, no watermark). It is laid from 0:00, padded or trimmed to the minute, faded and levelled.
 Output: promo.mp4 (1920x1080, 25 fps by default, H.264 + AAC)."""
 import argparse, asyncio, os, subprocess, sys, tempfile, time
 
@@ -18,7 +18,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument('--url', default='https://aromahub.studio/r/forum/promo.html')
 ap.add_argument('--fps', type=int, default=25)
 ap.add_argument('--out', default='promo.mp4')
-ap.add_argument('--music', default='')
+ap.add_argument('--music', default='https://aromahub.studio/r/forum/promo-music.mp3', help="path or URL; '' for none")
 ap.add_argument('--workers', default='auto', help='1, 2 or 4 (parts split at shot cuts), or auto')
 ap.add_argument('--gpu', action='store_true', help='use the graphics card (native Windows / Mac shell)')
 ap.add_argument('--headed', action='store_true', help='visible browser window (GPU on any desktop)')
@@ -87,8 +87,11 @@ async def part(p, k, a, b, tmp, log):
 
 
 def music_edit(src, out):
-    fc = ('[0:a]atrim=start=7.373:end=49.19,asetpts=PTS-STARTPTS[a];[0:a]atrim=start=121.579:end=139.912,asetpts=PTS-STARTPTS[b];'
-          '[a][b]acrossfade=d=0.15:c1=tri:c2=tri,afade=t=in:st=0:d=0.05,afade=t=out:st=58.0:d=2.0,loudnorm=I=-14:TP=-1.5:LRA=11,aresample=48000[o]')
+    if src.startswith('http'):
+        import urllib.request
+        local = out + '.src'
+        urllib.request.urlretrieve(src, local); src = local
+    fc = '[0:a]apad,atrim=0:60,afade=t=out:st=58.6:d=1.4,loudnorm=I=-14:TP=-1.5:LRA=11,aresample=48000[o]'
     subprocess.run([FF, '-y', '-loglevel', 'error', '-i', src, '-filter_complex', fc, '-map', '[o]', '-t', '60', out], check=True)
 
 
