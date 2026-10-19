@@ -65,6 +65,8 @@ main{flex:1;min-height:0;display:grid;gap:var(--gap);padding:var(--gap) 18px 18p
 #tnext .frame{max-width:calc((100vh - 610px) * 1.7778);min-width:180px}
 .frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none;opacity:0;transition:opacity .6s ease}
 .frame iframe.ready{opacity:1}
+/* pv calm v1: a preview waiting for the show to settle before it takes the new slide */
+.frame iframe.ready.stale{opacity:.45;transition:none}
 /* Amr 19 Oct 11:19: «المعاينة للتالي هي ال greyscale» — what comes next is in grey, so it is never mistaken for the screen */
 #tnext .frame iframe{filter:grayscale(1)}
 .frame .ph{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:6px;text-align:center;padding:16px;color:var(--dim);font:500 13px var(--fd);
@@ -555,16 +557,31 @@ rrender();
 
 /* ---------- preview frames (bento v1, Amr 19 Oct: «ومهم يكون فيه preview»): two silent copies of the deck (?preview=1), one on the
    slide / card that is on the big screen and one on what comes next. Each stops its own clock once its slide has settled. ---------- */
-var PVON=LS.get('fctl-pv'+SFX,'1')!=='0', PVS={};
+var PVON=LS.get('fctl-pv'+SFX,'1')!=='0', PVS={}, PVT={};
 function pvUrl(){var u=nsq(DECKS[sel].url);return u+(u.indexOf('?')<0?'?':'&')+'preview=1'}
 function pvLoad(){document.body.classList.toggle('nopv',!PVON);$('pvtog').classList.toggle('off',!PVON);$('pvph').textContent=PVON?'بتحمّل…':'المعاينة مقفولة · اضغط العين فوق';
   ['pvnow','pvnext'].forEach(function(id){var f=$(id),want=PVON?pvUrl():'about:blank';if(f.dataset.u===want)return;f.dataset.u=want;f.classList.remove('ready');PVS[id]='';f.src=want})}
 ['pvnow','pvnext'].forEach(function(id){$(id).addEventListener('load',function(){var f=$(id);if(!f.dataset.u||f.dataset.u==='about:blank')return;PVS[id]='';pvSync();setTimeout(function(){f.classList.add('ready')},900)})});
-function pvSend(id,t){if(!PVON||!t)return;var k=t.i+':'+t.k;if(PVS[id]===k)return;PVS[id]=k;try{$(id).contentWindow.postMessage({ns:'fctl-pv',i:t.i,k:t.k},'*')}catch(e){}}
+function pvSend(id,t){if(!PVON||!t)return;var k=t.i+':'+t.k;if(PVS[id]===k)return;PVS[id]=k;PVT[id]=Date.now();try{$(id).contentWindow.postMessage({ns:'fctl-pv',i:t.i,k:t.k},'*')}catch(e){}}
 function pvSync(){var d=info[sel],st=d&&d.st,cu=(st&&st.cur)||{i:0,k:0},sl=d&&d.slides,now={i:cu.i||0,k:cu.k||0},nx=null;
   if(sl&&st){var s=sl[now.i]||{},n=(s.steps||['']).length;if(now.k<n-1)nx={i:now.i,k:now.k+1};else{var j=now.i+1;while(sl[j]&&hidN(sl[j]))j++;if(sl[j])nx={i:j,k:0}}}
   else nx={i:now.i+1,k:0};
-  $('tnext').classList.toggle('end',!nx);pvSend('pvnow',now);pvSend('pvnext',nx)}
+  $('tnext').classList.toggle('end',!nx);pvWant(now,nx)}
+/* pv calm v1 (Amr 19 Oct 12:20: «الكنترول الحركة لما تغط على التالي باظت»): the show window opened from here runs on the same main
+   thread as this window and its two preview frames, so while the previews built their slides the show's own motion stuttered. Now the
+   moment the show moves the previews stand still; they get the new slide only once the show has settled (1.6 s after the last move,
+   and after a map scenario, at most 10 s), one after the other (the one on screen first). */
+var PVW={}, pvMv=0, pvKey='', pvTm=0;
+function pvLive(){var d=info[sel];return !!(d&&d.st&&Date.now()-d.seen<4500)}
+function pvBusy(){if(!pvLive())return 0;var st=info[sel].st,age=Date.now()-pvMv;if(age<1600)return 1600-age;if(st.anim&&!st.paused&&age<10000)return 350;return 0}
+function pvMark(){['pvnow','pvnext'].forEach(function(id){var f=$(id),t=PVW[id];f.classList.toggle('stale',!!(PVON&&t&&f.classList.contains('ready')&&PVS[id]!==t.i+':'+t.k))})}
+function pvHold(){if(!PVON)return;['pvnow','pvnext'].forEach(function(id){if(Date.now()-(PVT[id]||0)<7000)PVS[id]='';
+  try{$(id).contentWindow.postMessage({ns:'fctl-pv',hold:1},'*')}catch(e){}})}
+function pvFlush(){clearTimeout(pvTm);pvTm=0;var w=pvBusy();if(w){pvTm=setTimeout(pvFlush,w);return}
+  var a=PVW.pvnow,b=PVW.pvnext,na=!!(a&&PVS.pvnow!==a.i+':'+a.k);pvSend('pvnow',a);
+  if(b&&PVS.pvnext!==b.i+':'+b.k){if(na)pvTm=setTimeout(function(){pvTm=0;if(pvBusy()){pvFlush();return}pvSend('pvnext',PVW.pvnext);pvMark()},900);else pvSend('pvnext',b)}
+  pvMark()}
+function pvWant(now,nx){var k=now.i+':'+now.k;if(k!==pvKey){if(pvKey&&pvLive()){pvMv=Date.now();pvHold()}pvKey=k}PVW={pvnow:now,pvnext:nx};pvMark();pvFlush()}
 $('pvtog').onclick=function(e){e.stopPropagation();PVON=!PVON;LS.set('fctl-pv'+SFX,PVON?'1':'0');pvLoad();pvSync();toast(PVON?'المعاينة اشتغلت':'المعاينة اتقفلت · بتوفّر جهد الجهاز')};
 $('tnext').onclick=function(){if($('next').disabled){toast('افتح شاشة العرض الأول');return}send('next');startTimer()};
 pvLoad();

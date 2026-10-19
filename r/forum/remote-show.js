@@ -467,9 +467,15 @@ function media(){if(PV||ED||!('mediaSession' in navigator))return;
 var pvQ=null, pvT=0;
 if(PV){(function(){var s=D.createElement('style');s.textContent='#ui,#prog,#rc-edbar,#aroma-mascot,.aroma-notes{display:none!important}*{cursor:default!important}';(D.head||D.documentElement).appendChild(s)})();
   W.addEventListener('message',function(e){var m=e.data;if(m&&m.ns==='fctl-pv'&&e.source===W.parent)pvGo(m)})}
-function pvGo(m){if(!A){pvQ=m;return}pvQ=null;rCT(pvT);if(paused)resume();
+/* pv calm v1 (Amr 19 Oct 12:20: «الحركة لما تضغط على التالي باظت»): the previews share one main thread with the show, so they keep
+   still while it moves: the control sends «hold» the moment the show moves (the clock stops where it is), and the new slide only
+   once the show has settled. (Running the clock faster to settle sooner was tried and dropped: d3 drops the time of a late frame,
+   so under load a sped-up slide could stop half built.) */
+function pvRest(){rCT(pvT);if(!paused)pause()}
+function pvGo(m){if(m.hold){pvQ=null;pvRest();return}
+  if(!A){pvQ=m;return}pvQ=null;rCT(pvT);if(paused)resume();
   try{force=1;try{A.go(m.i,m.k)}finally{force=0}}catch(e){console.error(e)}
-  var ms=m.settle||((function(){try{return A.hasMap()}catch(e){return false}})()?6500:3200);pvT=rST(function(){pause()},ms)}
+  var ms=m.settle||((function(){try{return A.hasMap()}catch(e){return false}})()?6500:3200);pvT=rST(pvRest,ms)}
 function boot(){
   try{if(typeof SLIDES!=='undefined'&&typeof ORDER!=='undefined'&&typeof show==='function')A=forumAdapter();
       else if(typeof SL!=='undefined'&&typeof go==='function')A=centerAdapter()}catch(e){console.error(e)}
