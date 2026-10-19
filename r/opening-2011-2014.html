@@ -73,6 +73,8 @@ html,body{height:100%;margin:0;background:var(--ink);color:var(--paper);font-fam
 #start .n{font-size:1.25cqw;color:var(--muted);font-family:var(--text)}
 #start:focus-visible .p{outline:2px solid #fff;outline-offset:4px}
 #start[hidden]{display:none}
+#start:disabled{cursor:progress}
+#start:disabled .p{background:transparent;border-color:var(--muted);color:var(--muted)}
 #tools{width:min(100%,calc((100vh - 84px) * 16 / 9));display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;font-size:13px;color:var(--muted)}
 #tools button{font:inherit;color:var(--paper);background:#1a1817;border:1px solid #33302c;padding:6px 12px;cursor:pointer}
 #tools button:hover{border-color:var(--alarm)}
@@ -319,13 +321,17 @@ function reset(){
 }
 function start(){
   initAudio();if(AC&&AC.state==='suspended')AC.resume();
-  reset();startBtn.hidden=true;
-  var token=run;
+  reset();
+  var token=run,PREP=4500;
+  startBtn.hidden=false;startBtn.disabled=true;
+  startBtn.querySelector('.p').textContent='جاري التجهيز…';
+  droneTo(.25,3);
+  later(function(){startBtn.hidden=true;startBtn.disabled=false},PREP,token);
   SEQ.forEach(function(it){
-    later(function(){if(it.t==='card')showCard(it,token);else showShot(it,token)},it.at,token);
-    if(it.t==='shot')later(function(){prepare(it)},it.at-LEAD*1000,token);
+    later(function(){if(it.t==='card')showCard(it,token);else showShot(it,token)},PREP+it.at,token);
+    if(it.t==='shot')later(function(){prepare(it)},PREP+it.at-LEAD*1000,token);
   });
-  later(finish,total,token);
+  later(finish,PREP+total,token);
 }
 startBtn.addEventListener('click',start);
 $('#restart').addEventListener('click',start);
