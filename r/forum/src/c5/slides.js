@@ -71,6 +71,40 @@ function vid(n,o){S({n,full:1,cards:[['video',[0,0,12,6],Object.assign({cls:'vca
    '.bc.grad .era span,.bc.vio .era span{color:#fff}.bc.grad .era b.num{background:linear-gradient(100deg,#ffffff,#fbd5bb);-webkit-background-clip:text;background-clip:text}';
   document.head.appendChild(st)})();
 
+/* a cycle: the items sit on a ring around the centre sentence, joined by arrows that keep turning (slide 11) */
+CARD.cycle=function(c,r){const W=r.w-52,H=r.h-48,n=c.items.length,cx=W/2,cy=H/2,rx=W*.37,ry=H*.36;
+  const P=c.items.map((it,i)=>{const a=-Math.PI/2-i*2*Math.PI/n;return {x:cx+rx*Math.cos(a),y:cy+ry*Math.sin(a),ic:it[0],t:it[1]}});
+  const arc=(a0,a1)=>{const p=t=>[cx+rx*Math.cos(t),cy+ry*Math.sin(t)],[x0,y0]=p(a0),[x1,y1]=p(a1);return `M${x0.toFixed(1)} ${y0.toFixed(1)}A${rx.toFixed(1)} ${ry.toFixed(1)} 0 0 0 ${x1.toFixed(1)} ${y1.toFixed(1)}`};
+  const step=2*Math.PI/n, gap=step*.3;
+  const arcs=P.map((_,i)=>{const a=-Math.PI/2-i*step;return `<path class="cya" d="${arc(a-gap,a-step+gap)}" marker-end="url(#cyh)"/>`}).join('');
+  const bw=Math.min(240,W*.27);
+  return `<svg class="cys" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><defs><marker id="cyh" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#3d5cc0"/></marker></defs>${arcs}</svg>`+
+    `<div class="cyc" style="left:${cx}px;top:${cy}px;width:${rx*1.05}px">${ICON('refresh-ccw',34)}<b>${hl(c.c)}</b></div>`+
+    P.map((p,i)=>`<div class="cyi" style="left:${p.x.toFixed(1)}px;top:${p.y.toFixed(1)}px;width:${bw}px;--i:${i}"><span class="cyr">${ICON(p.ic,24)}</span><span class="cyt">${p.t}</span></div>`).join('')};
+(function(){const st=document.createElement('style');st.textContent=
+  '.bc .cys{position:absolute;inset:0;overflow:visible}.bc .cya{fill:none;stroke:#3d5cc0;stroke-width:3;stroke-dasharray:7 7;animation:cyd 1.6s linear infinite;opacity:.75}'+
+  '@keyframes cyd{to{stroke-dashoffset:-28}}'+
+  '.bc .cyc{position:absolute;transform:translate(-50%,-50%);text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--ink)}'+
+  '.bc .cyc svg{color:#3d5cc0;animation:cyr 9s linear infinite}@keyframes cyr{to{transform:rotate(-360deg)}}'+
+  '.bc .cyc b{font:700 25px/1.35 var(--f-display)}'+
+  '.bc .cyi{position:absolute;transform:translate(-50%,-50%);display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:18px;background:rgba(255,255,255,.86);box-shadow:inset 0 1px 0 #fff,0 14px 30px -18px rgba(28,37,71,.5);direction:rtl}'+
+  '.bc .cyr{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(150deg,#2840a5,#6a82e0);color:#fff}'+
+  '.bc .cyr svg{width:22px;height:22px}.bc .cyt{font:600 18px/1.3 var(--f-display);color:var(--ink)}'+
+  '.bc.photo.fit.clear{background:transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}.bc.photo.fit.clear img{padding:0}';
+  document.head.appendChild(st)})();
+
+/* sound relay v1 (Amr 13:23: «سلايد اتنين الصوت لازم يشتغل اوتوماتيك»): browsers keep a page silent until it has been clicked.
+   The film reports its clock here; this window passes it to the control window, which has been clicked and so may play sound,
+   and the control plays the score in step with the film. If the film can play its own sound, the control stays quiet. */
+if(!C5PV)(function(){let bc=null;const ns=(new URLSearchParams(location.search).get('ns')||'').replace(/[^a-z0-9_-]/gi,'');
+  try{bc=new BroadcastChannel('c5-film'+(ns?'~'+ns:''))}catch(e){}if(!bc)return;
+  const src=new URL('opening/score.mp3',document.baseURI).href;let last=0;
+  bc.onmessage=e=>{const m=e.data||{};if(m.c5ctl==='relaying')document.querySelectorAll('iframe.c5f').forEach(f=>{try{f.contentWindow.postMessage({c5film:'relay',on:!!m.on},'*')}catch(_){}})};
+  addEventListener('message',e=>{const m=e.data||{};if(m.c5film!=='state')return;last=Date.now();
+    bc.postMessage({c5film:1,t:m.t,playing:m.playing,own:m.own,muted:m.muted,at:Date.now(),src})});
+  setInterval(()=>{if(last&&(Date.now()-last>700||!document.querySelector('.slide:not(.out) iframe.c5f'))){last=0;bc.postMessage({c5film:1,playing:false,gone:true,at:Date.now(),src})}},300);
+})();
+
 /* jump v1 on the show (Amr 13:15: «امكانيه ادخال رقم السلايد او زرار من البداية»): type a slide number and Enter, as in PowerPoint,
    or use «من البداية» / the box in the bar at the bottom (it shows with the mouse); Home also goes to the first slide */
 if(!C5PV)addEventListener('DOMContentLoaded',()=>{const ui=document.getElementById('ui');if(!ui)return;
@@ -199,8 +233,8 @@ grid(6,HS1,{era:['مصر قبل','2014'],ic:'shield-alert',t:'الاضطرابا
 /* 7 — 2011–2023 */
 S({n:7,...HS1,cards:[
   ['photo',[0,0,8,6],{img:P('image20'),pos:'50% 45%'}],
-  ['title',[8,0,4,4],{bg:'dark',k:'خلال الفترة (2011- 2023)',ki:'flame',t:'تفاقمت الاضطرابات الامنية والعمليات الإرهابية',fs:46}],
-  ['title',[8,4,4,2],{bg:'grad',t:'2011 – 2023',fs:64,pz:0}],
+  ['title',[8,0,4,2],{bg:'grad',t:'<span dir="ltr">2011 – 2023</span>',fs:72,pz:0,hero:1}],   /* Amr 13:18: «انا محتاج التاريخ الاول» */
+  ['title',[8,2,4,4],{bg:'dark',k:'خلال الفترة (2011- 2023)',ki:'flame',t:'تفاقمت الاضطرابات الامنية والعمليات الإرهابية',fs:50}],
 ]});
 /* 8 — population and urban */
 S({n:8,...HS1,cards:[
@@ -220,15 +254,13 @@ S({n:10,...HS1,cards:[
   ['kpi',[8,4,4,2],{bg:'mint',ic:'map',l:'من 26 محافظة لديها مقومات كافية من الاستثمار الخاص المحلي',v:9,u:'%'}],
   ['photo',[0,0,4,6],{img:P('image38'),pos:'60% 50%'}],
 ]});
-/* 11 — the vicious circle */
+/* 11 — the vicious circle (Amr 13:13: redistributed; the Egypt collage shown whole, never cropped) */
 S({n:11,...HS1,cards:[
-  ['title',[8,0,4,2],{bg:'dark',k:'رسمت ملامح الاقتصاد المصري قبل 2014',ki:'refresh-ccw',t:'تحديات هيكلية متداخلة تغذي كلها واحدة الأخرى',fs:30}],
-  ['cq',[8,2,4,4],{bg:'vio',h:'حلقة مفرغة عانى منها الاقتصاد المصري لعقود',ic:'refresh-ccw',items:[
-    {ic:'users',k:'زيادة سكانية متسارعة'},{ic:'gauge',k:'ضغط على الموارد المتاحة'},{ic:'factory',k:'عدم الاستغلال الأمثل للموارد (إنتاجية محدودة)'}]}],
-  ['cq',[4,2,4,4],{bg:'dark2',ic:'triangle-alert',items:[
-    {ic:'lock',k:'قيود على النشاط الاستثماري'},{ic:'map-pin',k:'تركز التنمية في بعض المدن دون غيرها'},{ic:'shield-alert',k:'تحديات أمنية وسياسية'}]}],
-  ['photo',[0,0,4,6],{img:P('image41'),pos:'50% 50%'}],
-  ['kin',[4,0,4,2],{words:['السكان','الموارد','الإنتاجية','الاستثمار'],cur:1}],
+  ['title',[5,0,7,2],{bg:'dark',k:'رسمت ملامح الاقتصاد المصري قبل 2014',ki:'refresh-ccw',t:'تحديات هيكلية متداخلة تغذي كلها واحدة الأخرى',fs:40,hero:1}],
+  ['cycle',[5,2,7,4],{bg:'dark2',c:'حلقة مفرغة عانى منها الاقتصاد المصري لعقود',items:[
+    ['users','زيادة سكانية متسارعة'],['gauge','ضغط على الموارد المتاحة'],['factory','عدم الاستغلال الأمثل للموارد (إنتاجية محدودة)'],
+    ['lock','قيود على النشاط الاستثماري'],['map-pin','تركز التنمية في بعض المدن دون غيرها'],['shield-alert','تحديات أمنية وسياسية']]}],
+  ['photo',[0,0,5,6],{img:P('image41t'),cls:'fit clear'}],
 ]});
 /* 12 — the economy before 2014 */
 S({n:12,...HS1,cards:[
@@ -238,9 +270,8 @@ S({n:12,...HS1,cards:[
   ['ft',[0,0,4,2],{bg:'dark2',ic:'globe',l:'استثمار أجنبي مباشر (مليار دولار)',a:{v:6.7,u:''},b:{v:3.8,u:''}}],
   ['ft',[4,2,4,2],{bg:'dark2',ic:'trending-down',l:'معدل النمو',a:{v:5.2,u:'%'},b:{v:2.2,u:'%'},pie:0}],
   ['ft',[0,2,4,2],{bg:'vio',ic:'users',l:'معدل البطالة',a:{v:9,u:'%'},b:{v:13.2,u:'%'},pie:0}],
-  ['ft',[4,4,4,2],{bg:'mint',ic:'receipt',l:'عجز الموازنة للناتج',a:{v:8.1,u:'%'},b:{v:12,u:'%'},pie:0}],
+  ['ft',[0,4,8,2],{bg:'mint',ic:'receipt',l:'عجز الموازنة للناتج',a:{v:8.1,u:'%'},b:{v:12,u:'%'},pie:0}],
   ['photo',[8,4,4,2],{img:P('image42'),pos:'50% 50%'}],
-  ['photo',[0,4,4,2],{img:P('image41'),pos:'50% 30%'}],
 ]});
 /* 13 — the question */
 S({n:13,...HS1,cards:[

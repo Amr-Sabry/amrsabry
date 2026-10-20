@@ -30,7 +30,7 @@ S({n:16,...HS2,cards:[
       ['بناء الانسان','graduation-cap','تعليم وصحة وخدمات أساسية وشبكات حماية اجتماعية','image49',3]]
     .flatMap(([h,ic,t,img,k],i)=>{const c=8-2*i;return [
       ['photo',[c,0,2,3],{img:P(img),cls:'s5 s5-'+k}],
-      ['title',[c,3,2,3],{bg:['grad','dark2','vio','dark2','mint'][i],wm:ic,t:h,fs:32,s:t,ss:19,pz:0}]]}),
+      ['title',[c,3,2,3],{bg:['grad','dark2','vio','dark2','mint'][i],wm:ic,t:h,fs:32,s:t,ss:19,pz:0,top:1}]]}),
 ]});
 
 /* 17 — section three cover */

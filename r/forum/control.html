@@ -499,6 +499,18 @@ function anim(st){var A=$('anim'),bar=$('bar'),fill=$('abar');
 setInterval(function(){tabs();render()},1500);
 
 /* ---------- controls ---------- */
+/* c5 film sound relay v1 (closing deck, slide 2): the show window cannot start sound until it is clicked; this window has been
+   clicked, so it plays the film's score in step with the film's clock (BroadcastChannel c5-film) until the film has its own sound */
+(function(){var bc;try{bc=new BroadcastChannel('c5-film'+SFX)}catch(e){return}
+  var au=new Audio();au.preload='auto';var cur='',on=false;
+  bc.onmessage=function(e){var m=e.data||{};if(!m.c5film)return;
+    var want=m.playing&&!m.own&&!m.muted&&!m.gone;
+    if(!want){if(!au.paused)au.pause();if(on){on=false;bc.postMessage({c5ctl:'relaying',on:false})}return}
+    if(cur!==m.src){cur=m.src;au.src=m.src}
+    var t=m.t+(Date.now()-m.at)/1000;
+    if(au.paused){try{au.currentTime=t}catch(x){}var p=au.play();if(p&&p.then)p.then(function(){on=true;bc.postMessage({c5ctl:'relaying',on:true})}).catch(function(){})}
+    else if(Math.abs(au.currentTime-t)>.25){try{au.currentTime=t}catch(x){}}};
+})();
 /* jump v1: «من البداية» and a slide number (the number shown in the list) */
 function jumpTo(n){var d=info[sel];n=parseInt(String(n).replace(/[٠-٩]/g,function(c){return '٠١٢٣٤٥٦٧٨٩'.indexOf(c)}),10);if(!(n>=1)){toast('اكتب رقم سلايد');return}
   var tot=d&&d.slides?d.slides.length:0;if(tot&&n>tot){toast('العرض ده '+tot+' سلايد بس');return}send('go',{i:n-1,k:0});startTimer()}
