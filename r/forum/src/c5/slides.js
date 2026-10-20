@@ -625,3 +625,48 @@ CARD.cycle=function(c,r){const W=r.w-52,H=r.h-48,n=c.items.length,cx=W/2,cy=H/2,
   '.bc .cy2m b{font:900 42px/1.12 var(--f-display);background:linear-gradient(120deg,#22348a,#3d5cc0 55%,#e8845e);-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.06em}'+
   '.bc .cy2m span{font:500 19px/1.4 var(--f-body);color:var(--ink);opacity:.82;text-wrap:balance}';
   document.head.appendChild(st)})();
+
+/* popx v2 (Amr 18:01 «هل انت راضي عن الايقونات…»: no stock icons): «زيادة سكانية متسارعة» as a pictogram — columns of people
+   that grow taller from the oldest (right) to the newest (left), each column arriving sooner than the last (the speeding-up),
+   and the growth curve drawn over their heads ending in an arrow */
+CARD.popx=function(c,r){const H=[1,1,2,2,3,3,4,5,6,8],n=H.length,VW=230,VH=86,T=c.dur||2200,dx=VW/(n),ph=9.4;
+  const col=k=>d3.interpolateRgb('#a9b7ec','#22348a')(k/(n-1));
+  let g='',pts=[];
+  H.forEach((h,k)=>{const x=VW-dx*(k+.5),t0=T*Math.sqrt(k/n);
+    for(let j=0;j<h;j++){const y=VH-1-j*ph,last=k>=n-2&&j===h-1;
+      g+=`<g class="pg" style="--d:${Math.round(t0+j*70)}ms" fill="${last?'#ee9873':col(k)}"><circle cx="${x.toFixed(1)}" cy="${(y-7.2).toFixed(1)}" r="2.5"/><path d="M${(x-4).toFixed(1)} ${y.toFixed(1)}v-1.6a4 4 0 0 1 8 0v1.6z"/></g>`}
+    pts.push([x,VH-1-(h-1)*ph-13])});
+  /* one clean exponential over the heads, from the first column's top to the last one's: growth that speeds up */
+  const [xa,ya]=pts[0],[xb,yb]=pts[n-1],K=2.2,E=t=>(Math.exp(K*t)-1)/(Math.exp(K)-1);
+  const cv='M'+Array.from({length:25},(_,i)=>{const t=i/24;return (xa+(xb-xa)*t).toFixed(1)+' '+(ya-4+(yb-ya)*E(t)).toFixed(1)}).join('L');
+  return `<div class="px2"><div class="px2c">${hl(c.t)}</div><svg class="px2s" viewBox="0 -6 ${VW} ${VH+6}" preserveAspectRatio="xMidYMax meet">`+
+    `<defs><linearGradient id="px2l" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#3d5cc0"/><stop offset="1" stop-color="#ee9873"/></linearGradient>`+
+    `<marker id="px2h" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse"><path d="M0 1L9 5L0 9z" fill="#ee9873"/></marker></defs>`+
+    `<line x1="0" y1="${VH}" x2="${VW}" y2="${VH}" stroke="rgba(28,37,71,.16)" stroke-width=".6"/>${g}`+
+    `<path class="px2v" d="${cv}" pathLength="1" fill="none" stroke="url(#px2l)" stroke-width="1.6" stroke-linecap="round" marker-end="url(#px2h)" style="--d:${T+250}ms"/></svg></div>`};
+(function(){const st=document.createElement('style');st.textContent=
+  '.bc>.in:has(>.px2){container-type:size;inset:24px 26px!important;width:auto!important;height:auto!important;zoom:1!important}'+
+  '.bc .px2{position:absolute;inset:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:2cqh}'+
+  '.bc .px2c{font:800 min(15cqh,8cqw)/1.2 var(--f-display);color:var(--ink);text-align:right}'+
+  '.bc .px2s{width:100%;height:100%;overflow:visible}'+
+  '.bc .px2 .pg{opacity:0;transform:translateY(5px);transform-box:fill-box;transition:opacity .3s ease var(--d),transform .45s cubic-bezier(.2,1.5,.4,1) var(--d)}.bc.go .px2 .pg{opacity:1;transform:none}'+
+  '.bc .px2v{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.1s cubic-bezier(.5,0,.2,1) var(--d)}.bc.go .px2v{stroke-dashoffset:0}';
+  document.head.appendChild(st)})();
+
+/* accum v2 (Amr 18:01/18:06): «بالإضافة إلى تحديات اقتصادية واجتماعية عانت منها الدولة المصرية لعقود» — the sentence on top, its two
+   kinds of challenge set in their own colours so the sentence is the legend; under it the decades pile up as stacked bars, each one
+   taller than the one before (from the oldest, right, to the newest, left) */
+CARD.accum=function(c,r){const L=c.layers||[],n=7,col=['#3d5cc0','#e8845e'];
+  let t=hl(c.t||'');L.forEach((w,i)=>{t=t.replace(w,`<b class="acw${i+1}">${w}</b>`)});
+  const bars=Array.from({length:n},(_,k)=>{const h=.26+.74*Math.pow(k/(n-1),1.5),a=h*.56;
+    return `<span class="acb" style="--h:${(h*100).toFixed(1)}%;--d:${Math.round(180+k*150)}ms"><i style="height:${(100-a/h*100).toFixed(1)}%"></i><i style="height:${(a/h*100).toFixed(1)}%"></i></span>`}).join('');
+  return `<div class="ac2"><div class="ac2t">${t}</div><div class="ac2b">${bars}</div></div>`};
+(function(){const st=document.createElement('style');st.textContent=
+  '.bc>.in:has(>.ac2){container-type:size;inset:24px 26px!important;width:auto!important;height:auto!important;zoom:1!important}'+
+  '.bc .ac2{position:absolute;inset:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:4cqh}'+
+  '.bc .ac2t{font:500 min(7.4cqh,4.7cqw)/1.5 var(--f-body);color:var(--ink);text-align:right;text-wrap:balance}'+
+  '.bc .ac2t b{font-weight:800}.bc .ac2t .acw1{color:#3d5cc0}.bc .ac2t .acw2{color:#d9703f}'+
+  '.bc .ac2b{display:flex;align-items:flex-end;gap:2.4cqw;border-bottom:1px solid rgba(28,37,71,.16);padding:0 1cqw}'+
+  '.bc .acb{flex:1 1 0;height:var(--h);display:flex;flex-direction:column;gap:3px;transform-origin:bottom;transform:scaleY(0);transition:transform .9s cubic-bezier(.2,1,.3,1) var(--d)}.bc.go .acb{transform:none}'+
+  '.bc .acb i{display:block;border-radius:7px}.bc .acb i:first-child{background:linear-gradient(180deg,#f2a988,#e8845e)}.bc .acb i:last-child{background:linear-gradient(180deg,#5b78dd,#2c45b0)}';
+  document.head.appendChild(st)})();
