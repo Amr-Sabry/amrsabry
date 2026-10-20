@@ -101,6 +101,22 @@ function vid(n,o){S({n,full:1,cards:[['video',[0,0,12,6],Object.assign({cls:'vca
   document.head.appendChild(st)})();
 
 /* a cycle: the items sit on a ring around the centre sentence, joined by arrows that keep turning (slide 11) */
+/* photo pan v1 (Amr 14:47: «اي صورة جوة كارت اعمل ليها انيمشن يمين وشمال او فوق وتحت … لووب عشان ما يبقاش ال crop ماثر»): a photo
+   cropped by its card glides slowly from one edge of the picture to the other and back, along the side that is cut, so in time all
+   of it is seen; the speed follows how much is hidden; photos shown whole («fit») stay still */
+(function(){const st=document.createElement('style');st.textContent=
+  '@keyframes panx{from{object-position:0% var(--py,50%)}to{object-position:100% var(--py,50%)}}'+
+  '@keyframes pany{from{object-position:var(--px,50%) 0%}to{object-position:var(--px,50%) 100%}}'+
+  '.bc.photo img.panx,.bc.photo img.pany{animation-duration:var(--pd,18s)!important;animation-timing-function:ease-in-out!important;animation-iteration-count:infinite!important;animation-direction:alternate!important}';
+  document.head.appendChild(st);
+  window.panFit=function(el){el.querySelectorAll('figure img').forEach(img=>{if(img.closest('.bax')||el.classList.contains('mapimg'))return;
+    const go=()=>{const iw=img.naturalWidth,ih=img.naturalHeight,cw=img.clientWidth,ch=img.clientHeight;if(!iw||!cw||!ch)return;
+      img.classList.remove('panx','pany');if(getComputedStyle(img).objectFit==='contain'||RM)return;
+      const ri=iw/ih,rc=cw/ch,pos=(img.style.objectPosition||'50% 50%').split(' ').map(v=>parseFloat(v));
+      if(ri>rc*1.04){const hid=ch*ri-cw,D=Math.max(9,Math.min(28,hid/26));img.style.setProperty('--pd',D+'s');img.style.setProperty('--py',(pos[1]??50)+'%');img.style.animationDelay=(-(pos[0]??50)/100*D)+'s';img.classList.add('panx')}
+      else if(ri<rc/1.04){const hid=cw/ri-ch,D=Math.max(9,Math.min(28,hid/26));img.style.setProperty('--pd',D+'s');img.style.setProperty('--px',(pos[0]??50)+'%');img.style.animationDelay=(-(pos[1]??50)/100*D)+'s';img.classList.add('pany')}};
+    img.complete?go():img.addEventListener('load',go,{once:true})})};
+})();
 /* map names stay on their map while its card resizes (Amr 14:53): the route map's names sit in an html layer measured from the
    card's left edge, but in this right-to-left page the map picture itself hung from the right edge, so on every resize the two
    drifted apart until the map was redrawn; both now hang from the left edge */
