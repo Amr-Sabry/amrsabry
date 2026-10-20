@@ -110,7 +110,7 @@ body{font-family:var(--f-body);direction:rtl;-webkit-font-smoothing:antialiased;
 .bc.ph{background:#1c2547}
 .bc.ph .pi{position:absolute;inset:0;overflow:hidden;z-index:1;display:none}
 .bc.ph .pi.on{display:block}
-.bc.ph .pi img{position:absolute;inset:-2%;width:104%;height:104%;object-fit:cover;transform-origin:50% 50%}
+.bc.ph .pi img,.bc.ph .pi video{position:absolute;inset:-2%;width:104%;height:104%;object-fit:cover;transform-origin:50% 50%}
 .bc.ph .shade{position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(0deg,rgba(28,37,71,.42),rgba(28,37,71,0) 34%),radial-gradient(120% 95% at 50% 45%,transparent 58%,rgba(28,37,71,.3))}
 .bc.ph .flash{position:absolute;inset:0;z-index:3;background:#fff;opacity:0;pointer-events:none}
 .bc.ph .credit{position:absolute;z-index:4;bottom:16px;inset-inline-start:18px;display:flex;align-items:center;gap:8px;padding:6px 12px 7px;border-radius:999px;font-size:13.5px;font-weight:500;color:var(--ink);
@@ -232,7 +232,7 @@ html.emb #start{display:none}
 (async function(){
 const BASE='';const Q=new URLSearchParams(location.search),EMB=Q.has('embed'),MUTE=Q.has('mute');
 const FILM=window.FILM_DATA;
-FILM.beats.forEach(b=>{(b.photos||[]).forEach(p=>{p.file=BASE+p.file});if(b.bg)b.bg=b.bg.map(f=>BASE+f)});
+FILM.beats.forEach(b=>{(b.photos||[]).forEach(p=>{if(p.vid)p.vid=BASE+p.vid;else p.file=BASE+p.file});if(b.bg)b.bg=b.bg.map(f=>BASE+f)});
 try{await Promise.all(['600 30px "Readex Pro"','500 30px "Readex Pro"','700 30px "Readex Pro"','300 30px "Readex Pro"','500 16px "IBM Plex Sans Arabic"','600 16px "IBM Plex Sans Arabic"'].map(f=>document.fonts.load(f,'أبجد 2011')))}catch(e){}
 const B=FILM.beats, stage=document.getElementById('stage'), hd=document.getElementById('hd'), hax=document.getElementById('hax'), wipe=document.getElementById('wipe');
 
@@ -298,7 +298,7 @@ B.forEach((b,bi)=>{
       addContent(it.card,b,numHTML(it,r,dark),dark?'dark':'',r).insertAdjacentHTML('beforeend','<div class="wm" style="width:220px;height:220px">'+ICON(it.ic)+'</div>')});
   }
   if(b.photos&&b.photos.length){
-    b.pis=b.photos.map((p,k)=>{const card=C[p.card||'V'];const d=document.createElement('div');d.className='pi';d.innerHTML='<img src="'+p.file+'" alt="">';card.el.insertBefore(d,card.el.querySelector('.shade'));d._p=p;return d});
+    b.pis=b.photos.map((p,k)=>{const card=C[p.card||'V'];const d=document.createElement('div');d.className='pi';d.innerHTML=p.vid?'<video muted playsinline preload="auto"><source src="'+p.vid.replace(/\.mp4$/,'.webm')+'" type="video/webm"><source src="'+p.vid+'" type="video/mp4"></video>':'<img src="'+p.file+'" alt="">';card.el.insertBefore(d,card.el.querySelector('.shade'));d._p=p;return d});
   }
   if(b.type==='intro'){addContent('Y',b,'<div class="big" style="font-size:150px;direction:ltr">'+words('2011 → 2014')+'</div><div style="font-size:34px;font-weight:500;opacity:.9">'+words('أربع سنوات من التحديات… قبل البداية')+'</div>','dark cen',R.Y)}
   if(b.type==='year'){
@@ -382,10 +382,10 @@ function contentFrame(ct,t){
 
 function photoFrame(b,t){
   if(!b.pis)return;
-  b.pis.forEach((d,k)=>{const p=d._p,on=t>=p.t0&&t<p.t1;d.classList.toggle('on',on);if(!on)return;
+  b.pis.forEach((d,k)=>{const p=d._p,on=t>=p.t0&&t<p.t1;d.classList.toggle('on',on);if(p.vid){const v=d.firstChild;if(!on){if(!v.paused)v.pause()}else{const tg=(p.ss||0)+(t-p.t0);if(playing){if(v.paused)v.play().catch(()=>{});if(Math.abs(v.currentTime-tg)>.3)v.currentTime=tg}else{if(!v.paused)v.pause();if(Math.abs(v.currentTime-tg)>.05)v.currentTime=tg}}}if(!on)return;
     const u=(t-p.t0)/Math.max(.5,p.t1-p.t0);const s=1.05+.11*u;const dx=(p.dir||1)*(-1.6+3.2*u),dy=(k%2?.8:-.8)*(1-u);
     d.firstChild.style.transform='translate('+dx+'%,'+dy+'%) scale('+s+')';
-    const card=C[p.card||'V'];const f=cl((t-p.t0)/.14);card.flash.style.opacity=(.32*(1-f)).toFixed(3);const cr='صور: '+(p.credit||'اليوم السابع');if(card._cr!==cr){card.credit.lastChild.textContent=cr;card._cr=cr}});
+    const card=C[p.card||'V'];const f=cl((t-p.t0)/.14);card.flash.style.opacity=(.32*(1-f)).toFixed(3);const cr=p.vid?'فيديو: '+p.credit:'صور: '+(p.credit||'اليوم السابع');if(card._cr!==cr){card.credit.lastChild.textContent=cr;card._cr=cr}});
 }
 
 let lastYear='',yBump=-9;
