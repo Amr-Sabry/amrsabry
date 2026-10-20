@@ -5,6 +5,11 @@ move(35,{no:'02',k:'التحرك الثاني',t:'الربط',s:'مصر أصبح
 
 /* a template's slide, adjusted: f gets the slide spec */
 const mod=(n,f)=>f(SLIDES[n]);
+/* p2crop: the card shows only a window of the picture (--w,--h = window size, --x,--y = its corner, all in % of the picture); slide 58's window keeps Egypt and leaves out the browser bars of the client's screen capture */
+(function(){const st=document.createElement('style');st.textContent=
+  '.bc.photo.p2crop{background:#0e1430;--x:17;--y:9.4;--w:45.7;--h:83.6}.bc.photo.p2crop img{inset:auto!important;left:calc(-100% * var(--x) / var(--w))!important;top:calc(-100% * var(--y) / var(--h))!important;'+
+  'width:calc(100% * 100 / var(--w))!important;height:calc(100% * 100 / var(--h))!important;max-width:none!important;object-fit:fill!important;transform:none!important;animation:none!important}';
+  document.head.appendChild(st)})();
 const cardAt=(sp,g)=>sp.cards.findIndex(c=>String(c[1])===String(g));
 
 /* a carrying sentence whose heading comes first on the client's page: heading on top, the body under it */
@@ -164,5 +169,45 @@ S({n:56,...HM2,cards:[
   ['title',[8,2,4,2],{bg:'dark',ki:'ship',t:'ازدواج قناة السويس',s:'الممر الملاحي الأهم على مستوى العالم',fs:40,ss:22}],
   ['photo',[8,4,4,2],{img:P('image169'),pos:'50% 50%'}],
 ]});
+
+/* 57 — sea ports: before 2014 / 2026 */
+vs(57,HM2,{t:'مصر أصبحت أكثر اتصالا وترابطا',s:'الموانئ البحرية والتجارية',fs:32,ss:24,img:'image170',
+  a:{t:'محدودية الموانئ التجارية وعدم قدرتها على استيعاب حركة التجارة المستهدفة.',k:[{v:14,u:'ميناء تجاري وبحري',l:'عدد الموانئ البحرية والتجارة'},{v:185,u:'مليون طن سنويا'},{v:12,u:'مليون حاوية سنويا'}]},
+  b:{t:'تطوير شامل للموانئ القائمة، والقدرة على استيعاب السفن العلاقة وبدء تجارة الترانزيت.',k:[{v:19,u:'ميناء تجاري وبحري',l:'عدد الموانئ البحرية والتجارة'},{v:400,u:'مليون طن سنويا'},{v:40,u:'مليون حاوية سنويا'}]}});
+mod(57,sp=>{sp.cards.forEach(c=>{if(c[0]==='kpi2')c[2].sub=c[2].h==='2026'?'بأطوال أرصفة تتخطى 100 كم وبأعماق تصل إلى 25 متر .':'بأطوال أرصفة 37 كم وبعمق 11 : 15 متر'});
+  const i=cardAt(sp,[0,0,3,6]);sp.cards.splice(i,1,['photo',[0,0,3,2],{img:P('image170'),cls:'fit'}],['photo',[0,2,3,4],{img:P('image173'),pos:'55% 50%'}])});
+
+/* 58 — the ports map (the client's screen capture, shown without the browser bars) */
+S({n:58,...HM2,cards:[
+  ['photo',[0,0,6,6],{img:P('image171'),cls:'p2crop'}],
+  ['title',[6,0,6,1],{bg:'grad',ki:'anchor',t:'الممرات اللوجيستية',fs:36,pz:0}],
+  ['plist',[6,1,3,5],{bg:'dark',ic:'map-pin',lic:'anchor',cols:2,fs:19,gap:10,items:['الإسكندرية','دمياط','أبو قير','جرجوب','شرق بورسعيد','العريش','السخنة','الأدبية','السويس','شرم الشيخ','برنيس','الغردقة','سفاجا','نويبع','الطور','الزيتيات','الدخيلة','غرب بورسعيد']}],
+  ['kpi',[9,1,3,5],{bg:'dark2',ic:'ship',pre:'إنشاء وتطوير',v:19,u:'ميناء تجاري وبحري',sub:'على كافة السواحل المصرية لتعزيز فرص الاندماج في سلاسل الإمداد العالمية'}],
+]});
+
+/* 59 — Sokhna port: drag to compare */
+S({n:59,...HM2,cards:[
+  ['title',[8,0,4,2],{bg:'grad',ki:'anchor',t:'ميناء السخنة',fs:52}],
+  ['text',[8,2,4,4],{bg:'dark',ic:'award',t:'استلام شهادة موسوعة جينيس للأرقام لقياسية لميناء السخنة كأعمق ميناء من صنع الانسان ينشأ علي اليابسة بعمق 19 م.',fs:24}],
+  ['photo',[0,0,8,3],{ba:[P('image175'),P('image174')],la:'قبل التطوير',lb:'بعد التطوير'}],
+  ['photo',[0,3,8,3],{ba:[P('image172'),P('image173')],la:'قبل التطوير',lb:'بعد التطوير'}],
+]});
+
+/* 60 — East Port Said */
+stat(60,HM2,{k:'شبكة متكاملة للموانئ البحرية والتجارية',t:'ميناء شرق بورسعيد',ic:'container',ki:'anchor',pre:'بلغ حجم التداول سنويا',v:2.2,u:'مليون حاوية',tfs:34,
+  txt:'احتل الميناء المركز الثالث عالميًا والأول إقليميًا في مؤشر أداء موانئ الحاويات ٢٠٢٤، بتكلفة 73 مليار جنيه.',xfs:19,imgs:[['image176','','60% 50%']]});
+
+/* 61 — the sea ports */
+grid(61,HM2,{ic:'anchor',t:'تطوير شامل لكافة الموانئ البحرية والتجارية',fs:42,items:[
+  ['image179','محطة "تحيا مصر" للحاويات بميناء دمياط بطاقة 3.5 مليون حاوية'],['image178','محطة "تحيا مصر" متعددة الأغراض ( 55-62 ) بميناء الإسكندرية'],['image177','ميناء غرب بورسعيد']]});
+
+/* 62 — land ports: before 2014 / 2026 */
+vs(62,HM2,{t:'مصر أصبحت أكثر اتصالا وترابطا',s:'الموانئ البرية والمناطق اللوجستية',fs:32,ss:24,img:'image180',
+  a:{t:'محدودية عدد الموانئ وتراجع كفاءتها، وغياب المناطق اللوجستية اللازمة لتيسير حركة البضائع.',k:[{v:7,u:'ميناء بري'}]},
+  b:{t:'تعزيز كفاءة المنافذ البرية واستيعابها لحركة التجارة، بما يسرّع تدفق البضائع ويخفض التكاليف اللوجستية.',k:[{v:9,u:'ميناء بري'}]}});
+mod(62,sp=>{sp.cards.forEach((c,j)=>{if(c[0]!=='kpi2')return;const now=c[2].h==='2026';
+    sp.cards[j]=['kpi',c[1],{bg:c[2].bg,ic:'truck',l:(now?'2026':'قبل 2014')+' · عدد الموانئ البرية',v:now?9:7,u:'ميناء بري',vis:'icons',sub:now?'بالإضافة إلى إنشاء 33 ميناء جاف ومنطقة لوجيستية لأول مرة.':undefined}]});
+  const i=cardAt(sp,[0,0,3,6]);sp.cards.splice(i,1,['photo',[0,0,3,2],{img:P('image180'),cls:'fit'}],
+    ['text',[0,2,3,4],{bg:'dark2',ic:'triangle-alert',t:'تكدس الشاحنات وتأخر عبور البضائع، وارتفاع تكلفة النقل والتجارة؛ مما يساهم في رفع أسعار السلع ويضعف قدرة الصادرات على المنافسة.',fs:18}])});
 
 })();
