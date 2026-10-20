@@ -144,6 +144,24 @@ CARD.kpip=function(c,r){const W=r.w-52,H=r.h-48,wide=W>540,fs=c.fs||Math.round(w
   '.bc .kpw.wide{flex-direction:row;align-items:center;gap:22px}.bc .kpw.wide .kpf{flex:none}.bc .kpw.wide .kps{flex:1 1 auto}'+
   '.bc .kps{font-family:var(--f-display);font-weight:600;line-height:1.55;color:var(--ink)}.bc.grad .kps,.bc.mint .kps,.bc.vio .kps{color:#fff}'+
   '.bc .kpf .kpre{font:700 20px/1.2 var(--f-display);margin-bottom:4px}';document.head.appendChild(st)})();
+/* collage pieces (Amr 17:34, slide 3: «الاجابة تايب رايت مع الصورة وبيحصل هاي لايت على كل قطعة فيه بشكل عشوائي»): the Egypt collage
+   shown whole; one of its pieces at a time, picked at random, lifts and lights up while the rest dims (pieces cut by cutpieces in
+   the scratchpad: img/c5/p10/N.webp, rects in % of the picture) */
+const P10=[[6.479, 3.086, 56.707, 26.939], [58.232, 5.922, 34.604, 47.373], [6.326, 26.272, 64.787, 18.682], [5.183, 40.867, 29.268, 21.852], [32.088, 42.619, 24.771, 20.434], [55.488, 42.702, 26.296, 20.434], [4.421, 59.133, 84.985, 20.684], [1.677, 72.227, 32.088, 25.855], [64.482, 74.562, 34.375, 24.02], [32.851, 76.063, 33.765, 22.519]];
+CARD.pieces=function(c,r){const W=r.w-8,H=r.h-12,ar=c.ar||1312/1199,bw=Math.min(W,H*ar),bh=bw/ar;
+  return `<div class="pcs" style="width:${bw.toFixed(1)}px;height:${bh.toFixed(1)}px"><img class="pcb" src="${IMG(c.img)}" alt="">`+
+    c.parts.map((q,i)=>`<img class="pcp" src="img/${c.dir}/${i}.webp" alt="" style="left:${q[0]}%;top:${q[1]}%;width:${q[2]}%;height:${q[3]}%">`).join('')+`</div>`};
+(function(){const st=document.createElement('style');st.textContent=
+  '.bc .pcs{position:relative;margin:auto}.bc .pcs img{position:absolute;display:block}.bc .pcs .pcb{inset:0;width:100%;height:100%;transition:filter .7s ease}'+
+  '.bc .pcs.hl .pcb{filter:brightness(.42) saturate(.55) blur(.6px)}'+
+  '.bc .pcs .pcp{opacity:0;transform:scale(1);transition:opacity .55s ease,transform .7s cubic-bezier(.16,1,.3,1),filter .7s ease;filter:drop-shadow(0 0 0 rgba(255,255,255,0))}'+
+  '.bc .pcs .pcp.on{opacity:1;transform:scale(1.07);filter:brightness(1.08) saturate(1.1) drop-shadow(0 0 1.5px #fff) drop-shadow(0 0 1.5px #fff) drop-shadow(0 16px 30px rgba(14,18,40,.55))}';document.head.appendChild(st);
+  setInterval(()=>{if(typeof curLayer==='undefined'||!curLayer)return;curLayer.querySelectorAll('.bc:not(.wait) .pcs').forEach(w=>{
+    const ps=[...w.querySelectorAll('.pcp')];if(!ps.length)return;let j;do{j=Math.floor(Math.random()*ps.length)}while(ps.length>1&&j===w._last);w._last=j;
+    w.classList.add('hl');ps.forEach((p,k)=>p.classList.toggle('on',k===j))})},1700);
+})();
+/* builds on a full slide (cfg seq): the slide still has no header, but its cards come in steps like any other */
+(function(){const P0=plan;window.plan=function(sp){if(sp&&sp.full&&sp.seq&&!sp._plan){const f=sp.full;sp.full=0;try{return P0(sp)}finally{sp.full=f}}return P0(sp)}})();
 /* typewriter for a title (tw:1): its words write in, as on the quote cards */
 (function(){const T=CARD.title;CARD.title=function(c,r){const h=T(c,r);return c.tw?h.replace('class="ttl1','class="qt ttl1'):h}})();
 /* «مصر قبل 2014» set large and in colour at the top of a title card (Amr 13:06, slide 6: «محتاجه تكبر وتكون ملفتة بصريا»):
@@ -280,13 +298,13 @@ if(C5_LIVE)(function(){let v0=null;
   setInterval(ping,3000);setTimeout(ping,500)})();
 
 /* ---------- covers ---------- */
-function cover(n,o){S({n,full:1,cards:[
-  ['photo',[0,0,7,6],{img:P(o.img),pos:o.pos||'50% 50%'}],
+function cover(n,o){S({n,full:1,seq:o.seq,lays:o.lays,cards:[
+  o.pieces?['pieces',[0,0,7,6],{img:P(o.img),dir:o.pieces[0],parts:o.pieces[1],bg:'clear',cls:'clear'}]:['photo',[0,0,7,6],{img:P(o.img),pos:o.pos||'50% 50%'}],
   /* Amr 13:04: no rolling words on the section covers; the number and «القسم ...» share one chip */
   /* Amr 15:14: the answer is what matters — it gets the room, the section chip gives it up */
   ['axis',[7,0,5,1],{n:o.no,ic:o.ic||'layers',t:o.k,s:'',bg:'vio'}],
   ['title',[7,1,5,2],{bg:'dark',ic:o.ic||'layers',t:o.t,fs:o.fs||46}],
-  ['title',[7,3,5,3],{bg:'grad',t:o.s,fs:o.sfs||62}],
+  ['title',[7,3,5,3],{bg:'grad',t:o.s,fs:o.sfs||62,tw:o.tw,pz:o.tw?0:undefined}],
 ]})}
 function move(n,o){S({n,full:1,cards:[
   ['photo',[0,0,8,6],{img:P(o.img),pos:o.pos||'50% 50%'}],
@@ -376,7 +394,9 @@ S({n:2,full:1,cards:[['frame',[0,0,12,6],{cls:'fcard',src:'opening/index.html?em
    so from here on the number Amr sees is the internal n minus one (his «سلايد 16» is n:17) */
 /* vid(3,{src:'c5_3.mp4',cap:'مصر قبل عام 2014'}); */
 /* 4 — section one */
-cover(4,{no:'01',k:'القسم الأول',t:'لماذا لم يكن الاستمرار ممكنا؟',s:'تحديات تراكمت عبر عقود لم تكن تحتمل التأجيل',img:'image10',pos:'50% 40%',ic:'triangle-alert',words:['الأمن','السكان','البنية','الجغرافيا'],cur:1});
+cover(4,{no:'01',k:'القسم الأول',t:'لماذا لم يكن الاستمرار ممكنا؟',s:'تحديات تراكمت عبر عقود لم تكن تحتمل التأجيل',img:'image10',pos:'50% 40%',ic:'triangle-alert',words:['الأمن','السكان','البنية','الجغرافيا'],cur:1,
+  /* Amr 17:34: two steps — the section and the question, then the answer typing in with the collage */
+  seq:[[1,2],[0,3]],lays:{0:{1:[7,0,5,1],2:[7,1,5,2]}},tw:1,pieces:['c5/p10',P10]});
 /* 5 — four structural challenges */
 S({n:5,...HS1,cards:[
   ['photo',[0,0,8,6],{img:P('image11'),pos:'40% 50%'}],
