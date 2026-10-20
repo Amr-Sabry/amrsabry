@@ -201,9 +201,23 @@ body{font-family:var(--f-body);direction:rtl;-webkit-font-smoothing:antialiased;
 
 html.emb #start{display:none}
 #sndchip{position:fixed;left:18px;bottom:18px;z-index:50;display:flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;background:rgba(28,37,71,.78);color:#fff;font:600 15px var(--f-body);opacity:0;transition:opacity .4s;pointer-events:none}#sndchip.on{opacity:1}#sndchip svg{width:18px;height:18px}
+@font-face{font-family:'C5Num';src:url(../fonts/montserrat-500.woff2) format('woff2');font-weight:100 549;font-display:block;unicode-range:U+0025,U+002B-002E,U+0030-0039,U+2013}
+@font-face{font-family:'C5Num';src:url(../fonts/montserrat-600.woff2) format('woff2');font-weight:550 649;font-display:block;unicode-range:U+0025,U+002B-002E,U+0030-0039,U+2013}
+@font-face{font-family:'C5Num';src:url(../fonts/montserrat-700.woff2) format('woff2');font-weight:650 749;font-display:block;unicode-range:U+0025,U+002B-002E,U+0030-0039,U+2013}
+@font-face{font-family:'C5Num';src:url(../fonts/montserrat-800.woff2) format('woff2');font-weight:750 1000;font-display:block;unicode-range:U+0025,U+002B-002E,U+0030-0039,U+2013}
 @font-face{font-family:'Cairo26';src:url(../fonts/cairo-medium.woff2) format('woff2');font-weight:100 599;font-display:block;ascent-override:102%;descent-override:36%;line-gap-override:0%}
 @font-face{font-family:'Cairo26';src:url(../fonts/cairo-black.woff2) format('woff2');font-weight:600 1000;font-display:block;ascent-override:102%;descent-override:36%;line-gap-override:0%}
-:root{--f-display:'Cairo26','Readex Pro',system-ui,sans-serif!important;--f-body:'Cairo26','IBM Plex Sans Arabic',system-ui,sans-serif!important}
+:root{--f-display:'C5Num','Cairo26','Readex Pro',system-ui,sans-serif!important;--f-body:'C5Num','Cairo26','IBM Plex Sans Arabic',system-ui,sans-serif!important}
+/* year counters */
+.odo{display:inline-flex;direction:ltr;unicode-bidi:isolate;line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums;vertical-align:baseline}
+.odo .oc{position:relative;display:inline-block}
+.odo .oh{visibility:hidden}
+.odo .ow{position:absolute;left:-.1em;right:-.1em;top:-1.1em;height:3.2em;overflow:hidden;pointer-events:none;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 36%,#000 64%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 36%,#000 64%,transparent 100%)}
+.odo .os{position:absolute;left:0;right:0;top:1.1em;will-change:transform}
+.odo .os .od{display:block;height:1em;line-height:1;text-align:center;font:inherit;color:inherit;letter-spacing:0}
+.odo.sm .ow{top:-.42em;height:1.84em}.odo.sm .os{top:.42em}
+.odo .ox{white-space:pre}
+.hd .ax{overflow:hidden}
 </style>
 <script>if(/[?&]embed/.test(location.search))document.documentElement.classList.add("emb")</script>
 </head>
@@ -214,14 +228,14 @@ html.emb #start{display:none}
     <div class="gov"><img src="../img/emblem.webp" alt=""><div><span>جمهورية مصر العربية</span><span>رئاسة مجلس الوزراء</span></div></div>
     <div class="sep"></div>
     <div class="ax" id="hax">2011</div>
-    <div class="ttl"><b>قبل البداية</b><i>أربع سنوات من التحديات · 2011 – 2014</i></div>
+    <div class="ttl"><b>قبل البداية</b><i>أربع سنوات من التحديات · <span id="hrng"></span></i></div>
     <div class="forum"><img src="../img/logo-sym.webp" alt=""><span>منتدى مصر<small>2026</small></span></div>
   </div>
   <div id="wipe"></div>
   <div id="start"><div class="pane"><span class="t">2011<i>→</i>2014</span><span class="s">أربع سنوات من التحديات</span>
     <button class="go" id="go" disabled>جاري التجهيز…</button>
     <div class="chs" id="stchs"></div>
-    <span class="n">حوالي دقيقتين · شغّل الصوت · مسافة = تشغيل/إيقاف · الأسهم = اللحظة اللي بعدها واللي قبلها</span>
+    <span class="n">حوالي 4 دقائق · شغّل الصوت · مسافة = تشغيل/إيقاف · الأسهم = اللحظة اللي بعدها واللي قبلها</span>
     <span class="rotq"><i data-lucide="smartphone"></i>لف الموبايل بالعرض</span></div></div>
 </div>
 </div>
@@ -238,13 +252,14 @@ html.emb #start{display:none}
   <div id="bar"><div class="trk"></div><div class="fill"></div><div class="knob"></div></div>
 </div></div>
 <script src="https://unpkg.com/lucide@0.453.0/dist/umd/lucide.min.js"></script>
-<script src="film.js"></script>
+<script src="film.js?v=s2"></script>
 <script>
 (async function(){
 const BASE='';const Q=new URLSearchParams(location.search),EMB=Q.has('embed'),MUTE=Q.has('mute');
 const FILM=window.FILM_DATA;
 FILM.beats.forEach(b=>{(b.photos||[]).forEach(p=>{if(p.vid)p.vid=BASE+p.vid;else p.file=BASE+p.file});if(b.bg)b.bg=b.bg.map(f=>BASE+f)});
-try{await Promise.all(['600 30px Cairo26','500 30px Cairo26','600 30px "Readex Pro"','500 30px "Readex Pro"','700 30px "Readex Pro"','300 30px "Readex Pro"','500 16px "IBM Plex Sans Arabic"','600 16px "IBM Plex Sans Arabic"'].map(f=>document.fonts.load(f,'أبجد 2011')))}catch(e){}
+try{await Promise.all(['800 30px C5Num','700 30px C5Num','600 30px C5Num','500 30px C5Num','600 30px Cairo26','500 30px Cairo26','600 30px "Readex Pro"','500 30px "Readex Pro"','700 30px "Readex Pro"','300 30px "Readex Pro"','500 16px "IBM Plex Sans Arabic"','600 16px "IBM Plex Sans Arabic"'].map(f=>document.fonts.load(f,'أبجد 2011')))}catch(e){}
+const SL=FILM.slow||1;
 const B=FILM.beats, stage=document.getElementById('stage'), hd=document.getElementById('hd'), hax=document.getElementById('hax'), wipe=document.getElementById('wipe');
 
 /* ---------- helpers ---------- */
@@ -263,6 +278,19 @@ function wordsHTML(html){ /* keeps <b>/<em> runs: wrap each text word, tags stay
   (function walk(n){[...n.childNodes].forEach(c=>{if(c.nodeType===3){const parts=c.textContent.split(/(\s+)/);const f=document.createDocumentFragment();parts.forEach(p=>{if(!p)return;if(/^\s+$/.test(p))f.appendChild(document.createTextNode(' '));else{const s=document.createElement('span');s.className='w';const i=document.createElement('i');i.textContent=p;s.appendChild(i);f.appendChild(s)}});n.replaceChild(f,c)}else walk(c)})})(d);
   return d.innerHTML}
 const ICON=n=>'<i data-lucide="'+n+'"></i>';
+/* ---------- year counters ---------- */
+const ODD='01234567890';
+function odoHTML(vis,cls){return '<span class="odo'+(cls?' '+cls:'')+'">'+[...vis].map(ch=>/\d/.test(ch)?'<span class="oc"><span class="oh">'+ch+'</span><span class="ow"><span class="os">'+[...ODD].map(d=>'<span class="od">'+d+'</span>').join('')+'</span></span></span>':'<span class="ox">'+ch+'</span>').join('')+'</span>'}
+function odoGet(root){return {root,cols:[...root.querySelectorAll('.oc')].map(c=>({s:c.querySelector('.os'),b:[...c.querySelectorAll('.os .od')],v:null,m:null})),xs:[...root.querySelectorAll('.ox')]}}
+function odoCol(o,v,mv){if(o.v===v&&o.m===mv)return;o.v=v;o.m=mv;o.s.style.transform='translateY('+(-v).toFixed(4)+'em)';
+  o.b.forEach((b,d)=>{const di=Math.abs(d-v);b.style.opacity=(di<1?1-di*(1-mv):Math.max(0,mv*(1-(di-1)*.6))).toFixed(3)})}
+/* the 4 digit columns from column i0 show the year y0 -> y1 at progress p (0..1, already eased): the ones column turns
+   continuously, a higher column only turns while the one below goes 9 -> 0, like a counter; still columns show no neighbours */
+function odoYear(od,i0,y0,y1,p){const y=y0+(y1-y0)*p,m=Math.min(1,Math.min(p,1-p)*7);
+  for(let k=0;k<4;k++){const pw=Math.pow(10,3-k),v=Math.floor(y/pw)%10+Math.max(0,(y%pw)-(pw-1));
+    odoCol(od.cols[i0+k],v,Math.floor(y0/pw)!==Math.floor(y1/pw)?m:0)}}
+/* a year range reads right to left in the Arabic line: «2011 – 2014» is laid out (left to right) as 2014 – 2011 */
+const visY=s=>{const r=/^(\d{4}) – (\d{4})$/.exec(s);return r?r[2]+' – '+r[1]:s};
 
 /* ---------- cards ---------- */
 const SK=['frost','cobalt','teal','aurora','night'];
@@ -309,14 +337,14 @@ B.forEach((b,bi)=>{
       addContent(it.card,b,numHTML(it,r,dark),dark?'dark':'',r).insertAdjacentHTML('beforeend','<div class="wm" style="width:220px;height:220px">'+ICON(it.ic)+'</div>')});
   }
   if(b.photos&&b.photos.length){
-    b.pis=b.photos.map((p,k)=>{const card=C[p.card||'V'];const d=document.createElement('div');d.className='pi';d.innerHTML=p.vid?'<video muted playsinline preload="auto"><source src="'+p.vid.replace(/\.mp4$/,'.webm')+'" type="video/webm"><source src="'+p.vid+'" type="video/mp4"></video>':'<img src="'+p.file+'" alt="">';card.el.insertBefore(d,card.el.querySelector('.shade'));d._p=p;return d});
+    b.pis=b.photos.map((p,k)=>{const card=C[p.card||'V'];const d=document.createElement('div');d.className='pi';d.innerHTML=p.vid?'<video muted playsinline preload="auto"><source src="'+p.vid.replace(/\.mp4$/,'.webm')+'?v=s2" type="video/webm"><source src="'+p.vid+'?v=s2" type="video/mp4"></video>':'<img src="'+p.file+'" alt="">';card.el.insertBefore(d,card.el.querySelector('.shade'));d._p=p;return d});
   }
-  if(b.type==='intro'){addContent('Y',b,'<div class="big" style="font-size:150px;direction:ltr">'+words('2011 → 2014')+'</div><div style="font-size:34px;font-weight:500;opacity:.9">'+words('أربع سنوات من التحديات… قبل البداية')+'</div>','dark cen',R.Y)}
+  if(b.type==='intro'){addContent('Y',b,'<div class="big" style="font-size:150px;direction:ltr">'+odoHTML('2011','oy')+' '+words('→')+' '+odoHTML('2014','oy')+'</div><div style="font-size:34px;font-weight:500;opacity:.9">'+words('أربع سنوات من التحديات… قبل البداية')+'</div>','dark cen',R.Y)}
   if(b.type==='year'){
     const y=document.createElement('div');y.className='yrbg';
     const n=b.bg.length;y.innerHTML=b.bg.map((f,k)=>'<div class="strip3" style="right:'+(k*100/n)+'%;width:'+(100/n+.2)+'%"><img src="'+f+'" alt=""></div>').join('')+'<div class="tint"></div>';
     C.Y.el.insertBefore(y,C.Y.el.firstChild.nextSibling);b.yb=y;y.style.zIndex=1;
-    const ct=addContent('Y',b,'<div class="big" style="font-size:250px;direction:ltr;text-shadow:0 30px 60px rgba(10,18,60,.35)">'+words(b.y)+'</div>','dark cen',R.Y);ct.style.zIndex=2;
+    const ct=addContent('Y',b,'<div class="big" style="font-size:250px;direction:ltr;text-shadow:0 30px 60px rgba(10,18,60,.35)">'+odoHTML(b.y,'oy')+'</div>','dark cen',R.Y);ct.style.zIndex=2;
     b.clips=(b.heads||[]).map((h,k)=>{const c=document.createElement('div');c.className='clip';c.innerHTML=words(h.text)+'<small>'+ICON('newspaper')+'<span>'+h.src+' · '+h.date+'</span></small>';
       const pos=[{top:'6%',right:'4%',rot:-1.6},{bottom:'7%',left:'4%',rot:1.3},{bottom:'8%',right:'6%',rot:-.7}][k%3];
       Object.assign(c.style,{top:pos.top||'',bottom:pos.bottom||'',left:pos.left||'',right:pos.right||''});c._rot=pos.rot;ct.appendChild(c);return c});
@@ -325,8 +353,9 @@ B.forEach((b,bi)=>{
   if(b.type==='final'){addContent('Y',b,'<div style="font-size:30px;font-weight:500;opacity:.86;letter-spacing:.02em" class="k1">'+words('بعد أربع سنوات على الحافة')+'</div><div class="big fin" style="font-size:156px">من هنا <em>بدأ التحدي</em></div>','dark cen',R.Y)}
 });
 lucide.createIcons();
+const hrng=document.getElementById('hrng');hrng.innerHTML=odoHTML('2014 – 2011','sm');const hro=odoGet(hrng.firstChild),T11=(B.find(b=>b.type==='year')||{t0:0}).t0;
 /* collect animated bits for each content block */
-B.forEach(b=>{(b.cts||[]).forEach(ct=>{ct._w=[...ct.querySelectorAll('.w>i')];ct._cv=[...ct.querySelectorAll('.cv')];ct._chips=[...ct.querySelectorAll('.chips>*,.srcl,.hdr svg')];ct._bar=ct.querySelector('.bar');ct._fin=ct.querySelector('.fin')})});
+B.forEach(b=>{(b.cts||[]).forEach(ct=>{ct._w=[...ct.querySelectorAll('.w>i')];ct._cv=[...ct.querySelectorAll('.cv')];ct._chips=[...ct.querySelectorAll('.chips>*,.srcl,.hdr svg')];ct._bar=ct.querySelector('.bar');ct._fin=ct.querySelector('.fin');ct._od=[...ct.querySelectorAll('.odo.oy')].map(odoGet)})});
 
 /* ---------- timeline chart ---------- */
 const RES=FILM.res, RESL=FILM.resl, EVM=FILM.evm;
@@ -336,14 +365,18 @@ const tsvg=document.getElementById('tlsvg'),tval=document.getElementById('tval')
 function resAt(m){if(m<=RES[0][0])return RES[0][1];for(let i=1;i<RES.length;i++){if(m<=RES[i][0]){const a=RES[i-1],b=RES[i];return a[1]+(b[1]-a[1])*(m-a[0])/(b[0]-a[0])}}return RES[RES.length-1][1]}
 function lastKnown(m){let k=0;for(let i=0;i<RES.length;i++)if(RES[i][0]<=m+.001)k=i;return k}
 const vchips={};
+const tcwE=document.getElementById('tcw');let tcwO=null,tcwM=null;
+function tcwSet(kk,m){if(!tcwO){tcwE.innerHTML='<span class="mn"></span> '+odoHTML('2010','sm');tcwM=tcwE.firstChild;tcwO=odoGet(tcwE.querySelector('.odo'))}
+  const lab=RESL[kk],sp=lab.lastIndexOf(' '),mon=lab.slice(0,sp),y1=+lab.slice(sp+1);if(tcwM.textContent!==mon)tcwM.textContent=mon;
+  const Y=window.__tly;if(Y&&Y.y0!==Y.y1&&Y.k<1&&(y1===Y.y1||y1===Y.y0))odoYear(tcwO,0,Y.y0,Y.y1,Y.k);else odoYear(tcwO,0,y1,y1,1)}
 function tlDraw(r,m,idx,chips,ct){
   const g={W:r.w,H:r.h,l:44,r:r.w-34,t:Math.min(104,r.h*.4),b:r.h-50};const X=mm=>g.r-(mm/48)*(g.r-g.l),Y=v=>g.b-(v-10)/(38-10)*(g.b-g.t);
   let s='';
   for(let yr=0;yr<4;yr++){const x0=X(yr*12),x1=X(yr*12+12);s+='<line x1="'+x0+'" x2="'+x0+'" y1="'+(g.t-8)+'" y2="'+(g.b+6)+'" stroke="rgba(28,37,71,.12)"/>';
     for(let mm=1;mm<12;mm++){const xm=X(yr*12+mm);s+='<line x1="'+xm+'" x2="'+xm+'" y1="'+(g.b+1)+'" y2="'+(g.b+(mm%3?4:7))+'" stroke="rgba(28,37,71,.22)"/>'}
-    const cy=Math.min(3,Math.floor(m/12));s+='<text x="'+((x0+x1)/2)+'" y="'+(g.b+30)+'" text-anchor="middle" font-family="Cairo26, Readex Pro" font-size="25" font-weight="700" fill="'+(yr===cy?'#3d5cc0':(yr<cy?'rgba(28,37,71,.62)':'rgba(28,37,71,.38)'))+'">'+(2011+yr)+'</text>'}
+    const cy=Math.min(3,Math.floor(m/12));s+='<text x="'+((x0+x1)/2)+'" y="'+(g.b+30)+'" text-anchor="middle" font-family="C5Num, Cairo26, Readex Pro" font-size="25" font-weight="700" fill="'+(yr===cy?'#3d5cc0':(yr<cy?'rgba(28,37,71,.62)':'rgba(28,37,71,.38)'))+'">'+(2011+yr)+'</text>'}
   s+='<line x1="'+g.l+'" x2="'+g.r+'" y1="'+g.b+'" y2="'+g.b+'" stroke="rgba(28,37,71,.3)" stroke-width="1.2"/>';
-  [20,30].forEach(v=>{const y=Y(v);s+='<line x1="'+g.l+'" x2="'+g.r+'" y1="'+y+'" y2="'+y+'" stroke="rgba(28,37,71,.16)" stroke-dasharray="3 5"/><text x="'+(g.l-8)+'" y="'+(y+5)+'" text-anchor="end" font-family="Cairo26, Readex Pro" font-size="16" font-weight="600" fill="rgba(28,37,71,.55)">'+v+'</text>'});
+  [20,30].forEach(v=>{const y=Y(v);s+='<line x1="'+g.l+'" x2="'+g.r+'" y1="'+y+'" y2="'+y+'" stroke="rgba(28,37,71,.16)" stroke-dasharray="3 5"/><text x="'+(g.l-8)+'" y="'+(y+5)+'" text-anchor="end" font-family="C5Num, Cairo26, Readex Pro" font-size="16" font-weight="600" fill="rgba(28,37,71,.55)">'+v+'</text>'});
   let pts=[];for(let mm=0;mm<=48;mm+=.25)pts.push(X(mm).toFixed(1)+' '+Y(resAt(mm)).toFixed(1));const d='M'+pts.join('L');
   const xm=X(m),vm=resAt(m);
   s+='<defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3d5cc0" stop-opacity=".5"/><stop offset="1" stop-color="#3d5cc0" stop-opacity="0"/></linearGradient><clipPath id="gc"><rect x="'+xm+'" y="0" width="'+Math.max(0,g.r-xm+4)+'" height="'+g.H+'"/></clipPath></defs>';
@@ -351,7 +384,7 @@ function tlDraw(r,m,idx,chips,ct){
   EVM.forEach((mm,i)=>{const on=idx===i;s+='<circle cx="'+X(mm)+'" cy="'+g.b+'" r="'+(on?5:3.6)+'" fill="'+(on?'rgba(238,152,115,.95)':(mm<=m+.01?'rgba(28,37,71,.55)':'rgba(28,37,71,.16)'))+'"/>'});
   s+='<line x1="'+xm+'" x2="'+xm+'" y1="'+Y(vm)+'" y2="'+g.b+'" stroke="#3d5cc0" stroke-width="1.4" stroke-dasharray="3 4" opacity=".7"/><circle cx="'+xm+'" cy="'+g.b+'" r="9" fill="#ee9873" stroke="#fff" stroke-width="3"/><circle cx="'+xm+'" cy="'+Y(vm)+'" r="10" fill="#ee9873" stroke="#fff" stroke-width="3"/>';
   tsvg.setAttribute('width',g.W);tsvg.setAttribute('height',g.H);tsvg.innerHTML=s;
-  const kk=lastKnown(m),kv=RES[kk][1];tval.textContent=kv.toFixed(1);twhen.textContent=RESL[kk];const dp=Math.round((kv-36)/36*100);tdl.textContent=(dp<0?'−':'')+Math.abs(dp)+'%';tdl.style.visibility=dp<0?'visible':'hidden';{const tc=document.getElementById('tchip');if(tc){document.getElementById('tcv').textContent=kv.toFixed(1);document.getElementById('tcw').textContent=RESL[kk];const td=document.getElementById('tcd');td.textContent=(dp<0?'−':'')+Math.abs(dp)+'%';td.style.display=dp<0?'':'none';const cw=tc.offsetWidth,chh=tc.offsetHeight,py=Y(vm);let lx=xm-22-cw;if(lx<10)lx=Math.min(g.W-cw-10,xm+22);const ty=Math.max(Math.min(g.t-14,g.H-chh-56),Math.min(g.H-chh-50,py-chh/2));tc.style.transform='translate('+lx.toFixed(1)+'px,'+ty.toFixed(1)+'px)'}}
+  const kk=lastKnown(m),kv=RES[kk][1];tval.textContent=kv.toFixed(1);twhen.textContent=RESL[kk];const dp=Math.round((kv-36)/36*100);tdl.textContent=(dp<0?'−':'')+Math.abs(dp)+'%';tdl.style.visibility=dp<0?'visible':'hidden';{const tc=document.getElementById('tchip');if(tc){document.getElementById('tcv').textContent=kv.toFixed(1);tcwSet(kk,m);const td=document.getElementById('tcd');td.textContent=(dp<0?'−':'')+Math.abs(dp)+'%';td.style.display=dp<0?'':'none';const cw=tc.offsetWidth,chh=tc.offsetHeight,py=Y(vm);let lx=xm-22-cw;if(lx<10)lx=Math.min(g.W-cw-10,xm+22);const ty=Math.max(Math.min(g.t-14,g.H-chh-56),Math.min(g.H-chh-50,py-chh/2));tc.style.transform='translate('+lx.toFixed(1)+'px,'+ty.toFixed(1)+'px)'}}
   /* value chips (published figures) */
   const want=new Set(chips.map(c=>String(c.m)));
   Object.keys(vchips).forEach(k=>{if(!want.has(k))vchips[k].style.display='none'});
@@ -361,42 +394,47 @@ function tlDraw(r,m,idx,chips,ct){
 }
 
 /* ---------- per-frame evaluation ---------- */
-const G=.5;      /* glide duration (s) */
+const G=.5*SL;      /* glide duration (s) */
 function beatAt(t){let lo=0,hi=B.length-1;while(lo<hi){const mid=(lo+hi+1)>>1;if(B[mid].t0<=t)lo=mid;else hi=mid-1}return lo}
 function setRect(el,r){el.style.left=r.x+'px';el.style.top=r.y+'px';el.style.width=r.w+'px';el.style.height=r.h+'px'}
 function cardFrame(name,t,i){
   const b=B[i],p=i>0?B[i-1]:null,r=b.rects&&b.rects[name],pr=p&&p.rects&&p.rects[name],c=C[name],dt=t-b.t0;
   let rect=null,vis=0,dy=0,sc=1;
   if(r&&pr){const k=eIO(cl(dt/G));rect=lr(pr,r,k);vis=1}
-  else if(r){const k=eOut(cl((dt-.04)/.5));rect=r;vis=k;dy=22*(1-k);sc=.965+.035*k}
-  else if(pr){const k=cl(dt/.32);rect=pr;vis=1-eIn(k);dy=-10*k;sc=1-.02*k}
+  else if(r){const k=eOut(cl((dt-.04*SL)/(.5*SL)));rect=r;vis=k;dy=22*(1-k);sc=.965+.035*k}
+  else if(pr){const k=cl(dt/(.32*SL));rect=pr;vis=1-eIn(k);dy=-10*k;sc=1-.02*k}
   if(vis<=0.001){c.el.style.display='none';return null}
   c.el.style.display='block';setRect(c.el,rect);c.el.style.opacity=vis;c.el.style.transform='translateY('+dy+'px) scale('+sc+')';
   /* skin crossfade */
-  const s=(r?b.skins[name]:p.skins[name])||'frost',ps=(p&&p.skins&&p.skins[name])||s,kk=r&&pr?cl(dt/.45):1;
+  const s=(r?b.skins[name]:p.skins[name])||'frost',ps=(p&&p.skins&&p.skins[name])||s,kk=r&&pr?cl(dt/(.45*SL)):1;
   SK.forEach(n=>{c.bgs[n].style.opacity=(n===s?kk:0)+(n===ps&&ps!==s?1-kk:0)});
   return rect}
 
 function contentFrame(ct,t){
-  const b=ct._b,e0=b.t0,e1=b.t1,dly=b.type==='final'?0:(b.rects&&B[b.i-1]&&B[b.i-1].rects&&B[b.i-1].rects[ct.parentNode.id]?.32:.22);
-  const exitAt=b.keep?1e9:e1-.13;
-  if(t<e0-.001||t>exitAt+.36){ct.classList.remove('on');return}
+  const b=ct._b,e0=b.t0,e1=b.t1,dly=b.type==='final'?0:(b.rects&&B[b.i-1]&&B[b.i-1].rects&&B[b.i-1].rects[ct.parentNode.id]?.32:.22)*SL;
+  const exitAt=b.keep?1e9:e1-.13*SL;
+  if(t<e0-.001||t>exitAt+.36*SL){ct.classList.remove('on');return}
   ct.classList.add('on');
-  const xk=cl((t-exitAt)/.26);   /* exit progress */
-  ct._w.forEach((w,k)=>{const st=e0+dly+k*.045;const ek=eOutQ(cl((t-st)/.55));const xx=eIn(cl(xk*1.25-k*.01));w.style.transform='translateY('+((1-ek)*112-xx*112)+'%)'});
-  ct._chips.forEach((c,k)=>{const ek=eOut(cl((t-(e0+dly-.06+k*.06))/.45));c.style.opacity=ek*(1-xk);c.style.transform='translateY('+(10*(1-ek))+'px)'});
-  if(ct._bar){const ek=eOut(cl((t-(e0+dly))/.5));ct._bar.style.transform='scaleY('+ek+')';ct._bar.style.opacity=1-xk}
-  ct._cv.forEach(cv=>{const n=+cv.dataset.n,dec=+cv.dataset.dec,raw=cv.dataset.raw==='1';const dur=b.type==='res'?1.5:1.0;const k=eExp(cl((t-(e0+dly+.05))/dur));cv.textContent=fmt(n*k,dec,raw);const ek=eOut(cl((t-(e0+dly))/.4));cv.parentNode.style.opacity=ek*(1-xk);cv.parentNode.style.transform='translateY('+(14*(1-ek))+'px)'});
-  const wm=ct.querySelector('.wm');if(wm){wm.style.opacity=(ct.classList.contains('dark')?.12:.07)*eOut(cl((t-e0-dly)/.6))*(1-xk)}
-  if(ct._fin){const k=cl((t-e0)/.38);const drift=1+.035*cl((t-e0-.4)/11);ct._fin.style.transform='scale('+((1.14-.14*eOutQ(k))*drift)+')';ct._fin.style.filter='blur('+(10*(1-eOut(k)))+'px)';ct._fin.style.opacity=eOut(k)}
+  const xk=cl((t-exitAt)/(.26*SL));   /* exit progress */
+  ct._w.forEach((w,k)=>{const st=e0+dly+k*.045*SL+(b.type==='intro'&&k>0?2.3*SL:0);const ek=eOutQ(cl((t-st)/(.55*SL)));const xx=eIn(cl(xk*1.25-k*.01));w.style.transform='translateY('+((1-ek)*112-xx*112)+'%)'});
+  ct._chips.forEach((c,k)=>{const ek=eOut(cl((t-(e0+dly+(-.06+k*.06)*SL))/(.45*SL)));c.style.opacity=ek*(1-xk);c.style.transform='translateY('+(10*(1-ek))+'px)'});
+  if(ct._bar){const ek=eOut(cl((t-(e0+dly))/(.5*SL)));ct._bar.style.transform='scaleY('+ek+')';ct._bar.style.opacity=1-xk}
+  ct._cv.forEach(cv=>{const n=+cv.dataset.n,dec=+cv.dataset.dec,raw=cv.dataset.raw==='1';const dur=(b.type==='res'?1.5:1.0)*SL;const k=eExp(cl((t-(e0+dly+.05*SL))/dur));cv.textContent=fmt(n*k,dec,raw);const ek=eOut(cl((t-(e0+dly))/(.4*SL)));cv.parentNode.style.opacity=ek*(1-xk);cv.parentNode.style.transform='translateY('+(14*(1-ek))+'px)'});
+  if(ct._od.length){const yr=b.type==='year';
+    ct._od.forEach((od,k)=>{const st=e0+dly+k*2*.045*SL,ek=eOutQ(cl((t-st)/(.55*SL))),xx=eIn(cl(xk*1.25-k*.01));
+      od.root.style.transform='translateY('+((1-ek)*.42-xx*.6).toFixed(3)+'em)';od.root.style.opacity=(Math.min(1,ek*1.6)*(1-xx)).toFixed(3);
+      const r0=st+(yr?.12:(k?.65:.12))*SL,r1=r0+(yr?.85:(k?1.6:.7))*SL,y1=yr?+b.y:(k?2014:2011),y0=yr?y1-1:(k?2011:2010);
+      odoYear(od,0,y0,y1,eOutQ(cl((t-r0)/(r1-r0))))})}
+  const wm=ct.querySelector('.wm');if(wm){wm.style.opacity=(ct.classList.contains('dark')?.12:.07)*eOut(cl((t-e0-dly)/(.6*SL)))*(1-xk)}
+  if(ct._fin){const k=cl((t-e0)/(.38*SL));const drift=1+.035*cl((t-e0-.4*SL)/(11*SL));ct._fin.style.transform='scale('+((1.14-.14*eOutQ(k))*drift)+')';ct._fin.style.filter='blur('+(10*(1-eOut(k)))+'px)';ct._fin.style.opacity=eOut(k)}
 }
 
 function photoFrame(b,t){
   if(!b.pis)return;
   b.pis.forEach((d,k)=>{const p=d._p,on=t>=p.t0&&t<p.t1;d.classList.toggle('on',on);if(p.vid){const v=d.firstChild;if(!on){if(!v.paused)v.pause()}else{const tg=(p.ss||0)+(t-p.t0);if(playing){if(v.paused)v.play().catch(()=>{});if(Math.abs(v.currentTime-tg)>.3)v.currentTime=tg}else{if(!v.paused)v.pause();if(Math.abs(v.currentTime-tg)>.05)v.currentTime=tg}}}if(!on)return;
-    const u=(t-p.t0)/Math.max(.5,p.t1-p.t0);const s=1.05+.11*u;const dx=(p.dir||1)*(-1.6+3.2*u),dy=(k%2?.8:-.8)*(1-u);
+    const u=(t-p.t0)/Math.max(.5*SL,p.t1-p.t0);const s=1.05+.11*u;const dx=(p.dir||1)*(-1.6+3.2*u),dy=(k%2?.8:-.8)*(1-u);
     d.firstChild.style.transform='translate('+dx+'%,'+dy+'%) scale('+s+')';
-    const card=C[p.card||'V'];const f=cl((t-p.t0)/.14);card.flash.style.opacity=(.32*(1-f)).toFixed(3);const cr=p.vid?'فيديو: '+p.credit:'صور: '+(p.credit||'اليوم السابع');if(card._cr!==cr){card.credit.lastChild.textContent=cr;card._cr=cr}});
+    const card=C[p.card||'V'];const f=cl((t-p.t0)/(.14*SL));card.flash.style.opacity=(.32*(1-f)).toFixed(3);const cr=p.vid?'فيديو: '+p.credit:'صور: '+(p.credit||'اليوم السابع');if(card._cr!==cr){card.credit.lastChild.textContent=cr;card._cr=cr}});
 }
 
 let lastYear='',yBump=-9;
@@ -407,9 +445,11 @@ window.draw=function(t){
   /* cards */
   const rects={};Object.keys(C).forEach(n=>{rects[n]=cardFrame(n,t,i)});
   /* header */
-  const hv=b.type==='intro'?0:(p&&p.type==='intro'?eOut(cl((t-b.t0)/.6)):1);hd.style.opacity=hv;hd.style.transform='translateY('+(-14*(1-hv))+'px)';
-  const yr=b.yl||lastYear;if(yr!==hax.textContent){hax.textContent=yr;yBump=b.t0}
-  const bk=cl((t-yBump)/.5);hax.style.transform='scale('+(1+.14*(1-eOut(bk))*(bk<1?1:0))+')';
+  const hv=b.type==='intro'?0:(p&&p.type==='intro'?eOut(cl((t-b.t0)/(.6*SL))):1);hd.style.opacity=hv;odoYear(hro,4,2010,2011,eOutQ(cl((t-T11-.25*SL)/(.7*SL))));odoYear(hro,0,2011,2014,eOutQ(cl((t-T11-.55*SL)/(1.6*SL))));hd.style.transform='translateY('+(-14*(1-hv))+'px)';
+  {const yr=b.yl||'',py=(p&&p.yl)||'',vis=visY(yr);if(hax._k!==vis){hax._k=vis;hax.innerHTML=odoHTML(vis,'sm');hax._o=odoGet(hax.firstChild)}
+    const q=eOutQ(cl((t-b.t0-.05*SL)/(.6*SL))),o=hax._o,rng=vis.length>4,prng=py.length>4;
+    if(!rng){const y1=+yr||0,y0=(!prng&&+py)?+py:y1;if(o.cols.length===4)odoYear(o,0,y0,y1,q)}
+    else{odoYear(o,0,+vis.slice(0,4),+vis.slice(0,4),1);const y1=+vis.slice(-4),y0=prng?y1:(+py||y1);odoYear(o,4,y0,y1,q);o.xs.forEach(x=>{x.style.opacity=prng?1:Math.min(1,q*2.5).toFixed(3)})}}
   /* contents */
   allCts.forEach(ct=>{const bb=ct._b;if(bb.i>=i-1&&bb.i<=i+1)contentFrame(ct,t);else ct.classList.remove('on')});
   allPis.forEach(d=>d.classList.remove('on'));
@@ -417,14 +457,14 @@ window.draw=function(t){
   ['V','V2'].forEach(n=>{const anyOn=C[n].el.querySelector('.pi.on');if(!anyOn)C[n].flash.style.opacity=0});
   /* year backgrounds */
   B.forEach(bb=>{if(bb.yb){const on=bb.i===i;bb.yb.classList.toggle('on',on);if(on){const u=(t-bb.t0)/(bb.t1-bb.t0);[...bb.yb.querySelectorAll('img')].forEach((im,k)=>{im.style.transform='translateY('+((k%2?-1:1)*(4-8*u))+'%) scale(1.12)'})}}});
-  if(b.clips)b.clips.forEach((c,k)=>{const st=b.t0+.42+k*.42;const ek=cl((t-st)/.28);const xk=cl((t-(b.t1-.14))/.2);c.style.opacity=(ek>0?1:0)*(1-xk);c.style.transform='rotate('+c._rot+'deg) scale('+(1.18-.18*eOutQ(ek))+')';
+  if(b.clips)b.clips.forEach((c,k)=>{const st=b.t0+(.42+k*.42)*SL;const ek=cl((t-st)/(.28*SL));const xk=cl((t-(b.t1-.14*SL))/(.2*SL));c.style.opacity=(ek>0?1:0)*(1-xk);c.style.transform='rotate('+c._rot+'deg) scale('+(1.18-.18*eOutQ(ek))+')';
     const ws=[...c.querySelectorAll('.w>i')];ws.forEach(w=>{w.style.transform='none'})});
   /* timeline */
-  if(rects.L){const tb=b.tl||{m:0,idx:null},pb=(p&&p.tl)||tb;const k=eIO(cl((t-b.t0)/(b.type==='res'?1.6:.9)));const m=lerp(pb.m,tb.m,k);
-    const chips=(b.chips||[]).map(c=>({m:c.m,lab:c.lab,a:eOut(cl((t-(b.t0+.5+c.d))/.5))*(1-cl((t-(b.t1-.15))/.25))}));
+  if(rects.L){const tb=b.tl||{m:0,idx:null},pb=(p&&p.tl)||tb;const k=eIO(cl((t-b.t0)/((b.type==='res'?1.6:.9)*SL)));const m=lerp(pb.m,tb.m,k);{const yo=i=>+RESL[i].slice(-4);window.__tly={y0:yo(lastKnown(pb.m)),y1:yo(lastKnown(tb.m)),k:eOutQ(k)}}
+    const chips=(b.chips||[]).map(c=>({m:c.m,lab:c.lab,a:eOut(cl((t-(b.t0+.5*SL+c.d))/(.5*SL)))*(1-cl((t-(b.t1-.15*SL))/(.25*SL)))}));
     tlDraw(rects.L,m,tb.idx,chips)}
   /* cut flash on chapter changes */
-  const wk=b.type==='year'||b.type==='final'?cl((t-b.t0)/.22):1;wipe.style.opacity=b.type==='final'?(.55*(1-wk)):(b.type==='year'?(.5*(1-wk)):0);
+  const wk=b.type==='year'||b.type==='final'?cl((t-b.t0)/(.22*SL)):1;wipe.style.opacity=b.type==='final'?(.55*(1-wk)):(b.type==='year'?(.5*(1-wk)):0);
 };
 
 /* ---------- fit the 1600x900 stage to the window (phones held upright: the whole film turns sideways) ---------- */
@@ -436,7 +476,7 @@ function fit(){const W=innerWidth,H=innerHeight,rot=LITE&&H>W;document.body.clas
 addEventListener('resize',fit);addEventListener('orientationchange',()=>{setTimeout(fit,250);setTimeout(fit,700)});if(window.visualViewport)visualViewport.addEventListener('resize',fit);fit();
 
 /* ---------- player: the score drives the clock ---------- */
-const DUR=FILM.dur,audio=new Audio(BASE+'score.mp3');audio.preload='auto';
+const DUR=FILM.dur,audio=new Audio(BASE+'score.mp3?v=s2');audio.preload='auto';
 let playing=false,useAudio=true,wall0=0,tNow=0,ended=false;
 /* the wall clock drives the picture; the score follows it, and when the score is running smoothly the picture follows the score */
 let lastAT=-1,lastATw=0;
@@ -457,7 +497,7 @@ function play(){if(ended||tNow>=DUR-.05)tNow=0;ended=false;playing=true;wall0=pe
 function pause(){tNow=now();playing=false;audio.pause();setIcons();showCtl(true)}
 function seek(t){t=cl(t,0,DUR-.01);tNow=t;wall0=performance.now()-t*1000;ended=false;try{audio.currentTime=t}catch(e){}draw(t);paint(t)}
 function beatIndexAt(t){return beatAt(t)}
-function step(dir){const t=now();const i=beatIndexAt(t);let j=dir>0?i+1:(t-B[i].t0>1.2?i:i-1);j=cl(j,0,B.length-1);seek(B[j].t0+(playing?0:Math.min(1.4,(B[j].t1-B[j].t0)*.6)))}
+function step(dir){const t=now();const i=beatIndexAt(t);let j=dir>0?i+1:(t-B[i].t0>1.2*SL?i:i-1);j=cl(j,0,B.length-1);seek(B[j].t0+(playing?0:Math.min(1.4*SL,(B[j].t1-B[j].t0)*.6)))}
 function goFull(){const de=document.documentElement,rf=de.requestFullscreen||de.webkitRequestFullscreen;if(!rf)return;
   if(document.fullscreenElement||document.webkitFullscreenElement){(document.exitFullscreen||document.webkitExitFullscreen).call(document);return}
   try{const pr=rf.call(de,{navigationUI:'hide'});if(LITE&&pr&&pr.then)pr.then(()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}}).catch(()=>{})}catch(e){}}

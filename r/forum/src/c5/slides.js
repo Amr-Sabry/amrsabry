@@ -354,7 +354,7 @@ CARD.cycle=function(c,r){const W=r.w-52,H=r.h-48,n=c.items.length,cx=W/2,cy=H/2,
    and the control plays the score in step with the film. If the film can play its own sound, the control stays quiet. */
 if(!C5PV)(function(){let bc=null;const ns=(new URLSearchParams(location.search).get('ns')||'').replace(/[^a-z0-9_-]/gi,'');
   try{bc=new BroadcastChannel('c5-film'+(ns?'~'+ns:''))}catch(e){}if(!bc)return;
-  const src=new URL('opening/score.mp3',document.baseURI).href;let last=0;
+  const src=new URL('opening/score.mp3?v=s2',document.baseURI).href;let last=0;
   bc.onmessage=e=>{const m=e.data||{};if(m.c5ctl==='relaying')document.querySelectorAll('iframe.c5f').forEach(f=>{try{f.contentWindow.postMessage({c5film:'relay',on:!!m.on},'*')}catch(_){}})};
   addEventListener('message',e=>{const m=e.data||{};if(m.c5film!=='state')return;last=Date.now();
     bc.postMessage({c5film:1,t:m.t,playing:m.playing,own:m.own,muted:m.muted,at:Date.now(),src})});
@@ -484,7 +484,7 @@ S({n:1,full:1,cards:[
   /* Amr 18:07: the turning forum symbol sits at the card's far left, clear of the words */
   '.bc>.wm.wlogo.cov{left:18px!important;top:50%!important;width:auto!important;height:90%!important;aspect-ratio:1/1;translate:0 -50%}';document.head.appendChild(st)})();
 /* 2, 3 — films */
-S({n:2,full:1,cards:[['frame',[0,0,12,6],{cls:'fcard',src:'opening/index.html?embed=1',poster:'c5/opening',title:'قبل البداية 2011–2014'}]]});   /* Amr 12:58: slide 2 = the opener */
+S({n:2,full:1,cards:[['frame',[0,0,12,6],{cls:'fcard',src:'opening/index.html?embed=1&v=s2',poster:'c5/opening',title:'قبل البداية 2011–2014'}]]});   /* Amr 12:58: slide 2 = the opener */
 /* 3 — the film «مصر قبل عام 2014» now plays inside slide 2 (Amr 14:55: «احذف سلايد ٣»). The show counts by place (170 slides),
    so from here on the number Amr sees is the internal n minus one (his «سلايد 16» is n:17) */
 /* vid(3,{src:'c5_3.mp4',cap:'مصر قبل عام 2014'}); */
