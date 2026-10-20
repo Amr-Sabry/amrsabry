@@ -536,12 +536,12 @@ S({n:9,...HS1,cards:[
 S({n:10,...HS1,cards:[
   ['era2',[8,0,4,2],{bg:'dark2',k:'مصر قبل',y:2014,stay:'era',a:2011}],
   ['title',[8,2,4,2],{bg:'dark',ic:'map-pinned',t:'تحدي جغرافي',fs:58,pz:0,withHero:1}],
-  ['ibox',[8,4,4,2],{bg:'dark2',ic:'map-pin',t:'تركز الأنشطة الاقتصادية والفرص في عدد محدد من المحافظات،',fs:22}],
+  ['govc',[8,4,4,2],{bg:'dark2',t:'تركز الأنشطة الاقتصادية والفرص في عدد محدد من المحافظات،',k:'تركز الأنشطة الاقتصادية والفرص'}],
   ['kpip',[3,0,5,2],{bg:'grad',ic:'building-2',l:'من [[الاستثمار الخاص المحلي]] متركز في القاهرة والجيزة [[1972–2020]]',v:64,u:'%'}],
   ['kpip',[3,2,5,2],{bg:'dark2',ic:'globe',pre:'أكثر من',lfs:22,l:'من تدفقات [[الاستثمار الأجنبي المباشر]] في المشروعات الجديدة توجهت إلى القاهرة والجيزة [[1972–2020]]',v:70,u:'%'}],
   ['kpip',[3,4,5,2],{bg:'mint',ic:'map',l:'من 26 محافظة لديها [[مقومات كافية]] من الاستثمار الخاص المحلي',v:9,u:'%'}],
   ['photo',[0,0,3,4],{img:P('image38'),pos:'60% 50%'}],
-  ['ibox',[0,4,3,2],{bg:'dark2',ic:'unplug',t:'ومناطق لم تستفيد من إمكانيتها'}],
+  ['govc',[0,4,3,2],{bg:'dark2',mode:'rest',t:'ومناطق لم تستفيد من إمكانيتها',k:'لم تستفيد'}],
 ]});
 /* 11 — the vicious circle (Amr 13:13: redistributed; the Egypt collage shown whole, never cropped) */
 S({n:11,...HS1,cards:[
@@ -696,7 +696,7 @@ CARD.block=function(c,r){const lanes=3,per=6;let dots='';
   return `<div class="ix"><div class="ixt">${ixT(c)}</div><div class="bk"><div class="bkl"></div>${dots}<div class="bkb"></div></div></div>`};
 (function(){const st=document.createElement('style');st.textContent=cqIn('ix')+
   '.bc .ix{position:absolute;inset:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:4cqh}'+
-  '.bc .ixt{font:500 min(10cqh,6cqw)/1.35 var(--f-body);color:var(--ink);text-align:right;word-spacing:.06em}.bc .ixt b{font:800 min(13cqh,7.6cqw)/1.25 var(--f-display)}'+
+  '.bc .ixt{font:500 min(12cqh,6.6cqw)/1.4 var(--f-display);color:var(--ink);text-align:right;word-spacing:.06em;text-wrap:balance}.bc .ixt b{font-weight:800}'+
   '.bc.grad .ixt,.bc.mint .ixt,.bc.vio .ixt{color:#fff}'+
   /* wear */
   '.bc .wr{display:flex;align-items:center}.bc .wrs{width:100%;height:min(46cqh,100%);display:flex;gap:1.6cqw;direction:rtl}'+
@@ -715,4 +715,27 @@ CARD.block=function(c,r){const lanes=3,per=6;let dots='';
   '.bc.go .bkd:not(.thru){left:var(--x)}'+
   '.bc .bkd.thru{left:auto;right:52%;background:#a9b7ec;box-shadow:none;transition:none;animation:bkt 4.5s linear infinite;animation-delay:var(--d)}'+
   '@keyframes bkt{0%{right:52%;opacity:0}15%{opacity:1}85%{opacity:1}100%{right:104%;opacity:0}}';
+  document.head.appendChild(st)})();
+
+/* the geography challenge as maps of the governorates (GEO.gov, 27 shapes):
+   «تركز الأنشطة الاقتصادية والفرص في عدد محدد من المحافظات»: Cairo and Giza (named by the client's own figures on the slide) lit
+   and pulsing, every other governorate pale;
+   «ومناطق لم تستفيد من إمكانيتها»: the same map the other way round — the rest of the country drawn in dashes, its potential as
+   faint points that glow and fade, never lit */
+CARD.govc=function(c,r){let paths='',sparks='',vb='0 0 100 100';const lit=c.lit||['القاهرة','الجيزة'],rest=c.mode==='rest';
+  try{const F=GEO.gov.map(g=>({type:'Feature',properties:{n:g.n},geometry:g.g}));const fc={type:'FeatureCollection',features:F};
+    const P=d3.geoMercator().fitSize([100,100],fc),gp=d3.geoPath(P),b=gp.bounds(fc);
+    vb=`${(b[0][0]-1).toFixed(1)} ${(b[0][1]-1).toFixed(1)} ${(b[1][0]-b[0][0]+2).toFixed(1)} ${(b[1][1]-b[0][1]+2).toFixed(1)}`;
+    F.forEach((f,i)=>{const on=lit.some(w=>f.properties.n.includes(w));
+      paths+=`<path class="${on?(rest?'gq':'gl'):(rest?'gd':'gp')}" d="${gp(f)}" style="--d:${(i*.37%3).toFixed(2)}s"/>`;
+      if(rest&&!on){const [x,y]=gp.centroid(f);if(isFinite(x))sparks+=`<circle class="gs" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="1.9" style="--d:${(-(i*.53)%4).toFixed(2)}s"/>`}})}catch(e){}
+  return `<div class="gv${rest?' rest':''}"><svg class="gvm" viewBox="${vb}" preserveAspectRatio="xMidYMid meet">${paths}${sparks}</svg><div class="ixt">${ixT(c)}</div></div>`};
+(function(){const st=document.createElement('style');st.textContent=cqIn('gv')+
+  '.bc .gv{position:absolute;inset:0;display:flex;align-items:center;gap:5cqw;flex-direction:row-reverse}'+
+  '.bc .gv .gvm{flex:0 0 auto;height:100%;max-width:42%;overflow:visible}.bc .gv .ixt{flex:1 1 0;min-width:0;font-size:min(10.5cqh,5.6cqw)}.bc .gv.rest .gvm{max-width:48%}'+
+  '.bc .gvm path{stroke:#fff;stroke-width:.35;vector-effect:non-scaling-stroke;stroke-linejoin:round}'+
+  '.bc .gvm .gp{fill:rgba(61,92,192,.14)}'+
+  '.bc .gvm .gl{fill:#e8845e;filter:drop-shadow(0 0 1.6px rgba(232,132,94,.9));animation:gvl 2.6s ease-in-out infinite}@keyframes gvl{50%{filter:drop-shadow(0 0 3.6px rgba(232,132,94,1))}}'+
+  '.bc .gvm .gd{fill:rgba(61,92,192,.07);stroke:rgba(61,92,192,.7);stroke-dasharray:2.5 2;stroke-width:1}.bc .gvm .gq{fill:rgba(61,92,192,.3)}'+
+  '.bc .gvm .gs{fill:#e8845e;opacity:.25;animation:gvs 3.6s ease-in-out infinite;animation-delay:var(--d)}@keyframes gvs{50%{opacity:.9}}';
   document.head.appendChild(st)})();
