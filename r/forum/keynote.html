@@ -109,7 +109,7 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 .sr.o .num{font-size:130px;font-weight:600;opacity:.55}.sr.n .num{font-size:170px;font-weight:700}
 .sr .tr{flex:1;position:relative;height:130px;border-radius:34px;background:rgba(28,37,71,.09);box-shadow:inset 0 0 0 3px rgba(28,37,71,.14);overflow:hidden;display:flex}
 .sr .tr i{display:block;height:100%;flex:none}
-.sr .tr i.b0{background:linear-gradient(0deg,#8e9be6,#aab4f0)}
+.sr .tr i.b0{background:linear-gradient(0deg,#8e9be6,#aab4f0)}.sr.o .tr i.b0{background:rgba(28,37,71,.3)}
 .sr .tr i.a0{background:linear-gradient(0deg,#2f49ad,#4a67d2)}
 .sr .tr span{position:absolute;left:44px;top:50%;transform:translateY(-50%);font:700 42px/1 var(--f);opacity:.72}
 
@@ -223,7 +223,7 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 .st .gx{position:relative;display:flex;align-items:baseline;gap:30px;margin-top:6px;color:rgba(28,37,71,.5)}
 .st .gx .num{font-size:270px;font-weight:700}
 .st .gx .u{font:800 64px/1 var(--f)}
-.st .gx::after{content:"";position:absolute;left:-30px;right:-30px;top:52%;height:16px;border-radius:8px;background:#3d5cc0;transform:rotate(-3deg)}
+.st .gx .num{position:relative}.st .gx .num::after{content:"";position:absolute;left:-24px;right:-24px;top:50%;height:16px;border-radius:8px;background:#3d5cc0;transform:rotate(-4deg)}
 .st .res{display:flex;align-items:center;gap:24px;margin-top:22px;color:var(--cob);font:900 76px/1.1 var(--f)}
 .sx{position:absolute;left:160px;right:160px;top:880px;display:flex;justify-content:center;align-items:center;gap:56px}
 .sx .d{width:3px;height:110px;border-radius:2px;background:rgba(28,37,71,.15)}
@@ -306,13 +306,13 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 .cs .lb{position:absolute;display:flex;flex-direction:column;align-items:center;text-align:center}
 .cs .lb .num{white-space:nowrap}
 .cs .lb.o .num{font-size:62px;font-weight:600;opacity:.6}.cs .lb.n .num{font-size:84px;font-weight:800}
-.cs .lb .uu{font:700 30px/1.2 var(--f);margin-top:8px;white-space:normal}
+.cs .lb .uu{font:700 29px/1.2 var(--f);margin-top:8px;white-space:normal}
 .cs .lb.o .uu{opacity:.6}.cs .lb.n .uu{color:var(--cob)}
 .cs .lb .pr2{font:700 32px/1 var(--f);color:var(--cob);margin-bottom:6px;white-space:nowrap}
 .cs .lb .tt{font:600 32px/1.3 var(--f);opacity:.65;white-space:normal}
 .cs .yy2{position:absolute;bottom:80px;text-align:center;font:800 34px/1 var(--f);white-space:nowrap}
 .cs .yy2.o{color:rgba(28,37,71,.55)}.cs .yy2.n{color:var(--cob)}
-.cs .nb2{position:absolute;bottom:0;left:24px;right:24px;text-align:center;font:700 32px/1.3 var(--f);color:var(--cob)}
+.cs .nb2{position:absolute;bottom:4px;left:16px;right:16px;text-align:center;font:700 30px/1.3 var(--f);color:var(--cob)}
 .ec{position:absolute;top:330px;height:600px;display:flex;flex-direction:column;align-items:center;text-align:center}
 .ec+.ec::before{content:"";position:absolute;right:0;top:20px;bottom:20px;width:2px;background:rgba(28,37,71,.08)}
 .ec .ic2{color:#5a6280;margin-bottom:20px}
@@ -474,7 +474,7 @@ const R={
   /* 2–5 measures in rows, each pair of bars on its own scale (a percentage on the whole 100); the years are named once, on the first row */
   /* 2–5 measures side by side (Amr 22:56 «بالعرض»), each its own pair of columns to scale, every column named by its year under it:
      grey = قبل 2014 on the right, cobalt = 2026 on the left, the figure and its unit right above its column */
-  rows:s=>{const n=s.rows.length,W=1600/n,H=n>4?260:290;
+  rows:s=>{const n=s.rows.length,W=1600/n,H=n>4?260:(n>2?320:340);
     return HD(s)+s.rows.map((r,i)=>{const A=r.an!=null?r.an:fnum(r.a),B=r.bn!=null?r.bn:fnum(r.b),M=r.pct?100:(Math.max(A,B)||1),
       bw=Math.min(130,W*.27),gp=Math.max(26,W*.08),cx=W/2,xr=cx-gp/2-bw,xl=cx+gp/2,hA=r.a==null?0:Math.max(10,Math.round(A/M*H)),hB=Math.max(10,Math.round(B/M*H)),
       ua=[r.u,r.ax].filter(Boolean).join(' '),ub=[r.u,r.bx].filter(Boolean).join(' '),LW=bw+gp+40,sp=t=>{const m=String(t||'').match(/^([\d.,:\s–-]+)\s*(.*)$/);return m?[m[1].trim(),m[2]]:['',t||'']},
