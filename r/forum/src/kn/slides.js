@@ -1,6 +1,6 @@
 /* «الجلسة الختامية» — keynote edition: the slides in order. The client's words and figures only.
    types: cover · col (one measure) · multi (2–4 measures) · map (a network) · zmap (a share of Egypt) · cells (counts in different units) · gaps (the Nile's crossings)
-   a = before 2014, b = 2026; add = the part of b added since (drawn in peach); call = {pre,v,u} beside the added part */
+   a = before 2014, b = 2026; add = the part of b added since (drawn in the light accent); call = {pre,v,u} beside the added part */
 const KN=[
  {type:'cover',bg:'blue',k:'منتدى مصر 2026 · الجلسة الختامية',y0:'2014',y1:'2026',s:'من بناء مقومات التنمية .. إلى صناعة المستقبل'},
 
@@ -8,7 +8,7 @@ const KN=[
  {type:'zmap',bg:'dark',t:'الرقعة المعمورة',k:'مضاعفة نسبة الأراضي المعمورة والمستغلة من إجمالي مساحة مصر',
   a:{v:'7%'},b:{v:'14%'}},
 
- {type:'col',bg:'light',t:'المدن الجديدة',k:'مصر اتسعت لتستوعب سكانها',
+ {type:'col',bg:'dark',t:'المدن الجديدة',k:'مصر اتسعت لتستوعب سكانها',
   a:{v:'22',u:'مدينة جديدة',n:'في أربعين عاما من بداية السبعينيات'},b:{v:'61',u:'مدينة جديدة'},add:39,
   call:{pre:'تم إنشاء',v:'39',u:'مدينة جديدة في 12 عام'}},
 
@@ -23,7 +23,7 @@ const KN=[
  {type:'gaps',bg:'blue',net:'nile',t:'محاور على النيل',k:'مع اكتمال تنفيذ 35 محور على النيل',
   a:{v:'100',u:'كم',n:'المسافة بين محاور النيل'},b:{v:'25',u:'كم',n:'مستهدف · 19 محور منفذ'}},
 
- {type:'multi',bg:'light',t:'الموانئ البحرية والتجارية',k:'مصر أصبحت أكثر اتصالا وترابطا',rows:[
+ {type:'multi',bg:'dark',t:'الموانئ البحرية والتجارية',k:'مصر أصبحت أكثر اتصالا وترابطا',rows:[
   {nm:'عدد الموانئ',a:'14',b:'19',ub:'ميناء'},
   {nm:'الطاقة',a:'185',b:'400',ub:'مليون طن سنويا'},
   {nm:'الحاويات',a:'12',b:'40',ub:'مليون حاوية سنويا'}]},
