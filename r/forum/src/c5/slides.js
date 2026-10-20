@@ -126,8 +126,9 @@ function vid(n,o){S({n,full:1,cards:[['video',[0,0,12,6],Object.assign({cls:'vca
    both sides share it (the rest of each label stays under its own figure); several measures in one card stack as rows */
 CARD.cmp=function(c,r){const rows=c.rows||[{a:c.a,b:c.b}],n=rows.length;
   const sp=l=>String(l||'').split(/<br\s*\/?>/i), one=n===1;
-  const R=rows.map(x=>{const A=sp(x.a.l),B=sp(x.b.l),sh=A.length>1&&B.length>1&&A[0].trim()===B[0].trim()||(A.length===1&&B.length===1&&A[0].trim()===B[0].trim()&&A[0].trim()!=='');
-    return {a:x.a,b:x.b,name:sh?A[0].trim():(x.name||''),na:(sh?A.slice(1):A).join('<br>'),nb:(sh?B.slice(1):B).join('<br>')}});
+  const E={v:'',u:'',l:''};
+  const R=rows.map(x0=>{const x={a:x0.a||null,b:x0.b||null,name:x0.name},A=sp((x.a||E).l),B=sp((x.b||E).l),sh=x.a&&x.b&&A.length>1&&B.length>1&&A[0].trim()===B[0].trim()||(A.length===1&&B.length===1&&A[0].trim()===B[0].trim()&&A[0].trim()!=='');
+    return {a:x.a,b:x.b,name:sh?A[0].trim():(x.name||''),na:(sh?A.slice(1):A).join('<br>'),nb:(sh?B.slice(1):B).join('<br>')}});      /* a side the client gives no figure for stays out: the other spans the row */
   const head=c.h||(one&&R[0].name)||'', aw=(r.w-52-56)/2, ah=(r.h-48-(head?52:0)-(one?0:n*30))/n;
   const fs=c.fs||Math.round(Math.min(ah*(one?.36:.42),aw*.3,one?120:84));
   const fig=(x,note,cls)=>`<div class="cmpc ${cls}"><span class="cmpk">${ICON(cls==='a'?'history':'trending-up',17)}${cls==='a'?(c.ya||'قبل 2014'):(c.yb||'2026')}</span>`+
@@ -135,7 +136,8 @@ CARD.cmp=function(c,r){const rows=c.rows||[{a:c.a,b:c.b}],n=rows.length;
     (note?`<div class="sub cmps">${hl(note)}</div>`:'')+`</div>`;
   return (head?`<div class="hdr cmph">${ICON(c.ic||'git-compare-arrows',27)}<span class="lab">${hl(head)}</span></div>`:'')+
     `<div class="cmpw">`+R.map(x=>(!one&&x.name?`<div class="cmpn">${hl(x.name)}</div>`:'')+
-      `<div class="cmpr">${fig(x.a,x.na,'a')}<span class="cmpx">${ICON('arrow-left',30)}</span>${fig(x.b,x.nb,'b')}</div>`).join('')+`</div>`};
+      `<div class="cmpr${x.a&&x.b?'':' one'}">${x.a?fig(x.a,x.na,'a'):''}${x.a&&x.b?`<span class="cmpx">${ICON('arrow-left',30)}</span>`:''}${x.b?fig(x.b,x.nb,'b'):''}</div>`).join('')+`</div>`+
+    (c.foot?`<div class="sub cmpf">${hl(c.foot)}</div>`:'')};
 (function(){const st=document.createElement('style');st.textContent=
   '.bc .cmpw{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;gap:12px;min-height:0}'+
   '.bc .cmpn{font:700 19px/1.3 var(--f-display);color:var(--ink);margin-bottom:-4px}'+
@@ -147,7 +149,8 @@ CARD.cmp=function(c,r){const rows=c.rows||[{a:c.a,b:c.b}],n=rows.length;
   '.bc .cmpc.a .num{color:var(--ink)}'+
   '.bc .cmpk{display:inline-flex;align-items:center;gap:6px;font:600 15px/1 var(--f-body);color:var(--mute)}'+
   '.bc .cmpx{align-self:center;color:#3f93aa;display:grid;place-items:center}'+
-  '.bc .cmps{font-size:15.5px;line-height:1.45}.bc .cmph .lab{font:700 24px/1.25 var(--f-display);color:var(--ink);opacity:1}';
+  '.bc .cmps{font-size:15.5px;line-height:1.45}.bc .cmph .lab{font:700 24px/1.25 var(--f-display);color:var(--ink);opacity:1}'+
+  '.bc .cmpr.one{grid-template-columns:1fr}.bc .cmpf{margin-top:10px;font-size:16px;line-height:1.45}';
   document.head.appendChild(st)})();
 CARD.cycle=function(c,r){const W=r.w-52,H=r.h-48,n=c.items.length,cx=W/2,cy=H/2,rx=W*.37,ry=H*.36;
   const P=c.items.map((it,i)=>{const a=-Math.PI/2-i*2*Math.PI/n;return {x:cx+rx*Math.cos(a),y:cy+ry*Math.sin(a),ic:it[0],t:it[1]}});
@@ -215,9 +218,10 @@ if(C5_LIVE)(function(){let v0=null;
 function cover(n,o){S({n,full:1,cards:[
   ['photo',[0,0,7,6],{img:P(o.img),pos:o.pos||'50% 50%'}],
   /* Amr 13:04: no rolling words on the section covers; the number and «القسم ...» share one chip */
-  ['axis',[7,0,5,2],{n:o.no,ic:o.ic||'layers',t:o.k,s:'',bg:'vio'}],
-  ['title',[7,2,5,3],{bg:'dark',ic:o.ic||'layers',t:o.t,fs:o.fs||60}],
-  ['title',[7,5,5,1],{bg:'grad',t:o.s,fs:24}],
+  /* Amr 15:14: the answer is what matters — it gets the room, the section chip gives it up */
+  ['axis',[7,0,5,1],{n:o.no,ic:o.ic||'layers',t:o.k,s:'',bg:'vio'}],
+  ['title',[7,1,5,2],{bg:'dark',ic:o.ic||'layers',t:o.t,fs:o.fs||46}],
+  ['title',[7,3,5,3],{bg:'grad',t:o.s,fs:o.sfs||62}],
 ]})}
 function move(n,o){S({n,full:1,cards:[
   ['photo',[0,0,8,6],{img:P(o.img),pos:o.pos||'50% 50%'}],
