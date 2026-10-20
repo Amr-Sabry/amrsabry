@@ -152,6 +152,26 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 .sk .mid .num{font-size:140px;font-weight:700;margin-top:4px}
 .sk .mid .u{font:800 46px/1.2 var(--f);margin-top:14px}
 .sk .res{position:absolute;left:600px;right:600px;top:930px;display:flex;align-items:center;justify-content:center;gap:16px;font:800 46px/1 var(--f);color:var(--cob);white-space:nowrap}
+.pp{position:absolute;top:290px;width:760px;height:630px;border-radius:44px;display:flex;flex-direction:column;align-items:center;padding-top:40px}
+.pp.o{right:160px;background:rgba(28,37,71,.05);box-shadow:inset 0 0 0 2px rgba(28,37,71,.08)}
+.pp.n{left:160px;background:rgba(61,92,192,.09);box-shadow:inset 0 0 0 2px rgba(61,92,192,.2)}
+.pp .y{font:800 42px/1 var(--f)}
+.pp.o .y{opacity:.6}.pp.n .y{color:var(--cob)}
+.pp .fr{position:relative;margin-top:34px;padding:34px 40px;border-radius:34px;display:grid;grid-template-columns:repeat(6,74px);gap:20px 26px}
+.pp .fr .ico{stroke-width:2.1}.pp.o .fr{border:4px dashed rgba(28,37,71,.28);color:rgba(28,37,71,.45)}
+.pp.n .fr{border:4px solid rgba(61,92,192,.55);background:rgba(255,255,255,.28);color:var(--cob)}
+.pp .bd{position:absolute;top:-34px;left:-34px;width:76px;height:76px;border-radius:24px;display:grid;place-items:center;color:#fff}
+.pp.o .bd{background:#7a8199}.pp.n .bd{background:#3d5cc0}
+.pp .l1{display:flex;align-items:baseline;gap:18px;margin-top:40px}
+.pp .l1 .pre{font:600 40px/1 var(--f);opacity:.75}
+.pp .l1 .num{font-size:110px;font-weight:700}
+.pp.o .l1 .num{opacity:.65}
+.pp .l1 .u{font:800 46px/1 var(--f)}
+.pp .l1 .t{font:800 54px/1.2 var(--f);color:var(--cob);padding:22px 0 10px}
+.pp .l2{display:flex;align-items:baseline;gap:14px;margin-top:22px;font:700 42px/1 var(--f);opacity:.8}
+.pp .l2 .num{font-size:64px;font-weight:700}
+.pp-ar{position:absolute;left:50%;top:560px;width:104px;height:104px;margin-left:-52px;border-radius:50%;background:#3d5cc0;color:#fff;display:grid;place-items:center;box-shadow:0 0 0 14px #d9deec}
+.pp-key{position:absolute;left:0;right:0;bottom:62px;display:flex;justify-content:center;align-items:center;gap:12px;font:600 34px/1 var(--f);opacity:.6}
 /* ---- cover: the timeline from 2014 to 2026 and the five moves on the way ---- */
 .cover .kick{position:absolute;top:120px;left:160px;right:160px;text-align:center;font:700 40px/1 var(--f);color:var(--cob)}
 .cover .end{position:absolute;top:220px;width:720px}
@@ -175,7 +195,7 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 <body>
 <div id="vp"><div id="stage"></div></div>
 <div id="hint">← → للتنقل · F ملء الشاشة</div>
-<script src="src/kn/icons.js?v=2"></script>
+<script src="src/kn/icons.js?v=3"></script>
 <script src="src/kn/slides.js?v=3"></script>
 <script>
 const N=v=>`<span class="num">${v}</span>`, G=v=>`<span class="num grad">${v}</span>`;
@@ -208,6 +228,16 @@ const R={
     <div class="mv">${s.moves.map(m=>`<div class="m"><div class="ib">${ICON(m.ic,62)}</div><div class="n">${m.n}</div><div class="t">${m.t}</div></div>`).join('')}</div>`,
   /* one measure; with a callout the pair moves right to leave the callout its room */
   col:s=>HD(s)+colChart({a:s.a,b:s.b,add:s.add,adds:s.adds,call:s.call},(s.call||s.adds)?{x0:300,x1:1260,top:560,base:870}:{x0:360,x1:1560,top:560,base:870},{ya:s.ya,yb:s.yb}),
+  /* the same people, before and after: one figure for every 100 thousand, in an unsafe area (right) and in a safe home (left) */
+  people:s=>{const fig=n=>Array.from({length:n},()=>ICON('user',74)).join(''),n=Math.round(fnum(s.who.v)*10);
+    return HD(s)+`<div class="pp o"><div class="y">${s.ya||'قبل 2014'}</div><div class="fr"><div class="bd">${ICON('triangle-alert',44)}</div>${fig(n)}</div>
+        <div class="l1"><span class="pre">${s.who.pre}</span>${N(s.who.v)}<span class="u">${s.who.u}</span></div>
+        <div class="l2">${N(s.a.v)}<span>${s.a.u}</span></div></div>
+      <div class="pp-ar">${ICON('arrow-left',58)}</div>
+      <div class="pp n"><div class="y">${s.yb||'2026'}</div><div class="fr"><div class="bd">${ICON('shield-check',44)}</div>${fig(n)}</div>
+        <div class="l1"><span class="t">${s.res}</span></div>
+        <div class="l2"><span>${s.b.pre}</span>${G(s.b.v)}<span>${s.b.u}</span></div></div>
+      <div class="pp-key">${ICON('user',40)}<span>= ${s.key}</span></div>`},
   /* people on the move: from the unsafe areas (right) through a band that carries them to the new homes (left) */
   sankey:s=>{const p=s.mid;
     return HD(s)+`<div class="sk"><svg viewBox="0 0 1920 1080"><defs><linearGradient id="skg" x1="1" x2="0" y1="0" y2="0"><stop offset="0" stop-color="#1c2547" stop-opacity=".14"/><stop offset="1" stop-color="#3d5cc0" stop-opacity=".42"/></linearGradient></defs>

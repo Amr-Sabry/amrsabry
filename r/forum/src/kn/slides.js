@@ -1,7 +1,7 @@
 /* «الجلسة الختامية» — keynote edition: the slides in order. Figures and sentences are the client's; the questions (q) are
    ours, asked so the figures answer them (Amr 22:14: «كأنها سؤال والمعلومات إجابة … بأسلوب رسمي مختصر ومؤثر»).
    No maps (22:15: only maps whose information is certain). One header on every slide: icon + question (+ one client line).
-   types: cover · sankey (people carried from the unsafe areas to the new homes) · col (one measure as two columns) · rows (2–3 measures as bar pairs) · share (a share of Egypt's area) · gaps (the Nile's crossings)
+   types: cover · people (the same residents before and after, one figure per 100 thousand) · col (one measure as two columns) · rows (2–3 measures as bar pairs) · share (a share of Egypt's area) · gaps (the Nile's crossings)
    a = before 2014, b = 2026; add / adds = the part of b added since; call = {pre,v,u} beside the added part; ic = outline icon */
 const KN=[
  {type:'cover',k:'منتدى مصر 2026 · الجلسة الختامية',y0:'2014',y1:'2026',s0:'من بناء مقومات التنمية',s1:'إلى صناعة المستقبل',moves:[
@@ -19,11 +19,11 @@ const KN=[
   a:{v:'22',u:'مدينة جديدة',n:'في أربعين عاما من بداية السبعينيات'},b:{v:'61',u:'مدينة جديدة'},add:39,
   call:{pre:'تم إنشاء',v:'39',u:'مدينة جديدة في 12 عام'}},
 
- {type:'sankey',ic:'house',q:'ماذا تبقى من المناطق غير الآمنة؟',
-  a:{ic:'triangle-alert',v:'357',u:'منطقة غير آمنة'},
-  mid:{ic:'users',pre:'يقطنها نحو',v:'1.2',u:'مليون نسمة'},
-  b:{ic:'building-2',pre:'بتنفيذ',v:'246',u:'ألف وحدة سكنية'},
-  res:{ic:'shield-check',t:'القضاء على المناطق غير الآمنة'}},
+ {type:'people',ic:'house',q:'ماذا تبقى من المناطق غير الآمنة؟',
+  who:{pre:'يقطنها نحو',v:'1.2',u:'مليون نسمة'},
+  a:{v:'357',u:'منطقة غير آمنة'},
+  b:{pre:'بتنفيذ',v:'246',u:'ألف وحدة سكنية'},
+  res:'القضاء على المناطق غير الآمنة',key:'100 ألف نسمة'},
 
  /* التحرك الثاني · الربط */
  {type:'col',ic:'route',q:'كم كيلومترًا من الطرق تربط مصر؟',k:'من شبكة محدودة حول وادي النيل إلى شبكة قومية أكثر اتساعًا وترابطًا',
