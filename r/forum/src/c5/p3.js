@@ -3,7 +3,8 @@
 const mod=(n,f)=>f(SLIDES[n]);
 /* larger type for a bars card that has a whole column to itself (cls:'bbig'), so it reads from the hall */
 {const st=document.createElement('style');st.textContent='.bc.bbig .brs{gap:26px}.bc.bbig .br .brl b{font-size:30px}.bc.bbig .br .brv{font-size:20px}'+
-  '.bc.bbig .br .brv em{font-size:38px}.bc.bbig .brt{height:14px;border-radius:7px}.bc.bbig .brt.s{height:8px;margin-top:5px}.bc.bbig .bra{font-size:18px;margin-top:7px}.bc.bbig .brk{font-size:17px}';
+  '.bc.bbig .br .brv em{font-size:38px}.bc.bbig .brt{height:14px;border-radius:7px}.bc.bbig .brt.s{height:8px;margin-top:5px}.bc.bbig .bra{font-size:18px;margin-top:7px}.bc.bbig .brk{font-size:17px}'+
+  '.bc.lk .bax .yr span{font-size:20px;padding:4px 14px 5px}';
   document.head.appendChild(st)}
 /* 69 — move three */
 move(69,{no:'03',k:'التحرك الثالث',t:'التمكين',s:'من سد العجز إلى القدرة على تلبية الاحتياجات',img:'image197',pos:'50% 100%',ic:'zap',
@@ -204,5 +205,12 @@ S({n:96,...HM4,cards:[
   ['photo',[0,0,8,3],{img:P('image245'),pos:'50% 55%',cap:'مشروع الفيروز للاستزراع السمكي / شرق التفريعة'}],
   ['photo',[3,3,5,3],{img:P('image244'),pos:'50% 60%',cap:'مشروع الاستزراع السمكي (الفيروز) بشرق بورسعيد ومثلث الديبة'}],
   ['photo',[0,3,3,3],{img:P('image246'),pos:'50% 65%',cap:'مشروع المدينة السمكية الصناعية / غليون'}],
+]});
+/* 97 — the national lakes project: Mariout and Manzala, before and after (drag to compare) */
+S({n:97,...HM4,cards:[
+  ['title',[8,0,4,3],{bg:'dark',ki:'waves',t:'المشروع القومى لتنمية وتطوير البحيرات',fs:40}],
+  ['kin',[8,3,4,3],{words:['البحيرات','مريوط','المنزلة'],cur:1}],
+  ['photo',[0,0,8,3],{cls:'lk',ba:[P('image250'),P('image249')],la:' ',sa:'البحيرة قبل التطوير',lb:'بحيرة مريوط',alta:'بحيرة مريوط قبل التطوير',altb:'بحيرة مريوط'}],
+  ['photo',[0,3,8,3],{cls:'lk',ba:[P('image248'),P('image251')],la:' ',sa:'البحيرة قبل التطوير',lb:'بحيرة المنزلة',alta:'بحيرة المنزلة قبل التطوير',altb:'بحيرة المنزلة'}],
 ]});
 })();

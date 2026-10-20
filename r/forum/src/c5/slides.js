@@ -72,9 +72,9 @@ if(C5_LIVE)(function(){let v0=null;
 /* ---------- covers ---------- */
 function cover(n,o){S({n,full:1,cards:[
   ['photo',[0,0,7,6],{img:P(o.img),pos:o.pos||'50% 50%'}],
-  ['axis',[7,0,2,2],{n:o.no,ic:o.ic||'layers',t:'',s:'',bg:'vio'}],
-  ['kin',[9,0,3,2],{words:o.words,cur:o.cur??1}],
-  ['title',[7,2,5,3],{bg:'dark',k:o.k,ki:o.ic||'layers',t:o.t,fs:o.fs||56}],
+  /* Amr 13:04: no rolling words on the section covers; the number and «القسم ...» share one chip */
+  ['axis',[7,0,5,2],{n:o.no,ic:o.ic||'layers',t:o.k,s:'',bg:'vio'}],
+  ['title',[7,2,5,3],{bg:'dark',ic:o.ic||'layers',t:o.t,fs:o.fs||60}],
   ['title',[7,5,5,1],{bg:'grad',t:o.s,fs:24}],
 ]})}
 function move(n,o){S({n,full:1,cards:[
