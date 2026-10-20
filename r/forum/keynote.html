@@ -283,6 +283,18 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 .pc .l{font:700 38px/1.3 var(--f);margin-bottom:18px}
 .pc .tr{height:56px;border-radius:18px;background:rgba(28,37,71,.07);box-shadow:inset 0 0 0 2px rgba(28,37,71,.1);overflow:hidden}
 .pc .tr i{display:block;height:100%;background:linear-gradient(270deg,#5a6280,#7a8199);border-radius:18px}
+.pq{position:absolute;top:320px;bottom:130px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.pq .nm{font:800 42px/1.2 var(--f);height:104px;display:flex;align-items:flex-start;justify-content:center}
+.pq .u{font:600 34px/1 var(--f);opacity:.6;height:40px}
+.pq .ch2{position:relative;flex:1;width:100%}
+.pq .bb{position:absolute;bottom:0;border-radius:18px 18px 4px 4px}
+.pq .bb.g{border:4px dashed rgba(28,37,71,.4);border-bottom:0;border-radius:18px 18px 0 0}
+.pq .gv{position:absolute;white-space:nowrap;font-size:0}.pq .gv .num{font-size:54px;font-weight:600;opacity:.5}.pq .bb.n{background:linear-gradient(0deg,#1c2547,#3a4470)}
+.pq .bv{position:absolute;text-align:center;white-space:nowrap}
+.pq .bv.n .num{font-size:88px;font-weight:800;color:#1c2547}.pq .bv{display:flex;align-items:baseline;justify-content:center;gap:10px}.pq .bu{font:700 32px/1.1 var(--f);max-width:110px;text-align:right;white-space:normal}
+.pq .base2{position:absolute;bottom:-3px;left:20px;right:20px;height:3px;background:rgba(28,37,71,.2);border-radius:2px}
+.pq-leg{position:absolute;left:0;right:0;bottom:50px;display:flex;justify-content:center;align-items:center;gap:14px;font:700 36px/1 var(--f)}
+.pq-leg i{width:34px;height:34px;border-radius:9px;background:linear-gradient(0deg,#1c2547,#3a4470)}
 /* ---- cover: the timeline from 2014 to 2026 and the five moves on the way ---- */
 .cover .kick{position:absolute;top:120px;left:160px;right:160px;text-align:center;font:700 40px/1 var(--f);color:var(--cob)}
 .cover .end{position:absolute;top:220px;width:720px}
@@ -339,6 +351,15 @@ const R={
     <div class="mv">${s.moves.map(m=>`<div class="m"><div class="ib">${ICON(m.ic,62)}</div><div class="n">${m.n}</div><div class="t">${m.t}</div></div>`).join('')}</div>`,
   /* one measure; with a callout the pair moves right to leave the callout its room */
   col:s=>HD(s)+colChart({a:s.a,b:s.b,add:s.add,adds:s.adds,call:s.call},(s.call||s.adds)?{x0:300,x1:1260,top:560,base:870}:{x0:360,x1:1560,top:560,base:870},{ya:s.ya,yb:s.yb}),
+  /* a few indicators side by side: for each, the earlier figure (faint) and the figure before 2014 (dark), true to scale */
+  pairs:s=>{const n=s.rows.length,W=1600/n;
+    return HD(s)+s.rows.map((r,i)=>{const A=fnum(r.a),B=fnum(r.b),M=Math.max(A,B)||1,H=290,hA=Math.round(A/M*H),hB=Math.round(B/M*H),cx=W/2;
+      return `<div class="pq" style="right:${160+i*W}px;width:${W}px"><div class="nm">${r.nm}</div><div class="ch2">
+        <div class="bb n" style="right:${cx-70}px;width:140px;height:${hB}px"></div>
+        <div class="bb g" style="right:${cx-70}px;width:140px;height:${hA}px"></div>
+        <div class="gv" style="left:${cx+82}px;bottom:${hA-26}px">${N(r.a)}</div>
+        <div class="bv n" style="right:${cx-170}px;width:340px;bottom:${Math.max(hA,hB)+16}px">${N(r.b)}${r.u?`<span class="bu">${r.u}</span>`:''}</div>
+        <div class="base2"></div></div></div>`}).join('')+(s.leg?`<div class="pq-leg"><i></i><span>${s.leg}</span><b></b></div>`:'')},
   /* a decline told as slopes: the earlier figure, the line, the figure before 2014 */
   trend:s=>HD(s)+s.rows.map((r,i)=>{const A=fnum(r.a),B=fnum(r.b),M=Math.max(A,B)||1,ya=96-A/M*84,yb=96-B/M*84;
     return `<div class="tw" style="top:${310+i*142}px"><div class="mh"><div class="ib">${ICON(r.ic,52)}</div><div><div class="mn">${r.nm}</div></div></div>
