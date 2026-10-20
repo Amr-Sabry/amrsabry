@@ -109,7 +109,9 @@ function odoRun(el,a,b,o={}){a=+a;b=+b;if(!el||a===b){if(el)el.innerHTML=odoHTML
   const tick=()=>{if(!el.isConnected)return;v+=dir;el.dataset.y=v;
     cols.forEach(c=>{const i=c.seq.indexOf(Math.floor(v/c.p))+1,cur=+c.st.dataset.i||1;if(i!==cur){c.st.dataset.i=i;c.col.classList.add('roll');c.st.style.transition=`transform ${step*.92}ms cubic-bezier(.3,.7,.2,1)`;c.st.style.transform=`translateY(-${i}em)`;
       clearTimeout(c.tm);c.tm=setTimeout(()=>c.col.classList.remove('roll'),step*1.6)}});
-    o.onYear&&o.onYear(v);if(v!==b)setTimeout(tick,step);else o.done&&o.done()};
+    o.onYear&&o.onYear(v);if(v!==b)setTimeout(tick,step);else{o.done&&o.done();
+      /* a year inside a sentence goes back to plain figures once it has landed, so its spacing is the font's own */
+      if(el.classList.contains('plain'))setTimeout(()=>{if(el.isConnected){el.textContent=String(b);el.classList.remove('odo')}},step*1.7)}};
   setTimeout(tick,o.delay??500)}
 (function(){const st=document.createElement('style');st.textContent=
   '.odo,.e2y{direction:ltr;unicode-bidi:isolate}'+
@@ -788,3 +790,21 @@ CARD.ilist=function(c,r){
   '.bc .il2i b{font:700 min(8.6cqh,6.4cqw)/1.3 var(--f-display);color:var(--ink)}'+
   '.bc .il2f{margin-top:3.4cqh;padding:2.6cqh 3.4cqw;border-radius:16px;background:linear-gradient(135deg,rgba(232,132,94,.16),rgba(232,132,94,.06));box-shadow:inset 0 0 0 1.5px rgba(224,122,82,.35);font:600 min(6.2cqh,4.6cqw)/1.45 var(--f-display);color:var(--ink);opacity:0;transition:opacity .5s ease var(--d)}.bc.go .il2f{opacity:1}';
   document.head.appendChild(st)})();
+
+/* years v1 (Amr 17:55 «مهم نطبق ده في اي حاجة بنحكي فيها عن سنين»): every year written in a card's words (titles, kickers, pills,
+   sentences, comparison chips) becomes a digit-wheel counter that turns up to it when its card first shows on a slide visit:
+   2014 turns on from 2011, a later year from 2014, an earlier one from five years before. Big figures, maps, the era card and
+   the header keep their own behaviour. A card painted again on the same visit (a resize, a step) shows its years at rest. */
+if(!C5PV)(function(){const RX=/(^|[^0-9.,])((?:19[5-9]|20[0-4])\d)(?![0-9])/g,seen=new Set();let visit=0,lastCur=null;
+  const SKIP='.num,.odo,.odo-in,.e2y,.e2w,svg,.rl,.rlay,.hd,#ui,.c5f,.sln,.pc2,.mcap,.qby';
+  const from=y=>y===2014?2011:y>2014?2014:y-5;
+  function conv(card){if(!card||card.closest('.slide.out'))return;const key0=visit+'|'+((card.textContent||'').replace(/\s+/g,'').slice(0,48));
+    const w=document.createTreeWalker(card,NodeFilter.SHOW_TEXT,{acceptNode:t=>{const p=t.parentElement;if(!p||p.closest(SKIP))return NodeFilter.FILTER_REJECT;RX.lastIndex=0;return RX.test(t.nodeValue)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_SKIP}});
+    const ts=[];while(w.nextNode())ts.push(w.currentNode);let k=0;
+    ts.forEach(t=>{const html=t.nodeValue.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(RX,(m,pre,y)=>{const key=key0+'|'+(k++)+'|'+y,yy=+y,run=!seen.has(key);seen.add(key);
+        return pre+(run?`<span class="odo-in plain" data-from="${from(yy)}" data-to="${yy}" data-delay="450">${y}</span>`:`<span class="odo plain">${y}</span>`)});
+      const s=document.createElement('span');s.className='yrw';s.innerHTML=html;t.replaceWith(s)})}   /* one wrapper, so a flex pill keeps the run as one item */
+  const scan=()=>{if(typeof curLayer==='undefined'||!curLayer)return;if(typeof cur!=='undefined'&&cur!==lastCur){lastCur=cur;visit++}
+    curLayer.querySelectorAll('.bc>.in:not([data-yr])').forEach(i=>{i.dataset.yr=1;conv(i)})};
+  setInterval(scan,60);
+  const st=document.createElement('style');st.textContent='.odo.plain .odc,.odo-in.plain .odc{color:inherit!important;vertical-align:-.14em}.odo.plain,.odo-in.plain{direction:ltr;unicode-bidi:isolate;display:inline-block}';document.head.appendChild(st)})();
