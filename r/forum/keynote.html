@@ -124,7 +124,7 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:#eef1fa}
 .cover .yrs .a{opacity:.5}
 .cover .yrs svg{width:120px;height:120px;opacity:.7}
 .cover .sub{margin-top:70px;font:600 58px/1.4 var(--f)}
-#hint{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);font:500 12px var(--f);color:rgba(255,255,255,.3);pointer-events:none}
+#hint{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);font:500 12px var(--f);color:rgba(255,255,255,.3);pointer-events:none;animation:hf .8s 4s forwards}@keyframes hf{to{opacity:0}}
 </style>
 </head>
 <body>
@@ -164,7 +164,7 @@ const R={
     return `<div class="mp"><svg viewBox="0 0 ${g.W} ${g.H}"><path class="eg" d="${g.egypt}"/><path class="nl" d="${g.nile}"/>${nt.routes.map(r=>`<path class="rt" d="${r.d}"/>`).join('')}</svg></div>
     <div class="side" style="top:110px"><div class="h">${s.t}</div>${s.k?`<div class="k">${s.k}</div>`:''}</div>
     ${colChart([{a:s.a,b:s.b,add:s.add}],{x0:160,x1:880,top:620,base:840},{bw:210,gap:120})}
-    ${s.foot?`<div style="position:absolute;right:160px;width:720px;bottom:56px;text-align:center;font:600 36px/1.35 var(--f);opacity:.8">${s.foot}</div>`:''}`},
+    ${s.foot?`<div style="position:absolute;right:160px;width:720px;bottom:48px;text-align:center;font:600 34px/1.4 var(--f);opacity:.85">${s.foot.split(' · ').map(x=>`<div style="white-space:nowrap">${x}</div>`).join('')}</div>`:''}`},
   /* shares of Egypt on the map, and the same share as 100 squares */
   zmap:s=>{const g=KGEO,v=(g.zones.valley||[]).map(z=>`<path class="zv" d="${z.d}"/>`).join(''),gr=(g.zones.grow||[]).map(z=>`<path class="zg" d="${z.d}"/>`).join('');
     const A=Math.round(fnum(s.a.v)),B=Math.round(fnum(s.b.v));
