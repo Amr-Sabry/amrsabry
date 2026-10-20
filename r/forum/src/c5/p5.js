@@ -44,4 +44,22 @@ S({n:141,...HM5,cards:[
   ['photo',[0,0,4,2],{img:P('image366'),cls:'fit'}],
   ['kpi2',[0,2,4,4],{bg:'dark',ic:'store',h:'2026',items:[{v:369,u:'مجمع',l:'تطوير · بتكلفة 635 مليون جنيه'},{v:7906,u:'منافذ جمعيتي',l:'وفرت 23.7 ألف فرصة عمل'}]}],
 ]});
+/* 142 — supply outlets, then and now (one picture) */
+S({n:142,...HM5,cards:[
+  ['photo',[0,0,12,6],{img:P('image367'),pos:'50% 50%'}],
+]});
+/* 143 — wheat silos and hangars */
+S({n:143,...HM5,cards:[
+  ['photo',[6,0,6,6],{img:P('image368'),cap:'تحويل عدد 105 شونة ترابية لتكون هنجر متطور بتكلفة 262 مليون جنيه',capfs:22,pos:'50% 50%'}],
+  ['photo',[0,0,6,6],{img:P('image369'),cap:'انشاء وتطوير صوامع للقمح بمختلف المحافظات',capfs:22,pos:'30% 50%'}],
+]});
+/* 144 — citizen service offices and consumer outlets */
+S({n:144,...HM5,cards:[
+  ['title',[8,0,4,3],{bg:'dark',ki:'building-2',t:'تطوير مراكز خدمات المواطنين (مكاتب التموين)',fs:34}],
+  ['photo',[4,0,4,3],{img:P('image370'),pos:'50% 50%'}],
+  ['photo',[0,0,4,3],{img:P('image371'),pos:'50% 50%'}],
+  ['title',[8,3,4,3],{bg:'grad',ki:'store',t:'إنشاء وتطوير منافذ بيع ومجمعات استهلاكية',fs:34}],
+  ['photo',[4,3,4,3],{img:P('image373'),pos:'50% 50%'}],
+  ['photo',[0,3,4,3],{img:P('image372'),pos:'50% 50%'}],
+]});
 })();
