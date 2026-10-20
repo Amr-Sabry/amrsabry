@@ -33,10 +33,10 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 .pg{position:absolute;left:64px;bottom:40px;font:600 24px/1 'KNum',sans-serif;opacity:.35;direction:ltr}
 
 /* the header: icon + question (+ one line of the client's) */
-.hd{position:absolute;top:110px;right:160px;left:160px;display:flex;align-items:flex-start;gap:34px}
-.hd .ib{width:104px;height:104px;flex:none;border-radius:30px;background:rgba(61,92,192,.10);color:var(--cob);display:grid;place-items:center}
+.hd{position:absolute;top:100px;right:160px;left:160px;display:flex;align-items:center;gap:40px;min-height:150px}
+.hd .ib{width:150px;height:150px;flex:none;border-radius:42px;background:rgba(61,92,192,.10);color:var(--cob);display:grid;place-items:center}
 .hd .h{font:900 84px/1.15 var(--f)}
-.hd .k{font:500 40px/1.4 var(--f);opacity:.68;margin-top:12px}
+.hd .k{font:600 42px/1.4 var(--f);opacity:.8;margin-top:14px}
 .legend{position:absolute;display:flex;gap:44px;font:700 34px/1 var(--f)}
 .legend span{display:inline-flex;align-items:center;gap:14px}
 .legend i{width:34px;height:34px;border-radius:9px;flex:none}
@@ -54,15 +54,15 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 .ch .n .bar i.a1{background:linear-gradient(0deg,#1c2a6e,#2a3b86)}
 .ch .n .bar i+i{box-shadow:0 -3px 0 #d9deec inset}
 .ch .lbl{position:absolute;left:-220px;right:-220px;display:flex;flex-direction:column;align-items:center;text-align:center}
-.ch .o .lbl .num{font-size:120px;font-weight:600;opacity:.55}
+.ch .o .lbl .num{font-size:120px;font-weight:600;opacity:.6}
 .ch .n .lbl .num{font-size:170px;font-weight:700}
 .ch .lbl .u{font:700 44px/1.25 var(--f);margin-top:12px}
-.ch .o .lbl .u{opacity:.6}
+.ch .o .lbl .u{opacity:.72}
 .ch .yr{position:absolute;left:-220px;right:-220px;text-align:center;font:800 42px/1 var(--f)}
 .ch .o .yr{opacity:.55}.ch .n .yr{color:var(--cob)}
-.ch .nt{position:absolute;text-align:center;font:500 36px/1.35 var(--f);opacity:.62}
+.ch .nt{position:absolute;text-align:center;font:600 40px/1.35 var(--f);opacity:.8}
 .ch .call{position:absolute;display:flex;flex-direction:column;align-items:flex-start;gap:26px;text-align:right;width:640px}
-.ch .call .pre{font:600 38px/1.2 var(--f);opacity:.7;margin-bottom:-18px}
+.ch .call .pre{font:600 42px/1.2 var(--f);opacity:.82;margin-bottom:-18px}
 .ch .call .v{display:flex;align-items:baseline;gap:18px}
 .ch .call .v .num{font-size:116px;font-weight:700}
 .ch .call .v>span:last-child{font:700 42px/1.25 var(--f);white-space:nowrap}
@@ -70,12 +70,12 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 .ch .call::after{content:"";position:absolute;right:-56px;top:50%;width:40px;height:4px;border-radius:2px;background:var(--cob)}
 
 /* ---- rows: 2–3 measures, each a pair of bars on its own scale ---- */
-.mr{position:absolute;right:160px;left:160px;height:180px;display:flex;align-items:center;gap:56px}
+.mr{position:absolute;right:160px;left:160px;height:180px;display:flex;align-items:center;gap:48px}
 .mr+.mr{border-top:2px solid rgba(28,37,71,.08)}
-.mr .mh{width:660px;flex:none;display:flex;align-items:center;gap:26px}
-.mr .mh .ib{width:84px;height:84px;flex:none;border-radius:24px;background:rgba(61,92,192,.10);color:var(--cob);display:grid;place-items:center}
-.mr .mn{font:800 46px/1.2 var(--f);white-space:nowrap}
-.mr .mu{font:500 32px/1.3 var(--f);opacity:.6;margin-top:4px}
+.mr .mh{width:640px;flex:none;display:flex;align-items:center;gap:26px}
+.mr .mh .ib{width:112px;height:112px;flex:none;border-radius:32px;background:rgba(61,92,192,.10);color:var(--cob);display:grid;place-items:center}
+.mr .mn{font:800 44px/1.2 var(--f);white-space:nowrap}
+.mr .mu{font:600 40px/1.3 var(--f);opacity:.75;margin-top:4px}
 .mr .mb{flex:1;display:flex;flex-direction:column;gap:14px}
 .mr .br{display:flex;align-items:center;gap:22px}
 .mr .br i{display:block;flex:none;border-radius:12px}
@@ -83,7 +83,8 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 .mr .br.n i{height:56px;background:linear-gradient(270deg,#2f49ad,#4a67d2)}
 .mr .br.o .num{font-size:58px;font-weight:600;opacity:.55}
 .mr .br.n .num{font-size:78px;font-weight:700}
-.mr .br .nb{font:600 32px/1.2 var(--f);opacity:.65;white-space:nowrap}
+.mr .br .yl{width:200px;flex:none;font:800 40px/1 var(--f);white-space:nowrap}.mr .br.o .yl{opacity:.6}.mr .br.n .yl{color:var(--cob)}
+.mr .nb{font:700 40px/1.2 var(--f);color:var(--cob);white-space:nowrap;margin-right:222px}
 
 /* ---- share: a part of Egypt's whole area ---- */
 .sr{position:absolute;right:160px;left:160px;display:flex;align-items:center;gap:56px}
@@ -91,11 +92,11 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 .sr .y{font:800 42px/1 var(--f)}
 .sr.o .y{opacity:.55}.sr.n .y{color:var(--cob)}
 .sr.o .num{font-size:130px;font-weight:600;opacity:.55}.sr.n .num{font-size:170px;font-weight:700}
-.sr .tr{flex:1;position:relative;height:110px;border-radius:30px;background:rgba(28,37,71,.06);box-shadow:inset 0 0 0 2px rgba(28,37,71,.10);overflow:hidden;display:flex}
+.sr .tr{flex:1;position:relative;height:130px;border-radius:34px;background:rgba(28,37,71,.09);box-shadow:inset 0 0 0 3px rgba(28,37,71,.14);overflow:hidden;display:flex}
 .sr .tr i{display:block;height:100%;flex:none}
 .sr .tr i.b0{background:linear-gradient(0deg,#8e9be6,#aab4f0)}
 .sr .tr i.a0{background:linear-gradient(0deg,#2f49ad,#4a67d2)}
-.sr .tr span{position:absolute;left:36px;top:50%;transform:translateY(-50%);font:600 34px/1 var(--f);opacity:.5}
+.sr .tr span{position:absolute;left:44px;top:50%;transform:translateY(-50%);font:700 42px/1 var(--f);opacity:.72}
 
 /* ---- gaps: a crossing every N km, so a shorter distance shows as more crossings ---- */
 .gr{position:absolute;right:160px;left:160px;display:flex;align-items:center;gap:56px}
@@ -105,14 +106,15 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 .gr.o .y{opacity:.55}.gr.n .y{color:var(--cob)}
 .gr.o .num{font-size:110px;font-weight:600;opacity:.55}.gr.n .num{font-size:130px;font-weight:700}
 .gr .u{font:700 44px/1.2 var(--f)}
-.gr .nt{font:500 34px/1.3 var(--f);opacity:.62;margin-top:10px}
-.gr .river{flex:1;position:relative;height:70px}
-.gr .river::before{content:"";position:absolute;left:0;right:0;top:50%;height:12px;transform:translateY(-50%);border-radius:6px;background:linear-gradient(270deg,rgba(79,150,220,.35),#4f96dc)}
-.gr .river i{position:absolute;top:0;width:12px;height:70px;border-radius:5px;transform:translateX(50%)}
+.gr .nt{font:600 40px/1.3 var(--f);opacity:.8;margin-top:10px}
+.gr .river{flex:1;position:relative;height:84px}
+.gr .river::before{content:"";position:absolute;left:0;right:0;top:50%;height:18px;transform:translateY(-50%);border-radius:6px;background:linear-gradient(270deg,rgba(79,150,220,.35),#4f96dc)}
+.gr .river i{position:absolute;top:0;width:14px;height:84px;border-radius:6px;transform:translateX(50%)}
+.gr .river b{position:absolute;left:0;bottom:100%;margin-bottom:14px;font:800 40px/1 var(--f);color:#3a86cf}
 .gr.o .river i{background:rgba(28,37,71,.38)}.gr.n .river i{background:var(--cob)}
 .gr .pt{flex:1;position:relative;height:70px;border-radius:22px;background:rgba(28,37,71,.06);box-shadow:inset 0 0 0 2px rgba(28,37,71,.10);overflow:hidden}
 .gr .pt i{position:absolute;right:0;top:0;bottom:0;background:linear-gradient(270deg,#2f49ad,#4a67d2);border-radius:22px}
-.gr .pt span{position:absolute;left:30px;top:50%;transform:translateY(-50%);font:700 34px/1 var(--f);opacity:.6;white-space:nowrap}
+.gr .pt span{position:absolute;left:34px;top:50%;transform:translateY(-50%);font:700 40px/1 var(--f);opacity:.8;white-space:nowrap}
 
 /* ---- cover: the timeline from 2014 to 2026 and the five moves on the way ---- */
 .cover .kick{position:absolute;top:120px;left:160px;right:160px;text-align:center;font:700 40px/1 var(--f);color:var(--cob)}
@@ -129,7 +131,7 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 .cover .mv::before{content:"";position:absolute;right:120px;left:120px;top:60px;height:3px;background:rgba(61,92,192,.25)}
 .cover .m{position:relative;width:300px;display:flex;flex-direction:column;align-items:center;text-align:center}
 .cover .m .ib{width:120px;height:120px;border-radius:36px;background:#d9deec;box-shadow:inset 0 0 0 3px rgba(61,92,192,.35);color:var(--cob);display:grid;place-items:center}
-.cover .m .n{font:600 30px/1 var(--f);opacity:.6;margin-top:26px}
+.cover .m .n{font:600 36px/1 var(--f);opacity:.72;margin-top:26px}
 .cover .m .t{font:800 42px/1.2 var(--f);margin-top:12px;white-space:nowrap}
 #hint{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);font:500 12px var(--f);color:rgba(28,37,71,.35);pointer-events:none;animation:hf .8s 4s forwards}@keyframes hf{to{opacity:0}}
 </style>
@@ -143,7 +145,7 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 const N=v=>`<span class="num">${v}</span>`, G=v=>`<span class="num grad">${v}</span>`;
 const fnum=x=>parseFloat(String(x).replace(/[^0-9.]/g,''))||0;
 const ICON=(n,sz)=>KICONS[n]?`<svg class="ico" viewBox="0 0 24 24" width="${sz}" height="${sz}">${KICONS[n]}</svg>`:'';
-const HD=s=>`<div class="hd">${s.ic?`<div class="ib">${ICON(s.ic,58)}</div>`:''}<div><div class="h">${s.q||s.t}</div>${s.k?`<div class="k">${s.k}</div>`:''}</div></div>`;
+const HD=s=>`<div class="hd">${s.ic?`<div class="ib">${ICON(s.ic,92)}</div>`:''}<div><div class="h">${s.q||s.t}</div>${s.k?`<div class="k">${s.k}</div>`:''}</div></div>`;
 const LEG=(pos,a,b)=>`<div class="legend" style="${pos}"><span><i style="background:var(--bar0)"></i>${a||'قبل 2014'}</span><span><i style="background:linear-gradient(135deg,#2f49ad,#4a67d2)"></i>${b||'2026'}</span></div>`;
 /* two columns, true to scale: 2014 right of the centre, 2026 left of it (as Arabic reads); box x0..x1 measured from the right edge */
 function colChart(p,box,o={}){const W=box.x1-box.x0,H=box.base-box.top;let h=`<div class="base" style="right:${box.x0}px;width:${W}px;top:${box.base}px"></div>`;
@@ -171,17 +173,17 @@ const R={
   /* one measure; with a callout the pair moves right to leave the callout its room */
   col:s=>HD(s)+colChart({a:s.a,b:s.b,add:s.add,adds:s.adds,call:s.call},(s.call||s.adds)?{x0:300,x1:1260,top:560,base:870}:{x0:360,x1:1560,top:560,base:870},{ya:s.ya,yb:s.yb}),
   /* 2–3 measures in rows, each pair of bars on its own scale */
-  rows:s=>HD(s)+LEG('top:150px;left:160px',s.ya,s.yb)+s.rows.map((r,i)=>{const A=fnum(r.a),B=fnum(r.b),M=Math.max(A,B)||1,w=f=>`calc((100% - 330px) * ${(f/M).toFixed(4)})`;
-    return `<div class="mr" style="top:${370+i*200}px"><div class="mh"><div class="ib">${ICON(r.ic,46)}</div><div><div class="mn">${r.nm}</div><div class="mu">${r.u}</div>${r.nb?`<div class="mu" style="color:var(--cob);opacity:1;font-weight:700">${r.nb}</div>`:''}</div></div>
-      <div class="mb"><div class="br o"><i style="width:${w(A)}"></i>${N(r.a)}</div><div class="br n"><i style="width:${w(B)}"></i>${G(r.b)}</div></div></div>`}).join(''),
+  rows:s=>HD(s)+s.rows.map((r,i)=>{const A=fnum(r.a),B=fnum(r.b),M=Math.max(A,B)||1,w=f=>`calc((100% - 440px) * ${(f/M).toFixed(4)})`;
+    return `<div class="mr" style="top:${370+i*200}px"><div class="mh"><div class="ib">${ICON(r.ic,64)}</div><div><div class="mn">${r.nm}</div><div class="mu">${r.u}</div></div></div>
+      <div class="mb"><div class="br o"><span class="yl">${s.ya||'قبل 2014'}</span><i style="width:${w(A)}"></i>${N(r.a)}</div><div class="br n"><span class="yl">${s.yb||'2026'}</span><i style="width:${w(B)}"></i>${G(r.b)}</div>${r.nb?`<div class="nb">${r.nb}</div>`:''}</div></div>`}).join(''),
   /* a share of Egypt's whole area: the same 7% in both rows, and what was added */
   share:s=>{const A=fnum(s.a.v),B=fnum(s.b.v);
-    return HD(s)+`<div class="sr o" style="top:440px"><div class="sl"><span class="y">${s.ya||'قبل 2014'}</span>${N(s.a.v)}</div><div class="tr"><i class="b0" style="width:${A}%"></i><span>${s.whole}</span></div></div>
-      <div class="sr n" style="top:690px"><div class="sl"><span class="y">${s.yb||'2026'}</span>${G(s.b.v)}</div><div class="tr"><i class="b0" style="width:${A}%"></i><i class="a0" style="width:${B-A}%"></i><span>${s.whole}</span></div></div>`},
+    return HD(s)+`<div class="sr o" style="top:450px"><div class="sl"><span class="y">${s.ya||'قبل 2014'}</span>${N(s.a.v)}</div><div class="tr"><i class="b0" style="width:${A}%"></i><span>${s.whole}</span></div></div>
+      <div class="sr n" style="top:720px"><div class="sl"><span class="y">${s.yb||'2026'}</span>${G(s.b.v)}</div><div class="tr"><i class="b0" style="width:${A}%"></i><i class="a0" style="width:${B-A}%"></i><span>${s.whole}</span></div></div>`},
   /* the Nile's crossings: the same stretch of river, a mark at every crossing */
   gaps:s=>{const span=4*Math.max(fnum(s.a.v),fnum(s.b.v));
     const marks=v=>{let h='';for(let k=0;k<=span+1e-6;k+=fnum(v))h+=`<i style="right:${(k/span*100).toFixed(2)}%"></i>`;return h};
-    const row=(c,x,t,y)=>`<div class="gr ${c}" style="top:${t}px"><div class="gl"><div class="y">${y}</div><div class="vv">${c=='n'?G(x.v):N(x.v)}<span class="u">${x.u}</span></div><div class="nt">${x.n||''}</div></div><div class="river">${marks(x.v)}</div></div>`;
+    const row=(c,x,t,y)=>`<div class="gr ${c}" style="top:${t}px"><div class="gl"><div class="y">${y}</div><div class="vv">${c=='n'?G(x.v):N(x.v)}<span class="u">${x.u}</span></div><div class="nt">${x.n||''}</div></div><div class="river">${marks(x.v)}<b>${s.river||'النيل'}</b></div></div>`;
     return HD(s)+row('o',s.a,360,s.ya||'قبل 2014')+row('n',s.b,610,s.yb||'2026')+
       `<div class="gr n" style="top:870px"><div class="gl"><div class="vv">${G(s.done.v)}<span class="u">${s.done.u}</span></div></div><div class="pt"><i style="width:${(fnum(s.done.v)/fnum(s.of.v)*100).toFixed(2)}%"></i><span>${s.of.v} ${s.of.u}</span></div></div>`}
 };
