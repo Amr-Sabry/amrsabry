@@ -874,7 +874,7 @@ function pill(str,o={}){
     const w=pt.trim().split(' ').filter(Boolean);
     for(let i=0;i<w.length;i++){let x=w[i];
       if(x==='⟶'){out.push(`<span class="pp a">${ICON('arrow-left',18)}</span>`);continue}
-      const bare=x.replace(/[()،,.:؛]/g,'');
+      const bare=x.replace(/[()،:؛]/g,'').replace(/[.,]+$/,'');      /* pill decimals v1: the point inside 1.5 stays */
       if(/^\d[\d,.]*$/.test(bare)&&!/^(19|20)\d\d$/.test(bare)){let u='';const nx=(w[i+1]||'').replace(/[()،,.:؛]/g,''), nx2=(w[i+2]||'').replace(/[()،,.:؛]/g,'');
         if(PUNIT.test(nx)){u=nx;i++; if(/^(مليون|مليار|ألف)$/.test(nx)&&nx2&&nx2.length<9&&!PARROW.test(nx2)){u+=' '+nx2;i++}}
         out.push(numPill(bare,u)); if(/[،,.]$/.test(w[i]||'')) out.push(''); continue}
