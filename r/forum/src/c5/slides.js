@@ -527,9 +527,9 @@ S({n:8,...HS1,cards:[
 S({n:9,...HS1,cards:[
   ['era2',[8,0,4,2],{bg:'dark2',k:'مصر قبل',y:2014,stay:'era',a:2011}],
   ['title',[8,2,4,4],{bg:'dark',ic:'construction',t:'البنية الأساسية والخدمات',fs:58,pz:0,withHero:1}],
-  ['ibox',[4,0,4,2],{bg:'dark2',ic:'construction',t:'تهالك كامل للبنية التحتية'}],
-  ['ibox',[4,2,4,2],{bg:'grad',ic:'trending-down',t:'لا تواكب النمو،'}],
-  ['ibox',[4,4,4,2],{bg:'dark2',ic:'lock',t:'وتقييد من الحركة والاستثمار'}],
+  ['wear',[4,0,4,2],{bg:'dark2',t:'تهالك كامل للبنية التحتية',k:'تهالك كامل'}],
+  ['lag',[4,2,4,2],{bg:'grad',t:'لا تواكب النمو،',g:'النمو'}],
+  ['block',[4,4,4,2],{bg:'dark2',t:'وتقييد من الحركة والاستثمار',k:'وتقييد'}],
   ...ph4([['image37'],['image34'],['image33'],['image36'],['image35'],['image32'],['image30'],['image31']]),
 ]});
 /* 10 — geography */
@@ -669,4 +669,50 @@ CARD.accum=function(c,r){const L=c.layers||[],n=7,col=['#3d5cc0','#e8845e'];
   '.bc .ac2b{display:flex;align-items:flex-end;gap:2.4cqw;border-bottom:1px solid rgba(28,37,71,.16);padding:0 1cqw}'+
   '.bc .acb{flex:1 1 0;height:var(--h);display:flex;flex-direction:column;gap:3px;transform-origin:bottom;transform:scaleY(0);transition:transform .9s cubic-bezier(.2,1,.3,1) var(--d)}.bc.go .acb{transform:none}'+
   '.bc .acb i{display:block;border-radius:7px}.bc .acb i:first-child{background:linear-gradient(180deg,#f2a988,#e8845e)}.bc .acb i:last-child{background:linear-gradient(180deg,#5b78dd,#2c45b0)}';
+  document.head.appendChild(st)})();
+
+/* ---------- the infrastructure challenge as pictures (Amr 18:01: «تقرا الكلام وتشوف الكارت ممكن يتعبر عنه ازاي») ----------
+   «تهالك كامل للبنية التحتية»: a condition gauge whose segments wear out one after another until every one is cracked;
+   «لا تواكب النمو»: the growth line climbing away from a near-flat line, the gap between them opening;
+   «وتقييد من الحركة والاستثمار»: a stream that piles up at a barrier, a trickle getting through.
+   The sentence sits on top in two weights: its key words ExtraBold, the rest Medium (c.k = the key words, client text only) */
+const ixT=c=>{const t=c.t||'',k=c.k||'';return k&&t.includes(k)?t.replace(k,`<b>${k}</b>`):`<b>${t}</b>`};
+CARD.wear=function(c,r){const n=c.n||10;
+  const seg=Array.from({length:n},(_,i)=>`<i style="--d:${Math.round(500+i*190)}ms"><svg viewBox="0 0 20 40" preserveAspectRatio="none"><path d="M11 0L7 13L13 21L8 31L11 40"/></svg></i>`).join('');
+  return `<div class="ix"><div class="ixt">${ixT(c)}</div><div class="wr"><div class="wrs">${seg}</div></div></div>`};
+CARD.lag=function(c,r){const VW=200,VH=90,N=40,pg=[],pi=[];
+  for(let i=0;i<=N;i++){const t=i/N,x=VW-t*VW;pg.push([x,VH-6-(VH-14)*(Math.exp(2.3*t)-1)/(Math.exp(2.3)-1)]);pi.push([x,VH-6-(VH-14)*.2*t])}
+  const L=a=>'M'+a.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join('L'),gap=L(pg)+'L'+pi.slice().reverse().map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join('L')+'Z';
+  return `<div class="ix"><div class="ixt">${ixT(c)}</div><div class="lgw"><svg class="lgs" viewBox="0 0 ${VW} ${VH}" preserveAspectRatio="none">`+
+    `<defs><pattern id="lgh" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="4" stroke="rgba(255,255,255,.28)" stroke-width="1.2"/></pattern>`+
+    `<clipPath id="lgc"><rect class="lgr" x="-12" y="-12" width="${VW+12}" height="${VH+12}"/></clipPath><marker id="lga" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse" markerUnits="strokeWidth"><path d="M0 1L9 5L0 9z" fill="#fff"/></marker></defs>`+
+    `<line x1="0" y1="${VH-6}" x2="${VW}" y2="${VH-6}" stroke="rgba(255,255,255,.3)" stroke-width="1" vector-effect="non-scaling-stroke"/>`+
+    `<g clip-path="url(#lgc)"><path d="${gap}" fill="url(#lgh)"/><path class="lgi" d="${L(pi)}"/><path class="lgg" d="${L(pg)}" marker-end="url(#lga)"/></g></svg>`+
+    (c.g?`<span class="lgl">${c.g}</span>`:'')+`</div></div>`};
+CARD.block=function(c,r){const lanes=3,per=6;let dots='';
+  /* each lane's stream arrives and queues up behind the barrier (once, as the card opens); one dot in a while slips through */
+  for(let l=0;l<lanes;l++){for(let j=0;j<per;j++)dots+=`<i class="bkd" style="--y:${(22+l*28)}%;--x:${(53+j*7.6).toFixed(1)}%;--d:${(300+j*260+l*90)}ms"></i>`;
+    dots+=`<i class="bkd thru" style="--y:${(22+l*28)}%;--d:${(-(l*1.5)).toFixed(2)}s"></i>`}
+  return `<div class="ix"><div class="ixt">${ixT(c)}</div><div class="bk"><div class="bkl"></div>${dots}<div class="bkb"></div></div></div>`};
+(function(){const st=document.createElement('style');st.textContent=cqIn('ix')+
+  '.bc .ix{position:absolute;inset:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:4cqh}'+
+  '.bc .ixt{font:500 min(10cqh,6cqw)/1.35 var(--f-body);color:var(--ink);text-align:right;word-spacing:.06em}.bc .ixt b{font:800 min(13cqh,7.6cqw)/1.25 var(--f-display)}'+
+  '.bc.grad .ixt,.bc.mint .ixt,.bc.vio .ixt{color:#fff}'+
+  /* wear */
+  '.bc .wr{display:flex;align-items:center}.bc .wrs{width:100%;height:min(46cqh,100%);display:flex;gap:1.6cqw;direction:rtl}'+
+  '.bc .wrs i{flex:1 1 0;position:relative;border-radius:8px;background:linear-gradient(180deg,#5b78dd,#2c45b0);box-shadow:inset 0 1px 0 rgba(255,255,255,.35);transition:background .5s ease var(--d),box-shadow .5s ease var(--d),transform .5s ease var(--d)}'+
+  '.bc .wrs i svg{position:absolute;inset:8% 18%;width:64%;height:84%;opacity:0;transition:opacity .3s ease var(--d)}.bc .wrs i path{fill:none;stroke:#fff;stroke-width:2.2;stroke-linejoin:round;vector-effect:non-scaling-stroke}'+
+  '.bc.go .wrs i{background:linear-gradient(180deg,#f3b293,#e07a52);box-shadow:inset 0 0 0 1px rgba(255,255,255,.4);transform:translateY(4%)}.bc.go .wrs i svg{opacity:1}'+
+  /* lag */
+  '.bc .lgw{position:relative}.bc .lgs{position:absolute;inset:0;width:100%;height:100%;overflow:visible}'+
+  '.bc .lgg{fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;vector-effect:non-scaling-stroke}.bc .lgi{fill:none;stroke:rgba(255,255,255,.62);stroke-width:2.4;stroke-dasharray:6 6;vector-effect:non-scaling-stroke}'+
+  '.bc .lgr{transform-box:fill-box;transform-origin:right;transform:scaleX(0);transition:transform 2.2s cubic-bezier(.45,0,.2,1) .4s}.bc.go .lgr{transform:none}'+
+  '.bc .lgl{position:absolute;left:4%;top:-2%;font:700 min(8cqh,4.8cqw)/1 var(--f-display);color:#1c2547;background:#fff;border-radius:99px;padding:.3em .7em;opacity:0;transition:opacity .4s ease 2.4s}.bc.go .lgl{opacity:1}'+
+  /* block */
+  '.bc .bk{position:relative;overflow:hidden;border-radius:14px}.bc .bkl{position:absolute;inset:0;--ln:linear-gradient(rgba(28,37,71,.1),rgba(28,37,71,.1));background:var(--ln) 0 22%/100% 2px no-repeat,var(--ln) 0 50%/100% 2px no-repeat,var(--ln) 0 78%/100% 2px no-repeat}'+
+  '.bc .bkb{position:absolute;top:4%;bottom:4%;left:44%;width:4.2%;border-radius:8px;background:repeating-linear-gradient(-45deg,#e07a52 0 8px,#fff 8px 16px);box-shadow:0 6px 16px -6px rgba(224,122,82,.7)}'+
+  '.bc .bkd{position:absolute;top:var(--y);left:calc(100% + 10px);width:min(10cqh,5.4cqw);aspect-ratio:1;border-radius:50%;background:linear-gradient(150deg,#5b78dd,#2c45b0);transform:translate(0,-50%);box-shadow:0 4px 10px -4px rgba(28,37,71,.5);transition:left 1.1s cubic-bezier(.2,.9,.3,1) var(--d)}'+
+  '.bc.go .bkd:not(.thru){left:var(--x)}'+
+  '.bc .bkd.thru{left:auto;right:52%;background:#a9b7ec;box-shadow:none;transition:none;animation:bkt 4.5s linear infinite;animation-delay:var(--d)}'+
+  '@keyframes bkt{0%{right:52%;opacity:0}15%{opacity:1}85%{opacity:1}100%{right:104%;opacity:0}}';
   document.head.appendChild(st)})();
