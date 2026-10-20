@@ -1,6 +1,15 @@
 /* closing deck · part 4 — slides 101–135 (التحرك الرابع · الإنتاج والتشغيل 101–124, التحرك الخامس · بناء الإنسان 125–135).
    Every text and number is the client's, word for word (txt/NNN.txt). */
 (function(){
+/* before / after, one card per measure (Amr 14:34: «المقارنة تكون كل حاجة جمب بعضها على حسب البند … خلي دايما ده اسلوبك»):
+   the title and the two client sentences on the right exactly as vs() lays them, the measure cards (and photos) given per slide.
+   A measure the client gives for one period only keeps one side. */
+const VS=(n,H,o,mid)=>S(Object.assign({n},H,{cards:[
+  ['title',[8,0,4,2],{bg:'dark',k:'قبل 2014 ← 2026',ki:'git-compare-arrows',t:o.t,s:o.s,fs:o.fs||36,ss:17}],
+  ['text',[8,2,4,2],{bg:'dark2',h:'التحدي · قبل 2014',ic:'history',t:o.a,fs:o.afs||18}],
+  ['text',[8,4,4,2],{bg:'grad',h:'نتائج التحرك · 2026',ic:'sparkles',t:o.b,fs:o.bfs||18}],
+  ...mid]}));
+const CM=(g,rows,x)=>['cmp',g,Object.assign({bg:'dark2',rows},x||{})];
 /* 101 — two treatment plants */
 S({n:101,...HM4,cards:[
   ['kpi',[8,0,4,3],{bg:'grad',ic:'droplets',l:'محطة معالجة الصرف الزراعي بالحمام بطاقة',v:7.5,u:'مليون م3/يوم'}],

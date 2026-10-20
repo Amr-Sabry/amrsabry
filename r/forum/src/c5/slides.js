@@ -117,6 +117,8 @@ function vid(n,o){S({n,full:1,cards:[['video',[0,0,12,6],Object.assign({cls:'vca
       else if(ri<rc/1.04){const hid=cw/ri-ch,D=Math.max(9,Math.min(28,hid/26));img.style.setProperty('--pd',D+'s');img.style.setProperty('--px',(pos[0]??50)+'%');img.style.animationDelay=(-(pos[1]??50)/100*D)+'s';img.classList.add('pany')}};
     img.complete?go():img.addEventListener('load',go,{once:true})})};
 })();
+/* hall contrast (QA): the small labels on the teal and gradient cards were pale white at 16px; full white, a touch heavier */
+(function(){const st=document.createElement('style');st.textContent='.bc.mint .lab,.bc.mint .sub,.bc.mint .para,.bc.grad .lab,.bc.grad .sub,.bc.grad .para,.bc.grad .pre,.bc.grad .cu{opacity:.96!important;font-weight:500}';document.head.appendChild(st)})();
 /* map names stay on their map while its card resizes (Amr 14:53): the route map's names sit in an html layer measured from the
    card's left edge, but in this right-to-left page the map picture itself hung from the right edge, so on every resize the two
    drifted apart until the map was redrawn; both now hang from the left edge */

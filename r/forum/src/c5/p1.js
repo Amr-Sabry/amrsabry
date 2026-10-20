@@ -86,17 +86,20 @@ S({n:23,...HM1,cards:[
 /* 24 — film */
 vid(24,{src:'c5_24.mp4',poster:'c5/image80'});
 
-/* 25 — developing the existing city: before 2014 / 2026 */
-vs(25,HM1,{t:'تطوير العمران القائم',img:'image81',
+/* 25 — developing the existing city: before 2014 / 2026, one card per measure (cmp): the unsafe areas (357 areas → 246 thousand
+   housing units built to end them) and the unplanned areas (152 → 16.5 thousand feddans) */
+vs(25,HM1,{t:'تطوير العمران القائم',img:'image81',cmp:1,
   a:{t:'عجز في الوحدات السكنية يقدر بنحو 3 مليون وحدة سكنية ساهم في انتشار واسع للمناطق غير الآمنة وغير المخططة',fs:17,k:[
     {v:357,u:'منطقة غير آمنة',l:'يقطنها نحو 1.2 مليون نسمة'},
-    {v:152,u:'ألف فدان',l:'مناطق غير مخططة<br>أكثر من ثلث مساحة العمران المصري'}]},
+    {v:152,u:'ألف فدان',l:'أكثر من ثلث مساحة العمران المصري'}]},
   b:{t:'القضاء على المناطق غير الآمنة وتطوير شامل للمناطق غير المخططة والقائمة',fs:17,k:[
     {v:246,u:'ألف وحدة سكنية',l:'القضاء على المناطق غير الآمنة بتنفيذ'},
     {v:16.5,u:'ألف فدان',l:'تطوير مناطق غير مخططة<br>بإجمالي 8 مليون نسمة'}]}});
-/* the client's picture shown whole, and the 2026 note beside the 2026 figures */
-SLIDES[25].cards.forEach(cd=>{if(cd[0]==='photo'){cd[1]=[0,0,3,3];cd[2].cls='fit'}});
-SLIDES[25].cards.push(['text',[0,3,3,3],{bg:'dark2',ic:'house',t:'بالإضافة إلى تنفيذ حوالي [[2 مليون وحدة]] ضمن مشروعات سكن لكل المصريين وتطوير عواصم المحافظات وتطوير القاهرة التاريخية',fs:21,pz:0,pie:0}]);
+/* the unplanned-areas card: «مناطق غير مخططة» (the client's label under 152) names the measure on top of the card */
+SLIDES[25].cards.forEach(cd=>{if(cd[0]==='cmp'&&cd[2].rows[0].a.v===152)cd[2].rows[0].name='مناطق غير مخططة'});
+/* the client's picture shown whole; the 2026 note («بالإضافة إلى …» more housing units) beside the unsafe-areas card it continues */
+SLIDES[25].cards.forEach(cd=>{if(cd[0]==='photo'){cd[1]=[0,3,3,3];cd[2].cls='fit'}});
+SLIDES[25].cards.push(['text',[0,0,3,3],{bg:'dark2',ic:'house',t:'بالإضافة إلى تنفيذ حوالي [[2 مليون وحدة]] ضمن مشروعات سكن لكل المصريين وتطوير عواصم المحافظات وتطوير القاهرة التاريخية',fs:21,pz:0,pie:0}]);
 
 /* 26 — the projects on the client's map */
 S({n:26,...HM1,cards:[
