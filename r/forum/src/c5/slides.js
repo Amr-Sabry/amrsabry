@@ -58,6 +58,19 @@ addEventListener('message',e=>{const m=e.data||{};if(m.c5key){document.dispatchE
 })();
 function vid(n,o){S({n,full:1,cards:[['video',[0,0,12,6],Object.assign({cls:'vcard'},o)]]})}
 
+/* «مصر قبل 2014» set large and in colour at the top of a title card (Amr 13:06, slide 6: «محتاجه تكبر وتكون ملفتة بصريا»):
+   title cfg era:['مصر قبل','2014'] */
+(function(){const T=CARD.title;CARD.title=function(c,r){if(!c.era)return T(c,r);
+  const f=Math.round(r.h>420?150:Math.min(104,r.h*.4));
+  return `<div class="era" style="--ef:${f}px"><span>${c.era[0]}</span><b class="num">${c.era[1]}</b></div>`+T(c,r).replace('margin-top:auto','margin-top:auto')};
+  const st=document.createElement('style');st.textContent=
+   '.era{display:flex;align-items:baseline;gap:.22em;flex-wrap:nowrap;margin:2px 0 6px}'+
+   '.era span{font:600 calc(var(--ef)*.36)/1 var(--f-display);color:var(--ink);white-space:nowrap}'+
+   '.era b.num{font-size:var(--ef);font-weight:700;line-height:.86;background:linear-gradient(100deg,#2a3b86 0%,#3d5cc0 45%,#ee9873 100%);-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.04em}'+
+   '.era+.kick{font-size:24px;font-weight:600;color:var(--ink);margin-top:4px}.era+.kick svg{width:24px;height:24px}'+
+   '.bc.grad .era span,.bc.vio .era span{color:#fff}.bc.grad .era b.num{background:linear-gradient(100deg,#ffffff,#fbd5bb);-webkit-background-clip:text;background-clip:text}';
+  document.head.appendChild(st)})();
+
 /* live build (Amr, 20 Oct 12:41: «الابديت يكون لايف قدامي»): while the deck is being built, the page looks at src/c5/live.js
    every 3 s and, when a newer version has landed, reloads itself on the slide it is showing. A script tag, not fetch, so it
    works from file:// too. Switch off for the event: C5_LIVE=false. */
@@ -95,7 +108,7 @@ function photoCards(items,area){const it=items.map(x=>typeof x==='string'?[x,'']
   return G.map((g,i)=>{const x=it[i];
     if(extra.length&&i===n-1) return ['photo',g.slice(),{imgs:[x].concat(extra).map(y=>({img:P(y[0]),cap:y[1]||undefined,pos:y[2]})),every:3600}];
     return ['photo',g.slice(),{img:P(x[0]),cap:x[1]||undefined,pos:x[2]}]})}
-function grid(n,H,o){const cards=[['title',[8,0,4,o.side?2:(o.s?4:6)],{bg:o.bg||'dark',k:o.k,ki:o.ic||'images',t:o.t,fs:o.fs||(o.side?38:46)}]];
+function grid(n,H,o){const cards=[['title',[8,0,4,o.side?2:(o.s?4:6)],{bg:o.bg||'dark',era:o.era,k:o.k,ki:o.k?(o.ic||'images'):undefined,ic:o.era?o.ic:undefined,t:o.t,fs:o.fs||(o.side?38:46)}]];
   if(o.s&&!o.side)cards.push(['text',[8,4,4,2],{bg:'grad',t:o.s,fs:o.sfs||22}]);
   if(o.side)cards.push(o.side);
   S(Object.assign({n},H,{cards:cards.concat(photoCards(o.items))}))}
@@ -163,7 +176,7 @@ S({n:5,...HS1,cards:[
   ['title',[8,4,4,2],{bg:'dark',t:'قيدت من عملية التنمية',fs:40}],
 ]});
 /* 6 — security */
-grid(6,HS1,{k:'مصر قبل 2014 · التحدي الأول',ic:'shield-alert',t:'الاضطرابات الأمنية والعمليات الإرهابية',fs:46,
+grid(6,HS1,{era:['مصر قبل','2014'],ic:'shield-alert',t:'الاضطرابات الأمنية والعمليات الإرهابية',fs:66,
   items:[['image19'],['image16'],['image15'],['image18'],['image17'],['image14'],['image12'],['image13']]});
 /* 7 — 2011–2023 */
 S({n:7,...HS1,cards:[
@@ -173,16 +186,16 @@ S({n:7,...HS1,cards:[
 ]});
 /* 8 — population and urban */
 S({n:8,...HS1,cards:[
-  ['title',[8,0,4,2],{bg:'dark',k:'مصر قبل 2014 · تحدي سكاني وعمراني',ki:'users',t:'بالإضافة إلى تحديات اقتصادية واجتماعية عانت منها الدولة المصرية لعقود',fs:26}],
-  ['kpi',[8,2,4,4],{bg:'grad',ic:'map',l:'زيادة سكانية متسارعة مع تركزها في نطاق جغرافي محدود .. لا يتجاوز',v:7,u:'%',egy:1,wm:0,sub:'من إجمالي المساحة'}],
+  ['title',[8,0,4,3],{bg:'dark',era:['مصر قبل','2014'],k:'تحدي سكاني وعمراني',ki:'users',t:'بالإضافة إلى تحديات اقتصادية واجتماعية عانت منها الدولة المصرية لعقود',fs:24}],
+  ['kpi',[8,3,4,3],{bg:'grad',ic:'map',l:'زيادة سكانية متسارعة مع تركزها في نطاق جغرافي محدود .. لا يتجاوز',v:7,u:'%',egy:1,wm:0,sub:'من إجمالي المساحة'}],
   ...photoCards([['image29'],['image25'],['image24'],['image28'],['image26'],['image23'],['image21'],['image22']]),
 ]});
 /* 9 — infrastructure and services */
-grid(9,HS1,{k:'مصر قبل 2014 · البنية الأساسية والخدمات',ic:'construction',t:'تهالك كامل للبنية التحتية لا تواكب النمو، وتقييد من الحركة والاستثمار',fs:30,
+grid(9,HS1,{era:['مصر قبل','2014'],k:'البنية الأساسية والخدمات',ic:'construction',t:'تهالك كامل للبنية التحتية لا تواكب النمو، وتقييد من الحركة والاستثمار',fs:40,
   items:[['image37'],['image34'],['image33'],['image36'],['image35'],['image32'],['image30'],['image31']]});
 /* 10 — geography */
 S({n:10,...HS1,cards:[
-  ['title',[8,0,4,2],{bg:'dark',k:'مصر قبل 2014',ki:'map-pinned',t:'تحدي جغرافي',fs:48}],
+  ['title',[8,0,4,2],{bg:'dark',era:['مصر قبل','2014'],ic:'map-pinned',t:'تحدي جغرافي',fs:44}],
   ['text',[8,2,4,2],{bg:'dark2',t:'تركز الأنشطة الاقتصادية والفرص في عدد محدد من المحافظات، ومناطق لم تستفيد من إمكانيتها',fs:22,pie:0}],
   ['kpi',[4,0,4,3],{bg:'grad',ic:'building-2',l:'من الاستثمار الخاص المحلي متركز في القاهرة والجيزة (1972 – 2020)',v:64,u:'%'}],
   ['kpi',[4,3,4,3],{bg:'dark2',ic:'globe',pre:'أكثر من',l:'من تدفقات الاستثمار الأجنبي المباشر في المشروعات الجديدة توجهت إلى القاهرة والجيزة (1972 – 2020)',v:70,u:'%'}],
@@ -201,7 +214,7 @@ S({n:11,...HS1,cards:[
 ]});
 /* 12 — the economy before 2014 */
 S({n:12,...HS1,cards:[
-  ['title',[8,0,4,2],{bg:'dark',k:'مصر قبل عام 2014',ki:'trending-down',t:'وقد أفضت هذه التحديات إلى تدهور حاد في الأوضاع الاقتصادية',fs:30}],
+  ['title',[8,0,4,2],{bg:'dark',era:['مصر قبل عام','2014'],ic:'trending-down',t:'وقد أفضت هذه التحديات إلى تدهور حاد في الأوضاع الاقتصادية',fs:26}],
   ['text',[8,2,4,2],{bg:'dark2',t:'تجسد في ركود النشاط الإنتاجي، وتفاقم البطالة، وانسحاب الاستثمارات الخاصة، بما أضعف قدرة الاقتصاد على النمو وتوفير فرص العمل.',fs:18,pie:0}],
   ['ft',[4,0,4,2],{bg:'grad',ic:'landmark',l:'احتياطي نقدي (مليار دولار)',a:{v:36,u:''},b:{v:17,u:''}}],
   ['ft',[0,0,4,2],{bg:'dark2',ic:'globe',l:'استثمار أجنبي مباشر (مليار دولار)',a:{v:6.7,u:''},b:{v:3.8,u:''}}],
