@@ -29,17 +29,20 @@ const HM5={ax:'03',h:'التحرك الخامس · بناء الإنسان',hs:'
 const HS4={ax:'04',h:'ماذا لو لم تتدخل الدولة',hs:'واستمر الوضع القائم قبل 2014'};
 const HS5={ax:'05',h:'مصر التي نريدها',hs:'من بناء القدرات إلى تعظيم العائد'};
 
-/* conference fonts (Amr 14:12, from the client: «عروض المؤتمر — العناوين: Cairo black · الفرعي: Cairo medium»): one family, Cairo
-   Medium for every weight below 600 (body, labels, kickers) and Cairo Black from 600 up (titles, numbers, quotes) */
+/* conference fonts (Amr 14:12, from the client: «عروض المؤتمر — العناوين: Cairo black · الفرعي: Cairo medium»): one family; titles
+   and quotes stay Cairo Black, body Cairo Medium, and since 18:05 the weights in between carry the emphasis inside a sentence */
 (function(){const st=document.createElement('style');st.textContent=
-  "@font-face{font-family:'Cairo26';src:url(fonts/cairo-medium.woff2) format('woff2');font-weight:100 599;font-display:block;ascent-override:102%;descent-override:36%;line-gap-override:0%}"+
-  "@font-face{font-family:'Cairo26';src:url(fonts/cairo-black.woff2) format('woff2');font-weight:600 1000;font-display:block;ascent-override:102%;descent-override:36%;line-gap-override:0%}"+
+  /* Amr 18:05 «اوزان الفونت محتاجة تكون متنوعة»: the real Cairo weights in between, so a line can mix Medium connectors,
+     SemiBold labels, Bold phrases and ExtraBold titles (600–800 as Arabic + Latin subsets) */
+  "@font-face{font-family:'Cairo26';src:url(fonts/cairo-medium.woff2) format('woff2');font-weight:100 549;font-display:block;ascent-override:102%;descent-override:36%;line-gap-override:0%}"+
+  [600,700,800].map(w=>['ar','la'].map(k=>`@font-face{font-family:'Cairo26';src:url(fonts/cairo-${k}-${w}.woff2) format('woff2');font-weight:${w-50} ${w+49};font-display:block;ascent-override:102%;descent-override:36%;line-gap-override:0%;unicode-range:${k==='ar'?'U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0898-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC':'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD'}}`).join('')).join('')+
+  "@font-face{font-family:'Cairo26';src:url(fonts/cairo-black.woff2) format('woff2');font-weight:850 1000;font-display:block;ascent-override:102%;descent-override:36%;line-gap-override:0%}"+
   /* Amr 17:54: numbers in Montserrat across the deck — a face that holds only the figures and their signs, set before Cairo */
   ["500 100 549","600 550 649","700 650 749","800 750 1000"].map(x=>{const [f,a,b]=x.split(' ');return `@font-face{font-family:'C5Num';src:url(fonts/montserrat-${f}.woff2) format('woff2');font-weight:${a} ${b};font-display:block;unicode-range:U+0025,U+002B-002E,U+0030-0039,U+2013}`}).join('')+
   ":root{--f-display:'C5Num','Cairo26','Readex Pro',system-ui,sans-serif!important;--f-body:'C5Num','Cairo26','IBM Plex Sans Arabic',system-ui,sans-serif!important}"+
   "body,.hd,#ui,svg text{font-family:var(--f-display)}";
   document.head.appendChild(st);
-  try{document.fonts.load("900 40px Cairo26","أبجد 2026");document.fonts.load("500 20px Cairo26","أبجد 2026");document.fonts.load("800 40px C5Num","2026");document.fonts.load("500 20px C5Num","2026")}catch(e){}})();
+  try{[600,700,800].forEach(w=>document.fonts.load(w+" 30px Cairo26","أبجد"));document.fonts.load("900 40px Cairo26","أبجد 2026");document.fonts.load("500 20px Cairo26","أبجد 2026");document.fonts.load("800 40px C5Num","2026");document.fonts.load("500 20px C5Num","2026")}catch(e){}})();
 
 /* ---------- a film card (the deck's own videos; offline: video/c5_*.mp4) ---------- */
 /* the control's two preview frames show a film's first frame, silent and still (they share the show's main thread) */
@@ -565,3 +568,60 @@ S({n:13,...HS1,cards:[
   ['title',[0,0,12,4],{bg:'dark',k:'السؤال',ki:'circle-help',t:'كيف يمكن لدولة بهذا الحجم من التحديات أن [[تصنع مستقبلًا مختلفًا]] دون إعادة بناء مقومات التنمية؟',fs:58,pz:0}],
   ['photo',[0,4,12,2],{img:P('image43'),pos:'50% 50%'}],
 ]});
+
+/* type v2 (Amr 18:05 «فيه مشاكل في الكشيدة واوزان الفونت محتاجة تكون متنوعة والمقاسات بحيث احس بجودة التصميم»):
+   - no tracking on Arabic: any letter-spacing pulls the joined letters apart or onto each other; only pure figures keep theirs
+   - a touch more word space for the heavy weights, so «متركز في» never reads as one word
+   - titles and quotes in Cairo Black (the client's rule), the key phrase of a sentence ExtraBold and a little larger, the words
+     around it Medium; labels SemiBold */
+(function(){const st=document.createElement('style');st.textContent=
+  '.ttl1,.kick,.wk,.rl.ar>span,.pz .pp,.para,.sub,.lab,.kps{letter-spacing:0!important}'+
+  '.ttl1,.qt,.qt.wqt,.cqk,.kin .wd div{font-weight:900}'+
+  '.ttl1,.qt,.kps,.para,.lab.pz,.e2l{word-spacing:.06em}'+
+  '.bc .kps{font-weight:500;line-height:1.5}'+
+  '.bc .kps .pp{font-weight:800;font-size:1.05em}'+
+  '.bc .kps .pp.n b{font-weight:700}.bc .kps .pp.n i{font-weight:500}'+
+  '.bc .kpf .kpre{font-weight:600;opacity:.82}'+
+  '.para.pz .pp,.lab.pz .pp{font-weight:800}.para{font-weight:500}'+
+  '.ttl1.pz .pp{font-weight:900}';
+  document.head.appendChild(st)})();
+
+/* cycle v2 (Amr 18:06 «التصميم محتاج يكون مودرن وبروفيشنال اكتر», on «حلقة مفرغة»): a true ring, no boxes. The six causes sit on
+   the ring as lit nodes with their words outside it; a bright comet runs round the ring for ever (the circle that feeds itself),
+   lighting each cause as it passes; small chevrons on the ring give the direction; the ring's name in the middle in Cairo Black */
+CARD.cycle=function(c,r){const W=r.w-52,H=r.h-48,n=c.items.length,cx=W/2,cy=H/2,R=Math.min(H*.4,W*.27),NR=Math.round(Math.min(31,R*.17)),T=9;
+  const st=2*Math.PI/n,a0=-Math.PI/3,C=2*Math.PI*R;
+  const P=c.items.map((it,i)=>{const a=a0-i*st;return {a,x:cx+R*Math.cos(a),y:cy+R*Math.sin(a),ic:it[0],t:it[1]}});
+  /* the comet's head leaves angle 0 and runs anticlockwise: it reaches angle a after ((-a) mod 2π)/2π of the loop */
+  const when=a=>{let k=(-a)%(2*Math.PI);if(k<0)k+=2*Math.PI;return k/(2*Math.PI)*T};
+  const chev=P.map(p=>{const m=p.a-st/2,x=cx+R*Math.cos(m),y=cy+R*Math.sin(m),ang=Math.atan2(-Math.cos(m),Math.sin(m))*180/Math.PI;
+    return `<path class="cy2v" d="M-4 -7L4 0L-4 7" transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${ang.toFixed(1)})"/>`}).join('');
+  const words=String(c.c||'').split(' '),head=words.slice(0,2).join(' '),rest=words.slice(2).join(' ');
+  const lw=p=>{const dx=p.x-cx;return dx>1?W-(p.x+NR+14)-2:p.x-NR-14-2};
+  const lab=(p,i)=>{const right=p.x>cx+1,w=Math.round(lw(p));
+    return `<div class="cy2l${right?' r':' l'}" style="top:${p.y.toFixed(1)}px;${right?`left:${(p.x+NR+14).toFixed(1)}px`:`right:${(W-p.x+NR+14).toFixed(1)}px`};width:${w}px;--d:${(when(p.a)-T).toFixed(2)}s">${p.t}</div>`};
+  return `<div class="cy2" style="--T:${T}s">`+
+    `<svg class="cy2s" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><defs><linearGradient id="cy2g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3d5cc0"/><stop offset="1" stop-color="#ee9873"/></linearGradient></defs>`+
+      `<circle class="cy2t" cx="${cx}" cy="${cy}" r="${R}"/>`+
+      `<circle class="cy2c" cx="${cx}" cy="${cy}" r="${R}" style="stroke-dasharray:${(C*.16).toFixed(1)} ${(C*.84).toFixed(1)};--C:${C.toFixed(1)}"/>`+
+      `<circle class="cy2i" cx="${cx}" cy="${cy}" r="${(R-NR-16).toFixed(1)}"/>${chev}</svg>`+
+    `<div class="cy2m" style="left:${cx}px;top:${cy}px;width:${Math.round(2*(R-NR-26))}px"><b>${head}</b>${rest?`<span>${rest}</span>`:''}</div>`+
+    P.map((p,i)=>`<span class="cy2n" style="left:${p.x.toFixed(1)}px;top:${p.y.toFixed(1)}px;width:${2*NR}px;height:${2*NR}px;--d:${(when(p.a)-T).toFixed(2)}s">${ICON(p.ic,Math.round(NR*.95))}</span>`).join('')+
+    P.map(lab).join('')+`</div>`};
+(function(){const st=document.createElement('style');st.textContent=
+  '.bc .cy2{position:absolute;inset:0}.bc .cy2s{position:absolute;inset:0;overflow:visible}'+
+  '.bc .cy2t{fill:none;stroke:rgba(61,92,192,.13);stroke-width:14}'+
+  '.bc .cy2i{fill:rgba(255,255,255,.5);stroke:rgba(61,92,192,.16);stroke-width:1;stroke-dasharray:2 6}'+
+  '.bc .cy2c{fill:none;stroke:url(#cy2g);stroke-width:14;stroke-linecap:round;animation:cy2run var(--T) linear infinite;filter:drop-shadow(0 0 6px rgba(61,92,192,.35))}'+
+  '@keyframes cy2run{from{stroke-dashoffset:0}to{stroke-dashoffset:var(--C)}}'+
+  '.bc .cy2v{fill:none;stroke:#3d5cc0;stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round;opacity:.8}'+
+  '.bc .cy2n{position:absolute;transform:translate(-50%,-50%);border-radius:50%;display:grid;place-items:center;color:#fff;background:linear-gradient(150deg,#22348a,#4d6ad6);box-shadow:0 0 0 5px rgba(255,255,255,.92),0 10px 24px -10px rgba(28,37,71,.6);animation:cy2p var(--T) linear infinite;animation-delay:var(--d)}'+
+  '.bc .cy2n svg{stroke-width:1.7}'+
+  '@keyframes cy2p{0%{transform:translate(-50%,-50%) scale(1.16);background:linear-gradient(150deg,#e8845e,#f2a988);box-shadow:0 0 0 5px rgba(255,255,255,.95),0 0 0 14px rgba(238,152,115,.22),0 12px 28px -10px rgba(238,152,115,.7)}14%{transform:translate(-50%,-50%) scale(1)}14.1%,100%{background:linear-gradient(150deg,#22348a,#4d6ad6)}}'+
+  '.bc .cy2l{position:absolute;transform:translateY(-50%);font:700 19px/1.32 var(--f-display);color:var(--ink);word-spacing:.05em;text-wrap:balance;animation:cy2w var(--T) linear infinite;animation-delay:var(--d)}'+
+  '.bc .cy2l{direction:rtl}.bc .cy2l.r{text-align:left}.bc .cy2l.l{text-align:right}'+
+  '@keyframes cy2w{0%{color:#c4643e}16%,100%{color:var(--ink)}}'+
+  '.bc .cy2m{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}'+
+  '.bc .cy2m b{font:900 42px/1.12 var(--f-display);background:linear-gradient(120deg,#22348a,#3d5cc0 55%,#e8845e);-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.06em}'+
+  '.bc .cy2m span{font:500 19px/1.4 var(--f-body);color:var(--ink);opacity:.82;text-wrap:balance}';
+  document.head.appendChild(st)})();
