@@ -116,6 +116,42 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 .gr .pt i{position:absolute;right:0;top:0;bottom:0;background:linear-gradient(270deg,#2f49ad,#4a67d2);border-radius:22px}
 .gr .pt span{position:absolute;left:34px;top:50%;transform:translateY(-50%);font:700 40px/1 var(--f);opacity:.8;white-space:nowrap}
 
+.fl{position:absolute;top:300px;height:690px;width:780px;border-radius:44px;padding:44px 40px 0}
+.fl.o{right:160px;background:rgba(28,37,71,.05);box-shadow:inset 0 0 0 2px rgba(28,37,71,.08)}
+.fl.n{left:160px;background:rgba(61,92,192,.09);box-shadow:inset 0 0 0 2px rgba(61,92,192,.18)}
+.fl .y{font:800 42px/1 var(--f);text-align:center}
+.fl.o .y{opacity:.6}.fl.n .y{color:var(--cob)}
+.fl .its{display:flex;justify-content:space-around;margin-top:44px}
+.fl .it{width:330px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.fl .it .ib{width:120px;height:120px;border-radius:36px;display:grid;place-items:center;margin-bottom:22px}
+.fl.o .it .ib{background:rgba(28,37,71,.07);color:rgba(28,37,71,.62)}
+.fl.n .it .ib{background:rgba(61,92,192,.13);color:var(--cob)}
+.fl .it .pre{font:600 40px/1.2 var(--f);opacity:.75;height:48px}
+.fl .it .num{font-size:150px;font-weight:700;margin-top:6px}
+.fl.o .it .num{opacity:.6}
+.fl .it .u{font:700 42px/1.25 var(--f);margin-top:18px}
+.fl .res{position:absolute;left:36px;right:36px;bottom:36px;height:100px;border-radius:30px;background:#3d5cc0;color:#fff;display:flex;align-items:center;justify-content:center;gap:18px;font:800 42px/1 var(--f);white-space:nowrap}
+.fl-ar{position:absolute;left:50%;top:590px;width:110px;height:110px;margin-left:-55px;border-radius:50%;background:#3d5cc0;color:#fff;display:grid;place-items:center;box-shadow:0 0 0 14px #d9deec}
+.sk{position:absolute;inset:0}
+.sk>svg{position:absolute;inset:0;width:1920px;height:1080px}
+.sk .bx{position:absolute;top:350px;width:420px;height:540px;border-radius:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.sk .bx.o{right:160px;background:rgba(28,37,71,.08);box-shadow:inset 0 0 0 3px rgba(28,37,71,.12)}
+.sk .bx.n{left:160px;background:linear-gradient(160deg,#4a67d2,#2a3f9e);color:#fff;box-shadow:0 30px 60px -30px rgba(42,63,158,.6)}
+.sk .bx .ib{width:120px;height:120px;border-radius:36px;display:grid;place-items:center;margin-bottom:26px}
+.sk .bx.o .ib{background:rgba(28,37,71,.08);color:rgba(28,37,71,.6)}
+.sk .bx.n .ib{background:rgba(255,255,255,.16);color:#fff}
+.sk .bx .num{font-size:160px;font-weight:700}
+.sk .bx.o .num{opacity:.62}
+.sk .bx .u{font:700 44px/1.25 var(--f);margin-top:18px}
+.sk .bx .pre{font:600 40px/1.2 var(--f);opacity:.85;margin-bottom:6px}
+.sk .yy{position:absolute;top:286px;width:420px;text-align:center;font:800 42px/1 var(--f)}
+.sk .yy.o{right:160px;opacity:.6}.sk .yy.n{left:160px;color:var(--cob)}
+.sk .mid{position:absolute;left:600px;right:600px;top:470px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.sk .mid .ib{width:96px;height:96px;border-radius:30px;background:rgba(255,255,255,.55);color:var(--cob);display:grid;place-items:center;margin-bottom:14px}
+.sk .mid .pre{font:600 40px/1.2 var(--f);opacity:.8}
+.sk .mid .num{font-size:140px;font-weight:700;margin-top:4px}
+.sk .mid .u{font:800 46px/1.2 var(--f);margin-top:14px}
+.sk .res{position:absolute;left:600px;right:600px;top:930px;display:flex;align-items:center;justify-content:center;gap:16px;font:800 46px/1 var(--f);color:var(--cob);white-space:nowrap}
 /* ---- cover: the timeline from 2014 to 2026 and the five moves on the way ---- */
 .cover .kick{position:absolute;top:120px;left:160px;right:160px;text-align:center;font:700 40px/1 var(--f);color:var(--cob)}
 .cover .end{position:absolute;top:220px;width:720px}
@@ -139,7 +175,7 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 <body>
 <div id="vp"><div id="stage"></div></div>
 <div id="hint">← → للتنقل · F ملء الشاشة</div>
-<script src="src/kn/icons.js?v=1"></script>
+<script src="src/kn/icons.js?v=2"></script>
 <script src="src/kn/slides.js?v=3"></script>
 <script>
 const N=v=>`<span class="num">${v}</span>`, G=v=>`<span class="num grad">${v}</span>`;
@@ -172,6 +208,20 @@ const R={
     <div class="mv">${s.moves.map(m=>`<div class="m"><div class="ib">${ICON(m.ic,62)}</div><div class="n">${m.n}</div><div class="t">${m.t}</div></div>`).join('')}</div>`,
   /* one measure; with a callout the pair moves right to leave the callout its room */
   col:s=>HD(s)+colChart({a:s.a,b:s.b,add:s.add,adds:s.adds,call:s.call},(s.call||s.adds)?{x0:300,x1:1260,top:560,base:870}:{x0:360,x1:1560,top:560,base:870},{ya:s.ya,yb:s.yb}),
+  /* people on the move: from the unsafe areas (right) through a band that carries them to the new homes (left) */
+  sankey:s=>{const p=s.mid;
+    return HD(s)+`<div class="sk"><svg viewBox="0 0 1920 1080"><defs><linearGradient id="skg" x1="1" x2="0" y1="0" y2="0"><stop offset="0" stop-color="#1c2547" stop-opacity=".14"/><stop offset="1" stop-color="#3d5cc0" stop-opacity=".42"/></linearGradient></defs>
+      <path d="M1360 430 C1120 430 800 470 560 470 L560 770 C800 770 1120 810 1360 810 Z" fill="url(#skg)"/><path d="M1272 592 L1236 622 L1272 652" fill="none" stroke="#3d5cc0" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/><path d="M1212 592 L1176 622 L1212 652" fill="none" stroke="#3d5cc0" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/><path d="M722 592 L686 622 L722 652" fill="none" stroke="#3d5cc0" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/><path d="M662 592 L626 622 L662 652" fill="none" stroke="#3d5cc0" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/></svg>
+      <div class="yy o">${s.a.y||'قبل 2014'}</div><div class="yy n">${s.b.y||'2026'}</div>
+      <div class="bx o"><div class="ib">${ICON(s.a.ic,72)}</div>${N(s.a.v)}<div class="u">${s.a.u}</div></div>
+      <div class="mid"><div class="ib">${ICON(p.ic,56)}</div><div class="pre">${p.pre}</div>${G(p.v)}<div class="u">${p.u}</div></div>
+      <div class="bx n"><div class="ib">${ICON(s.b.ic,72)}</div><div class="pre">${s.b.pre||''}</div><span class="num">${s.b.v}</span><div class="u">${s.b.u}</div></div>
+      ${s.res?`<div class="res">${ICON(s.res.ic,58)}${s.res.t}</div>`:''}</div>`},
+  /* a before → after story told in figures: what there was, who lived there, what was built, what came of it */
+  flow:s=>{const it=(x,isN)=>`<div class="it"><div class="ib">${ICON(x.ic,72)}</div><div class="pre">${x.pre||''}</div>${isN?G(x.v):N(x.v)}<div class="u">${x.u}</div></div>`;
+    return HD(s)+`<div class="fl o"><div class="y">${s.a.y||'قبل 2014'}</div><div class="its">${s.a.items.map(x=>it(x,0)).join('')}</div></div>
+      <div class="fl-ar">${ICON('arrow-left',60)}</div>
+      <div class="fl n"><div class="y">${s.b.y||'2026'}</div><div class="its">${s.b.items.map(x=>it(x,1)).join('')}</div>${s.b.res?`<div class="res">${ICON(s.b.res.ic,56)}${s.b.res.t}</div>`:''}</div>`},
   /* 2–3 measures in rows, each pair of bars on its own scale */
   rows:s=>HD(s)+s.rows.map((r,i)=>{const A=fnum(r.a),B=fnum(r.b),M=Math.max(A,B)||1,w=f=>`calc((100% - 440px) * ${(f/M).toFixed(4)})`;
     return `<div class="mr" style="top:${370+i*200}px"><div class="mh"><div class="ib">${ICON(r.ic,64)}</div><div><div class="mn">${r.nm}</div><div class="mu">${r.u}</div></div></div>
