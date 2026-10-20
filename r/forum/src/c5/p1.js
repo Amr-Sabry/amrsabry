@@ -105,7 +105,7 @@ S({n:26,...HM1,cards:[
 
 /* 27 — Maspero triangle: after, and before */
 S({n:27,...HM1,cards:[
-  ['photo',[0,0,8,6],{img:P('image83'),pos:'50% 40%',tag:'مثلث ماسبيرو'}],
+  ['photo',[0,0,8,6],{img:P('image83'),pos:'50% 40%'}],
   ['title',[8,0,4,2],{bg:'grad',ki:'building-2',t:'مثلث ماسبيرو',fs:48}],
   ['photo',[8,2,4,2],{img:P('image85'),pos:'50% 50%',cap:'مثلث ماسبيرو (قبل التطوير)'}],
   ['photo',[8,4,4,2],{img:P('image84'),pos:'50% 50%'}],
