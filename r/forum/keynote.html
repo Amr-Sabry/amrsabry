@@ -33,8 +33,9 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 .pg{position:absolute;left:64px;bottom:40px;font:600 24px/1 'KNum',sans-serif;opacity:.35;direction:ltr}
 
 /* the header: icon + question (+ one line of the client's) */
-.hd{position:absolute;top:100px;right:160px;left:160px;display:flex;align-items:center;gap:40px;min-height:150px}
-.hd .ib{width:150px;height:150px;flex:none;border-radius:42px;background:rgba(61,92,192,.10);color:var(--cob);display:grid;place-items:center}
+.hd{position:absolute;top:100px;right:160px;left:160px;display:flex;align-items:center;gap:30px;min-height:130px}
+.hd>div:last-child{flex:1;min-width:0}
+.hd .ib{width:110px;height:110px;flex:none;color:var(--cob);display:grid;place-items:center}
 .hd .h{font:900 84px/1.15 var(--f)}
 .hd .k{font:600 42px/1.4 var(--f);opacity:.8;margin-top:14px}
 .legend{position:absolute;display:flex;gap:44px;font:700 34px/1 var(--f)}
@@ -73,8 +74,8 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 .mr{position:absolute;right:160px;left:160px;height:180px;display:flex;align-items:center;gap:48px}
 .mr+.mr{border-top:2px solid rgba(28,37,71,.08)}
 .mr .mh{width:640px;flex:none;display:flex;align-items:center;gap:26px}
-.mr .mh .ib{width:112px;height:112px;flex:none;border-radius:32px;background:rgba(61,92,192,.10);color:var(--cob);display:grid;place-items:center}
-.mr .mn{font:800 44px/1.2 var(--f);white-space:nowrap}
+.mr .mh .ib{width:80px;height:80px;flex:none;color:var(--cob);display:grid;place-items:center}
+.mr .mn{font:800 42px/1.2 var(--f)}
 .mr .mu{font:600 40px/1.3 var(--f);opacity:.75;margin-top:4px}
 .mr .mb{flex:1;display:flex;flex-direction:column;gap:14px}
 .mr .br{display:flex;align-items:center;gap:22px}
@@ -83,6 +84,7 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 .mr .br.n i{height:56px;background:linear-gradient(270deg,#2f49ad,#4a67d2)}
 .mr .br.o .num{font-size:58px;font-weight:600;opacity:.55}
 .mr .br.n .num{font-size:78px;font-weight:700}
+.mr .br .pb{font:700 40px/1 var(--f);color:var(--cob);white-space:nowrap}
 .mr .br .yl{width:200px;flex:none;font:800 40px/1 var(--f);white-space:nowrap}.mr .br.o .yl{opacity:.6}.mr .br.n .yl{color:var(--cob)}
 .mr .nb{font:700 40px/1.2 var(--f);color:var(--cob);white-space:nowrap;margin-right:222px}
 
@@ -172,6 +174,52 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 .pp .l2 .num{font-size:64px;font-weight:700}
 .pp-ar{position:absolute;left:50%;top:560px;width:104px;height:104px;margin-left:-52px;border-radius:50%;background:#3d5cc0;color:#fff;display:grid;place-items:center;box-shadow:0 0 0 14px #d9deec}
 .pp-key{position:absolute;left:0;right:0;bottom:62px;display:flex;justify-content:center;align-items:center;gap:12px;font:600 34px/1 var(--f);opacity:.6}
+.sp{position:absolute;top:290px;height:700px;width:780px;border-radius:48px;display:flex;flex-direction:column;align-items:center;text-align:center;padding:46px 50px 0}
+.sp.o{right:160px;background:linear-gradient(160deg,#c3c8d8,#b3b9cc);color:#3a4157}
+.sp.n{left:160px;background:linear-gradient(160deg,#4a67d2,#2a3f9e);color:#fff;box-shadow:0 40px 80px -40px rgba(42,63,158,.7)}
+.sp .y{font:800 44px/1 var(--f);opacity:.8}
+.sp .hero{height:330px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.sp .hero .num{font-size:250px;font-weight:700}
+.sp .hero .u{font:800 56px/1.2 var(--f);margin-top:18px}
+.sp .hero .ic{margin-bottom:22px}
+.sp .hero .t{font:900 70px/1.2 var(--f)}
+.sp .ln{width:100%;height:3px;border-radius:2px;margin:26px 0 30px}
+.sp.o .ln{background:rgba(58,65,87,.18)}.sp.n .ln{background:rgba(255,255,255,.25)}
+.sp .sec{display:flex;align-items:baseline;justify-content:center;gap:18px;flex-wrap:nowrap;white-space:nowrap}
+.sp .sec .pre{font:600 44px/1 var(--f);opacity:.85}
+.sp .sec .num{font-size:120px;font-weight:700}
+.sp .sec .u{font:800 46px/1 var(--f)}
+.sp-ar{position:absolute;z-index:2;left:50%;top:600px;width:104px;height:104px;margin-left:-52px;border-radius:50%;background:#d9deec;color:#3d5cc0;display:grid;place-items:center;box-shadow:0 10px 30px -10px rgba(28,37,71,.35)}
+.gn{position:absolute;right:160px;left:160px;display:flex;align-items:center;gap:56px}
+.gn .gl{width:520px;flex:none}
+.gn .y{font:800 42px/1 var(--f);margin-bottom:18px}
+.gn.o .y{opacity:.55}.gn.n .y{color:var(--cob)}
+.gn .vv{display:flex;align-items:baseline;gap:20px}
+.gn .vv .num{font-size:150px;font-weight:700;opacity:.6}
+.gn .vv .u{font:800 46px/1.2 var(--f)}
+.gn .res{display:flex;align-items:center;gap:18px;color:var(--cob);font:900 52px/1.25 var(--f)}
+.gn .tr{flex:1;position:relative;height:150px;border-radius:40px;display:flex;align-items:center;justify-content:center;gap:22px}
+.gn.o .tr{background:linear-gradient(270deg,rgba(28,37,71,.30),rgba(28,37,71,.20))}
+.gn.n .tr{border:4px dashed rgba(61,92,192,.5);color:var(--cob)}
+.gn .tr .pre{font:600 42px/1 var(--f);opacity:.85}
+.gn .tr .num{font-size:96px;font-weight:700}
+.gn .tr .u{font:800 46px/1 var(--f)}
+.st{position:absolute;left:160px;right:160px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.st .y{font:800 42px/1 var(--f)}
+.st.o .y{opacity:.55}.st.n .y{color:var(--cob)}
+.st .gx{position:relative;display:flex;align-items:baseline;gap:30px;margin-top:6px;color:rgba(28,37,71,.5)}
+.st .gx .num{font-size:270px;font-weight:700}
+.st .gx .u{font:800 64px/1 var(--f)}
+.st .gx::after{content:"";position:absolute;left:-30px;right:-30px;top:52%;height:16px;border-radius:8px;background:#3d5cc0;transform:rotate(-3deg)}
+.st .res{display:flex;align-items:center;gap:24px;margin-top:22px;color:var(--cob);font:900 76px/1.1 var(--f)}
+.sx{position:absolute;left:160px;right:160px;top:880px;display:flex;justify-content:center;align-items:center;gap:56px}
+.sx .d{width:3px;height:110px;border-radius:2px;background:rgba(28,37,71,.15)}
+.sx .f{display:flex;align-items:baseline;gap:18px;white-space:nowrap}
+.sx .f .ico{align-self:center}
+.sx .f .pre{font:600 42px/1 var(--f);opacity:.8}
+.sx .f .num{font-size:92px;font-weight:700}
+.sx .f .u{font:800 46px/1 var(--f)}
+.sx .f.o{color:rgba(28,37,71,.7)}.sx .f.n .ico{color:var(--cob)}
 /* ---- cover: the timeline from 2014 to 2026 and the five moves on the way ---- */
 .cover .kick{position:absolute;top:120px;left:160px;right:160px;text-align:center;font:700 40px/1 var(--f);color:var(--cob)}
 .cover .end{position:absolute;top:220px;width:720px}
@@ -186,7 +234,7 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 .cover .mv{position:absolute;left:160px;right:160px;top:690px;display:flex;justify-content:space-between}
 .cover .mv::before{content:"";position:absolute;right:120px;left:120px;top:60px;height:3px;background:rgba(61,92,192,.25)}
 .cover .m{position:relative;width:300px;display:flex;flex-direction:column;align-items:center;text-align:center}
-.cover .m .ib{width:120px;height:120px;border-radius:36px;background:#d9deec;box-shadow:inset 0 0 0 3px rgba(61,92,192,.35);color:var(--cob);display:grid;place-items:center}
+.cover .m .ib{width:120px;height:120px;border-radius:50%;background:#d9deec;color:var(--cob);display:grid;place-items:center}
 .cover .m .n{font:600 36px/1 var(--f);opacity:.72;margin-top:26px}
 .cover .m .t{font:800 42px/1.2 var(--f);margin-top:12px;white-space:nowrap}
 #hint{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);font:500 12px var(--f);color:rgba(28,37,71,.35);pointer-events:none;animation:hf .8s 4s forwards}@keyframes hf{to{opacity:0}}
@@ -195,7 +243,7 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 <body>
 <div id="vp"><div id="stage"></div></div>
 <div id="hint">← → للتنقل · F ملء الشاشة</div>
-<script src="src/kn/icons.js?v=3"></script>
+<script src="src/kn/icons.js?v=5"></script>
 <script src="src/kn/slides.js?v=3"></script>
 <script>
 const N=v=>`<span class="num">${v}</span>`, G=v=>`<span class="num grad">${v}</span>`;
@@ -228,6 +276,24 @@ const R={
     <div class="mv">${s.moves.map(m=>`<div class="m"><div class="ib">${ICON(m.ic,62)}</div><div class="n">${m.n}</div><div class="t">${m.t}</div></div>`).join('')}</div>`,
   /* one measure; with a callout the pair moves right to leave the callout its room */
   col:s=>HD(s)+colChart({a:s.a,b:s.b,add:s.add,adds:s.adds,call:s.call},(s.call||s.adds)?{x0:300,x1:1260,top:560,base:870}:{x0:360,x1:1560,top:560,base:870},{ya:s.ya,yb:s.yb}),
+  /* what was ended, crossed out; who lived there and what was built, under it */
+  strike:s=>HD(s)+`<div class="st o" style="top:320px"><div class="y">${s.ya||'قبل 2014'}</div><div class="gx">${N(s.a.v)}<span class="u">${s.a.u}</span></div></div>
+    <div class="st n" style="top:700px"><div class="res">${ICON(s.b.ic,84)}<span>${s.b.t}</span></div></div>
+    <div class="sx"><div class="f o">${ICON(s.a2.ic,64)}<span class="pre">${s.a2.pre}</span>${N(s.a2.v)}<span class="u">${s.a2.u}</span></div><div class="d"></div>
+      <div class="f n">${ICON(s.b2.ic,64)}<span class="pre">${s.b2.pre}</span>${G(s.b2.v)}<span class="u">${s.b2.u}</span></div></div>`,
+  /* the same measure in both rows: a full bar of unsafe areas, then the empty track where it was; who lived there and how it ended sit inside */
+  gone:s=>HD(s)+`<div class="gn o" style="top:400px"><div class="gl"><div class="y">${s.ya||'قبل 2014'}</div><div class="vv">${N(s.a.v)}<span class="u">${s.a.u}</span></div></div>
+      <div class="tr">${ICON(s.a2.ic,64)}<span class="pre">${s.a2.pre}</span>${N(s.a2.v)}<span class="u">${s.a2.u}</span></div></div>
+    <div class="gn n" style="top:700px"><div class="gl"><div class="y">${s.yb||'2026'}</div><div class="res">${ICON(s.b.ic,72)}<span>${s.b.t}</span></div></div>
+      <div class="tr">${ICON(s.b2.ic,64)}<span class="pre">${s.b2.pre}</span>${G(s.b2.v)}<span class="u">${s.b2.u}</span></div></div>`,
+  /* two sides, one hierarchy: the problem and who lived it (right, dim) · the outcome and how (left, cobalt) */
+  split:s=>HD(s)+`<div class="sp o"><div class="y">${s.ya||'قبل 2014'}</div>
+      <div class="hero"><span class="num">${s.a.v}</span><div class="u">${s.a.u}</div></div><div class="ln"></div>
+      <div class="sec"><span class="pre">${s.a2.pre}</span><span class="num">${s.a2.v}</span><span class="u">${s.a2.u}</span></div></div>
+    <div class="sp-ar">${ICON('arrow-left',58)}</div>
+    <div class="sp n"><div class="y">${s.yb||'2026'}</div>
+      <div class="hero"><div class="ic">${ICON(s.b.ic,120)}</div><div class="t">${s.b.t}</div></div><div class="ln"></div>
+      <div class="sec"><span class="pre">${s.b2.pre}</span><span class="num">${s.b2.v}</span><span class="u">${s.b2.u}</span></div></div>`,
   /* the same people, before and after: one figure for every 100 thousand, in an unsafe area (right) and in a safe home (left) */
   people:s=>{const fig=n=>Array.from({length:n},()=>ICON('user',74)).join(''),n=Math.round(fnum(s.who.v)*10);
     return HD(s)+`<div class="pp o"><div class="y">${s.ya||'قبل 2014'}</div><div class="fr"><div class="bd">${ICON('triangle-alert',44)}</div>${fig(n)}</div>
@@ -253,9 +319,9 @@ const R={
       <div class="fl-ar">${ICON('arrow-left',60)}</div>
       <div class="fl n"><div class="y">${s.b.y||'2026'}</div><div class="its">${s.b.items.map(x=>it(x,1)).join('')}</div>${s.b.res?`<div class="res">${ICON(s.b.res.ic,56)}${s.b.res.t}</div>`:''}</div>`},
   /* 2–3 measures in rows, each pair of bars on its own scale */
-  rows:s=>HD(s)+s.rows.map((r,i)=>{const A=fnum(r.a),B=fnum(r.b),M=Math.max(A,B)||1,w=f=>`calc((100% - 440px) * ${(f/M).toFixed(4)})`;
-    return `<div class="mr" style="top:${370+i*200}px"><div class="mh"><div class="ib">${ICON(r.ic,64)}</div><div><div class="mn">${r.nm}</div><div class="mu">${r.u}</div></div></div>
-      <div class="mb"><div class="br o"><span class="yl">${s.ya||'قبل 2014'}</span><i style="width:${w(A)}"></i>${N(r.a)}</div><div class="br n"><span class="yl">${s.yb||'2026'}</span><i style="width:${w(B)}"></i>${G(r.b)}</div>${r.nb?`<div class="nb">${r.nb}</div>`:''}</div></div>`}).join(''),
+  rows:s=>HD(s)+s.rows.map((r,i)=>{const A=r.an!=null?r.an:fnum(r.a),B=r.bn!=null?r.bn:fnum(r.b),M=Math.max(A,B)||1,w=f=>`calc((100% - ${r.pb?680:440}px) * ${(f/M).toFixed(4)})`;
+    return `<div class="mr" style="top:${(s.rows.length<3?440:370)+i*(s.rows.length<3?230:200)}px"><div class="mh"><div class="ib">${ICON(r.ic,64)}</div><div><div class="mn">${r.nm}</div>${r.u?`<div class="mu">${r.u}</div>`:''}</div></div>
+      <div class="mb"><div class="br o"><span class="yl">${s.ya||'قبل 2014'}</span>${r.a==null?N('—'):`<i style="width:${w(A)}"></i>${N(r.a)}`}</div><div class="br n"><span class="yl">${s.yb||'2026'}</span><i style="width:${w(B)}"></i>${r.pb?`<span class="pb">${r.pb}</span>`:''}${G(r.b)}</div>${r.nb?`<div class="nb">${r.nb}</div>`:''}</div></div>`}).join(''),
   /* a share of Egypt's whole area: the same 7% in both rows, and what was added */
   share:s=>{const A=fnum(s.a.v),B=fnum(s.b.v);
     return HD(s)+`<div class="sr o" style="top:450px"><div class="sl"><span class="y">${s.ya||'قبل 2014'}</span>${N(s.a.v)}</div><div class="tr"><i class="b0" style="width:${A}%"></i><span>${s.whole}</span></div></div>
@@ -271,8 +337,9 @@ const stage=document.getElementById('stage');
 stage.innerHTML=KN.map((s,i)=>`<section class="s ${s.bg||'light'} ${s.type}" data-i="${i}">${R[s.type](s)}<div class="pg">${i+1} / ${KN.length}</div></section>`).join('');
 const S=[...stage.children];let cur=Math.min(S.length-1,Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
 function go(i){cur=Math.max(0,Math.min(S.length-1,i));S.forEach((x,j)=>x.classList.toggle('on',j===cur));history.replaceState(null,'','#'+(cur+1))}
+function fitQ(){document.querySelectorAll('.hd .h').forEach(h=>{const sec=h.closest('.s'),on=sec.classList.contains('on');if(!on)sec.style.display='block';h.style.whiteSpace='nowrap';let f=84;h.style.fontSize=f+'px';while(h.scrollWidth>h.parentElement.clientWidth&&f>60){f-=2;h.style.fontSize=f+'px'}if(!on)sec.style.display=''})}
 function fit(){const k=Math.min(innerWidth/1920,innerHeight/1080);stage.style.transform=`scale(${k})`}
-addEventListener('resize',fit);fit();go(cur);
+addEventListener('resize',fit);fit();go(cur);document.fonts.ready.then(fitQ);
 addEventListener('keydown',e=>{if(['ArrowLeft','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();go(cur+1)}else if(['ArrowRight','PageUp','Backspace'].includes(e.key)){e.preventDefault();go(cur-1)}else if(e.key==='Home')go(0);else if(e.key==='End')go(S.length-1);else if(e.key==='f'||e.key==='F'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}});
 addEventListener('click',e=>{go(e.clientX<innerWidth/2?cur+1:cur-1)});
 let tx=0;addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>40)go(d>0?cur+1:cur-1)},{passive:true});
