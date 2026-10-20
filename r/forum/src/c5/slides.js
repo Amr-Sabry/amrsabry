@@ -20,6 +20,7 @@ const P=k=>'c5/'+k;
 /* section headers */
 const HS1={ax:'01',h:'لماذا لم يكن الاستمرار ممكنا؟',hs:'تحديات تراكمت عبر عقود لم تكن تحتمل التأجيل'};
 const HS2={ax:'02',h:'إعادة بناء مقومات التنمية',hs:'مشروع وطني متكامل للتنمية'};
+const HS3={ax:'03',h:'ماذا بنينا .. ؟ مصر التي تغيرت',hs:'خمس قدرات جديدة تمتلكها الدولة (2014-2026)'};
 const HM1={ax:'03',h:'التحرك الأول · التعمير',hs:'مصر اتسعت لتستوعب سكانها'};
 const HM2={ax:'03',h:'التحرك الثاني · الربط',hs:'مصر أصبحت أكثر اتصالا وترابطا'};
 const HM3={ax:'03',h:'التحرك الثالث · التمكين',hs:'من سد العجز إلى القدرة على تلبية الاحتياجات'};
@@ -32,7 +33,10 @@ const HS5={ax:'05',h:'مصر التي نريدها',hs:'من بناء القدر
 CARD.video=function(c,r){return `<video class="c5v" src="video/${c.src}" ${c.poster?`poster="${IMG(c.poster)}"`:''} playsinline autoplay preload="auto"></video>${c.cap?`<div class="tag">${c.cap}</div>`:''}`};
 (function(){const st=document.createElement('style');st.textContent=
   '.bc.vcard{padding:0!important;background:#000!important}.bc.vcard>.in{inset:0!important;top:0!important;right:0!important;width:100%!important;height:100%!important;zoom:1!important}'+
-  '.bc.vcard video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit}';
+  '.bc.vcard video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit}'+
+  /* cls:'fit' on a photo shows the whole picture (maps, charts, infographics): nothing cropped */
+  '.bc.photo.fit{background:rgba(255,255,255,.62)}.bc.photo.fit img{object-fit:contain!important;transform:none!important;padding:10px;box-sizing:border-box}'+
+  '.bc.photo.fit.dk{background:#0e1430}';
   document.head.appendChild(st);
   /* a film plays with sound once the show has been touched; if the browser refuses, it plays muted */
   new MutationObserver(()=>{document.querySelectorAll('video.c5v:not([data-go])').forEach(v=>{v.dataset.go=1;const p=v.play();if(p&&p.catch)p.catch(()=>{v.muted=true;v.play().catch(()=>{})})})})
