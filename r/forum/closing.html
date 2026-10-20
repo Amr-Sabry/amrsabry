@@ -1120,6 +1120,9 @@ function post(el,delay,again){
   const inn=el.querySelector(':scope>.in:not(.old):not(.old2)'); if(!inn) return;
   setTimeout(()=>el.classList.add('go'),Math.max(0,delay-200));
   if(again){inn.querySelectorAll('.cv').forEach(sp=>sp.textContent=fmt(+sp.dataset.v))}
+  if(again){const nt=x=>{x.style.setProperty('transition','none','important');requestAnimationFrame(()=>requestAnimationFrame(()=>x.style.removeProperty('transition')))};
+    inn.querySelectorAll('[data-w]').forEach(b=>{nt(b);b.style.width=b.dataset.w+'%'});inn.querySelectorAll('i[data-w2]').forEach(b=>{nt(b);b.style.width=b.dataset.w2+'px'});inn.querySelectorAll('i[data-h]').forEach(b=>{nt(b);b.style.height=b.dataset.h+'px'});
+    inn.querySelectorAll('[data-rise]').forEach(b=>{nt(b);b.style.transform='none'});inn.querySelectorAll('[data-pie]').forEach(b=>{nt(b);b.style.strokeDasharray=b.dataset.pie});inn.querySelectorAll('circle[data-off]').forEach(b=>{nt(b);b.style.strokeDashoffset=b.dataset.off})}
   const tg=inn.querySelector('.tg'); if(tg&&!again) tourRun(el,tg,delay);
   inn.querySelectorAll('.qt').forEach(q=>{if(again){q.querySelectorAll('.tw').forEach(e=>{e.style.transition='none';e.classList.add('on')})}else typeIn(q,delay)});
   setTimeout(()=>inn.querySelectorAll('[data-w]').forEach(b=>b.style.width=b.dataset.w+'%'),delay);
@@ -1242,6 +1245,55 @@ function place(el,r){el.style.left=r.x+'px';el.style.top=r.y+'px';el.style.width
 function setCls(el,cls){const keep=['wait','go'].filter(x=>el.classList.contains(x));el.className=cls+(keep.length?' '+keep.join(' '):'')}
 const NOZOOM={whatif:1,wq:1};
 /* draw (or redraw) a card's content for rect r; r0 is its final place, larger rects zoom the content up a little */
+/* responsive v2 (Amr 17:58 «لما اعمل تغيير لحجم اي كارت لازم الداتا اللي جواه ما يحصلش ليها فيد ولا كت لازم يكون بوزيشن وسكيل بس»):
+   the content is laid out once, at the card's new size; every piece of it starts where, and as big as, the same piece stood in the
+   old layout and glides into place with the frame (1 s, the frame's own curve). Nothing fades and nothing is swapped. */
+const FLIPX=/^(on|go|roll|cur|done|wait|mv|fresh|fresh2|old|old2|go2|grow2|rsp)$/;
+(function(){const st=document.createElement("style");st.textContent=".fw{display:inline-block}";document.head.appendChild(st)})();
+function flipTargets(root){const out=[];
+  const walk=(e,path)=>{const cnt={};[...e.children].forEach(k=>{const cs=getComputedStyle(k);if(cs.display==='none')return;
+    const sig=k.tagName+'.'+[...k.classList].filter(x=>!FLIPX.test(x)).sort().join('.');cnt[sig]=(cnt[sig]||0)+1;const pth=path+'>'+sig+'#'+cnt[sig];
+    const atomic=/^(svg|img|canvas|video|iframe)$/i.test(k.tagName);
+    const ch=[...k.children].filter(x=>getComputedStyle(x).display!=='none');
+    const leafy=!ch.length||ch.every(x=>/^inline/.test(getComputedStyle(x).display)&&!/^(svg|img|canvas|video)$/i.test(x.tagName));
+    if(atomic||leafy){if(atomic||cs.display!=='inline')out.push({p:pth,e:k,cs})}else walk(k,pth)})};
+  walk(root,'');return out}
+/* words of a text block, each its own unit (inline-block), so a block that wraps differently at the new size can have its words
+   travel from their old places to their new ones; pills and year counters count as one word each */
+function flipWords(t){const tw=document.createTreeWalker(t,NodeFilter.SHOW_TEXT,{acceptNode:n=>{const p=n.parentElement;if(!p||p.closest('svg,.pp,.odc,.odo,.odo-in,.fw'))return NodeFilter.FILTER_REJECT;return /\S/.test(n.nodeValue)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_SKIP}});
+  const ns=[];while(tw.nextNode())ns.push(tw.currentNode);
+  ns.forEach(n=>{const f=document.createDocumentFragment();n.nodeValue.split(/(\s+)/).forEach(w=>{if(!w)return;if(/^\s+$/.test(w))f.appendChild(document.createTextNode(w));else{const x=document.createElement('span');x.className='fw';x.textContent=w;f.appendChild(x)}});n.replaceWith(f)});
+  return [...t.querySelectorAll('.fw,.pp,.odo,.odo-in')].filter(x=>!x.parentElement.closest('.pp,.odo,.odo-in'))}
+function flip2(el,O,N,olds,r,pad){
+  const S=(el.getBoundingClientRect().width/el.offsetWidth)||1,kz=x=>parseFloat(x.style.zoom)||1,kO=kz(O),kN=kz(N);
+  const imp=(x,k,v)=>x.style.setProperty(k,v,'important');
+  el.querySelectorAll(':scope>.fresh').forEach(x=>{imp(x,'transition','none');x.classList.remove('fresh')});
+  const cq=getComputedStyle(N).containerType==='size';
+  const PIN=['inset','top','right','width','height'],keep=PIN.map(k=>[k,N.style.getPropertyValue(k),N.style.getPropertyPriority(k)]);   /* put back exactly what the engine set */
+  if(cq){imp(N,'inset','auto');imp(N,'top',pad[0]+'px');imp(N,'right',pad[1]+'px');imp(N,'width',Math.max(1,r.w-pad[1]-pad[3])+'px');imp(N,'height',Math.max(1,r.h-pad[0]-pad[2])+'px')}
+  const isA=e=>/^(svg|img|canvas|video|iframe)$/i.test(e.tagName);
+  const oT=new Map();flipTargets(O).forEach(t=>oT.set(t.p,t));
+  const units=[];   /* [new element, old rect, scale kind, font ratio] */
+  flipTargets(N).forEach(t=>{const o=oT.get(t.p);if(!o)return;
+    const fr=(parseFloat(o.cs.fontSize)*kO)/(parseFloat(t.cs.fontSize)*kN);
+    if(!isA(t.e)&&t.cs.backgroundClip!=='text'&&o.cs.backgroundClip!=='text'){const wo=flipWords(o.e),wn=flipWords(t.e);
+      if(wo.length>1&&wo.length===wn.length){wn.forEach((w,i)=>units.push([w,wo[i].getBoundingClientRect(),0,fr]));return}}
+    units.push([t.e,o.e.getBoundingClientRect(),isA(t.e)?1:0,fr])});
+  const oW=olds.find(x=>x.classList.contains('wm')),nW=el.querySelector(':scope>.wm:not(.old2)');
+  if(oW&&nW)units.push([nW,oW.getBoundingClientRect(),2,1]);
+  const go=[];
+  units.forEach(([e,ob,kind,fr])=>{const b=e.getBoundingClientRect();if(!b.width||!b.height||!ob.width||!ob.height)return;
+    let s=kind?Math.sqrt((ob.width*ob.height)/(b.width*b.height)):fr;if(!isFinite(s)||s<=0)s=1;s=Math.max(.3,Math.min(3,s));
+    const f=S*(kind===2?1:kN),dx=((ob.left+ob.right)-(b.left+b.right))/2/f,dy=((ob.top+ob.bottom)-(b.top+b.bottom))/2/f;
+    if(Math.abs(dx)<.5&&Math.abs(dy)<.5&&Math.abs(s-1)<.01)return;
+    const cs=getComputedStyle(e),base=cs.transform==='none'?'':cs.transform;
+    imp(e,'transition','none');imp(e,'transform-origin','50% 50%');imp(e,'transform',`translate(${dx.toFixed(2)}px,${dy.toFixed(2)}px) scale(${s.toFixed(4)}) ${base}`);go.push([e,base])});
+  olds.forEach(x=>x.remove());void el.offsetWidth;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>go.forEach(([x,base])=>{imp(x,'transition','transform 1s var(--mv)');imp(x,'transform',base||'none')})));
+  clearTimeout(el._rspT);el._rspT=setTimeout(()=>{go.forEach(([x])=>{['transition','transform','transform-origin'].forEach(k=>x.style.removeProperty(k))});
+    N.querySelectorAll('.fw').forEach(x=>{const p=x.parentNode;x.replaceWith(...x.childNodes);p&&p.normalize&&p.normalize()});
+    if(cq)keep.forEach(([k,v,pr])=>{N.style.removeProperty(k);if(v)N.style.setProperty(k,v,pr)});
+    [N,nW].forEach(x=>x&&x.style.removeProperty('transition'))},1060)}
 function paint(cc,r,again){
   const {type,c,el}=cc; cc.pr=r;
   if(type==='photo'){if(cc.done)return;cc.done=1;setCls(el,`bc photo ${sizeCls(r)}${c.bw?' bw':''}${c.cls?' '+c.cls:''}`);el.innerHTML=`<div class="in">${photoHTML(c)}</div>`;locInset(cc,r);requestAnimationFrame(()=>panFit(el));if(c.ba){el.querySelectorAll('[data-k]').forEach(x=>x.dataset.st=cc.st+(+x.dataset.k));baDrag(el)}startMedia(el,c);cc.kill.push(()=>clearInterval(el._pt));return}
@@ -1274,13 +1326,8 @@ function paint(cc,r,again){
   const wm=wmark(type,c,r); if(wm){el.insertAdjacentHTML('beforeend',wm);if(again)el.lastChild.classList.add('fresh')}
   autofit(el);
   if(el.dataset.ovf==='1'&&k>1.02){cc.kmax=Math.max(1,k*.82);if(again===2)el.querySelectorAll(':scope>.fresh2').forEach(x=>x.remove());return paint(cc,r,again)}
-  /* responsive v1: the old content stays and reflows live while the frame resizes; the new one takes over when it lands */
   const rspO=again===2&&olds.find(x=>x.classList.contains('in')),rspN=again===2&&el.querySelector(':scope>.in.fresh');
-  if(rspO&&rspN&&!RM){el.querySelectorAll(':scope>.fresh').forEach(x=>{x.classList.remove('fresh');x.classList.add('fresh2')});
-    rspO.classList.add('rsp');olds.filter(x=>x!==rspO).forEach(x=>x.remove());      /* the faint background icon simply takes its new size */
-    el.querySelectorAll(':scope>.wm.fresh2').forEach(x=>{x.style.setProperty('transition','none','important');x.classList.remove('fresh2');requestAnimationFrame(()=>requestAnimationFrame(()=>x.style.removeProperty('transition')))});
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{['top','right','width','height','zoom'].forEach(p=>rspO.style[p]=rspN.style[p])}));
-    clearTimeout(el._rspT);el._rspT=setTimeout(()=>{el.querySelectorAll(':scope>.fresh2').forEach(x=>{x.style.setProperty('transition','none','important');x.classList.remove('fresh2');void x.offsetWidth;requestAnimationFrame(()=>requestAnimationFrame(()=>x.style.removeProperty('transition')))});olds.forEach(x=>x.remove())},1010)}
+  if(rspO&&rspN&&!RM){flip2(el,rspO,rspN,olds,r,[pt,pr,pb,pl])}   /* responsive v2: position and scale only */
   else if(again===2){const nw=[...el.querySelectorAll(':scope>.fresh')];nw.forEach(x=>{x.classList.remove('fresh');x.classList.add('fresh2');if(x.classList.contains('in'))x.style.scale=(1/s0).toFixed(4)});
     requestAnimationFrame(()=>requestAnimationFrame(()=>{olds.forEach(x=>{if(x.classList.contains('in'))x.style.scale=s0.toFixed(4);x.classList.add('go2')});nw.forEach(x=>{x.classList.remove('fresh2');x.classList.add('grow2');x.style.scale='';setTimeout(()=>x.classList.remove('grow2'),1100)})}))}
   else if(again) requestAnimationFrame(()=>requestAnimationFrame(()=>el.querySelectorAll(':scope>.fresh').forEach(x=>x.classList.remove('fresh'))));
