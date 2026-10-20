@@ -133,6 +133,14 @@ body{font-family:var(--f-body);direction:rtl;-webkit-font-smoothing:antialiased;
 #tlh .val .dl{grid-column:1;grid-row:1/3}
 #tlh .val b{grid-column:2;grid-row:1;line-height:.95}
 #tlh .val small{grid-column:2;grid-row:2;text-align:right;line-height:1.2}
+#tlh .val{display:none!important}
+#tchip{position:absolute;z-index:5;left:0;top:0;display:flex;align-items:center;gap:14px;padding:10px 18px 11px;border-radius:18px;direction:rtl;pointer-events:none;white-space:nowrap;
+  background:linear-gradient(160deg,rgba(255,255,255,.97),rgba(255,255,255,.82));box-shadow:inset 0 1px 0 #fff,inset 0 0 0 1px rgba(61,92,192,.18),0 18px 36px -16px rgba(28,37,71,.55);will-change:transform}
+#tchip .cv{display:flex;flex-direction:column;align-items:flex-start;line-height:1.1}
+#tchip b{font-family:var(--f-display);font-size:46px;font-weight:700;letter-spacing:-.02em;color:var(--ink);direction:ltr;font-variant-numeric:tabular-nums;line-height:1}
+#tchip small{font-size:17px;font-weight:600;color:rgba(28,37,71,.78);margin-top:3px}
+#tchip i{font-style:normal;font-size:15px;font-weight:600;color:var(--cobalt);margin-top:2px}
+#tchip .dl2{font-size:19px;font-weight:700;padding:4px 12px 6px;border-radius:999px;color:#b5532c;background:rgba(238,152,115,.16);box-shadow:inset 0 0 0 1px rgba(238,152,115,.45);direction:ltr}
 #tlsvg{position:absolute;left:0;top:0;overflow:visible;z-index:2}
 .vchip{position:absolute;z-index:4;padding:6px 14px 7px;border-radius:14px;white-space:nowrap;font-family:var(--f-display);font-size:17px;font-weight:600;color:rgba(28,37,71,.8);text-align:center;line-height:1.2;
   background:linear-gradient(160deg,rgba(255,255,255,.92),rgba(255,255,255,.66));box-shadow:inset 0 1px 0 #fff,inset 0 0 0 1px rgba(255,255,255,.6),0 12px 26px -12px rgba(28,37,71,.45)}
@@ -193,6 +201,9 @@ body{font-family:var(--f-body);direction:rtl;-webkit-font-smoothing:antialiased;
 
 html.emb #start{display:none}
 #sndchip{position:fixed;left:18px;bottom:18px;z-index:50;display:flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;background:rgba(28,37,71,.78);color:#fff;font:600 15px var(--f-body);opacity:0;transition:opacity .4s;pointer-events:none}#sndchip.on{opacity:1}#sndchip svg{width:18px;height:18px}
+@font-face{font-family:'Cairo26';src:url(../fonts/cairo-medium.woff2) format('woff2');font-weight:100 599;font-display:block;ascent-override:102%;descent-override:36%;line-gap-override:0%}
+@font-face{font-family:'Cairo26';src:url(../fonts/cairo-black.woff2) format('woff2');font-weight:600 1000;font-display:block;ascent-override:102%;descent-override:36%;line-gap-override:0%}
+:root{--f-display:'Cairo26','Readex Pro',system-ui,sans-serif!important;--f-body:'Cairo26','IBM Plex Sans Arabic',system-ui,sans-serif!important}
 </style>
 <script>if(/[?&]embed/.test(location.search))document.documentElement.classList.add("emb")</script>
 </head>
@@ -233,7 +244,7 @@ html.emb #start{display:none}
 const BASE='';const Q=new URLSearchParams(location.search),EMB=Q.has('embed'),MUTE=Q.has('mute');
 const FILM=window.FILM_DATA;
 FILM.beats.forEach(b=>{(b.photos||[]).forEach(p=>{if(p.vid)p.vid=BASE+p.vid;else p.file=BASE+p.file});if(b.bg)b.bg=b.bg.map(f=>BASE+f)});
-try{await Promise.all(['600 30px "Readex Pro"','500 30px "Readex Pro"','700 30px "Readex Pro"','300 30px "Readex Pro"','500 16px "IBM Plex Sans Arabic"','600 16px "IBM Plex Sans Arabic"'].map(f=>document.fonts.load(f,'أبجد 2011')))}catch(e){}
+try{await Promise.all(['600 30px Cairo26','500 30px Cairo26','600 30px "Readex Pro"','500 30px "Readex Pro"','700 30px "Readex Pro"','300 30px "Readex Pro"','500 16px "IBM Plex Sans Arabic"','600 16px "IBM Plex Sans Arabic"'].map(f=>document.fonts.load(f,'أبجد 2011')))}catch(e){}
 const B=FILM.beats, stage=document.getElementById('stage'), hd=document.getElementById('hd'), hax=document.getElementById('hax'), wipe=document.getElementById('wipe');
 
 /* ---------- helpers ---------- */
@@ -319,7 +330,7 @@ B.forEach(b=>{(b.cts||[]).forEach(ct=>{ct._w=[...ct.querySelectorAll('.w>i')];ct
 
 /* ---------- timeline chart ---------- */
 const RES=FILM.res, RESL=FILM.resl, EVM=FILM.evm;
-const L=C.L.el;L.insertAdjacentHTML('beforeend','<div id="tlh">'+ICON('landmark')+'<span class="lbl">الاحتياطي من النقد الأجنبي<small>مليار دولار · نهاية كل شهر</small></span><span class="val"><span class="dl" id="tdl">0%</span><b id="tval">36.0</b><small><span id="twhen">ديسمبر 2010</span></small></span></div><svg id="tlsvg"></svg>');
+const L=C.L.el;L.insertAdjacentHTML('beforeend','<div id="tlh">'+ICON('landmark')+'<span class="lbl">الاحتياطي من النقد الأجنبي<small>نهاية كل شهر</small></span><span class="val"><span class="dl" id="tdl">0%</span><b id="tval">36.0</b><small><span id="twhen">ديسمبر 2010</span></small></span></div><svg id="tlsvg"></svg><div id="tchip"><div class="cv"><b id="tcv">36.0</b><small>مليار دولار</small><i id="tcw">ديسمبر 2010</i></div><span class="dl2" id="tcd"></span></div>');
 lucide.createIcons();
 const tsvg=document.getElementById('tlsvg'),tval=document.getElementById('tval'),tdl=document.getElementById('tdl'),twhen=document.getElementById('twhen');
 function resAt(m){if(m<=RES[0][0])return RES[0][1];for(let i=1;i<RES.length;i++){if(m<=RES[i][0]){const a=RES[i-1],b=RES[i];return a[1]+(b[1]-a[1])*(m-a[0])/(b[0]-a[0])}}return RES[RES.length-1][1]}
@@ -330,9 +341,9 @@ function tlDraw(r,m,idx,chips,ct){
   let s='';
   for(let yr=0;yr<4;yr++){const x0=X(yr*12),x1=X(yr*12+12);s+='<line x1="'+x0+'" x2="'+x0+'" y1="'+(g.t-8)+'" y2="'+(g.b+6)+'" stroke="rgba(28,37,71,.12)"/>';
     for(let mm=1;mm<12;mm++){const xm=X(yr*12+mm);s+='<line x1="'+xm+'" x2="'+xm+'" y1="'+(g.b+1)+'" y2="'+(g.b+(mm%3?4:7))+'" stroke="rgba(28,37,71,.22)"/>'}
-    const cy=Math.min(3,Math.floor(m/12));s+='<text x="'+((x0+x1)/2)+'" y="'+(g.b+30)+'" text-anchor="middle" font-family="Readex Pro" font-size="25" font-weight="700" fill="'+(yr===cy?'#3d5cc0':(yr<cy?'rgba(28,37,71,.62)':'rgba(28,37,71,.38)'))+'">'+(2011+yr)+'</text>'}
+    const cy=Math.min(3,Math.floor(m/12));s+='<text x="'+((x0+x1)/2)+'" y="'+(g.b+30)+'" text-anchor="middle" font-family="Cairo26, Readex Pro" font-size="25" font-weight="700" fill="'+(yr===cy?'#3d5cc0':(yr<cy?'rgba(28,37,71,.62)':'rgba(28,37,71,.38)'))+'">'+(2011+yr)+'</text>'}
   s+='<line x1="'+g.l+'" x2="'+g.r+'" y1="'+g.b+'" y2="'+g.b+'" stroke="rgba(28,37,71,.3)" stroke-width="1.2"/>';
-  [20,30].forEach(v=>{const y=Y(v);s+='<line x1="'+g.l+'" x2="'+g.r+'" y1="'+y+'" y2="'+y+'" stroke="rgba(28,37,71,.16)" stroke-dasharray="3 5"/><text x="'+(g.l-8)+'" y="'+(y+5)+'" text-anchor="end" font-family="Readex Pro" font-size="16" font-weight="600" fill="rgba(28,37,71,.55)">'+v+'</text>'});
+  [20,30].forEach(v=>{const y=Y(v);s+='<line x1="'+g.l+'" x2="'+g.r+'" y1="'+y+'" y2="'+y+'" stroke="rgba(28,37,71,.16)" stroke-dasharray="3 5"/><text x="'+(g.l-8)+'" y="'+(y+5)+'" text-anchor="end" font-family="Cairo26, Readex Pro" font-size="16" font-weight="600" fill="rgba(28,37,71,.55)">'+v+'</text>'});
   let pts=[];for(let mm=0;mm<=48;mm+=.25)pts.push(X(mm).toFixed(1)+' '+Y(resAt(mm)).toFixed(1));const d='M'+pts.join('L');
   const xm=X(m),vm=resAt(m);
   s+='<defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3d5cc0" stop-opacity=".5"/><stop offset="1" stop-color="#3d5cc0" stop-opacity="0"/></linearGradient><clipPath id="gc"><rect x="'+xm+'" y="0" width="'+Math.max(0,g.r-xm+4)+'" height="'+g.H+'"/></clipPath></defs>';
@@ -340,11 +351,11 @@ function tlDraw(r,m,idx,chips,ct){
   EVM.forEach((mm,i)=>{const on=idx===i;s+='<circle cx="'+X(mm)+'" cy="'+g.b+'" r="'+(on?5:3.6)+'" fill="'+(on?'rgba(238,152,115,.95)':(mm<=m+.01?'rgba(28,37,71,.55)':'rgba(28,37,71,.16)'))+'"/>'});
   s+='<line x1="'+xm+'" x2="'+xm+'" y1="'+Y(vm)+'" y2="'+g.b+'" stroke="#3d5cc0" stroke-width="1.4" stroke-dasharray="3 4" opacity=".7"/><circle cx="'+xm+'" cy="'+g.b+'" r="9" fill="#ee9873" stroke="#fff" stroke-width="3"/><circle cx="'+xm+'" cy="'+Y(vm)+'" r="10" fill="#ee9873" stroke="#fff" stroke-width="3"/>';
   tsvg.setAttribute('width',g.W);tsvg.setAttribute('height',g.H);tsvg.innerHTML=s;
-  const kk=lastKnown(m),kv=RES[kk][1];tval.textContent=kv.toFixed(1);twhen.textContent=RESL[kk];const dp=Math.round((kv-36)/36*100);tdl.textContent=(dp<0?'−':'')+Math.abs(dp)+'%';tdl.style.visibility=dp<0?'visible':'hidden';
+  const kk=lastKnown(m),kv=RES[kk][1];tval.textContent=kv.toFixed(1);twhen.textContent=RESL[kk];const dp=Math.round((kv-36)/36*100);tdl.textContent=(dp<0?'−':'')+Math.abs(dp)+'%';tdl.style.visibility=dp<0?'visible':'hidden';{const tc=document.getElementById('tchip');if(tc){document.getElementById('tcv').textContent=kv.toFixed(1);document.getElementById('tcw').textContent=RESL[kk];const td=document.getElementById('tcd');td.textContent=(dp<0?'−':'')+Math.abs(dp)+'%';td.style.display=dp<0?'':'none';const cw=tc.offsetWidth,chh=tc.offsetHeight,py=Y(vm);let lx=xm-22-cw;if(lx<10)lx=Math.min(g.W-cw-10,xm+22);const ty=Math.max(Math.min(g.t-14,g.H-chh-56),Math.min(g.H-chh-50,py-chh/2));tc.style.transform='translate('+lx.toFixed(1)+'px,'+ty.toFixed(1)+'px)'}}
   /* value chips (published figures) */
   const want=new Set(chips.map(c=>String(c.m)));
   Object.keys(vchips).forEach(k=>{if(!want.has(k))vchips[k].style.display='none'});
-  chips.forEach(c=>{const k=String(c.m);let el=vchips[k];if(!el){el=document.createElement('div');el.className='vchip'+(c.m>20?' low':'');el.innerHTML='<b>'+resAt(c.m).toFixed(1)+'</b>'+c.lab;L.appendChild(el);vchips[k]=el}
+  chips.forEach(c=>{const k=String(c.m);if(Math.abs(c.m-m)<1.5){if(vchips[k])vchips[k].style.display='none';return}let el=vchips[k];if(!el){el=document.createElement('div');el.className='vchip'+(c.m>20?' low':'');el.innerHTML='<b>'+resAt(c.m).toFixed(1)+'</b>'+c.lab;L.appendChild(el);vchips[k]=el}
     const x=X(c.m),y=Y(resAt(c.m)),below=y-70<g.t;const ax=x>g.W-160?-97:(x<160?-3:-50);
     el.style.display='block';el.style.left=x+'px';el.style.top=(below?y+14:y-10)+'px';const a=c.a;el.style.opacity=a;el.style.transform='translate('+ax+'%,'+(below?(6*a)+'px':'calc(-100% - '+(6*a)+'px)')+')'});
 }

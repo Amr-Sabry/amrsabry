@@ -29,6 +29,16 @@ const HM5={ax:'03',h:'التحرك الخامس · بناء الإنسان',hs:'
 const HS4={ax:'04',h:'ماذا لو لم تتدخل الدولة',hs:'واستمر الوضع القائم قبل 2014'};
 const HS5={ax:'05',h:'مصر التي نريدها',hs:'من بناء القدرات إلى تعظيم العائد'};
 
+/* conference fonts (Amr 14:12, from the client: «عروض المؤتمر — العناوين: Cairo black · الفرعي: Cairo medium»): one family, Cairo
+   Medium for every weight below 600 (body, labels, kickers) and Cairo Black from 600 up (titles, numbers, quotes) */
+(function(){const st=document.createElement('style');st.textContent=
+  "@font-face{font-family:'Cairo26';src:url(fonts/cairo-medium.woff2) format('woff2');font-weight:100 599;font-display:block;ascent-override:102%;descent-override:36%;line-gap-override:0%}"+
+  "@font-face{font-family:'Cairo26';src:url(fonts/cairo-black.woff2) format('woff2');font-weight:600 1000;font-display:block;ascent-override:102%;descent-override:36%;line-gap-override:0%}"+
+  ":root{--f-display:'Cairo26','Readex Pro',system-ui,sans-serif!important;--f-body:'Cairo26','IBM Plex Sans Arabic',system-ui,sans-serif!important}"+
+  "body,.hd,#ui,svg text{font-family:var(--f-display)}";
+  document.head.appendChild(st);
+  try{document.fonts.load("900 40px Cairo26","أبجد 2026");document.fonts.load("500 20px Cairo26","أبجد 2026")}catch(e){}})();
+
 /* ---------- a film card (the deck's own videos; offline: video/c5_*.mp4) ---------- */
 /* the control's two preview frames show a film's first frame, silent and still (they share the show's main thread) */
 const C5PV=/[?&]preview=1/.test(location.search);
