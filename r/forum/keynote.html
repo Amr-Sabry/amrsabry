@@ -234,15 +234,17 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 .sx .f .u{font:800 46px/1 var(--f)}
 .sx .f.o{color:rgba(28,37,71,.7)}.sx .f.n .ico{color:var(--cob)}
 .pt2{position:absolute;right:160px;left:160px;display:flex;align-items:center;gap:56px}
-.pt2 .gl{width:600px;flex:none}
+.pt2 .gl{width:480px;flex:none}
 .pt2 .y{font:800 40px/1 var(--f);margin-bottom:12px}
 .pt2.o .y{opacity:.55}.pt2.n .y{color:var(--cob)}
 .pt2 .vv{display:flex;align-items:baseline;gap:18px}
 .pt2.o .num{font-size:130px;font-weight:600;opacity:.6}.pt2.n .num{font-size:150px;font-weight:700}
-.pt2 .u{font:800 46px/1 var(--f)}
+.pt2 .u{font:800 46px/1 var(--f);white-space:nowrap}
 .pt2 .nt{font:600 38px/1.3 var(--f);opacity:.75;margin-top:12px}
-.pt2 .tr{flex:1;height:120px;border-radius:32px;background:rgba(28,37,71,.06);box-shadow:inset 0 0 0 3px rgba(28,37,71,.12);overflow:hidden;display:flex}
+.pt2 .tr{position:relative;flex:1;height:150px;border-radius:32px;background:rgba(28,37,71,.06);box-shadow:inset 0 0 0 3px rgba(28,37,71,.12);overflow:hidden;display:flex}
 .pt2 .tr i{display:block;height:100%}
+.pt2 .tr span{position:absolute;left:44px;right:44px;top:50%;transform:translateY(-50%);text-align:left;font:700 40px/1.3 var(--f)}
+.pt2.o .tr span{color:#fff}.pt2.n .tr span{color:var(--cob);right:auto}
 .pt2.o .tr i{background:rgba(28,37,71,.26)}.pt2.n .tr i{background:linear-gradient(270deg,#2f49ad,#4a67d2)}
 .ls{position:absolute;top:300px;width:760px;display:flex;flex-direction:column;align-items:flex-start}
 .ls.o{right:160px}.ls.n{left:160px}
@@ -324,8 +326,8 @@ const R={
   col:s=>HD(s)+colChart({a:s.a,b:s.b,add:s.add,adds:s.adds,call:s.call},(s.call||s.adds)?{x0:300,x1:1260,top:560,base:870}:{x0:360,x1:1560,top:560,base:870},{ya:s.ya,yb:s.yb}),
   /* a portion of a whole: the whole as a full track, then the part of it that was done */
   part:s=>{const W=fnum(s.a.v),P=fnum(s.b.v);
-    return HD(s)+`<div class="pt2 o" style="top:350px"><div class="gl"><div class="y">${s.ya||'قبل 2014'}</div><div class="vv">${N(s.a.v)}<span class="u">${s.a.u}</span></div><div class="nt">${s.a.n||''}</div></div><div class="tr"><i style="width:100%"></i></div></div>
-      <div class="pt2 n" style="top:660px"><div class="gl"><div class="y">${s.yb||'2026'}</div><div class="vv">${G(s.b.v)}<span class="u">${s.b.u}</span></div><div class="nt">${s.b.n||''}</div></div><div class="tr"><i style="width:${(P/W*100).toFixed(2)}%"></i></div></div>`+(s.foot?`<div class="foot">${s.foot}</div>`:'')},
+    return HD(s)+`<div class="pt2 o" style="top:380px"><div class="gl"><div class="y">${s.ya||'قبل 2014'}</div><div class="vv">${N(s.a.v)}<span class="u">${s.a.u}</span></div></div><div class="tr"><i style="width:100%"></i><span>${s.a.n||''}</span></div></div>
+      <div class="pt2 n" style="top:650px"><div class="gl"><div class="y">${s.yb||'2026'}</div><div class="vv">${G(s.b.v)}<span class="u">${s.b.u}</span></div></div><div class="tr"><i style="width:${(P/W*100).toFixed(2)}%"></i><span>${s.b.n||''}</span></div></div>`+(s.foot?`<div class="foot">${s.foot}</div>`:'')},
   /* what there was, and what there is now, as two lists */
   list:s=>HD(s)+`<div class="ls o"><div class="y">${s.ya||'قبل 2014'}</div>${s.a.items.map(t=>`<div class="it">${t}</div>`).join('')}<div class="cap">${s.a.cap||''}</div></div><div class="ls-d"></div>
     <div class="ls n"><div class="y">${s.yb||'2026'}</div>${s.b.items.map(t=>`<div class="it">${ICON(t.ic,64)}<span>${t.t}</span></div>`).join('')}<div class="cap">${s.b.cap||''}</div></div>`,
