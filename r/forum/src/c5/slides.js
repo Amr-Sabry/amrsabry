@@ -89,24 +89,62 @@ addEventListener('message',e=>{const m=e.data||{};if(m.c5key){document.dispatchE
 })();
 function vid(n,o){S({n,full:1,cards:[['video',[0,0,12,6],Object.assign({cls:'vcard'},o)]]})}
 
+/* year odometer v1 (Amr 17:55, his reference «2025 → 2026»: «من سنة كذا لسنة كذا يكون عدادات بالطريقة دي … في اي حاجة بنحكي فيها عن
+   سنين»): a year is a row of digit wheels; when it changes, only the wheels whose digit changes turn, one year at a time, and while a
+   wheel turns the digits before and after it show above and below, fading out. odoHTML(y) draws a year at rest; odoRun(el,a,b) turns
+   it from a to b. Any element .odo-in with data-from / data-to turns once its card is on screen. */
+const ODOC=['#2a3b86','#34499f','#3d5cc0','#ee9873'];
+function odoHTML(y){const t=String(y);return t.split('').map((d,i)=>`<span class="odc" style="--oc:${ODOC[Math.min(ODOC.length-1,i+ODOC.length-t.length)]}"><span class="ods"><span>${d}</span></span></span>`).join('')}
+function odoRun(el,a,b,o={}){a=+a;b=+b;if(!el||a===b){if(el)el.innerHTML=odoHTML(b);return}
+  const dir=b>a?1:-1,n=Math.abs(b-a),t=String(Math.max(a,b)),L=t.length,step=o.step||Math.max(170,Math.min(320,(o.dur||2900)/n));
+  el.classList.add('odo');el.innerHTML='';const cols=[];
+  for(let k=L-1;k>=0;k--){const p=10**k,seq=[];for(let v=a;dir>0?v<=b:v>=b;v+=dir){const c=Math.floor(v/p);if(seq[seq.length-1]!==c)seq.push(c)}
+    const col=document.createElement('span');col.className='odc';col.style.setProperty('--oc',ODOC[Math.min(ODOC.length-1,L-1-k+ODOC.length-L)]);
+    const st=document.createElement('span');st.className='ods';[seq[0]-dir,...seq,seq[seq.length-1]+dir].forEach(c=>{const d=document.createElement('span');d.textContent=((c%10)+10)%10;st.appendChild(d)});
+    st.style.transition='none';st.style.transform='translateY(-1em)';col.appendChild(st);el.appendChild(col);cols.push({p,seq,st,col})}
+  let v=a;el.dataset.y=a;
+  const tick=()=>{if(!el.isConnected)return;v+=dir;el.dataset.y=v;
+    cols.forEach(c=>{const i=c.seq.indexOf(Math.floor(v/c.p))+1,cur=+c.st.dataset.i||1;if(i!==cur){c.st.dataset.i=i;c.col.classList.add('roll');c.st.style.transition=`transform ${step*.92}ms cubic-bezier(.3,.7,.2,1)`;c.st.style.transform=`translateY(-${i}em)`;
+      clearTimeout(c.tm);c.tm=setTimeout(()=>c.col.classList.remove('roll'),step*1.6)}});
+    o.onYear&&o.onYear(v);if(v!==b)setTimeout(tick,step);else o.done&&o.done()};
+  setTimeout(tick,o.delay??500)}
+(function(){const st=document.createElement('style');st.textContent=
+  '.odo,.e2y{direction:ltr;unicode-bidi:isolate}'+
+  '.odc{box-sizing:content-box;display:inline-block;vertical-align:top;height:1em;line-height:1em;padding:.6em 0;margin:-.6em 0;overflow:hidden;color:var(--oc);'+
+  '-webkit-mask-image:linear-gradient(transparent 27.3%,#000 27.3%,#000 72.7%,transparent 72.7%);mask-image:linear-gradient(transparent 27.3%,#000 27.3%,#000 72.7%,transparent 72.7%)}'+
+  '.odc.roll{-webkit-mask-image:linear-gradient(transparent 0,rgba(0,0,0,.5) 16%,#000 28%,#000 72%,rgba(0,0,0,.5) 84%,transparent 100%);mask-image:linear-gradient(transparent 0,rgba(0,0,0,.5) 16%,#000 28%,#000 72%,rgba(0,0,0,.5) 84%,transparent 100%)}'+
+  '.odc .ods{display:flex;flex-direction:column;will-change:transform}.odc .ods>span{display:block;height:1em;line-height:1em;text-align:center}'+
+  '.bc .e2y.odo,.bc .e2y:has(.odc){background:none!important;color:inherit!important;-webkit-text-fill-color:currentColor}';document.head.appendChild(st);
+  setInterval(()=>{if(typeof curLayer==='undefined'||!curLayer)return;curLayer.querySelectorAll('.bc:not(.wait) .odo-in:not([data-go])').forEach(e=>{if(e.closest('.slide.enter'))return;e.dataset.go=1;odoRun(e,e.dataset.from,e.dataset.to,{delay:+e.dataset.delay||600})})},100);
+})();
 /* era infographic v1 (Amr 17:37: «عبر عن مصر قبل ٢٠١٤ بطريقة انفوجرافيك مش نصية»; 17:39: «faded roll للتاريخ بيزيد من ٢٠١٤ … لحد ٢٠٢٣
    واحنا بنكتب التايتل … تدي شعور بالتوالي»): Egypt's outline, the year set large, and a time bar 2011 → 2026 whose marked stretch is
    the period the slide talks about. With from: the year rolls up to y, one year at a time, fading, while the bar's mark slides along.
    cfg: k (the words over the year), y, from, stay (the same card on the next slide stays and glides) */
 CARD.era2=function(c,r){const Y0=2011,Y1=2026,y0=c.from||c.y,pos=y=>((y-Y0)/(Y1-Y0)*100).toFixed(2);
-  let pa='',vb='0 0 100 100';try{const P=d3.geoMercator().fitSize([100,100],EGY),g=d3.geoPath(P),b=g.bounds(EGY);pa=g(EGY);vb=`${b[0][0].toFixed(1)} ${b[0][1].toFixed(1)} ${(b[1][0]-b[0][0]).toFixed(1)} ${(b[1][1]-b[0][1]).toFixed(1)}`}catch(e){}
-  return `<div class="e2w"><div class="e2row"><div class="e2t"><span class="e2l">${c.k||''}</span><b class="num e2y" data-to="${c.y}"${c.from?` data-from="${c.from}"`:''}>${y0}</b></div>`+
-    `<svg class="e2m" viewBox="${vb}" preserveAspectRatio="xMidYMid meet"><defs><linearGradient id="e2g${c.y}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3d5cc0"/><stop offset=".6" stop-color="#6e7fd6"/><stop offset="1" stop-color="#ee9873"/></linearGradient></defs><path d="${pa}" fill="url(#e2g${c.y})"/></svg></div>`+
+  /* Amr 17:59: «مصر تبقى outline والكتابة مش بالأهمية دي … محتاجه انفوجرافيك اكتر من انه تايتل»: Egypt drawn as an outline with
+     the Nile, Cairo marked; the words small; the year a wheel counter; the time bar under it */
+  let pa='',nl='',cx=0,cy=0,vb='0 0 100 100';
+  try{const P=d3.geoMercator().fitSize([100,100],EGY),g=d3.geoPath(P),b=g.bounds(EGY),ln=d3.line();pa=g(EGY);
+    nl=(typeof CTXG!=='undefined'&&CTXG.riv?CTXG.riv:[]).map(L=>ln(L.map(P))).join('');const q=P([31.24,30.05]);cx=q[0];cy=q[1];
+    vb=`${(b[0][0]-2).toFixed(1)} ${(b[0][1]-2).toFixed(1)} ${(b[1][0]-b[0][0]+4).toFixed(1)} ${(b[1][1]-b[0][1]+4).toFixed(1)}`}catch(e){}
+  return `<div class="e2w"><div class="e2row"><div class="e2t"><span class="e2l">${c.k||''}</span><b class="num e2y" data-y="${y0}" data-to="${c.y}"${c.from?` data-from="${c.from}"`:''}>${odoHTML(y0)}</b></div>`+
+    `<svg class="e2m" viewBox="${vb}" preserveAspectRatio="xMidYMid meet"><defs><linearGradient id="e2g${c.y}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3d5cc0"/><stop offset=".6" stop-color="#6e7fd6"/><stop offset="1" stop-color="#ee9873"/></linearGradient></defs>`+
+    `<path class="e2o" d="${pa}" stroke="url(#e2g${c.y})"/><path class="e2n" d="${nl}"/><circle class="e2c" cx="${cx}" cy="${cy}" r="2.2"/><circle class="e2p" cx="${cx}" cy="${cy}" r="2.2"/></svg></div>`+
     `<div class="e2b" style="--p:${pos(y0)}%;--a:${pos(c.a||Y0)}%"><i class="e2r"></i><i class="e2s"></i><i class="e2d"></i>${Array.from({length:Y1-Y0+1},(_,i)=>`<i class="e2k" style="right:${pos(Y0+i)}%"></i>`).join('')}</div></div>`};
 (function(){const st=document.createElement('style');st.textContent=
   /* fluid: the content box follows the card while it glides or resizes, and every size is a share of it */
   '.bc>.in:has(>.e2w){container-type:size;inset:24px 26px!important;width:auto!important;height:auto!important;zoom:1!important}'+
   '.bc .e2w{position:absolute;inset:0;display:flex;flex-direction:column;gap:min(5cqh,14px)}'+
   '.bc .e2row{flex:1 1 auto;min-height:0;display:flex;align-items:center;gap:4cqw}'+
-  '.bc .e2t{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:1cqh}'+
-  '.bc .e2m{flex:0 0 46%;height:100%;min-height:0;filter:drop-shadow(0 10px 18px rgba(42,59,134,.25))}'+
-  '.bc .e2l{font:700 min(15cqh,9cqw)/1.1 var(--f-display);color:var(--ink);transition:opacity .4s;white-space:nowrap}'+
-  '.bc .e2y{font-size:min(44cqh,19cqw)!important;font-weight:800;line-height:.9;background:linear-gradient(100deg,#2a3b86 0%,#3d5cc0 45%,#ee9873 100%);-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block;transition:opacity .16s ease,transform .16s ease}'+
+  '.bc .e2t{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:max(3cqh,.18em)}'+
+  '.bc .e2m{flex:0 0 56%;width:56%;min-width:0;height:100%;min-height:0;overflow:visible}'+
+  '.bc .e2m .e2o{fill:rgba(61,92,192,.06);stroke-width:1.4;vector-effect:non-scaling-stroke;stroke-linejoin:round}'+
+  '.bc .e2m .e2n{fill:none;stroke:#5aa7d6;stroke-width:1.6;vector-effect:non-scaling-stroke;stroke-linecap:round;opacity:.9}'+
+  '.bc .e2m .e2c{fill:#ee9873}.bc .e2m .e2p{fill:none;stroke:#ee9873;stroke-width:1.2;vector-effect:non-scaling-stroke;transform-box:fill-box;transform-origin:center;animation:e2p 2.4s ease-out infinite}'+
+  '@keyframes e2p{from{transform:scale(1);opacity:.9}to{transform:scale(5);opacity:0}}'+
+  '.bc .e2l{font:600 min(10cqh,6.5cqw)/1.1 var(--f-display);color:var(--ink);opacity:.8;transition:opacity .4s;white-space:nowrap}'+
+  '.bc .e2y{font-size:min(34cqh,15cqw)!important;font-weight:800;line-height:.9;background:linear-gradient(100deg,#2a3b86 0%,#3d5cc0 45%,#ee9873 100%);-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block;transition:opacity .16s ease,transform .16s ease}'+
   '.bc .e2y.out{opacity:0;transform:translateY(-28%)}.bc .e2y.pre{opacity:0;transform:translateY(28%);transition:none}'+
   '.bc .e2b{position:relative;flex:none;height:14px}'+
   '.bc .e2b .e2r{position:absolute;left:0;right:0;top:6px;height:2px;background:rgba(28,37,71,.18);border-radius:2px}'+
@@ -114,15 +152,12 @@ CARD.era2=function(c,r){const Y0=2011,Y1=2026,y0=c.from||c.y,pos=y=>((y-Y0)/(Y1-
   '.bc .e2b .e2d{position:absolute;top:0;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px #3d5cc0,0 4px 10px -3px rgba(28,37,71,.5);right:calc(var(--p) - 7px);transition:right .28s ease}'+
   '.bc .e2b .e2k{position:absolute;top:3px;width:1px;height:8px;background:rgba(28,37,71,.25)}';document.head.appendChild(st);
   /* the roll: starts once the card is on screen, one year about every 270 ms, the bar's mark keeping pace */
-  const roll=b=>{b.dataset.go=1;const to=+b.dataset.to;let y=+(b.dataset.from||b.dataset.prev);if(!y||y===to)return;const dir=to>y?1:-1,bar=b.closest('.bc').querySelector('.e2b');
-    b.textContent=y;if(bar)bar.style.setProperty('--p',((y-2011)/15*100).toFixed(2)+'%');
-    const step=()=>{if(!b.isConnected||y===to)return;y+=dir;b.classList.add('out');
-      setTimeout(()=>{b.textContent=y;b.classList.remove('out');b.classList.add('pre');void b.offsetWidth;b.classList.remove('pre');
-        if(bar)bar.style.setProperty('--p',((y-2011)/15*100).toFixed(2)+'%');setTimeout(step,y===to?0:190)},130)};      /* about 320 ms a year, each one fully seen */
-    setTimeout(step,700)};
+  const roll=b=>{b.dataset.go=1;const to=+b.dataset.to,y=+(b.dataset.from||b.dataset.prev);if(!y||y===to)return;const bar=b.closest('.bc').querySelector('.e2b');
+    if(bar)bar.style.setProperty('--p',((y-2011)/15*100).toFixed(2)+'%');
+    odoRun(b,y,to,{delay:500,dur:2900,onYear:v=>{if(bar)bar.style.setProperty('--p',((v-2011)/15*100).toFixed(2)+'%')}})};
   /* while a staying card glides in, note the year it showed on the slide before (its old content rides along in .opold) */
   setInterval(()=>{if(typeof curLayer==='undefined'||!curLayer)return;
-    curLayer.querySelectorAll('.bc .opold .e2y').forEach(o=>{const n=o.closest('.bc').querySelector(':scope>.in .e2y');if(n&&!n.dataset.prev&&!n.dataset.go)n.dataset.prev=o.textContent.trim()});
+    curLayer.querySelectorAll('.bc .opold .e2y').forEach(o=>{const n=o.closest('.bc').querySelector(':scope>.in .e2y');if(n&&!n.dataset.prev&&!n.dataset.go)n.dataset.prev=o.dataset.y||o.textContent.trim()});
     curLayer.querySelectorAll('.bc:not(.wait) .e2y:not([data-go])').forEach(b=>{if(!b.closest('.slide.enter')&&(b.dataset.from||b.dataset.prev))roll(b)})},100);
 })();
 /* infographic pieces (Amr 17:41: «الكلام الشرح يكون بطريقة انفوجرافيك بنتوجريد كارت»): the challenge's sentence cut, in its own
@@ -167,6 +202,54 @@ CARD.pieces=function(c,r){const W=r.w-8,H=r.h-12,ar=c.ar||1312/1199,bw=Math.min(
 })();
 /* builds on a full slide (cfg seq): the slide still has no header, but its cards come in steps like any other */
 (function(){const P0=plan;window.plan=function(sp){if(sp&&sp.full&&sp.seq&&!sp._plan){const f=sp.full;sp.full=0;try{return P0(sp)}finally{sp.full=f}}return P0(sp)}})();
+/* infographic cards v2 (Amr 18:01: «تقرا الكلام وتشوف الكارت ممكن يتعبر عنه ازاي … حلول انفوجرافيك بصريا مبهرة»): each card draws what
+   its sentence says; the words stay, small, as the caption. All sizes are shares of the card (container units), so a card that glides
+   or resizes keeps its drawing whole. */
+const cqIn=c=>`.bc>.in:has(>.${c}){container-type:size;inset:24px 26px!important;width:auto!important;height:auto!important;zoom:1!important}`;
+/* «زيادة سكانية متسارعة»: rows of people filling in, faster and faster */
+CARD.popx=function(c,r){const N=c.n||40,T=c.dur||2600;
+  return `<div class="pxw"><div class="pxg">`+Array.from({length:N},(_,i)=>`<span style="--d:${Math.round(T*Math.sqrt(i/N))}ms">${ICON('user-round',20)}</span>`).join('')+
+    `</div><div class="pxa">${ICON('trending-up',22)}</div><div class="pxc">${hl(c.t)}</div></div>`};
+/* «تركزها في نطاق جغرافي محدود .. لا يتجاوز 7% من إجمالي المساحة»: Egypt as an outline, only the Nile valley and delta lit; the share as a split bar */
+CARD.share=function(c,r){let pa='',zs='',vb='0 0 100 100';
+  try{const P=d3.geoMercator().fitSize([100,100],EGY),g=d3.geoPath(P),b=g.bounds(EGY);pa=g(EGY);zs=ZONES.filter(z=>z.t==='valley').map(z=>g(z.g)).join('');
+    vb=`${(b[0][0]-2).toFixed(1)} ${(b[0][1]-2).toFixed(1)} ${(b[1][0]-b[0][0]+4).toFixed(1)} ${(b[1][1]-b[0][1]+4).toFixed(1)}`}catch(e){}
+  return `<div class="shw"><div class="shl">${hl(c.l)}</div><div class="shrow">`+
+    `<svg class="shm" viewBox="${vb}" preserveAspectRatio="xMidYMid meet"><defs><pattern id="shh" width="3" height="3" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="3" stroke="rgba(255,255,255,.18)" stroke-width="1"/></pattern>`+
+    `<linearGradient id="shv" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ffd7bd"/><stop offset="1" stop-color="#ffffff"/></linearGradient><clipPath id="shc"><rect class="shr" x="-10" y="-10" width="140" height="140"/></clipPath></defs>`+
+    `<path d="${pa}" fill="url(#shh)" stroke="rgba(255,255,255,.75)" stroke-width="1.2" vector-effect="non-scaling-stroke"/><g clip-path="url(#shc)"><path class="shz" d="${zs}" fill="url(#shv)"/></g></svg>`+
+    `<div class="shn">${bigNum(c.v,c.u,10)}<div class="shs">${hl(c.sub||'')}</div><div class="shb"><i style="width:${c.v}%"></i></div></div></div></div>`};
+/* «تحديات اقتصادية واجتماعية عانت منها الدولة المصرية لعقود»: two layers piling up over the decades */
+CARD.accum=function(c,r){const L=c.layers||[],n=8,W=100,H=40;
+  const band=(lo,hi)=>{const top=[],bot=[];for(let i=0;i<=n;i++){const x=W-i*W/n,t=i/n;top.push([x,H-(lo+(hi-lo)*Math.pow(t,1.35))*H]);bot.push([x,H-lo*H*Math.pow(t,1.35)])}
+    return 'M'+top.map(p=>p.map(v=>v.toFixed(1)).join(' ')).join('L')+'L'+bot.reverse().map(p=>p.map(v=>v.toFixed(1)).join(' ')).join('L')+'Z'};
+  return `<div class="acw"><svg class="acs" viewBox="0 -2 100 44" preserveAspectRatio="none"><defs><clipPath id="acc"><rect class="acr" x="0" y="-5" width="100" height="50"/></clipPath></defs><g clip-path="url(#acc)">`+
+    `<path d="${band(0,.42)}" class="ac1"/><path d="${band(.42,.86)}" class="ac2"/></g>`+Array.from({length:n+1},(_,i)=>`<line x1="${100-i*100/n}" x2="${100-i*100/n}" y1="40" y2="42" class="act"/>`).join('')+`<line x1="0" x2="100" y1="40" y2="40" class="act"/></svg>`+
+    `<div class="acl">${L.map((t,i)=>`<span class="ac${i+1}t">${hl(t)}</span>`).join('')}</div><div class="acc">${hl(c.t)}</div></div>`};
+(function(){const st=document.createElement('style');st.textContent=cqIn('pxw')+cqIn('shw')+cqIn('acw')+
+  /* people */
+  '.bc .pxw{position:absolute;inset:0;display:grid;grid-template-rows:1fr auto;grid-template-columns:1fr auto;gap:2cqh 3cqw}'+
+  '.bc .pxg{grid-column:1/-1;display:grid;grid-template-columns:repeat(10,1fr);align-content:center;gap:2.4cqh 1cqw;color:#3d5cc0}'+
+  '.bc .pxg span{display:grid;place-items:center;opacity:0;transform:translateY(30%) scale(.6);transition:opacity .35s ease var(--d),transform .5s cubic-bezier(.2,1.4,.4,1) var(--d)}.bc .pxg svg{width:min(14cqh,7.5cqw);height:min(14cqh,7.5cqw);stroke-width:2.2}'+
+  '.bc.go .pxg span{opacity:1;transform:none}.bc .pxg span:nth-child(n+21){color:#ee9873}'+
+  '.bc .pxc{font:700 min(15cqh,7.5cqw)/1.25 var(--f-display);color:var(--ink);align-self:end}.bc .pxa{align-self:end;color:#ee9873}.bc .pxa svg{width:min(16cqh,9cqw);height:min(16cqh,9cqw)}'+
+  /* share map */
+  '.bc .shw{position:absolute;inset:0;display:flex;flex-direction:column;gap:2cqh;color:#fff}'+
+  '.bc .shl{font:600 min(5.2cqh,4.4cqw)/1.4 var(--f-body);opacity:.95}'+
+  '.bc .shrow{flex:1 1 0;min-height:0;display:flex;align-items:center;gap:3cqw}'+
+  '.bc .shm{flex:0 0 58%;width:58%;min-width:0;height:100%;filter:drop-shadow(0 8px 18px rgba(14,18,40,.25))}'+
+  '.bc .shm .shz{filter:drop-shadow(0 0 2px #fff)}.bc .shm .shr{transform:translateY(140px);transition:transform 2.2s cubic-bezier(.16,1,.3,1) .3s}.bc.go .shm .shr{transform:none}'+
+  '.bc .shn{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:1.4cqh}.bc .shn .num{font-size:min(30cqh,22cqw)!important;color:#fff;line-height:.9}'+
+  '.bc .shs{font:600 min(5.4cqh,4.6cqw)/1.3 var(--f-body);opacity:.95}'+
+  '.bc .shb{height:min(3.4cqh,12px);border-radius:99px;background:rgba(255,255,255,.22);overflow:hidden;display:flex;justify-content:flex-start}'+
+  '.bc .shb i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#ffffff,#ffd7bd);transform-origin:right;transform:scaleX(0);transition:transform 1.4s cubic-bezier(.16,1,.3,1) 1.2s}.bc.go .shb i{transform:none}'+
+  /* decades piling up */
+  '.bc .acw{position:absolute;inset:0;display:grid;grid-template-rows:minmax(0,1fr) auto auto;gap:1.6cqh}'+
+  '.bc .acs{width:100%;height:100%;min-height:0;overflow:visible}.bc .acs .ac1{fill:#3d5cc0;opacity:.85}.bc .acs .ac2{fill:#ee9873;opacity:.85}.bc .acs .act{stroke:rgba(28,37,71,.3);stroke-width:1;vector-effect:non-scaling-stroke}'+
+  '.bc .acs .acr{transform-box:fill-box;transform-origin:right;transform:scaleX(0);transition:transform 2.4s cubic-bezier(.4,0,.2,1) .3s}.bc.go .acs .acr{transform:none}'+
+  '.bc .acl{display:flex;gap:3cqw;font:700 min(8cqh,5cqw)/1 var(--f-display)}.bc .acl span{display:inline-flex;align-items:center;gap:.4em}.bc .acl span::before{content:"";width:.7em;height:.7em;border-radius:3px;background:currentColor}'+
+  '.bc .acl .ac1t{color:#3d5cc0}.bc .acl .ac2t{color:#ee9873}'+
+  '.bc .acc{font:600 min(6.6cqh,4.2cqw)/1.4 var(--f-body);color:var(--ink)}';document.head.appendChild(st)})();
 /* typewriter for a title (tw:1): its words write in, as on the quote cards */
 (function(){const T=CARD.title;CARD.title=function(c,r){const h=T(c,r);return c.tw?h.replace('class="ttl1','class="qt ttl1'):h}})();
 /* «مصر قبل 2014» set large and in colour at the top of a title card (Amr 13:06, slide 6: «محتاجه تكبر وتكون ملفتة بصريا»):
@@ -392,7 +475,9 @@ S({n:1,full:1,cards:[
 ]});
 (function(){const st=document.createElement('style');st.textContent=
   '.bc.c5gov .cap{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;margin-top:8px;line-height:1.25}'+
-  '.bc.c5gov .cap b{font:700 24px/1.25 var(--f-display);color:var(--ink)}.bc.c5gov .cap span{font:600 20px/1.25 var(--f-body);color:var(--ink);opacity:.85}';document.head.appendChild(st)})();
+  '.bc.c5gov .cap b{font:700 24px/1.25 var(--f-display);color:var(--ink)}.bc.c5gov .cap span{font:600 20px/1.25 var(--f-body);color:var(--ink);opacity:.85}'+
+  /* Amr 18:07: the turning forum symbol sits at the card's far left, clear of the words */
+  '.bc>.wm.wlogo.cov{left:18px!important;top:50%!important;width:auto!important;height:90%!important;aspect-ratio:1/1;translate:0 -50%}';document.head.appendChild(st)})();
 /* 2, 3 — films */
 S({n:2,full:1,cards:[['frame',[0,0,12,6],{cls:'fcard',src:'opening/index.html?embed=1',poster:'c5/opening',title:'قبل البداية 2011–2014'}]]});   /* Amr 12:58: slide 2 = the opener */
 /* 3 — the film «مصر قبل عام 2014» now plays inside slide 2 (Amr 14:55: «احذف سلايد ٣»). The show counts by place (170 slides),
@@ -415,29 +500,30 @@ const ph4=(items,area)=>{const it=items.map(x=>typeof x==='string'?[x]:x),A=area
 /* Amr 17:37: «مصر قبل 2014» as an infographic, and the security sentence in a card of its own */
 S({n:6,...HS1,cards:[
   ['era2',[8,0,4,3],{bg:'dark2',k:'مصر قبل',y:2014,stay:'era',a:2011}],
-  ['title',[8,3,4,3],{bg:'dark',ic:'shield-alert',t:'الاضطرابات الأمنية والعمليات الإرهابية',fs:46,pz:0}],
+  ['title',[8,3,4,3],{bg:'dark',ic:'shield-alert',t:'الاضطرابات الأمنية والعمليات الإرهابية',fs:46,pz:0,withHero:1}],
   ...photoCards([['image19'],['image16'],['image15'],['image18'],['image17'],['image14'],['image12'],['image13']])]});
 /* 7 — 2011–2023 */
+/* Amr 18:10: the year card and its title come in together, so the counter reads with its words at once (every era slide) */
 S({n:7,...HS1,cards:[
   ['photo',[0,0,8,6],{img:P('image20'),pos:'50% 45%'}],
   /* Amr 17:39: no date card; the year of the card before rolls on from 2014 to 2023 while the title writes itself in */
   ['era2',[8,0,4,3],{bg:'dark2',k:'<span dir="ltr">2011 –</span>',y:2023,from:2014,stay:'era',a:2011}],
-  ['title',[8,3,4,3],{bg:'dark',k:'خلال الفترة (2011- 2023)',ki:'flame',t:'تفاقمت الاضطرابات الامنية والعمليات الإرهابية',fs:44,tw:1,pz:0}],
+  ['title',[8,3,4,3],{bg:'dark',k:'خلال الفترة (2011- 2023)',ki:'flame',t:'تفاقمت الاضطرابات الامنية والعمليات الإرهابية',fs:44,tw:1,pz:0,withHero:1}],
 ]});
 /* 8 — population and urban */
 /* Amr 17:41: the challenge's name first, its sentence as infographic pieces, «مصر قبل 2014» a card of its own (all the challenge slides) */
 S({n:8,...HS1,cards:[
   ['era2',[8,0,4,2],{bg:'dark2',k:'مصر قبل',y:2014,stay:'era',a:2011}],
-  ['title',[8,2,4,2],{bg:'dark',ic:'users',t:'تحدي سكاني وعمراني',fs:54,pz:0}],
-  ['ibox',[4,0,4,2],{bg:'dark2',ic:'users-round',t:'زيادة سكانية متسارعة'}],
-  ['kpi',[4,2,4,4],{bg:'grad',ic:'map',l:'مع تركزها في نطاق جغرافي محدود .. لا يتجاوز',v:7,u:'%',egy:1,wm:0,sub:'من إجمالي المساحة'}],
-  ['ibox',[8,4,4,2],{bg:'dark2',ic:'landmark',t:'بالإضافة إلى تحديات اقتصادية واجتماعية عانت منها الدولة المصرية لعقود',fs:22}],
+  ['title',[8,2,4,1.5],{bg:'dark',ic:'users',t:'تحدي سكاني وعمراني',fs:46,pz:0,withHero:1}],
+  ['accum',[8,3.5,4,2.5],{bg:'dark2',layers:['اقتصادية','اجتماعية'],t:'بالإضافة إلى تحديات اقتصادية واجتماعية عانت منها الدولة المصرية لعقود'}],
+  ['popx',[4,0,4,2],{bg:'dark2',t:'زيادة سكانية متسارعة'}],
+  ['share',[4,2,4,4],{bg:'grad',l:'مع تركزها في نطاق جغرافي محدود .. لا يتجاوز',v:7,u:'%',sub:'من إجمالي المساحة'}],
   ...ph4([['image29'],['image25'],['image24'],['image28'],['image26'],['image23'],['image21'],['image22']]),
 ]});
 /* 9 — infrastructure and services */
 S({n:9,...HS1,cards:[
   ['era2',[8,0,4,2],{bg:'dark2',k:'مصر قبل',y:2014,stay:'era',a:2011}],
-  ['title',[8,2,4,4],{bg:'dark',ic:'construction',t:'البنية الأساسية والخدمات',fs:58,pz:0}],
+  ['title',[8,2,4,4],{bg:'dark',ic:'construction',t:'البنية الأساسية والخدمات',fs:58,pz:0,withHero:1}],
   ['ibox',[4,0,4,2],{bg:'dark2',ic:'construction',t:'تهالك كامل للبنية التحتية'}],
   ['ibox',[4,2,4,2],{bg:'grad',ic:'trending-down',t:'لا تواكب النمو،'}],
   ['ibox',[4,4,4,2],{bg:'dark2',ic:'lock',t:'وتقييد من الحركة والاستثمار'}],
@@ -446,7 +532,7 @@ S({n:9,...HS1,cards:[
 /* 10 — geography */
 S({n:10,...HS1,cards:[
   ['era2',[8,0,4,2],{bg:'dark2',k:'مصر قبل',y:2014,stay:'era',a:2011}],
-  ['title',[8,2,4,2],{bg:'dark',ic:'map-pinned',t:'تحدي جغرافي',fs:58,pz:0}],
+  ['title',[8,2,4,2],{bg:'dark',ic:'map-pinned',t:'تحدي جغرافي',fs:58,pz:0,withHero:1}],
   ['ibox',[8,4,4,2],{bg:'dark2',ic:'map-pin',t:'تركز الأنشطة الاقتصادية والفرص في عدد محدد من المحافظات،',fs:22}],
   ['kpip',[3,0,5,2],{bg:'grad',ic:'building-2',l:'من [[الاستثمار الخاص المحلي]] متركز في القاهرة والجيزة [[1972–2020]]',v:64,u:'%'}],
   ['kpip',[3,2,5,2],{bg:'dark2',ic:'globe',pre:'أكثر من',lfs:22,l:'من تدفقات [[الاستثمار الأجنبي المباشر]] في المشروعات الجديدة توجهت إلى القاهرة والجيزة [[1972–2020]]',v:70,u:'%'}],
@@ -465,7 +551,7 @@ S({n:11,...HS1,cards:[
 /* 12 — the economy before 2014 */
 S({n:12,...HS1,cards:[
   ['era2',[8,0,4,1.5],{bg:'dark2',k:'مصر قبل عام',y:2014,stay:'era',a:2011}],
-  ['title',[8,1.5,4,1.5],{bg:'dark',ic:'trending-down',t:'وقد أفضت هذه التحديات إلى تدهور حاد في الأوضاع الاقتصادية',fs:30,pz:0}],
+  ['title',[8,1.5,4,1.5],{bg:'dark',ic:'trending-down',t:'وقد أفضت هذه التحديات إلى تدهور حاد في الأوضاع الاقتصادية',fs:30,pz:0,withHero:1}],
   ['ilist',[8,3,4,3],{bg:'dark2',h:'تجسد في',items:[['factory','ركود النشاط الإنتاجي،'],['users','وتفاقم البطالة،'],['banknote','وانسحاب الاستثمارات الخاصة،']],foot:'بما أضعف قدرة الاقتصاد على النمو وتوفير فرص العمل.'}],
   ['ft',[4,0,4,2],{bg:'grad',ic:'landmark',l:'احتياطي نقدي (مليار دولار)',a:{v:36,u:''},b:{v:17,u:''}}],
   ['ft',[0,0,4,2],{bg:'dark2',ic:'globe',l:'استثمار أجنبي مباشر (مليار دولار)',a:{v:6.7,u:''},b:{v:3.8,u:''}}],
