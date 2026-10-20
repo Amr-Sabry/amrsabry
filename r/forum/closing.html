@@ -1291,7 +1291,7 @@ let B=null;
 const FLATBG={dark:'var(--g-clear)',dark2:'var(--g-frost)',vio:'var(--g-aurora)',mint:'var(--g-teal)',grad:'var(--g-cobalt)',light:'var(--g-frost)',wi:'var(--g-wi)',kin:'var(--g-aurora)',photo:'#d9dfec',mapc:'var(--g-map)',model:'#14141d'};
 function flatBg(el){const k=['wi','kin','photo','mapc','model','vio','mint','grad','light','dark2','dark'].find(x=>el.classList.contains(x));return FLATBG[k]||'var(--g-clear)'}
 /* motion v10 «stay»: what a card is, to find it again on the next slide (an «مصر قبل 2014» block is the same card whatever its words) */
-function cardKey(type,c){c=c||{};if(type==='title'&&c.era)return 'era|'+c.era.join(' ').replace(/\s*عام\s*/g,' ').trim();
+function cardKey(type,c){c=c||{};if(c.stay)return 'stay|'+c.stay;if(type==='title'&&c.era)return 'era|'+c.era.join(' ').replace(/\s*عام\s*/g,' ').trim();
   const o={};Object.keys(c).sort().forEach(k=>{if(!/^(fs|ss|pz|top|hero|bg|cls|pos|wm|nfs|lfs|lays)$/.test(k))o[k]=c[k]});
   try{return type+'|'+JSON.stringify(o)}catch(e){return ''}}
 /* motion v9 «open & push»: each new card opens from one of its edges, horizontally or vertically, and its moving edge pushes
