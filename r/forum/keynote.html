@@ -268,6 +268,21 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 .cl{position:absolute;left:260px;right:260px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
 .cl .q{font:900 78px/1.35 var(--f)}
 .cl .a{font:700 50px/1.5 var(--f);color:var(--cob);margin-top:50px}
+.tw{position:absolute;right:160px;left:160px;height:130px;display:flex;align-items:center;gap:40px}
+.tw+.tw{border-top:2px solid rgba(28,37,71,.08)}
+.tw .mh{width:520px;flex:none;display:flex;align-items:center;gap:24px}
+.tw .mh .ib{width:64px;height:64px;flex:none;color:#5a6280;display:grid;place-items:center}
+.tw .mn{font:800 42px/1.2 var(--f)}.tw .mu{font:600 34px/1.2 var(--f);opacity:.65}
+.tw .va{width:330px;display:flex;align-items:baseline;justify-content:center;gap:12px}.tw .x{font:700 34px/1 var(--f);white-space:nowrap;opacity:.7}.tw .va .num{font-size:70px;font-weight:600;opacity:.5}
+.tw svg.sl{width:300px;height:110px;flex:none;overflow:visible}
+.tw .vb{width:420px;display:flex;align-items:baseline;justify-content:center;gap:14px}.tw .vb .num{font-size:96px;font-weight:800;color:#2b3350}
+.pc{position:absolute;right:160px;left:160px;display:flex;align-items:center;gap:50px}
+.pc .vv{width:380px;flex:none;text-align:right;white-space:nowrap;display:flex;flex-direction:column;align-items:flex-start}.pc .vv .num{font-size:130px;font-weight:700}
+.pc .pre{font:700 40px/1 var(--f);opacity:.75;margin-bottom:-6px}
+.pc .bx{flex:1}
+.pc .l{font:700 38px/1.3 var(--f);margin-bottom:18px}
+.pc .tr{height:56px;border-radius:18px;background:rgba(28,37,71,.07);box-shadow:inset 0 0 0 2px rgba(28,37,71,.1);overflow:hidden}
+.pc .tr i{display:block;height:100%;background:linear-gradient(270deg,#5a6280,#7a8199);border-radius:18px}
 /* ---- cover: the timeline from 2014 to 2026 and the five moves on the way ---- */
 .cover .kick{position:absolute;top:120px;left:160px;right:160px;text-align:center;font:700 40px/1 var(--f);color:var(--cob)}
 .cover .end{position:absolute;top:220px;width:720px}
@@ -291,7 +306,7 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 <body>
 <div id="vp"><div id="stage"></div></div>
 <div id="hint">← → للتنقل · F ملء الشاشة</div>
-<script src="src/kn/icons.js?v=6"></script>
+<script src="src/kn/icons.js?v=7"></script>
 <script src="src/kn/slides.js?v=4"></script>
 <script>
 const N=v=>`<span class="num">${v}</span>`, G=v=>`<span class="num grad">${v}</span>`;
@@ -324,6 +339,13 @@ const R={
     <div class="mv">${s.moves.map(m=>`<div class="m"><div class="ib">${ICON(m.ic,62)}</div><div class="n">${m.n}</div><div class="t">${m.t}</div></div>`).join('')}</div>`,
   /* one measure; with a callout the pair moves right to leave the callout its room */
   col:s=>HD(s)+colChart({a:s.a,b:s.b,add:s.add,adds:s.adds,call:s.call},(s.call||s.adds)?{x0:300,x1:1260,top:560,base:870}:{x0:360,x1:1560,top:560,base:870},{ya:s.ya,yb:s.yb}),
+  /* a decline told as slopes: the earlier figure, the line, the figure before 2014 */
+  trend:s=>HD(s)+s.rows.map((r,i)=>{const A=fnum(r.a),B=fnum(r.b),M=Math.max(A,B)||1,ya=96-A/M*84,yb=96-B/M*84;
+    return `<div class="tw" style="top:${310+i*142}px"><div class="mh"><div class="ib">${ICON(r.ic,52)}</div><div><div class="mn">${r.nm}</div></div></div>
+      <div class="va">${N(r.a)}${r.u?`<span class="x">${r.u}</span>`:''}</div><svg class="sl" viewBox="0 0 300 110"><line x1="284" y1="${ya.toFixed(1)}" x2="16" y2="${yb.toFixed(1)}" stroke="#5a6280" stroke-width="6" stroke-linecap="round"/><circle cx="284" cy="${ya.toFixed(1)}" r="11" fill="#d9deec" stroke="#8a90a8" stroke-width="5"/><circle cx="16" cy="${yb.toFixed(1)}" r="13" fill="#2b3350"/></svg>
+      <div class="vb">${N(r.b)}${r.u?`<span class="x">${r.u}</span>`:''}</div></div>`}).join(''),
+  /* shares of a whole, each on its own 100% track */
+  pcts:s=>HD(s)+s.rows.map((r,i)=>`<div class="pc" style="top:${330+i*225}px"><div class="vv">${r.pre?`<span class="pre">${r.pre}</span>`:''}${N(r.v)}</div><div class="bx"><div class="l">${r.l}</div><div class="tr"><i style="width:${fnum(r.v)}%"></i></div></div></div>`).join(''),
   /* a portion of a whole: the whole as a full track, then the part of it that was done */
   part:s=>{const W=fnum(s.a.v),P=fnum(s.b.v);
     return HD(s)+`<div class="pt2 o" style="top:380px"><div class="gl"><div class="y">${s.ya||'قبل 2014'}</div><div class="vv">${N(s.a.v)}<span class="u">${s.a.u}</span></div></div><div class="tr"><i style="width:100%"></i><span>${s.a.n||''}</span></div></div>
@@ -383,9 +405,9 @@ const R={
   /* 2–5 measures in rows, each pair of bars on its own scale (a percentage on the whole 100); the years are named once, on the first row */
   rows:s=>{const n=s.rows.length,L=({2:[450,240],3:[380,200],4:[350,165],5:[318,142]})[n]||[380,200];
     return HD(s)+s.rows.map((r,i)=>{const A=r.an!=null?r.an:fnum(r.a),B=r.bn!=null?r.bn:fnum(r.b),M=r.pct?100:(Math.max(A,B)||1),
-      res=(r.pb?240:0)+(r.nbi?300:0)+((r.ax||r.bx)?(s.xw||300):0),w=f=>`calc((100% - ${440+res}px) * ${(f/M).toFixed(4)})`,tr=r.pct?`<b class="trk" style="width:calc(100% - ${440+res}px)"></b>`:'';
-      return `<div class="mr c${n}" style="top:${L[0]+i*L[1]}px"><div class="mh" style="${s.mw?`width:${s.mw}px`:''}"><div class="ib">${ICON(r.ic,n>4?52:64)}</div><div><div class="mn">${r.nm}</div>${r.u?`<div class="mu">${r.u}</div>`:''}</div></div>
-      <div class="mb"><div class="br o"><span class="yl">${i?'':(s.ya||'قبل 2014')}</span>${r.a==null?(r.at?`<span class="at">${r.at}</span>`:N('—')):`<i style="width:${w(A)}"></i>${tr}${N(r.a)}${r.ax?`<span class="x">${r.ax}</span>`:''}`}</div><div class="br n"><span class="yl">${i?'':(s.yb||'2026')}</span><i style="width:${w(B)}"></i>${r.pct?tr:''}${r.pb?`<span class="pb">${r.pb}</span>`:''}${G(r.b)}${r.bx?`<span class="x">${r.bx}</span>`:''}${r.nbi?`<span class="nb">${r.nbi}</span>`:''}</div>${r.nb?`<div class="nb">${r.nb}</div>`:''}</div></div>`}).join('')+(s.foot?`<div class="foot">${s.foot}</div>`:'')},
+      tw=t=>t?t.length*19+24:0,res=(r.pb?240:0)+(r.nbi?300:0)+Math.max(tw([r.u,r.ax].filter(Boolean).join(' ')),tw([r.u,r.bx].filter(Boolean).join(' '))),w=f=>`calc((100% - ${440+res}px) * ${(f/M).toFixed(4)})`,tr=r.pct?`<b class="trk" style="width:calc(100% - ${440+res}px)"></b>`:'';
+      return `<div class="mr c${n}" style="top:${L[0]+i*L[1]}px"><div class="mh" style="${s.mw?`width:${s.mw}px`:''}"><div class="ib">${ICON(r.ic,n>4?52:64)}</div><div><div class="mn">${r.nm}</div>${r.mu?`<div class="mu">${r.mu}</div>`:''}</div></div>
+      <div class="mb"><div class="br o"><span class="yl">${i?'':(s.ya||'قبل 2014')}</span>${r.a==null?(r.at?`<span class="at">${r.at}</span>`:N('—')):`<i style="width:${w(A)}"></i>${tr}${N(r.a)}${(r.u||r.ax)?`<span class="x">${[r.u,r.ax].filter(Boolean).join(' ')}</span>`:''}`}</div><div class="br n"><span class="yl">${i?'':(s.yb||'2026')}</span><i style="width:${w(B)}"></i>${r.pct?tr:''}${r.pb?`<span class="pb">${r.pb}</span>`:''}${G(r.b)}${(r.u||r.bx)?`<span class="x">${[r.u,r.bx].filter(Boolean).join(' ')}</span>`:''}${r.nbi?`<span class="nb">${r.nbi}</span>`:''}</div>${r.nb?`<div class="nb">${r.nb}</div>`:''}</div></div>`}).join('')+(s.foot?`<div class="foot">${s.foot}</div>`:'')},
   /* a share of Egypt's whole area: the same 7% in both rows, and what was added */
   share:s=>{const A=fnum(s.a.v),B=fnum(s.b.v);
     return HD(s)+`<div class="sr o" style="top:450px"><div class="sl"><span class="y">${s.ya||'قبل 2014'}</span>${N(s.a.v)}</div><div class="tr"><i class="b0" style="width:${A}%"></i><span>${s.whole}</span></div></div>
