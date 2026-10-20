@@ -806,6 +806,10 @@ em{color:var(--cobalt)}
 .hd .hdyn.hx-in{opacity:0;transform:translateY(10px);transition:none}
 .mapc .lbx{opacity:0!important;transition:opacity .25s ease!important}
 /* ===== /motion v2 ===== */
+/* motion v7 «scatter» */
+.slide.scatter{z-index:3}.slide.scatter .bc{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;will-change:transform}
+.slide.enter:not(.on) .bc{transform:translateY(46px) scale(.93)}
+.slide.enter .bc:not(.wait){transition-delay:calc(var(--d,0ms) + 360ms),calc(var(--d,0ms) + 360ms),0s,0s,0s,0s,0s}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -1270,6 +1274,21 @@ let B=null;
 /* a card's colour as one flat value, for the frame that turns into it */
 const FLATBG={dark:'var(--g-clear)',dark2:'var(--g-frost)',vio:'var(--g-aurora)',mint:'var(--g-teal)',grad:'var(--g-cobalt)',light:'var(--g-frost)',wi:'var(--g-wi)',kin:'var(--g-aurora)',photo:'#d9dfec',mapc:'var(--g-map)',model:'#14141d'};
 function flatBg(el){const k=['wi','kin','photo','mapc','model','vio','mint','grad','light','dark2','dark'].find(x=>el.classList.contains(x));return FLATBG[k]||'var(--g-clear)'}
+/* motion v7 «scatter»: on a slide change every card of the old slide leaves by its nearest way out (right, left or down),
+   the ones nearest an edge first, speeding up as they go with a slight tilt; the new slide's cards rise into the room they leave */
+function scatterOut(old){
+  old.classList.add('out','scatter');old.classList.remove('on');
+  if(RM){old.remove();return}
+  const W=1600,H=900,els=[...old.querySelectorAll(':scope>.bc')];
+  const it=els.map(el=>{const x=el.offsetLeft,y=el.offsetTop,w=el.offsetWidth,h=el.offsetHeight,cx=x+w/2,cy=y+h/2;
+    const dl=cx,dr=W-cx,db=(H-cy)*1.35,m=Math.min(dl,dr,db);let tx=0,ty=0,rot=0;
+    if(m===db){ty=H-y+90;rot=cx<W/2?-3:3}else if(m===dr){tx=W-x+90;rot=5}else{tx=-(x+w+90);rot=-5}
+    return {el,tx,ty,rot,m}}).sort((a,b)=>a.m-b.m);
+  it.forEach((o,k)=>{const d=Math.min(k*60,420);o.el.style.transition='none';o.el.style.opacity='1';o.el.style.transform='none';
+    o.el.animate([{transform:'none',opacity:1},{transform:`translate(${o.tx*.18}px,${o.ty*.18}px) rotate(${o.rot*.3}deg) scale(.985)`,opacity:1,offset:.35},
+      {transform:`translate(${o.tx}px,${o.ty}px) rotate(${o.rot}deg) scale(.94)`,opacity:.15}],
+      {duration:950,delay:d,easing:'cubic-bezier(.5,0,.75,0)',fill:'forwards'})});
+  setTimeout(()=>old.remove(),1000+Math.min(it.length*60,420)+300)}
 function show(n,dir){
   if(!SLIDES[n]) return; cleanup(); if(B){B.mdone&&B.mdone();B.tm.forEach(clearTimeout);B.cards.forEach(cc=>cc.kill.forEach(f=>f()))}
   const sp=prep(SLIDES[n]); cur=n;
@@ -1279,9 +1298,9 @@ function show(n,dir){
   /* motion v4: push — the old slide slides out, the new one slides in from the other side (direction varies with the content) */
   const pv=old&&old._sp, newSec=!pv||(pv.ax||'')!==(sp.ax||'')||!!sp.full!==!!pv.full; window.__pk=(window.__pk||0)+1;
   let pd=dir<0?'r':'l';      /* side push + fixed header v6 */ /* next always comes in from one side, back from the other (no up / down, nothing random) */
-  if(old){old.classList.add('out','push','to-'+pd);old.classList.remove('on');setTimeout(()=>old.remove(),RM?0:1250)}
-  const L=document.createElement('div');L.className='slide'+(old&&!RM?' push pushin from-'+pd:'');L._sp=sp;L.innerHTML='';hdrSet(sp);stage.appendChild(L);curLayer=L;
-  if(old&&!RM){requestAnimationFrame(()=>requestAnimationFrame(()=>{L.classList.remove('from-'+pd);setTimeout(()=>L.classList.remove('pushin','push'),1200)}))}
+  if(old){scatterOut(old)}      /* motion v7: the old cards leave right, left or down; the new ones rise into the room */
+  const L=document.createElement('div');L.className='slide'+(old&&!RM?' enter':'');L._sp=sp;L.innerHTML='';hdrSet(sp);stage.appendChild(L);curLayer=L;
+  if(old&&!RM)setTimeout(()=>L.classList.remove('enter'),1700);
   const P=plan(sp);
   B={sp,L,P,step:-1,max:P.max,tm:[],cards:(sp.cards||[]).map((cd,i)=>{const [type,g,c]=cd;
     const el=document.createElement('div');el.className='bc wait';L.appendChild(el);

@@ -100,6 +100,12 @@ body.nopv .frame iframe+.ph{display:grid}
 #nav button{display:flex;align-items:center;justify-content:center;gap:10px;min-height:58px;height:100%;border-radius:16px;font:600 18px var(--fd);background:var(--glass2);border:1px solid var(--line);transition:transform .2s var(--ease),filter .2s,background .2s}
 #nav button:hover:not(:disabled){background:rgba(255,255,255,.11)}
 #nav button:active{transform:scale(.98)}
+#nav .jump{grid-column:1/-1;display:grid;grid-template-columns:1fr 1.6fr;gap:10px}
+#nav .jump form{display:grid;grid-template-columns:1fr auto;gap:8px;margin:0}
+#nav .jump button,#nav .jump input{min-height:46px;font-size:16px}
+#nav .jump input{border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:inherit;font:600 18px var(--fd);text-align:center;padding:0 10px;min-width:0;outline:none}
+#nav .jump input:focus{border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.1)}
+#nav .jump #jgo{padding:0 18px}
 #nav .pri{background:linear-gradient(135deg,var(--vio),var(--blue));border-color:transparent;box-shadow:0 14px 34px -16px rgba(110,109,242,.9),inset 0 1px 0 rgba(255,255,255,.22)}
 #nav .pri:hover:not(:disabled){background:linear-gradient(135deg,var(--vio2),var(--blue));filter:brightness(1.06)}
 
@@ -291,6 +297,10 @@ body.nopv .frame iframe+.ph{display:grid}
     <section id="nav" class="tile">
       <button id="prev" type="button"><svg class="i" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>السابق</button>
       <button id="next" type="button" class="pri">التالي<svg class="i" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+      <div class="jump"><!-- jump v1 -->
+        <button id="jfirst" type="button" title="من أول سلايد (Home)"><svg class="i" viewBox="0 0 24 24"><path d="m6 17 5-5-5-5"/><path d="M18 5v14"/></svg>من البداية</button>
+        <form id="jform" autocomplete="off"><input id="jno" class="num" type="text" inputmode="numeric" placeholder="رقم السلايد" aria-label="رقم السلايد"><button id="jgo" type="submit">اذهب</button></form>
+      </div>
     </section>
   </div>
 
@@ -489,6 +499,12 @@ function anim(st){var A=$('anim'),bar=$('bar'),fill=$('abar');
 setInterval(function(){tabs();render()},1500);
 
 /* ---------- controls ---------- */
+/* jump v1: «من البداية» and a slide number (the number shown in the list) */
+function jumpTo(n){var d=info[sel];n=parseInt(String(n).replace(/[٠-٩]/g,function(c){return '٠١٢٣٤٥٦٧٨٩'.indexOf(c)}),10);if(!(n>=1)){toast('اكتب رقم سلايد');return}
+  var tot=d&&d.slides?d.slides.length:0;if(tot&&n>tot){toast('العرض ده '+tot+' سلايد بس');return}send('go',{i:n-1,k:0});startTimer()}
+$('jfirst').onclick=function(){send('go',{i:0,k:0});startTimer()};
+$('jform').onsubmit=function(e){e.preventDefault();var v=$('jno').value;jumpTo(v);$('jno').value='';$('jno').blur()};
+addEventListener('keydown',function(e){if(e.key==='Home'&&!(e.target.closest&&e.target.closest('input,textarea'))){e.preventDefault();send('go',{i:0,k:0});startTimer()}},true);
 $('next').onclick=function(){send('next');startTimer()};
 $('prev').onclick=function(){send('prev')};
 $('replay').onclick=function(){send('replay')};

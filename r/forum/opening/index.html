@@ -126,6 +126,13 @@ body{font-family:var(--f-body);direction:rtl;-webkit-font-smoothing:antialiased;
 #tlh .val b{font-size:54px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--ink)}
 #tlh .val small{font-size:20px;color:rgba(28,37,71,.8);font-weight:600;direction:rtl}
 #tlh .dl{font-size:20px;font-weight:700;padding:4px 14px 6px;border-radius:999px;color:#b5532c;background:rgba(238,152,115,.16);box-shadow:inset 0 0 0 1px rgba(238,152,115,.45);font-variant-numeric:tabular-nums;direction:ltr}
+#tlh{align-items:center}
+#tlh .lbl{display:flex;flex-direction:column;align-items:flex-start;line-height:1.2}
+#tlh .lbl small{margin:3px 0 0!important}
+#tlh .val{display:grid!important;margin:0 auto 0 0!important;grid-template-columns:auto auto;align-items:center;column-gap:14px;row-gap:0}
+#tlh .val .dl{grid-column:1;grid-row:1/3}
+#tlh .val b{grid-column:2;grid-row:1;line-height:.95}
+#tlh .val small{grid-column:2;grid-row:2;text-align:right;line-height:1.2}
 #tlsvg{position:absolute;left:0;top:0;overflow:visible;z-index:2}
 .vchip{position:absolute;z-index:4;padding:6px 14px 7px;border-radius:14px;white-space:nowrap;font-family:var(--f-display);font-size:17px;font-weight:600;color:rgba(28,37,71,.8);text-align:center;line-height:1.2;
   background:linear-gradient(160deg,rgba(255,255,255,.92),rgba(255,255,255,.66));box-shadow:inset 0 1px 0 #fff,inset 0 0 0 1px rgba(255,255,255,.6),0 12px 26px -12px rgba(28,37,71,.45)}
@@ -312,14 +319,14 @@ B.forEach(b=>{(b.cts||[]).forEach(ct=>{ct._w=[...ct.querySelectorAll('.w>i')];ct
 
 /* ---------- timeline chart ---------- */
 const RES=FILM.res, RESL=FILM.resl, EVM=FILM.evm;
-const L=C.L.el;L.insertAdjacentHTML('beforeend','<div id="tlh">'+ICON('landmark')+'<span class="lbl">الاحتياطي من النقد الأجنبي<small>مليار دولار · نهاية كل شهر</small></span><span class="val"><span class="dl" id="tdl">0%</span><b id="tval">36.0</b><small>مليار $ · <span id="twhen">ديسمبر 2010</span></small></span></div><svg id="tlsvg"></svg>');
+const L=C.L.el;L.insertAdjacentHTML('beforeend','<div id="tlh">'+ICON('landmark')+'<span class="lbl">الاحتياطي من النقد الأجنبي<small>مليار دولار · نهاية كل شهر</small></span><span class="val"><span class="dl" id="tdl">0%</span><b id="tval">36.0</b><small><span id="twhen">ديسمبر 2010</span></small></span></div><svg id="tlsvg"></svg>');
 lucide.createIcons();
 const tsvg=document.getElementById('tlsvg'),tval=document.getElementById('tval'),tdl=document.getElementById('tdl'),twhen=document.getElementById('twhen');
 function resAt(m){if(m<=RES[0][0])return RES[0][1];for(let i=1;i<RES.length;i++){if(m<=RES[i][0]){const a=RES[i-1],b=RES[i];return a[1]+(b[1]-a[1])*(m-a[0])/(b[0]-a[0])}}return RES[RES.length-1][1]}
 function lastKnown(m){let k=0;for(let i=0;i<RES.length;i++)if(RES[i][0]<=m+.001)k=i;return k}
 const vchips={};
 function tlDraw(r,m,idx,chips,ct){
-  const g={W:r.w,H:r.h,l:44,r:r.w-34,t:86,b:r.h-50};const X=mm=>g.r-(mm/48)*(g.r-g.l),Y=v=>g.b-(v-10)/(38-10)*(g.b-g.t);
+  const g={W:r.w,H:r.h,l:44,r:r.w-34,t:Math.min(104,r.h*.4),b:r.h-50};const X=mm=>g.r-(mm/48)*(g.r-g.l),Y=v=>g.b-(v-10)/(38-10)*(g.b-g.t);
   let s='';
   for(let yr=0;yr<4;yr++){const x0=X(yr*12),x1=X(yr*12+12);s+='<line x1="'+x0+'" x2="'+x0+'" y1="'+(g.t-8)+'" y2="'+(g.b+6)+'" stroke="rgba(28,37,71,.12)"/>';
     for(let mm=1;mm<12;mm++){const xm=X(yr*12+mm);s+='<line x1="'+xm+'" x2="'+xm+'" y1="'+(g.b+1)+'" y2="'+(g.b+(mm%3?4:7))+'" stroke="rgba(28,37,71,.22)"/>'}

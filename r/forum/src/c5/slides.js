@@ -71,6 +71,24 @@ function vid(n,o){S({n,full:1,cards:[['video',[0,0,12,6],Object.assign({cls:'vca
    '.bc.grad .era span,.bc.vio .era span{color:#fff}.bc.grad .era b.num{background:linear-gradient(100deg,#ffffff,#fbd5bb);-webkit-background-clip:text;background-clip:text}';
   document.head.appendChild(st)})();
 
+/* jump v1 on the show (Amr 13:15: «امكانيه ادخال رقم السلايد او زرار من البداية»): type a slide number and Enter, as in PowerPoint,
+   or use «من البداية» / the box in the bar at the bottom (it shows with the mouse); Home also goes to the first slide */
+if(!C5PV)addEventListener('DOMContentLoaded',()=>{const ui=document.getElementById('ui');if(!ui)return;
+  const st=document.createElement('style');st.textContent='#ui .jf{all:unset;cursor:pointer;font:600 13.5px var(--f-display);color:var(--ink);padding:0 12px;height:38px;display:flex;align-items:center;gap:6px;border-radius:999px;white-space:nowrap}#ui .jf:hover{background:rgba(255,255,255,.72)}#ui .jf svg{width:16px;height:16px}'+
+    '#ui .jn{all:unset;width:58px;height:30px;border-radius:999px;background:rgba(28,37,71,.07);box-shadow:inset 0 0 0 1px rgba(28,37,71,.14);text-align:center;font:600 15px var(--f-display);color:var(--ink);font-variant-numeric:tabular-nums;margin:0 4px}#ui .jn::placeholder{color:rgba(28,37,71,.42);font-size:12.5px}#ui .jn:focus{box-shadow:inset 0 0 0 2px var(--cobalt,#3d5cc0)}';
+  document.head.appendChild(st);
+  const b=document.createElement('button');b.type='button';b.className='jf';b.title='من أول سلايد (Home)';b.innerHTML=ICON('rotate-ccw',16)+'من البداية';
+  const inp=document.createElement('input');inp.className='jn';inp.type='text';inp.inputMode='numeric';inp.placeholder='رقم';inp.setAttribute('aria-label','رقم السلايد');
+  ui.insertBefore(inp,ui.firstChild);ui.insertBefore(b,ui.firstChild);
+  const wk=()=>{try{wake()}catch(e){}};
+  const jump=v=>{const n=parseInt(String(v).replace(/[٠-٩]/g,c=>'٠١٢٣٤٥٦٧٨٩'.indexOf(c)),10);inp.value='';inp.blur();if(SLIDES[n]&&n!==cur)show(n,n>cur?1:-1)};
+  b.onclick=e=>{e.stopPropagation();show(ORDER[0],-1)};
+  inp.addEventListener('click',e=>e.stopPropagation());
+  inp.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'){e.preventDefault();jump(inp.value)}else if(e.key==='Escape'){inp.value='';inp.blur()}});
+  /* digits typed anywhere on the show go into the box */
+  addEventListener('keydown',e=>{if(e.target===inp||e.metaKey||e.ctrlKey||e.altKey)return;if(/^[0-9٠-٩]$/.test(e.key)){e.preventDefault();e.stopImmediatePropagation();wk();inp.focus();inp.value=(inp.value+e.key).slice(-3)}},true);
+});
+
 /* live build (Amr, 20 Oct 12:41: «الابديت يكون لايف قدامي»): while the deck is being built, the page looks at src/c5/live.js
    every 3 s and, when a newer version has landed, reloads itself on the slide it is showing. A script tag, not fetch, so it
    works from file:// too. Switch off for the event: C5_LIVE=false. */
