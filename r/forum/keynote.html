@@ -297,9 +297,11 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 .pq-leg i{width:34px;height:34px;border-radius:9px;background:linear-gradient(0deg,#8a90a8,#a9aec2)}
 .cs{position:absolute;top:300px;height:720px}
 .cs+.cs::before{content:"";position:absolute;right:0;top:30px;bottom:120px;width:2px;background:rgba(28,37,71,.08)}
-.cs .nm{position:absolute;top:0;left:20px;right:20px;text-align:center;font:800 44px/1.2 var(--f)}
+.cs .nm{position:absolute;top:0;left:20px;right:20px;display:flex;align-items:center;justify-content:center;gap:16px;text-align:center;font:800 44px/1.2 var(--f)}.cs .ni{color:var(--cob);flex:none;display:grid}
 .cs .col2{position:absolute;bottom:130px;border-radius:20px 20px 5px 5px}
 .cs .col2.o{background:rgba(28,37,71,.18)}.cs .col2.n{background:linear-gradient(0deg,#2f49ad,#4a67d2)}
+.cs .inb{position:absolute;left:0;right:0;top:16px;text-align:center}
+.cs .col2.n .inb .num{color:#fff;font-size:48px;font-weight:800}.cs .col2.o .inb .num{color:#1c2547;opacity:.65;font-size:42px;font-weight:700}
 .cs .base3{position:absolute;bottom:127px;left:30px;right:30px;height:3px;border-radius:2px;background:rgba(28,37,71,.22)}
 .cs .lb{position:absolute;display:flex;flex-direction:column;align-items:center;text-align:center}
 .cs .lb .num{white-space:nowrap}
@@ -445,11 +447,14 @@ const R={
   rows:s=>{const n=s.rows.length,W=1600/n,H=n>4?260:290;
     return HD(s)+s.rows.map((r,i)=>{const A=r.an!=null?r.an:fnum(r.a),B=r.bn!=null?r.bn:fnum(r.b),M=r.pct?100:(Math.max(A,B)||1),
       bw=Math.min(130,W*.27),gp=Math.max(26,W*.08),cx=W/2,xr=cx-gp/2-bw,xl=cx+gp/2,hA=r.a==null?0:Math.max(10,Math.round(A/M*H)),hB=Math.max(10,Math.round(B/M*H)),
-      ua=[r.u,r.ax].filter(Boolean).join(' '),ub=[r.u,r.bx].filter(Boolean).join(' '),LW=bw+gp+40;
-      return `<div class="cs" style="right:${160+i*W}px;width:${W}px"><div class="nm">${r.nm}</div>
+      ua=[r.u,r.ax].filter(Boolean).join(' '),ub=[r.u,r.bx].filter(Boolean).join(' '),LW=bw+gp+40,sp=t=>{const m=String(t||'').match(/^([\d.,:\s–-]+)\s*(.*)$/);return m?[m[1].trim(),m[2]]:['',t||'']},
+      PA=r.pct&&r.ax?sp(r.ax):null,PB=r.pct&&r.bx?sp(r.bx):null,inA=r.pct?`<div class="inb">${N(r.a)}</div>`:'',inB=r.pct?`<div class="inb">${N(r.b)}</div>`:'',
+      topA=r.pct?(PA?`${N(PA[0])}<span class="uu">${PA[1]}</span>`:''):`${N(r.a)}${ua?`<span class="uu">${ua}</span>`:''}`,
+      topB=r.pct?(PB?`${G(PB[0])}<span class="uu">${PB[1]}</span>`:''):`${G(r.b)}${ub?`<span class="uu">${ub}</span>`:''}`;
+      return `<div class="cs" style="right:${160+i*W}px;width:${W}px"><div class="nm">${r.ic?`<span class="ni">${ICON(r.ic,54)}</span>`:''}<span>${r.nm}</span></div>
         ${r.a==null?`<div class="lb o" style="right:${xr+bw/2-LW/2}px;width:${LW}px;bottom:${130+16}px">${r.at?`<span class="tt">${r.at}</span>`:N('—')}</div>`
-          :`<div class="col2 o" style="right:${xr}px;width:${bw}px;height:${hA}px"></div><div class="lb o" style="right:${xr+bw/2-LW/2}px;width:${LW}px;bottom:${130+hA+14}px">${N(r.a)}${ua?`<span class="uu">${ua}</span>`:''}</div>`}
-        <div class="col2 n" style="right:${xl}px;width:${bw}px;height:${hB}px"></div><div class="lb n" style="right:${xl+bw/2-LW/2}px;width:${LW}px;bottom:${130+hB+14}px">${r.pb?`<span class="pr2">${r.pb}</span>`:''}${G(r.b)}${ub?`<span class="uu">${ub}</span>`:''}</div>
+          :`<div class="col2 o" style="right:${xr}px;width:${bw}px;height:${hA}px">${inA}</div><div class="lb o" style="right:${xr+bw/2-LW/2}px;width:${LW}px;bottom:${130+hA+14}px">${topA}</div>`}
+        <div class="col2 n" style="right:${xl}px;width:${bw}px;height:${hB}px">${inB}</div><div class="lb n" style="right:${xl+bw/2-LW/2}px;width:${LW}px;bottom:${130+hB+14}px">${r.pb?`<span class="pr2">${r.pb}</span>`:''}${topB}</div>
         <div class="base3"></div>
         <div class="yy2 o" style="right:${xr+bw/2-90}px;width:180px">${s.ya||'قبل 2014'}</div><div class="yy2 n" style="right:${xl+bw/2-90}px;width:180px">${s.yb||'2026'}</div>
         ${r.nb?`<div class="nb2">${r.nb}</div>`:''}</div>`}).join('')+(s.foot?`<div class="foot">${s.foot}</div>`:'')},
