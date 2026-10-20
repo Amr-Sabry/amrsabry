@@ -4,5 +4,30 @@
 move(69,{no:'03',k:'التحرك الثالث',t:'التمكين',s:'من سد العجز إلى القدرة على تلبية الاحتياجات',img:'image197',pos:'50% 100%',ic:'zap',
   words:['العجز','القدرة','التمكين'],cur:1});
 /* 70 — the sentence that carries the three moves */
-say(70,HM3,{t:'التعمير يخلق المكان، والربط يتيح الوصول إليه، [[والتمكين يمنحه القدرة على الحياة والإنتاج]]',fs:50,img:'image218',pos:'45% 50%'});
+S({n:70,...HM3,cards:[
+  ['quote',[4,0,8,4],{bg:'dark',t:'التعمير يخلق المكان، والربط يتيح الوصول إليه، [[والتمكين يمنحه القدرة على الحياة والإنتاج]]',fs:48}],
+  ['kin',[8,4,4,2],{words:['التعمير','الربط','التمكين'],cur:2}],
+  ['photo',[4,4,4,2],{img:P('image222'),pos:'50% 60%'}],
+  ['photo',[0,0,4,6],{img:P('image218'),pos:'45% 50%'}],
+]});
+/* before / after with several figures a side (the client's 71, 76, 80, 84, 91, 98): the vs grammar — title, «التحدي» and
+   «نتائج التحرك» on the right — with the figures in two rows (قبل 2014 above, 2026 below), one or two cards a row, photos under them */
+function vsx(n,H,o){const K=x=>x.map(k=>Object.assign({},k)), row=(gs,y,bg,ic,h)=>gs.length===1?[['kpi2',[0,y,8,2],{bg,ic,h,items:K(gs[0]),fs:o.nfs||68}]]
+    :[['kpi2',[4,y,4,2],{bg,ic,h,items:K(gs[0]),fs:o.nfs||68}],['kpi2',[0,y,4,2],{bg,ic,h,items:K(gs[1]),fs:o.nfs||68}]];
+  const ph=(o.imgs||[]).map((x,i,a)=>['photo',a.length===1?[0,4,8,2]:[i?0:4,4,4,2],{img:P(x[0]),pos:x[1],cls:x[2]}]);
+  S(Object.assign({n},H,{cards:[
+  ['title',[8,0,4,2],{bg:'dark',k:o.k||'قبل 2014 ← 2026',ki:'git-compare-arrows',t:o.t,s:o.s,fs:o.fs||36,ss:17}],
+  ['text',[8,2,4,2],{bg:'dark2',h:'التحدي · قبل 2014',ic:'history',t:o.a.t,fs:o.a.fs||18,pie:0}],
+  ['text',[8,4,4,2],{bg:'grad',h:'نتائج التحرك · 2026',ic:'sparkles',t:o.b.t,fs:o.b.fs||18,pie:0}],
+  ...row(o.a.g,0,'dark2','history','قبل 2014'),
+  ...row(o.b.g,2,'mint','trending-up','2026'),
+  ...ph]}))}
+/* 71 — sanitation, before / after */
+vsx(71,HM3,{t:'الصرف الصحي',s:'من سد العجز إلى القدرة على تلبية الاحتياجات',imgs:[['image203','50% 50%']],
+  a:{t:'انخفاض كبير في نسب تغطية الصرف الصحي على مستوى الجمهورية',g:[
+    [{v:12,u:'%',l:'تغطية الصرف الصحي بالريف'},{v:50,u:'%',l:'متوسط الجمهورية'}],
+    [{v:10,u:'مليون م3/ يوم',l:'طاقة المعالجة الكلية'},{v:385,u:'',l:'محطة معالجة'}]]},
+  b:{t:'رفع نسب التغطية والاستخدام الأمثل للموارد المائية المتاحة',g:[
+    [{v:60,u:'%',l:'تغطية الصرف الصحي بالريف'},{v:70,u:'%',l:'متوسط الجمهورية'}],
+    [{v:19,u:'مليون م3/ يوم',l:'طاقة المعالجة الكلية'},{v:622,u:'',l:'محطة معالجة'}]]}});
 })();
