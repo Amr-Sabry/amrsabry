@@ -122,7 +122,7 @@ function ask(n,o){S({n,full:1,cards:[
 
 /* ---------- international testimony ---------- */
 function who(n,H,o){S(Object.assign({n},H,{cards:[
-  ['title',[8,0,4,2],{bg:'dark',k:'شهادات دولية',ki:'globe',t:o.t,fs:o.fs||34}],
+  ['title',[8,0,4,2],{bg:'dark',k:o.k,ki:o.k?'globe':undefined,t:o.t,fs:o.fs||34}],   /* no kicker of our own: only the client's words */
   ...o.items.map((x,i)=>['quote',[i?0:4,0,4,4],{bg:i?'dark2':'grad',t:x.t,by:x.org,fs:x.fs||22}]),
   ['photo',[0,4,12,2],{img:P(o.img),pos:o.pos||'50% 60%'}],
   ...(o.items.length===1?[]:[]),

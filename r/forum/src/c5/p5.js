@@ -121,4 +121,70 @@ S({n:151,...HM5,cards:[
     ['route','الطرق','1446 تجمع ريفي'],['zap','الكهرباء','20 ألف كم شبكات كهرباء'],['droplets','مياه الشرب','455 محطة مياه'],['waves','الصرف الصحي','1516 محطة رفع']]}],
   ['photo',[0,0,4,6],{img:P('image381'),cls:'fit',cap:'التوزيع الجغرافي لمحافظات المرحلة الأولى'}],
 ]});
+/* 152–162 — حياة كريمة, sector by sector: the title column on the right, the client's photos on the left
+   (old pictures stand beside the new ones as on the client's pages; «قبل التطوير» only where the client writes it) */
+const ph=(g,img,pos,tag)=>['photo',g,{img:P(img),pos:pos||'50% 50%',tag}];
+/* 152 — homes */
+S({n:152,...HM5,cards:[
+  ['title',[8,0,4,3],{bg:'dark',ki:'house',t:'المنازل',fs:64}],
+  ['kpi',[8,3,4,3],{bg:'grad',ic:'building',l:'',v:300,u:'عمارة سكنية'}],
+  ph([4,0,4,3],'image384','50% 55%'),ph([4,3,4,3],'image385','50% 55%'),ph([0,0,4,3],'image382','50% 50%'),ph([0,3,4,3],'image383','50% 50%'),
+]});
+/* 153 — sanitation */
+S({n:153,...HM5,cards:[
+  ['title',[8,0,4,2],{bg:'dark',ki:'waves',t:'الصرف الصحي',fs:56}],
+  ['kpi2',[8,2,4,4],{bg:'mint',ic:'factory',h:'',items:[{v:166,u:'',l:'محطة معالجة'},{v:1516,u:'',l:'محطة رفع'}],fs:96}],
+  ph([5,0,3,3],'image388','50% 50%'),ph([0,0,5,3],'image389','50% 0%'),ph([5,3,3,3],'image386','50% 50%'),ph([0,3,5,3],'image387','50% 40%'),
+]});
+/* 154 — drinking water */
+S({n:154,...HM5,cards:[
+  ['title',[8,0,4,3],{bg:'dark',ki:'droplets',t:'مياه الشرب',fs:60}],
+  ['kpi2',[8,3,4,3],{bg:'grad',ic:'droplets',h:'',items:[{v:455,u:'',l:'محطة تنقية'},{v:16,u:'',l:'ألف كم شبكات'}],fs:96}],
+  ph([4,0,4,2],'image390','50% 50%'),ph([4,2,4,4],'image393','50% 40%'),ph([0,0,4,4],'image392','50% 50%'),ph([0,4,4,2],'image391','50% 60%'),
+]});
+/* 155 — canal lining */
+S({n:155,...HM5,cards:[
+  ['title',[8,0,4,2],{bg:'dark',ki:'waves',t:'تبطين الترع',fs:56}],
+  ['kpi',[8,2,4,4],{bg:'mint',ic:'ruler',l:'',v:5,u:'آلاف كم',vis:0,fs:200}],
+  ph([4,0,4,2],'image396','50% 60%'),ph([4,2,4,4],'image395','50% 60%'),ph([0,0,4,4],'image397','50% 60%'),ph([0,4,4,2],'image394','50% 55%'),
+]});
+/* 156 — health facilities */
+S({n:156,...HM5,cards:[
+  ['title',[8,0,4,3],{bg:'dark',ki:'heart-pulse',t:'المنشآت الصحية',fs:56}],
+  ['kpi2',[8,3,4,3],{bg:'grad',ic:'stethoscope',h:'',items:[{v:1101,u:'',l:'وحدة ومركز طبي'},{v:11,u:'',l:'مستشفى'}],fs:96}],
+  ph([4,0,4,3],'image399','50% 50%','قبل التطوير'),ph([4,3,4,3],'image401','50% 50%'),ph([0,0,4,3],'image398','50% 50%'),ph([0,3,4,3],'image400','50% 50%'),
+]});
+/* 157 — youth centres */
+S({n:157,...HM5,cards:[
+  ['title',[8,0,4,2],{bg:'dark',ki:'users-round',t:'مراكز الشباب',fs:56}],
+  ['kpi',[8,2,4,4],{bg:'mint',ic:'users-round',l:'',v:983,u:'مركز',fs:170}],
+  ph([6,0,2,6],'image403','50% 50%','قبل التطوير'),ph([3,0,3,3],'image404','50% 50%'),ph([0,0,3,3],'image402','50% 50%'),ph([0,3,6,3],'image405','50% 55%'),
+]});
+/* 158 — schools */
+S({n:158,...HM5,cards:[
+  ['title',[8,0,4,3],{bg:'dark',ki:'school',t:'المنشآت التعليمية',fs:52}],
+  ['kpi',[8,3,4,3],{bg:'grad',ic:'school',l:'',v:2428,u:'منشآه تعليمية',fs:120}],
+  ph([5,0,3,6],'image406','50% 50%','قبل التطوير'),ph([0,0,5,3],'image407','50% 40%'),ph([0,3,5,3],'image408','50% 50%'),
+]});
+/* 159 — government service complexes */
+S({n:159,...HM5,cards:[
+  ['title',[8,0,4,2],{bg:'dark',ki:'landmark',t:'المجمعات الحكومية',fs:48}],
+  ph([8,2,4,4],'image410','50% 40%'),ph([4,0,4,3],'image409','50% 50%'),ph([0,0,4,3],'image412','50% 50%'),ph([0,3,8,3],'image411','50% 45%'),
+]});
+/* 160 — agricultural complexes */
+S({n:160,...HM5,cards:[
+  ['title',[8,0,4,2],{bg:'dark',ki:'sprout',t:'المجمعات الزراعية',fs:48}],
+  ph([8,2,4,4],'image413','50% 50%'),ph([6,0,2,6],'image415','45% 50%'),ph([0,0,6,3],'image414','50% 45%'),ph([0,3,6,3],'image416','50% 55%'),
+]});
+/* 161 — post offices */
+S({n:161,...HM5,cards:[
+  ['title',[8,0,4,3],{bg:'dark',ki:'mail',t:'مكاتب البريد',fs:60}],
+  ['kpi',[8,3,4,3],{bg:'mint',ic:'mail',l:'إنشاء ورفع كفاءة',v:850,u:'مكتب بريد',fs:130}],
+  ph([4,0,4,6],'image417','40% 50%'),ph([0,0,4,3],'image418','50% 50%'),ph([0,3,4,3],'image419','50% 50%'),
+]});
+/* 162 — social solidarity facilities */
+S({n:162,...HM5,cards:[
+  ['title',[8,0,4,2],{bg:'dark',ki:'hand-heart',t:'منشآت التضامن الاجتماعي',fs:44}],
+  ph([8,2,4,4],'image421','50% 50%'),ph([0,0,8,2],'image420','50% 40%'),ph([4,2,4,4],'image423','50% 50%'),ph([0,2,4,4],'image422','50% 50%'),
+]});
 })();
