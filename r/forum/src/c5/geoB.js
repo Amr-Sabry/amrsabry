@@ -1,7 +1,7 @@
 /* closing deck · photo locators for the photos V3 did not have (filled in by its builder) */
 (function(){ if(typeof SITEG==='undefined')return; Object.assign(SITEG,{
   'c5/image88':[31.34,29.994,'الأسمرات 1-2','s'],
-  'c5/image93':[31.237,30.027,'تل العقارب – روضة السيدة','s'],
+  'c5/image93':[31.237,30.027,'روضة السيدة','s'],
   'c5/image94':[31.244,30.012,'حدائق الفسطاط','s'],
   'c5/image96':[31.26,30.05,'تطوير القاهرة التاريخية','s'],
   'c5/image168':[32.33,30.68,'ازدواج قناة السويس','s'],

@@ -837,7 +837,7 @@ em{color:var(--cobalt)}
 <script src="src/models.js"></script>
 <script>
 /* ---------- basics ---------- */
-const TOTAL=249;
+const TOTAL=171;      /* closing deck: slides are numbered by their place in the show (3 now plays inside 2, so 170 in all) */
 const state={step:0};
 const RM=matchMedia('(max-width:1px)').matches;
 /* house rule: no pig (piggy bank for savings) and no cross as a symbol (health, hospitals, ambulances) */
@@ -1275,34 +1275,78 @@ let B=null;
 /* a card's colour as one flat value, for the frame that turns into it */
 const FLATBG={dark:'var(--g-clear)',dark2:'var(--g-frost)',vio:'var(--g-aurora)',mint:'var(--g-teal)',grad:'var(--g-cobalt)',light:'var(--g-frost)',wi:'var(--g-wi)',kin:'var(--g-aurora)',photo:'#d9dfec',mapc:'var(--g-map)',model:'#14141d'};
 function flatBg(el){const k=['wi','kin','photo','mapc','model','vio','mint','grad','light','dark2','dark'].find(x=>el.classList.contains(x));return FLATBG[k]||'var(--g-clear)'}
-/* motion v8 «push»: each card of the old slide leaves by its nearest way out (right, left or down); the cards going the same
-   way move together, and the new slide shows only where no old card is or will pass (a mask), so the new cards are drawn in
-   behind the old ones and push them out; nothing overlaps */
-function pushOut(old,L){
+/* motion v9 «open & push»: each new card opens from one of its edges, horizontally or vertically, and its moving edge pushes
+   the old cards out ahead of it (an old card in front of another pushes that one too); the opening directions are picked so
+   that no old card has to cross a new one, and wherever one still would, the new card wins the space; nothing overlaps */
+function openPush(old,L){
+  if(old._opStop)old._opStop();
   old.classList.add('out','scatter');old.classList.remove('on');
-  if(RM){old.remove();return}
-  const W=1600,H=900,T=1050,cs=[...old.querySelectorAll(':scope>.bc:not(.wait)')];
-  const g={r:[],l:[],d:[]};
-  cs.forEach(el=>{const x=el.offsetLeft,y=el.offsetTop,w=el.offsetWidth,h=el.offsetHeight,cx=x+w/2,cy=y+h/2;
-    const dl=cx,dr=W-cx,db=(H-cy)*1.35,m=Math.min(dl,dr,db),k=m===db?'d':(m===dr?'r':'l');
-    el.style.transition='none';el.style.opacity='1';g[k].push({el,x,y,w,h})});
-  const need={r:Math.max(0,...g.r.map(c=>W-c.x))+40,l:Math.max(0,...g.l.map(c=>c.x+c.w))+40,d:Math.max(0,...g.d.map(c=>H-c.y))+40};
-  const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2, lag={r:0,l:40,d:90};
-  const rects=D=>{const R=[];g.r.forEach(c=>R.push([c.x+D.r,c.y,W+200-(c.x+D.r),c.h]));g.l.forEach(c=>R.push([-200,c.y,c.x+c.w-D.l+200,c.h]));
-    g.d.forEach(c=>R.push([c.x,c.y+D.d,c.w,H+200-(c.y+D.d)]));return R.filter(r=>r[2]>0&&r[3]>0)};
-  const mask=R=>{if(!R.length){L.style.webkitMaskImage=L.style.maskImage='';return}
-    const im=['linear-gradient(#000 0 0)'].concat(R.map(()=>'linear-gradient(#000 0 0)')).join(',');
-    const pos=['0 0'].concat(R.map(r=>`${r[0].toFixed(1)}px ${r[1].toFixed(1)}px`)).join(',');
-    const sz=['100% 100%'].concat(R.map(r=>`${r[2].toFixed(1)}px ${r[3].toFixed(1)}px`)).join(',');
-    const cp=['subtract'].concat(R.map(()=>'add')).join(',');
-    Object.assign(L.style,{maskImage:im,webkitMaskImage:im,maskPosition:pos,webkitMaskPosition:pos,maskSize:sz,webkitMaskSize:sz,maskRepeat:'no-repeat',webkitMaskRepeat:'no-repeat',maskComposite:cp,maskMode:'alpha'})};
-  const t0=performance.now();
-  const frame=()=>{const e=performance.now()-t0,D={};
-    ['r','l','d'].forEach(k=>{const p=Math.max(0,Math.min(1,(e-lag[k])/T));D[k]=need[k]*ease(p)});
-    g.r.forEach(c=>c.el.style.transform=`translateX(${D.r}px)`);g.l.forEach(c=>c.el.style.transform=`translateX(${-D.l}px)`);g.d.forEach(c=>c.el.style.transform=`translateY(${D.d}px)`);
-    mask(rects(D));
-    if(e<T+Math.max(...Object.values(lag))+20&&old.isConnected)requestAnimationFrame(frame);else{mask([]);old.remove();L.classList.remove('enter')}};
-  mask(rects({r:0,l:0,d:0}));requestAnimationFrame(frame)}
+  if(RM){old.remove();L.classList.remove('enter');return}
+  const W=1600,H=900,G=16,SL=window.__opSlow||1,TO=1000*SL,TB=1150*SL;
+  const box=el=>({x:el.offsetLeft,y:el.offsetTop,w:el.offsetWidth,h:el.offsetHeight});
+  const O=[...old.querySelectorAll(':scope>.bc:not(.wait)')].map(el=>({el,r:box(el)})).filter(o=>o.r.w>0&&o.r.h>0);
+  O.forEach(o=>{o.el.style.transition='none';o.el.style.opacity='1'});
+  const N=[...L.querySelectorAll(':scope>.bc:not(.wait)')].map(el=>({el,r:box(el)})).filter(n=>n.r.w>0&&n.r.h>0);
+  const sr=(r,d)=>d==='l'?[-(r.x+r.w),-r.x]:d==='r'?[r.x,r.x+r.w]:d==='d'?[r.y,r.y+r.h]:[-(r.y+r.h),-r.y];      /* [back, front] along d */
+  const band=(r,d)=>(d==='l'||d==='r')?[r.y,r.y+r.h]:[r.x,r.x+r.w];
+  const bov=(a,b)=>Math.min(a[1],b[1])-Math.max(a[0],b[0]);
+  const ia=(a,b)=>Math.max(0,Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x))*Math.max(0,Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y));
+  const sweep=(r,d)=>d==='l'?{x:-400,y:r.y,w:r.x+r.w+400,h:r.h}:d==='r'?{x:r.x,y:r.y,w:W+400-r.x,h:r.h}:d==='d'?{x:r.x,y:r.y,w:r.w,h:H+400-r.y}:{x:r.x,y:-400,w:r.w,h:r.y+r.h+400};
+  const need=(r,d)=>d==='l'?r.x+r.w+40:d==='r'?W-r.x+40:d==='d'?H-r.y+40:r.y+r.h+40;
+  const DO=['l','r','d','u'],DN=['l','r','d'],WX={l:1,r:1,d:1.3,u:1.9};
+  /* the cost of each way out of each old card: its distance, plus what it does to each new card on its way — pushed ahead of
+     its opening edge (free), or the new card waits until the old one has gone by (cost: how far), or a crossing (dear) */
+  const OPP={l:'r',r:'l',d:'u',u:'d'};
+  const pre=O.map(o=>DO.map(d=>{const S=sweep(o.r,d),A=o.r.w*o.r.h,b0=sr(o.r,d)[0];
+    return {d,S,A,ex:need(o.r,d)/W*WX[d],c:N.map(n=>{const I=ia(S,n.r);if(I<60)return null;const inside=ia(o.r,n.r)>=60,cc={};
+      DN.forEach(e=>{if(e===d){const a0=sr(n.r,d)[0];cc[e]=b0>=a0-6?0:(a0-b0)/W*1.5}
+        else cc[e]=inside?Math.max(0,sr(n.r,d)[1]-b0)/W*2:I/A*3+1});return cc}),
+      oo:O.map(p=>{if(p===o)return 0;const I=ia(S,p.r);return I<60?0:{I:I/A*1.5,ahead:sr(p.r,d)[0]>=sr(o.r,d)[1]-6}})}}));
+  const costO=(oi,e,od)=>{let best=1e9,bd='l';pre[oi].forEach(p=>{let c=p.ex;
+      p.c.forEach((x,j)=>{if(x)c+=x[e[j]]});
+      if(od)p.oo.forEach((x,k)=>{if(x&&!(od[k]===p.d&&x.ahead))c+=x.I});
+      if(od)O.forEach((q,k)=>{if(k===oi||od[k]===p.d)return;const I=ia(p.S,sweep(q.r,od[k]));if(I>60)c+=I/Math.min(p.A,q.r.w*q.r.h)*.8});      /* two old cards whose ways out cross */
+      if(c<best){best=c;bd=p.d}});return [best,bd]};
+  const prefN=(n,e)=>{const cx=n.r.x+n.r.w/2;return e==='d'?.12:((e==='l')===(cx<W/2)?0:.25)};
+  const evalE=e=>{let c=0;N.forEach((n,j)=>c+=prefN(n,e[j]));O.forEach((o,i)=>c+=costO(i,e)[0]);return c};
+  let E=N.map(n=>n.r.x+n.r.w/2<W/2?'l':'r'),EC=1e9;
+  if(N.length<=8){const k=N.length,tot=Math.pow(3,k),e=new Array(k);
+    for(let m=0;m<tot;m++){let v=m;for(let q=0;q<k;q++){e[q]=DN[v%3];v=(v/3)|0}const c=evalE(e);if(c<EC-1e-9){EC=c;E=e.slice()}}}
+  else{EC=evalE(E);for(let it=0;it<3;it++)N.forEach((n,q)=>DN.forEach(d=>{const e=E.slice();e[q]=d;const c=evalE(e);if(c<EC-1e-9){EC=c;E=e}}))}
+  let od=O.map((o,i)=>costO(i,E)[1]);
+  for(let it=0;it<3;it++)od=O.map((o,i)=>costO(i,E,od)[1]);      /* old cards in a row leave the same way, or out of each other's way */
+  N.forEach((n,q)=>{n.d=E[q];const s2=sr(n.r,n.d);n.a0=s2[0];n.len=s2[1]-s2[0];n.b=band(n.r,n.d);n.dl=q*50*SL});
+  const NG={};O.forEach((o,i)=>{o.d=od[i];const s2=sr(o.r,o.d);o.b0=s2[0];o.f0=s2[1];o.b=band(o.r,o.d);o.need=need(o.r,o.d);NG[o.d]=Math.max(NG[o.d]||0,o.need)});
+  const OS=O.slice().sort((a,b)=>a.b0-b.b0);
+  const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2, cl=x=>Math.max(0,Math.min(1,x));
+  const st=window.__opStat={dirsN:E.join(''),dirsO:od.join(''),cut:0,oo:0};
+  let stop=false,t0=performance.now(),fid=0;
+  const end=()=>{stop=true;N.forEach(n=>n.el.style.removeProperty('clip-path'));old.remove();L.classList.remove('enter');L._opStop=null};
+  L._opStop=end;
+  const frame=()=>{if(stop)return;const t=performance.now()-t0;let done=true;fid++;
+    N.forEach(n=>{n.a=ease(cl((t-n.dl)/TO))});
+    OS.forEach(o=>{let D=NG[o.d]*ease(cl((t-40*SL)/TB));
+      N.forEach(n=>{if(n.d!==o.d||bov(n.b,o.b)<=2)return;const dist=o.b0-n.a0;if(dist<-6)return;const g=Math.min(G,Math.max(0,dist));D=Math.max(D,n.a*n.len-(Math.max(0,dist)-g))});
+      OS.forEach(p=>{if(p===o||p.fid!==fid||p.d!==o.d||bov(p.b,o.b)<=2)return;const gap=o.b0-p.f0;if(gap<-6)return;const g=Math.min(G,Math.max(0,gap));D=Math.max(D,p.D-(Math.max(0,gap)-g))});
+      o.D=D;o.fid=fid;if(D<o.need)done=false;
+      const tx=o.d==='l'?-D:o.d==='r'?D:0,ty=o.d==='d'?D:o.d==='u'?-D:0;o.el.style.transform=`translate(${tx}px,${ty}px)`;o.c={x:o.r.x+tx,y:o.r.y+ty,w:o.r.w,h:o.r.h}});
+    N.forEach(n=>{let h=n.len;
+      O.forEach(o=>{if(bov(band(o.c,n.d),n.b)<=2)return;const q=sr(o.c,n.d);
+        if(o.d===n.d){if(o.b0+6>=n.a0)return;h=Math.min(h,Math.max(0,q[0]-G-n.a0));return}
+        if(q[1]<=n.a0+1)return;if(q[0]<=n.a0||o.d===OPP[n.d]){h=0;return}h=Math.min(h,Math.max(0,q[0]-G-n.a0))});
+      n.f=Math.max(n.f||0,Math.min(n.a*n.len,h));if(n.f<n.len-.5)done=false});
+    N.forEach(n=>{const r=n.r,v=n.f,cut=Math.max(0,(n.d==='d'?r.h:r.w)-v);
+      n.v=n.d==='l'?{x:r.x+r.w-v,y:r.y,w:v,h:r.h}:n.d==='r'?{x:r.x,y:r.y,w:v,h:r.h}:{x:r.x,y:r.y,w:r.w,h:v};
+      n.el.style.setProperty('clip-path',n.f>=n.len-.5?'none':(n.d==='l'?`inset(0 0 0 ${cut}px round 22px)`:n.d==='r'?`inset(0 ${cut}px 0 0 round 22px)`:`inset(0 0 ${cut}px 0 round 22px)`),'important')});
+    /* where an old card would still be over an opening card, the new card wins: the old one is cut back at that side */
+    O.forEach(o=>{const c=o.c;let il=0,ir=0,it=0,ib=0;
+      N.forEach(n=>{const v=n.v;if(v.w<=0||v.h<=0)return;const x0=Math.max(c.x,v.x),x1=Math.min(c.x+c.w,v.x+v.w),y0=Math.max(c.y,v.y),y1=Math.min(c.y+c.h,v.y+v.h);
+        if(x1-x0<=1||y1-y0<=1)return;const opt=[['l',x1-c.x],['r',c.x+c.w-x0],['t',y1-c.y],['b',c.y+c.h-y0]].sort((a,b)=>a[1]-b[1]);
+        const [sd,q]=opt[0];if(sd==='l')il=Math.max(il,q);else if(sd==='r')ir=Math.max(ir,q);else if(sd==='t')it=Math.max(it,q);else ib=Math.max(ib,q);st.cut=Math.max(st.cut,q*(sd==='l'||sd==='r'?c.h:c.w)/(c.w*c.h))});
+      o.el.style.setProperty('clip-path',(il||ir||it||ib)?`inset(${it}px ${ir}px ${ib}px ${il}px round 22px)`:'none','important')});
+    for(let a=0;a<O.length;a++)for(let b=a+1;b<O.length;b++){const A=O[a].c,B2=O[b].c;const I=ia(A,B2);if(I>0)st.oo=Math.max(st.oo,I/Math.min(A.w*A.h,B2.w*B2.h))}
+    if(!done&&t<2400*SL&&old.isConnected)requestAnimationFrame(frame);else end()};
+  frame()}
 function show(n,dir){
   if(!SLIDES[n]) return; cleanup(); if(B){B.mdone&&B.mdone();B.tm.forEach(clearTimeout);B.cards.forEach(cc=>cc.kill.forEach(f=>f()))}
   const sp=prep(SLIDES[n]); cur=n;
@@ -1313,7 +1357,6 @@ function show(n,dir){
   const pv=old&&old._sp, newSec=!pv||(pv.ax||'')!==(sp.ax||'')||!!sp.full!==!!pv.full; window.__pk=(window.__pk||0)+1;
   let pd=dir<0?'r':'l';      /* side push + fixed header v6 */ /* next always comes in from one side, back from the other (no up / down, nothing random) */
   const L=document.createElement('div');L.className='slide'+(old&&!RM?' enter':'');L._sp=sp;L.innerHTML='';hdrSet(sp);stage.appendChild(L);curLayer=L;
-  if(old)pushOut(old,L);      /* motion v8 */
   const P=plan(sp);
   B={sp,L,P,step:-1,max:P.max,tm:[],cards:(sp.cards||[]).map((cd,i)=>{const [type,g,c]=cd;
     const el=document.createElement('div');el.className='bc wait';L.appendChild(el);
@@ -1322,6 +1365,7 @@ function show(n,dir){
   B.cards.forEach(cc=>{place(cc.el,cc.r0);if(cc.st>0&&!/^(map|model|photo)$/.test(cc.type))paint(cc,cc.r0)});
   B.morph=gh.length>0;
   setStep(dir<0?P.max:0,true);
+  if(old)openPush(old,L);      /* motion v9 */
   if(gh.length){
     /* motion v3: the old cards glide and stretch onto the new cards' places and take on their colour (no fade);
        each new card gets one frame first, spare frames join the nearest; then the new content comes in */
@@ -1339,7 +1383,7 @@ function show(n,dir){
     B.mt=setTimeout(()=>B.mdone&&B.mdone(),1050);
   }
   requestAnimationFrame(()=>requestAnimationFrame(()=>L.classList.add('on')));
-  document.querySelector('#prog i').style.width=(n/TOTAL*100)+'%';
+  document.querySelector('#prog i').style.width=((ORDER.indexOf(n)+1)/ORDER.length*100)+'%';
   try{history.replaceState(null,'','#'+n)}catch(e){}
   /* motion v2: the photos of the next two slides load and decode now, so their cards open full, not empty */
   try{const PRE=window.__pre||(window.__pre={}),ix=ORDER.indexOf(n);[ORDER[ix+1],ORDER[ix+2]].forEach(nx=>{if(nx==null||!SLIDES[nx])return;(JSON.stringify(SLIDES[nx]).match(/p\d+_[a-z0-9_]+/g)||[]).forEach(k=>{if(PRE[k])return;const im=new Image();im.decoding='async';im.src=IMG(k);PRE[k]=im;im.decode&&im.decode().catch(()=>{})})})}catch(e){}
@@ -1369,7 +1413,7 @@ function setStep(k,init){
     cc.r=r;
   });
   b.L.querySelectorAll('[data-st]').forEach(x=>x.classList.toggle('wait',+x.dataset.st>k));
-  document.getElementById('lab').innerHTML=`<b>${cur}</b> / ${TOTAL}`+(b.max>0?`<span id="sdots">${Array.from({length:b.max+1},(_,i)=>`<i class="${i<=k?'on':''}${i===k?' now':''}"></i>`).join('')}</span>`:'');
+  document.getElementById('lab').innerHTML=`<b>${ORDER.indexOf(cur)+1}</b> / ${ORDER.length}`+(b.max>0?`<span id="sdots">${Array.from({length:b.max+1},(_,i)=>`<i class="${i<=k?'on':''}${i===k?' now':''}"></i>`).join('')}</span>`:'');
 }
 window.__stepAll=()=>{if(B)setStep(B.max)};window.__step=k=>{if(B)setStep(Math.min(B.max,k))};
 function go(d){

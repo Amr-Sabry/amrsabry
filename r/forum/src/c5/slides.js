@@ -82,6 +82,34 @@ function vid(n,o){S({n,full:1,cards:[['video',[0,0,12,6],Object.assign({cls:'vca
   document.head.appendChild(st)})();
 
 /* a cycle: the items sit on a ring around the centre sentence, joined by arrows that keep turning (slide 11) */
+/* one measure, before and after, side by side in one card (Amr 14:34: «المقارنة تكون كل حاجة جمب بعضها على حسب البند … خلي دايما
+   ده اسلوبك»): قبل 2014 on the right, 2026 on the left in its own colour, an arrow between; the measure's name once on top when
+   both sides share it (the rest of each label stays under its own figure); several measures in one card stack as rows */
+CARD.cmp=function(c,r){const rows=c.rows||[{a:c.a,b:c.b}],n=rows.length;
+  const sp=l=>String(l||'').split(/<br\s*\/?>/i), one=n===1;
+  const R=rows.map(x=>{const A=sp(x.a.l),B=sp(x.b.l),sh=A.length>1&&B.length>1&&A[0].trim()===B[0].trim()||(A.length===1&&B.length===1&&A[0].trim()===B[0].trim()&&A[0].trim()!=='');
+    return {a:x.a,b:x.b,name:sh?A[0].trim():(x.name||''),na:(sh?A.slice(1):A).join('<br>'),nb:(sh?B.slice(1):B).join('<br>')}});
+  const head=c.h||(one&&R[0].name)||'', aw=(r.w-52-56)/2, ah=(r.h-48-(head?52:0)-(one?0:n*30))/n;
+  const fs=c.fs||Math.round(Math.min(ah*(one?.36:.42),aw*.3,one?120:84));
+  const fig=(x,note,cls)=>`<div class="cmpc ${cls}"><span class="cmpk">${ICON(cls==='a'?'history':'trending-up',17)}${cls==='a'?(c.ya||'قبل 2014'):(c.yb||'2026')}</span>`+
+    `<div class="cmpv">${x.u==='%'?`<div class="k2p">${pieSVG(x.v,fs*.95,cls==='a'?'then':'')}${bigNum(x.v,x.u,fs)}</div>`:bigNum(x.v,x.u,fs)}</div>`+
+    (note?`<div class="sub cmps">${hl(note)}</div>`:'')+`</div>`;
+  return (head?`<div class="hdr cmph">${ICON(c.ic||'git-compare-arrows',27)}<span class="lab">${hl(head)}</span></div>`:'')+
+    `<div class="cmpw">`+R.map(x=>(!one&&x.name?`<div class="cmpn">${hl(x.name)}</div>`:'')+
+      `<div class="cmpr">${fig(x.a,x.na,'a')}<span class="cmpx">${ICON('arrow-left',30)}</span>${fig(x.b,x.nb,'b')}</div>`).join('')+`</div>`};
+(function(){const st=document.createElement('style');st.textContent=
+  '.bc .cmpw{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;gap:12px;min-height:0}'+
+  '.bc .cmpn{font:700 19px/1.3 var(--f-display);color:var(--ink);margin-bottom:-4px}'+
+  '.bc .cmpr{flex:1 1 0;min-height:0;display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:12px}'+
+  '.bc .cmpc{display:flex;flex-direction:column;justify-content:center;gap:6px;padding:14px 18px;border-radius:18px;min-width:0}'+
+  '.bc .cmpc.a{background:rgba(28,37,71,.05);box-shadow:inset 0 0 0 1px rgba(28,37,71,.08)}'+
+  '.bc .cmpc.b{background:linear-gradient(150deg,#2b7890 0%,#3f93aa 55%,#6cb1c4 100%);color:#fff;box-shadow:0 18px 34px -22px rgba(31,104,128,.85)}'+
+  '.bc .cmpc.b .num,.bc .cmpc.b .sub,.bc .cmpc.b .cmpk{color:#fff}.bc .cmpc.b .sub{opacity:.9}.bc .cmpc.b .pie .pt{fill:rgba(255,255,255,.18)}.bc .cmpc.b .pie .pr{stroke:rgba(255,255,255,.5)}.bc .cmpc.b .pie .ps{stroke:#fff}'+
+  '.bc .cmpc.a .num{color:var(--ink)}'+
+  '.bc .cmpk{display:inline-flex;align-items:center;gap:6px;font:600 15px/1 var(--f-body);color:var(--mute)}'+
+  '.bc .cmpx{align-self:center;color:#3f93aa;display:grid;place-items:center}'+
+  '.bc .cmps{font-size:15.5px;line-height:1.45}.bc .cmph .lab{font:700 24px/1.25 var(--f-display);color:var(--ink);opacity:1}';
+  document.head.appendChild(st)})();
 CARD.cycle=function(c,r){const W=r.w-52,H=r.h-48,n=c.items.length,cx=W/2,cy=H/2,rx=W*.37,ry=H*.36;
   const P=c.items.map((it,i)=>{const a=-Math.PI/2-i*2*Math.PI/n;return {x:cx+rx*Math.cos(a),y:cy+ry*Math.sin(a),ic:it[0],t:it[1]}});
   const arc=(a0,a1)=>{const p=t=>[cx+rx*Math.cos(t),cy+ry*Math.sin(t)],[x0,y0]=p(a0),[x1,y1]=p(a1);return `M${x0.toFixed(1)} ${y0.toFixed(1)}A${rx.toFixed(1)} ${ry.toFixed(1)} 0 0 0 ${x1.toFixed(1)} ${y1.toFixed(1)}`};
@@ -125,7 +153,7 @@ if(!C5PV)addEventListener('DOMContentLoaded',()=>{const ui=document.getElementBy
   const inp=document.createElement('input');inp.className='jn';inp.type='text';inp.inputMode='numeric';inp.placeholder='رقم';inp.setAttribute('aria-label','رقم السلايد');
   ui.insertBefore(inp,ui.firstChild);ui.insertBefore(b,ui.firstChild);
   const wk=()=>{try{wake()}catch(e){}};
-  const jump=v=>{const n=parseInt(String(v).replace(/[٠-٩]/g,c=>'٠١٢٣٤٥٦٧٨٩'.indexOf(c)),10);inp.value='';inp.blur();if(SLIDES[n]&&n!==cur)show(n,n>cur?1:-1)};
+  const jump=v=>{const k=parseInt(String(v).replace(/[٠-٩]/g,c=>'٠١٢٣٤٥٦٧٨٩'.indexOf(c)),10),n=ORDER[k-1];inp.value='';inp.blur();if(n!=null&&n!==cur)show(n,n>cur?1:-1)};      /* by its place in the show, as the counter shows it */
   b.onclick=e=>{e.stopPropagation();show(ORDER[0],-1)};
   inp.addEventListener('click',e=>e.stopPropagation());
   inp.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'){e.preventDefault();jump(inp.value)}else if(e.key==='Escape'){inp.value='';inp.blur()}});
@@ -183,12 +211,17 @@ function stat(n,H,o){const cards=[
   S(Object.assign({n},H,{cards:cards.concat(photoCards(o.imgs))}))}
 
 /* ---------- قبل 2014 ← 2026 ---------- */
-function vs(n,H,o){const K=x=>x.map(k=>Object.assign({},k));S(Object.assign({n},H,{cards:[
+function vs(n,H,o){const K=x=>x.map(k=>Object.assign({},k));
+  /* cmp:1 — one card per measure, قبل 2014 and 2026 side by side (Amr 14:34: «خلي دايما ده اسلوبك»); slides move to it one by one */
+  let figs;if(o.cmp){const A=o.a.k,Bk=o.b.k,m=Math.max(A.length,Bk.length);
+    figs=Array.from({length:m},(_,i)=>['cmp',[3,i*6/m,5,6/m],{bg:'dark2',rows:[{a:Object.assign({},A[i]||{v:'',u:'',l:''}),b:Object.assign({},Bk[i]||{v:'',u:'',l:''})}],fs:o.nfs}])}
+  else figs=[['kpi2',[3,0,5,3],{bg:'dark2',ic:'history',h:'قبل 2014',items:K(o.a.k),fs:o.a.nfs}],
+    ['kpi2',[3,3,5,3],{bg:'mint',ic:'trending-up',h:'2026',items:K(o.b.k),fs:o.b.nfs}]];
+  S(Object.assign({n},H,{cards:[
   ['title',[8,0,4,2],{bg:'dark',k:o.k||'قبل 2014 ← 2026',ki:'git-compare-arrows',t:o.t,s:o.s,fs:o.fs||36,ss:17}],
   ['text',[8,2,4,2],{bg:'dark2',h:'التحدي · قبل 2014',ic:'history',t:o.a.t,fs:o.a.fs||18}],
   ['text',[8,4,4,2],{bg:'grad',h:'نتائج التحرك · 2026',ic:'sparkles',t:o.b.t,fs:o.b.fs||18}],
-  ['kpi2',[3,0,5,3],{bg:'dark2',ic:'history',h:'قبل 2014',items:K(o.a.k),fs:o.a.nfs}],
-  ['kpi2',[3,3,5,3],{bg:'mint',ic:'trending-up',h:'2026',items:K(o.b.k),fs:o.b.nfs}],
+  ...figs,
   ['photo',[0,0,3,6],{img:P(o.img),pos:o.pos}],
 ]}))}
 
@@ -228,7 +261,9 @@ S({n:1,full:1,cards:[
 ]});
 /* 2, 3 — films */
 S({n:2,full:1,cards:[['frame',[0,0,12,6],{cls:'fcard',src:'opening/index.html?embed=1',poster:'c5/opening',title:'قبل البداية 2011–2014'}]]});   /* Amr 12:58: slide 2 = the opener */
-vid(3,{src:'c5_3.mp4',cap:'مصر قبل عام 2014'});
+/* 3 — the film «مصر قبل عام 2014» now plays inside slide 2 (Amr 14:55: «احذف سلايد ٣»). The show counts by place (170 slides),
+   so from here on the number Amr sees is the internal n minus one (his «سلايد 16» is n:17) */
+/* vid(3,{src:'c5_3.mp4',cap:'مصر قبل عام 2014'}); */
 /* 4 — section one */
 cover(4,{no:'01',k:'القسم الأول',t:'لماذا لم يكن الاستمرار ممكنا؟',s:'تحديات تراكمت عبر عقود لم تكن تحتمل التأجيل',img:'image10',pos:'50% 40%',ic:'triangle-alert',words:['الأمن','السكان','البنية','الجغرافيا'],cur:1});
 /* 5 — four structural challenges */
