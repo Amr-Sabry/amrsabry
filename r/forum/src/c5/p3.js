@@ -1,6 +1,10 @@
 /* closing deck · part 3 — slides 69–100 (التحرك الثالث · التمكين 69–88, التحرك الرابع · الإنتاج والتشغيل 89–100) */
 (function(){
 const mod=(n,f)=>f(SLIDES[n]);
+/* larger type for a bars card that has a whole column to itself (cls:'bbig'), so it reads from the hall */
+{const st=document.createElement('style');st.textContent='.bc.bbig .brs{gap:26px}.bc.bbig .br .brl b{font-size:30px}.bc.bbig .br .brv{font-size:20px}'+
+  '.bc.bbig .br .brv em{font-size:38px}.bc.bbig .brt{height:14px;border-radius:7px}.bc.bbig .brt.s{height:8px;margin-top:5px}.bc.bbig .bra{font-size:18px;margin-top:7px}.bc.bbig .brk{font-size:17px}';
+  document.head.appendChild(st)}
 /* 69 — move three */
 move(69,{no:'03',k:'التحرك الثالث',t:'التمكين',s:'من سد العجز إلى القدرة على تلبية الاحتياجات',img:'image197',pos:'50% 100%',ic:'zap',
   words:['العجز','القدرة','التمكين'],cur:1});
@@ -13,10 +17,10 @@ S({n:70,...HM3,cards:[
 ]});
 /* before / after with several figures a side (the client's 71, 76, 80, 84, 91, 98): the vs grammar — title, «التحدي» and
    «نتائج التحرك» on the right — with the figures in two rows (قبل 2014 above, 2026 below), one or two cards a row, photos under them */
-function vsx(n,H,o){const K=x=>x.map(k=>Object.assign({},k)), w=o.w||4, rh=o.imgs&&o.imgs.length?2:3;
+function vsx(n,H,o){const K=x=>x.map(k=>Object.assign({},k)), w=o.w||4, rh=o.bottom||o.imgs&&o.imgs.length?2:3;
   const row=(gs,y,bg,ic,h)=>gs.length===1?[['kpi2',[0,y,8,rh],{bg,ic,h,items:K(gs[0]),fs:o.nfs||68}]]
     :[['kpi2',[8-w,y,w,rh],{bg,ic,h,items:K(gs[0]),fs:o.nfs||68}],['kpi2',[0,y,8-w,rh],{bg,ic,h,items:K(gs[1]),fs:o.nfs||68}]];
-  const ph=(o.imgs||[]).map((x,i,a)=>['photo',a.length===1?[0,4,8,2]:[i?0:4,4,4,2],{img:P(x[0]),pos:x[1],cls:x[2]}]);
+  const ph=o.bottom||(o.imgs||[]).map((x,i,a)=>['photo',a.length===1?[0,4,8,2]:[i?0:4,4,4,2],{img:P(x[0]),pos:x[1],cls:x[2]}]);
   S(Object.assign({n},H,{cards:[
   ['title',[8,0,4,2],{bg:'dark',k:o.k||'قبل 2014 ← 2026',ki:'git-compare-arrows',t:o.t,s:o.s,fs:o.fs||36,ss:17}],
   ['text',[8,2,4,2],{bg:'dark2',h:'التحدي · قبل 2014',ic:'history',t:o.a.t,fs:o.a.fs||18,pie:0}],
@@ -150,4 +154,55 @@ S({n:88,...HM3,cards:[
 /* 89 — move four */
 move(89,{no:'04',k:'التحرك الرابع',t:'الإنتاج والتشغيل',s:'مقومات إنتاج قابلة لأن تصبح مزايا تنافسية',img:'image232',pos:'50% 100%',ic:'factory',
   words:['مقومات','الإنتاج','مزايا'],cur:1});
+/* the client's picture is a wide band (its upper half is empty sky), so it takes the lower strip and the section's projects take turns above it */
+mod(89,sp=>{const ph=sp.cards.find(c=>c[0]==='photo');ph[1]=[0,4,8,2];ph[2].pos='50% 100%';
+  sp.cards.push(['photo',[0,0,8,4],{imgs:[{img:P('image238'),pos:'50% 50%'},{img:P('image240'),pos:'50% 60%'},{img:P('image243'),pos:'50% 60%'},{img:P('image245'),pos:'50% 50%'}],every:3600}])});
+/* 90 — the forum's question */
+ask(90,{t:'هل حققت مشروعات التوسع الزراعي والأمن الغذائي أهدافها؟ وكيف تواجه مصر تحديات الغذاء العالمية؟',img:'image76',fs:50});
+/* 91 — agriculture: reclamation and irrigation, before / after */
+vsx(91,HM4,{t:'التنمية الزراعية',s:'الاستصلاح الزراعي والري',w:5,
+  a:{t:'تآكل الرقعة الزراعية نتيجة التعديات والبناء العشوائي، وتركز الزراعة في الوادي والدلتا',g:[
+    [{v:9.1,u:'مليون فدان',l:'المساحة المزروعة'},{v:4.3,u:'مليون طن',l:'الصادرات الزراعية'}]]},
+  b:{t:'الحفاظ على الرقعة الزراعية والتوسع في مشروعات الاستصلاح',g:[
+    [{v:10.5,u:'مليون فدان',l:'المساحة المزروعة'},{v:9.5,u:'مليون طن',l:'الصادرات الزراعية'}],
+    [{v:12.5,u:'مليون فدان',l:'مساحة مزروعة<br>مستهدف 2030'}]]},
+  bottom:[['text',[4,4,4,2],{bg:'vio',ic:'award',t:'المركز الأول عالمياً في تصدير البرتقال والموالح منذ عام 2018 وحتى الآن',fs:18}],
+    ['photo',[0,4,4,2],{img:P('image240'),pos:'50% 60%'}]]});
+/* 92 — self-sufficiency in the basic farm products, 2014 against 2026 */
+S({n:92,...HM4,cards:[
+  ['title',[8,0,4,2],{bg:'dark',k:'قبل 2014 ← 2026',ki:'wheat',t:'التنمية الزراعية',s:'الاكتفاء الذاتي من المنتجات الزراعية الاساسية',fs:40,ss:20}],
+  ['bars',[0,0,8,6],{bg:'dark',cls:'bbig',ic:'wheat',h:'الاكتفاء الذاتي من المنتجات الزراعية الاساسية',ya:'قبل 2014',yb:'2026',items:[
+    {l:'القمح',a:{v:43,t:'7.8 مليون طن'},b:{v:52,t:'11 مليون طن'}},
+    {l:'اللحوم',a:{v:44,t:'440 ألف طن'},b:{v:60,t:'600 ألف طن'}},
+    {l:'الألبان',a:{v:90,t:'4.5 مليون طن'},b:{v:100,t:'7 مليون طن'}},
+    {l:'الدواجن',a:{v:80,t:'1.3 مليون طن'},b:{v:98,t:'2.3 مليون طن'}},
+    {l:'الاسماك',a:{v:84,t:'1.5 مليون طن'},b:{v:93.5,t:'2.1 مليون طن'}}]}],
+  ['photo',[8,2,4,4],{img:P('image235'),cls:'fit'}],
+]});
+/* 93 — before 2014: farmland eaten away */
+S({n:93,...HM4,cards:[
+  ['title',[8,0,4,2],{bg:'dark',k:'قبل عام 2014',ki:'history',t:'تآكل الرقعة الزراعية',fs:44}],
+  ['photo',[8,2,4,4],{img:P('image236'),pos:'50% 55%'}],
+  ['photo',[0,0,8,6],{img:P('image237'),pos:'50% 50%'}],
+]});
+/* 94 — the New Delta */
+S({n:94,...HM4,cards:[
+  ['photo',[0,0,8,4],{img:P('image238'),pos:'50% 50%'}],
+  ['text',[0,4,8,2],{bg:'dark2',ic:'sprout',t:'بتكلفة 800 مليار جنيه للاستفادة من مياه الصرف الزراعي والصحي المعالجة بغرب الدلتا والإسكندرية، لاستصلاح وزراعة أراضٍ جديدة ضمن مشروع «مستقبل مصر».',fs:18}],
+  ['title',[8,0,4,2],{bg:'dark',ki:'droplets',t:'الدلتا الجديدة',s:'(المصدرين الشرقي والشمالي ومحطة المعالجة)',fs:44,ss:19}],
+  ['kpi',[8,2,4,2],{bg:'grad',ic:'sprout',pre:'لاستصلاح',v:2.2,u:'مليون فدان',l:''}],
+  ['photo',[8,4,4,2],{img:P('image239'),cls:'fit dk'}],
+]});
+/* 95 — land reclamation projects */
+grid(95,HM4,{ic:'sprout',t:'مستهدف الوصول بمشروعات الاستصلاح الزراعي إلى 4.4 مليون فدان',fs:44,
+  items:[['image243','مشروع الاستصلاح الزراعي بالفرافرة','50% 60%'],['image241','مشروع شرق العوينات','50% 50%'],
+    ['image240','مشروع توشكى','50% 50%'],['image242','مشروع استصلاح 181 ألف فدان غرب ملوى','50% 60%']]});
+/* 96 — fish farming */
+S({n:96,...HM4,cards:[
+  ['title',[8,0,4,2],{bg:'dark',ki:'fish',t:'مشروعات الاستزراع السمكي بطاقة ([[28 ألف طن سنويا]])',fs:32,pz:0}],
+  ['photo',[8,2,4,4],{img:P('image247'),pos:'50% 70%',cap:'مشروع قناة السويس للاستزراع السمكي'}],
+  ['photo',[0,0,8,3],{img:P('image245'),pos:'50% 55%',cap:'مشروع الفيروز للاستزراع السمكي / شرق التفريعة'}],
+  ['photo',[3,3,5,3],{img:P('image244'),pos:'50% 60%',cap:'مشروع الاستزراع السمكي (الفيروز) بشرق بورسعيد ومثلث الديبة'}],
+  ['photo',[0,3,3,3],{img:P('image246'),pos:'50% 65%',cap:'مشروع المدينة السمكية الصناعية / غليون'}],
+]});
 })();

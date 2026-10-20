@@ -150,8 +150,9 @@ S({n:155,...HM5,cards:[
 ]});
 /* 156 — health facilities */
 S({n:156,...HM5,cards:[
-  ['title',[8,0,4,3],{bg:'dark',ki:'heart-pulse',t:'المنشآت الصحية',fs:56}],
-  ['kpi2',[8,3,4,3],{bg:'grad',ic:'stethoscope',h:'',items:[{v:1101,u:'',l:'وحدة ومركز طبي'},{v:11,u:'',l:'مستشفى'}],fs:96}],
+  ['title',[8,0,4,2],{bg:'dark',ki:'heart-pulse',t:'المنشآت الصحية',fs:52}],
+  ['kpi',[8,2,4,2],{bg:'grad',ic:'stethoscope',l:'',v:1101,u:'وحدة ومركز طبي',fs:100}],
+  ['kpi',[8,4,4,2],{bg:'mint',ic:'building-2',l:'',v:11,u:'مستشفى',vis:0,fs:100}],
   ph([4,0,4,3],'image399','50% 50%','قبل التطوير'),ph([4,3,4,3],'image401','50% 50%'),ph([0,0,4,3],'image398','50% 50%'),ph([0,3,4,3],'image400','50% 50%'),
 ]});
 /* 157 — youth centres */
@@ -186,5 +187,73 @@ S({n:161,...HM5,cards:[
 S({n:162,...HM5,cards:[
   ['title',[8,0,4,2],{bg:'dark',ki:'hand-heart',t:'منشآت التضامن الاجتماعي',fs:44}],
   ph([8,2,4,4],'image421','50% 50%'),ph([0,0,8,2],'image420','50% 40%'),ph([4,2,4,4],'image423','50% 50%'),ph([0,2,4,4],'image422','50% 50%'),
+]});
+/* 163 — the carrying sentence that closes the move */
+say(163,HM5,{t:'تغيرت خريطة العمران والربط والبنية الأساسية والخدمات، وأصبحت الدولة تمتلك قدرات لم تكن متاحة بهذا الحجم من قبل.',
+  s:'لكن بناء القدرات ليس نهاية عملية التنمية.',img:'image424',pos:'28% 50%',fs:38,sfs:44});
+SLIDES[163].cards.forEach(cd=>{if(cd[0]==='text')cd[2].pz=0});
+
+/* =====================================================================================================
+   القسم الرابع · ماذا لو لم تتدخل الدولة (164–166)
+   ===================================================================================================== */
+/* 164 — section four */
+cover(164,{no:'04',k:'القسم الرابع',t:'ماذا لو لم تتدخل الدولة',s:'واستمر الوضع القائم قبل 2014',img:'image429',pos:'50% 50%',ic:'circle-help',
+  words:['ماذا لو','الدولة','الوضع','2014'],cur:1});
+/* 165 — what if? services (the engine turns the «ماذا لو» title into the question layout; each sector is a numbered tile) */
+S({n:165,...HS4,cards:[
+  ['title',[6,0,6,2],{bg:'dark',k:'ماذا لو',ki:'circle-help',t:'لم تتدخل الدولة بعد عام 2014',fs:34}],
+  ['text',[8,2,4,2],{bg:'grad',h:'السكن اللائق',ic:'house',t:'تهديد حياة 1.2 مليون نسمة يعيشون بالمناطق غير الآمنة'}],
+  ['text',[8,4,4,2],{bg:'dark2',h:'مياه الشرب والصرف',ic:'droplets',t:'عدم تغطية أكثر من نصف سكان الجمهورية بخدمات الصرف الصحي'}],
+  ['text',[4,2,4,2],{bg:'light',h:'الخدمات الصحية',ic:'heart-pulse',t:'تفاقم عجز الخدمات الصحية، مع تأخر اكتشاف الأمراض وانتشار الفيروسات.'}],
+  ['text',[4,4,4,2],{bg:'dark',h:'التعليم قبل الجامعي',ic:'school',t:'تفاقم أزمة كثافة الفصول، التي مقدر ان تصل إلى 120 طالب/ فصل'}],
+  ['text',[0,2,4,4],{bg:'mint',h:'التعليم العالي',ic:'graduation-cap',t:'تفاقم الضغوط على الجامعات مع زيادة أعداد الطلاب'}],
+  ['photo',[0,0,6,2],{img:P('image429'),bw:1,pos:'50% 60%'}],
+]});
+/* 166 — what if? the economy (eight sectors, numbered in the client's order) */
+S({n:166,...HS4,cards:[
+  ['title',[6,0,6,2],{bg:'dark',k:'ماذا لو',ki:'circle-help',t:'لم تتدخل الدولة بعد عام 2014',fs:34}],
+  ['photo',[0,0,6,2],{img:P('image430'),cls:'fit dk'}],
+  ['text',[9,2,3,2],{bg:'grad',h:'الاتصالات',ic:'radio-tower',t:'عدم تهيئة البنية التحتية اللازمة للتحول الرقمي، وخسارة فرص تصديرية كبيرة'}],
+  ['text',[9,4,3,2],{bg:'dark2',h:'النقل',ic:'car-front',t:'تكلفة الازدحام المروري مقدر ان تصل إلى 18 مليار دولار سنويا عام 2030 مقابل 8 مليار دولار عام 2014'}],
+  ['text',[6,2,3,2],{bg:'dark',h:'البترول',ic:'fuel',t:'توقف عدد من المصانع لنقص الغاز الطبيعي'}],
+  ['text',[6,4,3,2],{bg:'mint',h:'الكهرباء',ic:'zap',t:'انقطاع الكهرباء لمدة تتجاوز 12 ساعة يوميا'}],
+  ['text',[3,2,3,2],{bg:'light',h:'السياحة',ic:'landmark',t:'خسارة إيرادات سياحية بأكثر من 6 مليار دولار سنويا'}],
+  ['text',[3,4,3,2],{bg:'dark2',h:'الصناعة',ic:'factory',t:'استمرار تعثر المصانع وهروب رؤوس الأموال وتراجع فرص التشغيل'}],
+  ['text',[0,2,3,2],{bg:'dark',h:'الزراعة',ic:'sprout',t:'استمرار تآكل الأراضي الزراعية، وتفاقم الفجوة الغذائية'}],
+  ['text',[0,4,3,2],{bg:'grad',h:'الري',ic:'droplets',t:'فقدان مليارات الأمتار المكعبة من المياه سنويا'}],
+]});
+
+/* =====================================================================================================
+   القسم الخامس · مصر التي نريدها (167–171)
+   ===================================================================================================== */
+/* 167 — section five (the deck's future-Egypt picture, shown whole) */
+cover(167,{no:'05',k:'القسم الخامس',t:'مصر التي نريدها',s:'من بناء القدرات إلى تعظيم العائد · <span dir="ltr">2026-2030</span>',img:'image436',ic:'telescope',
+  words:['مصر','القدرات','العائد','2030'],cur:1});
+SLIDES[167].cards[0][2].cls='fit';
+/* 168 — the 2030 economic targets: seven small charts with the client's own figures (2026/2027 → 2029/2030).
+   p5trend: one bar per fiscal year (the last year stands out); with stack it draws the public / private split per year */
+CARD.p5trend=function(c,r){
+  const aw=r.w-52, head=`<div class="hdr">${ICON(c.ic||'bar-chart-3',24)}<span class="lab" style="font-size:17px;line-height:1.3">${hl(c.l)}</span></div>`, yW=84;
+  if(c.stack){const [ka,kb]=c.keys;
+    return head+`<div class="hcmp">${c.rows.map(x=>`<div class="hr" style="gap:8px"><div class="cy" style="width:${yW}px;font-size:16px">${x[0]}</div>`+
+      `<div style="flex:1;display:flex;height:30px;border-radius:6px;overflow:hidden;direction:ltr">`+
+      `<i data-w="${x[1]}" style="width:0;display:flex;align-items:center;justify-content:center;background:#3d5cc0;color:#fff;font:600 15px/1 inherit;font-style:normal;transition:width 1.4s var(--settle)">${x[1]}%</i>`+
+      `<i data-w="${x[2]}" style="width:0;display:flex;align-items:center;justify-content:center;background:#8e9be6;color:#1c2547;font:600 15px/1 inherit;font-style:normal;transition:width 1.4s var(--settle)">${x[2]}%</i></div></div>`).join('')}`+
+      `<div style="display:flex;gap:18px;font-size:16px;font-weight:600"><span><i style="display:inline-block;width:14px;height:14px;border-radius:3px;background:#3d5cc0;vertical-align:-2px;margin-inline-end:6px"></i>${ka}</span><span><i style="display:inline-block;width:14px;height:14px;border-radius:3px;background:#8e9be6;vertical-align:-2px;margin-inline-end:6px"></i>${kb}</span></div></div>`}
+  const mx=Math.max(...c.rows.map(x=>x[1])), nW=78, track=aw-yW-nW-24;
+  return head+`<div class="hcmp">${c.rows.map((x,i)=>{const b=i===c.rows.length-1, w=Math.max(8,Math.round(track*x[1]/mx));
+    return `<div class="hr ${b?'b':'a'}"><div class="cy" style="width:${yW}px;font-size:16px">${x[0]}</div><i class="hb" data-w2="${w}" style="height:${b?26:20}px"></i><div class="num" style="font-size:${b?30:24}px">${cvSpan(x[1])}<span class="pc">%</span></div></div>`}).join('')}</div>`};
+const FY=['2026/2027','2027/2028','2028/2029','2029/2030'], fy=v=>v.map((x,i)=>[FY[i],x]);
+S({n:168,...HS5,cards:[
+  ['title',[9,0,3,4],{bg:'dark',k:'البرنامج الوطني للتحول الاقتصادي',ki:'trending-up',t:'مستهدفات طموحة لتعزيز الاستقرار الاقتصادي ..',s:'وتحسين التوازنات المالية وتحفيز النمو والاستثمار ودعم استدامتهما',fs:30,ss:19}],
+  ['kpi',[9,4,3,2],{bg:'grad',ic:'target',l:'أبرز المستهدفات بحلول عام 2030',v:7,u:'',vis:0,fs:110}],
+  ['p5trend',[6,0,3,2],{bg:'dark2',ic:'receipt',l:'العجز الكلي للموازنة (% من الناتج المحلي)',rows:fy([4.8,4.6,4.6,4.6])}],
+  ['p5trend',[3,0,3,2],{bg:'dark2',ic:'gauge',l:'معدل التضخم (%)',rows:fy([12.5,8.0,7.0,7.0])}],
+  ['p5trend',[0,0,3,2],{bg:'mint',ic:'trending-up',l:'معدل النمو الحقيقي (% من الناتج المحلي)',rows:fy([4.5,5.9,6.4,6.8])}],
+  ['p5trend',[6,2,3,2],{bg:'dark2',ic:'scale',l:'عجز الميزان الجاري (% من الناتج المحلي)',rows:fy([5.5,4.5,3.4,2.3])}],
+  ['p5trend',[3,2,3,2],{bg:'dark2',ic:'landmark',l:'دين أجهزة الموازنة (% من الناتج المحلي)',rows:fy([75.8,73.1,70.4,69.5])}],
+  ['p5trend',[0,2,3,2],{bg:'dark2',ic:'wallet',l:'الفائض الأولي للموازنة (% من الناتج المحلي)',rows:fy([4.8,3.6,3.1,2.6])}],
+  ['p5trend',[6,4,3,2],{bg:'dark',ic:'chart-pie',l:'معدلات الاستثمار الخاص والعام (% من جملة الاستثمارات)',stack:1,keys:['العام','الخاص'],rows:[[FY[0],40,60],[FY[1],37,63],[FY[2],34,66],[FY[3],33,67]]}],
+  ['photo',[0,4,6,2],{img:P('image436'),cls:'fit'}],
 ]});
 })();

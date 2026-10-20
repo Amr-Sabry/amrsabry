@@ -30,13 +30,25 @@ const HS4={ax:'04',h:'ماذا لو لم تتدخل الدولة',hs:'واستم
 const HS5={ax:'05',h:'مصر التي نريدها',hs:'من بناء القدرات إلى تعظيم العائد'};
 
 /* ---------- a film card (the deck's own videos; offline: video/c5_*.mp4) ---------- */
-CARD.video=function(c,r){return `<video class="c5v" src="video/${c.src}" ${c.poster?`poster="${IMG(c.poster)}"`:''} playsinline autoplay preload="auto"></video>${c.cap?`<div class="tag">${c.cap}</div>`:''}`};
+/* the control's two preview frames show a film's first frame, silent and still (they share the show's main thread) */
+const C5PV=/[?&]preview=1/.test(location.search);
+CARD.video=function(c,r){return `<video class="c5v" src="video/${c.src}" ${c.poster?`poster="${IMG(c.poster)}"`:''} playsinline ${C5PV?'muted preload="metadata" data-go="1"':'autoplay preload="auto"'}></video>${c.cap?`<div class="tag">${c.cap}</div>`:''}`};
+/* a page shown whole over the stage (slide 2: the interactive opener «قبل البداية 2011–2014», opening/index.html, built by
+   mkopening.py from aromahub.studio/opening-2011-2014); previews get its still picture */
+CARD.frame=function(c,r){if(C5PV&&c.poster)return `<img class="c5f" src="${IMG(c.poster)}" alt="">`;
+  return `<iframe class="c5f" src="${c.src}" allow="autoplay; fullscreen" title="${c.title||''}"></iframe>`};
+addEventListener('message',e=>{const m=e.data||{};if(m.c5key){document.dispatchEvent(new KeyboardEvent('keydown',{key:m.c5key,code:m.code||'',bubbles:true,cancelable:true}))}});
+/* autoplay rules: a film that had to start silent gets its sound at the first touch or key on the show */
+['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{if(C5PV)return;document.querySelectorAll('video.c5v').forEach(v=>{if(v.muted&&v.dataset.go){v.muted=false}});
+  document.querySelectorAll('iframe.c5f').forEach(f=>{try{f.contentWindow.postMessage({c5film:'sound'},'*')}catch(e){}})},true));
 (function(){const st=document.createElement('style');st.textContent=
   '.bc.vcard{padding:0!important;background:#000!important}.bc.vcard>.in{inset:0!important;top:0!important;right:0!important;width:100%!important;height:100%!important;zoom:1!important}'+
   '.bc.vcard video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit}'+
   /* cls:'fit' on a photo shows the whole picture (maps, charts, infographics): nothing cropped */
   '.bc.photo.fit{background:rgba(255,255,255,.62)}.bc.photo.fit img{object-fit:contain!important;transform:none!important;padding:10px;box-sizing:border-box}'+
-  '.bc.photo.fit.dk{background:#0e1430}';
+  '.bc.photo.fit.dk{background:#0e1430}'+
+  '.bc.fcard{left:0!important;top:0!important;width:1600px!important;height:900px!important;border-radius:0!important;padding:0!important;background:#e9edf6!important;box-shadow:none!important;border:0!important}'+
+  '.bc.fcard>.in{inset:0!important;top:0!important;right:0!important;width:100%!important;height:100%!important;zoom:1!important}.bc.fcard .c5f{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;object-fit:cover}';
   document.head.appendChild(st);
   /* a film plays with sound once the show has been touched; if the browser refuses, it plays muted */
   new MutationObserver(()=>{document.querySelectorAll('video.c5v:not([data-go])').forEach(v=>{v.dataset.go=1;const p=v.play();if(p&&p.catch)p.catch(()=>{v.muted=true;v.play().catch(()=>{})})})})
@@ -140,7 +152,7 @@ S({n:1,full:1,cards:[
   ['logo',[10,4,2,2],{img:'emblem',alt:'شعار الجمهورية',bg:'dark2',k:.8}],
 ]});
 /* 2, 3 — films */
-vid(2,{src:'c5_2.mp4'});
+S({n:2,full:1,cards:[['frame',[0,0,12,6],{cls:'fcard',src:'opening/index.html?embed=1',poster:'c5/opening',title:'قبل البداية 2011–2014'}]]});   /* Amr 12:58: slide 2 = the opener */
 vid(3,{src:'c5_3.mp4',cap:'مصر قبل عام 2014'});
 /* 4 — section one */
 cover(4,{no:'01',k:'القسم الأول',t:'لماذا لم يكن الاستمرار ممكنا؟',s:'تحديات تراكمت عبر عقود لم تكن تحتمل التأجيل',img:'image10',pos:'50% 40%',ic:'triangle-alert',words:['الأمن','السكان','البنية','الجغرافيا'],cur:1});
