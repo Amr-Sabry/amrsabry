@@ -34,10 +34,12 @@ const HS5={ax:'05',h:'مصر التي نريدها',hs:'من بناء القدر
 (function(){const st=document.createElement('style');st.textContent=
   "@font-face{font-family:'Cairo26';src:url(fonts/cairo-medium.woff2) format('woff2');font-weight:100 599;font-display:block;ascent-override:102%;descent-override:36%;line-gap-override:0%}"+
   "@font-face{font-family:'Cairo26';src:url(fonts/cairo-black.woff2) format('woff2');font-weight:600 1000;font-display:block;ascent-override:102%;descent-override:36%;line-gap-override:0%}"+
-  ":root{--f-display:'Cairo26','Readex Pro',system-ui,sans-serif!important;--f-body:'Cairo26','IBM Plex Sans Arabic',system-ui,sans-serif!important}"+
+  /* Amr 17:54: numbers in Montserrat across the deck — a face that holds only the figures and their signs, set before Cairo */
+  ["500 100 549","600 550 649","700 650 749","800 750 1000"].map(x=>{const [f,a,b]=x.split(' ');return `@font-face{font-family:'C5Num';src:url(fonts/montserrat-${f}.woff2) format('woff2');font-weight:${a} ${b};font-display:block;unicode-range:U+0025,U+002B-002E,U+0030-0039,U+2013}`}).join('')+
+  ":root{--f-display:'C5Num','Cairo26','Readex Pro',system-ui,sans-serif!important;--f-body:'C5Num','Cairo26','IBM Plex Sans Arabic',system-ui,sans-serif!important}"+
   "body,.hd,#ui,svg text{font-family:var(--f-display)}";
   document.head.appendChild(st);
-  try{document.fonts.load("900 40px Cairo26","أبجد 2026");document.fonts.load("500 20px Cairo26","أبجد 2026")}catch(e){}})();
+  try{document.fonts.load("900 40px Cairo26","أبجد 2026");document.fonts.load("500 20px Cairo26","أبجد 2026");document.fonts.load("800 40px C5Num","2026");document.fonts.load("500 20px C5Num","2026")}catch(e){}})();
 
 /* ---------- a film card (the deck's own videos; offline: video/c5_*.mp4) ---------- */
 /* the control's two preview frames show a film's first frame, silent and still (they share the show's main thread) */
@@ -91,19 +93,22 @@ function vid(n,o){S({n,full:1,cards:[['video',[0,0,12,6],Object.assign({cls:'vca
    واحنا بنكتب التايتل … تدي شعور بالتوالي»): Egypt's outline, the year set large, and a time bar 2011 → 2026 whose marked stretch is
    the period the slide talks about. With from: the year rolls up to y, one year at a time, fading, while the bar's mark slides along.
    cfg: k (the words over the year), y, from, stay (the same card on the next slide stays and glides) */
-CARD.era2=function(c,r){const W=r.w-52,H=r.h-48,big=r.h>300,Y0=2011,Y1=2026,y0=c.from||c.y,pos=y=>((y-Y0)/(Y1-Y0)*100).toFixed(2);
-  let pa='';try{const P=d3.geoMercator().fitExtent([[W*.02,6],[W*.46,H-(big?46:30)]],EGY);pa=d3.geoPath(P)(EGY)}catch(e){}
-  const f=Math.round(Math.min(H*(big?.42:.5),W*.3,150));
-  return `<svg class="e2m" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><defs><linearGradient id="e2g${c.y}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3d5cc0"/><stop offset=".6" stop-color="#6e7fd6"/><stop offset="1" stop-color="#ee9873"/></linearGradient></defs><path d="${pa}" fill="url(#e2g${c.y})" opacity=".9"/></svg>`+
-    `<div class="e2t"><span class="e2l">${c.k||''}</span><b class="num e2y" style="font-size:${f}px" data-to="${c.y}"${c.from?` data-from="${c.from}"`:''}>${y0}</b></div>`+
-    `<div class="e2b" style="--p:${pos(y0)}%;--a:${pos(c.a||Y0)}%"><i class="e2r"></i><i class="e2s"></i><i class="e2d"></i>${Array.from({length:Y1-Y0+1},(_,i)=>`<i class="e2k" style="right:${pos(Y0+i)}%"></i>`).join('')}</div>`};
+CARD.era2=function(c,r){const Y0=2011,Y1=2026,y0=c.from||c.y,pos=y=>((y-Y0)/(Y1-Y0)*100).toFixed(2);
+  let pa='',vb='0 0 100 100';try{const P=d3.geoMercator().fitSize([100,100],EGY),g=d3.geoPath(P),b=g.bounds(EGY);pa=g(EGY);vb=`${b[0][0].toFixed(1)} ${b[0][1].toFixed(1)} ${(b[1][0]-b[0][0]).toFixed(1)} ${(b[1][1]-b[0][1]).toFixed(1)}`}catch(e){}
+  return `<div class="e2w"><div class="e2row"><div class="e2t"><span class="e2l">${c.k||''}</span><b class="num e2y" data-to="${c.y}"${c.from?` data-from="${c.from}"`:''}>${y0}</b></div>`+
+    `<svg class="e2m" viewBox="${vb}" preserveAspectRatio="xMidYMid meet"><defs><linearGradient id="e2g${c.y}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3d5cc0"/><stop offset=".6" stop-color="#6e7fd6"/><stop offset="1" stop-color="#ee9873"/></linearGradient></defs><path d="${pa}" fill="url(#e2g${c.y})"/></svg></div>`+
+    `<div class="e2b" style="--p:${pos(y0)}%;--a:${pos(c.a||Y0)}%"><i class="e2r"></i><i class="e2s"></i><i class="e2d"></i>${Array.from({length:Y1-Y0+1},(_,i)=>`<i class="e2k" style="right:${pos(Y0+i)}%"></i>`).join('')}</div></div>`};
 (function(){const st=document.createElement('style');st.textContent=
-  '.bc .e2m{position:absolute;left:0;top:0;pointer-events:none}'+
-  '.bc .e2t{position:relative;z-index:1;margin:auto 0 0 0;display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding-bottom:42px}'+
-  '.bc .e2l{font:700 30px/1.1 var(--f-display);color:var(--ink);transition:opacity .4s}'+
-  '.bc .e2y{font-weight:700;line-height:.9;background:linear-gradient(100deg,#2a3b86 0%,#3d5cc0 45%,#ee9873 100%);-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block;transition:opacity .16s ease,transform .16s ease}'+
+  /* fluid: the content box follows the card while it glides or resizes, and every size is a share of it */
+  '.bc>.in:has(>.e2w){container-type:size;inset:24px 26px!important;width:auto!important;height:auto!important;zoom:1!important}'+
+  '.bc .e2w{position:absolute;inset:0;display:flex;flex-direction:column;gap:min(5cqh,14px)}'+
+  '.bc .e2row{flex:1 1 auto;min-height:0;display:flex;align-items:center;gap:4cqw}'+
+  '.bc .e2t{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:1cqh}'+
+  '.bc .e2m{flex:0 0 46%;height:100%;min-height:0;filter:drop-shadow(0 10px 18px rgba(42,59,134,.25))}'+
+  '.bc .e2l{font:700 min(15cqh,9cqw)/1.1 var(--f-display);color:var(--ink);transition:opacity .4s;white-space:nowrap}'+
+  '.bc .e2y{font-size:min(44cqh,19cqw)!important;font-weight:800;line-height:.9;background:linear-gradient(100deg,#2a3b86 0%,#3d5cc0 45%,#ee9873 100%);-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block;transition:opacity .16s ease,transform .16s ease}'+
   '.bc .e2y.out{opacity:0;transform:translateY(-28%)}.bc .e2y.pre{opacity:0;transform:translateY(28%);transition:none}'+
-  '.bc .e2b{position:absolute;left:26px;right:26px;bottom:26px;height:14px}'+
+  '.bc .e2b{position:relative;flex:none;height:14px}'+
   '.bc .e2b .e2r{position:absolute;left:0;right:0;top:6px;height:2px;background:rgba(28,37,71,.18);border-radius:2px}'+
   '.bc .e2b .e2s{position:absolute;top:4px;height:6px;border-radius:6px;right:var(--a);width:calc(var(--p) - var(--a));background:linear-gradient(90deg,#ee9873,#3d5cc0);transition:width .28s ease}'+
   '.bc .e2b .e2d{position:absolute;top:0;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px #3d5cc0,0 4px 10px -3px rgba(28,37,71,.5);right:calc(var(--p) - 7px);transition:right .28s ease}'+
@@ -135,7 +140,7 @@ CARD.ilist=function(c,r){return (c.h?`<div class="kick">${c.ki?ICON(c.ki,20):''}
 /* figure + sentence, the sentence set large as pills (Amr 17:47, slide 9 of the show: «سرد الكلام اللي في الكروت فيها النسب ضعيف … يكبر
    ويبان للعين … الهاي لايت على الارقام كانها تاجز ودخول الايقونات المعبرة عن الكلام واظهار الكلمات المهمة»): numbers become tags,
    an icon pill stands beside the words it is about, [[…]] marks the key words */
-CARD.kpip=function(c,r){const W=r.w-52,H=r.h-48,wide=W>540,fs=c.fs||Math.round(wide?Math.min(H*.5,W*.2,120):Math.min(H*.36,W*.28,96)),lf=c.lfs||Math.round(wide?Math.max(21,Math.min(27,H*.13)):Math.max(19,Math.min(24,H*.11)));
+CARD.kpip=function(c,r){const W=r.w-52,H=r.h-48,wide=W>540,fs=c.fs||Math.round(wide?Math.min(H*.46,W*.15,110):Math.min(H*.34,W*.22,90)),lf=c.lfs||Math.round(wide?Math.max(21,Math.min(27,H*.13)):Math.max(19,Math.min(24,H*.11)));
   const fig=`<div class="kpf">${c.pre?`<div class="kpre">${hl(c.pre)}</div>`:''}${c.u==='%'?`<div class="k2p">${pieSVG(c.v,fs*.95)}${bigNum(c.v,c.u,fs)}</div>`:bigNum(c.v,c.u,fs)}</div>`;
   const txt=`<div class="kps pz" style="font-size:${lf}px">${pill(c.l,{maxI:c.maxI??2,noArrow:1})}</div>`;
   return `<div class="hdr">${ICON(c.ic||'hash',26)}</div><div class="kpw${wide?' wide':''}">${fig}${txt}</div>`};
@@ -396,7 +401,7 @@ S({n:2,full:1,cards:[['frame',[0,0,12,6],{cls:'fcard',src:'opening/index.html?em
 /* 4 — section one */
 cover(4,{no:'01',k:'القسم الأول',t:'لماذا لم يكن الاستمرار ممكنا؟',s:'تحديات تراكمت عبر عقود لم تكن تحتمل التأجيل',img:'image10',pos:'50% 40%',ic:'triangle-alert',words:['الأمن','السكان','البنية','الجغرافيا'],cur:1,
   /* Amr 17:34: two steps — the section and the question, then the answer typing in with the collage */
-  seq:[[1,2],[0,3]],lays:{0:{1:[7,0,5,1],2:[7,1,5,2]}},tw:1,pieces:['c5/p10',P10]});
+  seq:[[1,2],[0,3]],tw:1,pieces:['c5/p10',P10]      /* step 1 fills the slide with its two cards, they make room on the click (Amr 17:56) */});
 /* 5 — four structural challenges */
 S({n:5,...HS1,cards:[
   ['photo',[0,0,8,6],{img:P('image11'),pos:'40% 50%'}],
