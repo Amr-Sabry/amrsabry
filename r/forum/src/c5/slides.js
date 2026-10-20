@@ -46,6 +46,17 @@ CARD.video=function(c,r){return `<video class="c5v" src="video/${c.src}" ${c.pos
 })();
 function vid(n,o){S({n,full:1,cards:[['video',[0,0,12,6],Object.assign({cls:'vcard'},o)]]})}
 
+/* live build (Amr, 20 Oct 12:41: «الابديت يكون لايف قدامي»): while the deck is being built, the page looks at src/c5/live.js
+   every 3 s and, when a newer version has landed, reloads itself on the slide it is showing. A script tag, not fetch, so it
+   works from file:// too. Switch off for the event: C5_LIVE=false. */
+const C5_LIVE=true;
+if(C5_LIVE)(function(){let v0=null;
+  function ping(){const s=document.createElement('script');s.src='src/c5/live.js?t='+Date.now();
+    s.onload=()=>{const v=window.C5LIVE;s.remove();if(v0===null){v0=v;return}
+      if(v!==v0){try{history.replaceState(null,'','#'+(typeof cur!=='undefined'&&cur||''))}catch(e){};location.reload()}};
+    s.onerror=()=>s.remove();document.head.appendChild(s)}
+  setInterval(ping,3000);setTimeout(ping,500)})();
+
 /* ---------- covers ---------- */
 function cover(n,o){S({n,full:1,cards:[
   ['photo',[0,0,7,6],{img:P(o.img),pos:o.pos||'50% 50%'}],
