@@ -556,11 +556,11 @@ S({n:12,...HS1,cards:[
   ['era2',[8,0,4,1.5],{bg:'dark2',k:'مصر قبل عام',y:2014,stay:'era',a:2011}],
   ['title',[8,1.5,4,1.5],{bg:'dark',ic:'trending-down',t:'وقد أفضت هذه التحديات إلى تدهور حاد في الأوضاع الاقتصادية',fs:30,pz:0,withHero:1}],
   ['ilist',[8,3,4,3],{bg:'dark2',h:'تجسد في',items:[['factory','ركود النشاط الإنتاجي،'],['users','وتفاقم البطالة،'],['banknote','وانسحاب الاستثمارات الخاصة،']],foot:'بما أضعف قدرة الاقتصاد على النمو وتوفير فرص العمل.'}],
-  ['ft',[4,0,4,2],{bg:'grad',ic:'landmark',l:'احتياطي نقدي (مليار دولار)',a:{v:36,u:''},b:{v:17,u:''}}],
-  ['ft',[0,0,4,2],{bg:'dark2',ic:'globe',l:'استثمار أجنبي مباشر (مليار دولار)',a:{v:6.7,u:''},b:{v:3.8,u:''}}],
-  ['ft',[4,2,4,2],{bg:'dark2',ic:'trending-down',l:'معدل النمو',a:{v:5.2,u:'%'},b:{v:2.2,u:'%'},pie:0}],
-  ['ft',[0,2,4,2],{bg:'vio',ic:'users',l:'معدل البطالة',a:{v:9,u:'%'},b:{v:13.2,u:'%'},pie:0}],
-  ['ft',[4,4,4,2],{bg:'mint',ic:'receipt',l:'عجز الموازنة للناتج',a:{v:8.1,u:'%'},b:{v:12,u:'%'},pie:0}],
+  ['slope',[4,0,4,2],{bg:'grad',ic:'landmark',l:'احتياطي نقدي (مليار دولار)',a:{v:36,u:''},b:{v:17,u:''}}],
+  ['slope',[0,0,4,2],{bg:'dark2',ic:'globe',l:'استثمار أجنبي مباشر (مليار دولار)',a:{v:6.7,u:''},b:{v:3.8,u:''}}],
+  ['slope',[4,2,4,2],{bg:'dark2',ic:'trending-down',l:'معدل النمو',a:{v:5.2,u:'%'},b:{v:2.2,u:'%'}}],
+  ['slope',[0,2,4,2],{bg:'vio',ic:'users',l:'معدل البطالة',a:{v:9,u:'%'},b:{v:13.2,u:'%'}}],
+  ['slope',[4,4,4,2],{bg:'mint',ic:'receipt',l:'عجز الموازنة للناتج',a:{v:8.1,u:'%'},b:{v:12,u:'%'}}],
   ['photo',[0,4,4,2],{img:P('image42'),pos:'50% 50%'}],
 ]});
 /* 13 — the question */
@@ -697,7 +697,7 @@ CARD.block=function(c,r){const lanes=3,per=6;let dots='';
 (function(){const st=document.createElement('style');st.textContent=cqIn('ix')+
   '.bc .ix{position:absolute;inset:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:4cqh}'+
   '.bc .ixt{font:500 min(12cqh,6.6cqw)/1.4 var(--f-display);color:var(--ink);text-align:right;word-spacing:.06em;text-wrap:balance}.bc .ixt b{font-weight:800}'+
-  '.bc.grad .ixt,.bc.mint .ixt,.bc.vio .ixt{color:#fff}'+
+  '.bc.grad .ixt,.bc.mint .ixt{color:#fff}'+
   /* wear */
   '.bc .wr{display:flex;align-items:center}.bc .wrs{width:100%;height:min(46cqh,100%);display:flex;gap:1.6cqw;direction:rtl}'+
   '.bc .wrs i{flex:1 1 0;position:relative;border-radius:8px;background:linear-gradient(180deg,#5b78dd,#2c45b0);box-shadow:inset 0 1px 0 rgba(255,255,255,.35);transition:background .5s ease var(--d),box-shadow .5s ease var(--d),transform .5s ease var(--d)}'+
@@ -738,4 +738,53 @@ CARD.govc=function(c,r){let paths='',sparks='',vb='0 0 100 100';const lit=c.lit|
   '.bc .gvm .gl{fill:#e8845e;filter:drop-shadow(0 0 1.6px rgba(232,132,94,.9));animation:gvl 2.6s ease-in-out infinite}@keyframes gvl{50%{filter:drop-shadow(0 0 3.6px rgba(232,132,94,1))}}'+
   '.bc .gvm .gd{fill:rgba(61,92,192,.07);stroke:rgba(61,92,192,.7);stroke-dasharray:2.5 2;stroke-width:1}.bc .gvm .gq{fill:rgba(61,92,192,.3)}'+
   '.bc .gvm .gs{fill:#e8845e;opacity:.25;animation:gvs 3.6s ease-in-out infinite;animation-delay:var(--d)}@keyframes gvs{50%{opacity:.9}}';
+  document.head.appendChild(st)})();
+
+/* slope v1 (slide 11 «وقد أفضت هذه التحديات إلى تدهور حاد»): each measure as a slope — its earlier figure on the right, the
+   later one on the left (time runs right to left, as everywhere in the deck), joined by a line that draws itself downhill or uphill;
+   the later figure is the big one. Heights are true to the two figures (from zero). No words beyond the client's label */
+CARD.slope=function(c,r){const a=c.a,b=c.b,mx=Math.max(a.v,b.v)||1,Y=v=>Math.max(24,Math.min(80,94-(v/mx)*70));
+  const ya=Y(a.v),yb=Y(b.v),lab=String(c.l||''),m=lab.match(/^(.*?)\s*(\(.*\))\s*$/);
+  const N=(x,cls)=>`<span class="sln ${cls}">${cvSpan(x.v)}${x.u==='%'?'<span class="pc">%</span>':''}</span>`;
+  return `<div class="sl"><div class="slh">${ICON(c.ic||'trending-down',22)}<span><b>${m?m[1]:lab}</b>${m?` <i>${m[2]}</i>`:''}</span></div>`+
+    `<div class="slc"><svg class="sls" viewBox="0 0 100 100" preserveAspectRatio="none"><line class="slb" x1="0" y1="96" x2="100" y2="96"/>`+
+    `<line class="slg" x1="66" y1="${ya}" x2="66" y2="96"/><line class="slg" x1="36" y1="${yb}" x2="36" y2="96"/>`+
+    `<defs><clipPath id="slk${c.l.length}${a.v}"><rect class="slr" x="-5" y="-5" width="110" height="110"/></clipPath></defs><g clip-path="url(#slk${c.l.length}${a.v})"><path class="sll" d="M66 ${ya}L36 ${yb}"/></g></svg>`+
+    `<i class="sld a" style="right:34%;top:${ya}%"></i><i class="sld b" style="right:64%;top:${yb}%"></i>`+
+    `<div class="slv a" style="left:69%;top:${ya}%">${N(a,'a')}</div><div class="slv b" style="right:67.5%;top:${yb}%">${N(b,'b')}</div></div></div>`};
+(function(){const st=document.createElement('style');st.textContent=cqIn('sl')+
+  '.bc .sl{position:absolute;inset:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:2cqh}'+
+  '.bc .slh{display:flex;align-items:center;gap:.5em;font:600 min(8.4cqh,4.6cqw)/1.25 var(--f-display);color:var(--ink)}.bc .slh svg{flex:none;opacity:.8}'+
+  '.bc .slh b{font-weight:700}.bc .slh i{font-style:normal;font-weight:500;opacity:.7;font-size:.86em}'+
+  '.bc .slc{position:relative}.bc .sls{position:absolute;inset:0;width:100%;height:100%;overflow:visible}'+
+  '.bc .slb{stroke:rgba(28,37,71,.16);stroke-width:1;vector-effect:non-scaling-stroke}.bc .slg{stroke:rgba(28,37,71,.14);stroke-width:1;stroke-dasharray:3 4;vector-effect:non-scaling-stroke}'+
+  '.bc .sll{fill:none;stroke:#e07a52;stroke-width:3.4;stroke-linecap:round;vector-effect:non-scaling-stroke}.bc .slr{transform-box:fill-box;transform-origin:right;transform:scaleX(0);transition:transform 1.2s cubic-bezier(.5,0,.2,1) .5s}.bc.go .slr{transform:none}'+
+  '.bc .sld{position:absolute;width:min(6cqh,3cqw);aspect-ratio:1;border-radius:50%;transform:translate(50%,-50%);background:#fff;box-shadow:0 0 0 3px #3d5cc0}'+
+  '.bc .sld.b{box-shadow:0 0 0 3.5px #e07a52,0 0 0 9px rgba(224,122,82,.18);opacity:0;transition:opacity .3s ease 1.7s}.bc.go .sld.b{opacity:1}'+
+  '.bc .slv{position:absolute;transform:translateY(-50%);white-space:nowrap;direction:ltr}'+
+  '.bc .sln{font-family:var(--f-display);font-variant-numeric:tabular-nums;line-height:.9;display:inline-flex;align-items:baseline}'+
+  '.bc .sln.a{font-weight:600;font-size:min(17cqh,8cqw);color:var(--ink);opacity:.55}'+
+  '.bc .sln.b{font-weight:700;font-size:min(28cqh,11.5cqw);color:var(--ink)}.bc .sln .pc{font-size:.5em;margin-left:.05em;font-weight:500}'+
+  '.bc .slv.b{opacity:0;transform:translateY(-50%) translateX(8px);transition:opacity .5s ease 1.6s,transform .6s cubic-bezier(.2,1,.3,1) 1.6s}.bc.go .slv.b{opacity:1;transform:translateY(-50%)}'+
+  '.bc.grad .slh,.bc.mint .slh,.bc.grad .sln,.bc.mint .sln{color:#fff}'+
+  '.bc.grad .sll,.bc.mint .sll{stroke:#fff}.bc.grad .slb,.bc.mint .slb,.bc.grad .slg,.bc.mint .slg{stroke:rgba(255,255,255,.35)}'+
+  '.bc.grad .sld,.bc.mint .sld{box-shadow:0 0 0 3px rgba(255,255,255,.7);background:transparent}.bc.grad .sld.b,.bc.mint .sld.b{background:#fff;box-shadow:0 0 0 3.5px #fff,0 0 0 9px rgba(255,255,255,.25)}';
+  document.head.appendChild(st)})();
+
+/* ilist v2 (slide 11 «تجسد في …»): the three symptoms run down a rail, one after the other, and the rail ends in an arrow into
+   their result («بما أضعف قدرة الاقتصاد…») set as the card's conclusion — no stock icons */
+CARD.ilist=function(c,r){
+  return `<div class="il2">${c.h?`<div class="il2h">${hl(c.h)}</div>`:''}<div class="il2l">`+
+    c.items.map(([ic,t],i)=>`<div class="il2i" style="--d:${300+i*280}ms"><i></i><b>${hl(t)}</b></div>`).join('')+
+    `</div>${c.foot?`<div class="il2f" style="--d:${300+c.items.length*280+150}ms">${hl(c.foot)}</div>`:''}</div>`};
+(function(){const st=document.createElement('style');st.textContent=cqIn('il2')+
+  '.bc .il2{position:absolute;inset:0;display:flex;flex-direction:column;gap:3cqh}'+
+  '.bc .il2h{font:600 min(5.6cqh,4.4cqw)/1.2 var(--f-display);color:var(--ink);opacity:.7}'+
+  '.bc .il2l{flex:1 1 auto;display:flex;flex-direction:column;justify-content:space-evenly;position:relative;padding-right:min(9cqh,7cqw)}'+
+  '.bc .il2l::before{content:"";position:absolute;right:min(2.6cqh,2cqw);top:8%;bottom:-3cqh;width:3px;border-radius:3px;background:linear-gradient(180deg,#3d5cc0,#e07a52)}'+
+  '.bc .il2l::after{content:"";position:absolute;right:calc(min(2.6cqh,2cqw) - 6px);bottom:-4.4cqh;border:7.5px solid transparent;border-top:10px solid #e07a52;border-bottom:0}'+
+  '.bc .il2i{position:relative;opacity:0;transform:translateX(-10px);transition:opacity .45s ease var(--d),transform .6s cubic-bezier(.2,1,.3,1) var(--d)}.bc.go .il2i{opacity:1;transform:none}'+
+  '.bc .il2i i{position:absolute;right:calc(-1 * min(9cqh,7cqw) + min(2.6cqh,2cqw) - 6px);top:50%;width:15px;height:15px;border-radius:50%;background:#fff;box-shadow:0 0 0 3.5px #3d5cc0;transform:translateY(-50%)}'+
+  '.bc .il2i b{font:700 min(8.6cqh,6.4cqw)/1.3 var(--f-display);color:var(--ink)}'+
+  '.bc .il2f{margin-top:3.4cqh;padding:2.6cqh 3.4cqw;border-radius:16px;background:linear-gradient(135deg,rgba(232,132,94,.16),rgba(232,132,94,.06));box-shadow:inset 0 0 0 1.5px rgba(224,122,82,.35);font:600 min(6.2cqh,4.6cqw)/1.45 var(--f-display);color:var(--ink);opacity:0;transition:opacity .5s ease var(--d)}.bc.go .il2f{opacity:1}';
   document.head.appendChild(st)})();
