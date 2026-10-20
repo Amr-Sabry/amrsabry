@@ -7,7 +7,9 @@ const st=document.createElement('style');
 st.textContent='.bc.photo.nopan img{animation:none!important}'+
   /* s5 s5-i: the client's five-panel picture (image48 / image49) — the card shows panel i only (0 = left panel) */
   '.bc.photo.s5 figure{overflow:hidden}.bc.photo.s5 img{inset:0 auto 0 0!important;width:500%!important;max-width:none;animation:none!important}'+
-  [0,1,2,3,4].map(i=>`.bc.photo.s5-${i} img{left:-${i*100}%!important}`).join('');
+  [0,1,2,3,4].map(i=>`.bc.photo.s5-${i} img{left:-${i*100}%!important}`).join('')+
+  /* bas: before/after names (not years) set smaller so a long place name stays inside its half */
+  '.bc.photo.bas .bax .yr.w b{font-size:clamp(26px,7cqh,46px)}';
 document.head.appendChild(st);
 
 /* 14 — section two cover */
@@ -130,7 +132,7 @@ S({n:29,...HM1,cards:[
 
 /* 30 — Rawdet El-Sayeda: Tal El-Aqareb before, and after (drag to compare) */
 S({n:30,...HM1,cards:[
-  ['photo',[0,0,8,6],{ba:['c5/image92','c5/image91'],la:'تل العقارب',sa:'(روضة السيدة قبل التطوير)',lb:'روضة السيدة'}],
+  ['photo',[0,0,8,6],{ba:['c5/image92','c5/image91'],la:'تل العقارب',sa:'(روضة السيدة قبل التطوير)',lb:'روضة السيدة',cls:'bas'}],
   ['title',[8,0,4,3],{bg:'grad',ki:'building-2',t:'روضة السيدة',fs:52}],
   ['photo',[8,3,4,3],{img:P('image93'),pos:'50% 50%',cap:'تل العقارب (روضة السيدة قبل التطوير)'}],
 ]});
