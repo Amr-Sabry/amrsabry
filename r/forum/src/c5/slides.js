@@ -119,6 +119,10 @@ function vid(n,o){S({n,full:1,cards:[['video',[0,0,12,6],Object.assign({cls:'vca
 })();
 /* hall contrast (QA): the small labels on the teal and gradient cards were pale white at 16px; full white, a touch heavier */
 (function(){const st=document.createElement('style');st.textContent='.bc.mint .lab,.bc.mint .sub,.bc.mint .para,.bc.grad .lab,.bc.grad .sub,.bc.grad .para,.bc.grad .pre,.bc.grad .cu{opacity:.96!important;font-weight:500}';document.head.appendChild(st)})();
+/* logo hd v1 (Amr 17:31: «الكواليتي بتاع اللوجو وحش قوي … تشيل منه التاريخ»): the forum's logo cards use a clean redraw without
+   the «2026» line — the words traced to vector, the symbol rebuilt at 3x with smooth edges (img/logo-hd.svg) */
+(function(){const L0=CARD.logo;CARD.logo=function(c,r){const h=L0.call(this,c,r);return c.img==='logo'?h.replace(/src="[^"]*"/,'src="img/logo-hd.svg"'):h}})();
+(function(){const st=document.createElement('style');st.textContent='#stage .bc:has(>.in img[src$="img/logo-hd.svg"]),#stage .bc:has(>img[src$="img/logo-hd.svg"]){background:var(--g-cobalt);color:#fff}';document.head.appendChild(st)})();
 /* map names stay on their map while its card resizes (Amr 14:53): the route map's names sit in an html layer measured from the
    card's left edge, but in this right-to-left page the map picture itself hung from the right edge, so on every resize the two
    drifted apart until the map was redrawn; both now hang from the left edge */
