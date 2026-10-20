@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>الجلسة الختامية · Keynote</title>
+<style>
+/* «الجلسة الختامية» keynote edition (Amr 21:30): one idea per slide, the figure is the hero, 2014 against 2026,
+   short words, no grid and no motion: slides simply follow one another. 1920×1080, scaled to the screen. */
+@font-face{font-family:'KNum';src:url(fonts/montserrat-500.woff2) format('woff2');font-weight:100 549;font-display:block;unicode-range:U+0025,U+002B-002E,U+0030-0039,U+2013,U+00D7}
+@font-face{font-family:'KNum';src:url(fonts/montserrat-600.woff2) format('woff2');font-weight:550 649;font-display:block;unicode-range:U+0025,U+002B-002E,U+0030-0039,U+2013,U+00D7}
+@font-face{font-family:'KNum';src:url(fonts/montserrat-700.woff2) format('woff2');font-weight:650 749;font-display:block;unicode-range:U+0025,U+002B-002E,U+0030-0039,U+2013,U+00D7}
+@font-face{font-family:'KNum';src:url(fonts/montserrat-800.woff2) format('woff2');font-weight:750 1000;font-display:block;unicode-range:U+0025,U+002B-002E,U+0030-0039,U+2013,U+00D7}
+@font-face{font-family:'KAr';src:url(fonts/cairo-medium.woff2) format('woff2');font-weight:100 549;font-display:block}
+@font-face{font-family:'KAr';src:url(fonts/cairo-ar-600.woff2) format('woff2');font-weight:550 649;font-display:block;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFC}
+@font-face{font-family:'KAr';src:url(fonts/cairo-ar-700.woff2) format('woff2');font-weight:650 749;font-display:block;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFC}
+@font-face{font-family:'KAr';src:url(fonts/cairo-ar-800.woff2) format('woff2');font-weight:750 849;font-display:block;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFC}
+@font-face{font-family:'KAr';src:url(fonts/cairo-black.woff2) format('woff2');font-weight:850 1000;font-display:block}
+:root{--blue:#2b45ff;--blue2:#6d7dff;--ink:#0b0d14;--paper:#f3f4f8;--grey:#8a8fa6;--peach:#ff9a6e;--f:'KNum','KAr',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#000;overflow:hidden}
+body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:#fff}
+#vp{position:fixed;inset:0;display:grid;place-items:center}
+#stage{position:relative;width:1920px;height:1080px;transform-origin:50% 50%;overflow:hidden}
+.s{position:absolute;inset:0;display:none;overflow:hidden}
+.s.on{display:block}
+/* backgrounds */
+.s.dark{background:#05060b;color:#fff}
+.s.blue{background:radial-gradient(120% 120% at 85% 10%,#5468ff 0%,#2b45ff 38%,#1726c9 72%,#0d1680 100%);color:#fff}
+.s.light{background:var(--paper);color:var(--ink)}
+/* the forum mark on every slide */
+.brand{position:absolute;top:56px;right:96px;left:96px;display:flex;justify-content:space-between;align-items:center;font:600 22px/1 var(--f);opacity:.75}
+.brand img{height:44px;width:auto}
+.brand .gov{display:flex;align-items:center;gap:14px}
+.brand .gov span{display:flex;flex-direction:column;gap:6px}.brand .gov b{font-weight:700}
+.s.light .brand{opacity:.8}
+.pg{position:absolute;bottom:52px;left:96px;font:500 20px/1 var(--f);opacity:.45;direction:ltr}
+.tag{position:absolute;bottom:52px;right:96px;font:600 22px/1 var(--f);opacity:.55}
+/* type */
+.num{font-family:'KNum','KAr',sans-serif;font-variant-numeric:lining-nums;direction:ltr;unicode-bidi:isolate;line-height:.86;letter-spacing:-.02em}
+.h1{font:900 104px/1.12 var(--f)}
+.h2{font:900 76px/1.15 var(--f)}
+.lead{font:500 40px/1.45 var(--f);opacity:.78}
+.grad{background:linear-gradient(100deg,#ffffff 0%,#c9d0ff 45%,#8d9cff 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.s.light .grad{background:linear-gradient(100deg,#2b45ff 0%,#4a5dff 60%,#7a3dff 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.yr{align-self:flex-start;display:inline-flex;align-items:center;gap:12px;font:700 30px/1 var(--f);padding:12px 26px;border-radius:999px}
+.yr.old{background:rgba(255,255,255,.1);color:rgba(255,255,255,.7)}
+.yr.new{background:var(--blue);color:#fff}
+.s.light .yr.old{background:rgba(11,13,20,.07);color:rgba(11,13,20,.6)}
+.s.blue .yr.new{background:#fff;color:var(--blue)}
+
+/* ---- cover ---- */
+.cover .c{position:absolute;right:140px;left:140px;top:300px}
+.cover .kick{font:600 34px/1 var(--f);opacity:.8;margin-bottom:40px}
+.cover .big{display:flex;align-items:baseline;gap:40px;font:900 190px/1 var(--f)}
+.cover .big .num{font-weight:700;font-size:220px}
+.cover .sub{margin-top:56px;font:500 50px/1.4 var(--f);opacity:.9}
+
+/* ---- section ---- */
+.sec .no{position:absolute;left:110px;top:120px;font:800 760px/.8 'KNum',sans-serif;letter-spacing:-.06em;color:transparent;-webkit-text-stroke:3px rgba(120,135,255,.45);direction:ltr}
+.sec .c{position:absolute;right:140px;bottom:200px;max-width:1150px}
+.sec .k{font:700 40px/1 var(--f);color:var(--blue2);margin-bottom:30px}
+.sec .h1{font-size:150px}
+
+/* ---- compare: 2014 on the right, 2026 on the left ---- */
+.cmp .t{position:absolute;right:140px;top:170px;left:140px}
+.cmp .t .k{font:600 34px/1 var(--f);opacity:.55;margin-bottom:22px}
+.cmp .row{position:absolute;right:140px;left:140px;top:350px;display:grid;grid-template-columns:1fr auto 1.25fr;align-items:end;column-gap:80px;direction:rtl}
+.cmp .col{display:flex;flex-direction:column;gap:22px}
+.cmp .col.old .num{font-size:210px;font-weight:600;color:rgba(255,255,255,.42)}
+.cmp .col.new .num{font-size:300px;font-weight:700}
+.s.light.cmp .col.old .num{color:rgba(11,13,20,.3)}
+.cmp .u{font:700 52px/1.2 var(--f)}
+.cmp .col.old .u{opacity:.5}
+.cmp .note{font:500 32px/1.4 var(--f);opacity:.62;max-width:720px}
+.cmp .arrow{align-self:center;width:130px;height:130px;opacity:.5;margin-bottom:60px}
+.cmp .chip{align-self:flex-start;margin-top:10px;white-space:nowrap;display:flex;align-items:center;gap:22px;font:700 40px/1.2 var(--f);padding:26px 40px;border-radius:28px;background:rgba(43,69,255,.18);box-shadow:inset 0 0 0 2px rgba(109,125,255,.45)}
+.cmp .col .chip .num{font-size:64px;font-weight:700;color:#9aa6ff;-webkit-text-fill-color:currentColor}
+.s.light.cmp .chip{background:rgba(43,69,255,.08);box-shadow:inset 0 0 0 2px rgba(43,69,255,.25)}.s.light.cmp .col .chip .num{color:var(--blue)}
+
+/* ---- photo hero ---- */
+.photo .img{position:absolute;inset:0;background-size:cover;background-position:50% 50%}
+.photo .img::after{content:"";position:absolute;inset:0;background:linear-gradient(270deg,rgba(3,4,10,.94) 0%,rgba(3,4,10,.82) 38%,rgba(3,4,10,.25) 75%,rgba(3,4,10,.1) 100%)}
+.photo .c{position:absolute;right:140px;top:170px;width:1000px}
+
+/* ---- rows: several measures, 2014 → 2026 ---- */
+.rows .t{position:absolute;right:140px;top:170px;left:140px}
+.rows .list{position:absolute;right:140px;left:140px;top:380px;display:flex;flex-direction:column}
+.rows .r{display:grid;grid-template-columns:1.1fr .7fr 70px 1.45fr;align-items:center;column-gap:40px;padding:34px 0;border-top:2px solid rgba(11,13,20,.1)}
+.s.dark.rows .r{border-top-color:rgba(255,255,255,.12)}
+.rows .r:last-child{border-bottom:2px solid rgba(11,13,20,.1)}
+.s.dark.rows .r:last-child{border-bottom-color:rgba(255,255,255,.12)}
+.rows .nm{font:800 46px/1.2 var(--f)}
+.rows .a,.rows .b{display:flex;align-items:baseline;gap:18px;justify-content:flex-start}
+.rows .a .num{font-size:96px;font-weight:600;opacity:.38}
+.rows .b .num{font-size:140px;font-weight:700}
+.rows .a i,.rows .b i{font:600 32px/1.2 var(--f);font-style:normal;opacity:.6;white-space:nowrap}
+.rows .ar{width:56px;height:56px;opacity:.35}
+.rows .hd{display:grid;grid-template-columns:1.1fr .7fr 70px 1.45fr;column-gap:40px;margin-bottom:18px}
+.rows .hd span{font:700 26px/1 var(--f);opacity:.5}
+
+/* footer note */
+.src{position:absolute;right:140px;bottom:130px;font:500 30px/1.4 var(--f);opacity:.6;max-width:1100px}
+
+/* navigation hint */
+#hint{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);font:500 13px var(--f);color:rgba(255,255,255,.35);direction:rtl;pointer-events:none}
+</style>
+</head>
+<body>
+<div id="vp"><div id="stage"></div></div>
+<div id="hint">← → للتنقل · F ملء الشاشة</div>
+<script src="src/kn/slides.js?v=1"></script>
+<script>
+const ARROW='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>';
+const N=v=>`<span class="num">${v}</span>`;
+const BRAND=s=>`<div class="brand"><div class="gov"><img src="img/emblem.webp" alt=""><span><b>جمهورية مصر العربية</b>رئاسة مجلس الوزراء</span></div><img src="img/logo-hd.svg" alt="" style="height:52px;${s.bg==='light'?'':'filter:brightness(0) invert(1);opacity:.9'}"></div>`;
+const R={
+  cover:s=>`${BRAND(s)}<div class="c"><div class="kick">${s.k}</div><div class="big">${s.t}<span style="font-family:KNum,sans-serif;font-weight:700;font-size:220px">${s.y}</span></div><div class="sub">${s.s}</div></div>`,
+  sec:s=>`${BRAND(s)}<div class="no">${s.no}</div><div class="c"><div class="k">${s.k}</div><div class="h1">${s.t}</div>${s.s?`<div class="lead" style="margin-top:36px">${s.s}</div>`:''}</div>`,
+  cmp:s=>`${BRAND(s)}<div class="t">${s.k?`<div class="k">${s.k}</div>`:''}<div class="h2">${s.t}</div></div>
+    <div class="row"><div class="col old"><span class="yr old">${s.ya||'قبل 2014'}</span>${N(s.a.v)}<div class="u">${s.a.u||''}</div>${s.a.n?`<div class="note">${s.a.n}</div>`:''}</div>
+    <div class="arrow">${ARROW}</div>
+    <div class="col new"><span class="yr new">${s.yb||'2026'}</span><span class="num grad">${s.b.v}</span><div class="u">${s.b.u||''}</div>${s.b.n?`<div class="note">${s.b.n}</div>`:''}${s.chip?`<div class="chip">${s.chip}</div>`:''}</div></div>`,
+  photo:s=>`<div class="img" style="background-image:url(img/c5/${s.img}.webp);background-position:${s.pos||'50% 50%'}"></div>${BRAND(s)}<div class="c">${s.k?`<div class="k" style="font:600 34px/1 var(--f);opacity:.6;margin-bottom:26px">${s.k}</div>`:''}<div class="h2">${s.t}</div>
+    <div style="display:flex;flex-direction:column;gap:44px;margin-top:56px">${s.items.map(it=>`<div><span class="yr ${it.y==='2026'?'new':'old'}">${it.y}</span>${it.pre?`<div style="font:600 34px/1.3 var(--f);opacity:.8;margin-top:22px">${it.pre}</div>`:''}<div style="display:flex;align-items:baseline;gap:26px;margin-top:${it.pre?10:22}px">${it.y==='2026'?`<span class="num grad" style="font-size:230px;font-weight:700">${it.v}</span>`:`<span class="num" style="font-size:170px;font-weight:600;opacity:.55">${it.v}</span>`}<span style="font:700 46px/1.2 var(--f)${it.y==='2026'?'':';opacity:.6'}">${it.u}</span></div>${it.n?`<div class="note" style="font:500 30px/1.4 var(--f);opacity:.6;margin-top:14px">${it.n}</div>`:''}</div>`).join('')}</div></div>`,
+  rows:s=>`${BRAND(s)}<div class="t">${s.k?`<div class="k" style="font:600 34px/1 var(--f);opacity:.55;margin-bottom:22px">${s.k}</div>`:''}<div class="h2">${s.t}</div></div>
+    <div class="list"><div class="hd"><span></span><span>قبل 2014</span><span></span><span>2026</span></div>${s.rows.map(r=>`<div class="r"><div class="nm">${r.nm}</div><div class="a">${r.a?N(r.a):''}<i>${r.ua||''}</i></div><div class="ar">${r.a?ARROW:''}</div><div class="b"><span class="num grad">${r.b}</span><i>${r.ub||''}</i></div></div>`).join('')}${s.foot?`<div style="font:600 32px/1.4 var(--f);opacity:.65;margin-top:34px">${s.foot}</div>`:''}</div>`
+};
+const stage=document.getElementById('stage');
+stage.innerHTML=KN.map((s,i)=>`<section class="s ${s.bg||'dark'} ${s.type}" data-i="${i}">${R[s.type](s)}<div class="pg">${i+1} / ${KN.length}</div>${s.sec?`<div class="tag">${s.sec}</div>`:''}</section>`).join('');
+const S=[...stage.children];let cur=Math.min(S.length-1,Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
+function go(i){cur=Math.max(0,Math.min(S.length-1,i));S.forEach((x,j)=>x.classList.toggle('on',j===cur));history.replaceState(null,'','#'+(cur+1))}
+function fit(){const k=Math.min(innerWidth/1920,innerHeight/1080);stage.style.transform=`scale(${k})`}
+addEventListener('resize',fit);fit();go(cur);
+addEventListener('keydown',e=>{if(['ArrowLeft','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();go(cur+1)}else if(['ArrowRight','PageUp','Backspace'].includes(e.key)){e.preventDefault();go(cur-1)}else if(e.key==='Home')go(0);else if(e.key==='End')go(S.length-1);else if(e.key==='f'||e.key==='F'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}});
+addEventListener('click',e=>{go(e.clientX<innerWidth/2?cur+1:cur-1)});
+let tx=0;addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>40)go(d>0?cur+1:cur-1)},{passive:true});
+/* live: the page reloads on the same slide when src/kn/live.js changes (works offline too) */
+(function(){let last=null;setInterval(()=>{const sc=document.createElement('script');sc.src='src/kn/live.js?t='+Date.now();sc.onload=()=>{if(last===null)last=window.KNLIVE;else if(window.KNLIVE!==last)location.reload();sc.remove()};sc.onerror=()=>sc.remove();document.head.appendChild(sc)},2500)})();
+</script>
+</body>
+</html>
