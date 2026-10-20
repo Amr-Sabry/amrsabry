@@ -72,4 +72,11 @@ S({n:77,...HM3,cards:[
   ['kpi',[8,0,4,4],{bg:'grad',ic:'waves',l:'الطاقة الإجمالية',v:150,u:'ألف م3/ يوم',fs:150}],
   ['title',[8,4,4,2],{bg:'dark',ki:'droplets',t:'محطة تحلية هضبة الجلالة',fs:38}],
 ]});
+/* 78 — 6th of October purification plant, Rumeila seawater desalination */
+S({n:78,...HM3,cards:[
+  ['photo',[4,0,8,3],{img:P('image210'),pos:'50% 60%',cap:'محطة التنقية المرحلة الثالثة بمدينة 6 اكتوبر'}],
+  ['photo',[0,0,4,3],{img:P('image205'),pos:'50% 60%'}],
+  ['photo',[6,3,6,3],{img:P('image209'),pos:'50% 50%',cap:'محطة تحلية مياه البحر بالرميلة'}],
+  ['photo',[0,3,6,3],{img:P('image208'),pos:'50% 50%'}],
+]});
 })();

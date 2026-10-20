@@ -94,13 +94,14 @@ vs(25,HM1,{t:'تطوير العمران القائم',img:'image81',
     {v:16.5,u:'ألف فدان',l:'تطوير مناطق غير مخططة<br>بإجمالي 8 مليون نسمة'}]}});
 /* the client's picture shown whole, and the 2026 note beside the 2026 figures */
 SLIDES[25].cards.forEach(cd=>{if(cd[0]==='photo'){cd[1]=[0,0,3,3];cd[2].cls='fit'}});
-SLIDES[25].cards.push(['text',[0,3,3,3],{bg:'dark2',ic:'house',t:'بالإضافة إلى تنفيذ حوالي 2 مليون وحدة ضمن مشروعات سكن لكل المصريين وتطوير عواصم المحافظات وتطوير القاهرة التاريخية',fs:17,pz:0,pie:0}]);
+SLIDES[25].cards.push(['text',[0,3,3,3],{bg:'dark2',ic:'house',t:'بالإضافة إلى تنفيذ حوالي [[2 مليون وحدة]] ضمن مشروعات سكن لكل المصريين وتطوير عواصم المحافظات وتطوير القاهرة التاريخية',fs:21,pz:0,pie:0}]);
 
 /* 26 — the projects on the client's map */
 S({n:26,...HM1,cards:[
   ['photo',[0,0,8,6],{img:P('image82'),cls:'fit'}],
   ['title',[8,0,4,2],{bg:'dark',ki:'map',t:'توزيع عدد مشروعات تطوير المناطق غير الآمنة',fs:30}],
-  ['kpi',[8,2,4,4],{bg:'vio',ic:'house',l:'',pre:'تنفيذ',v:45,u:'مشروع تطوير',sub:'للقضاء على المناطق غير الآمنة<br>عام 2026',fs:150}],
+  ['kpi',[8,2,4,3],{bg:'vio',ic:'house',l:'',pre:'تنفيذ',v:45,u:'مشروع تطوير',sub:'عام 2026',fs:140}],
+  ['text',[8,5,4,1],{bg:'grad',t:'للقضاء على المناطق غير الآمنة',fs:24,pz:0,pie:0}],
 ]});
 
 /* 27 — Maspero triangle: after, and before */
@@ -109,6 +110,29 @@ S({n:27,...HM1,cards:[
   ['title',[8,0,4,2],{bg:'grad',ki:'building-2',t:'مثلث ماسبيرو',fs:48}],
   ['photo',[8,2,4,2],{img:P('image85'),pos:'50% 50%',cap:'مثلث ماسبيرو (قبل التطوير)'}],
   ['photo',[8,4,4,2],{img:P('image84'),pos:'50% 50%'}],
+]});
+
+/* 28 — Asmarat, with the two areas before */
+S({n:28,...HM1,cards:[
+  ['photo',[0,0,8,6],{img:P('image88'),pos:'60% 50%'}],
+  ['photo',[8,0,4,2],{img:P('image87'),pos:'50% 45%',cap:'بطن البقرة'}],
+  ['photo',[8,2,4,2],{img:P('image86'),pos:'50% 50%',cap:'منشأة ناصر'}],
+  ['title',[8,4,4,2],{bg:'grad',ki:'building-2',t:'الأسمرات 1-2',fs:48}],
+]});
+
+/* 29 — Mahrousa, with the two areas before */
+S({n:29,...HM1,cards:[
+  ['photo',[0,0,8,4],{img:P('image90'),pos:'50% 55%'}],
+  ['photo',[4,4,4,2],{img:P('image40'),pos:'50% 50%',cap:'سيدي فرج - روض الفرج'}],
+  ['photo',[0,4,4,2],{img:P('image89'),pos:'50% 50%',cap:'حكر السكاكيني الجديد - الشرابية'}],
+  ['title',[8,0,4,6],{bg:'dark',ki:'building-2',t:'المحروسة 1 – 2',fs:60}],
+]});
+
+/* 30 — Rawdet El-Sayeda: Tal El-Aqareb before, and after (drag to compare) */
+S({n:30,...HM1,cards:[
+  ['photo',[0,0,8,6],{ba:['c5/image92','c5/image91'],la:'تل العقارب',sa:'(روضة السيدة قبل التطوير)',lb:'روضة السيدة'}],
+  ['title',[8,0,4,3],{bg:'grad',ki:'building-2',t:'روضة السيدة',fs:52}],
+  ['photo',[8,3,4,3],{img:P('image93'),pos:'50% 50%',cap:'تل العقارب (روضة السيدة قبل التطوير)'}],
 ]});
 
 })();
