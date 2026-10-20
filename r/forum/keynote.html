@@ -313,6 +313,23 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 .cs .yy2{position:absolute;bottom:80px;text-align:center;font:800 34px/1 var(--f);white-space:nowrap}
 .cs .yy2.o{color:rgba(28,37,71,.55)}.cs .yy2.n{color:var(--cob)}
 .cs .nb2{position:absolute;bottom:0;left:24px;right:24px;text-align:center;font:700 32px/1.3 var(--f);color:var(--cob)}
+.ec{position:absolute;top:330px;height:600px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.ec+.ec::before{content:"";position:absolute;right:0;top:20px;bottom:20px;width:2px;background:rgba(28,37,71,.08)}
+.ec .ic2{color:#5a6280;margin-bottom:20px}
+.ec .nm{font:800 42px/1.2 var(--f);height:110px}
+.ec .vv{display:flex;align-items:baseline;justify-content:center;gap:10px;margin-top:40px}
+.ec .vv .num{font-size:96px;font-weight:800;color:#2b3350}
+.ec .vv .u{font:700 34px/1.1 var(--f);max-width:110px;text-align:right}
+.ec .dir{display:flex;align-items:center;gap:12px;margin-top:40px;color:#5a6280}
+.ec .was{font:600 34px/1.3 var(--f);color:#5a6280;margin-top:36px;padding:0 14px}
+.ec .was .num{font-size:40px;font-weight:700}
+.dn{position:absolute;top:330px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.dn svg{width:330px;height:330px}
+.dn .ctr{position:absolute;top:0;left:0;right:0;height:330px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.dn .ctr .pre{font:700 34px/1 var(--f);opacity:.7;margin-bottom:4px}
+.dn .ctr .num{font-size:96px;font-weight:800;color:#2b3350}
+.dn .l{font:800 40px/1.3 var(--f);margin-top:34px;padding:0 30px}
+.dn .l2{font:600 34px/1.35 var(--f);opacity:.7;margin-top:10px;padding:0 30px}
 /* ---- cover: the timeline from 2014 to 2026 and the five moves on the way ---- */
 .cover .kick{position:absolute;top:120px;left:160px;right:160px;text-align:center;font:700 40px/1 var(--f);color:var(--cob)}
 .cover .end{position:absolute;top:220px;width:720px}
@@ -336,7 +353,7 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 <body>
 <div id="vp"><div id="stage"></div></div>
 <div id="hint">← → للتنقل · F ملء الشاشة</div>
-<script src="src/kn/icons.js?v=7"></script>
+<script src="src/kn/icons.js?v=9"></script>
 <script src="src/kn/slides.js?v=4"></script>
 <script>
 const N=v=>`<span class="num">${v}</span>`, G=v=>`<span class="num grad">${v}</span>`;
@@ -370,21 +387,21 @@ const R={
   /* one measure; with a callout the pair moves right to leave the callout its room */
   col:s=>HD(s)+colChart({a:s.a,b:s.b,add:s.add,adds:s.adds,call:s.call},(s.call||s.adds)?{x0:300,x1:1260,top:560,base:870}:{x0:360,x1:1560,top:560,base:870},{ya:s.ya,yb:s.yb}),
   /* a few indicators side by side: for each, the earlier figure (faint) and the figure before 2014 (dark), true to scale */
+  /* the economy before 2014: each indicator's figure big, an arrow for which way it went, and what it had been */
   pairs:s=>{const n=s.rows.length,W=1600/n;
-    return HD(s)+s.rows.map((r,i)=>{const A=fnum(r.a),B=fnum(r.b),M=Math.max(A,B)||1,H=290,hA=Math.round(A/M*H),hB=Math.round(B/M*H),cx=W/2;
-      return `<div class="pq" style="right:${160+i*W}px;width:${W}px"><div class="nm">${r.nm}</div><div class="ch2">
-        <div class="bb n" style="right:${cx-70}px;width:140px;height:${hB}px"></div>
-        <div class="bb g" style="right:${cx-70}px;width:140px;height:${hA}px"></div>
-        <div class="gv" style="left:${cx+82}px;bottom:${hA-26}px">${N(r.a)}</div>
-        <div class="bv n" style="right:${cx-170}px;width:340px;bottom:${Math.max(hA,hB)+16}px">${N(r.b)}${r.u?`<span class="bu">${r.u}</span>`:''}</div>
-        <div class="base2"></div></div></div>`}).join('')+(s.leg?`<div class="pq-leg"><i></i><span>${s.leg}</span><b></b></div>`:'')},
+    return HD(s)+s.rows.map((r,i)=>{const up=fnum(r.b)>fnum(r.a);
+      return `<div class="ec" style="right:${160+i*W}px;width:${W}px"><div class="ic2">${ICON(r.ic,60)}</div><div class="nm">${r.nm}</div>
+        <div class="vv">${N(r.b)}${r.u?`<span class="u">${r.u}</span>`:''}</div>
+        <div class="was">بعد أن كان ${N(r.a)}${r.u?` ${r.u}`:''}</div></div>`}).join('')},
   /* a decline told as slopes: the earlier figure, the line, the figure before 2014 */
   trend:s=>HD(s)+s.rows.map((r,i)=>{const A=fnum(r.a),B=fnum(r.b),M=Math.max(A,B)||1,ya=96-A/M*84,yb=96-B/M*84;
     return `<div class="tw" style="top:${310+i*142}px"><div class="mh"><div class="ib">${ICON(r.ic,52)}</div><div><div class="mn">${r.nm}</div></div></div>
       <div class="va">${N(r.a)}${r.u?`<span class="x">${r.u}</span>`:''}</div><svg class="sl" viewBox="0 0 300 110"><line x1="284" y1="${ya.toFixed(1)}" x2="16" y2="${yb.toFixed(1)}" stroke="#5a6280" stroke-width="6" stroke-linecap="round"/><circle cx="284" cy="${ya.toFixed(1)}" r="11" fill="#d9deec" stroke="#8a90a8" stroke-width="5"/><circle cx="16" cy="${yb.toFixed(1)}" r="13" fill="#2b3350"/></svg>
       <div class="vb">${N(r.b)}${r.u?`<span class="x">${r.u}</span>`:''}</div></div>`}).join(''),
   /* shares of a whole, each on its own 100% track */
-  pcts:s=>HD(s)+s.rows.map((r,i)=>`<div class="pc" style="top:${330+i*225}px"><div class="vv">${r.pre?`<span class="pre">${r.pre}</span>`:''}${N(r.v)}</div><div class="bx"><div class="l">${r.l}</div><div class="tr"><i style="width:${fnum(r.v)}%"></i></div></div></div>`).join(''),
+  pcts:s=>{const n=s.rows.length,W=1600/n,C=2*Math.PI*130;
+    return HD(s)+s.rows.map((r,i)=>{const f=fnum(r.v)/100;return `<div class="dn" style="right:${160+i*W}px;width:${W}px"><div style="position:relative;width:330px;height:330px"><svg viewBox="0 0 330 330"><circle cx="165" cy="165" r="130" fill="none" stroke="rgba(28,37,71,.1)" stroke-width="44"/><circle cx="165" cy="165" r="130" fill="none" stroke="#5a6280" stroke-width="44" stroke-dasharray="${(C*f).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 165 165) scale(1,-1) translate(0,-330)" stroke-linecap="butt"/></svg>
+      <div class="ctr">${r.pre?`<span class="pre">${r.pre}</span>`:''}${N(r.v)}</div></div><div class="l">${r.l}</div>${r.l2?`<div class="l2">${r.l2}</div>`:''}</div>`}).join('')},
   /* a portion of a whole: the whole as a full track, then the part of it that was done */
   part:s=>{const W=fnum(s.a.v),P=fnum(s.b.v);
     return HD(s)+`<div class="pt2 o" style="top:380px"><div class="gl"><div class="y">${s.ya||'قبل 2014'}</div><div class="vv">${N(s.a.v)}<span class="u">${s.a.u}</span></div></div><div class="tr"><i style="width:100%"></i><span>${s.a.n||''}</span></div></div>
@@ -448,9 +465,9 @@ const R={
     return HD(s)+s.rows.map((r,i)=>{const A=r.an!=null?r.an:fnum(r.a),B=r.bn!=null?r.bn:fnum(r.b),M=r.pct?100:(Math.max(A,B)||1),
       bw=Math.min(130,W*.27),gp=Math.max(26,W*.08),cx=W/2,xr=cx-gp/2-bw,xl=cx+gp/2,hA=r.a==null?0:Math.max(10,Math.round(A/M*H)),hB=Math.max(10,Math.round(B/M*H)),
       ua=[r.u,r.ax].filter(Boolean).join(' '),ub=[r.u,r.bx].filter(Boolean).join(' '),LW=bw+gp+40,sp=t=>{const m=String(t||'').match(/^([\d.,:\s–-]+)\s*(.*)$/);return m?[m[1].trim(),m[2]]:['',t||'']},
-      PA=r.pct&&r.ax?sp(r.ax):null,PB=r.pct&&r.bx?sp(r.bx):null,inA=r.pct?`<div class="inb">${N(r.a)}</div>`:'',inB=r.pct?`<div class="inb">${N(r.b)}</div>`:'',
-      topA=r.pct?(PA?`${N(PA[0])}<span class="uu">${PA[1]}</span>`:''):`${N(r.a)}${ua?`<span class="uu">${ua}</span>`:''}`,
-      topB=r.pct?(PB?`${G(PB[0])}<span class="uu">${PB[1]}</span>`:''):`${G(r.b)}${ub?`<span class="uu">${ub}</span>`:''}`;
+      PA=r.pct&&r.ax?sp(r.ax):null,PB=r.pct&&r.bx?sp(r.bx):null,fa=r.pct&&hA>=84,fb=r.pct&&hB>=84,inA=fa?`<div class="inb">${N(r.a)}</div>`:'',inB=fb?`<div class="inb">${N(r.b)}</div>`:'',
+      topA=r.pct?((fa?'':N(r.a))+(PA?`${N(PA[0])}<span class="uu">${PA[1]}</span>`:'')):`${N(r.a)}${ua?`<span class="uu">${ua}</span>`:''}`,
+      topB=r.pct?((fb?'':G(r.b))+(PB?`${G(PB[0])}<span class="uu">${PB[1]}</span>`:'')):`${G(r.b)}${ub?`<span class="uu">${ub}</span>`:''}`;
       return `<div class="cs" style="right:${160+i*W}px;width:${W}px"><div class="nm">${r.ic?`<span class="ni">${ICON(r.ic,54)}</span>`:''}<span>${r.nm}</span></div>
         ${r.a==null?`<div class="lb o" style="right:${xr+bw/2-LW/2}px;width:${LW}px;bottom:${130+16}px">${r.at?`<span class="tt">${r.at}</span>`:N('—')}</div>`
           :`<div class="col2 o" style="right:${xr}px;width:${bw}px;height:${hA}px">${inA}</div><div class="lb o" style="right:${xr+bw/2-LW/2}px;width:${LW}px;bottom:${130+hA+14}px">${topA}</div>`}
