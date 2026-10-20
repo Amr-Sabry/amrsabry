@@ -1780,12 +1780,16 @@ let tx=null;addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:
 const ui=document.getElementById('ui');let idleT;const wake=()=>{ui.classList.remove('idle');clearTimeout(idleT);idleT=setTimeout(()=>ui.classList.add('idle'),2600)};addEventListener('mousemove',wake);addEventListener('keydown',wake);wake();
 document.getElementById('view').addEventListener('click',e=>{if(e.target.closest('#ui,.mapc,[data-int]'))return;go(e.clientX<innerWidth/2?1:-1)});
 </script>
+<script>/* V3 map data (cities, ports, airports, plants, routes…) without its slides */window.__S5=S;S=function(){}</script><script src="src/lt/slides.js?v=t2"></script><script>S=window.__S5</script>
 <script src="src/c5/slides.js?v=1"></script>
 <script src="src/c5/p1.js?v=1"></script>
 <script src="src/c5/p2.js?v=1"></script>
 <script src="src/c5/p3.js?v=1"></script>
 <script src="src/c5/p4.js?v=1"></script>
 <script src="src/c5/p5.js?v=1"></script>
+<script src="src/c5/mapsA.js?v=1"></script>
+<script src="src/c5/mapsB.js?v=1"></script>
+<script src="src/c5/mapsC.js?v=1"></script>
 <script src="src/brand.js"></script>
 <script src="src/lt/mapcam.js"></script>
 <script>
