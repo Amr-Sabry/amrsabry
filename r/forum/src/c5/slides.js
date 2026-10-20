@@ -278,8 +278,8 @@ function say(n,H,o){S(Object.assign({n},H,{cards:[
 /* ---------- the forum's questions ---------- */
 function ask(n,o){S({n,full:1,cards:[
   ['title',[4,0,8,4],{bg:'dark',k:'أهم الأسئلة التي يجيب عنها المنتدى',ki:'circle-help',t:o.t,fs:o.fs||58}],
-  ['kin',[0,0,4,2],{words:['السؤال','المنتدى','الإجابة'],cur:0}],
-  ['logo',[0,2,4,2],{img:'logo',alt:'منتدى مصر 2026',bg:'dark2',k:.8}],
+  /* no decorative word stack: its words were not the client's, and the third one was cut at the card's edge (QA) */
+  ['logo',[0,0,4,4],{img:'logo',alt:'منتدى مصر 2026',bg:'dark2',k:.8}],
   ['photo',[0,4,12,2],{img:P(o.img||'image43'),pos:'50% 60%'}],
 ]})}
 
@@ -363,7 +363,6 @@ S({n:12,...HS1,cards:[
 ]});
 /* 13 — the question */
 S({n:13,...HS1,cards:[
-  ['title',[2,0,10,4],{bg:'dark',k:'السؤال',ki:'circle-help',t:'كيف يمكن لدولة بهذا الحجم من التحديات أن [[تصنع مستقبلًا مختلفًا]] دون إعادة بناء مقومات التنمية؟',fs:54,pz:0}],
-  ['kin',[0,0,2,4],{words:['تحديات','مقومات','مستقبل'],cur:1}],
+  ['title',[0,0,12,4],{bg:'dark',k:'السؤال',ki:'circle-help',t:'كيف يمكن لدولة بهذا الحجم من التحديات أن [[تصنع مستقبلًا مختلفًا]] دون إعادة بناء مقومات التنمية؟',fs:58,pz:0}],
   ['photo',[0,4,12,2],{img:P('image43'),pos:'50% 50%'}],
 ]});

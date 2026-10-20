@@ -889,7 +889,13 @@ function pill(str,o={}){
       else if((bare==='بالإضافة'||bare==='جانب')&&i<w.length-1&&!o.noArrow&&out.length){out.push(`<span class="pp a">${ICON('plus',18)}</span>`)}
       out.push(x);
       if(icons<maxI&&i<w.length-1){const hit=PICON.find(([re,ic])=>!used.has(ic)&&re.test(x));
-        if(hit){used.add(hit[1]);icons++;out.push(`<span class="pp i">${ICON(hit[1],20)}</span>`)}}}
+        if(hit){/* pill phrase v1: carry on to the end of the name — the definite words after it, and «قبل ال…» — then the icon */
+          const B=y=>(y||'').replace(/[()،,.:؛]/g,''),stop=y=>/[،,.:؛)]$/.test(y||'');let k=0;
+          while(k<3&&!stop(w[i])&&i+1<w.length){const nx=B(w[i+1]);
+            if(/^ال/.test(nx)&&!/^\d/.test(nx)){out.push(w[++i]);k++;continue}
+            if(nx==='قبل'&&/^ال/.test(B(w[i+2]))){out.push(w[++i]);out.push(w[++i]);k+=2;continue}
+            break}
+          if(i<w.length-1){used.add(hit[1]);icons++;out.push(`<span class="pp i">${ICON(hit[1],20)}</span>`)}}}}
   });
   if(o.ic&&maxI>0&&!o.noLead){out.unshift(`<span class="pp i">${ICON(o.ic,20)}</span>`)}
   return out.filter(x=>x!=='').join(' ');
