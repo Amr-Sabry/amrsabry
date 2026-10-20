@@ -170,6 +170,7 @@ var OFF=location.protocol==='file:'||/\/offline\//.test(location.pathname);
 var DECKS={
   v3:    {n:'V3 Update',          url:OFF?'forum-v3/v3-update.html':'/r/bacq9ed85gvpu47x2iusyj'},
   axes:  {n:'المحاور السبعة',     url:OFF?'forum-v3/7-axes.html':'/r/9fbhrknz7p2bx354w8jfur'},
+  closing:{n:'الجلسة الختامية',    url:OFF?'forum-v3/closing.html':'/r/forum/closing'},
   center:{n:'الخريطة في المنتصف', url:OFF?'center-map/center-map.html':'/r/knva3dcbti4kedhdf9icnf'}
 };
 var Q=new URLSearchParams(location.search), DK=DECKS[Q.get('deck')]?Q.get('deck'):'v3', I=Math.max(0,+Q.get('i')||0);

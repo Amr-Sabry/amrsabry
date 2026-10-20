@@ -353,7 +353,8 @@ var OFF=location.protocol==='file:'||/\/offline\//.test(location.pathname);
 var DECKS={
   v3:    {n:'V3 Update',          s:'العرض حسب القطاعات', url:OFF?'forum-v3/v3-update.html':'/r/bacq9ed85gvpu47x2iusyj',th:'thumbs/v3'},
   axes:  {n:'المحاور السبعة',     s:'محور ورا محور',       url:OFF?'forum-v3/7-axes.html':'/r/9fbhrknz7p2bx354w8jfur',th:'thumbs/axes'},
-  center:{n:'الخريطة في المنتصف', s:'13 سلايد',            url:OFF?'center-map/center-map.html':'/r/knva3dcbti4kedhdf9icnf',th:'thumbs/center'}
+  center:{n:'الخريطة في المنتصف', s:'13 سلايد',            url:OFF?'center-map/center-map.html':'/r/knva3dcbti4kedhdf9icnf',th:'thumbs/center'},
+  closing:{n:'الجلسة الختامية',    s:'171 سلايد',           url:OFF?'forum-v3/closing.html':'/r/forum/closing',th:'thumbs/closing'}
 };
 /* thumbs v1 */
 function thumbOf(s){var d=DECKS[sel];return d&&d.th?d.th+'/'+encodeURIComponent(String(s.n))+'.webp?v=1':''}
