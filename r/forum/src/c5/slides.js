@@ -297,13 +297,16 @@ function who(n,H,o){S(Object.assign({n},H,{cards:[
    القسم الأول · لماذا لم يكن الاستمرار ممكنا؟ (1–13)
    ===================================================================================================== */
 /* 1 — cover */
+/* Amr 16:56: no photo; the eagle on top with the cabinet's official title under it, and the forum's logo on top too */
 S({n:1,full:1,cards:[
-  ['title',[4,0,8,4],{bg:'dark',k:'منتدى مصر 2026 · الجلسة الختامية',ki:'sparkles',t:'مصر [[2014–2026]]',s:'من بناء مقومات التنمية .. إلى صناعة المستقبل',fs:118,ss:34}],
-  ['date',[0,0,4,4],{t:'أكتوبر 2026',bg:'vio'}],
-  ['photo',[0,4,8,2],{img:P('image6'),pos:'50% 70%'}],
-  ['logo',[8,4,2,2],{img:'logo',alt:'منتدى مصر 2026',bg:'dark2',k:.86}],
-  ['logo',[10,4,2,2],{img:'emblem',alt:'شعار الجمهورية',bg:'dark2',k:.8}],
+  ['logo',[8,0,4,3],{img:'emblem',alt:'شعار الجمهورية',bg:'dark2',k:.9,cls:'c5gov',cap:'<b>جمهورية مصر العربية</b><span>رئاسة مجلس الوزراء</span>'}],
+  ['date',[4,0,4,3],{t:'أكتوبر 2026',bg:'vio'}],
+  ['logo',[0,0,4,3],{img:'logo',alt:'منتدى مصر 2026',bg:'dark2',k:.86}],
+  ['title',[0,3,12,3],{bg:'dark',k:'منتدى مصر 2026 · الجلسة الختامية',ki:'sparkles',t:'مصر [[2014–2026]]',s:'من بناء مقومات التنمية .. إلى صناعة المستقبل',fs:118,ss:34}],
 ]});
+(function(){const st=document.createElement('style');st.textContent=
+  '.bc.c5gov .cap{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;margin-top:8px;line-height:1.25}'+
+  '.bc.c5gov .cap b{font:700 24px/1.25 var(--f-display);color:var(--ink)}.bc.c5gov .cap span{font:600 20px/1.25 var(--f-body);color:var(--ink);opacity:.85}';document.head.appendChild(st)})();
 /* 2, 3 — films */
 S({n:2,full:1,cards:[['frame',[0,0,12,6],{cls:'fcard',src:'opening/index.html?embed=1',poster:'c5/opening',title:'قبل البداية 2011–2014'}]]});   /* Amr 12:58: slide 2 = the opener */
 /* 3 — the film «مصر قبل عام 2014» now plays inside slide 2 (Amr 14:55: «احذف سلايد ٣»). The show counts by place (170 slides),
