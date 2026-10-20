@@ -31,4 +31,13 @@ S({n:16,...HS2,cards:[
       ['title',[c,3,2,3],{bg:['grad','dark2','vio','dark2','mint'][i],wm:ic,t:h,fs:32,s:t,ss:19,pz:0}]]}),
 ]});
 
+/* 17 — section three cover */
+cover(17,{no:'03',k:'القسم الثالث',t:'ماذا بنينا .. ؟<br>مصر التي تغيرت',s:'خمس قدرات جديدة تمتلكها الدولة (2014-2026)',img:'image59',pos:'50% 60%',ic:'landmark',
+  words:['خمس','قدرات','جديدة'],cur:1});
+SLIDES[17].cards.forEach(cd=>{if(cd[0]==='title')cd[2].pz=0});
+
+/* 18 — move one cover · التعمير */
+move(18,{no:'01',k:'التحرك الأول',t:'التعمير',s:'مصر اتسعت لتستوعب سكانها',img:'image52',pos:'45% 75%',ic:'building-2',
+  words:['مصر','اتسعت','لتستوعب','سكانها'],cur:1});
+
 })();
