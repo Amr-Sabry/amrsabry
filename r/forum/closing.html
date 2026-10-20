@@ -796,6 +796,8 @@ em{color:var(--cobalt)}
 .bc>.in.fresh2,.bc>.wm.fresh2{opacity:0!important;transition:none!important}
 .bc>.in.grow2,.bc>.wm.grow2,.bc.mv>.in.grow2,.bc.mv>.wm.grow2{transition:scale 1s var(--mv),opacity .5s ease .35s!important;transition-delay:0s,.35s!important}
 .bc>.mghost{position:absolute;inset:0;z-index:6;pointer-events:none;border-radius:inherit;overflow:hidden;transition:opacity .7s ease}
+/* responsive v1 */
+.bc>.in.old2.rsp{opacity:1!important;scale:none!important;transition:top 1s var(--mv),right 1s var(--mv),width 1s var(--mv),height 1s var(--mv),zoom 1s var(--mv)!important}
 .bc>.mghost.out{opacity:0}
 /* fixed header v6 */
 #hdx{position:absolute;left:0;top:0;right:0;height:88px;z-index:40;pointer-events:none;transition:opacity .6s var(--mv)}
@@ -1266,7 +1268,14 @@ function paint(cc,r,again){
   const wm=wmark(type,c,r); if(wm){el.insertAdjacentHTML('beforeend',wm);if(again)el.lastChild.classList.add('fresh')}
   autofit(el);
   if(el.dataset.ovf==='1'&&k>1.02){cc.kmax=Math.max(1,k*.82);if(again===2)el.querySelectorAll(':scope>.fresh2').forEach(x=>x.remove());return paint(cc,r,again)}
-  if(again===2){const nw=[...el.querySelectorAll(':scope>.fresh')];nw.forEach(x=>{x.classList.remove('fresh');x.classList.add('fresh2');if(x.classList.contains('in'))x.style.scale=(1/s0).toFixed(4)});
+  /* responsive v1: the old content stays and reflows live while the frame resizes; the new one takes over when it lands */
+  const rspO=again===2&&olds.find(x=>x.classList.contains('in')),rspN=again===2&&el.querySelector(':scope>.in.fresh');
+  if(rspO&&rspN&&!RM){el.querySelectorAll(':scope>.fresh').forEach(x=>{x.classList.remove('fresh');x.classList.add('fresh2')});
+    rspO.classList.add('rsp');olds.filter(x=>x!==rspO).forEach(x=>x.remove());      /* the faint background icon simply takes its new size */
+    el.querySelectorAll(':scope>.wm.fresh2').forEach(x=>{x.style.setProperty('transition','none','important');x.classList.remove('fresh2');requestAnimationFrame(()=>requestAnimationFrame(()=>x.style.removeProperty('transition')))});
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{['top','right','width','height','zoom'].forEach(p=>rspO.style[p]=rspN.style[p])}));
+    clearTimeout(el._rspT);el._rspT=setTimeout(()=>{el.querySelectorAll(':scope>.fresh2').forEach(x=>{x.style.setProperty('transition','none','important');x.classList.remove('fresh2');void x.offsetWidth;requestAnimationFrame(()=>requestAnimationFrame(()=>x.style.removeProperty('transition')))});olds.forEach(x=>x.remove())},1010)}
+  else if(again===2){const nw=[...el.querySelectorAll(':scope>.fresh')];nw.forEach(x=>{x.classList.remove('fresh');x.classList.add('fresh2');if(x.classList.contains('in'))x.style.scale=(1/s0).toFixed(4)});
     requestAnimationFrame(()=>requestAnimationFrame(()=>{olds.forEach(x=>{if(x.classList.contains('in'))x.style.scale=s0.toFixed(4);x.classList.add('go2')});nw.forEach(x=>{x.classList.remove('fresh2');x.classList.add('grow2');x.style.scale='';setTimeout(()=>x.classList.remove('grow2'),1100)})}))}
   else if(again) requestAnimationFrame(()=>requestAnimationFrame(()=>el.querySelectorAll(':scope>.fresh').forEach(x=>x.classList.remove('fresh'))));
   if(type==='plist'&&B&&B.L._pick) setTimeout(()=>B.L._pick&&B.L._pick(),30);
@@ -1275,6 +1284,10 @@ let B=null;
 /* a card's colour as one flat value, for the frame that turns into it */
 const FLATBG={dark:'var(--g-clear)',dark2:'var(--g-frost)',vio:'var(--g-aurora)',mint:'var(--g-teal)',grad:'var(--g-cobalt)',light:'var(--g-frost)',wi:'var(--g-wi)',kin:'var(--g-aurora)',photo:'#d9dfec',mapc:'var(--g-map)',model:'#14141d'};
 function flatBg(el){const k=['wi','kin','photo','mapc','model','vio','mint','grad','light','dark2','dark'].find(x=>el.classList.contains(x));return FLATBG[k]||'var(--g-clear)'}
+/* motion v10 «stay»: what a card is, to find it again on the next slide (an «مصر قبل 2014» block is the same card whatever its words) */
+function cardKey(type,c){c=c||{};if(type==='title'&&c.era)return 'era|'+c.era.join(' ').replace(/\s*عام\s*/g,' ').trim();
+  const o={};Object.keys(c).sort().forEach(k=>{if(!/^(fs|ss|pz|top|hero|bg|cls|pos|wm|nfs|lfs|lays)$/.test(k))o[k]=c[k]});
+  try{return type+'|'+JSON.stringify(o)}catch(e){return ''}}
 /* motion v9 «open & push»: each new card opens from one of its edges, horizontally or vertically, and its moving edge pushes
    the old cards out ahead of it (an old card in front of another pushes that one too); the opening directions are picked so
    that no old card has to cross a new one, and wherever one still would, the new card wins the space; nothing overlaps */
@@ -1284,9 +1297,24 @@ function openPush(old,L){
   if(RM){old.remove();L.classList.remove('enter');return}
   const W=1600,H=900,G=16,SL=window.__opSlow||1,TO=1000*SL,TB=1150*SL;
   const box=el=>({x:el.offsetLeft,y:el.offsetTop,w:el.offsetWidth,h:el.offsetHeight});
-  const O=[...old.querySelectorAll(':scope>.bc:not(.wait)')].map(el=>({el,r:box(el)})).filter(o=>o.r.w>0&&o.r.h>0);
+  let O=[...old.querySelectorAll(':scope>.bc:not(.wait)')].map(el=>({el,r:box(el)})).filter(o=>o.r.w>0&&o.r.h>0);
   O.forEach(o=>{o.el.style.transition='none';o.el.style.opacity='1'});
-  const N=[...L.querySelectorAll(':scope>.bc:not(.wait)')].map(el=>({el,r:box(el)})).filter(n=>n.r.w>0&&n.r.h>0);
+  let N=[...L.querySelectorAll(':scope>.bc:not(.wait)')].map(el=>({el,r:box(el)})).filter(n=>n.r.w>0&&n.r.h>0);
+  /* motion v10: cards that stay — the same card on both slides glides and resizes to its new place instead of leaving */
+  const MV=[],MT=1000;
+  N.forEach(n=>{const k=n.el._key;if(!k)return;const o=O.find(o=>!o.m&&o.el._key===k);if(!o)return;o.m=n;n.m=o;MV.push({o,n,r0:o.r,r1:n.r})});
+  if(MV.length){O=O.filter(o=>!o.m);N=N.filter(n=>!n.m)}
+  MV.forEach(m=>{const el=m.n.el,same=el._sig===m.o.el._sig;m.o.el.style.visibility='hidden';
+    el.style.setProperty('transition','none','important');place(el,m.r0);void el.offsetWidth;el.style.removeProperty('transition');place(el,m.r1);
+    if(same&&m.r0.w===m.r1.w&&m.r0.h===m.r1.h){el.replaceChildren(...m.o.el.childNodes);return}      /* the very same card: keep what it shows, as it is */
+    /* new words in the same card: what both slides share (the «مصر قبل 2014» block) stays as it is; only the words that change
+       fade, the old out as the new come in */
+    const oi=m.o.el.querySelector(':scope>.in'),ni=el.querySelector(':scope>.in'),oc=oi?[...oi.children]:[],nc=ni?[...ni.children]:[];
+    const fade=[];nc.forEach((c,i)=>{const o=oc[i];if(o&&o.outerHTML===c.outerHTML){o.style.visibility='hidden';return}c.style.opacity='0';c.style.transition='opacity .45s ease .2s';fade.push(c)});
+    [...el.children].filter(k=>k!==ni).forEach(k=>{k.style.opacity='0';k.style.transition='opacity .45s ease .2s';fade.push(k)});
+    const w=document.createElement('div');w.className='opold';w.style.cssText=`position:absolute;left:0;top:0;width:${m.r0.w}px;height:${m.r0.h}px;pointer-events:none;transition:opacity .25s ease;z-index:3`;
+    w.append(...m.o.el.childNodes);el.appendChild(w);m.w=w;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{w.style.opacity='0';fade.forEach(k=>k.style.opacity='')}))});
   const sr=(r,d)=>d==='l'?[-(r.x+r.w),-r.x]:d==='r'?[r.x,r.x+r.w]:d==='d'?[r.y,r.y+r.h]:[-(r.y+r.h),-r.y];      /* [back, front] along d */
   const band=(r,d)=>(d==='l'||d==='r')?[r.y,r.y+r.h]:[r.x,r.x+r.w];
   const bov=(a,b)=>Math.min(a[1],b[1])-Math.max(a[0],b[0]);
@@ -1298,7 +1326,7 @@ function openPush(old,L){
      its opening edge (free), or the new card waits until the old one has gone by (cost: how far), or a crossing (dear) */
   const OPP={l:'r',r:'l',d:'u',u:'d'};
   const pre=O.map(o=>DO.map(d=>{const S=sweep(o.r,d),A=o.r.w*o.r.h,b0=sr(o.r,d)[0];
-    return {d,S,A,ex:need(o.r,d)/W*WX[d],c:N.map(n=>{const I=ia(S,n.r);if(I<60)return null;const inside=ia(o.r,n.r)>=60,cc={};
+    return {d,S,A,ex:need(o.r,d)/W*WX[d]+MV.reduce((t,m)=>{const I=ia(S,m.r1);if(I<60)return t;const gr=sr(m.r1,d)[1]-sr(m.r0,d)[1]>1,ah=sr(o.r,d)[0]>=sr(m.r0,d)[1]-6&&bov(band(o.r,d),band(m.r1,d))>2;return t+(gr&&ah?0:I/A*3+1)},0),c:N.map(n=>{const I=ia(S,n.r);if(I<60)return null;const inside=ia(o.r,n.r)>=60,cc={};
       DN.forEach(e=>{if(e===d){const a0=sr(n.r,d)[0];cc[e]=b0>=a0-6?0:(a0-b0)/W*1.5}
         else cc[e]=inside?Math.max(0,sr(n.r,d)[1]-b0)/W*2:I/A*3+1});return cc}),
       oo:O.map(p=>{if(p===o)return 0;const I=ia(S,p.r);return I<60?0:{I:I/A*1.5,ahead:sr(p.r,d)[0]>=sr(o.r,d)[1]-6}})}}));
@@ -1319,18 +1347,21 @@ function openPush(old,L){
   const NG={};O.forEach((o,i)=>{o.d=od[i];const s2=sr(o.r,o.d);o.b0=s2[0];o.f0=s2[1];o.b=band(o.r,o.d);o.need=need(o.r,o.d);NG[o.d]=Math.max(NG[o.d]||0,o.need)});
   const OS=O.slice().sort((a,b)=>a.b0-b.b0);
   const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2, cl=x=>Math.max(0,Math.min(1,x));
-  const st=window.__opStat={dirsN:E.join(''),dirsO:od.join(''),cut:0,oo:0};
+  const st=window.__opStat={dirsN:E.join(''),dirsO:od.join(''),stay:MV.length,cut:0,oo:0};
   let stop=false,t0=performance.now(),fid=0;
-  const end=()=>{stop=true;N.forEach(n=>n.el.style.removeProperty('clip-path'));old.remove();L.classList.remove('enter');L._opStop=null};
+  const end=()=>{stop=true;N.forEach(n=>n.el.style.removeProperty('clip-path'));MV.forEach(m=>{m.w&&m.w.remove();m.n.el.querySelectorAll(':scope>*,:scope>.in>*').forEach(k=>{k.style.opacity='';k.style.transition=''})});old.remove();L.classList.remove('enter');L._opStop=null};
   L._opStop=end;
   const frame=()=>{if(stop)return;const t=performance.now()-t0;let done=true;fid++;
     N.forEach(n=>{n.a=ease(cl((t-n.dl)/TO))});
+    const mp=ease(cl(t/MT));MV.forEach(m=>{m.c={x:m.r0.x+(m.r1.x-m.r0.x)*mp,y:m.r0.y+(m.r1.y-m.r0.y)*mp,w:m.r0.w+(m.r1.w-m.r0.w)*mp,h:m.r0.h+(m.r1.h-m.r0.h)*mp}});if(t<MT)done=false;
     OS.forEach(o=>{let D=NG[o.d]*ease(cl((t-40*SL)/TB));
       N.forEach(n=>{if(n.d!==o.d||bov(n.b,o.b)<=2)return;const dist=o.b0-n.a0;if(dist<-6)return;const g=Math.min(G,Math.max(0,dist));D=Math.max(D,n.a*n.len-(Math.max(0,dist)-g))});
       OS.forEach(p=>{if(p===o||p.fid!==fid||p.d!==o.d||bov(p.b,o.b)<=2)return;const gap=o.b0-p.f0;if(gap<-6)return;const g=Math.min(G,Math.max(0,gap));D=Math.max(D,p.D-(Math.max(0,gap)-g))});
+      MV.forEach(m=>{if(!m.c||bov(band(m.r1,o.d),o.b)<=2)return;const e0=sr(m.r0,o.d)[1];if(sr(m.r1,o.d)[1]-e0<=1)return;const dist=o.b0-e0;if(dist<-6)return;const g=Math.min(G,Math.max(0,dist));D=Math.max(D,sr(m.c,o.d)[1]-e0-(Math.max(0,dist)-g))});
       o.D=D;o.fid=fid;if(D<o.need)done=false;
       const tx=o.d==='l'?-D:o.d==='r'?D:0,ty=o.d==='d'?D:o.d==='u'?-D:0;o.el.style.transform=`translate(${tx}px,${ty}px)`;o.c={x:o.r.x+tx,y:o.r.y+ty,w:o.r.w,h:o.r.h}});
     N.forEach(n=>{let h=n.len;
+      MV.forEach(m=>{if(bov(band(m.c,n.d),n.b)<=2)return;const q=sr(m.c,n.d);if(q[1]<=n.a0+1)return;if(q[0]<=n.a0){h=0;return}h=Math.min(h,Math.max(0,q[0]-G-n.a0))});
       O.forEach(o=>{if(bov(band(o.c,n.d),n.b)<=2)return;const q=sr(o.c,n.d);
         if(o.d===n.d){if(o.b0+6>=n.a0)return;h=Math.min(h,Math.max(0,q[0]-G-n.a0));return}
         if(q[1]<=n.a0+1)return;if(q[0]<=n.a0||o.d===OPP[n.d]){h=0;return}h=Math.min(h,Math.max(0,q[0]-G-n.a0))});
@@ -1340,7 +1371,7 @@ function openPush(old,L){
       n.el.style.setProperty('clip-path',n.f>=n.len-.5?'none':(n.d==='l'?`inset(0 0 0 ${cut}px round 22px)`:n.d==='r'?`inset(0 ${cut}px 0 0 round 22px)`:`inset(0 0 ${cut}px 0 round 22px)`),'important')});
     /* where an old card would still be over an opening card, the new card wins: the old one is cut back at that side */
     O.forEach(o=>{const c=o.c;let il=0,ir=0,it=0,ib=0;
-      N.forEach(n=>{const v=n.v;if(v.w<=0||v.h<=0)return;const x0=Math.max(c.x,v.x),x1=Math.min(c.x+c.w,v.x+v.w),y0=Math.max(c.y,v.y),y1=Math.min(c.y+c.h,v.y+v.h);
+      N.concat(MV.map(m=>({v:m.c}))).forEach(n=>{const v=n.v;if(v.w<=0||v.h<=0)return;const x0=Math.max(c.x,v.x),x1=Math.min(c.x+c.w,v.x+v.w),y0=Math.max(c.y,v.y),y1=Math.min(c.y+c.h,v.y+v.h);
         if(x1-x0<=1||y1-y0<=1)return;const opt=[['l',x1-c.x],['r',c.x+c.w-x0],['t',y1-c.y],['b',c.y+c.h-y0]].sort((a,b)=>a[1]-b[1]);
         const [sd,q]=opt[0];if(sd==='l')il=Math.max(il,q);else if(sd==='r')ir=Math.max(ir,q);else if(sd==='t')it=Math.max(it,q);else ib=Math.max(ib,q);st.cut=Math.max(st.cut,q*(sd==='l'||sd==='r'?c.h:c.w)/(c.w*c.h))});
       o.el.style.setProperty('clip-path',(il||ir||it||ib)?`inset(${it}px ${ir}px ${ib}px ${il}px round 22px)`:'none','important')});
@@ -1359,7 +1390,7 @@ function show(n,dir){
   const L=document.createElement('div');L.className='slide'+(old&&!RM?' enter':'');L._sp=sp;L.innerHTML='';hdrSet(sp);stage.appendChild(L);curLayer=L;
   const P=plan(sp);
   B={sp,L,P,step:-1,max:P.max,tm:[],cards:(sp.cards||[]).map((cd,i)=>{const [type,g,c]=cd;
-    const el=document.createElement('div');el.className='bc wait';L.appendChild(el);
+    const el=document.createElement('div');el.className='bc wait';L.appendChild(el);el._key=cardKey(type,c);el._sig=type+'|'+JSON.stringify(c||{});
     return {i,type,c,el,st:P.st[i],r0:Array.isArray(g)?R(g[0],g[1],g[2],g[3],sp.full):g,r:null,pr:null,kill:[]}})};
   /* cards that come in later are drawn now at their final place (maps, models and photos wait for their turn) */
   B.cards.forEach(cc=>{place(cc.el,cc.r0);if(cc.st>0&&!/^(map|model|photo)$/.test(cc.type))paint(cc,cc.r0)});

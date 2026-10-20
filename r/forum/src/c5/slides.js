@@ -42,11 +42,30 @@ const HS5={ax:'05',h:'مصر التي نريدها',hs:'من بناء القدر
 /* ---------- a film card (the deck's own videos; offline: video/c5_*.mp4) ---------- */
 /* the control's two preview frames show a film's first frame, silent and still (they share the show's main thread) */
 const C5PV=/[?&]preview=1/.test(location.search);
-CARD.video=function(c,r){return `<video class="c5v" src="video/${c.src}" ${c.poster?`poster="${IMG(c.poster)}"`:''} playsinline ${C5PV?'muted preload="metadata" data-go="1"':'autoplay preload="auto"'}></video>${c.cap?`<div class="tag">${c.cap}</div>`:''}`};
+CARD.video=function(c,r){return `<video class="c5v" src="video/${c.src}" ${c.poster?`poster="${IMG(c.poster)}"`:''} playsinline ${C5PV?'muted preload="metadata" data-go="1"':'autoplay preload="auto"'}></video>${c.cap?`<div class="tag">${c.cap}</div>`:''}`+(C5PV?'':LOADER('جاري تحميل الفيديو'))};
+/* loader v1 (Amr 15:08: «لو فيه فيديو بيتعرض … لازم يكون فيه لودر بيبين»): a video or a page shown over the stage carries a loader —
+   a ring with how much has come in — until it actually plays (and again whenever it stops to wait for data); if the file cannot be
+   read, the loader says so instead of spinning on */
+function LOADER(t){return `<div class="c5ld on" aria-live="polite"><i class="c5sp"></i><span>${t}</span><b class="c5pc"></b></div>`}
+(function(){const st=document.createElement('style');st.textContent=
+  '.bc .c5ld{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:rgba(14,18,40,.38);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#fff;font:600 20px/1.3 var(--f-body);opacity:0;pointer-events:none;transition:opacity .35s ease}'+
+  '.bc .c5ld.on{opacity:1}.bc .c5ld .c5sp{width:64px;height:64px;border-radius:50%;border:5px solid rgba(255,255,255,.25);border-top-color:#fff;animation:c5sp 1s linear infinite}'+
+  '.bc .c5ld .c5pc{font:700 16px/1 var(--f-display);opacity:.85;min-height:16px}.bc .c5ld.err .c5sp{animation:none;border-color:rgba(255,255,255,.35)}'+
+  '@keyframes c5sp{to{transform:rotate(360deg)}}';document.head.appendChild(st);
+  const ld=v=>{const b=v.closest('.bc');return b&&b.querySelector('.c5ld')};
+  const pct=v=>{try{const d=v.duration,b=v.buffered;if(!d||!isFinite(d)||!b.length)return '';let e=0;for(let i=0;i<b.length;i++)if(b.start(i)<=v.currentTime+.5)e=Math.max(e,b.end(i));return Math.min(100,Math.round(e/d*100))+'%'}catch(e){return ''}};
+  const on=(v,x)=>{const l=ld(v);if(!l)return;l.classList.toggle('on',x);if(x){const p=l.querySelector('.c5pc');if(p)p.textContent=pct(v)}};
+  ['playing','canplaythrough'].forEach(ev=>document.addEventListener(ev,e=>{if(e.target.matches&&e.target.matches('video.c5v'))on(e.target,false)},true));
+  ['waiting','stalled','loadstart'].forEach(ev=>document.addEventListener(ev,e=>{const v=e.target;if(v.matches&&v.matches('video.c5v')&&!v.ended)on(v,true)},true));
+  document.addEventListener('progress',e=>{const v=e.target;if(!(v.matches&&v.matches('video.c5v')))return;const l=ld(v);if(l&&l.classList.contains('on')){const p=l.querySelector('.c5pc');if(p)p.textContent=pct(v)}},true);
+  document.addEventListener('error',e=>{const v=e.target;if(!(v.matches&&v.matches('video.c5v')))return;const l=ld(v);if(!l)return;l.classList.add('on','err');l.querySelector('span').textContent='تعذر تحميل الفيديو';l.querySelector('.c5pc').textContent=''},true);
+  /* a video already playing from the cache never says «waiting»: check once it is on the slide */
+  new MutationObserver(()=>{document.querySelectorAll('video.c5v:not([data-ld])').forEach(v=>{v.dataset.ld=1;if(v.readyState>=3&&!v.paused)on(v,false)})}).observe(document.body,{subtree:true,childList:true});
+})();
 /* a page shown whole over the stage (slide 2: the interactive opener «قبل البداية 2011–2014», opening/index.html, built by
    mkopening.py from aromahub.studio/opening-2011-2014); previews get its still picture */
 CARD.frame=function(c,r){if(C5PV&&c.poster)return `<img class="c5f" src="${IMG(c.poster)}" alt="">`;
-  return `<iframe class="c5f" src="${c.src}" allow="autoplay; fullscreen" title="${c.title||''}"></iframe>`};
+  return `<iframe class="c5f" src="${c.src}" allow="autoplay; fullscreen" title="${c.title||''}" onload="var l=this.parentNode.querySelector('.c5ld');if(l)setTimeout(function(){l.classList.remove('on')},250)"></iframe>`+LOADER('جاري التحميل')};
 addEventListener('message',e=>{const m=e.data||{};if(m.c5key){document.dispatchEvent(new KeyboardEvent('keydown',{key:m.c5key,code:m.code||'',bubbles:true,cancelable:true}))}});
 /* autoplay rules: a film that had to start silent gets its sound at the first touch or key on the show */
 ['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{if(C5PV)return;document.querySelectorAll('video.c5v').forEach(v=>{if(v.muted&&v.dataset.go){v.muted=false}});
@@ -82,6 +101,10 @@ function vid(n,o){S({n,full:1,cards:[['video',[0,0,12,6],Object.assign({cls:'vca
   document.head.appendChild(st)})();
 
 /* a cycle: the items sit on a ring around the centre sentence, joined by arrows that keep turning (slide 11) */
+/* map names stay on their map while its card resizes (Amr 14:53): the route map's names sit in an html layer measured from the
+   card's left edge, but in this right-to-left page the map picture itself hung from the right edge, so on every resize the two
+   drifted apart until the map was redrawn; both now hang from the left edge */
+(function(){const st=document.createElement('style');st.textContent='.bc.mapc svg.rtm{left:0!important;right:auto!important}';document.head.appendChild(st)})();
 /* one measure, before and after, side by side in one card (Amr 14:34: «المقارنة تكون كل حاجة جمب بعضها على حسب البند … خلي دايما
    ده اسلوبك»): قبل 2014 on the right, 2026 on the left in its own colour, an arrow between; the measure's name once on top when
    both sides share it (the rest of each label stays under its own figure); several measures in one card stack as rows */
