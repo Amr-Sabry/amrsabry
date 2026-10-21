@@ -657,5 +657,33 @@ let tx=0;addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:tru
 /* live: the page reloads on the same slide when src/kn/live.js changes (offline too) */
 (function(){let last=null;setInterval(()=>{const sc=document.createElement('script');sc.src='src/kn/live.js?t='+Date.now();sc.onload=()=>{if(last===null)last=window.KNLIVE;else if(window.KNLIVE!==last)location.reload();sc.remove()};sc.onerror=()=>sc.remove();document.head.appendChild(sc)},2500)})();
 </script>
+<script>/* client palette v1 (Amr 21 Oct 13:40/14:12): the client's colours — slate text, gold for 2026, dark-slate question pill, off-white ground. ?lav=1 = the lavender original */
+(function(){if(/[?&]lav=1/.test(location.search))return;
+ const H=(r,g,b)=>{r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b);let h=0,s=0,l=(mx+mn)/2;if(mx!==mn){const d=mx-mn;s=l>.5?d/(2-mx-mn):d/(mx+mn);h=mx===r?((g-b)/d+(g<b?6:0)):mx===g?((b-r)/d+2):((r-g)/d+4);h*=60}return[h,s,l]};
+ const R=(h,s,l)=>{h/=360;const f=(p,q,t)=>{if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p};if(!s){const v=Math.round(l*255);return[v,v,v]}const q=l<.5?l*(1+s):l+s-l*s,p=2*l-q;return[f(p,q,h+1/3),f(p,q,h),f(p,q,h-1/3)].map(v=>Math.round(v*255))};
+ /* cobalt & lavender -> gold, navy -> slate, blue-greys -> slate-greys, near-white lavender -> warm off-white; neutrals untouched */
+ const map=(r,g,b)=>{const [h,s,l]=H(r,g,b);if(h<213||h>242||s<0.08)return[r,g,b];   /* the deck's blues sit at 215-231; outputs (gold 32, off-white 40, slate 206) stay outside, so a second pass changes nothing */
+   if(l>0.86)return R(40,0.15,Math.min(0.96,l+0.02));
+   if(l<0.3)return R(206,0.30,0.31+(l-0.19)*0.8);
+   if(s>=0.35)return R(32,0.43,Math.min(0.9,l+0.03));
+   return R(206,s*0.7,l)};
+ const hx=x=>x.toString(16).padStart(2,'0');
+ const rep=v=>v.replace(/#([0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b/g,(m,h)=>{let r,g,b,a='';if(h.length===3){r=parseInt(h[0]+h[0],16);g=parseInt(h[1]+h[1],16);b=parseInt(h[2]+h[2],16)}else{r=parseInt(h.slice(0,2),16);g=parseInt(h.slice(2,4),16);b=parseInt(h.slice(4,6),16);if(h.length===8)a=h.slice(6)}return '#'+map(r,g,b).map(hx).join('')+a})
+   .replace(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(,\s*[\d.]+\s*)?\)/g,(m,r,g,b,a)=>{const o=map(+r,+g,+b);return a?`rgba(${o.join(', ')}${a})`:`rgb(${o.join(', ')})`});
+ const CK=/#[0-9a-fA-F]{3}|rgb/;
+ const walk=rules=>{for(const ru of rules){if(ru.style){const st=ru.style;for(let i=0;i<st.length;i++){const pr=st[i],v=st.getPropertyValue(pr);if(v&&CK.test(v)){const nv=rep(v);if(nv!==v)st.setProperty(pr,nv,st.getPropertyPriority(pr))}}}
+   if(ru.cssRules&&!(ru instanceof CSSFontFaceRule))try{walk(ru.cssRules)}catch(e){}}};
+ for(const sh of document.styleSheets){try{walk(sh.cssRules)}catch(e){}}
+ const attrs=['style','fill','stroke','stop-color','color','flood-color'];
+ const fixEl=e=>{for(const at of attrs){const v=e.getAttribute&&e.getAttribute(at);if(v&&CK.test(v)){const nv=rep(v);if(nv!==v)e.setAttribute(at,nv)}}};
+ const stage=document.getElementById('stage');if(stage){fixEl(stage);stage.querySelectorAll('*').forEach(fixEl);
+   new MutationObserver(ms=>{for(const m of ms){if(m.type==='attributes')fixEl(m.target);else m.addedNodes.forEach(n=>{if(n.nodeType===1){fixEl(n);n.querySelectorAll&&n.querySelectorAll('*').forEach(fixEl)}})}}).observe(stage,{subtree:true,childList:true,attributes:true,attributeFilter:attrs})}
+ const css=document.createElement('style');css.id='palette-v1';css.textContent=
+  '#bgx{background:linear-gradient(140deg,#f8f7f4 0%,#f3f1ed 45%,#efeeeb 100%)!important}#bgx i{display:none!important}'+
+  '.hd .hq{background:#313d4f!important}';
+ document.head.appendChild(css);
+ document.getAnimations().forEach(an=>{if(an.transitionProperty&&/color|fill|stroke|shadow|background|border/.test(an.transitionProperty))try{an.finish()}catch(e){}});
+})();
+</script>
 </body>
 </html>
