@@ -1785,7 +1785,7 @@ function MAPCARD(el,r,c,live){
     base.selectAll('rect').attr('fill','none');base.selectAll('path').each(function(){const f=this.getAttribute('fill');if(f&&f!=='none'&&!/url/.test(f))this.setAttribute('fill','none')});
     const egd=ctx.path(EGY), dfs=svg.select('defs');
     dfs.append('filter').attr('id','eshadow').attr('x','-20%').attr('y','-20%').attr('width','140%').attr('height','150%').append('feGaussianBlur').attr('stdDeviation',Math.max(6,Math.min(r.w,r.h)*.022));
-    /* kmap clarity v1: natural satellite over the whole region, the north sharper (z9) */{const a9=P0([23.90625,32.54681317351515]),b9=P0([35.859375,23.885837699861998]);base.insert('image',':first-child').attr('class','day n9').attr('href','img/egy_sat_n9.webp').attr('x',a9[0]).attr('y',a9[1]).attr('width',b9[0]-a9[0]).attr('height',b9[1]-a9[1]).attr('preserveAspectRatio','none')}base.insert('image',':first-child').attr('class','day').attr('href','img/egy_sat_nat.webp').attr('x',q0[0]).attr('y',q0[1]).attr('width',q1[0]-q0[0]).attr('height',q1[1]-q0[1]).attr('preserveAspectRatio','none');{const a7=P0([11.25,40.97989806962013]),b7=P0([50.625,11.178401873711781]);base.insert('image',':first-child').attr('class','day z7').attr('href','img/egy_sat_z7.webp').attr('x',a7[0]).attr('y',a7[1]).attr('width',b7[0]-a7[0]).attr('height',b7[1]-a7[1]).attr('preserveAspectRatio','none')}
+    /* kmap clarity v1: natural satellite over the whole region, the north sharper (z9) */(window.__HIRES||[]).forEach(h=>{const a=P0(h.a),b=P0(h.b);base.insert('image',':first-child').attr('class','day hr').attr('href',h.href).attr('x',a[0]).attr('y',a[1]).attr('width',b[0]-a[0]).attr('height',b[1]-a[1]).attr('preserveAspectRatio','none')});{const a9=P0([23.90625,32.54681317351515]),b9=P0([35.859375,23.885837699861998]);base.insert('image',':first-child').attr('class','day n9').attr('href','img/egy_sat_n9.webp').attr('x',a9[0]).attr('y',a9[1]).attr('width',b9[0]-a9[0]).attr('height',b9[1]-a9[1]).attr('preserveAspectRatio','none')}base.insert('image',':first-child').attr('class','day').attr('href','img/egy_sat_nat.webp').attr('x',q0[0]).attr('y',q0[1]).attr('width',q1[0]-q0[0]).attr('height',q1[1]-q0[1]).attr('preserveAspectRatio','none');{const a7=P0([11.25,40.97989806962013]),b7=P0([50.625,11.178401873711781]);base.insert('image',':first-child').attr('class','day z7').attr('href','img/egy_sat_z7.webp').attr('x',a7[0]).attr('y',a7[1]).attr('width',b7[0]-a7[0]).attr('height',b7[1]-a7[1]).attr('preserveAspectRatio','none')}
     base.insert('path',':first-child').attr('class','eland').attr('d',egd).attr('fill','none');
     base.insert('path',':first-child').attr('class','eshadow').attr('d',egd).attr('fill','#2a3b86').attr('opacity',0).attr('transform',`translate(${Math.min(r.w,r.h)*.006},${Math.min(r.w,r.h)*.03})`).attr('filter','url(#eshadow)');
     svg.classed('daymap',true)}
@@ -1816,7 +1816,7 @@ function MAPCARD(el,r,c,live){
       g.append('text').text(d.v).attr('text-anchor','middle').attr('dy','.36em').attr('font-size',Math.max(11,d.r*.9)).attr('font-weight',600).attr('fill',d.v>=(c.hot||30)?'#fff':'#1c2547').style('font-family','Readex Pro');
       g.transition().delay(delay).duration(700).ease(d3.easeCubicOut).attr('transform',`translate(${d.x},${d.y}) scale(1)`);
       if(c.list){g.style('cursor','pointer').on('click',ev=>{ev.stopPropagation();pickGov(el.closest('.slide'),c,d.n)});d.g=g}
-      d.lab=gt.append('text').text(d.n).attr('x',d.x).attr('y',d.y+d.r+14).attr('text-anchor','middle').attr('font-size',12.5).attr('fill','#2a3b86').attr('stroke','#ffffff').attr('stroke-width',3).attr('paint-order','stroke').style('font-family','Readex Pro').style('opacity',0);
+      d.lab=gt.append('text').text(d.n).attr('x',d.x).attr('y',d.y+d.r+21).attr('text-anchor','middle').attr('font-size',19).attr('font-weight',700).attr('fill','#ffffff').attr('stroke','rgba(6,20,38,.92)').attr('stroke-width',4.5).attr('stroke-linejoin','round').attr('paint-order','stroke').attr('data-kc','v1.1').style('font-family','Readex Pro').style('opacity',0);
       d.lab.transition().delay(delay+300).duration(500).style('opacity',1);
     });
     /* keep the names that do not collide with bubbles or other names */
@@ -1951,6 +1951,8 @@ function MAPCARD(el,r,c,live){
  document.getAnimations().forEach(an=>{if(an.transitionProperty&&/color|fill|stroke|shadow|background|border/.test(an.transitionProperty))try{an.finish()}catch(e){}});
 })();
 </script>
+<script>/* kmap clarity v1.1: governorate names on the bubble maps 19px white */
+</script>
 <script>/* kmap clarity v1 — the map's own look (see the comment of kmap_clarity.py) */
 (function(){
   Object.assign(MAPTH,{bg:'#0b2238',coast:'rgba(255,255,255,.6)',coastW:1.3,gov:'rgba(255,255,255,.32)',govW:.9,nbs:'rgba(255,255,255,.28)',
@@ -1986,6 +1988,29 @@ html body #stage svg.daymap image.day,html body #stage .rtm svg.daymap image.day
 #stage .mtitle .mtt b,#stage .mtitle .mtt{color:#fff!important}#stage .mtitle .mtk{color:rgba(255,255,255,.75)!important}#stage .mtitle .mti{color:#d8b26c!important;background:rgba(255,255,255,.08)!important}
 #stage .mleg,#stage .bc .mleg,html body #stage .mapc .mleg{background:rgba(14,32,54,.92)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border:1px solid rgba(201,163,95,.65)!important;color:#fff!important;font-size:20px!important}
 #stage .mleg span{color:#fff!important}
+`;document.head.appendChild(st);addEventListener('DOMContentLoaded',()=>document.body.appendChild(st));
+})();
+</script>
+<script>/* kmap clarity v1.2 — conference type, names in place, big notes */
+(function(){
+  try{const sp=SLIDES[20];(sp.cards||[]).forEach(cd=>{if(cd[0]==='map'&&cd[2].mode==='pts'){cd[2].callout={fs:17,gap:10}}})}catch(e){}
+  const st=document.createElement('style');st.id='kmap-clarity-12';st.textContent=`
+#stage,#stage .mapc,#stage .mapc *:not(svg):not(path):not(circle):not(rect):not(g){font-family:'C5Num','Cairo26','Readex Pro',sans-serif!important}
+#stage svg text,#stage svg tspan{font-family:'C5Num','Cairo26',sans-serif!important}
+#stage .mtitle .mtt b{font-size:26px!important;font-weight:900!important;white-space:nowrap}
+#stage .mtitle{max-width:calc(100% - 28px)!important}
+#stage .mtitle .mtk{font-size:18px!important;font-weight:600!important}
+#stage .mtitle .axc{font-size:15px!important}
+#stage .mtitle .mti{width:44px!important;height:44px!important}
+#stage .mleg,#stage .mleg span{font-size:24px!important;font-weight:600!important}
+#stage .mleg i{width:22px!important;height:22px!important}
+#stage .rchip .rn,#stage .rchip span{font-size:24px!important;font-weight:700!important}
+#stage .rv b.num,#stage .rv .num{font-size:42px!important;font-weight:800!important}
+#stage .rv small{font-size:21px!important;font-weight:600!important}
+html body #stage .rchip,html body #stage .rchip.on,html body #stage .mapc .rchip{padding:10px 16px!important;background:rgba(14,32,54,.92)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border:1px solid rgba(201,163,95,.65)!important;color:#fff!important}
+html body #stage .rchip::before,html body #stage .rchip::after{display:none!important}
+#stage .rchip *{color:#fff!important}
+#stage .rl>span,#stage .rl.nm>span{font-size:21px!important}
 `;document.head.appendChild(st);addEventListener('DOMContentLoaded',()=>document.body.appendChild(st));
 })();
 </script>
