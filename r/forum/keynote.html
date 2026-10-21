@@ -422,7 +422,7 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 <body>
 <div id="vp"><div id="stage"></div></div>
 <script src="src/kn/icons.js?v=18"></script>
-<script src="src/kn/slides.js?v=21"></script>
+<script src="src/kn/slides.js?v=22"></script>
 <script>
 const RG=v=>/^\s*[\d.]+\s*[–-]\s*[\d.]+\s*$/.test(String(v)),N=v=>`<span class="num"${RG(v)?' style="direction:rtl"':''}>${v}</span>`, G=v=>`<span class="num grad"${RG(v)?' style="direction:rtl"':''}>${v}</span>`;
 const fnum=x=>parseFloat(String(x).replace(/[^0-9.]/g,''))||0;
@@ -593,9 +593,9 @@ function kmLoad(j){const f=S[j]&&S[j].querySelector('.kmf');if(f&&!f.src)f.src=f
 function go(i){cur=Math.max(0,Math.min(S.length-1,i));S.forEach((x,j)=>x.classList.toggle('on',j===cur));history.replaceState(null,'','#'+(cur+1));
   const f=kmLoad(cur);if(f){if(f.dataset.seen){try{f.contentWindow.postMessage('replay','*')}catch(e){}}f.dataset.seen=1}}
 function fitN(){document.querySelectorAll('.s').forEach(sec=>{const ts=[...sec.querySelectorAll('.cs .nm>span:last-child')];if(!ts.length)return;const on=sec.classList.contains('on');if(!on)sec.style.display='block';let m=44;ts.forEach(t=>{t.style.whiteSpace='nowrap';let f=44;t.style.fontSize=f+'px';const nm=t.parentElement;while(nm.scrollWidth>nm.clientWidth&&f>34){f-=2;t.style.fontSize=f+'px'}m=Math.min(m,f)});ts.forEach(t=>t.style.fontSize=m+'px');if(!on)sec.style.display=''})}
-function fitQ(){document.querySelectorAll('.hd .h').forEach(h=>{const sec=h.closest('.s'),on=sec.classList.contains('on'),hq=h.parentElement,hd=hq.parentElement;if(!on)sec.style.display='block';let f=66;h.style.fontSize=f+'px';while(hq.offsetWidth>hd.clientWidth&&f>48){f-=2;h.style.fontSize=f+'px'}if(!on)sec.style.display=''})}
+function fitQ(){document.querySelectorAll('.hd .h').forEach(h=>{const sec=h.closest('.s'),on=sec.classList.contains('on'),hq=h.parentElement,hd=hq.parentElement;if(!on)sec.style.display='block';let f=66;h.style.fontSize=f+'px';while(hq.scrollWidth>hq.clientWidth+1&&f>40){f-=2;h.style.fontSize=f+'px'}if(!on)sec.style.display=''})}
 function fit(){const k=Math.min(innerWidth/1920,innerHeight/1080);stage.style.transform=`scale(${k})`}
-addEventListener('resize',fit);fit();go(cur);document.fonts.ready.then(()=>{fitQ();fitN()});
+addEventListener('resize',fit);fit();go(cur);document.fonts.ready.then(()=>{fitQ();fitN()});[700,2000,4500].forEach(t=>setTimeout(()=>{fitQ();fitN()},t));
 addEventListener('keydown',e=>{if(['ArrowLeft','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();go(cur+1)}else if(['ArrowRight','PageUp','Backspace'].includes(e.key)){e.preventDefault();go(cur-1)}else if(e.key==='Home')go(0);else if(e.key==='End')go(S.length-1);else if(e.key==='f'||e.key==='F'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}});
 addEventListener('click',e=>{go(e.clientX<innerWidth/2?cur+1:cur-1)});
 let tx=0;addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>40)go(d>0?cur+1:cur-1)},{passive:true});
