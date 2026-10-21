@@ -26,6 +26,7 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 #stage{position:relative;width:1920px;height:1080px;transform-origin:50% 50%;overflow:hidden}
 .s{position:absolute;inset:0;display:none;overflow:hidden;color:var(--navy)}
 .s.on{display:block}
+.cmpw{position:absolute;inset:0;transform-origin:50% 230px;z-index:1}.pho.hk .cmpw{transform-origin:50% 300px}.pho .hd{z-index:2}.pho .cmpw{--cob:var(--pA)}.pho .cmpw .u,.pho .cmpw .yr,.pho .cmpw .pre,.pho .cmpw .x{opacity:1!important}.pho .cmpw .col.o .num{opacity:.85}
 .kmw{position:absolute;left:70px;right:70px;top:214px;bottom:44px;border-radius:28px;overflow:hidden;background:#cfd6e8;box-shadow:0 30px 60px -40px rgba(28,37,71,.5)}.kmf{width:100%;height:100%;border:0;display:block;pointer-events:none;background:transparent}
 .pho{--pb:#3b4160;--pa:#22379a;--pA:#22379a;--pq:#2f49ad}.pho .hq{background:var(--pq);box-shadow:0 18px 40px -22px rgba(0,0,0,.45)}.pho .sko .y,.pho .sko .u,.pho .sko .ex{color:var(--pb)!important}.pho .sko .kx .num{color:var(--pb)!important;opacity:.78}.pho .sko .kx .num::after{background:var(--pA)}.pho .skn .y,.pho .skn .u,.pho .skn .t,.pho .skn .ex,.pho .skn .ex .num{color:var(--pa)!important}.pho .skn .kz .num,.pho .grad{color:var(--pA)!important}.pho.cover .kick{color:var(--pa)}.pho.cover .end.a .num{color:var(--pb);opacity:.85}.pho.cover .end.a .sb{color:var(--pb);opacity:1}.pho.cover .end.b .sb{color:var(--pA)}.pho.cover .tl{background:linear-gradient(270deg,color-mix(in srgb,var(--pb) 40%,transparent),var(--pA))}.pho.cover .tl::after{border-color:var(--pA)}.pho.cover .tl i{background:var(--pA);opacity:.7}
 .tn{font-family:'KNum','KAr',sans-serif;direction:ltr;unicode-bidi:isolate}.tg{display:inline-block;padding:.07em .32em .12em;margin:0 .06em;border-radius:.3em;background:color-mix(in srgb,currentColor 14%,transparent);line-height:1.05;letter-spacing:0}.pho .tg{background:rgba(255,255,255,.84)}.hq .tg{background:none;padding:0;margin:0}
@@ -422,7 +423,7 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 <body>
 <div id="vp"><div id="stage"></div></div>
 <script src="src/kn/icons.js?v=18"></script>
-<script src="src/kn/slides.js?v=22"></script>
+<script src="src/kn/slides.js?v=23"></script>
 <script>
 const RG=v=>/^\s*[\d.]+\s*[–-]\s*[\d.]+\s*$/.test(String(v)),N=v=>`<span class="num"${RG(v)?' style="direction:rtl"':''}>${v}</span>`, G=v=>`<span class="num grad"${RG(v)?' style="direction:rtl"':''}>${v}</span>`;
 const fnum=x=>parseFloat(String(x).replace(/[^0-9.]/g,''))||0;
@@ -577,7 +578,7 @@ const R={
       `<div class="gsep"></div><div class="gr n d" style="top:900px"><div class="gl"><div class="vv"><span class="y" style="margin:0 0 0 8px">${s.yb||'2026'}</span>${G(s.done.v)}<span class="u">${s.done.u}</span></div></div><div class="pt"><i style="width:${(fnum(s.done.v)/fnum(s.of.v)*100).toFixed(2)}%"></i><span>${s.of.t}</span></div></div>`}
 };
 const stage=document.getElementById('stage');
-stage.innerHTML=KN.map((s,i)=>`<section class="s ${s.bg||'light'} ${s.type}${s.pb?' pbm':''}${s.ph?' pho'+(s.type==='strike'?' pbm':''):''}"${s.ph&&s.ph.c?` style="--pb:${s.ph.c.b};--pa:${s.ph.c.a};--pA:${s.ph.c.A};--pq:${s.ph.c.q}"`:''} data-i="${i}">${s.ph?`<div class="phb">${s.ph.r?`<div class="im r" style="background-image:url(img/kn/ph/${s.ph.r}.jpg)"></div><div class="im l" style="background-image:url(img/kn/ph/${s.ph.l}.jpg)"></div><div class="sep"></div>`:`<div class="im f" style="background-image:url(img/kn/ph/${s.ph.f}.jpg)"></div>`}</div>`:''}${s.pb?`<div class="pb"><figure class="r"><img src="img/kn/ph/${s.pb.r}.jpg" alt="">${s.pb.cr?`<figcaption>${s.pb.cr}</figcaption>`:''}</figure><figure class="l"><img src="img/kn/ph/${s.pb.l}.jpg" alt="">${s.pb.cl?`<figcaption>${s.pb.cl}</figcaption>`:''}</figure></div>`:''}${s.im?`<div class="bgi${/^(cover|close)$/.test(s.type)||s.imf?'':' dt'}" style="background-image:url(img/kn/${s.im}.jpg)"></div>`:''}${R[s.type](s)}</section>`).join('');
+stage.innerHTML=KN.map((s,i)=>`<section class="s ${s.bg||'light'} ${s.type}${s.pb?' pbm':''}${s.ph?' pho'+(s.type==='strike'?' pbm':'')+(s.k?' hk':''):''}"${s.ph&&s.ph.c?` style="--pb:${s.ph.c.b};--pa:${s.ph.c.a};--pA:${s.ph.c.A};--pq:${s.ph.c.q}"`:''} data-i="${i}">${s.ph?`<div class="phb">${s.ph.r?`<div class="im r" style="background-image:url(img/kn/ph/${s.ph.r}.jpg)"></div><div class="im l" style="background-image:url(img/kn/ph/${s.ph.l}.jpg)"></div><div class="sep"></div>`:`<div class="im f" style="background-image:url(img/kn/ph/${s.ph.f}.jpg)"></div>`}</div>`:''}${s.pb?`<div class="pb"><figure class="r"><img src="img/kn/ph/${s.pb.r}.jpg" alt="">${s.pb.cr?`<figcaption>${s.pb.cr}</figcaption>`:''}</figure><figure class="l"><img src="img/kn/ph/${s.pb.l}.jpg" alt="">${s.pb.cl?`<figcaption>${s.pb.cl}</figcaption>`:''}</figure></div>`:''}${s.im?`<div class="bgi${/^(cover|close)$/.test(s.type)||s.imf?'':' dt'}" style="background-image:url(img/kn/${s.im}.jpg)"></div>`:''}${R[s.type](s)}</section>`).join('');
 function tagNums(root){
   const big=66,RX=/[0-9][0-9.,]*(?:\s*[–-]\s*[0-9][0-9.,]*)?%?/g;
   const AR=/[\u0600-\u06FF]/;
@@ -588,6 +589,7 @@ function tagNums(root){
   const ts=[];while(w.nextNode())ts.push(w.currentNode);
   ts.forEach(t=>{const v=t.nodeValue;RX.lastIndex=0;if(!RX.test(v))return;RX.lastIndex=0;const fr=document.createDocumentFragment();let i=0,m;while((m=RX.exec(v))){if(m.index>i)fr.appendChild(document.createTextNode(v.slice(i,m.index)));const sp=document.createElement('span');const f0=parseFloat(getComputedStyle(t.parentElement).fontSize);sp.className=(/^(19|20)\d\d$/.test(m[0].trim())&&f0>48)?'tn':'tn tg';sp.textContent=m[0];if(/[–-]/.test(m[0]))sp.style.direction='rtl';fr.appendChild(sp);i=m.index+m[0].length}if(i<v.length)fr.appendChild(document.createTextNode(v.slice(i)));t.parentNode.replaceChild(fr,t)})}
 tagNums(stage);
+stage.querySelectorAll('section.pho:not(.strike):not(.close):not(.cover)').forEach(sec=>{const k=KN[+sec.dataset.i].ph,w=document.createElement('div');w.className='cmpw';w.style.transform=`translateY(${k.y||0}px) scale(${k.z||.62})`;[...sec.children].forEach(c=>{if(!c.matches('.phb,.hd'))w.appendChild(c)});sec.appendChild(w)});
 const S=[...stage.children];let cur=Math.min(S.length-1,Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
 function kmLoad(j){const f=S[j]&&S[j].querySelector('.kmf');if(f&&!f.src)f.src=f.dataset.src;return f}
 function go(i){cur=Math.max(0,Math.min(S.length-1,i));S.forEach((x,j)=>x.classList.toggle('on',j===cur));history.replaceState(null,'','#'+(cur+1));
