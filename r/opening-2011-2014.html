@@ -302,7 +302,7 @@ B.forEach((b,bi)=>{
   }
   if(b.type==='prefinal'){
     if(b.bg){const y=document.createElement('div');y.className='yrbg pf';y.innerHTML='<div class="strip3" style="right:0;width:100%"><img class="bk" src="'+b.bg[0]+'" alt=""><img class="fg" src="'+b.bg[0]+'" alt=""></div><div class="tint"></div>';C.Y.el.insertBefore(y,C.Y.el.firstChild.nextSibling);b.yb=y;y.style.zIndex=1}
-    const ct=addContent('Y',b,(b.chant?'<div class="big chant">'+words(b.chant)+'</div>':'')+'<div class="pfcap" style="font-size:'+(b.chant?26:40)+'px;font-weight:500;opacity:.9">'+words(b.cap||'بعد أربع سنوات على الحافة')+'</div>','dark cen',R.Y);ct.style.zIndex=2}
+    const ct=addContent('Y',b,(b.chant?'<div class="big chant">'+words(b.chant)+'</div>':'')+'<div class="pfcap" style="font-size:'+(b.bg?26:40)+'px;margin-top:'+(b.bg&&!b.chant?'auto':'0')+';font-weight:500;opacity:.9">'+words(b.cap||'بعد أربع سنوات على الحافة')+'</div>','dark cen',R.Y);ct.style.zIndex=2}
   if(b.type==='final'){addContent('Y',b,'<div style="font-size:30px;font-weight:500;opacity:.86;letter-spacing:.02em" class="k1">'+words('بعد أربع سنوات على الحافة')+'</div><div class="big fin" style="font-size:156px">من هنا <em>بدأ التحدي</em></div>','dark cen',R.Y)}
 });
 lucide.createIcons();
