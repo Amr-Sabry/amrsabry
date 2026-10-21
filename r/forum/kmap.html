@@ -1996,7 +1996,35 @@ try{Object.values(SLIDES).forEach(sp=>(sp.cards||[]).forEach(cd=>{if(cd[0]==='ma
   baseMap=function(st,th,cfg){const r=cc.r;
     if(cfg&&cfg.box&&r&&r.w>=r0.w-1&&r.h>=r0.h-1&&!Q.has('w')){const b=deckBox(r0),dx=(r.w-r0.w)/2,dy=(r.h-r0.h)/2;cfg=Object.assign({},cfg,{box:[b[0]+dx,b[1]+dy,b[2]+dx,b[3]+dy]})}
     return BM.call(this,st,th,cfg)};
-  const play=()=>{if(!cc.r)return;if(B._rtp)B._rtp.delete(c);paint(cc,cc.r);try{parent!==window&&parent.postMessage({kmap:'play',s,c:ci},'*')}catch(e){}};
+  /* keynote motion: pins pop in one by one (north to south), their labels and leader lines follow, filled governorates fill in;
+     afterwards the pins keep a soft pulse and the filled governorates breathe, so every map stays alive while it is talked over */
+  const MOT={tm:[],an:[]};const SVGNS='http://www.w3.org/2000/svg';
+  const kanim=()=>{MOT.tm.forEach(clearTimeout);MOT.tm=[];MOT.an.forEach(a=>{try{a.cancel()}catch(e){}});MOT.an=[];
+    document.querySelectorAll('.km-pulse').forEach(n=>n.remove());
+    const root=document.querySelector('.bc');if(!root||!root.animate)return;
+    const vis=e=>{for(let n=e;n&&n!==root;n=n.parentNode){if(n.nodeType!==1)continue;const cs=getComputedStyle(n);if(cs.display==='none'||cs.visibility==='hidden'||+cs.opacity<0.05)return false}return true};
+    const yc=e=>{const b=e.getBoundingClientRect();return b.top+b.height/2};
+    const A=(el,kf,o)=>{const a=el.animate(kf,Object.assign({fill:'backwards',easing:'cubic-bezier(.2,.8,.2,1)'},o));MOT.an.push(a);return a};
+    const pins=[...root.querySelectorAll('svg circle')].filter(c=>!c.closest('defs,.km-pulse')&&vis(c)).sort((a,b)=>yc(a)-yc(b));
+    const chips=[...root.querySelectorAll('g.co')].filter(vis).sort((a,b)=>yc(a)-yc(b));
+    const leads=[...root.querySelectorAll('path.col')].filter(vis).sort((a,b)=>yc(a)-yc(b));
+    const fills=[...root.querySelectorAll('svg path')].filter(p=>!p.classList.length&&!p.closest('defs,.ni,.nd')&&vis(p)&&/^rgb\((61, 92, 192)\)|^rgba\(61, 92, 192/.test(getComputedStyle(p).fill)).sort((a,b)=>yc(a)-yc(b));
+    const n=Math.max(pins.length,chips.length,fills.length),step=n?Math.min(150,2800/n):0,t0=250;
+    fills.forEach((p,i)=>A(p,[{opacity:0},{opacity:1}],{duration:700,delay:t0+i*step}));
+    pins.forEach((c,i)=>{c.style.transformBox='fill-box';c.style.transformOrigin='center';A(c,[{transform:'scale(0)',opacity:0},{transform:'scale(1.4)',opacity:1,offset:.6},{transform:'scale(1)',opacity:1}],{duration:560,delay:t0+i*step})});
+    leads.forEach((p,i)=>{let L=0;try{L=p.getTotalLength()}catch(e){}if(!L)return;A(p,[{strokeDasharray:L+' '+L,strokeDashoffset:L},{strokeDasharray:L+' '+L,strokeDashoffset:0}],{duration:520,delay:t0+120+i*step})});
+    chips.forEach((g,i)=>A(g,[{opacity:0,transform:'translateY(8px)'},{opacity:1,transform:'translateY(0)'}],{duration:480,delay:t0+220+i*step}));
+    const end=t0+n*step+700;
+    MOT.tm.push(setTimeout(()=>{
+      pins.slice(0,48).forEach((c,i)=>{if(!c.isConnected)return;const r=document.createElementNS(SVGNS,'circle');['cx','cy','r'].forEach(k=>r.setAttribute(k,c.getAttribute(k)||0));
+        if(c.getAttribute('transform'))r.setAttribute('transform',c.getAttribute('transform'));
+        r.setAttribute('class','km-pulse');r.setAttribute('fill','none');r.setAttribute('stroke',c.getAttribute('fill')||'#3d5cc0');r.setAttribute('stroke-width',Math.max(1.2,(+c.getAttribute('r')||3)*.28));
+        r.style.transformBox='fill-box';r.style.transformOrigin='center';r.style.pointerEvents='none';c.parentNode.insertBefore(r,c);
+        MOT.an.push(r.animate([{transform:'scale(1)',opacity:.75},{transform:'scale(3.4)',opacity:0}],{duration:2400,iterations:Infinity,delay:(i*173)%2400,easing:'ease-out'}))});
+      fills.forEach((p,i)=>MOT.an.push(p.animate([{opacity:1},{opacity:.72},{opacity:1}],{duration:3200,iterations:Infinity,delay:(i*260)%3200,easing:'ease-in-out'})));
+    },end));
+  };
+  const play=()=>{if(!cc.r)return;if(B._rtp)B._rtp.delete(c);paint(cc,cc.r);setTimeout(kanim,60);try{parent!==window&&parent.postMessage({kmap:'play',s,c:ci},'*')}catch(e){}};
   /* the card fills the page. By default the map keeps the size it has on the deck (relative to its title chip and legend)
      and the card simply widens or deepens to the page's shape; w/h lay it out at a set size, z sets the scale */
   const layout=()=>{const W0=innerWidth,H0=innerHeight;if(W0<4||H0<4)return null;
