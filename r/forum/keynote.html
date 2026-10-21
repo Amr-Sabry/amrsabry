@@ -23,9 +23,9 @@
 html,body{height:100%;background:#cfd5e6;overflow:hidden}
 body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 #vp{position:fixed;inset:0;display:grid;place-items:center}
-#stage{position:relative;width:1920px;height:1080px;transform-origin:50% 50%;overflow:hidden}
+#stage{position:absolute;left:50%;top:50%;margin:-540px 0 0 -960px;width:1920px;height:1080px;transform-origin:50% 50%;overflow:hidden}
 .s{position:absolute;inset:0;display:none;overflow:hidden;color:var(--navy)}
-.s.on{display:block}
+.s.on{display:block}#rot{display:none;position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:7;padding:12px 22px;border-radius:999px;background:rgba(47,73,173,.92);color:#fff;font:700 15px/1.3 var(--f);white-space:nowrap;pointer-events:none;box-shadow:0 10px 24px -12px rgba(36,57,154,.6)}@media (orientation:portrait) and (pointer:coarse){#rot{display:block}}
 #bgx{position:fixed;inset:0;z-index:0;overflow:hidden;background:linear-gradient(140deg,#f2f4fc 0%,#e0e5f7 38%,#c9d2f2 72%,#b7c3ef 100%);pointer-events:none}
 #bgx i{position:absolute;border-radius:50%;will-change:transform}
 #bgx .b1{width:70vw;height:70vw;right:-22vw;top:-34vw;background:radial-gradient(closest-side,rgba(61,92,192,.34),rgba(61,92,192,0));animation:bx1 23s ease-in-out infinite alternate}
@@ -449,7 +449,7 @@ body{font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--navy)}
 </style>
 </head>
 <body>
-<div id="bgx" aria-hidden="true"><i class="b1"></i><i class="b2"></i><i class="b3"></i><i class="b4"></i></div><div id="vp"><div id="stage"></div></div><div id="kar"><button class="nx" type="button" aria-label="التالي"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><button class="pv" type="button" aria-label="السابق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button></div>
+<div id="bgx" aria-hidden="true"><i class="b1"></i><i class="b2"></i><i class="b3"></i><i class="b4"></i></div><div id="vp"><div id="stage"></div></div><div id="rot">↻ لف الموبايل بالعرض عشان تشوف العرض كامل</div><div id="kar"><button class="nx" type="button" aria-label="التالي"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><button class="pv" type="button" aria-label="السابق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button></div>
 <script src="src/kn/icons.js?v=18"></script>
 <script src="src/kn/slides.js?v=25"></script>
 <script>
