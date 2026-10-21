@@ -1785,9 +1785,9 @@ function MAPCARD(el,r,c,live){
     base.selectAll('rect').attr('fill','none');base.selectAll('path').each(function(){const f=this.getAttribute('fill');if(f&&f!=='none'&&!/url/.test(f))this.setAttribute('fill','none')});
     const egd=ctx.path(EGY), dfs=svg.select('defs');
     dfs.append('filter').attr('id','eshadow').attr('x','-20%').attr('y','-20%').attr('width','140%').attr('height','150%').append('feGaussianBlur').attr('stdDeviation',Math.max(6,Math.min(r.w,r.h)*.022));
-    base.insert('image',':first-child').attr('class','day').attr('href','img/egy_sat_day.webp').attr('x',q0[0]).attr('y',q0[1]).attr('width',q1[0]-q0[0]).attr('height',q1[1]-q0[1]).attr('preserveAspectRatio','none').attr('clip-path','url(#eclip)');
-    base.insert('path',':first-child').attr('class','eland').attr('d',egd).attr('fill','#f6efe6');
-    base.insert('path',':first-child').attr('class','eshadow').attr('d',egd).attr('fill','#2a3b86').attr('opacity',.38).attr('transform',`translate(${Math.min(r.w,r.h)*.006},${Math.min(r.w,r.h)*.03})`).attr('filter','url(#eshadow)');
+    /* kmap clarity v1: natural satellite over the whole region, the north sharper (z9) */{const a9=P0([23.90625,32.54681317351515]),b9=P0([35.859375,23.885837699861998]);base.insert('image',':first-child').attr('class','day n9').attr('href','img/egy_sat_n9.webp').attr('x',a9[0]).attr('y',a9[1]).attr('width',b9[0]-a9[0]).attr('height',b9[1]-a9[1]).attr('preserveAspectRatio','none')}base.insert('image',':first-child').attr('class','day').attr('href','img/egy_sat_nat.webp').attr('x',q0[0]).attr('y',q0[1]).attr('width',q1[0]-q0[0]).attr('height',q1[1]-q0[1]).attr('preserveAspectRatio','none');{const a7=P0([11.25,40.97989806962013]),b7=P0([50.625,11.178401873711781]);base.insert('image',':first-child').attr('class','day z7').attr('href','img/egy_sat_z7.webp').attr('x',a7[0]).attr('y',a7[1]).attr('width',b7[0]-a7[0]).attr('height',b7[1]-a7[1]).attr('preserveAspectRatio','none')}
+    base.insert('path',':first-child').attr('class','eland').attr('d',egd).attr('fill','none');
+    base.insert('path',':first-child').attr('class','eshadow').attr('d',egd).attr('fill','#2a3b86').attr('opacity',0).attr('transform',`translate(${Math.min(r.w,r.h)*.006},${Math.min(r.w,r.h)*.03})`).attr('filter','url(#eshadow)');
     svg.classed('daymap',true)}
   uniqIds(svg.node());
   if(c.mode==='layers'){ctx.step(c.s);}
@@ -1923,6 +1923,72 @@ function MAPCARD(el,r,c,live){
 <script src="src/c5/geoB.js?v=1"></script>
 <script src="src/brand.js"></script>
 <script src="src/lt/mapcam.js"></script>
+<script>/* client palette v1 in the map (kmap clarity v1): the client's colours — slate text, gold for 2026, dark-slate question pill, off-white ground. ?lav=1 = the lavender original */
+(function(){if(/[?&]lav=1/.test(location.search))return;
+ const H=(r,g,b)=>{r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b);let h=0,s=0,l=(mx+mn)/2;if(mx!==mn){const d=mx-mn;s=l>.5?d/(2-mx-mn):d/(mx+mn);h=mx===r?((g-b)/d+(g<b?6:0)):mx===g?((b-r)/d+2):((r-g)/d+4);h*=60}return[h,s,l]};
+ const R=(h,s,l)=>{h/=360;const f=(p,q,t)=>{if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p};if(!s){const v=Math.round(l*255);return[v,v,v]}const q=l<.5?l*(1+s):l+s-l*s,p=2*l-q;return[f(p,q,h+1/3),f(p,q,h),f(p,q,h-1/3)].map(v=>Math.round(v*255))};
+ /* cobalt & lavender -> gold, navy -> slate, blue-greys -> slate-greys, near-white lavender -> warm off-white; neutrals untouched */
+ const map=(r,g,b)=>{const [h,s,l]=H(r,g,b);if(h<213||h>242||s<0.08)return[r,g,b];   /* the deck's blues sit at 215-231; outputs (gold 32, off-white 40, slate 206) stay outside, so a second pass changes nothing */
+   if(l>0.86)return R(40,0.15,Math.min(0.96,l+0.02));
+   if(l<0.3)return R(206,0.30,0.31+(l-0.19)*0.8);
+   if(s>=0.35)return R(32,0.43,Math.min(0.9,l+0.03));
+   return R(206,s*0.7,l)};
+ const hx=x=>x.toString(16).padStart(2,'0');
+ const rep=v=>v.replace(/#([0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b/g,(m,h)=>{let r,g,b,a='';if(h.length===3){r=parseInt(h[0]+h[0],16);g=parseInt(h[1]+h[1],16);b=parseInt(h[2]+h[2],16)}else{r=parseInt(h.slice(0,2),16);g=parseInt(h.slice(2,4),16);b=parseInt(h.slice(4,6),16);if(h.length===8)a=h.slice(6)}return '#'+map(r,g,b).map(hx).join('')+a})
+   .replace(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(,\s*[\d.]+\s*)?\)/g,(m,r,g,b,a)=>{const o=map(+r,+g,+b);return a?`rgba(${o.join(', ')}${a})`:`rgb(${o.join(', ')})`});
+ const CK=/#[0-9a-fA-F]{3}|rgb/;
+ const walk=rules=>{for(const ru of rules){if(ru.style){const st=ru.style;for(let i=0;i<st.length;i++){const pr=st[i],v=st.getPropertyValue(pr);if(v&&CK.test(v)){const nv=rep(v);if(nv!==v)st.setProperty(pr,nv,st.getPropertyPriority(pr))}}}
+   if(ru.cssRules&&!(ru instanceof CSSFontFaceRule))try{walk(ru.cssRules)}catch(e){}}};
+ for(const sh of document.styleSheets){try{walk(sh.cssRules)}catch(e){}}
+ const attrs=['style','fill','stroke','stop-color','color','flood-color'];
+ const fixEl=e=>{for(const at of attrs){const v=e.getAttribute&&e.getAttribute(at);if(v&&CK.test(v)){const nv=rep(v);if(nv!==v)e.setAttribute(at,nv)}}};
+ const stage=document.getElementById('stage');if(stage){fixEl(stage);stage.querySelectorAll('*').forEach(fixEl);
+   new MutationObserver(ms=>{for(const m of ms){if(m.type==='attributes')fixEl(m.target);else m.addedNodes.forEach(n=>{if(n.nodeType===1){fixEl(n);n.querySelectorAll&&n.querySelectorAll('*').forEach(fixEl)}})}}).observe(stage,{subtree:true,childList:true,attributes:true,attributeFilter:attrs})}
+ const css=document.createElement('style');css.id='palette-v1';css.textContent=
+  '#bgx{background:linear-gradient(140deg,#f8f7f4 0%,#f3f1ed 45%,#efeeeb 100%)!important}#bgx i{display:none!important}'+
+  '.hd .hq{background:#313d4f!important}';
+ document.head.appendChild(css);
+ document.getAnimations().forEach(an=>{if(an.transitionProperty&&/color|fill|stroke|shadow|background|border/.test(an.transitionProperty))try{an.finish()}catch(e){}});
+})();
+</script>
+<script>/* kmap clarity v1 — the map's own look (see the comment of kmap_clarity.py) */
+(function(){
+  Object.assign(MAPTH,{bg:'#0b2238',coast:'rgba(255,255,255,.6)',coastW:1.3,gov:'rgba(255,255,255,.32)',govW:.9,nbs:'rgba(255,255,255,.28)',
+    nile:'#5ab8ff',nileW:1.5,water:'rgba(25,75,135,.55)',valley:'rgba(0,0,0,0)',valleyS:'rgba(0,0,0,0)',
+    text:'#ffffff',sub:'rgba(255,255,255,.86)',halo:'rgba(6,20,38,.92)',labelSize:17});
+  /* a road's name wins over a governorate's: a place name under a road chip steps aside while they overlap */
+  setInterval(()=>{const chips=[...document.querySelectorAll('#stage .rl.nm.on>span')].map(e=>e.getBoundingClientRect()).filter(r=>r.width);
+    document.querySelectorAll('#stage svg g.lb').forEach(g=>{const r=g.getBoundingClientRect();if(!r.width)return;
+      const hit=chips.some(c=>r.left<c.right+4&&c.left<r.right+4&&r.top<c.bottom+2&&c.top<r.bottom+2);g.style.visibility=hit?'hidden':''})},250);
+  /* the new-cities map: names a third bigger, framed on the north where 32 of the 33 cities stand */
+  try{const sp=SLIDES[20];(sp.cards||[]).forEach(cd=>{if(cd[0]==='map'&&cd[2].mode==='pts'){cd[2].callout=Object.assign({},cd[2].callout,{fs:17});cd[2].fit=[[27.2,31.75],[33.9,25.2]]}})}catch(e){}
+  /* a card with .fit is framed on that box instead of the whole of Egypt */
+  /* Egypt is always fitted into cfg.box; to frame a smaller box F instead, hand over the box Egypt would fill at F's scale */
+  const _BM=baseMap; baseMap=function(st,th,cfg){const F=window.__KFIT;if(!F||!cfg||!cfg.box)return _BM(st,th,cfg);
+    const u=d3.geoMercator().scale(1).translate([0,0]), eb=d3.geoPath(u).bounds(EGY), a=u(F[0]), b=u(F[1]), B=cfg.box;
+    const s=Math.min((B[2]-B[0])/(b[0]-a[0]),(B[3]-B[1])/(b[1]-a[1])), fx=(a[0]+b[0])/2, fy=(a[1]+b[1])/2, cx=(B[0]+B[2])/2, cy=(B[1]+B[3])/2;
+    return _BM(st,th,Object.assign({},cfg,{box:[cx+(eb[0][0]-fx)*s,cy+(eb[0][1]-fy)*s,cx+(eb[1][0]-fx)*s,cy+(eb[1][1]-fy)*s]}))};
+  const _MC=MAPCARD; MAPCARD=function(el,r,c,live){window.__KFIT=c.fit||null;try{return _MC(el,r,c,live)}finally{window.__KFIT=null}};
+  const st=document.createElement('style');st.id='kmap-clarity';st.textContent=`
+#view,#stage{background:#0b2238!important}
+#stage .bc.mapc,#stage .bc.dark{background:#0b2238!important}
+html body #stage svg.daymap image.day,html body #stage .rtm svg.daymap image.day{opacity:1!important;filter:saturate(1.12) contrast(1.05)!important}
+#stage .rroutes .rln{stroke:#ffbf47!important;filter:drop-shadow(0 0 1.5px rgba(0,0,0,.95)) drop-shadow(0 0 4px rgba(0,0,0,.45))}
+#stage .rroutes .rgw{stroke:#ffbf47!important;opacity:.32!important}
+#stage svg path.rr{stroke:rgba(255,255,255,.2)!important}
+#stage svg path.rw{stroke:rgba(255,255,255,.24)!important}
+#stage .mapc .callouts .cob{fill:rgba(18,40,66,.94)!important;stroke:#c9a35f!important;stroke-width:1.2!important;filter:drop-shadow(0 6px 10px rgba(0,0,0,.45))!important}
+#stage .mapc .callouts text,#stage .mapc .callouts tspan{fill:#ffffff!important;font-weight:700!important}
+#stage .mapc .callouts .col{stroke:#d8b26c!important;stroke-width:1.5!important;opacity:.9!important}
+#stage .mapc svg g.lb text{paint-order:stroke;stroke-linejoin:round}
+.rl>span,.rl.nm>span{font-size:19px!important;font-weight:700!important;color:#fff!important;background:rgba(18,40,66,.94)!important;border:1.2px solid #c9a35f!important;box-shadow:0 6px 14px -6px rgba(0,0,0,.6)!important;padding:4px 12px!important}
+#stage .mtitle,#stage .bc .mtitle,html body #stage .mapc .mtitle{background:rgba(14,32,54,.92)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border:1px solid rgba(201,163,95,.65)!important;box-shadow:0 14px 30px -14px rgba(0,0,0,.6)!important}
+#stage .mtitle .mtt b,#stage .mtitle .mtt{color:#fff!important}#stage .mtitle .mtk{color:rgba(255,255,255,.75)!important}#stage .mtitle .mti{color:#d8b26c!important;background:rgba(255,255,255,.08)!important}
+#stage .mleg,#stage .bc .mleg,html body #stage .mapc .mleg{background:rgba(14,32,54,.92)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border:1px solid rgba(201,163,95,.65)!important;color:#fff!important;font-size:20px!important}
+#stage .mleg span{color:#fff!important}
+`;document.head.appendChild(st);addEventListener('DOMContentLoaded',()=>document.body.appendChild(st));
+})();
+</script>
 <script>
 /* the client's maps are shown as they are: whole Egypt where theirs is whole Egypt, no camera tours on map cards */
 try{Object.values(SLIDES).forEach(sp=>(sp.cards||[]).forEach(cd=>{if(cd[0]==='map')cd[2].noTour=1}))}catch(e){}
