@@ -1961,18 +1961,19 @@ try{Object.values(SLIDES).forEach(sp=>(sp.cards||[]).forEach(cd=>{if(cd[0]==='ma
   const esc=t=>String(t??'').replace(/<[^>]+>/g,'').replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
   const say=(h,p,body)=>{msg.hidden=false;document.documentElement.style.background=document.body.style.background='#d9deec';msg.innerHTML=`<h1>${h}</h1>${p?`<p>${p}</p>`:''}${body||''}`};
   const titleOf=c=>String(c.title||(c.net&&typeof RTS!=='undefined'&&RTS[c.net]&&RTS[c.net].title)||'').split(' · ')[0];
+  const ar=(n,few,many)=>`${n} ${n>=3&&n<=10?few:many}`;
   const whatOf=c=>{const m=c.mode;
-    if(m==='pts')return `${(c.pts||[]).length} موقعًا`+(c.info?' · مرقمة لها بيانات':'');
-    if(m==='gov')return `${Object.keys(c.data||{}).length} محافظة (أعداد)`+(c.list?' · قائمة بالضغط':'');
-    if(m==='choro')return `${Object.keys(c.cls||{}).length} محافظة (تصنيف)`;
-    if(m==='route'){const n=c.net&&RTS[c.net];return n?`${(n.routes||[]).length} مسارًا (${c.net})`:`${(c.routes||[]).length} مسارًا`}
+    if(m==='pts')return ar((c.pts||[]).length,'مواقع','موقعًا')+(c.info?' · مرقمة لها بيانات':'');
+    if(m==='gov')return ar(Object.keys(c.data||{}).length,'محافظات','محافظة')+' (أعداد)'+(c.list?' · قائمة بالضغط':'');
+    if(m==='choro')return ar(Object.keys(c.cls||{}).length,'محافظات','محافظة')+' (تصنيف)';
+    if(m==='route'){const n=c.net&&RTS[c.net];return ar(n?(n.routes||[]).length:(c.routes||[]).length,'مسارات','مسارًا')+(c.net?` (${c.net})`:'')}
     return m||''};
   /* every map card of the deck, in show order (the small locator maps on photos are not cards) */
   const MAPS=[];ORDER.forEach((n,pos)=>{const sp=prep(SLIDES[n]);(sp.cards||[]).forEach((cd,i)=>{if(cd[0]==='map'&&!cd[2].loc)MAPS.push({s:n,pos:pos+1,c:i,title:titleOf(cd[2]),mode:cd[2].mode||(cd[2].cimg?'cimg':''),net:cd[2].net||'',what:whatOf(cd[2]),legend:(cd[2].legend||[]).map(x=>x[1]),grid:cd[1]})})});
   window.KMAPS=MAPS;
   const link=m=>`kmap.html?s=${m.s}&c=${m.c}`;
   const table=L=>`<table><thead><tr><th>الشريحة (s)</th><th>ترتيبها في العرض</th><th>البطاقة (c)</th><th>عنوان الخريطة</th><th>النوع (mode)</th><th>ما تعرضه</th><th>الرابط</th></tr></thead><tbody>${L.map(m=>`<tr><td class="n">${m.s}</td><td class="n">${m.pos}</td><td class="n">${m.c}</td><td>${esc(m.title)}</td><td><code>${m.mode}${m.net?' · '+m.net:''}</code></td><td>${esc(m.what)}${m.legend.length?`<br><small>${esc(m.legend.join(' · '))}</small>`:''}</td><td><a href="${link(m)}" target="_blank"><code>${link(m)}</code></a></td></tr>`).join('')}</tbody></table>`;
-  if(Q.has('list')){say(`خرائط الجلسة الختامية · ${MAPS.length} خريطة`,'كل بطاقة خريطة في العرض. افتح أي واحدة وحدها بالرابط: <code>kmap.html?s=&lt;الشريحة&gt;&amp;c=&lt;البطاقة&gt;</code>',table(MAPS));
+  if(Q.has('list')){say(`خرائط الجلسة الختامية · ${MAPS.length} خريطة`,'كل بطاقة خريطة في العرض. افتح أي واحدة وحدها بالرابط <code>kmap.html?s=SLIDE&amp;c=CARD</code> (s رقم الشريحة كما في closing.html#s، و c رقم البطاقة).',table(MAPS));
     try{console.log(JSON.stringify(MAPS))}catch(e){}return}
   const s=+Q.get('s'), sp=SLIDES[s]&&prep(SLIDES[s]);
   if(!sp){say('لا توجد شريحة بهذا الرقم',`s=${esc(Q.get('s'))} · الخرائط الموجودة:`,table(MAPS));return}
@@ -1987,6 +1988,14 @@ try{Object.values(SLIDES).forEach(sp=>(sp.cards||[]).forEach(cd=>{if(cd[0]==='ma
   const el=document.createElement('div');el.className='bc';L.appendChild(el);
   const cc={i:ci,type:'map',c,el,st:0,r0,r:null,pr:null,kill:[]};
   B={sp,L,P:{st:[0],max:0,lay:()=>[g]},step:0,max:0,tm:[],cards:[cc]};curLayer=L;cur=s;
+  /* the map itself sits exactly where (and as large as) it sits on the deck's card, centred in the wider page: MAPCARD fits
+     Egypt into a box worked out from the card's size, so the box of the deck's card is handed over, moved to the centre */
+  const deckBox=r=>{const pad=Math.min(r.w,r.h)*(c.pad??.07), top=c.top??(c.title&&!c.loc&&r.w>=480?(/ · /.test(c.title)?124:100):52), bot=c.bot??40;
+    return [pad,pad+top*.6,r.w-pad,r.h-pad-bot*.6]};
+  const BM=baseMap;
+  baseMap=function(st,th,cfg){const r=cc.r;
+    if(cfg&&cfg.box&&r&&r.w>=r0.w-1&&r.h>=r0.h-1&&!Q.has('w')){const b=deckBox(r0),dx=(r.w-r0.w)/2,dy=(r.h-r0.h)/2;cfg=Object.assign({},cfg,{box:[b[0]+dx,b[1]+dy,b[2]+dx,b[3]+dy]})}
+    return BM.call(this,st,th,cfg)};
   const play=()=>{if(!cc.r)return;if(B._rtp)B._rtp.delete(c);paint(cc,cc.r);try{parent!==window&&parent.postMessage({kmap:'play',s,c:ci},'*')}catch(e){}};
   /* the card fills the page. By default the map keeps the size it has on the deck (relative to its title chip and legend)
      and the card simply widens or deepens to the page's shape; w/h lay it out at a set size, z sets the scale */
