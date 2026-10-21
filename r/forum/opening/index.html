@@ -111,6 +111,7 @@ body{font-family:var(--f-body);direction:rtl;-webkit-font-smoothing:antialiased;
 .bc.ph .pi{position:absolute;inset:0;overflow:hidden;z-index:1;display:none}
 .bc.ph .pi.on{display:block}
 .bc.ph .pi img,.bc.ph .pi video{position:absolute;inset:-2%;width:104%;height:104%;object-fit:cover;transform-origin:50% 50%}
+.bc.ph .pi img.fg,.bc.ph .pi img.bk{inset:0;width:100%;height:100%}.bc.ph .pi img.fg{object-fit:contain}.bc.ph .pi img.bk{filter:blur(26px) brightness(.5);transform:scale(1.18)}
 .bc.ph .shade{position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(0deg,rgba(28,37,71,.42),rgba(28,37,71,0) 34%),radial-gradient(120% 95% at 50% 45%,transparent 58%,rgba(28,37,71,.3))}
 .bc.ph .flash{position:absolute;inset:0;z-index:3;background:#fff;opacity:0;pointer-events:none}
 .bc.ph .credit{position:absolute;z-index:4;bottom:16px;inset-inline-start:18px;display:flex;align-items:center;gap:8px;padding:6px 12px 7px;border-radius:999px;font-size:13.5px;font-weight:500;color:var(--ink);
@@ -154,7 +155,21 @@ body{font-family:var(--f-body);direction:rtl;-webkit-font-smoothing:antialiased;
 .yrbg{position:absolute;inset:0;z-index:1;display:none}
 .yrbg.on{display:block}
 .yrbg .strip3{position:absolute;top:0;bottom:0;overflow:hidden}
-.yrbg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.yrbg img{position:absolute;inset:0;width:100%;height:100%}.yrbg img.fg{object-fit:contain}.yrbg img.bk{object-fit:cover;filter:blur(18px) brightness(.6);transform:scale(1.18)}
+.yrbg.pf .tint{background:rgba(12,18,46,.12)!important}.pfcap{margin-bottom:34px;text-shadow:0 6px 20px rgba(0,0,0,.5)}
+.num .pr{font-size:.46em;font-weight:600;margin-inline-end:.18em;letter-spacing:0}
+.num.nt{direction:rtl;white-space:normal;letter-spacing:-.01em;line-height:1.08;font-variant-numeric:normal}
+.ct:not(.dark) .num.nt{background:none;color:#3d5cc0;-webkit-text-fill-color:#3d5cc0}
+.yrbg.yl .tint{background:linear-gradient(160deg,rgba(16,26,78,.84),rgba(26,40,110,.78) 55%,rgba(40,60,150,.72))!important}
+.ct.ylc{padding:40px 64px;justify-content:center;align-items:stretch}
+.ylh{display:flex;align-items:baseline;gap:22px;margin-bottom:26px}
+.yly{font-size:92px;font-weight:700;line-height:1;direction:ltr;letter-spacing:-.02em}
+.ylk{font-size:32px;font-weight:500;opacity:.85}
+.ylist{display:grid;grid-template-columns:1fr 1fr;grid-auto-flow:column;gap:10px 34px}
+.yli{display:flex;align-items:center;gap:16px;padding:11px 18px 12px;border-radius:14px;background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px rgba(255,255,255,.16);opacity:0}
+.yd{flex:0 0 auto;min-width:160px;font-family:var(--f-body);font-size:17px;font-weight:600;color:#cfe0ff;white-space:nowrap}
+.yt{font-size:25px;font-weight:600;line-height:1.25}
+.ylist.big .yli{padding:15px 22px 16px}.ylist.big .yt{font-size:30px}.ylist.big .yd{font-size:18px}
 .yrbg .tint{position:absolute;inset:0;background:linear-gradient(160deg,rgba(26,42,110,.80),rgba(39,57,140,.72) 55%,rgba(58,82,180,.66));}
 .clip{position:absolute;z-index:3;max-width:580px;padding:14px 22px 16px;border-radius:6px;background:#f6f3ec;color:#1c2547;box-shadow:0 26px 40px -22px rgba(0,0,0,.6),0 2px 0 rgba(255,255,255,.6) inset;
   font-family:var(--f-display);font-weight:700;font-size:27px;line-height:1.38;text-align:right}
@@ -235,7 +250,7 @@ html.emb #start{display:none}
   <div id="start"><div class="pane"><span class="t">2011<i>→</i>2014</span><span class="s">أربع سنوات من التحديات</span>
     <button class="go" id="go" disabled>جاري التجهيز…</button>
     <div class="chs" id="stchs"></div>
-    <span class="n">حوالي 4 دقائق · شغّل الصوت · مسافة = تشغيل/إيقاف · الأسهم = اللحظة اللي بعدها واللي قبلها</span>
+    <span class="n">حوالي 6 دقائق · شغّل الصوت · مسافة = تشغيل/إيقاف · الأسهم = اللحظة اللي بعدها واللي قبلها</span>
     <span class="rotq"><i data-lucide="smartphone"></i>لف الموبايل بالعرض</span></div></div>
 </div>
 </div>
@@ -252,7 +267,7 @@ html.emb #start{display:none}
   <div id="bar"><div class="trk"></div><div class="fill"></div><div class="knob"></div></div>
 </div></div>
 <script src="https://unpkg.com/lucide@0.453.0/dist/umd/lucide.min.js"></script>
-<script src="film.js?v=s2"></script>
+<script src="film.js?v=s3"></script>
 <script>
 (async function(){
 const BASE='';const Q=new URLSearchParams(location.search),EMB=Q.has('embed'),MUTE=Q.has('mute');
@@ -308,10 +323,14 @@ function addContent(card,b,html,cls,r){
   ct._b=b;(b.cts=b.cts||[]).push(ct);return ct}
 
 function numHTML(it,r,dark){
-  const strip=r.h<=150;const len=String(it.n).replace('.','').length;
+  const strip=r.h<=150;
+  if(it.nt){const L=it.nt.length,fs=strip?44:Math.round(Math.min(r.h*.30,r.w*1.5/Math.max(5,L),118));
+    return '<div class="hdr">'+ICON(it.ic)+'<span class="kick">'+words(it.dom)+'</span></div>'+
+     '<div class="nwrap"><div class="num nt" style="font-size:'+fs+'px">'+words(it.nt)+'</div>'+
+     '<div class="u">'+words(it.u)+'</div>'+(it.sub?'<div class="sub">'+wordsHTML(it.sub)+'</div>':'')+'</div>'}const len=String(it.n).replace('.','').length+(it.pre?Math.ceil(it.pre.length*.3):0);
   const fs=strip?64:Math.round(Math.min(r.h*.40,r.w*(len>4?.2:.28),178));
   return '<div class="hdr">'+ICON(it.ic)+'<span class="kick">'+words(it.dom)+'</span></div>'+
-   '<div class="nwrap"><div class="num" style="font-size:'+fs+'px">'+(it.pre?'<span>'+it.pre+'</span>':'')+'<span class="cv" data-n="'+it.n+'" data-dec="'+(it.dec||0)+'" data-raw="'+(it.raw?1:0)+'">0</span>'+(it.sf?'<span class="sf">'+it.sf+'</span>':'')+'</div>'+
+   '<div class="nwrap"><div class="num" style="font-size:'+fs+'px">'+(it.pre?'<span class="pr">'+it.pre+'</span>':'')+'<span class="cv" data-n="'+it.n+'" data-dec="'+(it.dec||0)+'" data-raw="'+(it.raw?1:0)+'">0</span>'+(it.sf?'<span class="sf">'+it.sf+'</span>':'')+'</div>'+
    '<div class="u">'+words(it.u)+'</div>'+(it.sub?'<div class="sub">'+wordsHTML(it.sub)+'</div>':'')+'</div>'}
 
 const measurer=document.createElement('div');measurer.style.cssText='position:absolute;visibility:hidden;left:-5000px;top:0;font-family:var(--f-display);font-weight:600;line-height:1.34;padding-inline-start:20px';stage.appendChild(measurer);
@@ -319,13 +338,15 @@ function fitFont(text,w,h,max,min){for(let fs=max;fs>=min;fs-=1){measurer.style.
 
 function headHTML(b,r){
   const strip=r.h<=150;const h=b.hl;
-  const chips='<div class="chips"><span class="dchip">'+b.date+'</span>'+(strip?'':'<span class="tchip">'+ICON(b.ic)+'<span>'+b.head+'</span></span>')+'</div>';
+  const chips='<div class="chips">'+(b.date?'<span class="dchip">'+b.date+'</span>':'')+(strip?'':'<span class="tchip">'+ICON(b.ic)+'<span>'+b.head+'</span></span>')+'</div>';
   if(strip){return chips+'<div class="hl ed" style="font-size:24px">'+wordsHTML(b.headHTML||b.head)+'</div>'}
-  const text=h?h.text:b.head;
-  const avail=r.h-48-34-(h?40:0)-14;const fs=fitFont(text,r.w-52-20,avail,h?38:42,20);
+  const text=h?h.text:b.head;const sl=h?[h.src,h.date].filter(Boolean).join(' · '):'';
+  const avail=r.h-48-34-(sl?40:0)-14;const fs=fitFont(text,r.w-52-20,avail,h?38:42,20);
   return chips+'<div class="hl'+(h?'':' ed')+'" style="font-size:'+fs+'px">'+(h?'<span class="bar"></span>':'')+words(text)+'</div>'+
-    (h?'<div class="srcl">'+ICON('newspaper')+'<span>'+h.src+' · '+h.date+'</span></div>':'')}
+    (sl?'<div class="srcl">'+ICON('newspaper')+'<span>'+sl+'</span></div>':'')}
 
+function mkClips(heads,ct,POS){return (heads||[]).map((h,k)=>{const c=document.createElement('div');c.className='clip';const cs=[h.src,h.date].filter(Boolean).join(' · ');c.innerHTML=words(h.text)+(cs?'<small>'+ICON('newspaper')+'<span>'+cs+'</span></small>':'');
+      const pos=POS[k%POS.length];Object.assign(c.style,{top:pos.top||'',bottom:pos.bottom||'',left:pos.left||'',right:pos.right||''});c._rot=pos.rot;ct.appendChild(c);return c})}
 B.forEach((b,bi)=>{
   b.i=bi;const R=b.rects||{};
   if(b.type==='event'||b.type==='res'){
@@ -337,19 +358,29 @@ B.forEach((b,bi)=>{
       addContent(it.card,b,numHTML(it,r,dark),dark?'dark':'',r).insertAdjacentHTML('beforeend','<div class="wm" style="width:220px;height:220px">'+ICON(it.ic)+'</div>')});
   }
   if(b.photos&&b.photos.length){
-    b.pis=b.photos.map((p,k)=>{const card=C[p.card||'V'];const d=document.createElement('div');d.className='pi';d.innerHTML=p.vid?'<video muted playsinline preload="auto"><source src="'+p.vid.replace(/\.mp4$/,'.webm')+'?v=s2" type="video/webm"><source src="'+p.vid+'?v=s2" type="video/mp4"></video>':'<img src="'+p.file+'" alt="">';card.el.insertBefore(d,card.el.querySelector('.shade'));d._p=p;return d});
+    b.pis=b.photos.map((p,k)=>{const card=C[p.card||'V'];const d=document.createElement('div');d.className='pi';d.innerHTML=p.vid?'<video muted playsinline preload="auto"><source src="'+p.vid.replace(/\.mp4$/,'.webm')+'?v=s2" type="video/webm"><source src="'+p.vid+'?v=s2" type="video/mp4"></video>':'<img class="bk" src="'+p.file+'" alt=""><img class="fg" src="'+p.file+'" alt="">';card.el.insertBefore(d,card.el.querySelector('.shade'));d._p=p;return d});
   }
   if(b.type==='intro'){addContent('Y',b,'<div class="big" style="font-size:150px;direction:ltr">'+odoHTML('2011','oy')+' '+words('→')+' '+odoHTML('2014','oy')+'</div><div style="font-size:34px;font-weight:500;opacity:.9">'+words('أربع سنوات من التحديات… قبل البداية')+'</div>','dark cen',R.Y)}
   if(b.type==='year'){
     const y=document.createElement('div');y.className='yrbg';
-    const n=b.bg.length;y.innerHTML=b.bg.map((f,k)=>'<div class="strip3" style="right:'+(k*100/n)+'%;width:'+(100/n+.2)+'%"><img src="'+f+'" alt=""></div>').join('')+'<div class="tint"></div>';
+    const n=b.bg.length;y.innerHTML=b.bg.map((f,k)=>'<div class="strip3" style="right:'+(k*100/n)+'%;width:'+(100/n+.2)+'%"><img class="bk" src="'+f+'" alt=""><img class="fg" src="'+f+'" alt=""></div>').join('')+'<div class="tint"></div>';
     C.Y.el.insertBefore(y,C.Y.el.firstChild.nextSibling);b.yb=y;y.style.zIndex=1;
     const ct=addContent('Y',b,'<div class="big" style="font-size:250px;direction:ltr;text-shadow:0 30px 60px rgba(10,18,60,.35)">'+odoHTML(b.y,'oy')+'</div>','dark cen',R.Y);ct.style.zIndex=2;
-    b.clips=(b.heads||[]).map((h,k)=>{const c=document.createElement('div');c.className='clip';c.innerHTML=words(h.text)+'<small>'+ICON('newspaper')+'<span>'+h.src+' · '+h.date+'</span></small>';
-      const pos=[{top:'6%',right:'4%',rot:-1.6},{bottom:'7%',left:'4%',rot:1.3},{bottom:'8%',right:'6%',rot:-.7}][k%3];
-      Object.assign(c.style,{top:pos.top||'',bottom:pos.bottom||'',left:pos.left||'',right:pos.right||''});c._rot=pos.rot;ct.appendChild(c);return c});
+    b.clips=mkClips(b.heads,ct,[{top:'6%',right:'4%',rot:-1.6},{bottom:'7%',left:'4%',rot:1.3},{bottom:'8%',right:'6%',rot:-.7}]);
   }
-  if(b.type==='prefinal'){addContent('Y',b,'<div style="font-size:40px;font-weight:500;opacity:.9">'+words('بعد أربع سنوات على الحافة')+'</div>','dark cen',R.Y)}
+  if(b.type==='ylist'){
+    const y=document.createElement('div');y.className='yrbg yl';const n=b.bg.length;
+    y.innerHTML=b.bg.map((f,k)=>'<div class="strip3" style="right:'+(k*100/n)+'%;width:'+(100/n+.2)+'%"><img class="bk" src="'+f+'" alt=""><img class="fg" src="'+f+'" alt=""></div>').join('')+'<div class="tint"></div>';
+    C.Y.el.insertBefore(y,C.Y.el.firstChild.nextSibling);b.yb=y;y.style.zIndex=1;
+    const rows=Math.ceil(b.items.length/2),big=b.items.length<=12;
+    const ct=addContent('Y',b,'<div class="ylh"><span class="yly">'+b.y+'</span><span class="ylk">'+words('أحداث العام')+'</span></div>'+
+      '<div class="ylist'+(big?' big':'')+'" style="grid-template-rows:repeat('+rows+',auto)">'+b.items.map(it=>'<div class="yli"><span class="yd">'+it.d+'</span><span class="yt">'+it.t+'</span></div>').join('')+'</div>','dark ylc',R.Y);
+    ct.style.zIndex=2;b.ylis=[...ct.querySelectorAll('.yli')]}
+  if(b.type==='prefinal'){
+    if(b.bg){const y=document.createElement('div');y.className='yrbg pf';y.innerHTML='<div class="strip3" style="right:0;width:100%"><img class="bk" src="'+b.bg[0]+'" alt=""><img class="fg" src="'+b.bg[0]+'" alt=""></div><div class="tint"></div>';C.Y.el.insertBefore(y,C.Y.el.firstChild.nextSibling);b.yb=y;y.style.zIndex=1}
+    const cap=b.cap!=null?b.cap:'بعد أربع سنوات على الحافة';
+    const ct=addContent('Y',b,cap?'<div class="pfcap" style="font-size:'+(b.bg?26:40)+'px;margin-top:'+(b.bg?'auto':'0')+';font-weight:500;opacity:.9">'+words(cap)+'</div>':'','dark cen',R.Y);ct.style.zIndex=2;
+    b.clips=mkClips(b.heads,ct,[{top:'5%',right:'2.5%',rot:-1.4},{top:'7%',left:'2.5%',rot:1.2},{bottom:'7%',right:'3.5%',rot:.9},{bottom:'6%',left:'3%',rot:-1.1}])}
   if(b.type==='final'){addContent('Y',b,'<div style="font-size:30px;font-weight:500;opacity:.86;letter-spacing:.02em" class="k1">'+words('بعد أربع سنوات على الحافة')+'</div><div class="big fin" style="font-size:156px">من هنا <em>بدأ التحدي</em></div>','dark cen',R.Y)}
 });
 lucide.createIcons();
@@ -432,9 +463,10 @@ function contentFrame(ct,t){
 function photoFrame(b,t){
   if(!b.pis)return;
   b.pis.forEach((d,k)=>{const p=d._p,on=t>=p.t0&&t<p.t1;d.classList.toggle('on',on);if(p.vid){const v=d.firstChild;if(!on){if(!v.paused)v.pause()}else{const tg=(p.ss||0)+(t-p.t0);if(playing){if(v.paused)v.play().catch(()=>{});if(Math.abs(v.currentTime-tg)>.3)v.currentTime=tg}else{if(!v.paused)v.pause();if(Math.abs(v.currentTime-tg)>.05)v.currentTime=tg}}}if(!on)return;
-    const u=(t-p.t0)/Math.max(.5*SL,p.t1-p.t0);const s=1.05+.11*u;const dx=(p.dir||1)*(-1.6+3.2*u),dy=(k%2?.8:-.8)*(1-u);
-    d.firstChild.style.transform='translate('+dx+'%,'+dy+'%) scale('+s+')';
-    const card=C[p.card||'V'];const f=cl((t-p.t0)/(.14*SL));card.flash.style.opacity=(.32*(1-f)).toFixed(3);const cr=p.vid?'فيديو: '+p.credit:'صور: '+(p.credit||'اليوم السابع');if(card._cr!==cr){card.credit.lastChild.textContent=cr;card._cr=cr}});
+    const u=(t-p.t0)/Math.max(.5*SL,p.t1-p.t0);
+    if(p.vid){const s=1.05+.11*u;const dx=(p.dir||1)*(-1.6+3.2*u),dy=(k%2?.8:-.8)*(1-u);d.firstChild.style.transform='translate('+dx+'%,'+dy+'%) scale('+s+')'}
+    else{d.lastChild.style.transform='scale('+(.955+.045*u).toFixed(4)+')';d.firstChild.style.transform='scale('+(1.18+.06*u).toFixed(4)+')'}
+    const card=C[p.card||'V'];const f=cl((t-p.t0)/(.14*SL));card.flash.style.opacity=(.32*(1-f)).toFixed(3);const cr=p.vid?'فيديو: '+p.credit:(p.credit===''?'':'صور: '+(p.credit||'اليوم السابع'));if(card._cr!==cr){card.credit.lastChild.textContent=cr;card.credit.style.visibility=cr?'':'hidden';card._cr=cr}});
 }
 
 let lastYear='',yBump=-9;
@@ -456,7 +488,8 @@ window.draw=function(t){
   if(p)photoFrame(p,t);photoFrame(b,t);
   ['V','V2'].forEach(n=>{const anyOn=C[n].el.querySelector('.pi.on');if(!anyOn)C[n].flash.style.opacity=0});
   /* year backgrounds */
-  B.forEach(bb=>{if(bb.yb){const on=bb.i===i;bb.yb.classList.toggle('on',on);if(on){const u=(t-bb.t0)/(bb.t1-bb.t0);[...bb.yb.querySelectorAll('img')].forEach((im,k)=>{im.style.transform='translateY('+((k%2?-1:1)*(4-8*u))+'%) scale(1.12)'})}}});
+  B.forEach(bb=>{if(bb.yb){const on=bb.i===i;bb.yb.classList.toggle('on',on);if(on){const u=(t-bb.t0)/(bb.t1-bb.t0);[...bb.yb.querySelectorAll('img.bk')].forEach((im,k)=>{im.style.transform='translateY('+((k%2?-1:1)*(4-8*u))+'%) scale(1.2)'});[...bb.yb.querySelectorAll('img.fg')].forEach(im=>{im.style.transform='scale('+(.95+.05*u).toFixed(4)+')'})}}});
+  [p,b].forEach(bb=>{if(bb&&bb.ylis){const n=bb.ylis.length,gap=Math.min(.2,2.4/n)*SL,xk=cl((t-(bb.t1-.16*SL))/(.22*SL));bb.ylis.forEach((li,k)=>{const ek=eOut(cl((t-(bb.t0+.45*SL+k*gap))/(.45*SL)));li.style.opacity=ek*(1-xk);li.style.transform='translateY('+(18*(1-ek))+'px)'})}});
   if(b.clips)b.clips.forEach((c,k)=>{const st=b.t0+(.42+k*.42)*SL;const ek=cl((t-st)/(.28*SL));const xk=cl((t-(b.t1-.14*SL))/(.2*SL));c.style.opacity=(ek>0?1:0)*(1-xk);c.style.transform='rotate('+c._rot+'deg) scale('+(1.18-.18*eOutQ(ek))+')';
     const ws=[...c.querySelectorAll('.w>i')];ws.forEach(w=>{w.style.transform='none'})});
   /* timeline */
@@ -476,7 +509,7 @@ function fit(){const W=innerWidth,H=innerHeight,rot=LITE&&H>W;document.body.clas
 addEventListener('resize',fit);addEventListener('orientationchange',()=>{setTimeout(fit,250);setTimeout(fit,700)});if(window.visualViewport)visualViewport.addEventListener('resize',fit);fit();
 
 /* ---------- player: the score drives the clock ---------- */
-const DUR=FILM.dur,audio=new Audio(BASE+'score.mp3?v=s2');audio.preload='auto';
+const DUR=FILM.dur,audio=new Audio(BASE+'score.mp3?v=s3');audio.preload='auto';
 let playing=false,useAudio=true,wall0=0,tNow=0,ended=false;
 /* the wall clock drives the picture; the score follows it, and when the score is running smoothly the picture follows the score */
 let lastAT=-1,lastATw=0;
@@ -485,7 +518,7 @@ const now=()=>{if(!playing)return tNow;const pn=performance.now(),tw=(pn-wall0)/
     const fresh=pn-lastATw<400;if(fresh&&Math.abs(at-tw)<.6){wall0=pn-at*1000;return at}
     if(Math.abs(at-tw)>=.6&&tw<DUR-.3){try{audio.currentTime=tw}catch(e){}lastATw=pn}}
   return tw};
-const CH=[['2011',B.find(b=>b.type==='year'&&b.y==='2011')],['2012',B.find(b=>b.type==='year'&&b.y==='2012')],['2013',B.find(b=>b.type==='year'&&b.y==='2013')],['2014',B.find(b=>b.type==='year'&&b.y==='2014')],['الخلاصة',B.find(b=>b.type==='summary')]];
+const CH=[['2011',B.find(b=>b.type==='year'&&b.y==='2011')],['2012',B.find(b=>b.type==='year'&&b.y==='2012')],['2013',B.find(b=>b.type==='year'&&b.y==='2013')],['2014',B.find(b=>b.type==='year'&&b.y==='2014')],['الخلاصة',[...B].reverse().find(b=>b.type==='summary')]];
 const ctl=document.getElementById('ctl'),bPlay=document.getElementById('bPlay'),bSnd=document.getElementById('bSnd'),bSrc=document.getElementById('bSrc'),bar=document.getElementById('bar'),fill=bar.querySelector('.fill'),knob=bar.querySelector('.knob'),chaps=document.getElementById('chaps'),startEl=document.getElementById('start'),go=document.getElementById('go');
 chaps.innerHTML=CH.map((c,k)=>'<button class="chap" data-k="'+k+'" type="button">'+c[0]+'</button>').join('');
 document.getElementById('stchs').innerHTML=CH.slice(0,4).map((c,k)=>'<button data-k="'+k+'" type="button">من '+c[0]+'</button>').join('');
