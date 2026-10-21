@@ -5,7 +5,7 @@
    types: cover · share · col · strike · part · gaps · rows · list · duo · close
    a = before 2014, b = 2026; add / adds = the part of b added since; ic = outline icon */
 const KN=[
- {type:'cover',ph:{f:'c128',c:{b:'#4f5f6b',a:'#174562',A:'#1e6998',q:'#174562'}},k:'منتدى مصر 2026 · الجلسة الختامية',y0:'2014',y1:'2026',s0:'من بناء مقومات التنمية',s1:'إلى صناعة المستقبل',moves:[
+ {type:'cover',k:'منتدى مصر 2026 · الجلسة الختامية',y0:'2014',y1:'2026',s0:'من بناء مقومات التنمية',s1:'إلى صناعة المستقبل',moves:[
   {n:'التحرك الأول',t:'التعمير',ic:'building-2'},
   {n:'التحرك الثاني',t:'الربط',ic:'route'},
   {n:'التحرك الثالث',t:'التمكين',ic:'plug-zap'},
