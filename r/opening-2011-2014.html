@@ -233,7 +233,7 @@ body{font-family:var(--f-body);direction:rtl;-webkit-font-smoothing:antialiased;
 <script>
 (async function(){
 const BASE='/r/opening-2011-2014/';
-const FILM=await (await fetch(BASE+'film.json?v=3')).json();
+const FILM=await (await fetch(BASE+'film.json?v=4')).json();
 FILM.beats.forEach(b=>{(b.photos||[]).forEach(p=>{p.file=BASE+p.file});if(b.bg)b.bg=b.bg.map(f=>BASE+f)});
 try{await Promise.all(['600 30px "Readex Pro"','500 30px "Readex Pro"','700 30px "Readex Pro"','300 30px "Readex Pro"','500 16px "IBM Plex Sans Arabic"','600 16px "IBM Plex Sans Arabic"'].map(f=>document.fonts.load(f,'أبجد 2011')))}catch(e){}
 const B=FILM.beats, stage=document.getElementById('stage'), hd=document.getElementById('hd'), hax=document.getElementById('hax'), wipe=document.getElementById('wipe');
