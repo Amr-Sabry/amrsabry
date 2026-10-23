@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="sv7-build" content="10230943">
+<meta name="sv7-build" content="10230955">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>VS7 · العرض</title>
 <link rel="stylesheet" href="sv.css?v=21">
@@ -122,7 +122,7 @@ document.fonts.load('600 80px SVd','أبجد').catch(()=>{}).then(()=>document.f
 window.SVshow={go,next,prev,get cur(){return cur},get step(){return step}};
 })();
 </script>
-<script src="sv7-caps.js?v=6"></script><script src="sv7-media.js?v=7"></script>
+<script src="sv7-caps.js?v=7"></script><script src="sv7-media.js?v=7"></script>
 <script>/* a window older than the control reloads itself (keeps its place: the # stays) */
 (function(){const me=(document.querySelector('meta[name=sv7-build]')||{}).content||'';if(!('BroadcastChannel' in window)||/[?&](thumb|static|preview)/.test(location.search))return;
 const c=new BroadcastChannel('sv7-ctl');c.addEventListener('message',e=>{const d=e.data||{};if(d.type==='build'&&d.b&&me&&d.b>me){let k='';try{k=sessionStorage.getItem('sv7-rl')}catch(_){}if(k===d.b)return;try{sessionStorage.setItem('sv7-rl',d.b)}catch(_){}c.close();location.reload()}})})();</script>
