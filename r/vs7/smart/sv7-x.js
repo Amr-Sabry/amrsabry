@@ -1282,6 +1282,11 @@
 .sv.t-gallery .gt.gh .gfs.side .fv{filter:drop-shadow(0 3px 10px rgba(0,0,0,.55))}
 .sv.t-gallery .gt.gh .gfs.side .num{background-size:100% 100%!important}
 .sv.t-gallery .gt.gh .gfs.side .fu{color:#fff}
+/* 12:38 Amr «في الانيميشن خلي الكتابة تطلع على طول، اول ما السلايد يبدأ الكتابة تطلع فيد مش بوزيشن وبوب اب … في نفس مكانها وبسرعة»: the photo
+   slides' header (title and the figures card) comes in at once — a quick fade where it stands, no blur, no rise, no pop */
+.sv.t-gallery .gt.gh[data-s]{filter:none!important;transform:none!important;transition:opacity .3s ease 0s!important}
+.sv.t-gallery .gt.gh.in .gf,.sv.t-gallery .gt.gh.in .gfs.side .gf,.sv.t-gallery .gt.gh.in b .hl{animation:none!important}
+.sv.t-gallery .gt.gh.in .gfs.side{animation-delay:.35s}
 .sv.t-gallery .gt.gh .gfs.side{background:linear-gradient(180deg,rgba(18,16,12,.82),rgba(12,12,14,.74));-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 /* duo before/after photographs (his 31) */
 .sv.t-kq .phs.phx img{transition:opacity 2.4s ease,transform 12s linear}
