@@ -373,13 +373,19 @@
   /* 23 Oct 08:04 Amr (his 119) «تنسيقه غير مفهوم وبيلخبط — اوجد حل ذكي بصريًا»: six equal boxes said six unrelated things. Now the
      figures tell one story: the complexes are counted out as dots (built in gold, under way as rings) beside «16 … in 15 governorates»;
      then what they hold, flowing left: units → investment → jobs */
-  const hubHTML = (sc, d, o) => { const h = sc.hub, dots = Array.from({ length: h.n + (h.wip || 0) }, (_, i) => `<i class="${i < h.n ? 'on' : 'wip'}" style="transition-delay:${(.5 + i * .07).toFixed(2)}s"></i>`).join('');
+  /* 08:55 Amr «ماتلزقش الكروت تحت كده، خليك فنان، وخلي الكروت التلات ليها ايقونات دلالية بشفافية لسهولة الفهم البصري السريع»: the hub
+     and its three results stand side by side in the middle of the slide (nothing pinned to the bottom edge): on the right the 16
+     complexes counted out as dots; on the left the three results stacked on a gold thread, each card carrying its sign large and
+     translucent (a factory · coins in a hand · a briefcase) so the eye reads it before the words */
+  const hubHTML = (sc, d, o) => { const h = sc.hub, dots = Array.from({ length: h.n + (h.wip || 0) }, (_, i) => `<i class="${i < h.n ? 'on' : 'wip'}" style="transition-delay:${(.5 + i * .06).toFixed(2)}s"></i>`).join('');
+    const ic = n => IC[n] ? `<svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">${IC[n]}</svg>` : '';
     return `<div class="pad hub">${sc.kick ? `<div class="kick"${S(0)}>${esc(sc.kick)}</div>` : ''}<h2 class="h2 st"${S(0)}>${esc(sc.title)}</h2>${sc.sub ? `<div class="ss"${S(0)}>${esc(sc.sub)}</div>` : ''}
       <div class="hubrow">
-        <div class="hubA glass"${S(0)} style="transition-delay:.3s"><div class="hdots">${dots}</div>
-          <div class="hv"><div class="l1">${esc(h.pre)}</div><div class="l2">${N(h.v, 'gold')}<u>${esc(h.u)}</u></div><div class="l3">${esc(h.in)} ${N(h.gv, 'gold')} ${esc(h.gu)}</div>
-          ${h.wip ? `<div class="l4"><i class="wip"></i>${esc(h.wpre)} ${N(String(h.wip))} ${esc(h.wu)}</div>` : ''}</div></div>
-        <div class="hubB">${h.flow.map((x, i) => `${i ? `<span class="ar"${S(0)} style="transition-delay:${(1.3 + i * .35).toFixed(2)}s">←</span>` : ''}<div class="hf glass"${S(0)} style="transition-delay:${(1.1 + i * .35).toFixed(2)}s"><div class="pre">${esc(x.pre)}</div><div class="v">${N(x.v, 'gold')}</div><div class="u">${esc(x.u)}</div></div>`).join('')}</div>
+        <div class="hubA glass"${S(0)} style="transition-delay:.3s">
+          <div class="hv"><div class="l1">${esc(h.pre)}</div><div class="l2">${N(h.v, 'gold')}<u>${esc(h.u)}</u></div><div class="l3">${esc(h.in)} ${N(h.gv, 'gold')} ${esc(h.gu)}</div></div>
+          <div class="hdots">${dots}</div>
+          ${h.wip ? `<div class="l4"><i class="wip"></i>${esc(h.wpre)} ${N(String(h.wip))} ${esc(h.wu)}</div>` : ''}</div>
+        <div class="hubB">${h.flow.map((x, i) => `<div class="hf glass"${S(0)} style="transition-delay:${(1.0 + i * .3).toFixed(2)}s">${ic(x.ic)}<div class="pre">${esc(x.pre)}</div><div class="vu"><span class="v">${N(x.v, 'gold')}</span><span class="u">${esc(x.u)}</span></div></div>`).join('')}</div>
       </div></div>`; };
   R.stats = (sc, d, o) => {
     if (sc.hub) return hubHTML(sc, d, o);
@@ -1220,26 +1226,30 @@
 .sv.t-proj .ppanel:has(.pfx) .psts{margin:26px 0 18px;padding:20px 0}
 .sv.t-proj .ppanel:has(.pfx) .psts.two{flex-direction:row;gap:24px}.sv.t-proj .ppanel:has(.pfx) .psts.two .pst{flex:1}
 .sv.t-proj .ppanel:has(.pfx) .psts.two .pst .pv .num{font-size:92px}
-.sv.t-stats .hubrow{flex-direction:column;align-items:stretch;gap:30px;margin-top:40px}
-.sv.t-stats .hubA{align-self:center;padding:30px 56px}
-.sv.t-stats .hubB{gap:24px}.sv.t-stats .hubB .hf{padding:24px 18px}
-.sv.t-stats .pad.hub{justify-content:flex-start;padding-top:120px}
-.sv.t-stats .hubrow{display:flex;gap:46px;align-items:stretch;margin-top:46px;direction:rtl}
-.sv.t-stats .hubA{display:flex;align-items:center;gap:44px;padding:40px 46px;border-radius:34px;flex:none}
-.sv.t-stats .hdots{display:grid;grid-template-columns:repeat(6,34px);gap:14px;direction:rtl}
-.sv.t-stats .hdots i{width:34px;height:34px;border-radius:50%;opacity:0;transform:scale(.3);transition:opacity .4s ease,transform .6s cubic-bezier(.3,1.6,.5,1)}
-.sv.t-stats .hdots i.on{background:radial-gradient(circle at 35% 30%,#f6dca0,#c9944a);box-shadow:0 0 18px rgba(233,188,108,.45)}
-.sv.t-stats .hdots i.wip,.sv.t-stats .hv .l4 i.wip{border:2.5px dashed rgba(233,188,108,.8);box-sizing:border-box}
-.sv.t-stats .hubA.in .hdots i,.sv.t-stats.static .hdots i{opacity:1;transform:none}
+/* 08:55 the hub (right) and its three results (left), side by side in the middle */
+.sv.t-stats .pad.hub{justify-content:center;padding-top:96px;padding-bottom:96px}
+.sv.t-stats .pad.hub .ss{max-width:1180px;text-wrap:balance}
+.sv.t-stats .hubrow{display:flex;flex-direction:row;gap:44px;align-items:stretch;margin-top:54px;direction:rtl}
+.sv.t-stats .hubA{flex:0 0 640px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:30px;padding:44px 52px;border-radius:36px}
 .sv.t-stats .hv{display:flex;flex-direction:column;gap:6px}
 .sv.t-stats .hv .l1{font:500 28px/1.2 var(--fb);color:#c9ced8}
-.sv.t-stats .hv .l2{display:flex;align-items:baseline;gap:14px}.sv.t-stats .hv .l2 .num{font-size:150px;line-height:.9}.sv.t-stats .hv .l2 u{text-decoration:none;font:700 44px/1.1 var(--fd);color:#fff}
-.sv.t-stats .hv .l3{font:600 34px/1.2 var(--fd);color:#e6e9ef}.sv.t-stats .hv .l3 .num{font-size:52px}
-.sv.t-stats .hv .l4{display:flex;align-items:center;gap:10px;margin-top:10px;font:500 26px/1.2 var(--fb);color:#c9ced8}.sv.t-stats .hv .l4 i{width:24px;height:24px;border-radius:50%}.sv.t-stats .hv .l4 .num{font-size:34px;color:var(--gold2)}
-.sv.t-stats .hubB{flex:1;display:flex;align-items:center;gap:16px;direction:rtl}
-.sv.t-stats .hubB .hf{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:34px 18px;border-radius:30px}
-.sv.t-stats .hubB .hf .pre{font:500 24px/1.2 var(--fb);color:#aeb5c2}.sv.t-stats .hubB .hf .v .num{font-size:96px;line-height:.95}.sv.t-stats .hubB .hf .u{font:700 30px/1.2 var(--fd);color:#fff}
-.sv.t-stats .hubB .ar{font:600 46px/1 var(--fd);color:var(--acc)}
+.sv.t-stats .hv .l2{display:flex;align-items:baseline;gap:16px}.sv.t-stats .hv .l2 .num{font-size:150px;line-height:.9}.sv.t-stats .hv .l2 u{text-decoration:none;font:700 46px/1.1 var(--fd);color:#fff}
+.sv.t-stats .hv .l3{font:600 36px/1.2 var(--fd);color:#e6e9ef}.sv.t-stats .hv .l3 .num{font-size:54px}
+.sv.t-stats .hdots{display:grid;grid-template-columns:repeat(9,40px);gap:14px 15px;direction:rtl}
+.sv.t-stats .hdots i{width:40px;height:40px;border-radius:50%;opacity:0;transform:scale(.3);transition:opacity .4s ease,transform .6s cubic-bezier(.22,.8,.3,1)}
+.sv.t-stats .hdots i.on{background:radial-gradient(circle at 35% 30%,#f6dca0,#c9944a);box-shadow:0 0 18px rgba(233,188,108,.45)}
+.sv.t-stats .hdots i.wip,.sv.t-stats .hubA .l4 i.wip{border:2.5px dashed rgba(233,188,108,.8);box-sizing:border-box}
+.sv.t-stats .hubA.in .hdots i,.sv.t-stats.static .hdots i{opacity:1;transform:none}
+.sv.t-stats .hubA .l4{display:flex;align-items:center;gap:10px;font:500 26px/1.2 var(--fb);color:#c9ced8}.sv.t-stats .hubA .l4 i{width:24px;height:24px;border-radius:50%}.sv.t-stats .hubA .l4 .num{font-size:34px;color:var(--gold2)}
+.sv.t-stats .hubB{flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:22px;position:relative;padding-right:46px}
+.sv.t-stats .hubB::before{content:"";position:absolute;right:12px;top:14%;bottom:14%;width:2px;border-radius:2px;background:linear-gradient(180deg,rgba(233,188,108,0),rgba(233,188,108,.7) 18%,rgba(233,188,108,.7) 82%,rgba(233,188,108,0))}
+.sv.t-stats .hubB .hf{position:relative;flex:1;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:4px;padding:22px 44px;border-radius:30px;overflow:hidden}
+.sv.t-stats .hubB .hf::before{content:"";position:absolute;right:-40px;top:50%;width:14px;height:14px;margin-top:-7px;border-radius:50%;background:#e9bc6c;box-shadow:0 0 14px rgba(233,188,108,.8)}
+.sv.t-stats .hubB .hf{overflow:visible}
+.sv.t-stats .hubB .hf .hic{position:absolute;left:34px;top:50%;width:150px;height:150px;transform:translateY(-50%) rotate(-6deg);color:#e9bc6c;opacity:.2;pointer-events:none}
+.sv.t-stats .hubB .hf .pre{font:500 26px/1.2 var(--fb);color:#aeb5c2}
+.sv.t-stats .hubB .hf .vu{display:flex;align-items:baseline;gap:16px}
+.sv.t-stats .hubB .hf .v .num{font-size:96px;line-height:.95}.sv.t-stats .hubB .hf .u{font:700 36px/1.2 var(--fd);color:#fff}
 .sv.t-proj .pfx{margin-top:22px;display:flex;flex-direction:column;gap:16px}
 .sv.t-proj .pfr{display:flex;gap:16px}
 .sv.t-proj .pfc{flex:1;display:flex;align-items:baseline;justify-content:center;gap:10px;padding:12px 10px;border-radius:20px;background:rgba(255,255,255,.05);border:1px solid rgba(233,188,108,.32)}
