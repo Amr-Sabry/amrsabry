@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="sv7-build" content="10230924">
+<meta name="sv7-build" content="10230934">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>VS7 · العرض</title>
 <link rel="stylesheet" href="sv.css?v=21">
@@ -96,7 +96,7 @@ addEventListener('keydown',e=>{if(PREVIEW||THUMB||e.target.id==='nIn')return;con
 /* sound, as on the V6 show: the opener's score and any film the browser keeps silent are played in step by the control */
 ['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{if(PREVIEW||THUMB)return;document.querySelectorAll('iframe').forEach(f=>{try{f.contentWindow.postMessage({c5film:'sound'},'*')}catch(e){}});document.querySelectorAll('video').forEach(v=>{if(v.muted){v.muted=false;delete v.dataset.relay}})},true));
 addEventListener('message',e=>{const m=e.data||{};if(m.c5film!=='state'||PREVIEW||THUMB||!shown)return;const f=[...shown.querySelectorAll('iframe')].find(x=>x.contentWindow===e.source);if(!f)return;
-  try{e.source.postMessage({c5film:'relay',on:true},'*')}catch(_){}film={t:+m.t||0,playing:!!m.playing,own:!!m.own,muted:!!m.muted,at:Date.now(),src:new URL('score.mp3',f.src).href,dur:+m.dur||0};});
+  try{e.source.postMessage({c5film:'relay',on:true},'*')}catch(_){}film={t:+m.t||0,playing:!!m.playing,own:!!m.own,muted:!!m.muted,at:Date.now(),src:new URL('score.mp3?v=g1',f.src).href,dur:+m.dur||0};});
 setInterval(()=>{if(PREVIEW||THUMB||STATIC||!snd)return;const items=[];
   if(shown){shown.querySelectorAll('video').forEach(v=>{if(v.dataset.relay==='1'&&v.currentSrc&&!v.paused)items.push({src:v.currentSrc,ct:v.currentTime,at:Date.now()})});
     if(film&&Date.now()-film.at<1200&&film.playing&&!film.own&&!film.muted)items.push({src:film.src,ct:film.t+(Date.now()-film.at)/1000,at:Date.now()})}
