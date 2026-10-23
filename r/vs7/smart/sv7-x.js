@@ -731,7 +731,14 @@
       g.innerHTML = (prg ? prg.outerHTML : '') + (twin ? bar(-8, 'e') + bar(8, 'w') : bar(0, 'b')); g.classList.add('tw'); }); if (sc && sc.still) el.classList.add('nomo'); if (sc && sc.same && sc.type === 'map' && el._onstep) { const f = el._onstep;
       /* 08:40: «same» — a map whose later steps only move the camera: the first step's panel and labels stay on, untouched */
       el.querySelectorAll('.mp:not([data-st="0"]),.mn[data-st]:not([data-st="0"]),.mlabels:not([data-st="0"])').forEach(n => n.remove());
-      el._onstep = (k, i) => { f(k, i); el.querySelectorAll('.mp[data-st="0"],.mn[data-st="0"],.mlabels[data-st="0"]').forEach(n => n.classList.add('cur')); }; } try { hlNums(el); } catch (e) {} try { drift(el, o); } catch (e) {}
+      el._onstep = (k, i) => { f(k, i); el.querySelectorAll('.mp[data-st="0"],.mn[data-st="0"],.mlabels[data-st="0"]').forEach(n => n.classList.add('cur')); }; }
+      /* 11:57 Amr «في سلايد ٥٠ ما تخفيش الكلام صمم بحيث الكلام يزيد»: «acc» — a later step's words join the first panel under what is
+         already said (its paragraph and chips), nothing said before leaves the screen */
+      if (sc && sc.acc && sc.type === 'map' && el._onstep) { const f2 = el._onstep, p0 = el.querySelector('.mp[data-st="0"]');
+        if (p0) { p0.classList.add('acc');
+          el.querySelectorAll('.mp:not([data-st="0"])').forEach(p => { const b = document.createElement('div'); b.className = 'macc'; b.dataset.k = p.dataset.st;
+            p.querySelectorAll(':scope > p, :scope > .mchips, :scope > .pace').forEach(x => b.appendChild(x)); p0.insertBefore(b, p0.querySelector(':scope > .mfoot')); p.remove(); });
+          el._onstep = (k, i) => { f2(k, i); p0.classList.add('cur'); p0.querySelectorAll('.macc').forEach(b => b.classList.toggle('on', +b.dataset.k <= k)); }; } } try { hlNums(el); } catch (e) {} try { drift(el, o); } catch (e) {}
       if (!(o && o.thumb)) kjRun(el); } return el; };
   /* 00:19 kashida only once the slide is on the page AND its own faces are in: two frames after it is connected the browser has
      asked for the weights it uses; fonts.ready then waits for them — measured with a stand-in font the lines broke elsewhere and
@@ -1225,6 +1232,11 @@
 .sv.t-map .mn>i::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid #fff;animation:sv7mni 2.2s cubic-bezier(.22,.61,.36,1) infinite}
 @keyframes sv7mni{0%{transform:scale(1);opacity:.85}80%,100%{transform:scale(3);opacity:0}}
 .sv.static .prg,.sv.static .mn>i::after{animation:none!important;opacity:0!important}
+.sv.t-map .mp.acc{justify-content:flex-start;padding-top:0}
+.sv.t-map .mpanel:has(.mp.acc){top:128px;bottom:72px}
+.sv.t-map .mp .macc{max-height:0;opacity:0;overflow:hidden;margin-top:0;padding-top:0;border-top:1px solid rgba(255,255,255,0);transition:max-height .9s var(--e1),opacity .6s var(--e1) .15s,margin .9s var(--e1),padding .9s var(--e1),border-color .6s}
+.sv.t-map .mp .macc.on{max-height:560px;opacity:1;margin-top:20px;padding-top:18px;border-top-color:rgba(233,188,108,.35)}
+.sv.t-map .mp.cur .macc:not(.on) .mchips .chip{opacity:0;transform:translateY(12px)}
 .sv.t-map .mp .pace{display:flex;flex-direction:column;gap:12px;margin:22px 0 4px;padding-top:20px;border-top:1px solid rgba(255,255,255,.12)}
 .sv.t-map .mp .pr{display:flex;align-items:baseline;gap:18px}
 .sv.t-map .mp .pr .num{flex:none;min-width:112px;font-size:58px;line-height:1;color:#8f98a8}
