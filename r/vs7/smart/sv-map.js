@@ -122,7 +122,7 @@
       const st = Math.min(.035, 1.4 / Math.max(1, list.length));
       pins += `<g class="ly ly-${k} pl" data-ly="${k}">${list.map((n, i) => { const q = P(n.p); return `<g class="pin" data-x="${f1(q[0])}" data-y="${f1(q[1])}"><g class="pop" style="transition-delay:${(i * st).toFixed(3)}s">${shape(L.sh, L.r)}</g></g>`; }).join('')}</g>`;
     });
-    const notes = sc.st.map((s, k) => (s.notes || []).map(n => { const q = P(where(n.at)); return `<div class="mn ${n.d === 'l' ? 'l' : 'r'} ${n.c || ''}" data-st="${k}" data-x="${f1(q[0])}" data-y="${f1(q[1])}"><i></i><span>${esc(n.t)}</span></div>`; }).join('')).join('');
+    const notes = sc.st.map((s, k) => (s.notes || []).map(n => { const q = P(where(n.at)); return `<div class="mn ${n.d === 'l' ? 'l' : 'r'} ${n.c || ''}" data-st="${k}" data-x="${f1(q[0])}" data-y="${f1(q[1])}"><i></i><span>${esc(n.t)}${n.s ? `<small class="ms">${esc(n.s)}</small>` : ''}</span></div>`; }).join('')).join('');
     /* 16:04 Amr «اسماء ال ٣٩ ينزلوا بطريقة متتالية», 16:20 «عاوزها على الخريطة»: a step's labels:[[name, left, top, pinX, pinY]]
        (stage px, laid out once for that step's camera, clear of each other, of the pins and of the big notes) put every place's name
        on the map next to its pin — a hairline to the pin when the name had to move away — dropping in one after another */

@@ -1271,6 +1271,8 @@
 .sv.t-gallery .grec.col .gt2{order:4;width:100%;font-size:42px;line-height:1.3;padding-top:22px;border-top:1px solid rgba(233,188,108,.3)}
 .sv.t-gallery .grec.col .gs{order:5;width:100%;margin-top:-12px}
 .sv.t-gallery .gal.geo.wrec .gi{border-radius:14px;overflow:hidden}
+/* 09:23 a map label may carry a second line (n.s) — the route under the line's name */
+.sv.t-map .mn>span .ms{display:block;margin-top:8px;font:500 21px/1.15 var(--fb);color:#d5dae3;letter-spacing:0}
 .sv.t-gallery .grec .gcert{margin:-90px 0 -10px;width:170px;height:228px;flex:none;border-radius:8px;overflow:hidden;box-shadow:0 24px 50px -14px rgba(0,0,0,.9);transform:rotate(-3deg)}
 .sv.t-gallery .grec .gcert img{width:100%;height:100%;object-fit:cover}
 .sv.t-gallery .grec .gtx{flex:1;display:flex;flex-direction:column;gap:8px}
