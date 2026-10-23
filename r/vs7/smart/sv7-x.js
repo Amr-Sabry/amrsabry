@@ -130,7 +130,8 @@
   function factOf(t) {
     t = t.trim().replace(/^[\s(–—-]+|[\s)،,.–—-]+$/g, ''); const m = t.match(/\d[\d,.]*/); if (!m) return null;
     if (/^(19|20)\d\d$/.test(m[0]) && !/\d/.test(t.slice(m.index + m[0].length))) return null;   /* a year is not a figure */
-    return { pre: t.slice(0, m.index).trim(), v: m[0], u: t.slice(m.index + m[0].length).trim() };
+    let u = t.slice(m.index + m[0].length).trim(); if ((u.match(/\(/g) || []).length > (u.match(/\)/g) || []).length) u += ')';   /* a bracket the split left open closes */
+    return { pre: t.slice(0, m.index).trim(), v: m[0], u };
   }
   function splitFacts(inner) { return inner.split(/\s*[–—]\s*|\s+-\s+/).map(factOf).filter(Boolean); }
   function pullFacts(s, facts) {
@@ -151,15 +152,23 @@
     }
     return (sc._gh = { kick, title, sub, facts });
   }
+  /* 11:17 Amr «سلايد ٢٩ والسلايدات اللي زيه اللي فيه الارقام ممكن تستغل الجزء اليسار عشان الارقام تبان بشكل ملفت أكتر»: the figures
+     leave the line under the title and stand big in the band's empty left side — one or two: the figure with its unit beside it;
+     three or more: each figure over its unit — the title keeps the right side, wrapping if the figures need the room */
   function gheadHTML(sc) {
     const g = ghead(sc); if (!(g.title || g.kick || g.facts.length || g.sub)) return '';
-    const u = t => esc(t).replace(/\(([^()]*)\)/g, '<small>$1</small>');
-    return `<div class="gt gh${g.title.length > 58 ? ' long' : ''}"${S(0, 'fade')}>${g.kick ? `<span class="k">${esc(g.kick)}</span>` : ''}${g.title ? `<b>${esc(g.title)}</b>` : ''}${g.sub ? `<div class="sub">${esc(g.sub)}</div>` : ''}${g.facts.length ? `<div class="gfs">${g.facts.map(f => `<div class="gf">${f.pre ? `<span class="fp">${esc(f.pre)}</span>` : ''}<span class="num gold"${/^[\d.,]+$/.test(f.v) ? ` data-to="${esc(f.v)}"` : ''}>${esc(f.v)}</span>${f.u ? `<span class="fu">${u(f.u)}</span>` : ''}</div>`).join('')}</div>` : ''}</div>`;
+    const u = t => esc(t).replace(/\(([^()]*)\)/g, '<small>$1</small>'), nf = g.facts.length;
+    const facts = nf ? `<div class="gfs side${nf > 2 ? ' stk' : ''}">${g.facts.map(f => `<div class="gf">${f.pre ? `<span class="fp">${esc(f.pre)}</span>` : ''}<div class="fv"><span class="num gold"${/^[\d.,]+$/.test(f.v) ? ` data-to="${esc(f.v)}"` : ''}>${esc(f.v)}</span>${f.u ? `<span class="fu">${u(f.u)}</span>` : ''}</div></div>`).join('')}</div>` : '';
+    return `<div class="gt gh${g.title.length > 58 ? ' long' : ''}${nf ? ' wf' : ''}"${S(0, 'fade')}><div class="ghl">${g.kick ? `<span class="k">${esc(g.kick)}</span>` : ''}${g.title ? `<b>${esc(g.title)}</b>` : ''}${g.sub ? `<div class="sub">${esc(g.sub)}</div>` : ''}</div>${facts}</div>`;
   }
+  const factsW = g => { const stk = g.facts.length > 2;
+    return g.facts.reduce((a, f) => a + 68 + (stk ? Math.max(f.pre.length * 11, f.v.length * 46, Math.min(f.u.length * 13.5, 280)) : Math.max(f.pre.length * 11, f.v.length * 57 + 12 + Math.min(f.u.length * 15, 300))), 0); };
   const band = sc => { const g = ghead(sc); if (!(g.title || g.kick || g.facts.length || g.sub)) return 0;
-    const long = g.title.length > 58, tl = g.title ? Math.ceil(wlen(g.title) / (long ? 72 : 64)) : 0;
-    const fw = g.facts.reduce((a, f) => a + (f.pre.length + f.u.length) * 12.5 + f.v.length * 27 + 64, 0), fr = g.facts.length ? Math.ceil(fw / 1700) : 0;
-    return Math.round(100 + (g.kick ? 36 : 0) + tl * (long ? 50 : 58) + (g.sub ? 10 + 40 * Math.ceil(wlen(g.sub) / 90) : 0) + (fr ? 14 + fr * 62 : 0) + 30); };
+    const nf = g.facts.length, stk = nf > 2, long = g.title.length > 58, k = Math.max(.3, (1780 - (nf ? factsW(g) + 56 : 0)) / 1780);
+    const tl = g.title ? Math.ceil(wlen(g.title) / ((long ? 72 : 64) * k)) : 0;
+    const th = (g.kick ? 36 : 0) + tl * (long ? 50 : 58) + (g.sub ? 10 + 40 * Math.ceil(wlen(g.sub) / (90 * k)) : 0);
+    const fh = nf ? (g.facts.some(f => f.pre) ? 30 : 0) + (stk ? 88 + 34 * Math.max(1, ...g.facts.map(f => Math.ceil(f.u.length * 13.5 / 280))) : 112) : 0;
+    return Math.round(100 + Math.max(th, fh) + 30); };
   let recBox = null;
   function geoGallery(sc, o) {
     const ps = sc.pics.map((p, i) => Object.assign({ _i: i }, p)).sort((a, b) => (a.z || 0) - (b.z || 0));
@@ -1195,6 +1204,18 @@
 .sv.t-gallery .gt.gh .gf .fu{font:500 26px/1.25 var(--fb);color:#e6e9ef}
 .sv.t-gallery .gt.gh .gf .fu small{font-size:.8em;color:var(--mute);margin-right:6px}
 .sv.t-gallery .gal.geo~.gt.gh .gf{text-shadow:0 2px 14px rgba(0,0,0,.8)}
+.sv.t-gallery .gt.gh{flex-direction:row;justify-content:space-between;align-items:center;gap:56px}
+.sv.t-gallery .gt.gh .ghl{display:flex;flex-direction:column;align-items:flex-start;min-width:0;flex:0 1 auto}
+.sv.t-gallery .gt.gh .gfs.side{flex:0 0 auto;margin-top:0;flex-wrap:nowrap;align-items:stretch;row-gap:0}
+.sv.t-gallery .gt.gh .gfs.side .gf{flex-direction:column;align-items:flex-start;justify-content:flex-end;gap:4px;padding:2px 34px}
+.sv.t-gallery .gt.gh .gfs.side .gf:first-child{padding-right:0}
+.sv.t-gallery .gt.gh .gfs.side .fv{display:flex;align-items:baseline;gap:14px}
+.sv.t-gallery .gt.gh .gfs.side .num{font-size:108px;line-height:1}
+.sv.t-gallery .gt.gh .gfs.side .fu{font:600 32px/1.25 var(--fb);color:#eef0f4;max-width:300px}
+.sv.t-gallery .gt.gh .gfs.side .fp{font:500 25px/1.2 var(--fb);color:#c9ced8}
+.sv.t-gallery .gt.gh .gfs.side.stk .fv{flex-direction:column;align-items:flex-start;gap:6px}
+.sv.t-gallery .gt.gh .gfs.side.stk .num{font-size:84px}
+.sv.t-gallery .gt.gh .gfs.side.stk .fu{font-size:26px;max-width:280px}
 /* duo before/after photographs (his 31) */
 .sv.t-kq .phs.phx img{transition:opacity 2.4s ease,transform 12s linear}
 .sv.t-kq .phs.phx .pa{filter:grayscale(1) brightness(.55) contrast(1.12)}
