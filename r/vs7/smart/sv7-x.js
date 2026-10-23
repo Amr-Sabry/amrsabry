@@ -146,6 +146,7 @@
     const long = g.title.length > 58, tl = g.title ? Math.ceil(wlen(g.title) / (long ? 72 : 64)) : 0;
     const fw = g.facts.reduce((a, f) => a + (f.pre.length + f.u.length) * 12.5 + f.v.length * 27 + 64, 0), fr = g.facts.length ? Math.ceil(fw / 1700) : 0;
     return Math.round(100 + (g.kick ? 36 : 0) + tl * (long ? 50 : 58) + (g.sub ? 10 + 40 * Math.ceil(wlen(g.sub) / 90) : 0) + (fr ? 14 + fr * 62 : 0) + 30); };
+  let recBox = null;
   function geoGallery(sc, o) {
     const ps = sc.pics.map((p, i) => Object.assign({ _i: i }, p)).sort((a, b) => (a.z || 0) - (b.z || 0));
     /* 19:45: the title gets its own band — the slide's arrangement moves down under it (the frames keep their widths, the pictures
@@ -153,8 +154,17 @@
     const T = band(sc), B = sc.note ? 980 : 1080, minY = Math.min(...ps.map(p => p.box[1]));
     const ky = (B - T) / (1080 - Math.max(0, minY) - Math.max(0, 1080 - Math.max(...ps.map(p => p.box[1] + p.box[3]))));
     const y0 = Math.max(0, minY);
+    /* 08:43 Amr (his 69) «حلوة الفكرة بس ياريت من غير اوفرلاب»: with a record plate the photographs keep their arrangement and their
+       proportions, scaled as one block into the left part of the slide; the plate stands in its own column on the right */
+    const RB = sc.rec ? { x0: 70, x1: 1290, y0: T + 14, y1: 1040 } : null;
+    let rk = 1, rx = 0, ry = 0, bx0 = 0, by0 = 0;
+    if (RB) { bx0 = Math.min(...ps.map(p => p.box[0])); by0 = Math.min(...ps.map(p => p.box[1]));
+      const bw = Math.max(...ps.map(p => p.box[0] + p.box[2])) - bx0, bh = Math.max(...ps.map(p => p.box[1] + p.box[3])) - by0;
+      rk = Math.min((RB.x1 - RB.x0) / bw, (RB.y1 - RB.y0) / bh); rx = RB.x0 + ((RB.x1 - RB.x0) - rk * bw) / 2; ry = RB.y0 + ((RB.y1 - RB.y0) - rk * bh) / 2;
+      recBox = { top: Math.round(ry), bottom: Math.round(1080 - ry - rk * bh) }; }
     return ps.map((p, k) => { let [x, y, w, h] = p.box;
-      if (T || sc.note) { y = T + (y - y0) * ky; h = h * ky; }
+      if (RB) { x = rx + (x - bx0) * rk; y = ry + (y - by0) * rk; w *= rk; h *= rk; }
+      else if (T || sc.note) { y = T + (y - y0) * ky; h = h * ky; }
       const small = h < 330;
       const t = { right: 1920 - x - w, top: y, w, h, ri: 0, ci: k };
       if (p.rot === 90 || p.rot === 270) {
@@ -174,9 +184,9 @@
     const pics = sc.pics || [];
     if (sc.geo) {
       const hasT = !!(sc.title || sc.kick);
-      return `<div class="gal geo">${geoGallery(sc, o)}</div>
+      return `<div class="gal geo${sc.rec ? ' wrec' : ''}">${geoGallery(sc, o)}</div>
         ${hasT ? gheadHTML(sc) : ''}
-        ${sc.rec ? recHTML(sc.rec, o) : sc.note ? `<div class="gnote"${S(0)}><span>${esc(sc.note)}</span></div>` : ''}`;
+        ${sc.rec ? recHTML(sc.rec, o).replace('class="grec"', `class="grec col" style="top:${recBox ? recBox.top : band(sc) + 14}px;bottom:${recBox ? recBox.bottom : 40}px"`) : sc.note ? `<div class="gnote"${S(0)}><span>${esc(sc.note)}</span></div>` : ''}`;
     }
     if ((sc.title || sc.kick) && !sc.title && sc.im != null) sc = Object.assign({}, sc, { title: 'صور من المشروعات', _gh: null });
     const hasT = !!(sc.title || sc.kick), sub = !!sc.sub, note = !!sc.note;
@@ -472,6 +482,11 @@
       if (sc.b.l2) h = h.replace(/(<div class="db"[^>]*>[\s\S]*?<\/p>)/, `$1<div class="dl2">${sc.b.l2ic && KICONS[sc.b.l2ic] ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${KICONS[sc.b.l2ic]}</svg>` : ''}<span>${esc(sc.b.l2)}</span></div>`);
       return kb + darr(sc, h);
     }
+    /* 23 Oct 08:35 Amr «في سلايد ٣٠ الرقم بتاع ٢٠١٤ هيكون ظاهر من الاول بدون انميشن»: with sc.aNow the struck figure (and its line)
+       stand from the first frame, still — no build, no count */
+    if (sc.kind === 'strike' && sc.aNow) { let h = kqR0(sc, d, o);
+      h = h.replace(/<div class="sa" data-s="\d+">([\s\S]*?)(<div class="sb")/, (m, body, sb) => `<div class="sa now">${body.replace(/ data-(?:to|from)="[^"]*"/g, '')}${sb}`);
+      return kb + darr(sc, h); }
     if (sc.kind !== 'share') return kb + darr(sc, kqR0(sc, d, o));
     const IC2 = typeof KICONS !== 'undefined' ? KICONS : {};
     const icn = IC2[sc.ic] ? `<svg class="qic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${IC2[sc.ic]}</svg>` : '';
@@ -650,7 +665,10 @@
     const k = sc.type === 'section' ? 2 + (i % 2) * 3 : (i * 5 + 1) % 6;
     const m = document.createElement('div'); m.className = 'mesh m' + k; el.insertBefore(m, el.firstChild); el.classList.add('hasmesh');
   }
-  SV.render = function (deck, i, o) { const el = render0.call(this, deck, i, o); if (deck && deck.id === 'sv7') { try { mesh(el, deck.scenes[i], i, o); } catch (e) {} const sc = deck.scenes[i]; if (sc && sc.gap) el._gap = sc.gap; try { hlNums(el); } catch (e) {} try { drift(el, o); } catch (e) {}
+  SV.render = function (deck, i, o) { const el = render0.call(this, deck, i, o); if (deck && deck.id === 'sv7') { try { mesh(el, deck.scenes[i], i, o); } catch (e) {} const sc = deck.scenes[i]; if (sc && sc.gap) el._gap = sc.gap; if (sc && sc.lead) el._lead = sc.lead; if (sc && sc.same && sc.type === 'map' && el._onstep) { const f = el._onstep;
+      /* 08:40: «same» — a map whose later steps only move the camera: the first step's panel and labels stay on, untouched */
+      el.querySelectorAll('.mp:not([data-st="0"]),.mn[data-st]:not([data-st="0"]),.mlabels:not([data-st="0"])').forEach(n => n.remove());
+      el._onstep = (k, i) => { f(k, i); el.querySelectorAll('.mp[data-st="0"],.mn[data-st="0"],.mlabels[data-st="0"]').forEach(n => n.classList.add('cur')); }; } try { hlNums(el); } catch (e) {} try { drift(el, o); } catch (e) {}
       if (!(o && o.thumb)) kjRun(el); } return el; };
   /* 00:19 kashida only once the slide is on the page AND its own faces are in: two frames after it is connected the browser has
      asked for the weights it uses; fonts.ready then waits for them — measured with a stand-in font the lines broke elsewhere and
@@ -1232,6 +1250,17 @@
   padding:22px 40px 22px 44px;border-radius:30px;background:linear-gradient(150deg,rgba(14,18,28,.94),rgba(8,10,16,.9));border:1px solid rgba(233,188,108,.55);
   box-shadow:0 40px 90px -30px rgba(0,0,0,.9),0 0 60px -20px rgba(233,188,108,.35);transition:opacity .9s ease 1.1s,transform 1.1s cubic-bezier(.2,.8,.2,1) 1.1s}
 .sv.t-gallery .grec.in,.sv.t-gallery.static .grec{opacity:1;transform:translateX(-50%)}
+/* 08:43 the plate as its own column beside the photographs (no overlap) */
+.sv.t-gallery .grec.col{left:auto;right:60px;width:540px;transform:translateY(30px);flex-flow:row wrap;align-items:center;align-content:center;gap:26px 30px;padding:40px 40px 36px;border-radius:34px}
+.sv.t-gallery .grec.col.in,.sv.t-gallery.static .grec.col{transform:none}
+.sv.t-gallery .grec.col .gtx{display:contents}
+.sv.t-gallery .grec.col .gk{order:1;width:100%;font-size:28px;line-height:1.35}
+.sv.t-gallery .grec.col .gcert{order:2;margin:0;width:196px;height:263px}
+.sv.t-gallery .grec.col .gd{order:3;flex:1;border:0;padding:0}
+.sv.t-gallery .grec.col .gd b{font-size:170px}.sv.t-gallery .grec.col .gd span{font-size:56px}.sv.t-gallery .grec.col .gd small{font-size:28px}
+.sv.t-gallery .grec.col .gt2{order:4;width:100%;font-size:42px;line-height:1.3;padding-top:22px;border-top:1px solid rgba(233,188,108,.3)}
+.sv.t-gallery .grec.col .gs{order:5;width:100%;margin-top:-12px}
+.sv.t-gallery .gal.geo.wrec .gi{border-radius:14px;overflow:hidden}
 .sv.t-gallery .grec .gcert{margin:-90px 0 -10px;width:170px;height:228px;flex:none;border-radius:8px;overflow:hidden;box-shadow:0 24px 50px -14px rgba(0,0,0,.9);transform:rotate(-3deg)}
 .sv.t-gallery .grec .gcert img{width:100%;height:100%;object-fit:cover}
 .sv.t-gallery .grec .gtx{flex:1;display:flex;flex-direction:column;gap:8px}
@@ -1257,7 +1286,9 @@
 .sv.t-proj .prk .rcost svg{width:30px;height:30px;color:var(--gold2,#e9bc6c);align-self:center}.sv.t-proj .prk .rcost b{font-size:50px;line-height:1}
 .sv.t-kq .k-sys .it .nw{font-size:.72em;color:var(--gold2,#e9bc6c)}
 .sv.t-kq .k-col .ad span:has(small.u2){display:flex;align-items:center;gap:12px}.sv.t-kq .k-col .ad small.u2{line-height:1.2;text-align:right}
-.sv .darr{display:inline-flex;align-self:center;font-style:normal;opacity:0;transform:translateY(-36px);transition:opacity .5s ease 1.1s,transform .9s cubic-bezier(.3,1.4,.5,1) 1.1s}
+/* 08:35 «بيحصل jump animation»: the triangle slides down and settles — no overshoot */
+.sv .darr{display:inline-flex;align-self:center;font-style:normal;opacity:0;transform:translateY(-28px);transition:opacity .6s ease .7s,transform .9s cubic-bezier(.22,.8,.3,1) .7s}
+.sv.t-kq .k-strike .sa.now{opacity:1;transform:none;filter:none;transition:opacity .8s ease}
 .sv .darr svg{width:100%;height:auto;fill:url(#svgold);fill:#e9bc6c;filter:drop-shadow(0 6px 18px rgba(233,188,108,.45))}
 .sv .in .darr,.sv.static .darr{opacity:1;transform:none}
 .sv.t-kq .k-strike .sb .darr{width:64px;margin-top:-40px}

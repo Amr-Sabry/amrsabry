@@ -180,7 +180,7 @@
        CSS transitions — the SVG on the main thread, the pins on the compositor — so during a zoom they drifted apart and shimmered.
        Now one frame loop moves them all together, frame by frame, on the same eased value (the old 1.9 s, cubic-bezier(.65,0,.35,1)). */
     const bez = (x1, y1, x2, y2) => t => { let a = 0, b = 1, m = t; for (let i = 0; i < 22; i++) { m = (a + b) / 2; const u = 1 - m, x = 3 * u * u * m * x1 + 3 * u * m * m * x2 + m * m * m; if (x < t) a = m; else b = m; } const u = 1 - m; return 3 * u * u * m * y1 + 3 * u * m * m * y2 + m * m * m; };
-    const ease = bez(.65, 0, .35, 1), DUR = 1900;
+    const ease = bez(.65, 0, .35, 1), DUR0 = 1900;  /* a step may set its own glide time (st.dur, ms) — 23 Oct 08:40 */
     const put = (tx, ty, z) => {
       cg.style.transform = `translate(${tx.toFixed(2)}px,${ty.toFixed(2)}px) scale(${z.toFixed(5)})`;
       svg.style.setProperty('--z', z.toFixed(5));
@@ -190,6 +190,7 @@
     };
     wrap.classList.add('jscam');
     el._onstep = (k, instant) => {
+      const DUR = (sc.st[k] && sc.st[k].dur) || DUR0;
       const S0 = stateAt(sc, k), c = S0.cam, q = P(c.c), z = c.z, tx = CX - z * q[0], ty = CY - z * q[1];
       if (instant || last < 0) { wrap.classList.add('still'); }
       cancelAnimationFrame(raf);
