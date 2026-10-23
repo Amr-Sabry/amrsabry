@@ -492,14 +492,16 @@
      red stretch of that same axis from 2014 to 2023, named on a band that stands right over it */
   R.shocks = (sc, d, o) => {
     if (!sc.war) return sh0(sc, d, o);
-    const nodes = [{ y: 2014 }].concat(sc.ev || []), n = nodes.length, X0 = 1760, X1 = 160, step = (X0 - X1) / (n - 1), AY = 468;
+    /* 13:03 «في التايم لاين شيل العنوان اللي فوق وحط الكلام اللي تحت هو اللي فوق»: the question leads the slide, the old title is gone */
+    const top = !!sc.endTop;
+    const nodes = [{ y: 2014 }].concat(sc.ev || []), n = nodes.length, X0 = 1760, X1 = 160, step = (X0 - X1) / (n - 1), AY = top ? 620 : 468;
     const xs = nodes.map((_, i) => X0 - i * step), wi = Math.max(1, nodes.findIndex(x => x.y === 2023));
-    let h = `<h2 class="h2 shh"${S(0)}>${esc(sc.title)}</h2><div class="shx">`;
+    let h = top ? (sc.end ? `<div class="send top gold"${S(0)}>${esc(sc.end)}</div>` : '') + `<div class="shx">` : `<h2 class="h2 shh"${S(0)}>${esc(sc.title)}</h2><div class="shx">`;
     h += `<div class="sax"${S(0, 'fade')} style="left:${X1 - 40}px;width:${X0 - X1 + 80}px;top:${AY}px"></div>`;
     h += `<div class="sax wseg"${S(0, 'fade')} style="left:${xs[wi]}px;width:${xs[0] - xs[wi]}px;top:${AY - 3}px"></div>`;
     h += `<div class="swar"${S(0, 'fade')} style="left:${xs[wi] - 20}px;width:${xs[0] - xs[wi] + 40}px;top:${AY - 118}px"><span>${esc(sc.war)}</span><b class="num">2014 – 2023</b></div>`;
     nodes.forEach((e, i) => { h += `<div class="sev${i ? '' : ' st'}${i <= wi ? ' iw' : ''}"${S(0, 'fade')} style="left:${xs[i].toFixed(1)}px;top:${AY - 14}px;transition-delay:${(.05 + i * .06).toFixed(2)}s"><i></i><b class="num">${e.y}</b>${e.t ? `<span>${esc(e.t)}</span>` : ''}</div>`; });
-    h += `</div>${sc.end ? `<div class="send gold"${S(0)} style="transition-delay:.5s">${esc(sc.end)}</div>` : ''}`;
+    h += `</div>${sc.end && !top ? `<div class="send gold"${S(0)} style="transition-delay:.5s">${esc(sc.end)}</div>` : ''}`;
     return h;
   };
 
@@ -1121,6 +1123,20 @@
 .sv.t-cards .cg.what.n8 .cd{min-height:280px;padding:34px 32px}
 .sv.t-cards .cg.what{grid-template-columns:repeat(5,minmax(0,1fr))!important}.sv.t-cards .cg.what.n8{grid-template-columns:repeat(4,minmax(0,1fr))!important}
 .sv.t-cards .cg.what.n5 .hl{display:block;font-size:1.3em;line-height:1.25;margin-top:.35em;white-space:normal;text-align:right;text-align-last:right}
+/* 13:00 Amr «وريني اوبشن بالنسبه لماذا لو»: option — every what-if card wears a real pre-2014 photograph from the deck, black-and-white under a
+   red veil; the sector on top of it, the sentence below, its figure big in red */
+.sv.t-cards .cg.what .cd.hasbg{min-height:600px!important;justify-content:space-between!important;border-color:rgba(229,100,92,.55);padding:30px 28px 34px!important}
+.sv.t-cards .cg.what .cd.hasbg .cbgi img{filter:grayscale(1) contrast(1.12) brightness(.78)}
+.sv.t-cards .cg.what .cd.hasbg::before{background:linear-gradient(180deg,rgba(150,30,22,.28) 0%,rgba(40,8,8,.5) 38%,rgba(10,4,6,.94) 72%,rgba(8,4,6,.98) 100%)}
+.sv.t-cards .cg.what .cd.hasbg h3{font-size:40px;color:#fff;text-shadow:0 2px 16px rgba(0,0,0,.7);min-height:0}
+.sv.t-cards .cg.what .cd.hasbg p{font-size:28px;color:#eef0f4}
+.sv.t-cards .cg.what .cd.hasbg .hl{color:#ff8a7a;font-size:1.55em}
+/* 12:56 Amr «حرف العين او الحاء، اي حرف بيبقى نازل بيبقى مقطوع من تحت … وراجع على كده في كل الفريمات»: a gold word is a gradient clipped to
+   its text box, and Arabic descenders hang below that box — every gold text gets room underneath (padding, given back as a negative margin),
+   and a clamped caption keeps its last line's tails */
+.sv .gold{padding-bottom:.24em;margin-bottom:-.24em}
+.sv .gi figcaption{padding-bottom:16px}
+.sv .hl{padding-bottom:.16em}
 .sv.t-cards .cg.good{grid-template-columns:repeat(3,1fr)}
 .sv.t-cards .cg.good .cd{flex-direction:row;align-items:flex-start;min-height:240px}
 .sv.t-cards .cg.good .cd .ci{flex:none;width:80px;height:80px}.sv.t-cards .cg.good .cd .ci svg{width:44px;height:44px}
@@ -1262,6 +1278,7 @@
 .sv.t-shocks .sev b{margin-top:24px;font-size:64px;line-height:1;color:#fff}
 .sv.t-shocks .sev span{margin-top:16px;font:500 29px/1.5 var(--fb);color:#e6e9ef;max-width:236px}
 .sv.t-shocks .send{position:absolute;right:160px;top:770px;max-width:1520px;margin:0;font:600 56px/1.4 var(--fd)}
+.sv.t-shocks .send.top{top:130px;right:160px;left:160px;max-width:none;font-size:60px;line-height:1.45}
 .sv.t-shocks .war{display:flex;align-items:center;gap:20px;margin-top:40px;font:600 32px/1 var(--fd);color:#ffb3a8}
 .sv.t-shocks .war i{flex:1;height:10px;border-radius:6px;background:linear-gradient(270deg,#e5645c,rgba(229,100,92,.25))}
 /* map dots: a looping pulse */
