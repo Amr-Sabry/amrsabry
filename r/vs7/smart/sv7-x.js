@@ -371,7 +371,32 @@
     <blockquote${S(0)} style="transition-delay:.4s">«${esc(sc.q)}»</blockquote><cite${S(0)} style="transition-delay:.6s">${esc(sc.by)}</cite></div>`;
 
   /* ───────── cards: icons · photo · what-if · good ───────── */
+  /* 13:11 Amr «هل ممكن تعبر عن ماذا لو بانفوجرافيك؟ … الكلام ده يتحول لحاجات بيانية … سهلة بصري انها تتفهم»: each what-if becomes a
+     tile — its icon, its sector, one picture of its figure (a ring for a share, a clock for hours a day, a crowd of dots for pupils in a
+     class, a row of houses for the deficit, two bars for then and later) and, under it, the sentence exactly as the deck says it */
+  /* every tile: title · one visual zone (same height in every tile) · one figure line (same height) · the deck sentence at the foot */
+  const ivFig = v => !v ? '' : v.v ? `<div class="ivn"><small>${esc(v.pre || '')}</small><b class="num">${esc(v.v)}</b><span>${esc(v.u || '')}</span></div>` : v.u ? `<div class="ivn"><small></small><span class="solo">${esc(v.u)}</span></div>` : '';
+  const ivBadge = m => m === 'x' ? '<em class="ivx"></em>' : m ? `<span class="ivb">${ic(m === 'up' ? 'trending-up' : 'trending-down')}</span>` : '';
+  const ivArc = (frac, inner) => { const r = 62, c = 2 * Math.PI * r, f = c * frac;
+    return `<svg class="ivring" viewBox="0 0 160 160"><circle cx="80" cy="80" r="${r}" class="rb"/>${inner || ''}<circle cx="80" cy="80" r="${r}" class="rf" stroke-dasharray="${f.toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 80 80)"/></svg>`; };
+  const ivVis = v => {
+    switch (v.k) {
+      case 'ring': return `<div class="ivrw">${ivArc(v.pct / 100)}<span class="ivri">${ic(v.ic)}</span></div>`;
+      case 'clock': return `<div class="ivrw">${ivArc(v.h / 24, Array.from({ length: 24 }, (_, i) => { const a = i / 24 * 2 * Math.PI - Math.PI / 2; return `<line x1="${(80 + 44 * Math.cos(a)).toFixed(1)}" y1="${(80 + 44 * Math.sin(a)).toFixed(1)}" x2="${(80 + (i % 6 ? 48 : 51) * Math.cos(a)).toFixed(1)}" y2="${(80 + (i % 6 ? 48 : 51) * Math.sin(a)).toFixed(1)}" class="tk"/>`; }).join(''))}<span class="ivri">${ic(v.ic)}</span></div>`;
+      case 'dots': return `<div class="ivdots" style="grid-template-columns:repeat(${v.cols},1fr)">${'<i></i>'.repeat(v.n)}</div>`;
+      case 'crowd': return `<div class="ivcrowd" style="grid-template-columns:repeat(${v.cols},1fr)">${Array.from({ length: v.n }, () => `<span>${ic('person-standing')}</span>`).join('')}</div>`;
+      case 'icons': return `<div class="ivics">${Array.from({ length: v.n }, () => `<span>${ic(v.ic)}</span>`).join('')}</div>`;
+      case 'bars': { const M = Math.max(...v.b.map(x => +x[0])); return `<div class="ivbars">${v.b.map((x, i) => `<div class="ib${i ? ' z' : ''}"><b class="num">${esc(x[0])}</b><i style="--h:${(+x[0] / M).toFixed(3)}"></i><small class="num">${esc(x[1])}</small></div>`).join('')}</div>`; }
+      case 'icon': return `<div class="ivic">${ic(v.ic)}${ivBadge(v.mark)}</div>`;
+    }
+    return '';
+  };
   R.cards = (sc, d, o) => {
+    if (sc.look === 'what' && sc.items.some(x => x.iv)) {
+      const n = sc.items.length;
+      return `<div class="pad"><h2 class="h2 ct"${S(0)}>${esc(sc.title)}</h2>${sc.sub ? `<div class="cs"${S(0)}>${esc(sc.sub)}</div>` : ''}
+        <div class="ivg n${n}">${sc.items.map((it, i) => `<div class="ivt k-${it.iv.k}"${S(0)} style="transition-delay:${(.08 + i * .06).toFixed(2)}s"><h3>${esc(it.h)}</h3><div class="ivv">${ivVis(it.iv)}</div><div class="ivf">${ivFig(it.iv)}</div><p>${esc(it.p)}</p></div>`).join('')}</div></div>`;
+    }
     const n = sc.items.length, look = sc.look || 'icons';
     const card = (it, i) => {
       const dl = `transition-delay:${(.15 + i * .14).toFixed(2)}s`;
@@ -1125,6 +1150,29 @@
 .sv.t-cards .cg.what.n5 .hl{display:block;font-size:1.3em;line-height:1.25;margin-top:.35em;white-space:normal;text-align:right;text-align-last:right}
 /* 13:00 Amr «وريني اوبشن بالنسبه لماذا لو»: option — every what-if card wears a real pre-2014 photograph from the deck, black-and-white under a
    red veil; the sector on top of it, the sentence below, its figure big in red */
+.sv.t-cards .ivg{display:grid;gap:22px;margin-top:44px}.sv.t-cards .ivg.n5{grid-template-columns:repeat(5,minmax(0,1fr))}.sv.t-cards .ivg.n8{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 22px;margin-top:30px}
+.sv.t-cards .ivt{display:flex;flex-direction:column;align-items:center;text-align:center;padding:30px 22px 28px;border-radius:26px;background:linear-gradient(180deg,rgba(229,100,92,.12),rgba(255,255,255,.02) 75%);border:1px solid rgba(229,100,92,.32)}
+.sv.t-cards .ivg.n8 .ivt{padding:20px 20px 18px}
+.sv.t-cards .ivt h3{margin:0;font:700 34px/1.3 var(--fd);color:#fff;height:2.6em;display:flex;align-items:center;justify-content:center;padding-bottom:.1em}.sv.t-cards .ivg.n8 .ivt h3{font-size:30px;height:1.4em}
+.sv.t-cards .ivv{height:140px;width:100%;display:flex;align-items:center;justify-content:center;margin-top:10px}.sv.t-cards .ivg.n8 .ivv{height:112px;margin-top:4px}
+.sv.t-cards .ivf{height:196px;display:flex;align-items:flex-start;justify-content:center;padding-top:14px}.sv.t-cards .ivg.n8 .ivf{height:78px;align-items:flex-end;padding:0 0 6px}
+.sv.t-cards .ivt p{margin:auto 0 0;padding-top:14px;border-top:1px solid rgba(255,255,255,.09);width:100%;height:calc(4.8em + 15px);font:500 24px/1.6 var(--fb);color:#d9dde4}.sv.t-cards .ivg.n8 .ivt p{font-size:21px;line-height:1.55;padding-top:10px;height:calc(4.65em + 11px)}
+.sv.t-cards .ivn{display:grid;grid-template-rows:30px 104px 40px;justify-items:center;align-items:center}.sv.t-cards .ivn b{font-size:110px;line-height:1;color:#ff7a68;text-shadow:0 0 34px rgba(255,111,97,.45)}.sv.t-cards .ivn span{font:700 27px/1.3 var(--fd);color:#ffc2b8;white-space:nowrap}.sv.t-cards .ivn small{font:600 22px/1.2 var(--fb);color:#d5d9e0}
+.sv.t-cards .ivg.n8 .ivn{display:flex;align-items:baseline;flex-wrap:nowrap;white-space:nowrap;gap:10px}.sv.t-cards .ivg.n8 .ivn>:empty{display:none}.sv.t-cards .ivg.n8 .ivn b{font-size:74px;line-height:.95}.sv.t-cards .ivg.n8 .ivn span{font-size:22px}.sv.t-cards .ivg.n8 .ivn small{font-size:20px}.sv.t-cards .ivg.n8 .ivn span.solo{font-size:24px}
+.sv.t-cards .ivg.n8 .ivt.k-bars .ivv{height:154px}.sv.t-cards .ivg.n8 .ivt.k-bars .ivf{height:36px;padding:0 0 2px}.sv.t-cards .ivt.k-bars .ivbars .ib i{height:calc(var(--h) * 86px)}.sv.t-cards .ivt.k-bars .ivbars .ib b{font-size:50px}.sv.t-cards .ivt.k-bars .ivbars{gap:40px}.sv.t-cards .ivt.k-bars .ivbars .ib i{width:66px}
+.sv.t-cards .ivrw{position:relative;width:146px;height:146px}.sv.t-cards .ivg.n8 .ivrw{width:104px;height:104px}.sv.t-cards .ivring{width:100%;height:100%}
+.sv.t-cards .ivring .rb{fill:none;stroke:rgba(255,255,255,.1);stroke-width:15}.sv.t-cards .ivring .rf{fill:none;stroke:#ff6f61;stroke-width:15;stroke-linecap:round;filter:drop-shadow(0 0 8px rgba(255,111,97,.55))}.sv.t-cards .ivring .tk{stroke:rgba(255,255,255,.28);stroke-width:2;stroke-linecap:round}
+.sv.t-cards .ivri{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#ff9a8c}.sv.t-cards .ivri svg{width:52px;height:52px}.sv.t-cards .ivg.n8 .ivri svg{width:38px;height:38px}
+.sv.t-cards .ivdots{display:grid;gap:5px;padding:12px;border-radius:12px;border:1.5px dashed rgba(255,111,97,.5);background:rgba(0,0,0,.25)}.sv.t-cards .ivdots i{width:10px;height:10px;border-radius:50%;background:#ff6f61;box-shadow:0 0 6px rgba(255,111,97,.6)}
+.sv.t-cards .ivcrowd{display:grid;gap:2px 4px;color:#ff7d6e}.sv.t-cards .ivcrowd span svg{width:38px;height:38px;display:block}
+.sv.t-cards .ivics{display:flex;gap:4px;color:#ff6f61}.sv.t-cards .ivics span svg{width:48px;height:48px;display:block;stroke-dasharray:3 2.5}
+.sv.t-cards .ivbars{display:flex;align-items:flex-end;justify-content:center;gap:34px;height:100%}.sv.t-cards .ivbars .ib{display:flex;flex-direction:column;align-items:center;gap:4px}
+.sv.t-cards .ivbars .ib i{display:block;width:56px;height:calc(var(--h) * 46px);border-radius:9px 9px 3px 3px;background:linear-gradient(180deg,#7c8494,#4a5160)}.sv.t-cards .ivbars .ib.z i{background:linear-gradient(180deg,#ff8a7a,#b8433b);box-shadow:0 0 22px -6px rgba(255,111,97,.6)}
+.sv.t-cards .ivbars .ib b{font-size:40px;line-height:1;color:#c9ced8}.sv.t-cards .ivbars .ib.z b{color:#ff7a68;text-shadow:0 0 24px rgba(255,111,97,.45)}.sv.t-cards .ivbars .ib small{font-size:18px;line-height:1;color:#aab2bf}
+.sv.t-cards .ivic{position:relative;width:136px;height:136px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(229,100,92,.1);border:2px solid rgba(229,100,92,.55);color:#ff9a8c}.sv.t-cards .ivic>svg{width:64px;height:64px}
+.sv.t-cards .ivg.n8 .ivic{width:100px;height:100px}.sv.t-cards .ivg.n8 .ivic>svg{width:46px;height:46px}
+.sv.t-cards .ivx{position:absolute;inset:18%;pointer-events:none}.sv.t-cards .ivx::before{content:'';position:absolute;left:50%;top:-6%;bottom:-6%;width:5px;margin-left:-2.5px;border-radius:3px;background:#ff6f61;transform:rotate(45deg);box-shadow:0 0 0 3px rgba(20,14,16,.85),0 0 12px rgba(255,111,97,.7)}
+.sv.t-cards .ivb{position:absolute;left:-4px;bottom:-4px;width:44%;height:44%;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#2a1513;border:2px solid #ff6f61;color:#ff6f61}.sv.t-cards .ivb svg{width:60%;height:60%;stroke-width:2.2}
 .sv.t-cards .cg.what .cd.hasbg{min-height:600px!important;justify-content:space-between!important;border-color:rgba(229,100,92,.55);padding:30px 28px 34px!important}
 .sv.t-cards .cg.what .cd.hasbg .cbgi img{filter:grayscale(1) contrast(1.12) brightness(.78)}
 .sv.t-cards .cg.what .cd.hasbg::before{background:linear-gradient(180deg,rgba(150,30,22,.28) 0%,rgba(40,8,8,.5) 38%,rgba(10,4,6,.94) 72%,rgba(8,4,6,.98) 100%)}
