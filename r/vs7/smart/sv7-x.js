@@ -487,7 +487,21 @@
   const pres0 = R.pressures;
   R.pressures = (sc, d, o) => { let h = pres0(sc, d, o); if (sc.kicker) h = h.replace('<h2 class="h2"', `<div class="kick pk"${S(0)}>${esc(sc.kicker)}</div><h2 class="h2"`); return h; };
   const sh0 = R.shocks;
-  R.shocks = (sc, d, o) => { let h = sh0(sc, d, o); if (sc.war) h = h.replace('<div class="end', `<div class="war"${S(0)}><i></i><span>${esc(sc.war)} · 2014–2023</span></div><div class="end`); return h; };
+  /* 12:30 Amr «الصدمات اللي حصلت على مصر في كتايم لاين … وبالذات موضوع الارهاب برضو يبقى واضح قوي … في نفس التايم لاين مش منفصلين … تايم لاين
+     واحد وواضح … والكلام مقروء»: one axis, 2014 on the right to 2025 on the left, every shock on it at its year; the war on terrorism is the
+     red stretch of that same axis from 2014 to 2023, named on a band that stands right over it */
+  R.shocks = (sc, d, o) => {
+    if (!sc.war) return sh0(sc, d, o);
+    const nodes = [{ y: 2014 }].concat(sc.ev || []), n = nodes.length, X0 = 1760, X1 = 160, step = (X0 - X1) / (n - 1), AY = 468;
+    const xs = nodes.map((_, i) => X0 - i * step), wi = Math.max(1, nodes.findIndex(x => x.y === 2023));
+    let h = `<h2 class="h2 shh"${S(0)}>${esc(sc.title)}</h2><div class="shx">`;
+    h += `<div class="sax"${S(0, 'fade')} style="left:${X1 - 40}px;width:${X0 - X1 + 80}px;top:${AY}px"></div>`;
+    h += `<div class="sax wseg"${S(0, 'fade')} style="left:${xs[wi]}px;width:${xs[0] - xs[wi]}px;top:${AY - 3}px"></div>`;
+    h += `<div class="swar"${S(0, 'fade')} style="left:${xs[wi] - 20}px;width:${xs[0] - xs[wi] + 40}px;top:${AY - 118}px"><span>${esc(sc.war)}</span><b class="num">2014 – 2023</b></div>`;
+    nodes.forEach((e, i) => { h += `<div class="sev${i ? '' : ' st'}${i <= wi ? ' iw' : ''}"${S(0, 'fade')} style="left:${xs[i].toFixed(1)}px;top:${AY - 14}px;transition-delay:${(.05 + i * .06).toFixed(2)}s"><i></i><b class="num">${e.y}</b>${e.t ? `<span>${esc(e.t)}</span>` : ''}</div>`; });
+    h += `</div>${sc.end ? `<div class="send gold"${S(0)} style="transition-delay:.5s">${esc(sc.end)}</div>` : ''}`;
+    return h;
+  };
 
   const title0 = SV.title;
   SV.title = s => s.type === 'oath' ? '2014 · البداية' : s.type === 'people' ? 'المواطن · أرقام' : s.type === 'leaders' ? 'التنمية في تجارب قادة العالم' : s.type === 'gallery' && !s.title ? (s.kick ? s.kick + ' · صور' : 'صور') : title0(s);
@@ -1223,6 +1237,21 @@
 .sv.t-chapter .cpre{font:600 40px/1 var(--fd);color:#fff;opacity:.9;margin-bottom:22px}
 .sv.t-pressures .pk{margin-bottom:10px}
 .sv.t-shocks .evs{grid-template-columns:repeat(6,1fr)!important}
+.sv.t-shocks .shh{position:absolute;right:160px;top:110px;margin:0;font-size:68px;line-height:1.2}
+.sv.t-shocks .shx{position:absolute;inset:0;pointer-events:none}
+.sv.t-shocks .sax{position:absolute;height:3px;border-radius:2px;background:linear-gradient(270deg,rgba(255,255,255,.55),rgba(255,255,255,.18))}
+.sv.t-shocks .sax.wseg{height:9px;border-radius:5px;background:linear-gradient(270deg,#e5645c,#c8453e);box-shadow:0 0 30px rgba(229,100,92,.45)}
+.sv.t-shocks .swar{position:absolute;height:66px;border-radius:18px;display:flex;align-items:center;justify-content:center;gap:22px;background:linear-gradient(270deg,rgba(229,100,92,.28),rgba(229,100,92,.14));border:1.5px solid rgba(229,100,92,.75);color:#fff;font:600 34px/1 var(--fd)}
+.sv.t-shocks .swar b{font-size:40px;color:#ffb3a8;font-weight:400;letter-spacing:.02em}
+.sv.t-shocks .swar::before,.sv.t-shocks .swar::after{content:'';position:absolute;top:100%;width:2px;height:52px;background:linear-gradient(180deg,rgba(229,100,92,.9),rgba(229,100,92,.3))}
+.sv.t-shocks .swar::before{right:19px}.sv.t-shocks .swar::after{left:19px}
+.sv.t-shocks .sev{position:absolute;width:250px;margin-left:-125px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.sv.t-shocks .sev i{width:30px;height:30px;border-radius:50%;background:#f3d79f;box-shadow:0 0 0 8px rgba(233,188,108,.16),0 0 24px rgba(233,188,108,.5)}
+.sv.t-shocks .sev.iw i{background:#ff8a7a;box-shadow:0 0 0 8px rgba(229,100,92,.2),0 0 24px rgba(229,100,92,.55)}
+.sv.t-shocks .sev.st i{background:#fff;width:22px;height:22px;margin:4px 0}
+.sv.t-shocks .sev b{margin-top:24px;font-size:64px;line-height:1;color:#fff}
+.sv.t-shocks .sev span{margin-top:16px;font:500 29px/1.5 var(--fb);color:#e6e9ef;max-width:236px}
+.sv.t-shocks .send{position:absolute;right:160px;top:770px;max-width:1520px;margin:0;font:600 56px/1.4 var(--fd)}
 .sv.t-shocks .war{display:flex;align-items:center;gap:20px;margin-top:40px;font:600 32px/1 var(--fd);color:#ffb3a8}
 .sv.t-shocks .war i{flex:1;height:10px;border-radius:6px;background:linear-gradient(270deg,#e5645c,rgba(229,100,92,.25))}
 /* map dots: a looping pulse */
