@@ -320,7 +320,7 @@
   /* ───────── oath: 2014 · the beginning ───────── */
   /* 00:04 Amr «فيديو … صوت السيسي وهو بيقول القسم والكلام بيطلع مع صوته مع نفس الكلمات اللي مكتوبة»: the real oath (8 June 2014),
      every written word lit the moment he says it (word times by forced alignment) */
-  const oathV = (sc, d, o) => { const live = !o.static && !o.thumb;
+  const oathV = (sc, d, o) => { const live = !o.static && !o.thumb && !sc.still;   /* 10:03: the silent twin (sc.still) — no voice, every word lit */
     const words = sc.q.split(/\s+/).map((w, i) => { const tt = sc.times[i] || {}; return `<span class="ow" data-t0="${tt.t0}" data-t1="${tt.t1}">${esc(w)}</span>`; }).join(' ');
     /* 00:13 «الفيديو الكواليتي وحش … استخدم الصوت فقط على الصورة القديمة»: his voice only, over the slide's own photograph */
     const pic = sc.aud ? `<figure class="oimg"${S(0, 'fade')} style="aspect-ratio:${sc.img.w}/${sc.img.h}">${cropImg(sc.img, o)}</figure>${live ? `<video class="oaud" playsinline preload="auto" data-src="${U(sc.aud, o)}"></video>` : ''}`
@@ -328,7 +328,7 @@
     return `${pic}
     <div class="pad"><div class="oy gold"${S(0)}>${esc(sc.y)}</div><div class="ok"${S(0)}>${esc(sc.k)}</div>
     <blockquote class="okar${live ? '' : ' all'}"${S(0)} style="transition-delay:.4s">«${words}»</blockquote><cite${S(0)} style="transition-delay:.6s">${esc(sc.by)}</cite></div>`; };
-  SV.after.oath = (el, sc, d, o) => { if (!(sc.vid || sc.aud) || o.static || o.thumb) return;
+  SV.after.oath = (el, sc, d, o) => { if (!(sc.vid || sc.aud) || o.static || o.thumb || sc.still) return;
     const v = el.querySelector('video'), ws = [...el.querySelectorAll('.ow')].map(w => ({ w, a: +w.dataset.t0, b: +w.dataset.t1 }));
     const tick = () => { if (!el.isConnected) return; const t = v ? v.currentTime : 0;
       ws.forEach(x => { x.w.classList.toggle('on', t >= x.a - .03); x.w.classList.toggle('cur', t >= x.a - .03 && t < x.b + .05); }); requestAnimationFrame(tick); };
@@ -682,7 +682,7 @@
     const k = sc.type === 'section' ? 2 + (i % 2) * 3 : (i * 5 + 1) % 6;
     const m = document.createElement('div'); m.className = 'mesh m' + k; el.insertBefore(m, el.firstChild); el.classList.add('hasmesh');
   }
-  SV.render = function (deck, i, o) { const el = render0.call(this, deck, i, o); if (deck && deck.id === 'sv7') { try { mesh(el, deck.scenes[i], i, o); } catch (e) {} const sc = deck.scenes[i]; if (sc && sc.gap) el._gap = sc.gap; if (sc && sc.lead) el._lead = sc.lead; if (sc && sc.same && sc.type === 'map' && el._onstep) { const f = el._onstep;
+  SV.render = function (deck, i, o) { const el = render0.call(this, deck, i, o); if (deck && deck.id === 'sv7') { try { mesh(el, deck.scenes[i], i, o); } catch (e) {} const sc = deck.scenes[i]; if (sc && sc.gap) el._gap = sc.gap; if (sc && sc.lead) el._lead = sc.lead; if (sc && sc.still) el.classList.add('nomo'); if (sc && sc.same && sc.type === 'map' && el._onstep) { const f = el._onstep;
       /* 08:40: «same» — a map whose later steps only move the camera: the first step's panel and labels stay on, untouched */
       el.querySelectorAll('.mp:not([data-st="0"]),.mn[data-st]:not([data-st="0"]),.mlabels:not([data-st="0"])').forEach(n => n.remove());
       el._onstep = (k, i) => { f(k, i); el.querySelectorAll('.mp[data-st="0"],.mn[data-st="0"],.mlabels[data-st="0"]').forEach(n => n.classList.add('cur')); }; } try { hlNums(el); } catch (e) {} try { drift(el, o); } catch (e) {}
@@ -1283,6 +1283,9 @@
 .sv.t-gallery .grec.col .gs{order:5;width:100%;margin-top:-12px}
 .sv.t-gallery .gal.geo.wrec .gi{border-radius:14px;overflow:hidden}
 /* the New Delta map, whole */
+/* 10:03 a «still» slide (sc.still): everything on it from the first frame, nothing moves */
+.sv.nomo [data-s]{opacity:1!important;transform:none!important;filter:none!important;transition:none!important}
+.sv.nomo *,.sv.nomo *::before,.sv.nomo *::after{animation:none!important;transition:none!important}
 .sv.t-ndmap{background:#0a0e17}
 .sv.t-ndmap .ndw{position:absolute;inset:0;z-index:1}
 .sv.t-ndmap .ndw svg{display:block;width:100%;height:100%}
