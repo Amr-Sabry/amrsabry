@@ -1194,6 +1194,8 @@
 .sv.t-map .pace .pr.tags .ptags{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:7px}
 .sv.t-map .pace .pr.tags .ptags i{font:600 18px/1 var(--fb);font-style:normal;color:#e9ecf1;padding:7px 11px 8px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);white-space:nowrap}
 .sv.t-map .pace .pr.tags.pb .ptags i{border-color:rgba(92,192,234,.35)}.sv.t-map .pace .pr.tags.pn .ptags i{border-color:rgba(95,211,141,.4)}
+/* 15:34 Amr «فيه اوفر لاب» (chapter 4): the chapter name's descenders (ج، ع) clear the line under it */
+.sv.t-chapter .pad .h1{line-height:1.08!important;padding-bottom:0!important;margin-bottom:0!important}.sv.t-chapter .pad .p{margin-top:14px!important}
 .sv.t-cards .ivg{display:grid;gap:22px;margin-top:44px}.sv.t-cards .ivg.n5{grid-template-columns:repeat(5,minmax(0,1fr))}.sv.t-cards .ivg.n8{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 22px;margin-top:30px}
 .sv.t-cards .ivt{display:flex;flex-direction:column;align-items:center;text-align:center;padding:30px 22px 28px;border-radius:26px;background:linear-gradient(180deg,rgba(229,100,92,.12),rgba(255,255,255,.02) 75%);border:1px solid rgba(229,100,92,.32)}
 .sv.t-cards .ivg.n8 .ivt{padding:20px 20px 18px}
