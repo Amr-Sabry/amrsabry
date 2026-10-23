@@ -682,7 +682,14 @@
     const k = sc.type === 'section' ? 2 + (i % 2) * 3 : (i * 5 + 1) % 6;
     const m = document.createElement('div'); m.className = 'mesh m' + k; el.insertBefore(m, el.firstChild); el.classList.add('hasmesh');
   }
-  SV.render = function (deck, i, o) { const el = render0.call(this, deck, i, o); if (deck && deck.id === 'sv7') { try { mesh(el, deck.scenes[i], i, o); } catch (e) {} const sc = deck.scenes[i]; if (sc && sc.gap) el._gap = sc.gap; if (sc && sc.lead) el._lead = sc.lead; if (sc && sc.still) el.classList.add('nomo'); if (sc && sc.same && sc.type === 'map' && el._onstep) { const f = el._onstep;
+  SV.render = function (deck, i, o) { const el = render0.call(this, deck, i, o); if (deck && deck.id === 'sv7') { try { mesh(el, deck.scenes[i], i, o); } catch (e) {} const sc = deck.scenes[i]; if (sc && sc.gap) el._gap = sc.gap; if (sc && sc.lead) el._lead = sc.lead; if (sc && sc.type === 'map') el.querySelectorAll('.ly-tunnels .pin .pop').forEach((g, i) => {
+      /* 10:40 Amr «الخريطة اللي مكتوب عليها نفقا دي معناها رايح جاي نفقين فعبر عنها بخطين، ولو عرفت بالانيمشن تبين ده»: each «نفقا»
+         (two tunnels, one each way) is two bars under the canal, a flow running east on one and west on the other; the single tunnel
+         (Ahmed Hamdy 2) one bar. The tunnel pins come in the geo order: تحيا مصر · 3 يوليو · أحمد حمدي 2 */
+      const W = 30, twin = i < 2, prg = g.querySelector('.prg');
+      const bar = (y, dir) => `<rect x="${-W}" y="${y - 3.5}" width="${2 * W}" height="7" rx="3.5" class="dot"/><line class="tfl ${dir}" x1="${-W + 5}" y1="${y}" x2="${W - 5}" y2="${y}"/>` +
+        (dir === 'e' ? `<path class="tah" d="M${W + 3},${y - 5} l8,5 l-8,5z"/>` : dir === 'w' ? `<path class="tah" d="M${-W - 3},${y - 5} l-8,5 l8,5z"/>` : '');
+      g.innerHTML = (prg ? prg.outerHTML : '') + (twin ? bar(-8, 'e') + bar(8, 'w') : bar(0, 'b')); g.classList.add('tw'); }); if (sc && sc.still) el.classList.add('nomo'); if (sc && sc.same && sc.type === 'map' && el._onstep) { const f = el._onstep;
       /* 08:40: «same» — a map whose later steps only move the camera: the first step's panel and labels stay on, untouched */
       el.querySelectorAll('.mp:not([data-st="0"]),.mn[data-st]:not([data-st="0"]),.mlabels:not([data-st="0"])').forEach(n => n.remove());
       el._onstep = (k, i) => { f(k, i); el.querySelectorAll('.mp[data-st="0"],.mn[data-st="0"],.mlabels[data-st="0"]').forEach(n => n.classList.add('cur')); }; } try { hlNums(el); } catch (e) {} try { drift(el, o); } catch (e) {}
@@ -704,10 +711,13 @@
      spreads out from it and fades, over and over, each dot a little out of step with the others so the map ripples, not blinks */
   /* 23 Oct 07:50 Amr (his 62) «عيد تنسيق الخريطة والصور ولو عندك رؤية افضل للخريطة نفذها»: a map may carry the project's own
      photographs (sc.pics), set as two cards in the empty western desert of the map — the network on the map, the work in the photos */
-  const mapPics = (sc, o) => `<div class="mpics">${sc.mpics.map((p, i) => `<figure class="mpic"${S(0, 'fade')} style="transition-delay:${(.5 + i * .25).toFixed(2)}s">${cropImg(p, o)}${p.cap ? `<figcaption>${esc(p.cap)}</figcaption>` : ''}</figure>`).join('')}</div>`;
+  const mapPics = (sc, o) => `<div class="mpics">${sc.mpics.map((p, i) => `<figure class="mpic"${S(sc.mpicsAt || 0, 'fade')} style="transition-delay:${(.5 + i * .25).toFixed(2)}s">${cropImg(p, o)}${p.cap ? `<figcaption>${esc(p.cap)}</figcaption>` : ''}</figure>`).join('')}</div>`;
   { const _map = R.map; R.map = (sc, d, o) => { let h = _map(sc, d, o); if (sc.mpics) h += mapPics(sc, o); if (o && (o.thumb || o.static)) return h; let n = 0;
       let out = h.replace(/<g class="pop"([^>]*)>(<(?:circle|rect|path)[^>]*?(?: r="([\d.]+)")?[^>]*>)/g, (m, a, sh, r) =>
         `<g class="pop"${a}><circle class="prg" r="${r || 7}" style="animation-delay:${(-((n++ * 0.53) % 2.6)).toFixed(2)}s"/>${sh}`);
+      /* 10:40 Amr «الخريطة اللي مكتوب عليها نفقا دي معناها رايح جاي نفقين فعبر عنها بخطين، ولو عرفت بالانيمشن تبين ده»: each «نفقا»
+         (two tunnels — one each way) is drawn as two bars under the canal, a flow running east on one and west on the other;
+         the single tunnel (Ahmed Hamdy 2) one bar, its flow both ways. Order of the tunnel pins: تحيا مصر · 3 يوليو · أحمد حمدي 2 */
       return mapPace(sc, out); };
     /* 00:20 «في سلايد ٢٠ فيه كلكعة في الكتابة»: a panel's «pace» rows — figure, then what it counts — in place of a long sentence */
     /* 06:09 «سلايد ٢٠ الجزء اليمين زحمة نسقه وراعي المحاذاة»: the total stands alone; one bar splits it in proportion — the old
@@ -1286,6 +1296,14 @@
 /* 10:34 the road names on the roads map: small, in the roads' own blue */
 .sv[data-id="s50"].t-map .mlabels>span{font-size:15px;font-weight:600;color:#cfe8ff}
 .sv[data-id="s50"].t-map .mgrp b{font-size:16px}.sv[data-id="s50"].t-map .mgrp .gl span{font-size:15px;color:#cfe8ff}
+/* 10:40 the tunnels: two bars for each «نفقا», a flow each way */
+.sv.t-map .ly-tunnels .tw .dot{fill:#f4c84a;stroke:rgba(6,9,15,.8);stroke-width:1.2}
+.sv.t-map .ly-tunnels .tw .tfl{stroke:#0b111c;stroke-width:2;stroke-linecap:round;stroke-dasharray:3 6;animation:tflE 1.1s linear infinite}
+.sv.t-map .ly-tunnels .tw .tfl.w{animation-name:tflW}.sv.t-map .ly-tunnels .tw .tfl.b{animation:none;stroke-dasharray:none;opacity:.35}
+.sv.t-map .ly-tunnels .tw .tah{fill:#f4c84a;stroke:rgba(6,9,15,.8);stroke-width:1}
+@keyframes tflE{to{stroke-dashoffset:-18}}@keyframes tflW{to{stroke-dashoffset:18}}
+.sv.t-map[data-id="s62"] .mn.good.r>span,.sv.t-map[data-id="s59"] .mn.good.r>span{left:62px}   /* clear of the tunnel bars and their arrows */
+.sv[data-id="s62"].t-map .mpics{top:150px;width:372px}.sv[data-id="s62"].t-map .mpic{width:372px;height:210px}
 /* 10:03 a «still» slide (sc.still): everything on it from the first frame, nothing moves */
 .sv.nomo [data-s]{opacity:1!important;transform:none!important;filter:none!important;transition:none!important}
 .sv.nomo *,.sv.nomo *::before,.sv.nomo *::after{animation:none!important;transition:none!important}
