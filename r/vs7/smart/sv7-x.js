@@ -1304,6 +1304,9 @@
 @keyframes tflE{to{stroke-dashoffset:-18}}@keyframes tflW{to{stroke-dashoffset:18}}
 .sv.t-map[data-id="s62"] .mn.good.r>span,.sv.t-map[data-id="s59"] .mn.good.r>span{left:62px}   /* clear of the tunnel bars and their arrows */
 .sv[data-id="s62"].t-map .mpics{top:150px;width:372px}.sv[data-id="s62"].t-map .mpic{width:372px;height:210px}
+/* 10:46 Amr (his 91) «اظبط الكلام في نصف الصفحة»: a before/after strike with no photographs sits in the middle of the stage */
+.sv.t-kq:not(:has(.phs)) .kbody:has(.k-strike){justify-content:center;padding-bottom:30px}
+.sv.t-kq:not(:has(.phs)) .chart.k-strike{margin-bottom:0}
 /* 10:03 a «still» slide (sc.still): everything on it from the first frame, nothing moves */
 .sv.nomo [data-s]{opacity:1!important;transform:none!important;filter:none!important;transition:none!important}
 .sv.nomo *,.sv.nomo *::before,.sv.nomo *::after{animation:none!important;transition:none!important}
