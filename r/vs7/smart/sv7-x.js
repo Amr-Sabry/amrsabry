@@ -427,8 +427,10 @@
     const it = sc.items || [], n = it.length, cols = sc.cols || (n <= 4 ? n : n === 7 ? 4 : 3);
     const big = (x, i) => `<div class="hb2"${S(0)} style="transition-delay:${(.2 + i * .2).toFixed(2)}s">${x.pre ? `<div class="pre">${esc(x.pre)}</div>` : ''}${x.p && !x.pre ? `<div class="pre">${esc(x.p)}</div>` : ''}<div class="v">${N(x.v, 'gold')}<u>${esc(x.u)}</u></div>${x.p && x.pre ? `<div class="pp">${esc(x.p)}</div>` : ''}</div>`;
     const hero = sc.hero ? [sc.hero] : (sc.hero2 || []);
-    return `${sc.img ? `<figure class="simg${sc.img.cap ? ' cap' : ''}${sc.dense ? ' dense' : ''}"${S(0, 'fade')} style="aspect-ratio:${sc.img.w}/${sc.img.h}">${cropImg(sc.img, o)}${sc.img.cap ? `<figcaption>${esc(sc.img.cap)}</figcaption>` : ''}</figure>` : ''}
-      <div class="pad${sc.img ? ' wimg' : ''}${sc.dense ? ' dense' : ''}">${sc.kick ? `<div class="kick"${S(0)}>${esc(sc.kick)}</div>` : ''}<h2 class="h2 st"${S(0)}>${esc(sc.title)}</h2>${sc.sub ? `<div class="ss"${S(0)}>${esc(sc.sub)}</div>` : ''}
+    /* 11:18 Amr «خلي الصورة خلفية السلايد والكروت ليها شفافية»: a stats slide with bgimg wears its photo full-bleed, the cards glass over it */
+    const sbg = sc.bgimg ? `<div class="bg sbgp">${coverFig(sc.bgimg, o, 'sbi')}</div>` : '';
+    return `${sbg}${sc.img && !sc.bgimg ? `<figure class="simg${sc.img.cap ? ' cap' : ''}${sc.dense ? ' dense' : ''}"${S(0, 'fade')} style="aspect-ratio:${sc.img.w}/${sc.img.h}">${cropImg(sc.img, o)}${sc.img.cap ? `<figcaption>${esc(sc.img.cap)}</figcaption>` : ''}</figure>` : ''}
+      <div class="pad${sc.img || sc.bgimg ? ' wimg' : ''}${sc.bgimg ? ' onbg' : ''}${sc.dense ? ' dense' : ''}">${sc.kick ? `<div class="kick"${S(0)}>${esc(sc.kick)}</div>` : ''}<h2 class="h2 st"${S(0)}>${esc(sc.title)}</h2>${sc.sub ? `<div class="ss"${S(0)}>${esc(sc.sub)}</div>` : ''}
       ${hero.length ? `<div class="hrow">${hero.map(big).join('')}</div>` : ''}
       ${n ? `<div class="sg" style="grid-template-columns:repeat(${cols},1fr)">${it.map((x, i) => `<div class="sc glass"${S(0)} style="transition-delay:${(.5 + i * .12).toFixed(2)}s">${x.pre ? `<div class="pre">${esc(x.pre)}</div>` : ''}<div class="v">${N(x.v, 'gold')}</div><div class="u">${esc(x.u)}</div>${x.p ? `<div class="pp">${esc(x.p)}</div>` : ''}</div>`).join('')}</div>` : ''}
       ${sc.p ? `<p class="sp"${S(0)}>${esc(sc.p)}</p>` : ''}</div>`;
@@ -1121,6 +1123,10 @@
 .sv.t-stats .pad.dense .sc .v .num{font-size:62px}
 .sv.t-stats .pad.dense .sc .u{font-size:25px}
 .sv.t-stats .simg.dense{width:520px}
+.sv.t-stats .bg.sbgp{z-index:0}
+.sv.t-stats .bg.sbgp::after{background:linear-gradient(270deg,rgba(4,6,11,.9) 0%,rgba(4,6,11,.74) 42%,rgba(4,6,11,.3) 78%,rgba(4,6,11,.22) 100%),linear-gradient(0deg,rgba(4,6,11,.7),transparent 45%),linear-gradient(180deg,rgba(4,6,11,.55),transparent 30%)}
+.sv.t-stats .pad.onbg{position:relative;z-index:2}
+.sv.t-stats .pad.onbg .sc.glass{background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.04) 60%,rgba(255,255,255,.07));-webkit-backdrop-filter:blur(14px) saturate(1.15);backdrop-filter:blur(14px) saturate(1.15);border:1px solid rgba(255,255,255,.16)}
 .sv.t-stats .sp{margin:36px 0 0;font:500 34px/1.55 var(--fb);color:#e3e6ec;max-width:1400px}
 /* cmp */
 .sv.t-cmp .pad{padding:110px 120px 130px}
