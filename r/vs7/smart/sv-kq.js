@@ -139,12 +139,13 @@
     const seg = (typeof Intl !== 'undefined' && Intl.Segmenter) ? [...new Intl.Segmenter('ar', { granularity: 'grapheme' }).segment(full)].map(s => s.segment) : [...full];
     /* 15:47 Amr «لو فيه كتابه تايب رايت لعنوان خليه يكمل كتابته وبعدين البيانات تبان ورا بعض»: the scene's data wait for the
        question to finish typing (320 ms lead + 34 ms a letter) and a short breath after it (sv-engine.js reads el._lead) */
-    el._lead = 320 + seg.length * 34 + 450;
+    const sp = SV.speed || 1, T0 = 320 * sp, TL = 34 * sp;   /* 10:59 faster when the deck asks (SV.speed) */
+    el._lead = T0 + seg.length * TL + 450 * sp;
     el._onenter = () => {
       if (el._typed) return; el._typed = 1;
       let i = 0; qt.textContent = ''; el.classList.add('typing');
-      const tick = () => { i++; qt.textContent = seg.slice(0, i).join(''); if (i < seg.length) el._tt = setTimeout(tick, 34); else el.classList.remove('typing'); };
-      el._tt = setTimeout(tick, 320);
+      const tick = () => { i++; qt.textContent = seg.slice(0, i).join(''); if (i < seg.length) el._tt = setTimeout(tick, TL); else el.classList.remove('typing'); };
+      el._tt = setTimeout(tick, T0);
     };
   };
 })();

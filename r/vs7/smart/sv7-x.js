@@ -11,6 +11,18 @@
   const isN = v => /^-?[\d.]+%?$/.test(String(v == null ? '' : v).trim());
   const N = (v, cls) => isN(v) ? `<span class="num ${cls || ''}" data-to="${esc(v)}">${esc(v)}</span>` : `<span class="num ${cls || ''}">${esc(v)}</span>`;
   const R = SV.R;
+  /* 23 Oct 10:59 Amr «مش عاوز تباطئ في الانميشن، احنا عاوزين نكسب وقت» / «خلي الظهور اسرع»: everything that comes in, comes in faster —
+     builds, counts, the typed question, each element's wait (×0.55) */
+  SV.speed = 0.55;
+  /* 23 Oct 10:54 Amr «دي بيانات الخريطة بتاعة المواني عشان انت عامل ١٧ بس مش ١٩» — the client's «خريطة الـ19 ميناء بحري»: these 19 ports
+     (14 developed / under development, 5 new: جرجوب، المكس، أبو قير، طابا، برنيس — «new» drawn apart). 10:58 «احنا عدلنا الخريطة دي ولاغينا
+     الداخلة وحطينا الطور، وبرج العرب بقى اسكندرية»: the airports without Dakhla, with El Tor */
+  if (window.SVGEO && SVGEO.nodes) {
+    const PORTS = [{"t": "port", "n": "ميناء جرجوب", "p": [26.58, 31.5], "new": 1}, {"t": "port", "n": "ميناء المكس", "p": [29.835, 31.155], "new": 1}, {"t": "port", "n": "ميناء الإسكندرية", "p": [29.87, 31.18], "new": 0}, {"t": "port", "n": "ميناء الدخيلة", "p": [29.8, 31.13], "new": 0}, {"t": "port", "n": "ميناء أبو قير", "p": [30.07, 31.32], "new": 1}, {"t": "port", "n": "ميناء دمياط", "p": [31.76, 31.47], "new": 0}, {"t": "port", "n": "ميناء غرب بورسعيد", "p": [32.3, 31.25], "new": 0}, {"t": "port", "n": "ميناء شرق بورسعيد", "p": [32.36, 31.21], "new": 0}, {"t": "port", "n": "ميناء العريش", "p": [33.81, 31.14], "new": 0}, {"t": "port", "n": "ميناء بورتوفيق", "p": [32.555, 29.945], "new": 0}, {"t": "port", "n": "ميناء الأدبية", "p": [32.47, 29.87], "new": 0}, {"t": "port", "n": "ميناء العين السخنة", "p": [32.34, 29.64], "new": 0}, {"t": "port", "n": "ميناء الطور", "p": [33.61, 28.24], "new": 0}, {"t": "port", "n": "ميناء طابا", "p": [34.895, 29.49], "new": 1}, {"t": "port", "n": "ميناء نويبع", "p": [34.66, 29.03], "new": 0}, {"t": "port", "n": "ميناء شرم الشيخ", "p": [34.29, 27.86], "new": 0}, {"t": "port", "n": "ميناء الغردقة", "p": [33.84, 27.23], "new": 0}, {"t": "port", "n": "ميناء سفاجا", "p": [33.94, 26.76], "new": 0}, {"t": "port", "n": "ميناء برنيس", "p": [35.48, 23.95], "new": 1}];
+    SVGEO.nodes = SVGEO.nodes.filter(n => n.t !== 'port' && !(n.t === 'airport' && n.n === 'مطار الداخلة')).concat(PORTS);
+    if (!SVGEO.nodes.some(n => n.t === 'airport' && n.n === 'مطار الطور')) SVGEO.nodes.push({ t: 'airport', n: 'مطار الطور', p: [33.645, 28.209] });
+    SV.newPorts = PORTS.map(x => !!x.new);
+  }
   /* 19:52 Amr «بلاش علامة صليب في اي ايقون حتى وان كانت مستشفى … وبلاش رمز مثلا خنزير في التوفير»: the icon set lends no cross —
      the hospital is a plain building with a heartbeat, the shield carries a check (the set has no piggy bank) */
   if (typeof KICONS !== 'undefined') {
@@ -683,7 +695,7 @@
     const k = sc.type === 'section' ? 2 + (i % 2) * 3 : (i * 5 + 1) % 6;
     const m = document.createElement('div'); m.className = 'mesh m' + k; el.insertBefore(m, el.firstChild); el.classList.add('hasmesh');
   }
-  SV.render = function (deck, i, o) { const el = render0.call(this, deck, i, o); if (deck && deck.id === 'sv7') { try { mesh(el, deck.scenes[i], i, o); } catch (e) {} const sc = deck.scenes[i]; if (sc && sc.gap) el._gap = sc.gap; if (sc && sc.lead) el._lead = sc.lead; if (sc && sc.type === 'map') el.querySelectorAll('.ly-tunnels .pin .pop').forEach((g, i) => {
+  SV.render = function (deck, i, o) { const el = render0.call(this, deck, i, o); if (deck && deck.id === 'sv7') { try { mesh(el, deck.scenes[i], i, o); } catch (e) {} const sc = deck.scenes[i]; if (sc && sc.gap) el._gap = sc.gap; el.querySelectorAll('[style*="transition-delay"]').forEach(n => { const m = /transition-delay:\s*([\d.]+)s/.exec(n.getAttribute('style')); if (m) n.style.transitionDelay = (parseFloat(m[1]) * SV.speed).toFixed(2) + 's'; }); if (sc && sc.lead) el._lead = sc.lead; if (sc && sc.type === 'map' && SV.newPorts) el.querySelectorAll('.ly-ports .pin').forEach((g, i) => { if (SV.newPorts[i]) g.classList.add('newp'); }); if (sc && sc.type === 'map') el.querySelectorAll('.ly-tunnels .pin .pop').forEach((g, i) => {
       /* 10:40 Amr «الخريطة اللي مكتوب عليها نفقا دي معناها رايح جاي نفقين فعبر عنها بخطين، ولو عرفت بالانيمشن تبين ده»: each «نفقا»
          (two tunnels, one each way) is two bars under the canal, a flow running east on one and west on the other; the single tunnel
          (Ahmed Hamdy 2) one bar. The tunnel pins come in the geo order: تحيا مصر · 3 يوليو · أحمد حمدي 2 */
@@ -1298,6 +1310,12 @@
 /* 10:34 the road names on the roads map: small, in the roads' own blue */
 .sv[data-id="s50"].t-map .mlabels>span{font-size:15px;font-weight:600;color:#cfe8ff}
 .sv[data-id="s50"].t-map .mgrp b{font-size:16px}.sv[data-id="s50"].t-map .mgrp .gl span{font-size:15px;color:#cfe8ff}
+/* 10:59 faster entrances */
+.sv [data-s]{transition:opacity .5s var(--e1),transform .62s var(--e1),filter .5s var(--e1)}
+/* 10:54 the ports: the 14 developed in the ports' blue, the 5 new in green */
+.sv.t-map .ly-ports .pin.newp .dot{fill:#5fd38d}.sv.t-map .ly-ports .pin.newp .prg{stroke:#5fd38d}
+.sv.t-map .pace .pr.pb b{color:#5cc0ea}.sv.t-map .pace .pr.pn b{color:#5fd38d}
+.sv.t-map .pace .pr.pb b::before,.sv.t-map .pace .pr.pn b::before{content:"";display:inline-block;width:14px;height:14px;margin-left:12px;transform:rotate(45deg);background:currentColor;vertical-align:middle}
 /* 10:40 the tunnels: two bars for each «نفقا», a flow each way */
 .sv.t-map .ly-tunnels .tw .dot{fill:#f4c84a;stroke:rgba(6,9,15,.8);stroke-width:1.2}
 .sv.t-map .ly-tunnels .tw .tfl{stroke:#0b111c;stroke-width:2;stroke-linecap:round;stroke-dasharray:3 6;animation:tflE 1.1s linear infinite}

@@ -171,8 +171,9 @@
       if (el._played) return; el._played = 1; el._tm = [];
       build(el, 0);
       /* a typed title (kq) holds the rest until it has finished typing: el._lead (sv-kq.js) */
-      const lead = Math.max(GAP, el._lead || 0);
-      const G = el._gap || GAP;
+      const sp = SV.speed || 1;   /* 23 Oct 10:59 a deck may run its builds faster (SV.speed < 1) */
+      const lead = Math.max(GAP * sp, el._lead || 0);
+      const G = (el._gap || GAP) * sp;
       for (let b = 1; b < el._steps; b++) el._tm.push(setTimeout(() => { if (el.isConnected) build(el, b); }, lead + (b - 1) * G));
       return;
     }
@@ -199,7 +200,7 @@
     list.forEach(x => {
       const to = parse(x.dataset.to); if (!to) return;
       const fr = x.dataset.from != null ? parse(x.dataset.from) : { v: 0 };
-      const f0 = fr ? fr.v : 0, D = 1500, t0 = performance.now() + 250;
+      const f0 = fr ? fr.v : 0, sp = SV.speed || 1, D = 1500 * sp, t0 = performance.now() + 250 * sp;
       const tick = now => {
         const k = Math.max(0, Math.min(1, (now - t0) / D)), e = 1 - Math.pow(1 - k, 4);
         x.textContent = fmt(f0 + (to.v - f0) * e, to.dec) + to.pct;
