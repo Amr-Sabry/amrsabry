@@ -836,7 +836,7 @@
         let j = Math.min(...ends);
         /* 15:17: a panel with nothing after its words (no chips, legend or foot) — the rows go inside it, before it closes */
         if (j === h.indexOf('<div class="mp ', i) || j === h.indexOf('<div class="mdots">', i)) j = h.lastIndexOf('</div>', j);
-        const pace = s.split ? splitHTML(s.split) : `<div class="pace">${s.pace.map(r => `<div class="pr ${r[2] || ''}"><b class="num${r[2] === 'g' ? ' gold' : ''}">${esc(r[0])}</b><span>${esc(r[1])}</span></div>`).join('')}</div>`;
+        const pace = s.split ? splitHTML(s.split) : `<div class="pace">${s.pace.map(r => `<div class="pr ${r[2] || ''}${r[3] ? ' tags' : ''}"><b class="num${r[2] === 'g' ? ' gold' : ''}">${esc(r[0])}</b><span>${esc(r[1])}</span>${r[3] ? `<div class="ptags">${r[3].map(t => `<i>${esc(t)}</i>`).join('')}</div>` : ''}</div>`).join('')}</div>`;
         h = h.slice(0, j) + pace + h.slice(j); });
       return h;
     } }
@@ -1187,6 +1187,13 @@
 .sv[data-id="s59"] .mp .pace .pr span{font:600 21px/1.4 var(--fb);color:#e6e1d6}
 /* 15:20 Amr «اتاكد ان ده النص في دولة تحمي مقدراتها»: the line under the title in two lines, as the deck sets it */
 .sv[data-id="s213"] .pad .p{white-space:pre-line;font-size:40px;line-height:1.45;font-weight:600;margin-top:14px}
+/* 15:31 Amr (the ports map) «خليهم كروت وفي كل كارت حط اساميهم في تاجز»: 14 developed and 5 new — two cards, each with its ports as tags */
+.sv.t-map .pace .pr.tags{display:grid;grid-template-columns:auto 1fr;align-items:baseline;column-gap:16px;row-gap:10px;padding:16px 20px 18px;border-radius:20px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.14)}
+.sv.t-map .pace .pr.tags.pb{border-color:rgba(92,192,234,.45);background:linear-gradient(180deg,rgba(92,192,234,.10),rgba(255,255,255,.02))}
+.sv.t-map .pace .pr.tags.pn{border-color:rgba(95,211,141,.45);background:linear-gradient(180deg,rgba(95,211,141,.10),rgba(255,255,255,.02))}
+.sv.t-map .pace .pr.tags .ptags{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:7px}
+.sv.t-map .pace .pr.tags .ptags i{font:600 18px/1 var(--fb);font-style:normal;color:#e9ecf1;padding:7px 11px 8px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);white-space:nowrap}
+.sv.t-map .pace .pr.tags.pb .ptags i{border-color:rgba(92,192,234,.35)}.sv.t-map .pace .pr.tags.pn .ptags i{border-color:rgba(95,211,141,.4)}
 .sv.t-cards .ivg{display:grid;gap:22px;margin-top:44px}.sv.t-cards .ivg.n5{grid-template-columns:repeat(5,minmax(0,1fr))}.sv.t-cards .ivg.n8{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 22px;margin-top:30px}
 .sv.t-cards .ivt{display:flex;flex-direction:column;align-items:center;text-align:center;padding:30px 22px 28px;border-radius:26px;background:linear-gradient(180deg,rgba(229,100,92,.12),rgba(255,255,255,.02) 75%);border:1px solid rgba(229,100,92,.32)}
 .sv.t-cards .ivg.n8 .ivt{padding:20px 20px 18px}
