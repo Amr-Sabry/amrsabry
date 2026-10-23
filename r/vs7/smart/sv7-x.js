@@ -1276,6 +1276,13 @@
 .sv.t-gallery .gt.gh.in .gfs.side{animation:gfcard 2.2s ease 1.1s 1}
 @keyframes gfcard{0%,100%{box-shadow:0 0 34px -12px rgba(233,188,108,.45),inset 0 1px 0 rgba(255,255,255,.08);border-color:rgba(233,188,108,.6)}40%{box-shadow:0 0 70px 6px rgba(233,188,108,.6),inset 0 1px 0 rgba(255,255,255,.12);border-color:rgba(243,215,159,1)}}
 .sv.nomo .gt.gh .gfs.side,.sv.nomo .gt.gh .gfs.side .gf{animation:none!important}
+/* 12:37 Amr (the 367 · 231 · 130 card) «ده مش واضح … نستخدم الالوان اللي كنا بنستخدمها في العادي»: the dark text-shadow the geo header gives its
+   figures was painting over the gold (a clipped gradient sits under the shadow) — the figures take the deck's usual bright gold, depth from a drop-shadow */
+.sv.t-gallery .gt.gh .gfs.side .gf,.sv.t-gallery .gt.gh .gfs.side .num{text-shadow:none!important}
+.sv.t-gallery .gt.gh .gfs.side .fv{filter:drop-shadow(0 3px 10px rgba(0,0,0,.55))}
+.sv.t-gallery .gt.gh .gfs.side .num{background-size:100% 100%!important}
+.sv.t-gallery .gt.gh .gfs.side .fu{color:#fff}
+.sv.t-gallery .gt.gh .gfs.side{background:linear-gradient(180deg,rgba(18,16,12,.82),rgba(12,12,14,.74));-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 /* duo before/after photographs (his 31) */
 .sv.t-kq .phs.phx img{transition:opacity 2.4s ease,transform 12s linear}
 .sv.t-kq .phs.phx .pa{filter:grayscale(1) brightness(.55) contrast(1.12)}
