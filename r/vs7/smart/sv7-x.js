@@ -1111,6 +1111,16 @@
 .sv.t-cards .cg.what .cd{border-color:rgba(229,100,92,.4);background:linear-gradient(160deg,rgba(229,100,92,.16),rgba(255,255,255,.03) 60%)}
 .sv.t-cards .cg.what h3{font-size:36px;color:#ff9a8c}
 .sv.t-cards .cg.what p,.sv.t-cards .cg.good p{font-size:29px;color:#e3e6ec}
+/* 12:31–12:32 Amr («ماذا لو» ×2) «محتاج … موضح الحاجة مش متلخبطة والالاين مظبوط … ماذا لو كلها محتاجة إعادة نظر منك إزاي تكون واضحة»: the figures read
+   inside the sentence in bold gold — no boxed pills breaking the lines — every title takes the same height so every text starts on one line */
+.sv.t-cards .cg.what .hl{display:inline;font-size:1.12em;line-height:inherit;padding:0;margin:0;background:none;border:0;border-radius:0;box-shadow:none;color:#f3d79f;white-space:nowrap}
+.sv.t-cards .cg.what .cd{justify-content:flex-start}
+.sv.t-cards .cg.what h3{line-height:1.25;margin:0}
+.sv.t-cards .cg.what.n5 h3{min-height:2.5em}
+.sv.t-cards .cg.what p{line-height:1.62;margin:0}
+.sv.t-cards .cg.what.n8 .cd{min-height:280px;padding:34px 32px}
+.sv.t-cards .cg.what{grid-template-columns:repeat(5,minmax(0,1fr))!important}.sv.t-cards .cg.what.n8{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+.sv.t-cards .cg.what.n5 .hl{display:block;font-size:1.3em;line-height:1.25;margin-top:.35em;white-space:normal;text-align:right;text-align-last:right}
 .sv.t-cards .cg.good{grid-template-columns:repeat(3,1fr)}
 .sv.t-cards .cg.good .cd{flex-direction:row;align-items:flex-start;min-height:240px}
 .sv.t-cards .cg.good .cd .ci{flex:none;width:80px;height:80px}.sv.t-cards .cg.good .cd .ci svg{width:44px;height:44px}
