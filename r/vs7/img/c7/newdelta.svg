@@ -188,7 +188,7 @@ text{direction:rtl;unicode-bidi:plaintext}
 <g><rect x="2102" y="584" width="76" height="24" rx="12" fill="rgba(10,26,46,.9)" stroke="rgba(110,175,235,.6)"/><text class="blab" x="2140" y="601" font-size="14">فرع دمياط</text></g>
 </g>
 <g id="labels-roads">
-<text class="rlab" x="1742" y="742" font-size="13" transform="rotate(29 1742 742)">طريق القاهرة / الإسكندرية الصحراوى</text>
+<text class="rlab" x="1724" y="774" font-size="13" transform="rotate(29 1724 774)">طريق القاهرة / الإسكندرية الصحراوى</text>
 <text class="rlab" x="1410" y="588" font-size="12.5" transform="rotate(22 1410 588)">طريق وادى النطرون / العلمين</text>
 <text class="rlab" x="738" y="594" font-size="13" transform="rotate(16 738 594)">محور تحيا مصر / الضبعة</text>
 <text class="rlab" x="1388" y="1196" font-size="13" transform="rotate(-26 1388 1196)">طريق القاهرة / الواحات البحرية</text>
