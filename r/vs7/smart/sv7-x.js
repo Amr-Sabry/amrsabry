@@ -249,6 +249,16 @@
       <div class="gal">${ph}</div>`;
   };
 
+  /* ───────── kpis: a table of targets (23 Oct 10:58 Amr «هنا في جدول بالمستهدفات») ─────────
+     the programme's three aims as the title, then each indicator on its own row: now (grey) → 2029/2030 (gold) and the change, its
+     arrow up or down — every change here is a gain, so all in the gain's colour */
+  R.kpis = (sc, d, o) => {
+    const ch = v => { const neg = /^-/.test(v), n = v.replace(/^[+-]/, ''); return `<span class="kc ${neg ? 'dn' : 'up'}"><i>${neg ? '▼' : '▲'}</i><b>\u2066${neg ? '−' : '+'}${esc(n)}\u2069</b></span>`; };
+    return `<div class="pad kpw">${sc.k ? `<div class="kick"${S(0)}>${esc(sc.k)}</div>` : ''}<h2 class="h2 kq2"${S(0)}>${esc(sc.q)}</h2>
+      <div class="ktab"><div class="kr kh"${S(0)}><span>${esc(sc.cols[0])}</span><span>${esc(sc.cols[1])}</span><span></span><span>${esc(sc.cols[2])}</span><span>${esc(sc.cols[3])}</span></div>
+      ${sc.rows.map((r, i) => `<div class="kr glass"${S(0)} style="transition-delay:${(.25 + i * .12).toFixed(2)}s"><span class="kn">${esc(r[0])}</span><span class="ka">${N(r[1].replace('%', '')) }<em>%</em></span><span class="kar">←</span><span class="kb">${N(r[2].replace('%', ''), 'gold')}<em>%</em></span>${ch(r[3])}</div>`).join('')}</div></div>`;
+  };
+
   /* ───────── ndmap: a whole drawn map across the stage (23 Oct 07:59 Amr his 106 — the New Delta map, nothing of it hidden) ─────────
      the vector map (its parcels, letters, areas, owners, sources, legend) fills the stage; the slide's words sit in one card over the
      empty western desert */
@@ -1310,6 +1320,21 @@
 /* 10:34 the road names on the roads map: small, in the roads' own blue */
 .sv[data-id="s50"].t-map .mlabels>span{font-size:15px;font-weight:600;color:#cfe8ff}
 .sv[data-id="s50"].t-map .mgrp b{font-size:16px}.sv[data-id="s50"].t-map .mgrp .gl span{font-size:15px;color:#cfe8ff}
+/* the targets table */
+.sv.t-kpis .pad.kpw{justify-content:flex-start;padding-top:140px;padding-bottom:70px}
+.sv.t-kpis .kick{color:var(--gold2,#e9bc6c)}
+.sv.t-kpis .h2.kq2{font-size:52px;margin:8px 0 26px}
+.sv.t-kpis .ktab{display:flex;flex-direction:column;gap:10px;direction:rtl}
+.sv.t-kpis .kr{display:grid;grid-template-columns:1fr 190px 60px 190px 250px;align-items:center;padding:0 30px;height:70px;border-radius:18px}
+.sv.t-kpis .kr.kh{height:40px;background:none;border:0;font:600 22px/1 var(--fb);color:#9aa3b2}
+.sv.t-kpis .kr.kh span:not(:first-child){text-align:center}
+.sv.t-kpis .kn{font:600 28px/1.2 var(--fd);color:#f1f3f7}
+.sv.t-kpis .ka,.sv.t-kpis .kb{display:flex;align-items:baseline;justify-content:center;gap:4px;direction:ltr}
+.sv.t-kpis .ka .num{font-size:44px;color:#aeb6c4}.sv.t-kpis .kb .num{font-size:52px}
+.sv.t-kpis .ka em,.sv.t-kpis .kb em{font:600 26px/1 var(--fd);font-style:normal;color:#8d96a6}.sv.t-kpis .kb em{color:var(--gold2,#e9bc6c)}
+.sv.t-kpis .kar{text-align:center;font:600 30px/1 var(--fd);color:var(--acc,#e9bc6c)}
+.sv.t-kpis .kc{display:flex;align-items:center;justify-content:center;gap:10px;font:700 34px/1 var(--fd);color:#5fd38d}
+.sv.t-kpis .kc i{font-style:normal;font-size:20px}
 /* 10:59 faster entrances */
 .sv [data-s]{transition:opacity .5s var(--e1),transform .62s var(--e1),filter .5s var(--e1)}
 /* 10:54 the ports: the 14 developed in the ports' blue, the 5 new in green */
