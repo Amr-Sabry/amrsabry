@@ -785,8 +785,13 @@
           el._onstep = (k, i) => { f2(k, i); p0.classList.add('cur'); p0.querySelectorAll('.macc').forEach(b => b.classList.toggle('on', +b.dataset.k <= k)); }; } }
       /* 13:56 Amr «سلايد ٥٠ خلي الكلام يظهر مرة واحدة · وسلايد ٥١ من غير زووم · نظهر ع طول واحنا في الاخر»: «atEnd» — the map opens
          straight on its last step (camera, words, figures), nothing glides or builds */
-      if (sc && sc.atEnd && sc.type === 'map' && el._onstep) { const f4 = el._onstep, kl = sc.st.length - 1; let first = true;
-        el._onstep = () => { if (first) { first = false; f4(0, true); } f4(kl, true); }; }
+      /* 15:17 Amr «ادمج كمان سلايد ٥٢ مع ٥١ …»: «merge» — the map opens on its first two steps at once (all the words, one motion), then by
+         itself (after sc.lead) moves to its last step: the tunnels, their names and photographs, the time and the cars come in */
+      if (sc && sc.merge && sc.type === 'map' && el._onstep) { const f5 = el._onstep, kl = sc.st.length - 1; let first = true, done = false; el.classList.add('mg');
+        el._onstep = k => { if (first) { first = false; for (let j = 0; j < kl; j++) f5(j, true); return; }
+          if (k >= 1 && !done) { done = true; el.classList.remove('mg'); f5(kl); } }; }
+      if (sc && sc.atEnd && sc.type === 'map' && el._onstep) { const f4 = el._onstep, kl = sc.st.length - 1; let first = true; el.classList.add('atend');
+        el._onstep = () => { if (first) { first = false; f4(0, true); f4(kl, true); } }; }
       try { hlNums(el); } catch (e) {} try { drift(el, o); } catch (e) {}
       if (!(o && o.thumb)) kjRun(el); } return el; };
   /* 00:19 kashida only once the slide is on the page AND its own faces are in: two frames after it is connected the browser has
@@ -826,7 +831,9 @@
       (sc.st || []).forEach((s, k) => { if (!s.pace && !s.split) return;
         const i = h.indexOf(`data-st="${k}">`, h.indexOf('<div class="mpanel">')); if (i < 0) return;
         const ends = ['<div class="leg">', '<div class="mchips">', '<div class="mfoot">', '<div class="mp ', '<div class="mdots">'].map(x => h.indexOf(x, i)).filter(x => x > 0);
-        const j = Math.min(...ends);
+        let j = Math.min(...ends);
+        /* 15:17: a panel with nothing after its words (no chips, legend or foot) — the rows go inside it, before it closes */
+        if (j === h.indexOf('<div class="mp ', i) || j === h.indexOf('<div class="mdots">', i)) j = h.lastIndexOf('</div>', j);
         const pace = s.split ? splitHTML(s.split) : `<div class="pace">${s.pace.map(r => `<div class="pr ${r[2] || ''}"><b class="num${r[2] === 'g' ? ' gold' : ''}">${esc(r[0])}</b><span>${esc(r[1])}</span></div>`).join('')}</div>`;
         h = h.slice(0, j) + pace + h.slice(j); });
       return h;
@@ -1158,6 +1165,22 @@
 .sv.t-cards .cg.what.n5 .hl{display:block;font-size:1.3em;line-height:1.25;margin-top:.35em;white-space:normal;text-align:right;text-align-last:right}
 /* 13:00 Amr «وريني اوبشن بالنسبه لماذا لو»: option — every what-if card wears a real pre-2014 photograph from the deck, black-and-white under a
    red veil; the sector on top of it, the sentence below, its figure big in red */
+/* 15:14 Amr «سلايد ٥١ بتعمل فليكر لان انت لسه مديها اتنين موشن خلي كل حاجة موشن واحد»: an «atEnd» map has no motion of its own — no build,
+   no line drawing, no panel rise, no photo stagger: everything rides the one fade that brings the slide in */
+.sv.atend [data-s]{opacity:1!important;transform:none!important;filter:none!important;transition:none!important}
+.sv.atend .mp,.sv.atend .mp *,.sv.atend .ly,.sv.atend .ly path,.sv.atend .mn,.sv.atend .mlabels *,.sv.atend .mpic,.sv.atend .mpic *,.sv.atend .chip{transition:none!important;animation-delay:0s!important}
+.sv.mg [data-s="0"]{opacity:1!important;transform:none!important;filter:none!important;transition:none!important}
+.sv.mg .mp,.sv.mg .mp *,.sv.mg .ly,.sv.mg .ly path,.sv.mg .mn,.sv.mg .mlabels *,.sv.mg .chip{transition:none!important}
+/* 15:17 the merged Sinai map: its two paragraphs, their chips and the two tunnel figures all fit the panel (no clipping) */
+.sv[data-id="s59"] .mpanel:has(.mp.acc){top:112px;bottom:56px}
+.sv[data-id="s59"] .mp h3{font-size:58px;line-height:1.18}
+.sv[data-id="s59"] .mp p{font-size:26px;line-height:1.6;margin-top:10px}
+.sv[data-id="s59"] .mp .mchips{flex-direction:row;flex-wrap:wrap;gap:10px 10px;margin-top:12px}
+.sv[data-id="s59"] .mp .mchips .chip{font-size:21px;padding:8px 18px}
+.sv[data-id="s59"] .mp .macc.on{margin-top:14px;padding-top:12px}
+.sv[data-id="s59"] .mp .pace{margin:4px 0 0!important;padding-top:0!important;border-top:0!important;gap:8px}
+/* 15:20 Amr «اتاكد ان ده النص في دولة تحمي مقدراتها»: the line under the title in two lines, as the deck sets it */
+.sv[data-id="s213"] .pad .p{white-space:pre-line;font-size:40px;line-height:1.45;font-weight:600;margin-top:14px}
 .sv.t-cards .ivg{display:grid;gap:22px;margin-top:44px}.sv.t-cards .ivg.n5{grid-template-columns:repeat(5,minmax(0,1fr))}.sv.t-cards .ivg.n8{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 22px;margin-top:30px}
 .sv.t-cards .ivt{display:flex;flex-direction:column;align-items:center;text-align:center;padding:30px 22px 28px;border-radius:26px;background:linear-gradient(180deg,rgba(229,100,92,.12),rgba(255,255,255,.02) 75%);border:1px solid rgba(229,100,92,.32)}
 .sv.t-cards .ivg.n8 .ivt{padding:20px 20px 18px}
@@ -1587,7 +1610,7 @@
 .sv.t-map .ly-tunnels .tw .tah{fill:#f4c84a;stroke:rgba(6,9,15,.8);stroke-width:1}
 @keyframes tflE{to{stroke-dashoffset:-18}}@keyframes tflW{to{stroke-dashoffset:18}}
 .sv.t-map[data-id="s62"] .mn.good.r>span,.sv.t-map[data-id="s59"] .mn.good.r>span{left:62px}   /* clear of the tunnel bars and their arrows */
-.sv[data-id="s62"].t-map .mpics{top:150px;width:372px}.sv[data-id="s62"].t-map .mpic{width:372px;height:210px}
+.sv[data-id="s62"].t-map .mpics,.sv[data-id="s59"].t-map .mpics{top:150px;width:372px}.sv[data-id="s62"].t-map .mpic,.sv[data-id="s59"].t-map .mpic{width:372px;height:210px}
 /* 10:46 Amr (his 91) «اظبط الكلام في نصف الصفحة»: a before/after strike with no photographs sits in the middle of the stage */
 .sv.t-kq:not(:has(.phs)) .kbody:has(.k-strike){justify-content:center;padding-bottom:30px}
 .sv.t-kq:not(:has(.phs)) .chart.k-strike{margin-bottom:0}
