@@ -782,7 +782,12 @@
         if (p0) { p0.classList.add('acc');
           el.querySelectorAll('.mp:not([data-st="0"])').forEach(p => { const b = document.createElement('div'); b.className = 'macc'; b.dataset.k = p.dataset.st;
             p.querySelectorAll(':scope > p, :scope > .mchips, :scope > .pace').forEach(x => b.appendChild(x)); p0.insertBefore(b, p0.querySelector(':scope > .mfoot')); p.remove(); });
-          el._onstep = (k, i) => { f2(k, i); p0.classList.add('cur'); p0.querySelectorAll('.macc').forEach(b => b.classList.toggle('on', +b.dataset.k <= k)); }; } } try { hlNums(el); } catch (e) {} try { drift(el, o); } catch (e) {}
+          el._onstep = (k, i) => { f2(k, i); p0.classList.add('cur'); p0.querySelectorAll('.macc').forEach(b => b.classList.toggle('on', +b.dataset.k <= k)); }; } }
+      /* 13:56 Amr «سلايد ٥٠ خلي الكلام يظهر مرة واحدة · وسلايد ٥١ من غير زووم · نظهر ع طول واحنا في الاخر»: «atEnd» — the map opens
+         straight on its last step (camera, words, figures), nothing glides or builds */
+      if (sc && sc.atEnd && sc.type === 'map' && el._onstep) { const f4 = el._onstep, kl = sc.st.length - 1; let first = true;
+        el._onstep = () => { if (first) { first = false; f4(0, true); } f4(kl, true); }; }
+      try { hlNums(el); } catch (e) {} try { drift(el, o); } catch (e) {}
       if (!(o && o.thumb)) kjRun(el); } return el; };
   /* 00:19 kashida only once the slide is on the page AND its own faces are in: two frames after it is connected the browser has
      asked for the weights it uses; fonts.ready then waits for them — measured with a stand-in font the lines broke elsewhere and
