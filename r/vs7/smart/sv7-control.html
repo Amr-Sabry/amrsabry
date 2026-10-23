@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="sv7-build" content="10231400">
+<meta name="sv7-build" content="10231500">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>الكنترول · VS7</title>
 <link rel="stylesheet" href="sv.css?v=21">
@@ -104,7 +104,7 @@ body.black .frame:first-child{outline:3px solid var(--bad)}
 <script src="sv-engine.js?v=11"></script>
 <script src="sv-kq.js?v=12"></script>
 <script src="sv-map.js?v=9"></script>
-<script src="sv-gallery.js?v=3"></script><script src="sv7-x.js?v=67"></script>
+<script src="sv-gallery.js?v=3"></script><script src="sv7-x.js?v=67"></script><script src="sv7-remote.js?v=1"></script>
 <script src="../src/c6/store.js?v=c7" onerror="void 0"></script>
 <script>
 (function(){
@@ -170,6 +170,8 @@ $('bNext').onclick=next;$('bPrev').onclick=prev;$('fNext').onclick=()=>{const j=
 $('bOrd').onclick=()=>{ord=null;saveOrd()};
 $('bFirst').onclick=()=>go(live()[0],0);$('bReplay').onclick=()=>go(cur,0);
 $('bBlack').onclick=()=>{black=!black;send({type:'black',on:black});document.body.classList.toggle('black',black)};
+/* 14:56 Apple remote / media keys turn the slides (sv7-remote.js) */
+if(window.svRemote)svRemote(next,prev);
 addEventListener('keydown',e=>{if(e.target.matches('input,textarea'))return;const k=e.key;
   if(['ArrowLeft','PageDown',' ','Enter','ArrowDown'].includes(k)){e.preventDefault();next()}else if(['ArrowRight','PageUp','Backspace','ArrowUp'].includes(k)){e.preventDefault();prev()}else if(k==='b'||k==='B')$('bBlack').click()});
 let showBuild='';if(bc)bc.onmessage=ev=>{const d=ev.data||{};if(d.type==='state'&&(d.deck==='sv7'||d.deck==='sv1')){showSeen=Date.now();showBuild=d.build||'old';if(d.i!==cur||d.step!==step||d.slideAt!==slideAt)setCur(d.i,d.step,d.slideAt);showPill()}};

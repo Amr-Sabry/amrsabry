@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="sv7-build" content="10231400">
+<meta name="sv7-build" content="10231500">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>شاشة المتحدث · VS7</title>
 <link rel="stylesheet" href="sv.css?v=21">
@@ -72,7 +72,7 @@ h1{margin:0;font:600 calc(46px*var(--fs))/1.25 var(--fd)}
 <script src="sv-engine.js?v=11"></script>
 <script src="sv-kq.js?v=12"></script>
 <script src="sv-map.js?v=9"></script>
-<script src="sv-gallery.js?v=3"></script><script src="sv7-x.js?v=67"></script>
+<script src="sv-gallery.js?v=3"></script><script src="sv7-x.js?v=67"></script><script src="sv7-remote.js?v=1"></script>
 <script src="../src/c6/store.js?v=c7" onerror="void 0"></script>
 <script>
 (function(){
@@ -117,6 +117,8 @@ setInterval(tick,500);
 let fs=+(localStorage.getItem('sv7-pfs')||1);const setFs=()=>{document.documentElement.style.setProperty('--fs',fs);localStorage.setItem('sv7-pfs',fs)};setFs();
 $('fMinus').onclick=()=>{fs=Math.max(.7,+(fs-.1).toFixed(2));setFs()};$('fPlus').onclick=()=>{fs=Math.min(1.6,+(fs+.1).toFixed(2));setFs()};
 $('mir').onclick=()=>document.body.classList.toggle('mirror');
+/* 14:56 Apple remote / media keys turn the slides (sv7-remote.js) */
+if(window.svRemote)svRemote(()=>bc&&bc.postMessage({type:'next'}),()=>bc&&bc.postMessage({type:'prev'}));
 addEventListener('keydown',e=>{const k=e.key;if(['ArrowLeft','PageDown',' ','Enter','ArrowDown'].includes(k)){e.preventDefault();bc&&bc.postMessage({type:'next'})}else if(['ArrowRight','PageUp','Backspace','ArrowUp'].includes(k)){e.preventDefault();bc&&bc.postMessage({type:'prev'})}else if(k==='m'||k==='M')$('mir').click()});
 if(window.C6&&C6.sndRelay)C6.sndRelay();
 addEventListener('resize',draw);
