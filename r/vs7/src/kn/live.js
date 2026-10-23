@@ -1,1 +1,0 @@
-window.KNLIVE=1792585178;
