@@ -3,6 +3,9 @@
 const HUB_HOSTS = ['aromahub.studio', 'www.aromahub.studio'];
 // Friendly addresses for rooms that were published under a random slug.
 const ALIAS = { yummis: '4spd88sciw6fss8jpdw3vx', egymap: 'tin5cbfttzvdu6uujdc6wb' };
+// Public short links to a show inside a room folder. These redirect (not rewrite) so the page's
+// relative paths (../img, ../fonts, ../opening …) resolve inside its own folder.
+const SHOW = { vs7: '/r/vs7/smart/sv7' };
 const notFound = () =>
   new Response('Not found', { status: 404, headers: { 'content-type': 'text/plain; charset=utf-8' } });
 const rewrite = (request, to) =>
@@ -22,6 +25,11 @@ export default function middleware(request) {
     if (path === '/api/notes') return;                        // comments left on rooms (api/notes.js)
     if (path === '/api/media') return;                        // photos a room's settings page edits online (api/media.js)
     const m = path.match(/^\/([a-z0-9][a-z0-9-]{1,40})$/);    // open project pages: /<project> is r/<project>.html
+    if (m && Object.prototype.hasOwnProperty.call(SHOW, m[1])) {
+      const to = new URL(SHOW[m[1]], request.url);
+      to.search = url.search;
+      return Response.redirect(to.toString(), 302);
+    }
     if (m) return rewrite(request, '/r/' + (ALIAS[m[1]] || m[1]));
     return notFound();
   }
