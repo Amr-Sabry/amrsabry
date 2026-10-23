@@ -5,7 +5,7 @@ const HUB_HOSTS = ['aromahub.studio', 'www.aromahub.studio'];
 const ALIAS = { yummis: '4spd88sciw6fss8jpdw3vx', egymap: 'tin5cbfttzvdu6uujdc6wb' };
 // Public short links to a show inside a room folder. These redirect (not rewrite) so the page's
 // relative paths (../img, ../fonts, ../opening …) resolve inside its own folder.
-const SHOW = {};   // 23 Oct 15:51 Amr: the presentation is off the hub (offline only)
+const SHOW = { vs7: '/r/vs7/smart/sv7' };
 const notFound = () =>
   new Response('Not found', { status: 404, headers: { 'content-type': 'text/plain; charset=utf-8' } });
 const rewrite = (request, to) =>

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="sv7-build" content="10231550">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VS7 · العرض</title>
+<link rel="stylesheet" href="sv.css?v=21">
+<style>
+html,body{margin:0;height:100%;background:#000;overflow:hidden}
+#stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;overflow:hidden;background:#04060b}
+#stage>.sv{transition:opacity .8s cubic-bezier(.16,1,.3,1)}
+#stage>.sv.leave{opacity:0}
+#black{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .35s;z-index:20}#black.on{opacity:1}
+body.nocur{cursor:none}
+#nav{position:fixed;left:50%;bottom:18px;transform:translate(-50%,20px);z-index:35;display:flex;align-items:center;gap:6px;padding:6px;border-radius:999px;background:rgba(20,24,38,.82);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;direction:rtl;font-family:system-ui,sans-serif}
+body.ui #nav,#nav:hover,#nav:focus-within{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+#nav button{all:unset;cursor:pointer;height:40px;min-width:40px;padding:0 12px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#fff;font:600 14px system-ui}
+#nav button:hover{background:rgba(255,255,255,.12)}
+#nav .cnt{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.7);font:600 15px system-ui;padding:0 6px}
+#nav #nFull{border-right:1px solid rgba(255,255,255,.16);border-radius:0 999px 999px 0;margin-right:2px}#nav #nFull .fi{display:none}body.fs #nav #nFull .fi{display:inline}body.fs #nav #nFull .fo{display:none}
+#nav input{all:unset;width:56px;height:32px;border-radius:999px;background:rgba(255,255,255,.12);text-align:center;color:#fff;font:700 16px system-ui}
+/* 23 Oct 08:27 Amr «لما يتعرض على الموبايل عاوزه يشتغل بس لازم يطلع رسالة لف الموبايل»: a phone held upright is asked to turn */
+#rot{position:fixed;inset:0;z-index:99;display:none;flex-direction:column;align-items:center;justify-content:center;gap:26px;background:#05070d;color:#f4ecd9;direction:rtl;text-align:center;padding:24px;font:600 22px/1.5 'SVd','SVb',system-ui,sans-serif}
+#rot svg{width:84px;height:84px;color:#e9bc6c;animation:rotph 2.4s cubic-bezier(.6,0,.3,1) infinite}
+#rot small{font:500 16px/1.5 'SVb',system-ui,sans-serif;color:#aeb5c2}
+@keyframes rotph{0%,15%{transform:rotate(0)}45%,70%{transform:rotate(-90deg)}100%{transform:rotate(0)}}
+@media (orientation:portrait) and (max-width:900px){#rot{display:flex}}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="black"></div>
+<div id="rot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18.5h2"/></svg><div>لف الموبايل بالعرض</div><small>العرض بيشتغل على الشاشة بالعرض</small></div>
+<div id="nav"><button id="nFirst">من البداية</button><button id="nPrev">›</button><span class="cnt"><input id="nIn" inputmode="numeric"><span>/</span><span id="nTot"></span></span><button id="nNext">‹</button><button id="nFull" title="F"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path class="fo" d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><path class="fi" d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg></button></div>
+<script src="../src/kn/icons.js?v=2"></script>
+<script src="sv-geo.js?v=7"></script>
+<script src="sv1-data.js?v=27"></script>
+<script src="sv1-gallery.js?v=3"></script><script src="sv7-data.js?v=79"></script>
+<script src="sv-engine.js?v=11"></script>
+<script src="sv-kq.js?v=12"></script>
+<script src="sv-map.js?v=9"></script>
+<script src="sv-gallery.js?v=3"></script><script src="sv7-x.js?v=71"></script><script src="sv7-remote.js?v=2"></script>
+<script>
+/* VS7 — the show window. Keys: ← / Space / PageDown = next build, → / PageUp = back, Home / End, B = black, F = full screen,
+   type a scene number + Enter. Driven by the control over BroadcastChannel «sv7-ctl». ?thumb=1&i=N a still of scene N, ?preview=1 silent copy. */
+(function(){
+const D=window.SV7, Q=new URLSearchParams(location.search), THUMB=Q.has('thumb'), STATIC=Q.has('static'), PREVIEW=Q.has('preview');
+const stage=document.getElementById('stage');
+function fit(){const s=Math.min(innerWidth/1920,innerHeight/1080);stage.style.transform=`translate(${(innerWidth-1920*s)/2}px,${(innerHeight-1080*s)/2}px) scale(${s})`}
+addEventListener('resize',fit);fit();
+const bc=('BroadcastChannel' in window)?new BroadcastChannel('sv7-ctl'):null;
+const snd=('BroadcastChannel' in window)?new BroadcastChannel('c6-ctl'):null;
+/* the opt-in list of films: the control can switch any film scene off */
+let off=Object.assign({},(window.SV7&&SV7.hid)||{});try{Object.assign(off,JSON.parse(localStorage.getItem('sv7-off')||'{}'))}catch(e){}
+/* 06:26 Amr «اديني في الكنترول … الاخفاء والاظهار للسلايد وكمان امكانية تحريك مكانه»: the show order is the deck's order unless
+   the control saved another (localStorage «sv7-ord», sent as {type:'ord'}); a scene the saved order doesn't know sits after its
+   natural predecessor. Next/previous walk this order, skipping what is switched off. */
+let ord=null;try{ord=JSON.parse(localStorage.getItem('sv7-ord')||'null')}catch(e){}
+function seq(){const nat=D.scenes.map((s,i)=>i);if(!ord||!ord.length)return nat;const id2i={};D.scenes.forEach((s,i)=>id2i[s.id]=i);const out=[],seen=new Set();
+  ord.forEach(id=>{const i=id2i[id];if(i!=null&&!seen.has(i)){out.push(i);seen.add(i)}});
+  nat.forEach(i=>{if(seen.has(i))return;let k=-1;for(let j=i-1;j>=0;j--){const p=out.indexOf(j);if(p>=0){k=p;break}}out.splice(k+1,0,i);seen.add(i)});return out}
+function nb(i,d){const S=seq();let p=S.indexOf(i);for(p+=d;p>=0&&p<S.length;p+=d){if(!off[D.scenes[S[p]].id])return S[p]}return null}
+const live=()=>seq().filter(i=>!off[D.scenes[i].id]);
+let cur=0,step=0,black=false,slideAt=Date.now(),shown=null,film=null;
+function startMedia(el){
+  if(THUMB||STATIC)return;
+  el.querySelectorAll('video[data-src]').forEach(v=>{v.src=v.dataset.src;if(PREVIEW)v.muted=true;const p=v.play();if(p&&p.catch)p.catch(()=>{v.muted=true;if(!PREVIEW)v.dataset.relay='1';v.play().catch(()=>{})});});
+  /* 23:35 Amr «لما السلايد بيخلص بتقلب اتوماتيك على السلايد التاني»: no auto-advance — a film that ends holds its last frame */
+  el.querySelectorAll('iframe[data-src]').forEach(f=>{f.src=f.dataset.src+(PREVIEW?'&mute=1':'')+'&b='+((document.querySelector('meta[name=sv7-build]')||{}).content||'');f.addEventListener('load',()=>{const p=el.querySelector('.poster');if(p)setTimeout(()=>p.remove(),500)},{once:true})});
+}
+function stopMedia(el){el.querySelectorAll('video').forEach(v=>{try{v.pause();v.removeAttribute('src');v.load()}catch(e){}});el.querySelectorAll('iframe').forEach(f=>f.src='about:blank')}
+function draw(i,k){
+  const el=SV.render(D,i,{static:STATIC||THUMB,thumb:THUMB});
+  const old=shown; shown=el; film=null; stage.appendChild(el);
+  if(old){old.classList.add('leave');stopMedia(old);setTimeout(()=>old.remove(),850)}
+  startMedia(el);
+  if(!STATIC&&!THUMB){el._k=k||0;SV.enter(el)}
+}
+function send(){
+  if(PREVIEW||THUMB||!bc)return;const S=D.scenes[cur];
+  bc.postMessage({type:'state',deck:'sv7',build:(document.querySelector('meta[name=sv7-build]')||{}).content||'',i:cur,id:S.id,step,steps:S.steps||1,place:live().indexOf(cur)+1,total:live().length,black,slideAt,t:Date.now()});
+  try{localStorage.setItem('sv7-state',JSON.stringify({i:cur,step,slideAt,t:Date.now()}))}catch(e){}
+}
+function go(i,k){if(i<0||i>=D.scenes.length)return;const changed=i!==cur||!shown;cur=i;step=k||0;if(changed){slideAt=Date.now();draw(cur,step)}else SV.step(shown,step);send();navUpd();if(!PREVIEW&&!THUMB)history.replaceState(null,'','#'+(live().indexOf(cur)+1))}
+function next(){const S=D.scenes[cur];if(step<(S.steps||1)-1){step++;SV.step(shown,step);send();return}const j=nb(cur,1);if(j!=null)go(j,0)}
+function prev(){if(step>0){step--;SV.step(shown,step);send();return}const j=nb(cur,-1);if(j!=null)go(j,(D.scenes[j].steps||1)-1)}
+function setBlack(on){black=on==null?!black:!!on;document.getElementById('black').classList.toggle('on',black);send()}
+/* 14:56 Apple remote / media keys turn the slides (sv7-remote.js) */
+if(!PREVIEW&&!THUMB&&window.svRemote)svRemote(next,prev);
+addEventListener('keydown',e=>{if(PREVIEW||THUMB||e.target.id==='nIn')return;const k=e.key;
+  if(['ArrowLeft','PageDown',' ','Enter','ArrowDown'].includes(k)){e.preventDefault();next()}
+  else if(['ArrowRight','PageUp','Backspace','ArrowUp'].includes(k)){e.preventDefault();prev()}
+  else if(k==='Home')go(live()[0]);else if(k==='End'){const v=live();go(v[v.length-1])}
+  else if(k==='b'||k==='B'||k==='.')setBlack();
+  else if(k==='f'||k==='F'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{})}
+  else if(/^[0-9٠-٩]$/.test(k)&&!e.metaKey&&!e.ctrlKey){e.preventDefault();document.body.classList.add('ui');nIn.focus();nIn.value=(nIn.value+k).slice(-3)}});
+/* sound, as on the V6 show: the opener's score and any film the browser keeps silent are played in step by the control */
+['pointerdown','keydown'].forEach(ev=>addEventListener(ev,e=>{if(PREVIEW||THUMB)return;document.querySelectorAll('iframe').forEach(f=>{try{f.contentWindow.postMessage({c5film:'sound'},'*')}catch(e){}});if(e.pointerType==='touch')return;document.querySelectorAll('video').forEach(v=>{if(v.muted){v.muted=false;delete v.dataset.relay}})},true));
+/* 23 Oct «الفيلم الافتتاحي مش بيتعرض على الموبايل»: a phone lets sound start only inside the touch itself and a message reaches the film
+   after it — so a touch on the show (outside the film) calls the film's own sound start directly (same origin). No touch, no change. */
+addEventListener('touchend',()=>{if(PREVIEW||THUMB)return;document.querySelectorAll('iframe').forEach(f=>{try{const w=f.contentWindow;if(w&&w.__c5sound)w.__c5sound()}catch(e){}});
+  /* 10:00 Amr «اه اكمل التصليح» — the same for the show's own videos: on a phone a video starts muted (the browser allows only that), and
+     its sound is turned on inside the tap's end (iOS pauses a video unmuted at the touch's start); it keeps playing from where it is */
+  document.querySelectorAll('video').forEach(v=>{if(v.muted&&v.dataset.relay==='1'){v.muted=false;delete v.dataset.relay;if(v.paused)v.play().catch(()=>{v.muted=true;v.dataset.relay='1';v.play().catch(()=>{})})}})},true);
+addEventListener('message',e=>{const m=e.data||{};if(m.c5film!=='state'||PREVIEW||THUMB||!shown)return;const f=[...shown.querySelectorAll('iframe')].find(x=>x.contentWindow===e.source);if(!f)return;
+  try{e.source.postMessage({c5film:'relay',on:true},'*')}catch(_){}film={t:+m.t||0,playing:!!m.playing,own:!!m.own,muted:!!m.muted,at:Date.now(),src:new URL('score.mp3?v=g1',f.src).href,dur:+m.dur||0};});
+setInterval(()=>{if(PREVIEW||THUMB||STATIC||!snd)return;const items=[];
+  if(shown){shown.querySelectorAll('video').forEach(v=>{if(v.dataset.relay==='1'&&v.currentSrc&&!v.paused)items.push({src:v.currentSrc,ct:v.currentTime,at:Date.now()})});
+    if(film&&Date.now()-film.at<1200&&film.playing&&!film.own&&!film.muted)items.push({src:film.src,ct:film.t+(Date.now()-film.at)/1000,at:Date.now()})}
+  snd.postMessage({type:'snd',from:'sv1',items})},250);
+if(bc)bc.onmessage=ev=>{const d=ev.data||{};
+  if(PREVIEW){if(d.type==='state')go(d.i,d.step);return}
+  if(THUMB)return;
+  if(d.type==='go')go(d.i,d.step||0);else if(d.type==='next')next();else if(d.type==='prev')prev();else if(d.type==='black')setBlack(d.on);else if(d.type==='ping')send();
+  else if(d.type==='off'){off=d.off||{};send();navUpd()}else if(d.type==='ord'){ord=d.ord||null;send();navUpd()}};
+let mt=0;addEventListener('mousemove',()=>{if(PREVIEW||THUMB)return;document.body.classList.remove('nocur');document.body.classList.add('ui');clearTimeout(mt);mt=setTimeout(()=>{document.body.classList.add('nocur');if(document.activeElement.id!=='nIn')document.body.classList.remove('ui')},2200)});
+const nIn=document.getElementById('nIn');
+function navUpd(){nIn.placeholder=live().indexOf(cur)+1;document.getElementById('nTot').textContent=live().length}
+nIn.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'){const n=parseInt(nIn.value.replace(/[٠-٩]/g,c=>'٠١٢٣٤٥٦٧٨٩'.indexOf(c)),10);const i=live()[n-1];nIn.value='';nIn.blur();document.body.classList.remove('ui');if(i!=null)go(i)}});
+/* 06:20 Amr «اديني كمان في الجزء اللي تحت بتاع الاسهم وارقام السلايد زرار full screen» */
+document.getElementById('nFull').onclick=()=>{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{})};
+document.addEventListener('fullscreenchange',()=>document.body.classList.toggle('fs',!!document.fullscreenElement));
+document.getElementById('nFirst').onclick=()=>go(live()[0]);document.getElementById('nPrev').onclick=prev;document.getElementById('nNext').onclick=next;
+const want=Q.has('i')?+Q.get('i'):(live()[(parseInt(location.hash.slice(1))||1)-1]??0);
+document.fonts.load('600 80px SVd','أبجد').catch(()=>{}).then(()=>document.fonts.ready).then(()=>{go(want,Q.has('k')?+Q.get('k'):(THUMB?SV.steps(D,want)-1:0));document.body.dataset.ready=1});
+window.SVshow={go,next,prev,get cur(){return cur},get step(){return step}};
+})();
+</script>
+<script src="sv7-caps.js?v=8"></script><script src="sv7-media.js?v=7"></script>
+<script>/* a window older than the control reloads itself (keeps its place: the # stays) */
+(function(){const me=(document.querySelector('meta[name=sv7-build]')||{}).content||'';if(!('BroadcastChannel' in window)||/[?&](thumb|static|preview)/.test(location.search))return;
+const c=new BroadcastChannel('sv7-ctl');c.addEventListener('message',e=>{const d=e.data||{};if(d.type==='build'&&d.b&&me&&d.b>me){let k='';try{k=sessionStorage.getItem('sv7-rl')}catch(_){}if(k===d.b)return;try{sessionStorage.setItem('sv7-rl',d.b)}catch(_){}c.close();location.reload()}})})();</script>
+</body>
+</html>

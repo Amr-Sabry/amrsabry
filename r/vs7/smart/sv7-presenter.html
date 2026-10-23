@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="sv7-build" content="10231550">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>شاشة المتحدث · VS7</title>
+<link rel="stylesheet" href="sv.css?v=21">
+<style>
+:root{--bg:#05070c;--line:rgba(255,255,255,.1);--ink:#f2f3f6;--mute:#8d96a6;--gold:#e9bc6c;--ok:#4fd1a1;--warn:#f5b84b;--bad:#ef6b6b;--fs:1;--f:'SVb','SVd',system-ui,sans-serif;--fd:'SVd','SVb',system-ui,sans-serif}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:400 16px/1.4 var(--f);overflow:hidden}
+body.mirror #wrap{transform:scaleX(-1)}
+#wrap{height:100%;display:grid;grid-template-rows:auto 1fr auto;gap:14px;padding:16px 22px}
+.top{display:flex;align-items:center;gap:22px}
+.tm{display:flex;flex-direction:column;gap:6px;min-width:210px}
+.tm small{color:var(--mute);font:500 13px var(--f)}
+.tm b{font:600 44px/1 var(--fd);font-variant-numeric:tabular-nums;direction:ltr;text-align:right}
+.bar{height:7px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden}.bar i{display:block;height:100%;background:var(--ok);width:0;transition:width .5s}
+.sp{flex:1}
+.place{font:600 34px var(--fd);color:var(--mute);direction:ltr}.place b{color:var(--ink)}
+.tools button{all:unset;cursor:pointer;padding:8px 12px;border-radius:10px;border:1px solid var(--line);font:600 14px var(--fd);margin-inline-start:6px}
+.mid{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:22px;min-height:0}
+.main{display:flex;flex-direction:column;gap:18px;min-height:0;overflow:hidden}
+.kind{display:flex;gap:10px;align-items:center;font:600 16px var(--fd);color:var(--gold)}
+.kind .ch{color:var(--mute)}
+h1{margin:0;font:600 calc(46px*var(--fs))/1.25 var(--fd)}
+.cue{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+.cue li{font:600 calc(40px*var(--fs))/1.35 var(--fd);display:flex;gap:16px}
+.cue li::before{content:'';flex:none;width:14px;height:14px;border-radius:50%;background:var(--gold);margin-top:calc(16px*var(--fs))}
+.say{margin-top:6px;padding:22px 26px;border-radius:22px;background:rgba(233,188,108,.07);border:1px solid rgba(233,188,108,.22);font:500 calc(32px*var(--fs))/1.75 var(--f);color:#f1e6cc;overflow:auto}
+.say em{font-style:normal;color:#fff;background:rgba(233,188,108,.22);border-radius:6px;padding:0 6px}
+.film{font:600 calc(40px*var(--fs))/1.4 var(--fd);color:#9fd6ff}
+.side{display:flex;flex-direction:column;gap:14px;min-height:0}
+.frame{position:relative;width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#04060b;border:2px solid #e5645c}
+.frame.n{border-color:var(--line);filter:grayscale(.5) brightness(.8)}
+.frame .mini{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0}
+.side .lab{font:600 13px var(--fd);color:var(--mute)}
+.nxt{font:600 22px/1.35 var(--fd)}
+.dots{display:flex;gap:6px}.dots i{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.12)}.dots i.on{background:var(--gold)}
+.bottom{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid var(--line);font:600 22px var(--fd)}
+.bottom span{color:var(--mute);font-weight:500}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div class="top">
+    <div class="tm"><small>الجلسة · من <span id="tBud">45:00</span></small><b id="tAll">00:00</b><div class="bar"><i id="tAllB"></i></div></div>
+    <div class="tm"><small>المشهد · المخطط <span id="tPl"></span></small><b id="tSc">00:00</b><div class="bar"><i id="tScB"></i></div></div>
+    <div class="sp"></div>
+    <div class="place"><b id="pNo">1</b> / <span id="pTot"></span></div>
+    <div class="tm" style="min-width:110px"><small>الساعة</small><b id="clock" style="font-size:34px">--:--</b></div>
+    <div class="tools"><button id="fMinus">A−</button><button id="fPlus">A+</button><button id="mir">مراية</button></div>
+  </div>
+  <div class="mid">
+    <div class="main">
+      <div class="kind"><span id="kKind"></span><span class="ch" id="kCh"></span></div>
+      <h1 id="title"></h1>
+      <ul class="cue" id="cue"></ul>
+      <div class="say" id="say"></div>
+    </div>
+    <div class="side">
+      <div class="lab">على الشاشة ورايا</div><div class="frame" id="fNow"></div><div class="dots" id="dots"></div>
+      <div class="lab">اللي بعده</div><div class="frame n" id="fNext"></div><div class="nxt" id="nxt"></div>
+    </div>
+  </div>
+  <div class="bottom">بعد كده ← <b id="bNext"></b> <span id="bCue"></span></div>
+</div>
+<script src="../src/kn/icons.js?v=2"></script>
+<script src="sv-geo.js?v=7"></script>
+<script src="sv1-data.js?v=27"></script>
+<script src="sv1-gallery.js?v=3"></script><script src="sv7-data.js?v=79"></script>
+<script src="sv-engine.js?v=11"></script>
+<script src="sv-kq.js?v=12"></script>
+<script src="sv-map.js?v=9"></script>
+<script src="sv-gallery.js?v=3"></script><script src="sv7-x.js?v=71"></script><script src="sv7-remote.js?v=2"></script>
+<script src="../src/c6/store.js?v=c7" onerror="void 0"></script>
+<script>
+(function(){
+const D=window.SV7,$=id=>document.getElementById(id),BUD=(D.mins||45)*60;
+const sayOf=(S,k)=>(S.st&&S.st[k]&&S.st[k].say)||S.say;
+const bc=('BroadcastChannel' in window)?new BroadcastChannel('sv7-ctl'):null;
+let off=Object.assign({},(window.SV7&&SV7.hid)||{});try{Object.assign(off,JSON.parse(localStorage.getItem('sv7-off')||'{}'))}catch(e){}
+/* 06:26 Amr «اديني في الكنترول … الاخفاء والاظهار للسلايد وكمان امكانية تحريك مكانه»: the show order is the deck's order unless
+   the control saved another (localStorage «sv7-ord», sent as {type:'ord'}); a scene the saved order doesn't know sits after its
+   natural predecessor. Next/previous walk this order, skipping what is switched off. */
+let ord=null;try{ord=JSON.parse(localStorage.getItem('sv7-ord')||'null')}catch(e){}
+function seq(){const nat=D.scenes.map((s,i)=>i);if(!ord||!ord.length)return nat;const id2i={};D.scenes.forEach((s,i)=>id2i[s.id]=i);const out=[],seen=new Set();
+  ord.forEach(id=>{const i=id2i[id];if(i!=null&&!seen.has(i)){out.push(i);seen.add(i)}});
+  nat.forEach(i=>{if(seen.has(i))return;let k=-1;for(let j=i-1;j>=0;j--){const p=out.indexOf(j);if(p>=0){k=p;break}}out.splice(k+1,0,i);seen.add(i)});return out}
+function nb(i,d){const S=seq();let p=S.indexOf(i);for(p+=d;p>=0&&p<S.length;p+=d){if(!off[D.scenes[S[p]].id])return S[p]}return null}
+const live=()=>seq().filter(i=>!off[D.scenes[i].id]);
+let cur=0,step=0,slideAt=Date.now();
+const KIND={gallery:'تجميع صور',film:'فيلم',act:'سؤال',chapter:'قدرة جديدة',compare:'قبل ← بعد',stat:'رقم',quote:'اقتباس',whatif:'ماذا لو',close:'القفلة',kq:'سؤال وإجابة',map:'الخريطة'};
+const title=s=>SV.title(s);
+const fmt=s=>{s=Math.max(0,Math.round(s));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
+/* numbers in the script stand out so the eye finds them */
+const hl=t=>String(t||'').replace(/(\d[\d.,%–-]*|صفر|الضعف|أضعاف)/g,'<em>$1</em>');
+function mini(fr,i,k){fr.querySelectorAll('.mini').forEach(n=>n.remove());if(i==null)return;const w=document.createElement('div');w.className='mini';const el=SV.render(D,i,{thumb:true});if(k!=null)SV.step(el,k,true);w.appendChild(el);fr.appendChild(w);w.style.transform=`scale(${fr.clientWidth/1920})`}
+function draw(){
+  const S=D.scenes[cur],n=nb(cur,1);
+  $('pNo').textContent=live().indexOf(cur)+1;$('pTot').textContent=live().length;
+  $('kKind').textContent=KIND[S.type]||'';$('kCh').textContent=S.ch?('· '+D.chapters[S.ch-1]+' '+S.ch+'/5'):'';
+  $('title').textContent=title(S)+(S.st&&S.st[step]&&S.st[step].h?' · '+S.st[step].h:'');
+  $('cue').innerHTML=(S.cue||[]).map(c=>`<li>${c}</li>`).join('');
+  $('say').innerHTML=S.type==='film'?`<div class="film">▶︎ ${S.label} — ${fmt(S.t)}<br><span style="font-size:.7em;color:#c9d6e3">الفيلم بيقف على آخر فريم · دوس «التالي» لما يخلص</span></div>`:hl(sayOf(S,step));
+  $('tPl').textContent=fmt(S.t||0);$('tBud').textContent=fmt(BUD);
+  $('dots').innerHTML=Array.from({length:S.steps||1},(_,k)=>`<i class="${k<=step?'on':''}"></i>`).join('');
+  mini($('fNow'),cur,step);mini($('fNext'),n!=null?n:null);
+  $('nxt').textContent=n!=null?title(D.scenes[n]):'— آخر مشهد —';$('bNext').textContent=n!=null?title(D.scenes[n]):'النهاية';$('bCue').textContent=n!=null&&D.scenes[n].cue?('· '+D.scenes[n].cue[0]):'';
+}
+if(bc)bc.onmessage=ev=>{const d=ev.data||{};if(d.type==='off'){off=d.off||{};draw();return}if(d.type==='ord'){ord=d.ord||null;draw();return}if(d.type==='state'&&(d.deck==='sv7'||d.deck==='sv1')){const ch=d.i!==cur;cur=d.i;step=d.step||0;if(d.slideAt)slideAt=d.slideAt;draw()}};
+function tick(){let t;try{t=JSON.parse(localStorage.getItem('sv7-timer'))||{acc:0}}catch(e){t={acc:0}}const a=(t.acc+(t.run?Date.now()-t.start:0))/1000;
+  $('tAll').textContent=fmt(a);$('tAllB').style.width=Math.min(100,a/BUD*100)+'%';$('tAllB').style.background=a>BUD?'var(--bad)':a>BUD*.9?'var(--warn)':'var(--ok)';
+  const s=(Date.now()-slideAt)/1000,pl=D.scenes[cur].t||30;$('tSc').textContent=fmt(s);$('tScB').style.width=Math.min(100,s/pl*100)+'%';$('tScB').style.background=s>pl?'var(--bad)':s>pl*.8?'var(--warn)':'var(--ok)';
+  const d=new Date();$('clock').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
+setInterval(tick,500);
+let fs=+(localStorage.getItem('sv7-pfs')||1);const setFs=()=>{document.documentElement.style.setProperty('--fs',fs);localStorage.setItem('sv7-pfs',fs)};setFs();
+$('fMinus').onclick=()=>{fs=Math.max(.7,+(fs-.1).toFixed(2));setFs()};$('fPlus').onclick=()=>{fs=Math.min(1.6,+(fs+.1).toFixed(2));setFs()};
+$('mir').onclick=()=>document.body.classList.toggle('mirror');
+/* 14:56 Apple remote / media keys turn the slides (sv7-remote.js) */
+if(window.svRemote)svRemote(()=>bc&&bc.postMessage({type:'next'}),()=>bc&&bc.postMessage({type:'prev'}));
+addEventListener('keydown',e=>{const k=e.key;if(['ArrowLeft','PageDown',' ','Enter','ArrowDown'].includes(k)){e.preventDefault();bc&&bc.postMessage({type:'next'})}else if(['ArrowRight','PageUp','Backspace','ArrowUp'].includes(k)){e.preventDefault();bc&&bc.postMessage({type:'prev'})}else if(k==='m'||k==='M')$('mir').click()});
+if(window.C6&&C6.sndRelay)C6.sndRelay();
+addEventListener('resize',draw);
+document.fonts.ready.then(()=>{draw();tick();bc&&bc.postMessage({type:'ping'})});
+})();
+</script>
+<script>/* a window older than the control reloads itself (keeps its place: the # stays) */
+(function(){const me=(document.querySelector('meta[name=sv7-build]')||{}).content||'';if(!('BroadcastChannel' in window)||/[?&](thumb|static|preview)/.test(location.search))return;
+const c=new BroadcastChannel('sv7-ctl');c.addEventListener('message',e=>{const d=e.data||{};if(d.type==='build'&&d.b&&me&&d.b>me){let k='';try{k=sessionStorage.getItem('sv7-rl')}catch(_){}if(k===d.b)return;try{sessionStorage.setItem('sv7-rl',d.b)}catch(_){}c.close();location.reload()}})})();</script>
+</body>
+</html>
