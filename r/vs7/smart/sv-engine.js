@@ -200,7 +200,7 @@
     list.forEach(x => {
       const to = parse(x.dataset.to); if (!to) return;
       const fr = x.dataset.from != null ? parse(x.dataset.from) : { v: 0 };
-      const f0 = fr ? fr.v : 0, sp = SV.speed || 1, D = 1500 * sp, t0 = performance.now() + 250 * sp;
+      const f0 = fr ? fr.v : 0, sp = SV.speed || 1, D = 650 * sp, t0 = performance.now() + 60 * sp;   /* 12:41 «الأرقام تطلع بسرعة»: the count-up is over in ~0.35 s */
       const tick = now => {
         const k = Math.max(0, Math.min(1, (now - t0) / D)), e = 1 - Math.pow(1 - k, 4);
         x.textContent = fmt(f0 + (to.v - f0) * e, to.dec) + to.pct;

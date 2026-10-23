@@ -1287,6 +1287,20 @@
 .sv.t-gallery .gt.gh[data-s]{filter:none!important;transform:none!important;transition:opacity .3s ease 0s!important}
 .sv.t-gallery .gt.gh.in .gf,.sv.t-gallery .gt.gh.in .gfs.side .gf,.sv.t-gallery .gt.gh.in b .hl{animation:none!important}
 .sv.t-gallery .gt.gh.in .gfs.side{animation-delay:.35s}
+/* 12:41 Amr «كل الحاجات اللي ليها علاقة بظهور الـ charts … الأرقام تطلع بسرعة … علشان اللي بيعرض يشوف الأرقام قدامه وهو بيتكلم»: every chart
+   draws in well under a second and its figures are up almost at once */
+.sv.t-kq .col>i,.sv.t-kq .cc.a>i{transition:transform .65s var(--e1) .05s!important}
+.sv.t-kq .col.b>i{transition-delay:.15s!important}.sv.t-kq .col.t>i{transition-delay:.25s!important}
+.sv.t-kq .col>.inl .in{transition:transform .65s var(--e1) .05s!important}.sv.t-kq .col.b>.inl .in{transition-delay:.15s!important}
+.sv.t-kq .cv{transition:opacity .25s ease .05s!important}
+.sv.t-kq .col.b .cv{transition-delay:.12s!important}.sv.t-kq .col.t .cv{transition-delay:.2s!important}.sv.t-kq .cc .cv{transition-delay:.1s!important}
+.sv.t-kq .slope .sl{transition:stroke-dashoffset .7s var(--e2) .1s!important}
+.sv.t-kq .slope .pb{transition:opacity .25s ease .5s!important}.sv.t-kq .pv.b{transition:opacity .25s ease .45s!important}.sv.t-kq .pv .darr{transition-delay:.6s!important}
+.sv.t-kq .stk .bs{transition:transform .6s var(--e1) .1s!important}
+.sv.t-kq .k-strike .x{transition:transform .5s var(--e1) .15s!important}
+.sv.t-kq .whole .bar i{transition:transform .8s var(--e1) .1s!important}
+.sv.t-kq .pbar .ph i{transition-duration:.6s!important}.sv.t-kq .pbar .p0 i{transition-delay:.1s!important}.sv.t-kq .pbar .p1 i{transition-delay:.3s!important}.sv.t-kq .pbar .p2 i{transition-delay:.5s!important}
+.sv.t-kq .k-share .frame .sb{transition:transform .8s var(--e1) .2s!important}
 .sv.t-gallery .gt.gh .gfs.side{background:linear-gradient(180deg,rgba(18,16,12,.82),rgba(12,12,14,.74));-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 /* duo before/after photographs (his 31) */
 .sv.t-kq .phs.phx img{transition:opacity 2.4s ease,transform 12s linear}
