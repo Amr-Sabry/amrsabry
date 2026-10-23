@@ -523,9 +523,12 @@
     const xs = nodes.map((_, i) => X0 - i * step), wi = Math.max(1, nodes.findIndex(x => x.y === 2023));
     let h = top ? (sc.end ? `<div class="send top gold"${S(0)}>${esc(sc.end)}</div>` : '') + `<div class="shx">` : `<h2 class="h2 shh"${S(0)}>${esc(sc.title)}</h2><div class="shx">`;
     h += `<div class="sax"${S(0, 'fade')} style="left:${X1 - 40}px;width:${X0 - X1 + 80}px;top:${AY}px"></div>`;
-    h += `<div class="sax wseg"${S(0, 'fade')} style="left:${xs[wi]}px;width:${xs[0] - xs[wi]}px;top:${AY - 3}px"></div>`;
-    h += `<div class="swar"${S(0, 'fade')} style="left:${xs[wi] - 20}px;width:${xs[0] - xs[wi] + 40}px;top:${AY - 118}px"><span>${esc(sc.war)}</span><b class="num">2014 – 2023</b></div>`;
-    nodes.forEach((e, i) => { h += `<div class="sev${i ? '' : ' st'}${i <= wi ? ' iw' : ''}"${S(0, 'fade')} style="left:${xs[i].toFixed(1)}px;top:${AY - 14}px;transition-delay:${(.05 + i * .06).toFixed(2)}s"><i></i><b class="num">${e.y}</b>${e.t ? `<span>${esc(e.t)}</span>` : ''}</div>`; });
+    /* 13:53 Amr «واديها ثانية كمان في الانميشن»: the years come in one by one over about a second and a half (was under half a second);
+       the red war stretch and its band follow once the line reaches 2023 */
+    const wd = top ? (.15 + wi * 1.45 / Math.max(1, n - 1) + .1).toFixed(2) : 0;
+    h += `<div class="sax wseg"${S(0, 'fade')} style="transition-delay:${wd}s;left:${xs[wi]}px;width:${xs[0] - xs[wi]}px;top:${AY - 3}px"></div>`;
+    h += `<div class="swar"${S(0, 'fade')} style="transition-delay:${wd}s;left:${xs[wi] - 20}px;width:${xs[0] - xs[wi] + 40}px;top:${AY - 118}px"><span>${esc(sc.war)}</span><b class="num">2014 – 2023</b></div>`;
+    nodes.forEach((e, i) => { h += `<div class="sev${i ? '' : ' st'}${i <= wi ? ' iw' : ''}"${S(0, 'fade')} style="left:${xs[i].toFixed(1)}px;top:${AY - 14}px;transition-delay:${(.15 + i * (top ? 1.45 / Math.max(1, n - 1) : .06)).toFixed(2)}s"><i></i><b class="num">${e.y}</b>${e.t ? `<span>${esc(e.t)}</span>` : ''}</div>`; });
     h += `</div>${sc.end && !top ? `<div class="send gold"${S(0)} style="transition-delay:.5s">${esc(sc.end)}</div>` : ''}`;
     return h;
   };
