@@ -395,7 +395,7 @@
     if (sc.look === 'what' && sc.items.some(x => x.iv)) {
       const n = sc.items.length;
       return `<div class="pad"><h2 class="h2 ct"${S(0)}>${esc(sc.title)}</h2>${sc.sub ? `<div class="cs"${S(0)}>${esc(sc.sub)}</div>` : ''}
-        <div class="ivg n${n}">${sc.items.map((it, i) => `<div class="ivt k-${it.iv.k}"${S(0)} style="transition-delay:${(.08 + i * .06).toFixed(2)}s"><h3>${esc(it.h)}</h3><div class="ivv">${ivVis(it.iv)}</div><div class="ivf">${ivFig(it.iv)}</div><p>${esc(it.p)}</p></div>`).join('')}</div></div>`;
+        <div class="ivg n${n}">${sc.items.map((it, i) => `<div class="ivt k-${it.iv.k}${it.iv.v || it.iv.u ? '' : ' nofig'}"${S(0)} style="transition-delay:${(.08 + i * .06).toFixed(2)}s"><h3>${esc(it.h)}</h3><div class="ivv">${ivVis(it.iv)}</div><div class="ivf">${ivFig(it.iv)}</div><p>${esc(it.p)}</p></div>`).join('')}</div></div>`;
     }
     const n = sc.items.length, look = sc.look || 'icons';
     const card = (it, i) => {
@@ -1173,6 +1173,18 @@
 .sv.t-cards .ivg.n8 .ivic{width:100px;height:100px}.sv.t-cards .ivg.n8 .ivic>svg{width:46px;height:46px}
 .sv.t-cards .ivx{position:absolute;inset:18%;pointer-events:none}.sv.t-cards .ivx::before{content:'';position:absolute;left:50%;top:-6%;bottom:-6%;width:5px;margin-left:-2.5px;border-radius:3px;background:#ff6f61;transform:rotate(45deg);box-shadow:0 0 0 3px rgba(20,14,16,.85),0 0 12px rgba(255,111,97,.7)}
 .sv.t-cards .ivb{position:absolute;left:-4px;bottom:-4px;width:44%;height:44%;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#2a1513;border:2px solid #ff6f61;color:#ff6f61}.sv.t-cards .ivb svg{width:60%;height:60%;stroke-width:2.2}
+/* 13:43 Amr «في ماذا لو كل سلايد يكون ٤ ونكبر الكتابات لانها صغيرة قوي» (basic services stays five on one slide, his choice) */
+.sv.t-cards .ivg.n4{grid-template-columns:repeat(4,minmax(0,1fr));gap:26px;margin-top:46px}
+.sv.t-cards .ivg.n4 .ivt{padding:32px 26px 28px}.sv.t-cards .ivg.n4 .ivt h3{font-size:42px;height:1.4em}
+.sv.t-cards .ivg.n4 .ivv{height:176px;margin-top:12px}.sv.t-cards .ivg.n4 .ivf{height:204px;padding-top:10px}
+.sv.t-cards .ivg.n4 .ivn{grid-template-rows:32px 118px 42px}.sv.t-cards .ivg.n4 .ivn b{font-size:128px}.sv.t-cards .ivg.n4 .ivn span{font-size:31px}.sv.t-cards .ivg.n4 .ivn small{font-size:25px}.sv.t-cards .ivg.n4 .ivn span.solo{font-size:31px}
+.sv.t-cards .ivg.n4 .ivt p{font-size:29px;line-height:1.55;height:calc(6.2em + 16px);padding-top:16px}
+.sv.t-cards .ivg.n4 .ivic{width:162px;height:162px}.sv.t-cards .ivg.n4 .ivic>svg{width:82px;height:82px}.sv.t-cards .ivg.n4 .ivrw{width:162px;height:162px}.sv.t-cards .ivg.n4 .ivri svg{width:60px;height:60px}
+.sv.t-cards .ivg.n4 .ivt.k-bars .ivv{height:332px}.sv.t-cards .ivg.n4 .ivt.k-bars .ivf{height:48px;padding:0;align-items:center}.sv.t-cards .ivg.n4 .ivt.k-bars .ivbars .ib i{height:calc(var(--h) * 170px);width:86px}.sv.t-cards .ivg.n4 .ivt.k-bars .ivbars .ib b{font-size:72px}.sv.t-cards .ivg.n4 .ivt.k-bars .ivbars .ib small{font-size:26px}.sv.t-cards .ivg.n4 .ivt.k-bars .ivbars{gap:50px}
+.sv.t-cards .ivg.n5 .ivt h3{font-size:39px}.sv.t-cards .ivg.n5 .ivn{grid-template-rows:32px 112px 44px}.sv.t-cards .ivg.n5 .ivn b{font-size:122px}.sv.t-cards .ivg.n5 .ivn span{font-size:31px}.sv.t-cards .ivg.n5 .ivn small{font-size:25px}
+.sv.t-cards .ivg.n5 .ivf{height:204px}.sv.t-cards .ivg.n5 .ivt p{font-size:27px;line-height:1.55;height:calc(4.65em + 15px)}
+.sv.t-cards .ivt.nofig .ivf{display:none}.sv.t-cards .ivt.nofig p{border-top:0;display:flex;align-items:center;justify-content:center;color:#e9ebef}
+.sv.t-cards .ivg.n5 .ivt.nofig p{height:calc(204px + 4.65em + 15px)}.sv.t-cards .ivg.n4 .ivt.nofig p{height:calc(204px + 6.2em + 16px)}
 .sv.t-cards .cg.what .cd.hasbg{min-height:600px!important;justify-content:space-between!important;border-color:rgba(229,100,92,.55);padding:30px 28px 34px!important}
 .sv.t-cards .cg.what .cd.hasbg .cbgi img{filter:grayscale(1) contrast(1.12) brightness(.78)}
 .sv.t-cards .cg.what .cd.hasbg::before{background:linear-gradient(180deg,rgba(150,30,22,.28) 0%,rgba(40,8,8,.5) 38%,rgba(10,4,6,.94) 72%,rgba(8,4,6,.98) 100%)}
