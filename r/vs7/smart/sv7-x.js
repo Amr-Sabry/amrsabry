@@ -162,12 +162,12 @@
     return `<div class="gt gh${g.title.length > 58 ? ' long' : ''}${nf ? ' wf' : ''}"${S(0, 'fade')}><div class="ghl">${g.kick ? `<span class="k">${esc(g.kick)}</span>` : ''}${g.title ? `<b>${esc(g.title)}</b>` : ''}${g.sub ? `<div class="sub">${esc(g.sub)}</div>` : ''}</div>${facts}</div>`;
   }
   const factsW = g => { const stk = g.facts.length > 2;
-    return g.facts.reduce((a, f) => a + 68 + (stk ? Math.max(f.pre.length * 11, f.v.length * 46, Math.min(f.u.length * 13.5, 280)) : Math.max(f.pre.length * 11, f.v.length * 57 + 12 + Math.min(f.u.length * 15, 300))), 0); };
+    return 64 + g.facts.reduce((a, f) => a + 68 + (stk ? Math.max(f.pre.length * 11, f.v.length * 46, Math.min(f.u.length * 13.5, 280)) : Math.max(f.pre.length * 11, f.v.length * 57 + 12 + Math.min(f.u.length * 15, 300))), 0); };
   const band = sc => { const g = ghead(sc); if (!(g.title || g.kick || g.facts.length || g.sub)) return 0;
     const nf = g.facts.length, stk = nf > 2, long = g.title.length > 58, k = Math.max(.3, (1780 - (nf ? factsW(g) + 56 : 0)) / 1780);
     const tl = g.title ? Math.ceil(wlen(g.title) / ((long ? 72 : 64) * k)) : 0;
     const th = (g.kick ? 36 : 0) + tl * (long ? 50 : 58) + (g.sub ? 10 + 40 * Math.ceil(wlen(g.sub) / (90 * k)) : 0);
-    const fh = nf ? (g.facts.some(f => f.pre) ? 30 : 0) + (stk ? 88 + 34 * Math.max(1, ...g.facts.map(f => Math.ceil(f.u.length * 13.5 / 280))) : 112) : 0;
+    const fh = nf ? 40 + (g.facts.some(f => f.pre) ? 30 : 0) + (stk ? 88 + 34 * Math.max(1, ...g.facts.map(f => Math.ceil(f.u.length * 13.5 / 280))) : 112) : 0;
     return Math.round(100 + Math.max(th, fh) + 30); };
   let recBox = null;
   function geoGallery(sc, o) {
@@ -1257,6 +1257,13 @@
 .sv.t-gallery .gt.gh .gfs.side.stk .fv{flex-direction:column;align-items:flex-start;gap:6px}
 .sv.t-gallery .gt.gh .gfs.side.stk .num{font-size:84px}
 .sv.t-gallery .gt.gh .gfs.side.stk .fu{font-size:26px;max-width:280px}
+/* 11:54 Amr «٢٩ والسلايدات اللي زيها اعمل بوردر لكارت هو اللي يعمل glow»: the figures sit in one bordered card; the card glows, not each figure */
+.sv.t-gallery .gt.gh .gfs.side{padding:16px 32px 18px;border-radius:26px;border:1.5px solid rgba(233,188,108,.6);background:linear-gradient(180deg,rgba(233,188,108,.12),rgba(233,188,108,.035));box-shadow:0 0 34px -12px rgba(233,188,108,.45),inset 0 1px 0 rgba(255,255,255,.08)}
+.sv.t-gallery .gt.gh .gfs.side .gf:last-child{padding-left:0}
+.sv.t-gallery .gt.gh.in .gfs.side .gf{animation:gfpop 1s cubic-bezier(.3,1.4,.5,1) .55s both}
+.sv.t-gallery .gt.gh.in .gfs.side{animation:gfcard 2.2s ease 1.1s 1}
+@keyframes gfcard{0%,100%{box-shadow:0 0 34px -12px rgba(233,188,108,.45),inset 0 1px 0 rgba(255,255,255,.08);border-color:rgba(233,188,108,.6)}40%{box-shadow:0 0 70px 6px rgba(233,188,108,.6),inset 0 1px 0 rgba(255,255,255,.12);border-color:rgba(243,215,159,1)}}
+.sv.nomo .gt.gh .gfs.side,.sv.nomo .gt.gh .gfs.side .gf{animation:none!important}
 /* duo before/after photographs (his 31) */
 .sv.t-kq .phs.phx img{transition:opacity 2.4s ease,transform 12s linear}
 .sv.t-kq .phs.phx .pa{filter:grayscale(1) brightness(.55) contrast(1.12)}
