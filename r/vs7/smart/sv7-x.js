@@ -438,8 +438,11 @@
     const hero = sc.hero ? [sc.hero] : (sc.hero2 || []);
     /* 11:18 Amr «خلي الصورة خلفية السلايد والكروت ليها شفافية»: a stats slide with bgimg wears its photo full-bleed, the cards glass over it */
     const sbg = sc.bgimg ? `<div class="bg sbgp">${coverFig(sc.bgimg, o, 'sbi')}</div>` : '';
+    /* 10:56 Amr «الخريطة بس محتاجينها بنفس اسلوب الخرائط اللي ف الاول والمحافظات الغامقة دي 20 محافظة المرحلة الأولى .. تنور باسمائهم»:
+       the grey picture gives way to the deck's own map — the 20 governorates light up north to south, each with its name */
+    if (sc.msvg) return `<div class="smap"${S(0, 'fade')}>${sc.msvg}</div>` + R.stats(Object.assign({}, sc, { msvg: null, img: null, _wimg: 1 }), d, o);
     return `${sbg}${sc.img && !sc.bgimg ? `<figure class="simg${sc.img.cap ? ' cap' : ''}${sc.dense ? ' dense' : ''}"${S(0, 'fade')} style="aspect-ratio:${sc.img.w}/${sc.img.h}">${cropImg(sc.img, o)}${sc.img.cap ? `<figcaption>${esc(sc.img.cap)}</figcaption>` : ''}</figure>` : ''}
-      <div class="pad${sc.img || sc.bgimg ? ' wimg' : ''}${sc.bgimg ? ' onbg' : ''}${sc.dense ? ' dense' : ''}">${sc.kick ? `<div class="kick"${S(0)}>${esc(sc.kick)}</div>` : ''}<h2 class="h2 st"${S(0)}>${esc(sc.title)}</h2>${sc.sub ? `<div class="ss"${S(0)}>${esc(sc.sub)}</div>` : ''}
+      <div class="pad${sc.img || sc.bgimg || sc._wimg ? ' wimg' : ''}${sc.bgimg ? ' onbg' : ''}${sc.dense ? ' dense' : ''}">${sc.kick ? `<div class="kick"${S(0)}>${esc(sc.kick)}</div>` : ''}<h2 class="h2 st"${S(0)}>${esc(sc.title)}</h2>${sc.sub ? `<div class="ss"${S(0)}>${esc(sc.sub)}</div>` : ''}
       ${hero.length ? `<div class="hrow">${hero.map(big).join('')}</div>` : ''}
       ${n ? `<div class="sg" style="grid-template-columns:repeat(${cols},1fr)">${it.map((x, i) => `<div class="sc glass"${S(0)} style="transition-delay:${(.5 + i * .12).toFixed(2)}s">${x.pre ? `<div class="pre">${esc(x.pre)}</div>` : ''}<div class="v">${N(x.v, 'gold')}</div><div class="u">${esc(x.u)}</div>${x.p ? `<div class="pp">${esc(x.p)}</div>` : ''}</div>`).join('')}</div>` : ''}
       ${sc.p ? `<p class="sp"${S(0)}>${esc(sc.p)}</p>` : ''}</div>`;
@@ -1148,6 +1151,28 @@
 .sv.t-kq .kmid .yt{margin-top:18px}
 .sv.t-kq .kmid .karr{position:absolute;right:-84px;top:42px;width:80px;height:18px;fill:none;stroke:rgba(233,188,108,.85);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .sv.t-kq .kmid .karr path:first-child{stroke-dasharray:5 6}
+.sv.t-stats .smap{position:absolute;left:16px;top:118px;width:760px;height:900px;z-index:4}
+.sv.t-stats .smap .hkm .un path{fill:#131a28;stroke:rgba(255,255,255,.12);stroke-width:.8}
+.sv.t-stats .smap .hkm .lk path{fill:#173f5a}
+.sv.t-stats .smap .hkm .lit{fill:rgba(233,188,108,.42);stroke:#f3d79f;stroke-width:1;stroke-linejoin:round}
+.sv.t-stats .smap .hkm .nl0{fill:none;stroke:rgba(79,182,227,.28);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+.sv.t-stats .smap .hkm .nl{fill:none;stroke:#5cc0ea;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.sv.t-stats .smap .hkm .eo{fill:none;stroke:rgba(255,255,255,.38);stroke-width:1.2;stroke-linejoin:round}
+.sv.t-stats .smap .hkm text{direction:ltr;unicode-bidi:plaintext;font:600 17px var(--fb);fill:#eef0f4;paint-order:stroke;stroke:rgba(6,10,18,.88);stroke-width:4px;stroke-linejoin:round}
+.sv.t-stats .smap .hkm text.big{font-size:22px;fill:#fff3d6}
+.sv.t-stats .smap .hkm .gq path{fill:none;stroke:rgba(243,215,159,.6);stroke-width:.9}
+.sv.t-stats .smap .hkm .gq circle{fill:#f3d79f}
+.sv.t-stats .smap .hkm .lg rect{fill:rgba(233,188,108,.42);stroke:#f3d79f;stroke-width:1}
+.sv.t-stats .smap .hkm text.rtl{direction:rtl;unicode-bidi:normal}
+.sv.t-stats .smap .hkm .lg text{font:600 22px var(--fb);fill:#eef0f4;stroke:none}
+.sv.t-stats .smap .hkm .lg text.lgn{font:500 18px var(--fb);fill:#c9ced8}
+.sv.t-stats .smap .hkm .lg tspan.g{font-weight:700;fill:#e9bc6c}
+.sv.t-stats .smap .hkm .lit,.sv.t-stats .smap .hkm .gq,.sv.t-stats .smap .hkm text.gl{opacity:0}
+.sv.t-stats .smap.in .hkm .lit{animation:hklit .55s cubic-bezier(.2,.7,.2,1) both}
+.sv.t-stats .smap.in .hkm .gq,.sv.t-stats .smap.in .hkm text.gl{animation:hklb .45s ease both}
+@keyframes hklit{0%{opacity:0;fill:rgba(255,236,190,.95)}60%{opacity:1}100%{opacity:1}}
+@keyframes hklb{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.sv.nomo .sv.t-stats .smap .hkm .lit,.sv.nomo .sv.t-stats .smap .hkm .gq,.sv.nomo .sv.t-stats .smap .hkm text.gl{opacity:1;animation:none}
 .sv.t-stats .bg.sbgp{z-index:0}
 .sv.t-stats .bg.sbgp::after{background:linear-gradient(270deg,rgba(4,6,11,.9) 0%,rgba(4,6,11,.74) 42%,rgba(4,6,11,.3) 78%,rgba(4,6,11,.22) 100%),linear-gradient(0deg,rgba(4,6,11,.7),transparent 45%),linear-gradient(180deg,rgba(4,6,11,.55),transparent 30%)}
 .sv.t-stats .pad.onbg{position:relative;z-index:2}
