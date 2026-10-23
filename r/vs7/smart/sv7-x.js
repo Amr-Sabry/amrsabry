@@ -237,6 +237,17 @@
       <div class="gal">${ph}</div>`;
   };
 
+  /* ───────── ndmap: a whole drawn map across the stage (23 Oct 07:59 Amr his 106 — the New Delta map, nothing of it hidden) ─────────
+     the vector map (its parcels, letters, areas, owners, sources, legend) fills the stage; the slide's words sit in one card over the
+     empty western desert */
+  R.ndmap = (sc, d, o) => {
+    const st = sc.stat;
+    return `<div class="ndw"${S(0, 'fade')}>${sc.svg || ''}</div>
+      <div class="ndc glass"${S(0)} style="transition-delay:.5s">${sc.kick ? `<div class="kick">${esc(sc.kick)}</div>` : ''}<h2 class="ph">${esc(sc.h)}</h2>${sc.sub ? `<div class="psub">${esc(sc.sub)}</div>` : ''}
+        ${st ? `<div class="pst">${st.pre ? `<div class="pre">${esc(st.pre)}</div>` : ''}<div class="pv">${N(st.v, 'gold')}${st.u ? `<u>${esc(st.u)}</u>` : ''}</div></div>` : ''}
+        ${sc.p ? `<p class="pd">${esc(sc.p)}</p>` : ''}</div>`;
+  };
+
   /* ───────── hero: one photo across the stage, its name in the corner; any small extra photo stays whole ───────── */
   R.hero = (sc, d, o) => `<div class="bg hb">${coverFig(sc.img, o, 'hbi')}</div>
     ${(sc.ins || []).map((p, i) => `<figure class="hins"${S(0, 'fade')} style="width:${Math.round(Math.min(560, 330 * p.w / p.h))}px;aspect-ratio:${p.w}/${p.h};transition-delay:${(.6 + i * .2).toFixed(2)}s">${cropImg(p, o)}</figure>`).join('')}
@@ -1271,6 +1282,18 @@
 .sv.t-gallery .grec.col .gt2{order:4;width:100%;font-size:42px;line-height:1.3;padding-top:22px;border-top:1px solid rgba(233,188,108,.3)}
 .sv.t-gallery .grec.col .gs{order:5;width:100%;margin-top:-12px}
 .sv.t-gallery .gal.geo.wrec .gi{border-radius:14px;overflow:hidden}
+/* the New Delta map, whole */
+.sv.t-ndmap{background:#0a0e17}
+.sv.t-ndmap .ndw{position:absolute;inset:0;z-index:1}
+.sv.t-ndmap .ndw svg{display:block;width:100%;height:100%}
+.sv.t-ndmap .ndc{position:absolute;left:28px;top:232px;width:318px;box-sizing:border-box;z-index:12;padding:26px 28px 24px;border-radius:26px;direction:rtl;text-align:right;display:flex;flex-direction:column;gap:6px}
+.sv.t-ndmap .ndc .kick{font:600 18px/1.3 var(--fd);color:var(--acc)}
+.sv.t-ndmap .ndc .ph{font:700 44px/1.15 var(--fd);margin:2px 0 0;color:#fff}
+.sv.t-ndmap .ndc .psub{font:500 19px/1.4 var(--fb);color:#c9ced8}
+.sv.t-ndmap .ndc .pst{margin:12px 0 6px;padding:12px 0;border-top:1px solid rgba(233,188,108,.3);border-bottom:1px solid rgba(233,188,108,.3)}
+.sv.t-ndmap .ndc .pre{font:500 20px/1.2 var(--fb);color:#c9ced8}
+.sv.t-ndmap .ndc .pv{display:flex;align-items:baseline;gap:10px}.sv.t-ndmap .ndc .pv .num{font-size:96px;line-height:.95}.sv.t-ndmap .ndc .pv u{text-decoration:none;font:700 26px/1.1 var(--fd);color:var(--gold2)}
+.sv.t-ndmap .ndc .pd{font:400 19px/1.55 var(--fb);color:#dfe3ea;margin:4px 0 0}
 /* 09:23 a map label may carry a second line (n.s) — the route under the line's name */
 .sv.t-map .mn>span .ms{display:block;margin-top:8px;font:500 21px/1.15 var(--fb);color:#d5dae3;letter-spacing:0}
 .sv.t-gallery .grec .gcert{margin:-90px 0 -10px;width:170px;height:228px;flex:none;border-radius:8px;overflow:hidden;box-shadow:0 24px 50px -14px rgba(0,0,0,.9);transform:rotate(-3deg)}
