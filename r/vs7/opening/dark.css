@@ -1,0 +1,195 @@
+/* VS7 dark theme for the opening film (html.dk) — loaded only with «?theme=dark».
+   Near-black navy ground, soft amber + deep-blue glows at the edges (centre kept darker for reading),
+   liquid-glass cards, gold accents, red-ish only for figures that fall. Photographs are left untouched.
+   Every rule is scoped under html.dk, so the light film is unchanged. */
+
+/* ---------- tokens ---------- */
+html.dk{
+  --bg:#05070d; --ink:#f4ecd9; --ink2:#c9ced8; --mute:#8f98a8;
+  --cobalt:#e9bc6c; --indigo:#f3d08a; --teal:#8fb6e0; --ember:#e87a2a; --peach:#f3d08a;
+  --gold1:#fff3d6; --gold2:#f3d08a; --gold3:#e9bc6c; --gold4:#b9843d; --bad:#ff8a7a;
+  --goldtxt:linear-gradient(180deg,#fff3d6 0%,#f3d08a 38%,#e9bc6c 68%,#c48f45 100%);
+  --sheenbg:radial-gradient(120% 70% at 78% -8%,rgba(255,255,255,.07),rgba(255,255,255,0) 58%),radial-gradient(90% 60% at 10% 112%,rgba(255,255,255,.03),rgba(255,255,255,0) 60%);
+  --g-frost:var(--sheenbg),linear-gradient(150deg,rgba(255,255,255,.085),rgba(255,255,255,.035) 55%,rgba(255,255,255,.055));
+  --g-cobalt:radial-gradient(120% 70% at 78% -8%,rgba(255,255,255,.06),rgba(255,255,255,0) 58%),radial-gradient(circle at 14% 20%,rgba(232,122,42,.42),rgba(232,122,42,0) 42%),radial-gradient(circle at 92% 100%,rgba(58,120,200,.30),rgba(58,120,200,0) 46%),linear-gradient(150deg,rgba(24,36,74,.92),rgba(14,21,44,.92) 60%,rgba(10,16,32,.94));
+  --g-teal:radial-gradient(120% 70% at 78% -8%,rgba(255,255,255,.06),rgba(255,255,255,0) 58%),radial-gradient(circle at 88% 4%,rgba(58,120,200,.52),rgba(58,120,200,0) 46%),radial-gradient(circle at 8% 104%,rgba(232,122,42,.22),rgba(232,122,42,0) 40%),linear-gradient(160deg,rgba(16,30,58,.94),rgba(10,18,36,.94));
+  --g-aurora:var(--sheenbg),radial-gradient(circle at 88% 6%,rgba(232,122,42,.34),rgba(232,122,42,0) 48%),radial-gradient(circle at 10% 100%,rgba(58,120,200,.30),rgba(58,120,200,0) 52%),linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.03));
+  --g-night:radial-gradient(62% 58% at 50% 52%,rgba(5,7,13,.6),rgba(5,7,13,.22) 60%,rgba(5,7,13,0) 85%),radial-gradient(55% 75% at 0% 100%,rgba(232,122,42,.5),rgba(232,122,42,0) 70%),radial-gradient(60% 75% at 100% 0%,rgba(58,120,200,.45),rgba(58,120,200,0) 70%),radial-gradient(38% 46% at 100% 100%,rgba(58,120,200,.2),rgba(58,120,200,0) 70%),linear-gradient(155deg,#0a1020,#070a14 55%,#0a1020);
+  --bevel:inset 0 1px 0 rgba(255,255,255,.13),inset 0 0 22px -10px rgba(255,255,255,.08);
+}
+/* ---------- typography: the deck's faces (23 Oct) ----------
+   figures → Bebas Neue (FDnum: digits % + , - . ± – − only, one weight), display → Readex (FDd, variable 160–700),
+   body → IBM Plex Sans Arabic (FDb). Files are the deck's own (../fonts/sv/); names are new so nothing clashes with the
+   light film's C5Num / Cairo26 / Readex Pro. These @font-face rules live only in this file, which loads only with theme=dark. */
+@font-face{font-family:FDnum;src:url(../fonts/sv/bebas-neue-latin-400.woff2) format('woff2');font-weight:100 900;font-display:block;size-adjust:108%;unicode-range:U+0025,U+002B-002E,U+0030-0039,U+00B1,U+2013,U+2212}
+@font-face{font-family:FDd;src:url(../fonts/sv/readex-ar.woff2) format('woff2');font-weight:160 700;font-display:block;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFC}
+@font-face{font-family:FDd;src:url(../fonts/sv/readex-la.woff2) format('woff2');font-weight:160 700;font-display:block;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+2000-206F,U+2190-21FF,U+2212,U+2215}
+@font-face{font-family:FDb;src:url(../fonts/sv/plex-ar-300.woff2) format('woff2');font-weight:100 349;font-display:block;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFC}
+@font-face{font-family:FDb;src:url(../fonts/sv/plex-ar-400.woff2) format('woff2');font-weight:350 449;font-display:block;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFC}
+@font-face{font-family:FDb;src:url(../fonts/sv/plex-ar-500.woff2) format('woff2');font-weight:450 549;font-display:block;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFC}
+@font-face{font-family:FDb;src:url(../fonts/sv/plex-ar-600.woff2) format('woff2');font-weight:550 649;font-display:block;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFC}
+@font-face{font-family:FDb;src:url(../fonts/sv/plex-ar-700.woff2) format('woff2');font-weight:650 1000;font-display:block;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFC}
+@font-face{font-family:FDb;src:url(../fonts/sv/plex-la-300.woff2) format('woff2');font-weight:100 349;font-display:block;unicode-range:U+0000-00FF,U+2000-206F,U+2190-21FF,U+2212}
+@font-face{font-family:FDb;src:url(../fonts/sv/plex-la-400.woff2) format('woff2');font-weight:350 449;font-display:block;unicode-range:U+0000-00FF,U+2000-206F,U+2190-21FF,U+2212}
+@font-face{font-family:FDb;src:url(../fonts/sv/plex-la-500.woff2) format('woff2');font-weight:450 549;font-display:block;unicode-range:U+0000-00FF,U+2000-206F,U+2190-21FF,U+2212}
+@font-face{font-family:FDb;src:url(../fonts/sv/plex-la-600.woff2) format('woff2');font-weight:550 649;font-display:block;unicode-range:U+0000-00FF,U+2000-206F,U+2190-21FF,U+2212}
+@font-face{font-family:FDb;src:url(../fonts/sv/plex-la-700.woff2) format('woff2');font-weight:650 1000;font-display:block;unicode-range:U+0000-00FF,U+2000-206F,U+2190-21FF,U+2212}
+/* the film's two stacks (index.html sets them with !important on :root; html.dk is more specific, so it wins) */
+html.dk{--f-display:'FDnum','FDd','FDb',system-ui,sans-serif!important;--f-body:'FDnum','FDb','FDd',system-ui,sans-serif!important}
+/* places that name their faces directly: the chart's SVG labels and the control bar */
+html.dk #tlsvg text{font-family:var(--f-display)}
+html.dk #ctl,html.dk #ctl button,html.dk #ctl a{font-family:var(--f-display)}
+/* Bebas is condensed with one weight: open the tight negative tracking the Montserrat figures used */
+html.dk .num:not(.nt){letter-spacing:.01em}
+html.dk #tchip b,html.dk .vchip b,html.dk .yly,html.dk #start .t{letter-spacing:.01em}
+/* word reveal: each word waits 112% of its own box below its mask; Readex's أ/hamza rises above that box, so a fleck of it
+   showed under the mask before the word rose. A taller box (padding, cancelled by the same negative margin, so the layout
+   is unchanged) moves the waiting word further down */
+html.dk .w>i{padding:.12em 0;margin:-.12em 0}
+
+html.dk,html.dk body{background:#05070d;color:var(--ink)}
+html.dk #view{background:radial-gradient(60% 80% at 0% 100%,rgba(232,122,42,.16),transparent 70%),radial-gradient(60% 80% at 100% 0%,rgba(58,120,200,.16),transparent 70%),#05070d}
+
+/* ---------- stage: mesh ground ---------- */
+html.dk #stage{background:
+  radial-gradient(62% 58% at 50% 54%,rgba(5,7,13,.62),rgba(5,7,13,.25) 60%,rgba(5,7,13,0) 85%),
+  radial-gradient(55% 75% at 0% 100%,rgba(232,122,42,.5),rgba(232,122,42,0) 70%),
+  radial-gradient(55% 70% at 100% 0%,rgba(58,120,200,.45),rgba(58,120,200,0) 70%),
+  radial-gradient(40% 50% at 100% 100%,rgba(58,120,200,.24),rgba(58,120,200,0) 70%),
+  radial-gradient(34% 44% at 6% 0%,rgba(232,122,42,.2),rgba(232,122,42,0) 70%),
+  #05070d}
+html.dk #stage::after{mix-blend-mode:overlay;opacity:.07}
+
+/* ---------- header ---------- */
+html.dk .hd .gov span{color:var(--ink2)}
+html.dk .hd .sep{background:rgba(255,255,255,.16)}
+html.dk .hd .ax{color:#1a1206;background:linear-gradient(150deg,#f6d996,#e9bc6c 55%,#d29a4c);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 8px 20px -8px rgba(233,188,108,.5)}
+html.dk .hd .ttl b{color:var(--ink)}
+html.dk .hd .ttl i{color:var(--ink2)}
+html.dk .hd .forum{color:var(--ink);background:radial-gradient(circle at 88% 20%,rgba(232,122,42,.3),rgba(232,122,42,0) 46%),linear-gradient(150deg,rgba(255,255,255,.13),rgba(255,255,255,.05));box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 0 0 1px rgba(255,255,255,.14),0 12px 26px -12px rgba(0,0,0,.7)}
+html.dk .hd .forum span small{color:var(--gold3)}
+
+/* ---------- glass cards ---------- */
+html.dk .bc{color:var(--ink);background:rgba(255,255,255,.035);box-shadow:var(--bevel),0 30px 60px -30px rgba(0,0,0,.8)}
+html.dk .bc::before{padding:1px;background:linear-gradient(135deg,rgba(255,255,255,.26),rgba(255,255,255,.08) 30%,rgba(255,255,255,.04) 58%,rgba(255,255,255,.1) 86%,rgba(255,255,255,.2))}
+/* the number card is the key card: a subtle gold edge */
+html.dk #K::before{padding:1.2px;background:linear-gradient(135deg,rgba(246,215,154,.75),rgba(233,188,108,.22) 32%,rgba(255,255,255,.05) 60%,rgba(233,188,108,.3) 88%,rgba(246,215,154,.55))}
+html.dk .dark{color:#f8f3e8}
+html.dk .wm{color:var(--gold2)}
+html.dk .dark .wm{color:#fff}
+
+/* number card */
+html.dk .ct .kick{color:inherit}
+html.dk .ct:not(.dark) .hdr svg{color:var(--gold3)}
+html.dk .ct .num:not(.nt){background:var(--goldtxt);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:currentcolor}
+html.dk .ct .num .cv,html.dk .ct .num .sf{color:color-mix(in srgb,var(--bad) calc(var(--bk,0)*100%),transparent)}
+html.dk .ct .num .pr{color:transparent}
+html.dk .ct .num.nt{background:none;color:var(--gold2);-webkit-text-fill-color:currentcolor}
+html.dk .ct .num.nt .w{color:var(--gold2)}
+html.dk .ct .num .ntold{color:color-mix(in srgb,var(--bad) calc(var(--bk,0)*100%),var(--gold2))}
+html.dk .ct .num .darr{color:var(--bad);-webkit-text-fill-color:var(--bad)}
+html.dk .ct .u{color:inherit}
+html.dk .ct:not(.dark) .sub{color:var(--ink2);opacity:1}
+html.dk .sub b,html.dk .dark .sub b{color:var(--gold2)}
+
+/* headline card */
+html.dk .dchip{color:#1a1206;background:linear-gradient(150deg,#f6d996,#e9bc6c 55%,#d29a4c);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 8px 18px -8px rgba(233,188,108,.45)}
+html.dk .tchip{color:var(--gold2);background:rgba(233,188,108,.1);box-shadow:inset 0 0 0 1px rgba(233,188,108,.32)}
+html.dk .hl{color:var(--ink)}
+html.dk .hl em{color:var(--gold2)}
+html.dk .hl .bar{background:linear-gradient(180deg,#f3d08a,#e87a2a)}
+html.dk .srcl{color:var(--ink2)}
+html.dk .srcl svg{color:var(--gold3)}
+
+/* photo cards (the photographs themselves are not touched) */
+html.dk .bc.ph{background:#070a12}
+html.dk .bc.ph .shade{background:linear-gradient(0deg,rgba(5,7,13,.5),rgba(5,7,13,0) 34%),radial-gradient(120% 95% at 50% 45%,transparent 58%,rgba(5,7,13,.38))}
+html.dk .bc.ph .credit{color:var(--ink);background:linear-gradient(160deg,rgba(18,24,40,.86),rgba(8,11,20,.78));box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 0 0 0 1px rgba(255,255,255,.12),0 10px 22px -10px rgba(0,0,0,.7)}
+html.dk .bc.ph .credit svg{color:var(--gold3)}
+
+/* ---------- reserves chart ---------- */
+html.dk #tlh svg{color:var(--gold3)}
+html.dk #tlh .lbl{color:var(--ink)}
+html.dk #tlh .lbl small{color:var(--ink2)}
+html.dk #tlh .val b{color:var(--ink)}
+html.dk #tlh .val small{color:var(--ink2)}
+html.dk #tlh .dl{color:var(--bad);background:rgba(255,138,122,.12);box-shadow:inset 0 0 0 1px rgba(255,138,122,.42)}
+/* grid, ticks, axis */
+html.dk #tlsvg line[stroke="rgba(28,37,71,.12)"]{stroke:rgba(255,255,255,.08)}
+html.dk #tlsvg line[stroke="rgba(28,37,71,.22)"]{stroke:rgba(255,255,255,.22)}
+html.dk #tlsvg line[stroke="rgba(28,37,71,.3)"]{stroke:rgba(255,255,255,.3)}
+html.dk #tlsvg line[stroke="rgba(28,37,71,.16)"]{stroke:rgba(255,255,255,.13)}
+html.dk #tlsvg text[fill="#3d5cc0"]{fill:#f3d08a}
+html.dk #tlsvg text[fill="rgba(28,37,71,.62)"]{fill:rgba(244,236,217,.72)}
+html.dk #tlsvg text[fill="rgba(28,37,71,.38)"]{fill:rgba(244,236,217,.3)}
+html.dk #tlsvg text[fill="rgba(28,37,71,.55)"]{fill:#8f98a8}
+/* area, line, monthly dots */
+html.dk #tlsvg #ga stop:first-child{stop-color:#e9bc6c;stop-opacity:.34}
+html.dk #tlsvg #ga stop:last-child{stop-color:#e87a2a;stop-opacity:0}
+html.dk #tlsvg path[stroke="#2a3b86"]{stroke:#f3d08a}
+html.dk #tlsvg circle[fill="#2a3b86"]{fill:#f3d08a;stroke:#0a1020}
+/* event ticks on the base line */
+html.dk #tlsvg circle[fill="rgba(238,152,115,.95)"]{fill:#ff9d55}
+html.dk #tlsvg circle[fill="rgba(28,37,71,.55)"]{fill:rgba(244,236,217,.55)}
+html.dk #tlsvg circle[fill="rgba(28,37,71,.16)"]{fill:rgba(244,236,217,.16)}
+/* the moving marker */
+html.dk #tlsvg line[stroke="#3d5cc0"]{stroke:#f3d08a;opacity:.6}
+html.dk #tlsvg circle[fill="#ee9873"]{fill:#e87a2a;stroke:#fff3d6}
+/* value tooltip */
+html.dk #tchip{background:linear-gradient(160deg,rgba(26,32,50,.96),rgba(12,16,28,.94));box-shadow:inset 0 1px 0 rgba(255,255,255,.14),inset 0 0 0 1px rgba(233,188,108,.4),0 18px 36px -14px rgba(0,0,0,.8)}
+html.dk #tchip b{color:#fff}
+html.dk #tchip small{color:var(--ink2)}
+html.dk #tchip i{color:var(--gold2)}
+html.dk #tchip .dl2{color:var(--bad);background:rgba(255,138,122,.12);box-shadow:inset 0 0 0 1px rgba(255,138,122,.45)}
+/* published figures */
+html.dk .vchip{color:var(--ink2);background:linear-gradient(160deg,rgba(26,32,50,.94),rgba(12,16,28,.9));box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 0 0 0 1px rgba(255,255,255,.12),0 12px 26px -12px rgba(0,0,0,.75)}
+html.dk .vchip b{color:var(--ink)}
+html.dk .vchip.low b{color:var(--bad)}
+
+/* ---------- full cards: intro, year list, prefinal, final ---------- */
+html.dk .big em{color:var(--gold2)}
+html.dk .big .w>i{color:var(--gold3)}
+html.dk .yrbg .tint{background:linear-gradient(160deg,rgba(5,7,13,.84),rgba(10,16,32,.78) 55%,rgba(10,16,32,.72))}
+html.dk .yrbg.yl .tint{background:radial-gradient(60% 80% at 0% 100%,rgba(232,122,42,.3),rgba(232,122,42,0) 70%),radial-gradient(60% 75% at 100% 0%,rgba(58,120,200,.3),rgba(58,120,200,0) 70%),linear-gradient(160deg,rgba(5,7,13,.84),rgba(8,12,24,.77) 55%,rgba(10,16,32,.7))!important}
+html.dk .yrbg.pf .tint{background:rgba(5,7,13,.16)!important}
+html.dk .yly{background:var(--goldtxt);-webkit-background-clip:text;background-clip:text;color:transparent}
+html.dk .ylk{color:var(--ink2);opacity:1}
+html.dk .yli{background:linear-gradient(150deg,rgba(255,255,255,.085),rgba(255,255,255,.035));box-shadow:inset 0 1px 0 rgba(255,255,255,.08),inset 0 0 0 1px rgba(255,255,255,.12)}
+html.dk .yd{color:var(--gold3)}
+html.dk .yt{color:var(--ink)}
+/* newspaper headlines over the photos: dark glass slips with a gold edge */
+html.dk .clip{background:linear-gradient(160deg,rgba(18,24,40,.93),rgba(8,11,20,.9));color:var(--ink);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 0 0 0 1px rgba(233,188,108,.38),0 26px 40px -20px rgba(0,0,0,.85);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+html.dk .clip small{color:var(--ink2)}
+html.dk .clip small svg{color:var(--gold3)}
+/* final card: the gold line */
+html.dk .big.fin{color:#f8f3e8}
+html.dk .big.fin em{background:var(--goldtxt);-webkit-background-clip:text;background-clip:text;color:transparent}
+/* Readex: the gold run's box must reach the dots under the final ي (text outside the box gets no gold), and the tall أ of
+   «بدأ» needs room under the line above it */
+html.dk .big.fin em{padding-bottom:.32em}
+html.dk .big.fin{margin-top:.18em}
+/* cut flash: a softer warm light instead of the white flash */
+html.dk #wipe{background:radial-gradient(70% 80% at 50% 54%,rgba(255,243,214,.62),rgba(243,208,138,.38) 55%,rgba(232,122,42,.16))}
+
+/* ---------- start screen ---------- */
+html.dk #start{background:rgba(5,7,13,.5)}
+html.dk #start .pane{background:radial-gradient(70% 60% at 100% 0%,rgba(58,120,200,.22),rgba(58,120,200,0) 70%),radial-gradient(70% 60% at 0% 100%,rgba(232,122,42,.22),rgba(232,122,42,0) 70%),linear-gradient(150deg,rgba(22,28,44,.9),rgba(9,12,22,.88));box-shadow:inset 0 1px 0 rgba(255,255,255,.14),inset 0 0 0 1px rgba(255,255,255,.12),0 40px 90px -40px rgba(0,0,0,.85)}
+html.dk #start .t{color:var(--ink)}
+html.dk #start .t i{color:var(--gold3)}
+html.dk #start .go{color:#1a1206;background:linear-gradient(150deg,#f6d996,#e9bc6c 55%,#d29a4c);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 16px 30px -14px rgba(233,188,108,.55)}
+html.dk #start .go:disabled{color:var(--gold2);background:rgba(233,188,108,.1);box-shadow:inset 0 0 0 1px rgba(233,188,108,.35)}
+html.dk #start .chs button{color:var(--gold2);background:rgba(233,188,108,.08);box-shadow:inset 0 0 0 1px rgba(233,188,108,.3)}
+html.dk #start .n{color:var(--mute)}
+html.dk #start .rotq{color:var(--gold2)}
+
+/* ---------- control bar ---------- */
+html.dk #ctl{background:linear-gradient(160deg,rgba(24,30,48,.92),rgba(10,14,24,.88));box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 0 0 0 1px rgba(255,255,255,.1),0 18px 40px -18px rgba(0,0,0,.8)}
+html.dk #ctl button,html.dk #ctl a{color:var(--ink)}
+html.dk #ctl button:hover,html.dk #ctl a:hover{background:rgba(255,255,255,.08)}
+html.dk #ctl .chap.on{color:#1a1206;background:linear-gradient(150deg,#f6d996,#e9bc6c 55%,#d29a4c)}
+html.dk #ctl .src{color:var(--gold3)}
+html.dk #bar .trk{background:rgba(255,255,255,.14)}
+html.dk #bar .fill{background:linear-gradient(270deg,#f3d08a,#e87a2a)}
+html.dk #bar .mk{background:rgba(255,255,255,.3)}
+html.dk #bar .knob{background:#fff3d6;box-shadow:0 0 0 2px #e9bc6c,0 0 12px rgba(233,188,108,.6)}
+html.dk #sndchip{color:var(--ink);background:rgba(12,16,28,.86);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
