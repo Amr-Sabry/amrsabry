@@ -23,12 +23,13 @@
     const n = sc.rows.length, W = Math.min(600, Math.floor(1620 / n)), H = n > 3 ? 280 : 320;
     /* room above the tallest column: number + unit (+ prefix, + tonnes tag), and below it the year tag */
     const any = f => sc.rows.some(f), ulong = any(r => String(r.ub || r.u || '').length > 16);
-    const room = 178 + (any(r => r.pb) ? 30 : 0) + (any(r => r.bx || r.ax) ? 40 : 0) + (ulong ? 30 : 0);
+    const room = 178 + (any(r => r.pb || r.tg) ? 34 : 0) + (any(r => r.bx || r.ax) ? 40 : 0) + (ulong ? 30 : 0);
     const two = any(r => String(r.nm).length * 19 > W - 70);
     const CM = sc.common ? Math.max(...sc.rows.map(r => Math.max(fnum(r.a), fnum(r.b)))) : 0;
     const g = sc.rows.map((r, i) => {
       const A = r.an != null ? r.an : (r.a == null ? 0 : fnum(r.a)), B = r.bn != null ? r.bn : fnum(r.b);
-      const M = r.pct ? 100 : (r.gp || CM || Math.max(A, B) || 1);
+      const T = r.tg ? fnum(r.tg.v) : 0;
+      const M = r.pct ? 100 : (r.gp || CM || Math.max(A, B, T) || 1);
       const h = v => Math.max(v > 0 ? 8 : 3, Math.round(v / M * H));
       const ya = r.ya || sc.ya || YA, yb = r.yb || sc.yb || YB;
       const rng = r.an != null && String(r.a).includes('–') ? fnum(r.a) : null;
@@ -40,12 +41,20 @@
            <i style="height:${h(A)}px">${rng != null ? `<b style="height:${Math.round((A - rng) / A * 100)}%"></b>` : ''}</i>${inl(r.ia, h(A))}${tag(ya)}</div>`;
       const colB = `<div class="col b${sc.wf ? ' wf' : ''}"><div class="cv">${r.pb ? `<small>${rich(r.pb)}</small>` : ''}${N(r.b, sc.wf ? '' : 'gold')}<u>${rich(r.ub || r.u || '')}</u>${r.bx ? `<em>${rich(r.bx)}</em>` : ''}</div>
            <i style="height:${h(B)}px"></i>${inl(r.ib, h(B))}${tag(yb, 'b')}</div>`;
-      return `<div class="grp"${S(1)} style="width:${W}px;transition-delay:${(.1 + i * .34).toFixed(2)}s">
+      /* 23 Oct 10:52 / 11:31 Amr «المستهدف 12.5 مليون فدان مساحة مزروعة بحلول عام 2030»: a target stands as a third column, drawn dashed — not yet built */
+      const colT = r.tg ? `<div class="col t"><div class="cv"><small>${rich(r.tg.pre || 'مستهدف')}</small>${N(r.tg.v)}<u>${rich(r.tg.u || r.u || '')}</u></div>
+           <i style="height:${h(T)}px"></i>${tag(r.tg.y, 't')}</div>` : '';
+      return `<div class="grp${r.tg ? ' wtg' : ''}"${S(1)} style="width:${W}px;transition-delay:${(.1 + i * .34).toFixed(2)}s">
         <div class="gh">${ic(r.ic)}<span>${rich(r.nm)}</span>${r.sub ? `<small>${rich(r.sub)}</small>` : ''}</div>
-        <div class="cols" style="height:${H + room}px">${colA}${colB}</div>
+        <div class="cols" style="height:${H + room}px">${colA}${colB}${colT}</div>
         ${r.nb ? `<div class="nb${r.nbt ? ' t' : ''}${r.nbo ? ' o' : ''}">${rich(r.nb)}</div>` : ''}${r.mu ? `<div class="nb">${rich(r.mu)}</div>` : ''}</div>`;
-    }).join('');
-    return `<div class="chart k-rows n${n}${two ? ' two' : ''}">${g}</div>${sc.foot ? `<div class="kfoot"${S(1)}>${rich(sc.foot)}</div>` : ''}`;
+    }).join('<!--grp-->');
+    /* 11:33 Amr «الزراعة خلي 12.5 في النص»: a target the slide states on its own stands as a card between the two charts,
+       an arrow from the measure it belongs to (the first, on the right) */
+    const m = sc.mid, mid = m ? `<div class="kmid"${S(1)} style="transition-delay:.55s"><svg class="karr" viewBox="0 0 90 20"><path d="M86 10H12"/><path d="M20 3 11 10l9 7"/></svg>
+        <small>${rich(m.pre || 'مستهدف')}</small><div class="mv">${N(m.v, 'gold')}</div><u>${rich(m.u || '')}</u>${m.y ? tag(m.y, 'b') : ''}</div>` : '';
+    const gs = mid ? g.split('<!--grp-->') : null;
+    return `<div class="chart k-rows n${n}${two ? ' two' : ''}${mid ? ' wmid' : ''}">${mid ? gs[0] + mid + gs.slice(1).join('') : g}</div>${sc.foot ? `<div class="kfoot"${S(1)}>${rich(sc.foot)}</div>` : ''}`;
   };
 
   /* ── pairs: the economy as slopes — before → after, one small chart per measure ── */

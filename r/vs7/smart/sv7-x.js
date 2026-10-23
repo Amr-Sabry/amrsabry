@@ -1132,6 +1132,22 @@
 .sv.t-stats .pad.dense .sc .v .num{font-size:62px}
 .sv.t-stats .pad.dense .sc .u{font-size:25px}
 .sv.t-stats .simg.dense{width:520px}
+.sv.t-kq .k-rows .grp.wtg .cols{gap:34px}
+.sv.t-kq .col.t>i{background:repeating-linear-gradient(135deg,rgba(233,188,108,.16) 0 8px,rgba(233,188,108,.04) 8px 16px);border:2px dashed rgba(233,188,108,.8);box-shadow:0 0 60px -18px rgba(233,188,108,.5);transition-delay:1.05s}
+.sv.t-kq .col.t .cv{transition-delay:1.5s}
+.sv.t-kq .col.t .cv .num{font-size:76px;color:#f3d79f}
+.sv.t-kq .col.t .cv u{color:var(--gold2)}
+.sv.t-kq .col.t .cv small{font:600 24px/1.2 var(--fb);color:#f3d79f}
+.sv.t-kq .yt.t{color:#f3d79f;background:rgba(233,188,108,.08);border:1.5px dashed rgba(233,188,108,.75);padding:6.5px 14.5px}
+.sv.t-kq .k-rows.wmid{align-items:flex-start}
+.sv.t-kq .kmid{position:relative;align-self:flex-start;margin:150px 34px 0;padding:30px 40px 30px;border-radius:30px;display:flex;flex-direction:column;align-items:center;text-align:center;
+  background:linear-gradient(180deg,rgba(233,188,108,.17),rgba(233,188,108,.045));border:1.5px solid rgba(233,188,108,.55);box-shadow:0 30px 70px -30px rgba(0,0,0,.9),0 0 80px -30px rgba(233,188,108,.45)}
+.sv.t-kq .kmid small{font:600 30px/1.2 var(--fb);color:#f3d79f}
+.sv.t-kq .kmid .mv .num{font-size:118px;line-height:1.05}
+.sv.t-kq .kmid u{text-decoration:none;font:600 30px/1.2 var(--fb);color:#eef0f4;margin-top:4px}
+.sv.t-kq .kmid .yt{margin-top:18px}
+.sv.t-kq .kmid .karr{position:absolute;right:-84px;top:42px;width:80px;height:18px;fill:none;stroke:rgba(233,188,108,.85);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sv.t-kq .kmid .karr path:first-child{stroke-dasharray:5 6}
 .sv.t-stats .bg.sbgp{z-index:0}
 .sv.t-stats .bg.sbgp::after{background:linear-gradient(270deg,rgba(4,6,11,.9) 0%,rgba(4,6,11,.74) 42%,rgba(4,6,11,.3) 78%,rgba(4,6,11,.22) 100%),linear-gradient(0deg,rgba(4,6,11,.7),transparent 45%),linear-gradient(180deg,rgba(4,6,11,.55),transparent 30%)}
 .sv.t-stats .pad.onbg{position:relative;z-index:2}
