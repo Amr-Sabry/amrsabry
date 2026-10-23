@@ -792,6 +792,8 @@
           if (k >= 1 && !done) { done = true; el.classList.remove('mg'); f5(kl); } }; }
       if (sc && sc.atEnd && sc.type === 'map' && el._onstep) { const f4 = el._onstep, kl = sc.st.length - 1; let first = true; el.classList.add('atend');
         el._onstep = () => { if (first) { first = false; f4(0, true); f4(kl, true); } }; }
+      /* 15:25 Amr «الخريطة تكون اسرع»: a route-map film on a project slide plays twice as fast */
+      el.querySelectorAll('.gi.mapv video').forEach(v => { const r = () => { v.defaultPlaybackRate = 2; v.playbackRate = 2; }; r(); ['loadedmetadata', 'play'].forEach(e => v.addEventListener(e, r)); });
       try { hlNums(el); } catch (e) {} try { drift(el, o); } catch (e) {}
       if (!(o && o.thumb)) kjRun(el); } return el; };
   /* 00:19 kashida only once the slide is on the page AND its own faces are in: two frames after it is connected the browser has
@@ -1178,7 +1180,11 @@
 .sv[data-id="s59"] .mp .mchips{flex-direction:row;flex-wrap:wrap;gap:10px 10px;margin-top:12px}
 .sv[data-id="s59"] .mp .mchips .chip{font-size:21px;padding:8px 18px}
 .sv[data-id="s59"] .mp .macc.on{margin-top:14px;padding-top:12px}
-.sv[data-id="s59"] .mp .pace{margin:4px 0 0!important;padding-top:0!important;border-top:0!important;gap:8px}
+.sv[data-id="s59"] .mp .pace{margin:4px 0 0!important;padding-top:0!important;border-top:0!important;flex-direction:row!important;gap:16px}.sv[data-id="s59"] .mp .macc{flex-shrink:0}
+/* 15:24 Amr «خليهم كارتين بالوان الارقام اللي بنستخدمها دايما»: the time and the cars as two cards, their figures in the deck's gold */
+.sv[data-id="s59"] .mp .pace .pr{flex:1 1 0;display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:14px 20px 12px;border-radius:20px;background:linear-gradient(180deg,rgba(233,188,108,.10),rgba(255,255,255,.03));border:1px solid rgba(233,188,108,.45);box-shadow:0 0 30px -10px rgba(233,188,108,.35)}
+.sv[data-id="s59"] .mp .pace .pr b{font-size:66px;line-height:.95;background:linear-gradient(180deg,var(--gold1) 0%,var(--gold2) 46%,var(--gold3) 100%);-webkit-background-clip:text;background-clip:text;color:transparent!important;padding-bottom:.06em}
+.sv[data-id="s59"] .mp .pace .pr span{font:600 21px/1.4 var(--fb);color:#e6e1d6}
 /* 15:20 Amr «اتاكد ان ده النص في دولة تحمي مقدراتها»: the line under the title in two lines, as the deck sets it */
 .sv[data-id="s213"] .pad .p{white-space:pre-line;font-size:40px;line-height:1.45;font-weight:600;margin-top:14px}
 .sv.t-cards .ivg{display:grid;gap:22px;margin-top:44px}.sv.t-cards .ivg.n5{grid-template-columns:repeat(5,minmax(0,1fr))}.sv.t-cards .ivg.n8{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 22px;margin-top:30px}
