@@ -1283,6 +1283,9 @@
 .sv.t-gallery .grec.col .gs{order:5;width:100%;margin-top:-12px}
 .sv.t-gallery .gal.geo.wrec .gi{border-radius:14px;overflow:hidden}
 /* the New Delta map, whole */
+/* 10:34 the road names on the roads map: small, in the roads' own blue */
+.sv[data-id="s50"].t-map .mlabels>span{font-size:15px;font-weight:600;color:#cfe8ff}
+.sv[data-id="s50"].t-map .mgrp b{font-size:16px}.sv[data-id="s50"].t-map .mgrp .gl span{font-size:15px;color:#cfe8ff}
 /* 10:03 a «still» slide (sc.still): everything on it from the first frame, nothing moves */
 .sv.nomo [data-s]{opacity:1!important;transform:none!important;filter:none!important;transition:none!important}
 .sv.nomo *,.sv.nomo *::before,.sv.nomo *::after{animation:none!important;transition:none!important}
