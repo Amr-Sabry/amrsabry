@@ -531,7 +531,8 @@
       const tw = document.createTreeWalker(box, NodeFilter.SHOW_TEXT, { acceptNode: n => n.parentElement.closest('.num,.hl,svg,.yt,.tg') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
       const nodes = []; while (tw.nextNode()) nodes.push(tw.currentNode);
       nodes.forEach(n => {
-        const t = n.nodeValue; RX.lastIndex = 0; if (!RX.test(t)) return; RX.lastIndex = 0;
+        const t = n.nodeValue; if (/\d{4}\s*\/\s*\d{4}/.test(t)) return;   /* 10:55 a school year («دفعة 2025/2026») stays plain text */
+        RX.lastIndex = 0; if (!RX.test(t)) return; RX.lastIndex = 0;
         const f = document.createDocumentFragment(); let k = 0, m;
         while ((m = RX.exec(t))) { if (m.index > k) f.appendChild(document.createTextNode(t.slice(k, m.index)));
           const sp = document.createElement('span'); sp.className = 'hl'; sp.textContent = m[1].trim(); f.appendChild(sp);
@@ -953,6 +954,7 @@
 .sv .gi .tg.new{background:linear-gradient(180deg,#f3d08a,#c9944a);color:#1a1206}
 .sv .gi.ins{z-index:3;box-shadow:0 0 0 3px rgba(4,6,11,.85),0 0 0 4px rgba(255,255,255,.35),0 30px 60px -20px rgba(0,0,0,.95)}
 .sv .gi.ins figcaption{font-size:20px;padding:7px 10px}
+.sv .gi.ins figcaption{-webkit-line-clamp:3}   /* 10:55 a three-line caption shows whole (Knowledge City: the university and its four faculties) */
 .sv .gi.mapv{box-shadow:0 0 0 3px rgba(4,6,11,.85),0 0 0 5px rgba(233,188,108,.7),0 30px 60px -20px rgba(0,0,0,.95)}
 .sv.t-gallery .gt{position:absolute;right:70px;left:120px;top:112px;z-index:12;display:flex;flex-direction:column;align-items:flex-start;gap:8px}
 .sv.t-gallery .gt .k{font:500 24px/1.2 var(--fb);color:var(--acc)}
