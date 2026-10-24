@@ -8,25 +8,25 @@
 <title>استوديو حلو الكلام</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Montserrat:wght@400;500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Doto:wght@700;900&family=Space+Mono:wght@400;700&family=Noto+Kufi+Arabic:wght@600;800&family=Readex+Pro:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: full-bleed real-time 3D studio framed like an LED wall; dot-matrix chrome on the edges
    (brand + tally top, segment sheet on one side, camera switcher + rundown bottom). One dark look by choice: an LED screen is dark. */
 :root{
   color-scheme: dark;
-  --ink:#04050c;
-  --panel:rgba(5,6,15,.86);
-  --panel-2:rgba(9,11,26,.94);
+  --ink:#0B0912;
+  --panel:#1B1828;
+  --panel-2:#221E33;
   --dot:rgba(140,150,255,.07);
-  --cyan:#55f2ee;
-  --pink:#ff60d0;
-  --amber:#ffb46c;
-  --cream:#eef0ff;
-  --muted:#9799b6;
+  --cyan:#BEFF48;
+  --pink:#CD96FF;
+  --amber:#FFB03A;
+  --cream:#EEEAF8;
+  --muted:#9893AE;
   --tally:#ff3d3d;
-  --line:rgba(85,242,238,.2);
-  --f-ui:"Montserrat","Cairo","Segoe UI",Tahoma,system-ui,sans-serif;
-  --f-ar:"Cairo","Montserrat",Tahoma,system-ui,sans-serif;
+  --line:#EEEAF8;
+  --f-ui:"Space Mono","Readex Pro",ui-monospace,monospace;--f-dot:"Doto","Noto Kufi Arabic","Space Mono",monospace;--f-kufi:"Noto Kufi Arabic","Readex Pro",sans-serif;
+  --f-ar:"Readex Pro","Space Mono",sans-serif;
   --gl:max(16px, env(safe-area-inset-left, 0px));
   --gr:max(16px, env(safe-area-inset-right, 0px));
   --gallery-h:126px;
@@ -61,7 +61,7 @@ html[lang="ar"] .chip{letter-spacing:0}
 .tally{color:#fff;background:rgba(150,16,22,.9);border-color:rgba(255,90,90,.55)}
 .tally::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--tally);box-shadow:0 0 9px var(--tally);margin-inline-end:7px;vertical-align:1px;animation:blink 1.6s infinite}
 @keyframes blink{50%{opacity:.3}}
-.tbtn{font-weight:700;font-size:13px;padding:7px 13px;border-radius:7px;background:var(--cyan);color:#021214;border:1px solid #b9fffb;box-shadow:0 0 18px rgba(85,242,238,.35)}
+.tbtn{font-weight:700;font-size:13px;padding:7px 13px;border-radius:7px;background:var(--cyan);color:#021214;border:1px solid #b9fffb;box-shadow:0 0 18px rgba(190,255,72,.35)}
 .tbtn[aria-pressed="true"]{background:#021214;color:var(--cyan)}
 .lang{font-weight:800;font-size:13px;min-width:38px;padding:7px 10px;border-radius:7px;border:1px solid var(--line);background:var(--panel);color:var(--cream)}
 .lang:hover,.tbtn:hover{filter:brightness(1.1)}
@@ -79,9 +79,9 @@ html[lang="ar"] .chip{letter-spacing:0}
 .p-body{padding:14px 18px 22px;overflow:auto;display:flex;flex-direction:column;gap:18px;min-height:0}
 .lead{font-size:15.5px;line-height:1.55;margin:0;color:var(--cream);max-width:60ch}
 .lead.sm{font-size:14px}
-.act{align-self:flex-start;display:inline-flex;align-items:center;gap:10px;padding:11px 16px;border-radius:9px;background:linear-gradient(180deg,#ff7bd9,#e04cb8);color:#1a0414;font-weight:800;font-size:14px;border:1px solid #ffc3ee;box-shadow:0 0 22px rgba(255,96,208,.35)}
+.act{align-self:flex-start;display:inline-flex;align-items:center;gap:10px;padding:11px 16px;border-radius:9px;background:linear-gradient(180deg,#ff7bd9,#e04cb8);color:#1a0414;font-weight:800;font-size:14px;border:1px solid #ffc3ee;box-shadow:0 0 22px rgba(205,150,255,.35)}
 .act:hover{filter:brightness(1.07)}
-.result{font-size:15px;line-height:1.5;padding:12px 14px;border-radius:10px;background:rgba(85,242,238,.08);border:1px solid var(--line);margin:0}
+.result{font-size:15px;line-height:1.5;padding:12px 14px;border-radius:10px;background:rgba(190,255,72,.08);border:1px solid var(--line);margin:0}
 .result:empty{display:none}
 .sec h3{margin:0 0 8px;color:var(--muted)}
 .ls{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:14px;line-height:1.5}
@@ -97,7 +97,7 @@ html[lang="ar"] .chip{letter-spacing:0}
 .pairs dt{color:var(--amber);font-weight:700}
 .pairs dd{margin:0;color:var(--cream)}
 .chain{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px}
-.chain span{padding:5px 9px;border-radius:6px;background:rgba(85,242,238,.09);border:1px solid rgba(85,242,238,.3)}
+.chain span{padding:5px 9px;border-radius:6px;background:rgba(190,255,72,.09);border:1px solid rgba(190,255,72,.3)}
 .chain i{font-style:normal;color:var(--pink)}
 html[lang="ar"] .chain i{transform:scaleX(-1);display:inline-block}
 .big{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
@@ -124,7 +124,7 @@ html[lang="ar"] .lt-tag{letter-spacing:0;font-size:13px}
 /* 9:16 safe frame */
 .frame916{position:fixed;z-index:3;left:50%;top:50%;height:min(66vh,560px);aspect-ratio:9/16;max-width:90vw;transform:translate(-50%,-56%);pointer-events:none;
   box-shadow:0 0 0 200vmax rgba(2,3,10,.55);border:2px solid var(--cyan);border-radius:4px}
-.frame916::after{content:"";position:absolute;inset:8%;border:1px dashed rgba(85,242,238,.45)}
+.frame916::after{content:"";position:absolute;inset:8%;border:1px dashed rgba(190,255,72,.45)}
 .frame916 span{position:absolute;top:-26px;left:0;color:var(--cyan);white-space:nowrap}
 
 /* zone labels */
@@ -155,7 +155,7 @@ html[lang="ar"] .zl small{letter-spacing:0;font-size:11px}
 .seg .t{display:block;font-size:16px;font-weight:800;line-height:1.3}
 .seg .s{display:block;font-size:11px;color:var(--muted);line-height:1.25}
 .seg:hover{background:rgba(255,255,255,.04)}
-.seg[aria-current="true"]{background:linear-gradient(180deg,rgba(85,242,238,.16),rgba(85,242,238,.04));border-color:rgba(85,242,238,.6);box-shadow:inset 0 0 18px rgba(85,242,238,.12)}
+.seg[aria-current="true"]{background:linear-gradient(180deg,rgba(190,255,72,.16),rgba(190,255,72,.04));border-color:rgba(190,255,72,.6);box-shadow:inset 0 0 18px rgba(190,255,72,.12)}
 .seg .bar{position:absolute;inset-inline-start:0;bottom:0;height:2px;width:0;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
 
 /* intro */
@@ -164,10 +164,10 @@ html[lang="ar"] .zl small{letter-spacing:0;font-size:11px}
 .intro.out{opacity:0;pointer-events:none}
 .intro-in{max-width:820px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}
 .kicker{color:var(--amber)}
-.intro-logo{padding:14px 18px;border-radius:14px;background:#03040a;border:1px solid rgba(255,255,255,.06);box-shadow:0 0 70px rgba(85,242,238,.12)}
+.intro-logo{padding:14px 18px;border-radius:14px;background:#03040a;border:1px solid rgba(255,255,255,.06);box-shadow:0 0 70px rgba(190,255,72,.12)}
 .intro .tag{font-size:clamp(16px,2.3vw,22px);font-weight:700;line-height:1.45;color:var(--cream);margin:0;max-width:34ch;text-wrap:balance}
 .intro .sub{font-size:14px;color:var(--muted);margin:0}
-.enter{margin-top:8px;display:inline-flex;align-items:center;gap:12px;padding:14px 24px;border-radius:12px;background:linear-gradient(180deg,#7ff8f4,#2fd6d1);color:#021214;font-weight:800;font-size:17px;border:1px solid #c8fffc;box-shadow:0 0 40px rgba(85,242,238,.4)}
+.enter{margin-top:8px;display:inline-flex;align-items:center;gap:12px;padding:14px 24px;border-radius:12px;background:linear-gradient(180deg,#7ff8f4,#2fd6d1);color:#021214;font-weight:800;font-size:17px;border:1px solid #c8fffc;box-shadow:0 0 40px rgba(190,255,72,.4)}
 .fine{font-size:11px;font-weight:600;color:rgba(151,153,182,.85);margin:4px 0 0}
 .lang-intro{position:absolute;top:calc(env(safe-area-inset-top,0px) + 14px);right:var(--gr)}
 .nogl{display:none}
@@ -181,7 +181,7 @@ body.pre .top,body.pre .panel,body.pre .gallery,body.pre #labels{opacity:0;point
 @media (orientation: portrait) and (max-width: 600px){
   .rotate{display:grid;place-items:center;position:fixed;inset:0;z-index:60;background:var(--ink);padding:24px var(--gr) 24px var(--gl);text-align:center}
   .rotate-in{display:flex;flex-direction:column;align-items:center;gap:16px}
-  .phone{width:58px;height:100px;border:3px solid var(--cyan);border-radius:12px;box-shadow:0 0 22px rgba(85,242,238,.5);position:relative;animation:turn 2.4s ease-in-out infinite}
+  .phone{width:58px;height:100px;border:3px solid var(--cyan);border-radius:12px;box-shadow:0 0 22px rgba(190,255,72,.5);position:relative;animation:turn 2.4s ease-in-out infinite}
   .phone::after{content:"";position:absolute;left:50%;bottom:6px;width:14px;height:3px;border-radius:2px;background:var(--cyan);transform:translateX(-50%)}
   .rotate b{font-size:22px;font-weight:900}
   .rotate small{font-size:14px;color:var(--muted)}
@@ -238,6 +238,74 @@ body.pre .top,body.pre .panel,body.pre .gallery,body.pre #labels{opacity:0;point
   .lower{animation:none}
   .intro,.sting{transition:none}
 }
+
+/* ===== dark retro-OS skin: same palette, type and window language as the dark deck ===== */
+html[lang="ar"] body{font-family:var(--f-ar)}
+:focus-visible{outline:3px solid var(--cyan)}
+.panel,.rundown,.chip,.lang,.zl,.cam,.lt-text,.sting-in{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.panel{background:#1B1828;border:3px solid #EEEAF8;border-radius:9px;box-shadow:7px 7px 0 #000}
+.panel::before{content:"";flex:0 0 34px;background:var(--pink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='66' height='18'%3E%3Cg fill='%23FFF9E8' stroke='%23121212' stroke-width='2'%3E%3Crect x='1' y='1' width='18' height='16' rx='3'/%3E%3Crect x='24' y='1' width='18' height='16' rx='3'/%3E%3Crect x='47' y='1' width='18' height='16' rx='3'/%3E%3C/g%3E%3Cg stroke='%23121212' stroke-width='2' fill='none'%3E%3Cpath d='M5 12h10'/%3E%3Crect x='28.5' y='5' width='9' height='8'/%3E%3Cpath d='M52 5l8 8M60 5l-8 8'/%3E%3C/g%3E%3C/svg%3E") no-repeat right 8px center/66px 18px;border-bottom:3px solid #EEEAF8}
+html[lang="ar"] .panel::before{background-position:left 8px center}
+.p-head{border-bottom:2px dashed rgba(238,234,248,.22)}
+.p-titlewrap{background:#06070D;border:2px solid #000;border-radius:6px}
+.p-eyebrow{color:var(--cyan)}
+.p-sub{color:var(--cream)}
+.act{background:var(--cyan);color:#121212;border:2.5px solid #000;border-radius:999px;box-shadow:3px 3px 0 #000;font-family:var(--f-ui);font-weight:700}
+html[lang="ar"] .act{font-family:var(--f-ar)}
+.act:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #000}
+.result{background:#221E33;border:2px solid rgba(238,234,248,.28);border-radius:8px}
+.sec h3{color:var(--pink)}
+.ls li::before{box-shadow:none;background:var(--cyan)}
+.ls.num li::before{color:var(--cyan)}
+.chips span{border:2px solid rgba(238,234,248,.55);background:transparent;font-size:12px}
+.pairs div{border-bottom:1px solid rgba(238,234,248,.14)}
+.pairs dt{color:var(--amber)}
+.chain span{background:rgba(190,255,72,.12);border:2px solid var(--cyan)}
+.chain i{color:var(--cyan)}
+.big div{background:#221E33;border:2px solid rgba(238,234,248,.28);border-radius:8px}
+.big b{font-family:var(--f-dot);font-weight:900;font-size:26px;color:var(--amber)}
+.note{background:#F2F58E;color:#121212;border:3px solid #000;border-radius:2px;box-shadow:5px 5px 0 #000;font-size:13px}
+.rule{font-family:var(--f-dot);color:var(--amber)}
+html[lang="ar"] .rule,html[lang="ar"] .closing{font-family:var(--f-kufi);font-weight:800}
+.lt-tag{background:var(--cyan);color:#121212;border:3px solid #EEEAF8;border-inline-end:0}
+.lt-text{background:#1B1828;border:3px solid #EEEAF8;box-shadow:6px 6px 0 #000}
+.sting-in{background:#1B1828;border:3px solid #EEEAF8;border-radius:9px;box-shadow:7px 7px 0 #000}
+.sting .lbl{color:var(--cyan)}
+.zl{background:#1B1828;border:2.5px solid #EEEAF8;border-radius:8px;box-shadow:4px 4px 0 #000}
+.zl b{font-family:var(--f-dot);font-weight:900;font-size:15px}
+html[lang="ar"] .zl b{font-family:var(--f-kufi);font-weight:800}
+.zl small{color:var(--cyan)}
+.zl:hover{border-color:var(--cyan)}
+.cam{background:#1B1828;border:2px solid rgba(238,234,248,.5);border-radius:6px;color:var(--muted)}
+.cam[aria-pressed="true"]{background:var(--cyan);border-color:#EEEAF8;color:#121212;box-shadow:3px 3px 0 #000}
+.cam[aria-pressed="true"] b{color:#121212}
+.hint{color:var(--muted)}
+.rundown{background:#1B1828;border:3px solid #EEEAF8;border-radius:9px;box-shadow:6px 6px 0 #000}
+.seg .n{color:var(--pink)}
+.seg .t{font-family:var(--f-dot);font-weight:900}
+html[lang="ar"] .seg .t{font-family:var(--f-kufi);font-weight:800}
+.seg:hover{background:rgba(238,234,248,.06)}
+.seg[aria-current="true"]{background:var(--cyan);border-color:#000;box-shadow:none;color:#121212}
+.seg[aria-current="true"] .n,.seg[aria-current="true"] .s{color:#121212}
+.seg .bar{background:var(--amber);box-shadow:none;height:4px}
+.chip{background:#1B1828;border:2px solid #EEEAF8;border-radius:6px}
+.tally{background:#E5484D;color:#fff;border-color:#EEEAF8}
+.tbtn{background:var(--cyan);color:#121212;border:2.5px solid #000;border-radius:999px;box-shadow:3px 3px 0 #000}
+.tbtn[aria-pressed="true"]{background:#1B1828;color:var(--cyan);border-color:var(--cyan)}
+.lang{background:#1B1828;border:2px solid #EEEAF8;border-radius:999px}
+.frame916{border:3px solid var(--cyan)}
+.intro{background:linear-gradient(rgba(214,168,245,.09) 1.5px,transparent 1.5px) 0 0/64px 64px,linear-gradient(90deg,rgba(214,168,245,.09) 1.5px,transparent 1.5px) 0 0/64px 64px,radial-gradient(80% 70% at 50% 48%, rgba(30,18,56,.82), rgba(11,9,18,.97) 78%)}
+.intro-logo{background:#06070D;border:3px solid #EEEAF8;border-radius:9px;box-shadow:7px 7px 0 #000;padding:42px 18px 14px;position:relative}
+.intro-logo::before{content:"";position:absolute;left:0;right:0;top:0;height:28px;background:var(--cyan) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='66' height='18'%3E%3Cg fill='%23FFF9E8' stroke='%23121212' stroke-width='2'%3E%3Crect x='1' y='1' width='18' height='16' rx='3'/%3E%3Crect x='24' y='1' width='18' height='16' rx='3'/%3E%3Crect x='47' y='1' width='18' height='16' rx='3'/%3E%3C/g%3E%3Cg stroke='%23121212' stroke-width='2' fill='none'%3E%3Cpath d='M5 12h10'/%3E%3Crect x='28.5' y='5' width='9' height='8'/%3E%3Cpath d='M52 5l8 8M60 5l-8 8'/%3E%3C/g%3E%3C/svg%3E") no-repeat right 8px center/66px 18px;border-bottom:3px solid #EEEAF8}
+html[lang="ar"] .intro-logo::before{background-position:left 8px center}
+.intro .kicker{color:var(--pink)}
+.intro .tag{font-family:var(--f-dot);font-weight:900;font-size:clamp(20px,2.8vw,30px);line-height:1.25}
+html[lang="ar"] .intro .tag{font-family:var(--f-kufi);font-weight:800;line-height:1.5}
+.enter{background:var(--cyan);color:#121212;border:2.5px solid #000;border-radius:999px;box-shadow:4px 4px 0 #000;font-family:var(--f-ui)}
+html[lang="ar"] .enter{font-family:var(--f-ar)}
+.rotate .phone{border-color:var(--cyan);box-shadow:none}
+html[lang="ar"] .lbl,html[lang="ar"] .chip,html[lang="ar"] .lt-tag{letter-spacing:0}
+.note:empty{display:none}
 </style>
 </head>
 <body data-mascot-side="left" data-mascot-lines="دوس على أي فقرة تحت|اسحب علشان تلف في الاستوديو|جرّب تفتح الباب|عربي و English.. الاتنين شغالين">
@@ -416,7 +484,7 @@ function composeEN(text) {
 const wordCache = {};
 function word(key, l = lang) { const k = l + ':' + key; if (!wordCache[k]) wordCache[k] = l === 'ar' ? composeAR(WORDS.ar[key]) : composeEN(WORDS.en[key]); return wordCache[k]; }
 
-const LEDPAL = ['#55f2ee', '#ff60d0', '#ffb46c'];
+const LEDPAL = ['#BEFF48', '#CD96FF', '#FFB03A'];
 /* order in which lit cells switch on: a sweep in reading direction with jitter */
 function revealOrder(w) {
   const cells = []; const cols = w.rows[0].length;
@@ -469,7 +537,7 @@ function tickLED(now) { ledAnims.forEach((a, cv) => { const t = Math.min(1, (now
 /* ===================== LOGO: square-Kufic حلو الكلام, rebuilt on an exact grid (33 × 7 units) ===================== */
 const LOGO = { w: 33, h: 7, el: [[0, 0, 5, 1, "p"], [0, 2, 1, 7, "c"], [0, 2, 5, 3, "c"], [2, 2, 3, 5, "c"], [4, 2, 5, 5, "c"], [2, 4, 5, 5, "c"], [2, 6, 9, 7, "a"], [5.5, 4, 17, 5, ["p", 10, "c", 15.5]], [6, 0, 7, 3.5, "p"], [8, 0, 9, 5, "p"], [10, 0, 15, 1, "a"], [10, 0, 11, 3, "a"], [10, 2, 15, 3, ["a", 11.5, "p", 14.5]], [14, 2, 15, 5, "p"], [16, 0, 17, 5, "c"], [18, 0, 19, 5, "c"], [10, 6, 19, 7, "c"], [20, 0, 21, 7, "p"], [20, 0, 25, 1, "p"], [22, 2, 23, 5, "a"], [22, 2, 25, 3, "a"], [24, 2, 25, 7, "a"], [22, 6, 25, 7, "a"], [22, 4, 33, 5, ["a", 24.5, "p", 27.5]], [26, 0, 27, 5, "p"], [28, 2, 31, 3, "p"], [30, 2, 31, 5, "p"], [28, 0, 33, 1, "c"], [32, 0, 33, 3, "c"], [26, 6, 33, 7, ["a", 27, "p", 33]]], cuts: [[8.5, 4.5, 9, 5], [26.5, 4.5, 27, 5]] };
 
-const LOGO_COL = { c: [79, 240, 240], p: [228, 110, 240], a: [255, 194, 122] };
+const LOGO_COL = { c: [190, 255, 72], p: [205, 150, 255], a: [255, 176, 58] };
 function logoFill(f, x) {
   if (typeof f === 'string') return LOGO_COL[f];
   const [ca, xa, cb, xb] = f; let t = Math.min(1, Math.max(0, (x - xa) / (xb - xa))); t = t * t * (3 - 2 * t);
@@ -584,7 +652,7 @@ const UI = {
     h: { bigIdea: 'الفكرة الكبيرة', genz: 'معمول لجيل Z', rule: 'القاعدة الأساسية', dna: 'DNA الفورمات', seq: 'تسلسل الليلة', opp: 'الفرصة', studio: 'الاستوديو', energy: 'الطاقة', trend: 'إيه الترند الليلة؟', desk: 'منطقة الديسك', presenter: 'المذيع', guests: 'ضيفنا الرئيسي طول الليلة', chain: 'سلسلة الحوار', qs: 'الأسئلة اللي بنسألها', behind: 'ورا الباب', visual: 'التوقيع البصري', fill: 'ممكن يتملي بإيه', pairs: 'الثنائيات', streams: 'القنوات', premiere: 'كل ليلة عرض أول' },
     a: { tour: 'شغّل الليلة كلها ▶', trend: 'الترند اللي بعده', question: 'اسحب سؤال', door: 'افتح الباب', buzzer: 'اضرب الجرس', band: 'شغّل الباند 🔊', frame: 'إطار 9:16' },
     tagT: { trend: 'ترند الليلة', question: 'السؤال', door: 'ورا الباب', play: 'الأوبن ستيدج', band: 'لايف الليلة', digital: 'الإذاعة التانية' },
-    notes: { night: 'الـ 3D ده مبني على رندرات OPTION 02. النِسَب تقريبية: ده جولة في الكونسبت، مش مسقط بالمقاسات.', door: 'ملحوظة: البريف طالب قوس منوّر، وOPTION 02 فيه باب خشب عادي. هنا فريم الباب منوّر ولونه بيتغير مع كل فقرة، علشان تحكم على الفكرتين مع بعض.', play: 'في الديكور: بوديومين للمتسابقين بزراير، ترابيزة تحديات، دواير في الأرض بتنوّر، وعدّاد على الشاشة الكبيرة فوق الباب.' },
+    notes: { night: 'وظائف البرنامج حسب البريف. التوزيع تصوّر مبدئي وليس مسقطًا بالمقاسات.', door: 'البريف يصوّر قوسًا مضيئًا. الخيار 02 يفسّر المدخل كباب جوز مزدوج داخل بوابة مضيئة تحت شاشة LED.', play: '' },
     r: { door: w => `الليلة ورا الباب: ${w}`, buzz: (s, a) => `${s ? 'البوديوم اليمين' : 'البوديوم الشمال'} داس الأول · الليلة: ${a}`, buzzRes: s => `${s ? 'البوديوم اليمين' : 'البوديوم الشمال'} داس الأول. معاه ١٠ ثواني.`, band: p => `ثنائي الليلة: ${p}. الصوت شغال.`, frameOn: 'إطار 9:16: الباب والشاشة الكبيرة بيملوا كادر طولي كامل.', frameOff: 'الإطار الطولي اتشال.', digital: 'كل ليلة بتتحول كليبات: مونتاج ٤٠ دقيقة، ٣–٥ كليبات متوسطة، ٨–١٢ ريلز وتيك توك.' },
     cams: { master: 'ماستر', desk: 'الديسك', lounge: 'اللاونج', door: 'الباب', crane: 'كرين', band: 'الباند', vertical: '9:16' },
     zones: { desk: ['الديسك', 'الترند'], lounge: ['اللاونج', 'الكلام'], door: ['الباب', 'المفاجأة'], stage: ['الأوبن ستيدج', 'اللعب'], band: ['الباند', 'المزيكا'] }
@@ -598,7 +666,7 @@ const UI = {
     h: { bigIdea: 'The big idea', genz: 'Built for Gen Z', rule: 'The fundamental rule', dna: 'The format DNA', seq: 'The sequence', opp: 'The opportunity', studio: 'The studio', energy: 'The energy', trend: 'What is trending tonight?', desk: 'The desk zone', presenter: 'The presenter', guests: 'Our main guest through the night', chain: 'The conversation chain', qs: 'The questions we ask', behind: 'Behind the door', visual: 'Visual signature', fill: 'What can fill it', pairs: 'The pairings', streams: 'The streams', premiere: 'Every night is a premiere' },
     a: { tour: 'Play the whole night ▶', trend: 'Next trend', question: 'Draw a question', door: 'Open the door', buzzer: 'Hit the buzzer', band: 'Cue the band 🔊', frame: '9:16 frame' },
     tagT: { trend: 'Trending tonight', question: 'The question', door: 'Behind the door', play: 'Open stage', band: 'Live tonight', digital: 'Second broadcast' },
-    notes: { night: 'This 3D build follows the Option 02 renders. Proportions are approximate: a concept walkthrough, not a measured plan.', door: 'Prototype note: the brief asks for a glowing arch, and Option 02 shows a plain timber door. This build lights the door frame and changes its colour with every segment, so you can judge both ideas together.', play: 'In the set: two contestant podiums with buzzers, a challenge table, light-up floor steps and a countdown on the big screen above the door.' },
+    notes: { night: 'Programme functions follow the brief. The layout is a concept arrangement rather than a measured plan.', door: 'The brief illustrates a glowing arch. Option 02 interprets the entrance as a walnut double door in a lit portal under an LED screen.', play: '' },
     r: { door: w => `Tonight behind the door: ${w}`, buzz: (s, a) => `${s ? 'Right' : 'Left'} podium buzzes first · Tonight: ${a}`, buzzRes: s => `${s ? 'Right' : 'Left'} podium buzzed first. Ten seconds on the clock.`, band: p => `Tonight’s pairing: ${p}. Sound is on.`, frameOn: 'Vertical 9:16 frame: the door and the big screen hold a full-height shot.', frameOff: 'Vertical frame hidden.', digital: 'Every night becomes clips: one 40′ edit, 3–5 medium clips, 8–12 Reels & TikToks.' },
     cams: { master: 'Master', desk: 'Desk', lounge: 'Lounge', door: 'Door', crane: 'Crane', band: 'Band', vertical: '9:16' },
     zones: { desk: ['DESK', 'TRENDING'], lounge: ['LOUNGE', 'CONVERSATION'], door: ['THE DOOR', 'SURPRISE'], stage: ['OPEN STAGE', 'PLAY'], band: ['BAND', 'MUSIC'] }
@@ -624,6 +692,8 @@ const chips = a => `<div class="chips">${a.map(x => `<span>${esc(x)}</span>`).jo
 const pairs = a => `<dl class="pairs">${a.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>`;
 const sec = (t, html) => `<section class="sec"><h3 class="lbl">${esc(t)}</h3>${html}</section>`;
 const act = id => `<button class="act" data-act="${id}">${esc(T().a[id])}</button><p class="result" id="result" aria-live="polite"></p>`;
+const SETTXT = {"ar": {"night": [["مركز مفتوح تحت سماء المدينة ليلًا", "أقواس من الخشب والذهب تؤطّر المدينة حول أرضية مشتركة للكلام واللعب والمزيكا."], ["أقواس ذهبية متموجة", "خطوط LED ذهبية ترسم إطارات طويلة متموجة تفتح على المدينة ليلًا."], ["حلقات معلّقة", "ثريات خشبية دائرية بحلقات LED دافئة تحدد ركن الحوار والفرقة من أعلى."], ["منصات دائرية", "كل منطقة على منصة دائرية بحافة مضيئة، والمسرح المفتوح يكرر نفس المنحنى."]], "trending": [["هندسة دائرية", "أسطوانة الجوز المضلّعة تكرر إيقاع المنصات الدائرية وحدود المسرح."], ["حواف مضيئة", "خطوط LED ذهبية أعلى المكتب وأسفله تبرزه في اللقطة الواسعة."], ["حركة مباشرة", "ينزل المذيع من المنصة المنخفضة إلى الأرضية المشتركة في خطوات قليلة."]], "guest": [["جلسة اجتماعية", "الكنبة الكحلي المنحنية والفوتيه النبيتي يصنعان جلسة مريحة."], ["خلفية بطبقات", "النخل والأباجورات المضيئة وأفق المدينة تضيف عمقًا خلف الضيوف."], ["مقياس إنساني", "السجادة الدائرية والطاولة النحاسية والحلقة المضيئة فوقها تقرّب الجلسة داخل الاستوديو الكبير."]], "door": [["الضوء كإشارة", "إطارات LED ذهبية ترسم البوابة وتغيّر لونها مع اللحظة."], ["الشاشة فوق الباب", "شاشة الـLED تحمل اللوجو والساعة والعدّ التنازلي لكل ظهور."], ["ظهور حقيقي", "باب الجوز المزدوج يخفي المشارك القادم حتى إشارة الإنتاج."], ["انتظار ← انتباه ← دخول ← لقاء", "الشاشة تعدّ تنازليًا وضوء البوابة يغيّر لونه، الباب يُفتح، والكاميرات تلتقط رد الفعل."]], "play": [["مركز مرن", "المسرح البيضاوي يستوعب المنصات وطاولة التحدي والخطوات المضيئة، ثم يُخلى لفقرات أخرى."], ["نشاط وأداء", "الأرضية المركزية تتيح اللعب قبل اللحظة الموسيقية أو بعدها."], ["الإضاءة", "إضاءة متساوية للأرضية المركزية مع خطوات مضيئة: حركة وردود أفعال واضحة."]], "music": [["بيت للمزيكا", "المنصة المرتفعة المنحنية تعطي الفرقة مكانًا واضحًا في اللقطة الواسعة."], ["ضوء من أعلى", "حلقة مضيئة وأباجورات دافئة تؤطّر العازفين دون أن تعزلهم."], ["علاقة مسرح مشتركة", "يمكن للمؤدين النزول إلى الأرضية المركزية عندما تتطلب الحلقة."]], "digital": [["كادر مميز", "شاشة اللوجو والأقواس الذهبية والأفق تجعل أي مقطع معروفًا."], ["كوادر طولية", "البوابة العالية والشاشة فوقها تملأ كادر 9:16 كاملًا للكاميرات المخططة."], ["تفاعل ظاهر", "المنصات والأجراس والأنشطة المشتركة تعطي الضيوف سببًا للحركة ورد الفعل."]]}, "en": {"night": [["An open centre under a night skyline", "Wood-and-gold arches frame the city around a shared floor for conversation, play and music."], ["Wavy gold arches", "Gold LED lines trace tall wavy frames that open onto the night city."], ["Floating rings", "Wooden halo chandeliers with warm LED rings mark the lounge and the band from above."], ["Circular platforms", "Each zone sits on a round platform with a lit edge; the open stage repeats the curve."]], "trending": [["Round geometry", "The fluted walnut drum echoes the circular platforms and the stage outline."], ["Lit edges", "Gold LED lines along the top and the base hold the desk in the wide shot."], ["Direct movement", "The host steps off the low platform onto the shared floor in a few paces."]], "guest": [["Social seating", "The curved navy velvet sofa and a burgundy armchair create a relaxed grouping."], ["Layered background", "Palms, glowing lamps and the city skyline add depth behind the guests."], ["Human scale", "The round rug, copper table and the halo ring above bring intimacy to the larger studio."]], "door": [["Light as a signal", "Gold LED frames trace the portal and can change colour with the moment."], ["The screen above", "The LED screen carries the logo, the clock and the countdown to every reveal."], ["A physical reveal", "The walnut double door conceals the next participant until the production cue."], ["Waiting → Attention → Arrival → Meeting", "The screen counts down, the portal light shifts colour, the doors open and cameras capture the reaction."]], "play": [["Flexible centre", "The oval stage holds podiums, the challenge table and lit floor steps, then clears for other acts."], ["Activity and performance", "The central floor gives room for play before or after a musical moment."], ["Lighting", "Even central floor coverage with lit floor steps: readable movement and reactions."]], "music": [["A home for music", "The raised curved platform gives the band an identifiable place in the wide shot."], ["Light from above", "A halo ring and warm lamps frame the musicians without closing them off."], ["A shared stage relationship", "Featured performers can step down into the central floor when the episode requires."]], "digital": [["Recognizable framing", "The LED logo screen, gold arches and skyline make any clip identifiable."], ["Vertical compositions", "The tall portal and the screen above it hold a full 9:16 frame for planned cameras."], ["Visible interaction", "Podiums, buzzers and shared activities give guests a reason to move and react."]]}};
+const SETH = { ar: 'في الديكور', en: 'In the set' };
 const PANELS = {
   night: () => { const d = D(), h = T().h; return `
     <p class="lead">${esc(d.bigIdeaLine)}</p>
@@ -1248,7 +1318,7 @@ function drawClock() {
     const p = cairo();
     const s = clock.mode === 'time' ? `${p.hour}:${p.minute}` : `00:${String(Math.max(0, Math.ceil(clock.count))).padStart(2, '0')}`;
     w = composeEN(s);
-    colorAt = (x, y, g) => clock.mode === 'count' ? '#ff4d6d' : (g <= 1 ? '#55f2ee' : g === 2 ? '#ff60d0' : '#ffb46c');
+    colorAt = (x, y, g) => clock.mode === 'count' ? '#ff4d6d' : (g <= 1 ? '#BEFF48' : g === 2 ? '#CD96FF' : '#FFB03A');
     if (clock.mode === 'time' && +p.second % 2 === 0) skip = x => w.ids[x] === 2;
   } else if (clock.mode === 'logo') { paintLogo(cg, 20, 20, W - 40, H - 40, { dps: 2, offColor: 'rgba(120,130,220,.11)' }); clockTex.needsUpdate = true; return; }
   else w = clock.word || composeEN('ON AIR');
@@ -1268,7 +1338,7 @@ function renderPanel(animate = true) {
   $('#pEyebrow').textContent = tx[2]; $('#pTitle').textContent = tx[0]; $('#pSub').textContent = tx[1]; $('#pLed').setAttribute('aria-label', tx[0]);
   const maxW = Math.max(120, ($('.p-titlewrap').clientWidth || 300) - 18);
   ledCanvas($('#pLed'), word(s.id), { cell: isPhone() ? 3.6 : 5.6, maxW, animate });
-  $('#pBody').innerHTML = PANELS[s.id](); $('#pBody').scrollTop = 0;
+  $('#pBody').innerHTML = PANELS[s.id]() + (SETTXT[lang][s.id] ? sec(SETH[lang], pairs(SETTXT[lang][s.id])) : ''); $('#pBody').scrollTop = 0;
 }
 function renderRundown() {
   $('#rundown').innerHTML = SEGS.map((s, i) => { const t = segText(s); return `<li><button class="seg" data-seg="${i}" aria-current="${i === cur}"><span class="n">${s.n}</span><span class="t">${esc(t[0])}</span><span class="s">${esc(t[1])}</span><span class="bar"></span></button></li>`; }).join('');
