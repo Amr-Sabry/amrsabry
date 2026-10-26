@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
-<head><script>/* pretty-URL base: the host serves this page as …/opening (no slash), so its files are found from …/opening/ */if(!/\/$|\.html?$/.test(location.pathname)&&location.protocol!=="file:")document.write('<base href="'+location.pathname+'/">')</script>
+<head><script>/* pretty-URL base: the host serves this page as …/opening (no slash), so its files are found from …/opening/ *//* embed: the film page's copy of the opening (reached as …/opening/embed) — its files are in …/opening/ */if(location.protocol!=="file:")document.write('<base href="'+location.pathname.replace(/\/embed(\.html)?$/,'/')+'">')</script>
 <meta charset="utf-8">
 <script>/* 23 Oct 06:56 Amr: the same film in the deck's dark colours — «&theme=dark» (VS7's hidden twin slide) */
 if(/[?&]theme=dark\b/.test(location.search)){document.documentElement.classList.add('dk');document.write('<link rel="stylesheet" href="dark.css?v=2">')}</script>
