@@ -460,12 +460,33 @@ async function addStreets(){
   console.log('streets', JSON.stringify(STR.stats)); redraw();
 }
 
+/* ---------- gates, heritage seating, plaza decor and people (places.js) ---------- */
+let PLC = null;
+function extraLabel(key, ar, en, desc, film, xm, ym, z, pri){
+  const o = {z:{id:key, cat:'_x', ar, en, desc, film, extra:true}, h:z, area:0, lp:[xm*S, ym*S],
+    box:new THREE.Box3(new THREE.Vector3(xm*S-12, 0, -ym*S-12), new THREE.Vector3(xm*S+12, z, -ym*S+12)), near:22};
+  zoneObjs.push(o);
+  labelObjs.push({...addLabel(o, `<i style="background:#ffd27a"></i>${esc(ar)}<small>${esc(en)}</small>`, '', [xm*S, ym*S, z + 3], 'x', () => select(o, true)), o, arr:[o], cat:'_x', pri, w: 200});
+  o.labelRef = labelObjs[labelObjs.length-1]; labelObjs.sort((a,b)=>b.pri-a.pri); lblDirty = true;
+}
+async function addPlaces(){
+  const {buildPlaces} = await import(BASE + 'places.js');
+  const ground = (x, y) => Math.max(PLATE, (typeof TER !== 'undefined' && TER ? terrainZ(x, y) : 0) + 0.02);
+  PLC = buildPlaces(THREE, DATA, {S, VEX, ground, plazas: BLK ? BLK.plazas : [], mobile}); world.add(PLC.group); window.__nv.places = PLC;
+  console.log('places', JSON.stringify(PLC.stats));
+  if(PLC.heritage) extraLabel('heritage', 'منطقة الجلسات التراثية', 'Heritage seating', 'جلسات في حرم اليونسكو قدّام الأهرامات، من وحي صور الماستر بلان: مدرجات حجر حوالين نار، خيام بيضا بسجاد، أشرعة تظليل، وممشى مغطّي بأشرعة من طرف المدينة، وفوانيس وزرع صحراوي. المكان والمقاسات تقريبية للعرض.', 'الغروب والليل: الضيوف قاعدين حوالين النار والأهرامات ورا، وانتقال من صخب المدينة لهدوء الصحرا.', PLC.heritage.x, PLC.heritage.y + 40, 4, 7e9);
+  const g0 = (PLC.gates || []).sort((a,b)=>b.w-a.w)[0];
+  if(g0) extraLabel('gates', 'بوابات نيفيرا', 'Nevera gates', `بوابة على كل طريق رئيسي داخل المشروع (${PLC.gates.length} بوابات): برجين بايلون مصري بحجر فاتح، وكوبري بوابة برونز بخط دهبي، وهرم دهبي صغير فوق كل برج، ومية ونخل على الجنبين. التصميم رمزي من وحي «بوابة مصر الثقافية» في البريزنتيشن.`, 'لحظة الدخول: الكاميرا بتعدّي من تحت البوابة وتنفتح على المدينة.', g0.x, g0.y, 6, 6e9);
+  renderer.shadowMap.needsUpdate = true; redraw();
+}
+
 /* ---------- buildings: procedural blocks on every parcel (blocks.js) ---------- */
 let BLK = null;
 async function addBlocks(){
   const {buildBlocks} = await import(BASE + 'blocks.js'); const t0 = performance.now();
   BLK = buildBlocks(THREE, DATA, {S, VEX, plate: PLATE, mobile});
   for(const [k, g] of Object.entries(BLK.byCat)){ g.visible = !hidden.has(k); world.add(g); }
+  window.__nv.blocks = BLK;
   console.log('blocks', JSON.stringify(BLK.stats), Math.round(performance.now() - t0) + ' ms');
   renderer.shadowMap.needsUpdate = true; redraw();
 }
@@ -494,6 +515,7 @@ async function addTrains(stopXY){
 function moveTrains(tt){
   if(BLK) BLK.update(tt);
   if(STR) STR.update(tt);
+  if(PLC) PLC.update(tt);
   for(const T of TRAINS) T.M.placeTrain(T.t, T.path, T.s(tt), (x, y) => [x*S, Math.max(0.45, terrainZ(x, y) + 0.45), -y*S], -1);
 }
 
@@ -728,8 +750,9 @@ function loop(now){
   try{
     DATA = await getData();
     build(); buildLegend(); paintUpd(); addStation().catch(e => console.error(e));
-    addTerrain().then(() => { settleOnTerrain(); return addLandmarks(); }).catch(e => console.error(e));
-    requestAnimationFrame(() => setTimeout(() => { addStreets().catch(e => console.error(e)); addBlocks().catch(e => console.error(e)); }, 30));
+    const pT = addTerrain().then(() => { settleOnTerrain(); return addLandmarks(); }).catch(e => console.error(e));
+    requestAnimationFrame(() => setTimeout(() => { addStreets().catch(e => console.error(e));
+      const pB = addBlocks().catch(e => console.error(e)); Promise.all([pT, pB]).then(() => addPlaces()).catch(e => console.error(e)); }, 30));
     camera.position.copy(HOME.pos).add(new THREE.Vector3(HOME.radius*0.4, HOME.radius*0.5, HOME.radius*0.4)); controls.target.copy(HOME.target);
     requestAnimationFrame(loop);
     $('#veil').classList.add('gone'); goHome(2400);

@@ -54,7 +54,7 @@ export function buildBlocks(THREE, data, opt = {}) {
   }
 
   /* ---------- instance bins: one InstancedMesh per (category, geometry, material) ---------- */
-  const bins = new Map();
+  const bins = new Map(), plazas = [];
   function put(cat, g, m, x, y, z0, w, d, h, a, col) {
     const k = cat + '|' + g + '|' + m; let b = bins.get(k); if (!b) { b = { cat, g, m, L: [] }; bins.set(k, b); }
     b.L.push(x, y, z0, w, d, h, a, col);
@@ -250,9 +250,11 @@ export function buildBlocks(THREE, data, opt = {}) {
     rh(c, P, R, fl) { perimBlocks(c, P, R, { cw: 92, ch: 74, street: 20, depth: 14, seg: 58, gap: 6, corner: .6, fl, pal: SAND, vary: 1 }); },
     cd(c, P, R, fl, cov, Z) {                                 // district core: podium + stepped mid-rise, towers, glass pyramid plaza
       let pyr = null;
-      if (P.area > 60000) { const [x, y] = P.w((P.u0 + P.u1) / 2, (P.v0 + P.v1) / 2); if (fits(P, x, y, 40, 40, P.ang)) { glassPyr(c, x, y, P.ang, 34); pyr = [x, y]; } }
+      if (P.area > 60000) { const [x, y] = P.w((P.u0 + P.u1) / 2, (P.v0 + P.v1) / 2); if (fits(P, x, y, 40, 40, P.ang)) { glassPyr(c, x, y, P.ang, 34); pyr = [x, y]; plazas.push({ x, y, a: P.ang, b: 34 });
+        put(c, 'box', 'pave', x, y, PT - .005, 150, 150, .03, P.ang, 0xffffff);
+        for (let k = 0; k < 16; k++) { const t = k / 16 * Math.PI * 2; palm(c, R, x + Math.cos(t) * 66, y + Math.sin(t) * 66); } } }
       perimBlocks(c, P, R, { cw: 120, ch: 100, street: 26, depth: 17, seg: 46, gap: 8, corner: .7, fl, pal: SAND,
-        special: (x, y, blk, A) => { if (pyr && Math.hypot(x - pyr[0], y - pyr[1]) < 80) return true;
+        special: (x, y, blk, A) => { if (pyr && (Math.hypot(x - pyr[0], y - pyr[1]) < 100 || blk.some(p => Math.hypot(p[0] - pyr[0], p[1] - pyr[1]) < 78))) return true;
           if (fl >= 6 && A > 5000 && R() < .12) { tower(c, R, x, y, P.ang, 22, Math.round(fl * 1.5)); return true; } return false; } });
     },
     me(c, P, R, fl, cov) {                                    // entry district: a long colonnade facing the axis + blocks
@@ -482,5 +484,5 @@ export function buildBlocks(THREE, data, opt = {}) {
     g.traverse(m => { if (m.isMesh) { m.castShadow = true; } }); return g;
   }
 
-  return { byCat, extra, stats, levels: lv, update: t => { for (const f of spinners) f(t); } };
+  return { byCat, extra, stats, plazas, levels: lv, update: t => { for (const f of spinners) f(t); } };
 }
