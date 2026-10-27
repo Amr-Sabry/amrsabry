@@ -95,6 +95,7 @@ export function buildPlaces(THREE, data, opt = {}) {
     const cx = 200, cy = 2700 + 260;
     heritage = { x: cx, y: cy };
     const H = holder(cx, cy, 0);
+    const sailTris = [];
     // stepped stone bowl round a fire
     const prof = [[0, -.1], [5, -.1], [5, .35], [8.5, .35], [8.5, .75], [12, .75], [12, 1.15], [15.5, 1.15], [15.5, 1.55], [19, 1.55], [21, .2], [22, 0]].map(([r, z]) => new THREE.Vector2(r, z));
     const bowl = new THREE.LatheGeometry(prof, 48); bowl.rotateX(Math.PI / 2); mesh(bowl, M.stone, H);
@@ -113,17 +114,6 @@ export function buildPlaces(THREE, data, opt = {}) {
       const p1 = [Math.cos(a) * rr, Math.sin(a) * rr, h1], p2 = [Math.cos(b) * rr, Math.sin(b) * rr, h2], p3 = [Math.cos((a + b) / 2) * 15, Math.sin((a + b) / 2) * 15, 4.5];
       tris.push([p1, p2, p3]); polePts.push(p1, p2); }
     sails(tris, H); poles(polePts, H);
-    // tents with carpets and low seating, in an arc on the pyramids side (north-east)
-    for (let k = 0; k < 5; k++) {
-      const a = .35 + k * .32, rr = 52 + (k % 2) * 8, tx = Math.cos(a) * rr, ty = Math.sin(a) * rr;
-      const deck = mesh(box(14, 12, .35), M.wood, H, tx, ty, 0, false); deck.rotation.z = a;
-      const cp = mesh(box(11, 9, .05), M.carpet.clone(), H, tx, ty, .35, false); cp.rotation.z = a; cp.material.color.setHex(pick([0x9c3b2c, 0xb5623f, 0x7a2f2a]));
-      const t3 = [], pp = [];
-      const c4 = [[-7, -6, 3.2], [7, -6, 4.6], [7, 6, 3.2], [-7, 6, 4.6]].map(([u, v, z]) => [tx + u * Math.cos(a) - v * Math.sin(a), ty + u * Math.sin(a) + v * Math.cos(a), z]);
-      const top = [tx, ty, 6.2]; for (let i = 0; i < 4; i++) t3.push([c4[i], c4[(i + 1) % 4], top]); pp.push(...c4);
-      sails(t3, H); poles(pp, H, .15);
-      for (let i = 0; i < 7; i++) sitter(cx + tx + (R() - .5) * 9, cy + ty + (R() - .5) * 7, ground(cx, cy) + .4 * VEX * S);
-    }
     // the sail-covered walkway from the city edge to the bowl
     const wl = 230, wx = 0, wy0 = -wl - 22;
     mesh(box(6, wl, .12), M.pave, H, wx, wy0 + wl / 2, 0, false);
@@ -136,11 +126,73 @@ export function buildPlaces(THREE, data, opt = {}) {
     }
     sails(wt, H); poles(wp, H, .14);
     for (let i = 0; i < 26; i++) { const y1 = wy0 + R() * wl; walker(cx + (R() - .5) * 3, cy + y1, cx + (R() - .5) * 3, cy + (R() < .5 ? wy0 : wy0 + wl), ground(cx, cy) + .12 * VEX * S); }
-    // lanterns and desert planting around
-    for (let k = 0; k < 40; k++) { const a = R() * 6.28, rr = 30 + R() * 70; mesh(new THREE.IcosahedronGeometry(1.2 + R() * 1.4, 0).translate(0, 0, .8), M.shrub, H, Math.cos(a) * rr, Math.sin(a) * rr, 0, false); }
-    for (let k = 0; k < 24; k++) { const a = k / 24 * 6.28; mesh(box(.4, .4, .6), M.lamp, H, Math.cos(a) * 24, Math.sin(a) * 24, 0, false); }
-    // a low stone viewing terrace towards the pyramids
-    const tr = mesh(box(46, 10, 1.1), M.stoneDark, H, 86, 52, 0); tr.rotation.z = .55;
+    // the majlis landscape: terraces stepping up round the bowl (open to the walkway in the south), seating pods spread
+    // along every terrace, stairs and paths between them, Bedouin tents and shade sails, lanterns, fire pits, planting
+    const g0 = ground(cx, cy), HB = new Map(), hi = (k, geo, mat, x, y, z, a, sx, sy, sz) => { let b = HB.get(k); if (!b) HB.set(k, b = { geo, mat, L: [] }); b.L.push(x, y, z, a, sx, sy, sz); };
+    const U = { box: box(1, 1, 1), cyl: cyl(.5, .5, 1, 8), cone: new THREE.ConeGeometry(.5, 1, 7).rotateX(Math.PI / 2).translate(0, 0, .5),
+      tent: (() => { const t = new THREE.Shape(); t.moveTo(-.5, 0); t.lineTo(.5, 0); t.lineTo(.08, 1); t.lineTo(-.08, 1); t.closePath();
+        return new THREE.ExtrudeGeometry(t, { depth: 1, bevelEnabled: false }).translate(0, 0, -.5).rotateY(Math.PI / 2).rotateZ(Math.PI / 2).rotateX(0); })(),
+      ico: new THREE.IcosahedronGeometry(.5, 0).translate(0, 0, .5), ptrunk: cyl(.5, .36, 1, 5), pcrown: new THREE.ConeGeometry(.5, 1, 6).rotateX(-Math.PI / 2).translate(0, 0, .5) };
+    const tentMat = new THREE.MeshStandardMaterial({ color: 0x4a3426, roughness: 1, side: THREE.DoubleSide });
+    const A0 = -.38, A1 = Math.PI + .38, bands = [];
+    const bnd = (k, a) => k === 0 ? 34 : 34 + k * 40 + 7 * Math.sin(2.3 * a + k * 1.7) + 3 * Math.sin(5.1 * a + k);
+    const ringShape = (fo, fi, a0, a1, n = 90) => { const sh = new THREE.Shape(); for (let i = 0; i <= n; i++) { const a = a0 + (a1 - a0) * i / n, r = fo(a); i ? sh.lineTo(Math.cos(a) * r, Math.sin(a) * r) : sh.moveTo(Math.cos(a) * r, Math.sin(a) * r); }
+      for (let i = n; i >= 0; i--) { const a = a0 + (a1 - a0) * i / n, r = fi(a); sh.lineTo(Math.cos(a) * r, Math.sin(a) * r); } sh.closePath(); return sh; };
+    for (let k = 0; k < 4; k++) {
+      const h = .9 * (k + 1), fo = a => bnd(k + 1, a), fi = a => bnd(k, a);
+      mesh(new THREE.ExtrudeGeometry(ringShape(fo, fi, A0, A1), { depth: h, bevelEnabled: false }), k % 2 ? M.stone : M.stoneDark, H);
+      bands.push({ r0: 34 + k * 40, h, fi, fo });
+      // a path along the back of each terrace, lanterns on its edge
+      const pr = a => fo(a) - 7;
+      mesh(new THREE.ExtrudeGeometry(ringShape(a => pr(a) + 2.2, a => pr(a) - 2.2, A0 + .04, A1 - .04), { depth: .06, bevelEnabled: false }), M.pave, H, 0, 0, h, false);
+      for (let a = A0 + .06; a < A1 - .04; a += 14 / pr(a)) hi('lamp', U.box, M.lamp, Math.cos(a) * (pr(a) + 3), Math.sin(a) * (pr(a) + 3), h, a, .35, .35, .6);
+      // seating pods along the terrace, with palms and planting between them
+      for (let a = A0 + .1; a < A1 - .08; a += 23 / (fi(a) + 17)) {
+        const rm = fi(a) + 15 + (R() - .5) * 4;
+        if (R() < .14) { const px = Math.cos(a) * rm, py = Math.sin(a) * rm;
+          if (R() < .5) { const ph = 10 + R() * 3; hi('ptrunk', U.ptrunk, M.pole, px, py, h, 0, .7, .7, ph); hi('pcrown', U.pcrown, M.shrub, px, py, h + ph - 1.4, R() * 6, 8, 8, 2); }
+          else hi('shrub', U.ico, M.shrub, px, py, h, R() * 6, 3 + R() * 2, 3 + R() * 2, 2); continue; }
+        const x = Math.cos(a) * rm, y = Math.sin(a) * rm, ang = a + Math.PI / 2, kind = R();
+        hi('carpet' + ((R() * 3) | 0), U.box, null, x, y, h, ang, 8, 5.5, .05);
+        for (const [du, dv, w, d] of [[0, 2.5, 8, 1], [0, -2.5, 8, 1], [3.6, 0, 1, 4], [-3.6, 0, 1, 4]]) {
+          if (dv < 0 && kind < .5) continue;                                      // open side towards the view
+          hi('cushion', U.box, M.carpet, x + du * Math.cos(ang) - dv * Math.sin(ang), y + du * Math.sin(ang) + dv * Math.cos(ang), h + .05, ang, w, d, .45); }
+        hi('table', U.cyl, M.wood, x, y, h + .05, 0, 1.6, 1.6, .4);
+        if (kind < .35) hi('tent', U.tent, tentMat, x, y, h, ang, 12, 9, 3.4);              // Bedouin tent
+        else if (kind < .7) { const s1 = [x + 5 * Math.cos(ang), y + 5 * Math.sin(ang)], s2 = [x - 5 * Math.cos(ang), y - 5 * Math.sin(ang)];
+          sailTris.push([[s1[0], s1[1], h + 4.2], [s2[0], s2[1], h + 5.4], [x - 3.5 * Math.sin(ang), y + 3.5 * Math.cos(ang), h + 3]]);
+          hi('pole', U.cyl, M.pole, s1[0], s1[1], h, 0, .3, .3, 4.2); hi('pole', U.cyl, M.pole, s2[0], s2[1], h, 0, .3, .3, 5.4); }
+        else { hi('pit', U.cyl, M.stoneDark, x - 5.5 * Math.sin(ang), y + 5.5 * Math.cos(ang), h, 0, 2, 2, .35); hi('fire', U.cone, M.fire, x - 5.5 * Math.sin(ang), y + 5.5 * Math.cos(ang), h + .3, R() * 6, 1, 1, 1.4); }
+        const n = 2 + ((R() * 4) | 0);
+        for (let i = 0; i < n; i++) { const du = (R() - .5) * 6, dv = (R() < .5 ? 1.8 : -1.8) * (kind < .5 && R() < .7 ? 1 : 1);
+          sitter(cx + x + du * Math.cos(ang) - dv * Math.sin(ang), cy + y + du * Math.sin(ang) + dv * Math.cos(ang), g0 + (h + .1) * VEX * S); }
+      }
+      // walkers along the terrace path
+      for (let i = 0; i < 8; i++) { const a = A0 + .1 + R() * (A1 - A0 - .2), b = a + (R() - .5) * .3;
+        walker(cx + Math.cos(a) * pr(a), cy + Math.sin(a) * pr(a), cx + Math.cos(b) * pr(b), cy + Math.sin(b) * pr(b), g0 + (h + .06) * VEX * S); }
+    }
+    // stairs climbing the terraces at five angles, lanterns on both sides
+    for (const a of [-.2, .75, Math.PI / 2, Math.PI - .75, Math.PI + .2]) {
+      for (let k = 0; k < 4; k++) { const { fi, h } = bands[k], r0 = fi(a);
+        for (let j = 0; j < 4; j++) { const rr = r0 - 3 + j * 1.5, zz = (k ? bands[k - 1].h : 0) + (h - (k ? bands[k - 1].h : 0)) * (j + 1) / 4;
+          hi('step', U.box, M.pave, Math.cos(a) * rr, Math.sin(a) * rr, 0, a, 1.6, 6, zz); } }
+      for (let r = 26; r < 186; r += 12) for (const sd of [-1, 1]) { const b = a + sd * 4 / r; let k = -1; for (let j = 0; j < 4; j++) if (r >= bands[j].fi(b)) k = j; const z = k < 0 ? 0 : bands[k].h;
+        hi('lamp', U.box, M.lamp, Math.cos(b) * r, Math.sin(b) * r, z, a, .35, .35, .6); }
+      for (let i = 0; i < 3; i++) { const r1 = 30 + R() * 150, r2 = r1 + 20; const k1 = Math.max(0, Math.min(3, Math.floor((r1 - 34) / 40)));
+        walker(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1, cx + Math.cos(a) * r2, cy + Math.sin(a) * r2, g0 + (r1 < 34 ? .1 : bands[k1].h + .1) * VEX * S); }
+    }
+    // desert planting and palms on the top edge and round the walkway
+    for (let a = A0; a < A1; a += .07) { const r = bnd(4, a) + 2 + R() * 8; if (R() < .5) hi('shrub', U.ico, M.shrub, Math.cos(a) * r, Math.sin(a) * r, bands[3].h, R() * 6, 3 + R() * 3, 3 + R() * 3, 2.2); }
+    for (let k = 0; k < 60; k++) { const a = -Math.PI / 2 + (R() - .5) * 1.4, r = 40 + R() * 160; hi('shrub', U.ico, M.shrub, Math.cos(a) * r, Math.sin(a) * r, 0, R() * 6, 2 + R() * 2, 2 + R() * 2, 1.6); }
+    for (let k = 0; k < 24; k++) { const a = k / 24 * 6.28; hi('lamp', U.box, M.lamp, Math.cos(a) * 24, Math.sin(a) * 24, 0, a, .4, .4, .6); }
+    // carpets in three colours, then everything into instanced meshes (metres in the holder's frame)
+    const carpetM = [0x9c3b2c, 0xb5623f, 0x7a2f2a].map(c => new THREE.MeshStandardMaterial({ color: c, roughness: 1 }));
+    { const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), Zz = new THREE.Vector3(0, 0, 1);
+      for (const [k, b] of HB) { const n = b.L.length / 7, mat = b.mat || carpetM[+k.slice(-1)], im = new THREE.InstancedMesh(b.geo, mat, n);
+        for (let i = 0; i < n; i++) { const o = i * 7, L = b.L; im.setMatrixAt(i, m4.compose(new THREE.Vector3(L[o], L[o + 1], L[o + 2]), q.setFromAxisAngle(Zz, L[o + 3]), new THREE.Vector3(L[o + 4], L[o + 5], L[o + 6]))); }
+        im.castShadow = !['lamp', 'fire', 'carpet0', 'carpet1', 'carpet2'].includes(k); im.receiveShadow = true; im.computeBoundingSphere(); H.add(im); } }
+    sails(sailTris, H);
+    heritage.terraces = bands.length; heritage.pods = 0;
     heritage.flame = flame;
   }
 
