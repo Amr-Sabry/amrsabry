@@ -73,13 +73,14 @@ export function buildPlaces(THREE, data, opt = {}) {
     }
   }
   for (const G of gates) {
-    const P = holder(G.x, G.y, G.a), half = G.w / 2 + 9;
+    // pylons stand on the pavements inside the road's right-of-way, clear of the carriageways and of the buildings
+    const P = holder(G.x, G.y, G.a), edge = G.w >= 80 ? 37 : 15, half = edge + 7;
     for (const s of [-1, 1]) {
-      mesh(frustum(9, 16, 24, .78), M.pylon, P, 0, s * half, 0);
-      mesh(box(9.6, 16.6, .8), M.bronze, P, 0, s * half, 24).scale.set(.78, .78, 1);
+      mesh(frustum(9, 10, 24, .78), M.pylon, P, 0, s * half, 0);
+      mesh(box(9.6, 10.6, .8), M.bronze, P, 0, s * half, 24).scale.set(.78, .78, 1);
       mesh(new THREE.ConeGeometry(2.2, 4, 4).rotateY(Math.PI / 4).rotateX(Math.PI / 2).translate(0, 0, 2), M.gold, P, 0, s * half, 24.8);
-      mesh(box(1.2, 10, 14), M.bronze, P, 4.7, s * half, 4);                  // recessed bronze panel on the face
-      for (const k of [-1, 1]) mesh(cyl(.25, .2, 9, 6), M.pole, P, k * 9, s * (half + 6), 0, false);
+      mesh(box(1.2, 6.5, 14), M.bronze, P, 4.7, s * half, 4);                 // recessed bronze panel on the face
+      for (const k of [-1, 1]) mesh(cyl(.25, .2, 9, 6), M.pole, P, k * 12, s * half, 0, false);
     }
     mesh(box(4, 2 * half - 8, 2.4), M.bronze, P, 0, 0, 19);                 // portal beam over the road
     mesh(box(4.2, 2 * half - 8, .35), M.gold, P, 0, 0, 21.4, false);
@@ -239,7 +240,7 @@ export function buildPlaces(THREE, data, opt = {}) {
     const free = (x, y) => { for (const z of zl) if (x >= z.x0 && x <= z.x1 && y >= z.y0 && y <= z.y1 && inRing(x, y, z.r)) return false;
       for (const sg of segs) if (dSeg(x, y, sg.a, sg.b) < sg.hw) return false; return true; };
     const freeUV = (u, v) => Math.abs(v) > 22 && !(Math.abs(u) < 104 && Math.abs(v) < 128) && !(Math.abs(u) < 420 && Math.abs(v) < 60) && free(...W(u, v));
-    const share = (u, v, w, d, st = 12) => { let n = 0, f = 0; for (let a = -w / 2; a <= w / 2 + .1; a += st) for (let b = -d / 2; b <= d / 2 + .1; b += st) { n++; if (freeUV(u + a, v + b)) f++; } return f / n; };
+    const share = (u, v, w, d, st = 8) => { let n = 0, f = 0; for (let a = -w / 2; a <= w / 2 + .1; a += st) for (let b = -d / 2; b <= d / 2 + .1; b += st) { n++; if (freeUV(u + a, v + b)) f++; } return f / n; };
     const used = [];   // rectangles already taken, in (u, v)
     const clash = (u, v, w, d) => used.some(r => Math.abs(r.u - u) < (r.w + w) / 2 && Math.abs(r.v - v) < (r.d + d) / 2);
     const take = (u, v, w, d, min = .92) => { if (clash(u, v, w, d) || share(u, v, w, d) < min) return false; used.push({ u, v, w, d }); return true; };
@@ -293,7 +294,7 @@ export function buildPlaces(THREE, data, opt = {}) {
     district = { forecourts: 0, hotels: 0, screens: 0 };
     for (const sd of [-1, 1]) {
       let done = false;
-      for (const u0 of [0, -80, 80, -160, 160, -240, 240]) for (let L = 380; L >= 160 && !done; L -= 40) { const v = sd * (128 + 45); if (take(u0, v, L, 90, .85)) { done = true;
+      for (const u0 of [0, -80, 80, -160, 160, -240, 240]) for (let L = 380; L >= 160 && !done; L -= 40) { const v = sd * (128 + 45); if (take(u0, v, L, 90, 1)) { done = true;
         const P = Hd(u0, v, 0), art = new THREE.Mesh(new THREE.PlaneGeometry(L, 90), new THREE.MeshStandardMaterial({ map: groundArt(L, 90), roughness: .9 }));
         art.position.z = .06; art.receiveShadow = true; P.add(art); district.forecourts++;
         // giant screens on the outer edge of the forecourt, facing the station
@@ -320,14 +321,14 @@ export function buildPlaces(THREE, data, opt = {}) {
       for (let i = 0; i < 12; i++) { const [x, y] = W(u - 26 + R() * 40, v - sd * (14 + R() * 8)); sitter(x, y, ground(x, y) + 8 * VEX * S); }
       district.hotels++;
     };
-    for (const v0 of [250, 320, 380]) for (const u0 of [-480, -330, -170, 0, 170, 330, 480]) for (const sd of [-1, 1]) { if (district.hotels >= 9) break; if (take(u0, sd * v0, 80, 56, .95)) hotelAt(u0, sd * v0); }
+    for (const v0 of [250, 320, 380]) for (const u0 of [-480, -330, -170, 0, 170, 330, 480]) for (const sd of [-1, 1]) { if (district.hotels >= 9) break; if (take(u0, sd * v0, 80, 56, 1)) hotelAt(u0, sd * v0); }
     // 3) taxi and bus loop at one end of each forecourt, parking courts further out
-    for (const sd of [-1, 1]) for (const u0 of [300, -300, 440, -440]) { const v = sd * 175; if (!take(u0, v, 110, 70, .85)) continue;
+    for (const sd of [-1, 1]) for (const u0 of [300, -300, 440, -440]) { const v = sd * 175; if (!take(u0, v, 110, 70, 1)) continue;
       const P = Hd(u0, v, 0); mesh(box(110, 70, .1), new THREE.MeshStandardMaterial({ color: 0x3a3835, roughness: .95 }), P, 0, 0, .02, false);
       mesh(box(80, 30, .2), M.shrub, P, 0, 0, .04, false);
       for (let k = 0; k < 14; k++) { const a = k / 14 * Math.PI * 2; const [x, y] = W(u0 + Math.cos(a) * 46, v + Math.sin(a) * 26); parked.push({ x, y, a: stn.ang + a + Math.PI / 2, c: k % 3 ? 0xf2f2f0 : 0xd9b23a, bus: k % 7 === 0 }); }
     }
-    for (let u0 = -520; u0 <= 520; u0 += 130) for (const sd of [-1, 1]) for (const v0 of [190, 300, 420]) { const v = sd * v0; if (!take(u0, v, 110, 60, .97)) continue;
+    for (let u0 = -520; u0 <= 520; u0 += 130) for (const sd of [-1, 1]) for (const v0 of [190, 300, 420]) { const v = sd * v0; if (!take(u0, v, 110, 60, 1)) continue;
       const P = Hd(u0, v, 0); mesh(box(110, 60, .1), new THREE.MeshStandardMaterial({ color: 0x454340, roughness: .95 }), P, 0, 0, .02, false);
       for (let r = -2; r <= 2; r++) for (let k = -20; k <= 20; k++) { if (R() < .22 || r === 0) continue; const [x, y] = W(u0 + k * 2.6, v + r * 11); parked.push({ x, y, a: stn.ang + Math.PI / 2, c: [0xf2f2f0, 0xc9ccd0, 0x1b1d20, 0x8a8e93, 0x2b3c5c, 0x8c2a2a][(R() * 6) | 0] }); }
       for (let k = -50; k <= 50; k += 20) for (const e of [-1, 1]) treeAt(...W(u0 + k, v + e * 28));
@@ -339,7 +340,7 @@ export function buildPlaces(THREE, data, opt = {}) {
         im.castShadow = k !== 'lawn'; im.receiveShadow = true; im.computeBoundingSphere(); group.add(im); } };
     for (let u0 = -880; u0 <= 880; u0 += 40) for (let v0 = 40; v0 <= 560; v0 += 40) for (const sd of [-1, 1]) { const v = sd * v0;
       if (v0 < 64 && Math.abs(u0) < 420) continue;                    // the tracks through the station
-      if (v0 < 64 ? !(free(...W(u0, v)) && !clash(u0, v, 40, 40)) : !take(u0, v, 40, 40, .9)) continue;
+      if (v0 < 64 ? !(free(...W(u0, v)) && !clash(u0, v, 40, 40)) : !take(u0, v, 40, 40, 1)) continue;
       const [gx, gy] = W(u0, v); ins('lawn', G_BOX, lawnMat, gx, gy, .01, stn.ang, 40.5, 40.5, .04);
       for (let i = 0; i < 2; i++) { if (R() < .3) continue; const [tx, ty] = W(u0 + (R() - .5) * 34, v + (R() - .5) * 34); (R() < .5 ? palmAt : treeAt)(tx, ty); }
       if (R() < .15) { const [x0, y0] = W(u0 - 18, v), [x1, y1] = W(u0 + 18, v + (R() - .5) * 20); walker(x0, y0, x1, y1, ground(x0, y0) + .04); }

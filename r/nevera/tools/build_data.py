@@ -55,6 +55,10 @@ now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=3))).repl
 def is_rail(r): return r['w'] == 20 and len(r['p']) == 23 and r['p'][0] == [5994, -2932]
 rail = next((r['p'] for r in g['roads'] if is_rail(r)), None)
 roads = [r for r in g['roads'] if not is_rail(r)]
+# drop duplicated / overlapping centrelines and close short gaps at junctions (see road_clean.py)
+from road_clean import clean_roads
+roads, _road_log = clean_roads(roads)
+print('\n'.join(_road_log))
 for z in zones:
     if z['cat'] == 'pz': z['h'] = 0.35          # the circuit sits flat on its parcel
 extras = {

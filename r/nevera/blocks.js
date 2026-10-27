@@ -53,9 +53,32 @@ export function buildBlocks(THREE, data, opt = {}) {
     }
   }
 
+  /* ---------- keep everything off the roads ---------- */
+  // a building or ground item may not touch a road's right-of-way; a tree may not stand on a carriageway (medians and
+  // pavements are fine). Anything stacked on a rejected item (upper floors, roof gardens, the villa on its lawn) goes too.
+  const CARRY = w => (w >= 80 ? [[10, 24], [30, 37]] : w >= 45 ? [[4, 15]] : w >= 25 ? [[0, 7]] : [[0, 4.5]]);
+  const RC = 120, rgrid = new Map();
+  for (const r of roads) for (let i = 1; i < (r.p || []).length; i++) { const a = r.p[i - 1], b = r.p[i], w = r.w || 20, pad = w / 2 + 2;
+    for (let gx = Math.floor((Math.min(a[0], b[0]) - pad) / RC); gx <= Math.floor((Math.max(a[0], b[0]) + pad) / RC); gx++)
+      for (let gy = Math.floor((Math.min(a[1], b[1]) - pad) / RC); gy <= Math.floor((Math.max(a[1], b[1]) + pad) / RC); gy++) {
+        const k = gx + ',' + gy; let L = rgrid.get(k); if (!L) rgrid.set(k, L = []); L.push({ a, b, w, bands: CARRY(w) }); } }
+  const dSeg = (x, y, a, b) => { const dx = b[0] - a[0], dy = b[1] - a[1], L2 = dx * dx + dy * dy || 1, t = Math.max(0, Math.min(1, ((x - a[0]) * dx + (y - a[1]) * dy) / L2)); return Math.hypot(x - a[0] - dx * t, y - a[1] - dy * t); };
+  const inROW = (x, y, pad = 1) => { const L = rgrid.get(Math.floor(x / RC) + ',' + Math.floor(y / RC)); if (L) for (const sg of L) if (dSeg(x, y, sg.a, sg.b) < sg.w / 2 + pad) return true; return false; };
+  const onCarriage = (x, y, pad = .8) => { const L = rgrid.get(Math.floor(x / RC) + ',' + Math.floor(y / RC)); if (L) for (const sg of L) { const d = dSeg(x, y, sg.a, sg.b); for (const [a, b] of sg.bands) if (d > a - pad && d < b + pad) return true; } return false; };
+  const rejected = []; let treeOut = false;
+  const rectHit = (x, y) => rejected.some(r => { const c = Math.cos(r.a), s2 = Math.sin(r.a), u = (x - r.x) * c + (y - r.y) * s2, v = -(x - r.x) * s2 + (y - r.y) * c; return Math.abs(u) <= r.w / 2 + .5 && Math.abs(v) <= r.d / 2 + .5; });
+  const drop = { roads: 0, trees: 0 };
+
   /* ---------- instance bins: one InstancedMesh per (category, geometry, material) ---------- */
   const bins = new Map(), plazas = [];
   function put(cat, g, m, x, y, z0, w, d, h, a, col) {
+    if (g === 'trunk') { treeOut = onCarriage(x, y); if (treeOut) { drop.trees++; return; } }
+    else if (g === 'ico' || g === 'crown') { if (treeOut) return; }
+    else if (z0 <= PT + .045) {                               // ground-level item: its footprint must stay off the roads
+      const c = Math.cos(a), s2 = Math.sin(a); let hit = inROW(x, y);
+      for (const [i, j] of [[-1, -1], [1, -1], [1, 1], [-1, 1], [0, -1], [0, 1], [-1, 0], [1, 0]]) { if (hit) break; hit = inROW(x + i * w / 2 * c - j * d / 2 * s2, y + i * w / 2 * s2 + j * d / 2 * c); }
+      if (hit) { rejected.push({ x, y, a, w, d }); if (rejected.length > 6) rejected.shift(); drop.roads++; return; }
+    } else if (rectHit(x, y)) return;                         // stacked on something that was dropped
     const k = cat + '|' + g + '|' + m; let b = bins.get(k); if (!b) { b = { cat, g, m, L: [] }; bins.set(k, b); }
     b.L.push(x, y, z0, w, d, h, a, col);
   }
@@ -435,7 +458,7 @@ export function buildBlocks(THREE, data, opt = {}) {
   const byCat = {}, m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), Zax = new THREE.Vector3(0, 0, 1), pv = new THREE.Vector3(), sv = new THREE.Vector3(), col = new THREE.Color();
   let inst = 0;
   for (const b of bins.values()) {
-    const n = b.L.length / 8, mesh = new THREE.InstancedMesh(GEO[b.g], M[b.m], n);
+    const n = b.L.length / 8, mesh = new THREE.InstancedMesh(GEO[b.g], M[b.m], n); mesh.name = b.g + '|' + b.m;
     for (let i = 0; i < n; i++) {
       const o = i * 8, L = b.L;
       pv.set(L[o] * S, L[o + 1] * S, L[o + 2]); q.setFromAxisAngle(Zax, L[o + 6]);
@@ -448,7 +471,7 @@ export function buildBlocks(THREE, data, opt = {}) {
     (byCat[b.cat] ||= new THREE.Group()).add(mesh); inst += n;
     stats[b.cat] = (stats[b.cat] || 0) + n;
   }
-  stats.total = inst;
+  stats.total = inst; stats.droppedOnRoads = drop.roads; stats.treesOffCarriageways = drop.trees;
   (byCat.tp ||= new THREE.Group()).add(extra);
 
   /* ---------- the theme park rides (regular meshes, the wheel turns in the loop) ---------- */
