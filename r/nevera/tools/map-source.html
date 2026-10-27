@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Nevera 3D Masterplan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Marcellus&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;
+  --cream:#f4efe6; --sand:#e7e0d3; --tan:#d7c2a4; --camel:#c8a883; --copper:#a97654; --umber:#5d4b35; --ink:#2b2117;
+  --glass:rgba(32,24,17,.72); --glass-hi:rgba(44,33,23,.86); --line:rgba(231,224,211,.16); --mute:rgba(231,224,211,.62);
+  --r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#1b140e;color:var(--sand);font-family:'IBM Plex Sans Arabic',system-ui,sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+#stage{position:fixed;inset:0}
+#stage canvas{display:block}
+#labels{position:fixed;inset:0;pointer-events:none;direction:ltr}
+#labels .lbl{left:0;top:0;direction:rtl}
+.lbl{pointer-events:auto;cursor:pointer;padding:3px 9px 4px;border-radius:999px;background:rgba(27,20,14,.78);border:1px solid rgba(231,224,211,.22);
+  white-space:nowrap;font-size:12.5px;font-weight:500;line-height:1.25;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.28);transition:opacity .25s,background .2s,border-color .2s;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.lbl small{display:block;font-family:Marcellus,serif;font-size:9.5px;letter-spacing:.08em;color:var(--mute);text-transform:uppercase}
+.lbl i{display:inline-block;width:7px;height:7px;border-radius:2px;margin-inline-end:6px;vertical-align:1px}
+.lbl.off{opacity:0;pointer-events:none}
+.lbl.sel{background:var(--cream);color:var(--ink);border-color:var(--cream)}
+.lbl.sel small{color:var(--umber)}
+.lbl.big{font-size:14px;padding:5px 12px 6px}
+
+/* top bar */
+#top{position:fixed;top:0;inset-inline:0;display:flex;align-items:center;gap:14px;padding:14px 18px;pointer-events:none;
+  background:linear-gradient(to bottom,rgba(20,15,10,.82),rgba(20,15,10,0));z-index:5}
+#top>*{pointer-events:auto}
+.brand{display:flex;align-items:baseline;gap:10px}
+.brand b{font-family:Marcellus,serif;font-weight:400;font-size:26px;letter-spacing:.02em;color:var(--cream)}
+.brand span{font-size:13px;color:var(--mute)}
+#upd{margin-inline-start:auto;font-size:12px;color:var(--mute);display:flex;align-items:center;gap:7px;white-space:nowrap}
+#upd i{width:7px;height:7px;border-radius:50%;background:#7fc28a;box-shadow:0 0 0 0 rgba(127,194,138,.6);animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(127,194,138,.55)}70%{box-shadow:0 0 0 8px rgba(127,194,138,0)}100%{box-shadow:0 0 0 0 rgba(127,194,138,0)}}
+
+/* tools */
+#tools{position:fixed;top:72px;inset-inline-end:18px;display:flex;flex-direction:column;gap:8px;z-index:5}
+.tb{width:42px;height:42px;border-radius:12px;background:var(--glass);border:1px solid var(--line);display:grid;place-items:center;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:background .2s,border-color .2s}
+.tb:hover{background:var(--glass-hi);border-color:rgba(231,224,211,.32)}
+.tb.on{background:var(--cream);color:var(--ink);border-color:var(--cream)}
+.tb svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.tb[data-tip]{position:relative}
+.tb[data-tip]:hover::after{content:attr(data-tip);position:absolute;inset-inline-end:52px;top:50%;transform:translateY(-50%);white-space:nowrap;font-size:12px;padding:4px 9px;border-radius:8px;background:var(--glass-hi);border:1px solid var(--line);color:var(--sand)}
+
+/* compass */
+#north{position:fixed;top:332px;inset-inline-end:17px;width:44px;height:44px;border-radius:50%;background:var(--glass);border:1px solid var(--line);display:grid;place-items:center;z-index:5;backdrop-filter:blur(10px)}
+#north svg{width:30px;height:30px;transition:transform .1s linear}
+
+/* legend */
+#legend{position:fixed;bottom:0;inset-inline:0;padding:14px 18px calc(14px + env(safe-area-inset-bottom));display:flex;gap:8px;overflow-x:auto;z-index:5;
+  background:linear-gradient(to top,rgba(20,15,10,.86),rgba(20,15,10,0));scrollbar-width:none}
+#legend::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:7px 12px;border-radius:999px;background:var(--glass);border:1px solid var(--line);font-size:12.5px;white-space:nowrap;backdrop-filter:blur(8px);transition:opacity .2s,border-color .2s}
+.chip i{width:10px;height:10px;border-radius:3px}
+.chip.off{opacity:.38}
+.chip:hover{border-color:rgba(231,224,211,.35)}
+
+/* side panel */
+#panel{position:fixed;top:72px;bottom:80px;inset-inline-start:18px;width:360px;max-width:calc(100vw - 36px);display:flex;flex-direction:column;border-radius:18px;
+  background:rgba(244,239,230,.94);color:var(--ink);box-shadow:0 18px 50px rgba(0,0,0,.35);z-index:6;overflow:hidden;
+  transform:translateX(calc(100% + 40px));transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+#panel.open{transform:none!important}
+#panel header{padding:18px 20px 10px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(93,75,53,.14)}
+#panel header h2{font-size:15px;font-weight:600}
+#panel header .x{margin-inline-start:auto;width:32px;height:32px;border-radius:10px;display:grid;place-items:center;color:var(--umber)}
+#panel header .x:hover{background:rgba(93,75,53,.1)}
+#panel header .x svg{width:16px;height:16px;stroke:currentColor;stroke-width:2;fill:none}
+#pbody{overflow-y:auto;padding:16px 20px 22px;flex:1}
+.cat{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:500;padding:4px 10px;border-radius:999px;background:rgba(93,75,53,.08);color:var(--umber)}
+.cat i{width:9px;height:9px;border-radius:3px}
+.zn{margin:12px 0 2px;font-size:24px;font-weight:700;line-height:1.3}
+.ze{font-family:Marcellus,serif;font-size:13px;letter-spacing:.06em;color:var(--copper);text-transform:uppercase}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}
+.st{background:#fff;border-radius:12px;padding:10px 10px 9px;border:1px solid rgba(93,75,53,.1)}
+.st b{display:block;font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;direction:ltr;text-align:right}
+.st span{font-size:11px;color:#7a6650}
+.sec{margin-top:16px}
+.sec h3{font-size:11.5px;font-weight:600;letter-spacing:.04em;color:var(--copper);margin-bottom:6px}
+.sec p{font-size:14px;line-height:1.75;color:#3a2e22}
+.film{background:var(--ink);color:var(--sand);border-radius:12px;padding:12px 14px}
+.film h3{color:var(--camel)}
+.film p{color:var(--sand)}
+.src{margin-top:18px;font-size:11px;color:#8b7860;line-height:1.6}
+/* index list */
+.idx h4{font-size:11.5px;font-weight:600;color:var(--copper);margin:16px 0 6px;display:flex;align-items:center;gap:7px}
+.idx h4 i{width:9px;height:9px;border-radius:3px}
+.idx button{display:flex;width:100%;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;text-align:start;font-size:14px}
+.idx button:hover{background:rgba(93,75,53,.08)}
+.idx button em{margin-inline-start:auto;font-style:normal;font-size:12px;color:#8b7860;font-variant-numeric:tabular-nums;direction:ltr}
+.search{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(93,75,53,.2);background:#fff;font:inherit;font-size:14px;color:var(--ink);outline:none}
+.search:focus{border-color:var(--copper)}
+.totals{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+
+/* loader / gate */
+#veil{position:fixed;inset:0;display:grid;place-items:center;background:#1b140e;z-index:20;transition:opacity .6s}
+#veil.gone{opacity:0;pointer-events:none}
+#veil .in{text-align:center;padding:24px;max-width:360px}
+#veil b{font-family:Marcellus,serif;font-weight:400;font-size:44px;color:var(--cream);display:block}
+#veil p{font-size:14px;color:var(--mute);margin-top:8px}
+#veil .bar{width:180px;height:2px;margin:18px auto 0;background:rgba(231,224,211,.14);overflow:hidden;border-radius:2px}
+#veil .bar i{display:block;height:100%;width:40%;background:var(--camel);animation:slide 1.1s ease-in-out infinite}
+@keyframes slide{0%{transform:translateX(-120%)}100%{transform:translateX(280%)}}
+#gate{display:none;margin-top:18px}
+#gate input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(231,224,211,.25);background:rgba(255,255,255,.06);color:var(--cream);font:inherit;font-size:15px;text-align:center;letter-spacing:.12em;outline:none}
+#gate button{margin-top:10px;width:100%;padding:11px;border-radius:12px;background:var(--cream);color:var(--ink);font-weight:600}
+#gate .err{color:#e59a83;font-size:13px;margin-top:8px;min-height:18px}
+#hint{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);font-size:12.5px;color:var(--mute);background:var(--glass);padding:7px 14px;border-radius:999px;border:1px solid var(--line);z-index:4;transition:opacity .6s;white-space:nowrap}
+#hint.gone{opacity:0}
+@media (max-width:640px){
+  .brand span{display:none}
+  #upd span{display:none}
+  #panel{top:auto;bottom:0;inset-inline:0;width:auto;max-width:none;height:62vh;border-radius:18px 18px 0 0;transform:translateY(105%)!important}
+  #panel.open{transform:none!important}
+  #tools{top:64px;inset-inline-end:12px}
+  .tb{width:38px;height:38px}
+  #north{top:300px;inset-inline-end:9px}
+  #hint{bottom:74px}
+}
+@media (prefers-reduced-motion:reduce){#upd i{animation:none}#panel{transition:none}}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="labels"></div>
+
+<div id="top">
+  <div class="brand"><b>nevera</b><span>المخطط التفاعلي · 3D Masterplan</span></div>
+  <div id="upd"><i></i><span>آخر تحديث</span> <time id="updt">—</time></div>
+</div>
+
+<div id="tools">
+  <button class="tb" id="bIndex" data-tip="كل المناطق"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg></button>
+  <button class="tb" id="bReset" data-tip="الرجوع للمنظر العام"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></button>
+  <button class="tb" id="bTop" data-tip="منظر من فوق (2D)"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 12h16M12 4v16"/></svg></button>
+  <button class="tb on" id="bLabels" data-tip="الأسماء"><svg viewBox="0 0 24 24"><path d="M4 7V5h16v2M12 5v14M9 19h6"/></svg></button>
+  <button class="tb" id="bSpin" data-tip="لفّ تلقائي"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 4v5h-5"/></svg></button>
+</div>
+
+<div id="north" title="الشمال"><svg viewBox="0 0 30 30"><path d="M15 3l5 12h-10z" fill="#e7e0d3"/><path d="M15 27l-5-12h10z" fill="rgba(231,224,211,.3)"/><text x="15" y="12.5" font-size="6" text-anchor="middle" fill="#2b2117" font-family="Marcellus">N</text></svg></div>
+
+<aside id="panel" aria-live="polite">
+  <header><h2 id="ptitle">المنطقة</h2><button class="x" id="pclose" aria-label="إغلاق"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></header>
+  <div id="pbody"></div>
+</aside>
+
+<div id="legend"></div>
+<div id="hint">اسحب للّف · قرّب بالعجلة أو بصباعين · دوس على أي منطقة</div>
+
+<div id="veil"><div class="in">
+  <b>nevera</b>
+  <p id="vmsg">بنجهّز المخطط…</p>
+  <div class="bar" id="vbar"><i></i></div>
+  <form id="gate" autocomplete="off">
+    <input id="gkey" placeholder="مفتاح الدخول" inputmode="text" autocapitalize="characters" spellcheck="false">
+    <button type="submit">افتح المخطط</button>
+    <div class="err" id="gerr"></div>
+  </form>
+</div></div>
+
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {CSS2DRenderer, CSS2DObject} from 'three/addons/renderers/CSS2DRenderer.js';
+
+const DATA_URL = (new URLSearchParams(location.search).get('data')) || './zones.json';
+const S = 0.1;               // 1 scene unit = 10 m
+const $ = s => document.querySelector(s);
+const fmt = n => Math.round(n).toLocaleString('en-US');
+const FEDDAN = 4200.83;
+
+/* ---------- data (plain or encrypted with the room key) ---------- */
+async function getData(){
+  const r = await fetch(DATA_URL + (DATA_URL.includes('?')?'&':'?') + 't=' + Date.now(), {cache:'no-store'});
+  if(!r.ok) throw new Error('data ' + r.status);
+  const j = await r.json();
+  if(!j.ct) return j;
+  return await unlock(j);
+}
+function keyFromHash(){ const m = location.hash.match(/k=([^&]+)/); return m ? decodeURIComponent(m[1]) : null; }
+async function decrypt(j, key){
+  const b = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(key.replace(/[-\s]/g,'').toUpperCase()), 'PBKDF2', false, ['deriveKey']);
+  const k = await crypto.subtle.deriveKey({name:'PBKDF2', salt:b(j.s), iterations:j.n, hash:'SHA-256'}, base, {name:'AES-GCM', length:256}, false, ['decrypt']);
+  const pt = await crypto.subtle.decrypt({name:'AES-GCM', iv:b(j.iv)}, k, b(j.ct));
+  return JSON.parse(new TextDecoder().decode(pt));
+}
+function unlock(j){
+  return new Promise(async res => {
+    const tryKey = async key => { try { const d = await decrypt(j, key); try{sessionStorage.setItem('nv-k', key)}catch(e){} res(d); return true; } catch(e){ return false; } };
+    let saved = keyFromHash(); if(!saved){ try{ saved = sessionStorage.getItem('nv-k'); }catch(e){} }
+    if(saved && await tryKey(saved)) return;
+    $('#vbar').style.display='none'; $('#vmsg').textContent='المخطط ده محمي. اكتب مفتاح الدخول.'; $('#gate').style.display='block'; $('#gkey').focus();
+    $('#gate').onsubmit = async e => { e.preventDefault(); $('#gerr').textContent=''; const ok = await tryKey($('#gkey').value.trim());
+      if(!ok){ $('#gerr').textContent='المفتاح ده مش صح.'; } else { $('#gate').style.display='none'; $('#vbar').style.display=''; $('#vmsg').textContent='بنجهّز المخطط…'; } };
+  });
+}
+
+/* ---------- scene ---------- */
+const stage = $('#stage');
+const renderer = new THREE.WebGLRenderer({antialias:true, powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+stage.appendChild(renderer.domElement);
+const lr = new CSS2DRenderer({element: $('#labels')}); lr.setSize(innerWidth, innerHeight);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(38, innerWidth/innerHeight, 1, 20000);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.dampingFactor = .07; controls.maxPolarAngle = Math.PI*0.47; controls.minDistance = 25; controls.maxDistance = 4200;
+controls.screenSpacePanning = false; controls.zoomToCursor = true;
+
+// dusk sky
+{
+  const c = document.createElement('canvas'); c.width = 2; c.height = 512; const g = c.getContext('2d');
+  const gr = g.createLinearGradient(0,0,0,512); gr.addColorStop(0,'#18120d'); gr.addColorStop(.55,'#3a2a1d'); gr.addColorStop(.8,'#8a5d3b'); gr.addColorStop(1,'#c99366');
+  g.fillStyle = gr; g.fillRect(0,0,2,512); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; scene.background = t;
+}
+scene.fog = new THREE.Fog(0x6e4c33, 2600, 9000);
+scene.add(new THREE.HemisphereLight(0xffe8cc, 0x4a3524, 1.15));
+const sun = new THREE.DirectionalLight(0xffd2a0, 2.3); sun.castShadow = true; sun.shadow.mapSize.set(4096,4096); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.6;
+scene.add(sun, sun.target);
+
+const world = new THREE.Group(); world.rotation.x = -Math.PI/2; scene.add(world); // shape space: x east, y north, z up
+
+const ground = new THREE.Mesh(new THREE.CircleGeometry(9000, 96), new THREE.MeshStandardMaterial({color:0xb99a73, roughness:1}));
+ground.receiveShadow = true; ground.position.z = -0.2; world.add(ground);
+
+/* ---------- build ---------- */
+let phaseGroup = null, DATA, CATS = {}, zoneObjs = [], labelObjs = [], hidden = new Set(), selected = null, totalArea = 0;
+const meshToZone = new Map();
+
+function shapeFrom(poly){
+  const toV = p => new THREE.Vector2(p[0]*S, p[1]*S);
+  const sh = new THREE.Shape(poly[0].map(toV));
+  for(let i=1;i<poly.length;i++) sh.holes.push(new THREE.Path(poly[i].map(toV)));
+  return sh;
+}
+function centroidOf(rings){ // area-weighted centroid of outer rings
+  let A=0,cx=0,cy=0;
+  for(const r of rings){ const o=r[0]; for(let i=0,j=o.length-1;i<o.length;j=i++){ const f=o[j][0]*o[i][1]-o[i][0]*o[j][1]; A+=f; cx+=(o[j][0]+o[i][0])*f; cy+=(o[j][1]+o[i][1])*f; } }
+  return A ? [cx/(3*A), cy/(3*A)] : rings[0][0][0];
+}
+
+function build(){
+  CATS = DATA.cats;
+  const lineMat = new THREE.LineBasicMaterial({color:0xf6eee0, transparent:true, opacity:.55});
+  for(const z of DATA.zones){
+    const cat = CATS[z.cat] || {color:'#999', h:2};
+    const h = (z.h ?? cat.h ?? 2) * (cat.flat ? 0.15 : 1);
+    const geo = new THREE.ExtrudeGeometry(z.polys.map(shapeFrom), {depth:h, bevelEnabled:false, curveSegments:4});
+    const col = new THREE.Color(cat.color);
+    const mat = new THREE.MeshStandardMaterial({color:col, roughness:.82, metalness:0, transparent:!!cat.overlay, opacity:cat.overlay?0.32:1, depthWrite:!cat.overlay});
+    const mesh = new THREE.Mesh(geo, mat); mesh.castShadow = !cat.overlay; mesh.receiveShadow = true;
+    const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geo, 30), new THREE.LineBasicMaterial({color:col.clone().lerp(new THREE.Color(0xffffff), .45), transparent:true, opacity:.65}));
+    const g = new THREE.Group(); g.add(mesh, edges); world.add(g);
+    const lp = z.label || centroidOf(z.polys);
+    const obj = {z, g, mesh, mat, base:col.clone(), h, lp:[lp[0]*S, lp[1]*S], area:z.area||0};
+    zoneObjs.push(obj); meshToZone.set(mesh, obj); if(!cat.overlay) totalArea += obj.area;
+  }
+  // roads: flat ribbons along the centrelines, as wide as their right-of-way
+  const roadMat = new THREE.MeshStandardMaterial({color:0x4a3b2e, roughness:.95});
+  for(const r of (DATA.roads||[])){
+    const pts = (r.p || r), w = (r.w || 20) * S * 0.5; if(pts.length < 2) continue;
+    const pos = [], idx = [];
+    for(let i=0;i<pts.length;i++){
+      const a = pts[Math.max(0,i-1)], c = pts[Math.min(pts.length-1,i+1)];
+      let dx = c[0]-a[0], dy = c[1]-a[1]; const L = Math.hypot(dx,dy) || 1; dx/=L; dy/=L;
+      const x = pts[i][0]*S, y = pts[i][1]*S;
+      pos.push(x - dy*w, y + dx*w, 0.15, x + dy*w, y - dx*w, 0.15);
+      if(i) { const k = (i-1)*2; idx.push(k, k+1, k+2, k+1, k+3, k+2); }
+    }
+    const gq = new THREE.BufferGeometry(); gq.setAttribute('position', new THREE.Float32BufferAttribute(pos,3)); gq.setIndex(idx); gq.computeVertexNormals();
+    const m = new THREE.Mesh(gq, roadMat); m.receiveShadow = true; world.add(m);
+    if(r.w >= 60) world.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts.map(p => new THREE.Vector3(p[0]*S, p[1]*S, 0.2))), lineMat));
+  }
+  // Phase 1A outline
+  phaseGroup = new THREE.Group(); world.add(phaseGroup);
+  for(const b of (DATA.phase||[])){
+    const pts = b.map(p => new THREE.Vector3(p[0]*S, p[1]*S, 16)); pts.push(pts[0]);
+    const ln = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineDashedMaterial({color:0xffd27a, dashSize:6, gapSize:4}));
+    ln.computeLineDistances(); phaseGroup.add(ln);
+  }
+  phaseGroup.visible = false;
+  for(const b of (DATA.boundary||[])){
+    const pts = b.map(p => new THREE.Vector3(p[0]*S, p[1]*S, 0.6)); pts.push(pts[0]);
+    world.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({color:0xfff6e6})));
+  }
+  // one label per named zone (zones sharing a name share a label at the largest piece)
+  const groups = new Map();
+  for(const o of zoneObjs){ const k = o.z.label_group || (o.z.ar + '|' + o.z.cat); if(!groups.has(k)) groups.set(k, []); groups.get(k).push(o); }
+  for(const [k, arr] of groups){
+    arr.sort((a,b)=>b.area-a.area); const o = arr[0]; const cat = CATS[o.z.cat]||{};
+    const el = document.createElement('div'); el.className = 'lbl';
+    el.innerHTML = `<i style="background:${cat.color}"></i>${o.z.ar}${o.z.en?`<small>${o.z.en}</small>`:''}`;
+    el.addEventListener('click', e => { e.stopPropagation(); select(o, true); });
+    const lo = new CSS2DObject(el); lo.position.set(o.lp[0], o.lp[1], o.h + 2); world.add(lo);
+    const total = arr.reduce((s,a)=>s+a.area,0);
+    labelObjs.push({el, lo, o, arr, pri: total + (cat.pri||0)*1e9, w: Math.max(o.z.ar.length*7.5, (o.z.en||'').length*6.2)+34});
+    for(const a of arr) a.labelRef = labelObjs[labelObjs.length-1];
+  }
+  labelObjs.sort((a,b)=>b.pri-a.pri);
+  // frame
+  const box = new THREE.Box3(); for(const o of zoneObjs) box.expandByObject(o.mesh);
+  const size = box.getSize(new THREE.Vector3()), ctr = box.getCenter(new THREE.Vector3());
+  HOME.target.copy(ctr).setY(0); HOME.radius = Math.max(size.x, size.z);
+  const kk = Math.max(1, 0.95 / camera.aspect);
+  HOME.pos.set(ctr.x + HOME.radius*0.55*kk, HOME.radius*0.62*kk, ctr.z + HOME.radius*0.78*kk);
+  const sc = sun.shadow.camera, R = HOME.radius*0.75; sc.left=-R; sc.right=R; sc.top=R; sc.bottom=-R; sc.near=1; sc.far=HOME.radius*4; sc.updateProjectionMatrix();
+  sun.position.set(ctr.x - HOME.radius*0.9, HOME.radius*0.55, ctr.z + HOME.radius*0.35); sun.target.position.copy(ctr);
+  scene.fog.near = HOME.radius*1.6; scene.fog.far = HOME.radius*6;
+}
+const HOME = {target:new THREE.Vector3(), pos:new THREE.Vector3(), radius:1000};
+
+/* ---------- labels: priority + collision ---------- */
+let showLabels = true, lblDirty = true;
+const v = new THREE.Vector3();
+function layoutLabels(){
+  const placed = [], W = innerWidth, H = innerHeight;
+  const dist = camera.position.distanceTo(controls.target);
+  for(const L of labelObjs){
+    const z = L.o.z, visible = showLabels && !hidden.has(z.cat);
+    let ok = false;
+    if(visible){
+      L.lo.getWorldPosition(v); v.project(camera);
+      if(v.z < 1 && Math.abs(v.x) < 1.1 && Math.abs(v.y) < 1.1){
+        const x = (v.x+1)/2*W, y = (1-v.y)/2*H, w = L.w, h = 34;
+        const r = {x0:x-w/2-4, x1:x+w/2+4, y0:y-h-6, y1:y+4};
+        const isSel = selected && L.arr.includes(selected);
+        ok = isSel || !placed.some(p => !(r.x1<p.x0||r.x0>p.x1||r.y1<p.y0||r.y0>p.y1));
+        if(ok) placed.push(r);
+      }
+    }
+    L.el.classList.toggle('off', !ok);
+    L.el.classList.toggle('sel', !!(selected && L.arr.includes(selected)));
+    L.lo.visible = visible;
+  }
+  // world scale hint for label size
+  for(const L of labelObjs) L.el.classList.toggle('big', dist < HOME.radius*0.45 && L.pri > labelObjs[Math.min(5,labelObjs.length-1)].pri);
+}
+
+/* ---------- interaction ---------- */
+const ray = new THREE.Raycaster(), ptr = new THREE.Vector2();
+let downAt = null, hover = null;
+renderer.domElement.addEventListener('pointerdown', e => { downAt = [e.clientX, e.clientY]; stopSpin(); hideHint(); });
+renderer.domElement.addEventListener('pointerup', e => {
+  if(!downAt || Math.hypot(e.clientX-downAt[0], e.clientY-downAt[1]) > 6) return;
+  const o = pick(e); if(o) select(o, false); else closePanel();
+});
+renderer.domElement.addEventListener('pointermove', e => {
+  if(e.pointerType !== 'mouse') return;
+  const o = pick(e); if(o !== hover){ if(hover && hover !== selected) tint(hover, 0); hover = o; if(o && o !== selected) tint(o, .18); renderer.domElement.style.cursor = o ? 'pointer' : ''; }
+});
+function pick(e){
+  ptr.set(e.clientX/innerWidth*2-1, -(e.clientY/innerHeight)*2+1); ray.setFromCamera(ptr, camera);
+  const meshes = zoneObjs.filter(o => o.g.visible && !(CATS[o.z.cat]||{}).overlay).map(o => o.mesh);
+  const hit = ray.intersectObjects(meshes, false)[0]; return hit ? meshToZone.get(hit.object) : null;
+}
+function tint(o, k){ o.mat.color.copy(o.base).lerp(new THREE.Color(0xfff3dd), k); o.mat.emissive.set(k ? 0x2a1a08 : 0x000000); }
+function select(o, fly){
+  if(selected && selected !== o){ tint(selected, 0); selected.g.position.z = 0; }
+  selected = o; tint(o, .28); o.g.position.z = 0.8; lblDirty = true;
+  openPanel(zoneHTML(o));
+  if(fly) flyTo(o);
+}
+
+/* ---------- panel ---------- */
+const panel = $('#panel'), pbody = $('#pbody');
+function openPanel(html, title){ pbody.innerHTML = html; $('#ptitle').textContent = title || 'المنطقة'; panel.classList.add('open'); pbody.scrollTop = 0; shiftFor(true); }
+function closePanel(){ panel.classList.remove('open'); shiftFor(false); if(selected){ tint(selected,0); selected.g.position.z = 0; selected = null; lblDirty = true; } }
+$('#pclose').onclick = closePanel;
+function esc(s){ return String(s??'').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function zoneHTML(o){
+  const z = o.z, cat = CATS[z.cat]||{}, L = o.labelRef, area = L ? L.arr.reduce((s,a)=>s+a.area,0) : o.area;
+  const pct = totalArea ? (area/totalArea*100) : 0;
+  return `<span class="cat"><i style="background:${cat.color}"></i>${esc(cat.ar||z.cat)}</span>
+  <div class="zn">${esc(z.ar)}</div>${z.en?`<div class="ze">${esc(z.en)}</div>`:''}
+  <div class="stats">
+    <div class="st"><b>${area>=1e6?(area/1e6).toFixed(2)+'M':fmt(area)}</b><span>م² ${area>=1e6?'(مليون)':''}</span></div>
+    <div class="st"><b>${fmt(area/FEDDAN)}</b><span>فدان</span></div>
+    <div class="st"><b>${pct<0.1?'<0.1':pct.toFixed(1)}%</b><span>من المخطط</span></div>
+  </div>
+  ${(z.facts||[]).length?`<div class="totals">${z.facts.map(f=>`<div class="st"><b>${esc(f.v)}</b><span>${esc(f.k)}</span></div>`).join('')}</div>`:''}
+  ${z.district?`<div class="sec"><h3>الحي</h3><p>${esc(z.district)}</p></div>`:''}
+  ${z.desc?`<div class="sec"><h3>عن المنطقة</h3><p>${esc(z.desc)}</p></div>`:''}
+  ${z.film?`<div class="sec film"><h3>في الفيلم</h3><p>${esc(z.film)}</p></div>`:''}
+  ${L && L.arr.length>1?`<div class="src">المنطقة دي متقسمة على ${L.arr.length} قطع في المخطط.</div>`:''}
+  <div class="src">المساحة محسوبة من ملف الأوتوكاد (${esc(DATA.meta.source_short||'DWG')}).${z.note?' '+esc(z.note):''}</div>`;
+}
+function indexHTML(q=''){
+  const m = DATA.meta, byCat = {};
+  for(const L of labelObjs){ const z = L.o.z; if(q && !(z.ar.includes(q) || (z.en||'').toLowerCase().includes(q.toLowerCase()))) continue; (byCat[z.cat] ||= []).push(L); }
+  const order = Object.keys(CATS).filter(k => byCat[k]);
+  return `${q===''?`<div class="totals">
+      <div class="st"><b>${m.total_area?(m.total_area/1e6).toFixed(2)+'M':'—'}</b><span>م² إجمالي المشروع</span></div>
+      <div class="st"><b>${m.total_area?fmt(m.total_area/FEDDAN):'—'}</b><span>فدان</span></div>
+      ${(m.facts||[]).map(f=>`<div class="st"><b>${esc(f.v)}</b><span>${esc(f.k)}</span></div>`).join('')}
+    </div>`:''}
+    <input class="search" id="q" placeholder="دوّر على منطقة…" value="${esc(q)}">
+    <div class="idx">${order.map(k => `<h4><i style="background:${CATS[k].color}"></i>${esc(CATS[k].ar)}</h4>` + byCat[k].sort((a,b)=>b.pri-a.pri).map(L => `<button data-i="${labelObjs.indexOf(L)}">${esc(L.o.z.ar)}<em>${fmt(L.arr.reduce((s,a)=>s+a.area,0))} م²</em></button>`).join('')).join('')}</div>
+    <div class="src">المصدر: ${esc(m.source||'')}${m.source_date?` · ${esc(m.source_date)}`:''}. الارتفاعات توضيحية للتمييز بين الاستعمالات، مش ارتفاعات المباني الفعلية.</div>`;
+}
+function openIndex(q=''){
+  if(selected){ tint(selected,0); selected.g.position.z=0; selected=null; lblDirty=true; }
+  openPanel(indexHTML(q), 'كل المناطق');
+  const qi = $('#q'); qi.oninput = () => { const pos = qi.selectionStart; openIndex(qi.value); const n = $('#q'); n.focus(); n.setSelectionRange(pos,pos); };
+  pbody.querySelectorAll('.idx button').forEach(b => b.onclick = () => select(labelObjs[+b.dataset.i].o, true));
+}
+$('#bIndex').onclick = () => openIndex();
+
+/* ---------- camera moves ---------- */
+let anim = null;
+function tweenTo(pos, target, ms=1400){
+  const p0 = camera.position.clone(), t0 = controls.target.clone(), st = performance.now();
+  anim = now => { let k = Math.min(1, (now-st)/ms); k = k<.5 ? 4*k*k*k : 1-Math.pow(-2*k+2,3)/2;
+    camera.position.lerpVectors(p0, pos, k); controls.target.lerpVectors(t0, target, k); lblDirty = true; if(k>=1) anim = null; };
+}
+function flyTo(o){
+  const L = o.labelRef, arr = L ? L.arr : [o], box = new THREE.Box3(); for(const a of arr) box.expandByObject(a.mesh);
+  const c = box.getCenter(new THREE.Vector3()), r = Math.max(box.getSize(new THREE.Vector3()).length(), 60);
+  const dir = camera.position.clone().sub(controls.target).normalize(); dir.y = Math.max(dir.y, .55); dir.normalize();
+  tweenTo(c.clone().add(dir.multiplyScalar(r*1.7)), c.clone());
+}
+function goHome(ms){ tweenTo(HOME.pos.clone(), HOME.target.clone(), ms); }
+$('#bReset').onclick = () => { $('#bTop').classList.remove('on'); controls.maxPolarAngle = Math.PI*.47; goHome(); };
+$('#bTop').onclick = () => {
+  const on = !$('#bTop').classList.contains('on'); $('#bTop').classList.toggle('on', on);
+  if(on){ const t = controls.target.clone(); const d = Math.max(camera.position.distanceTo(t), HOME.radius*0.4); tweenTo(t.clone().add(new THREE.Vector3(0.001, d*1.15, 0.001)), t); }
+  else goHome();
+};
+$('#bLabels').onclick = () => { showLabels = !showLabels; $('#bLabels').classList.toggle('on', showLabels); lblDirty = true; };
+let spinning = false;
+function stopSpin(){ spinning = false; controls.autoRotate = false; $('#bSpin').classList.remove('on'); }
+$('#bSpin').onclick = () => { spinning = !spinning; controls.autoRotate = spinning; controls.autoRotateSpeed = .45; $('#bSpin').classList.toggle('on', spinning); };
+function hideHint(){ $('#hint').classList.add('gone'); }
+setTimeout(hideHint, 9000);
+
+/* ---------- legend ---------- */
+function buildLegend(){
+  const used = new Set(DATA.zones.map(z => z.cat)), lg = $('#legend'); lg.innerHTML = '';
+  if((DATA.phase||[]).length){ const ph = document.createElement('button'); ph.className = 'chip off'; ph.innerHTML = '<i style="background:#ffd27a;border-radius:50%"></i>المرحلة الأولى 1A';
+    ph.onclick = () => { phaseGroup.visible = !phaseGroup.visible; ph.classList.toggle('off', !phaseGroup.visible); }; lg.appendChild(ph); }
+  for(const [k, c] of Object.entries(CATS)){ if(!used.has(k)) continue;
+    const b = document.createElement('button'); b.className = 'chip'; b.innerHTML = `<i style="background:${c.color}"></i>${esc(c.ar)}`;
+    b.onclick = () => { const off = !hidden.has(k); off ? hidden.add(k) : hidden.delete(k); b.classList.toggle('off', off);
+      for(const o of zoneObjs) if(o.z.cat === k) o.g.visible = !off; lblDirty = true; };
+    lg.appendChild(b);
+  }
+}
+
+/* ---------- live "last updated" ---------- */
+function rel(iso){
+  const d = new Date(iso), s = (Date.now()-d)/1000;
+  const abs = d.toLocaleString('ar-EG-u-nu-latn', {day:'numeric', month:'short', hour:'numeric', minute:'2-digit', timeZone:'Africa/Cairo'});
+  let r = s < 90 ? 'دلوقتي' : s < 3600 ? `من ${Math.round(s/60)} دقيقة` : s < 86400 ? `من ${Math.round(s/3600)} ساعة` : `من ${Math.round(s/86400)} يوم`;
+  return {r, abs};
+}
+function paintUpd(){ if(!DATA) return; const {r, abs} = rel(DATA.meta.updated); const t = $('#updt'); t.textContent = r; t.title = abs + ' (القاهرة)'; t.dateTime = DATA.meta.updated; }
+setInterval(paintUpd, 30000);
+
+/* keep the picture centred in the part of the screen the panel leaves free */
+const shift = {x:0, y:0, tx:0, ty:0};
+function shiftFor(open){ const m = innerWidth < 640; shift.tx = open && !m ? (panel.offsetWidth + 18) / 2 : 0; shift.ty = open && m ? panel.offsetHeight * 0.42 : 0; }
+function applyShift(){
+  shift.x += (shift.tx - shift.x) * .12; shift.y += (shift.ty - shift.y) * .12;
+  if(Math.abs(shift.tx - shift.x) < .5) shift.x = shift.tx; if(Math.abs(shift.ty - shift.y) < .5) shift.y = shift.ty;
+  if(!shift.x && !shift.y) camera.clearViewOffset(); else camera.setViewOffset(innerWidth, innerHeight, shift.x, shift.y, innerWidth, innerHeight);
+  lblDirty = true;
+}
+
+/* ---------- loop ---------- */
+addEventListener('resize', () => { camera.aspect = innerWidth/innerHeight; if(shift.x||shift.y){ shiftFor(panel.classList.contains('open')); shift.x=shift.tx; shift.y=shift.ty; if(shift.x||shift.y) camera.setViewOffset(innerWidth, innerHeight, shift.x, shift.y, innerWidth, innerHeight); else camera.clearViewOffset(); } camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); lr.setSize(innerWidth, innerHeight); lblDirty = true; });
+controls.addEventListener('change', () => { lblDirty = true; });
+const az = new THREE.Spherical(); let lastLbl = 0;
+function loop(now){
+  requestAnimationFrame(loop);
+  if(anim) anim(now);
+  if(shift.x !== shift.tx || shift.y !== shift.ty) applyShift();
+  controls.update();
+  if(lblDirty && now - lastLbl > 120){ layoutLabels(); lblDirty = false; lastLbl = now; }
+  az.setFromVector3(camera.position.clone().sub(controls.target));
+  $('#north svg').style.transform = `rotate(${-az.theta*180/Math.PI}deg)`;
+  renderer.render(scene, camera); lr.render(scene, camera);
+}
+
+/* ---------- go ---------- */
+(async () => {
+  try{
+    DATA = await getData();
+    build(); buildLegend(); paintUpd();
+    camera.position.copy(HOME.pos).add(new THREE.Vector3(HOME.radius*0.4, HOME.radius*0.5, HOME.radius*0.4)); controls.target.copy(HOME.target);
+    requestAnimationFrame(loop);
+    $('#veil').classList.add('gone'); goHome(2600);
+    const want = new URLSearchParams(location.search).get('z');
+    if(want){ const L = labelObjs.find(L => L.o.z.id === want); if(L) setTimeout(() => select(L.o, true), 2700); }
+  }catch(e){
+    console.error(e); $('#vbar').style.display='none'; $('#vmsg').textContent = 'المخطط مش راضي يحمّل. جرّب تعمل refresh.';
+  }
+})();
+</script>
+</body>
+</html>
