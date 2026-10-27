@@ -55,6 +55,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   <button class="x" id="cx" aria-label="تصغير">–</button>
   <h1>محطة حدائق أكتوبر التبادلية</h1>
   <div class="en">October Gardens HSR Interchange</div>
+  <p>القطورات في الموديل هي قطار Velaro السريع بتاع مصر (8 عربيات، حوالي 200 م، 250 كم/س)، بألوان العلم على جسم أبيض.</p>
   <p>نقطة الالتقاء بين الخط الأول للقطار السريع (السخنة–العلمين–مطروح)، وده بيمشي على الأرض، والخط الثاني (أكتوبر–أسوان)، وده علوي. أرصفة الخطين على نفس المنسوب. المحطة عبارة عن مبنيين بتكسية حجر على جانبي القضبان، وبينهم كوبري صالة رئيسي و4 كباري مشاة.</p>
   <div class="facts">
     <div><b>2</b><span>مبنى على جانبي القضبان</span></div>
@@ -70,6 +71,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   <button data-v="platform">الأرصفة</button>
   <button data-v="top">من فوق</button>
   <button data-v="spin">لفّ</button>
+  <button data-v="anim" class="on">القطورات</button>
 </nav>
 
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
@@ -78,6 +80,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {CSS2DRenderer, CSS2DObject} from 'three/addons/renderers/CSS2DRenderer.js';
 import {buildStation} from './station.js';
+import {buildTrain, makePath, schedule, placeTrain} from './train.js';
 
 const mobile = matchMedia('(max-width:640px)').matches;
 const renderer = new THREE.WebGLRenderer({antialias:true});
@@ -118,6 +121,19 @@ function occlude(){ for(const o of labels){ const d = o.position.clone().sub(cam
   o.visible = ray.intersectObjects(meshes, false).length === 0; } }
 renderer.shadowMap.needsUpdate = true;
 
+/* trains: Line 1 at grade through the station, one each way, stopping at the platforms */
+const TRAINS = [];
+for (const [z, dir, phase] of [[-3, 1, 0], [18, -1, 23]]) {
+  const t = buildTrain(THREE); scene.add(t.group);
+  const pts = dir > 0 ? [[-380, z], [380, z]] : [[380, z], [-380, z]];
+  const path = makePath(pts);
+  TRAINS.push({t, path, s: schedule({total: path.total, stopAt: path.total / 2 + 100, length: t.length, vmax: 32, acc: 1.1, dwell: 12, dir: 1, phase})});
+}
+let animOn = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clock = new THREE.Clock();
+function moveTrains(){ const tt = clock.getElapsedTime(); for(const T of TRAINS) placeTrain(T.t, T.path, T.s(tt), (x, y) => [x, 0.35, y], 1); }
+moveTrains();
+
 const VIEWS = {
   drone:   {pos:[620, 190, 0], target:[0, 10, 0]},
   entry:   {pos:[60, 22, 330], target:[0, 18, 100]},
@@ -130,8 +146,9 @@ function go(v, ms=1500){
   anim = now => { let k = Math.min(1, (now-st)/ms); k = k<.5 ? 4*k*k*k : 1-Math.pow(-2*k+2,3)/2; camera.position.lerpVectors(p0,p1,k); controls.target.lerpVectors(t0,t1,k); if(k>=1) anim = null; };
 }
 document.querySelectorAll('#views button').forEach(b => b.onclick = () => {
+  if(b.dataset.v === 'anim'){ animOn = !animOn; b.classList.toggle('on', animOn); need = 2; return; }
   if(b.dataset.v === 'spin'){ spin = !spin; controls.autoRotate = spin; controls.autoRotateSpeed = .6; b.classList.toggle('on', spin); need = 2; return; }
-  document.querySelectorAll('#views button').forEach(x => { if(x.dataset.v !== 'spin') x.classList.toggle('on', x === b); }); go(b.dataset.v);
+  document.querySelectorAll('#views button').forEach(x => { if(x.dataset.v !== 'spin' && x.dataset.v !== 'anim') x.classList.toggle('on', x === b); }); go(b.dataset.v);
 });
 document.getElementById('cx').onclick = () => { const c = document.getElementById('card'); c.classList.toggle('min'); document.getElementById('cx').textContent = c.classList.contains('min') ? '+' : '–'; };
 if(mobile) document.getElementById('card').classList.add('min');
@@ -144,6 +161,7 @@ renderer.domElement.addEventListener('pointerdown', () => { if(spin){ spin = fal
   if(anim){ anim(now); need = 2; }
   if(controls.update()) need = 2;
   if(spin) need = 2;
+  if(animOn){ moveTrains(); need = Math.max(need, 1); }
   if(!need) return; need--;
   if(!anim && !spin) occlude();
   renderer.render(scene, camera); lr.render(scene, camera);
