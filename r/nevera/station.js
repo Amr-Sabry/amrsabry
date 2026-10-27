@@ -16,7 +16,7 @@ export function buildStation(THREE, opts = {}) {
   const stone = new THREE.MeshStandardMaterial({ color: 0xe5d9c3, roughness: .85 });
   const stoneTop = new THREE.MeshStandardMaterial({ color: 0xf1e8d6, roughness: .8 });
   const concrete = new THREE.MeshStandardMaterial({ color: 0xcfc7b8, roughness: .9 });
-  const glass = new THREE.MeshStandardMaterial({ color: 0x41535c, roughness: .3, metalness: .25 });
+  const glass = new THREE.MeshStandardMaterial({ color: 0x8aa3ad, emissive: 0x1b2b33, roughness: .25, metalness: .15 });
   const mullion = new THREE.MeshStandardMaterial({ color: 0x8c8a84, roughness: .5, metalness: .3 });
   const roofDark = new THREE.MeshStandardMaterial({ color: 0x2a2d30, roughness: .7 });
   const canopy = new THREE.MeshStandardMaterial({ color: 0xf3f0ea, roughness: .6 });
@@ -53,7 +53,7 @@ export function buildStation(THREE, opts = {}) {
   };
 
   // ---------- ground ----------
-  if (detail) box(760, .4, 300, paving, 0, -.4, 0, false);
+  if (detail && opts.ground !== false) box(760, .4, 300, paving, 0, -.4, 0, false);
 
   // ---------- tracks: 8 tracks, 4 island platforms ----------
   const tracks = [-39, -24, -18, -3, 3, 18, 24, 39];
@@ -102,7 +102,9 @@ export function buildStation(THREE, opts = {}) {
   // ---------- main concourse bridge over the tracks ----------
   box(36, 2.2, 96, concrete, 0, 9, 0);                       // deck
   box(36, 5.2, 96, glass, 0, 11.2, 0);                        // glazed hall
-  box(38, .9, 98, roofDark, 0, 16.4, 0, false);               // roof
+  box(38, .6, 98, canopy, 0, 16.4, 0);                        // white roof slab over the hall
+  for (let z = -40; z <= 40; z += 10) box(30, .12, 2.2, glass, 0, 17.0, z, false);   // skylight strips
+  for (const z of [-49, 49]) box(38, .5, .6, roofDark, 0, 17.0, z, false);   // roof edge trim
   for (const z of platforms) for (const x of [-14, 14]) box(1.4, 9, 1.4, concrete, x, 1.1, z);
   // stairs from the concourse down to every platform, both directions
   const stair = (x0, x1, z, y0, y1, w = 3.6) => {

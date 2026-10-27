@@ -110,7 +110,7 @@ export function schedule({ total, stopAt, length, vmax = 40, acc = 1.2, dwell = 
   const tCruiseIn = Math.max(0, (dIn - brake) / vmax), tBrake = vmax / acc;
   const tAcc = vmax / acc, tCruiseOut = Math.max(0, (dOut - brake) / vmax);
   const T = tCruiseIn + tBrake + dwell + tAcc + tCruiseOut + 6;
-  return function (t) {
+  const fn = function (t) {
     let k = ((t + phase) % T + T) % T, s;
     if (k < tCruiseIn) s = start + vmax * k;
     else if ((k -= tCruiseIn) < tBrake) s = stopAt - brake + vmax * k - acc * k * k / 2;
@@ -120,6 +120,8 @@ export function schedule({ total, stopAt, length, vmax = 40, acc = 1.2, dwell = 
     s = Math.min(s, end);
     return dir > 0 ? s : total - s;
   };
+  fn.tStop = tCruiseIn + tBrake; fn.period = T;      // seconds from the loop start until the train stands at the platform
+  return fn;
 }
 
 // Place every car of a train built by buildTrain at front-tip arc length s on `path` (makePath).

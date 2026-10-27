@@ -127,7 +127,8 @@ for (const [z, dir, phase] of [[-3, 1, 0], [18, -1, 23]]) {
   const t = buildTrain(THREE); scene.add(t.group);
   const pts = dir > 0 ? [[-380, z], [380, z]] : [[380, z], [-380, z]];
   const path = makePath(pts);
-  TRAINS.push({t, path, s: schedule({total: path.total, stopAt: path.total / 2 + 100, length: t.length, vmax: 32, acc: 1.1, dwell: 12, dir: 1, phase})});
+  const s0 = schedule({total: path.total, stopAt: path.total / 2 + 100, length: t.length, vmax: 32, acc: 1.1, dwell: 12, dir: 1});
+  TRAINS.push({t, path, s: schedule({total: path.total, stopAt: path.total / 2 + 100, length: t.length, vmax: 32, acc: 1.1, dwell: 12, dir: 1, phase: s0.tStop + (dir > 0 ? -10 : 3)})});
 }
 let animOn = !matchMedia('(prefers-reduced-motion: reduce)').matches;
 const clock = new THREE.Clock();

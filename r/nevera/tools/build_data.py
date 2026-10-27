@@ -96,14 +96,19 @@ PYR = [  # ar, en, site, lat, lon, base m, height m, shape, colour
  ('الهرم الأسود', 'Black Pyramid', 'دهشور', 29.7917, 31.2236, 105, 75, 'std', '#6f6052'),
 ]
 pyramids = [{'ar': a, 'en': e, 'site': st, 'lat': la, 'lon': lo, 'p': _loc(la, lo), 'base': bs, 'h': ht, 'shape': sh, 'color': c} for a, e, st, la, lo, bs, ht, sh, c in PYR]
-landmarks = [{'ar': 'المتحف المصري الكبير', 'en': 'Grand Egyptian Museum', 'lat': 29.9946, 'lon': 31.1199, 'p': _loc(29.9946, 31.1199)}]
+landmarks = [{'ar': 'المتحف المصري الكبير', 'en': 'Grand Egyptian Museum', 'lat': 29.99315, 'lon': 31.11965, 'p': _loc(29.99315, 31.11965)}]
 for pyr in pyramids:
     d = (pyr['p'][0] ** 2 + pyr['p'][1] ** 2) ** .5 / 1000
-    pyr['desc'] = '%s. القاعدة حوالي %d م والارتفاع الأصلي حوالي %d م، وعلى بعد حوالي %.1f كم من وسط المشروع. مرسوم أكبر 2.5 مرة من حجمه عشان يبان.' % (pyr['site'], pyr['base'], pyr['h'], d)
+    pyr['desc'] = '%s. القاعدة حوالي %d م والارتفاع الأصلي حوالي %d م، وعلى بعد حوالي %.1f كم من وسط المشروع. مرسوم بمقاس قاعدته الحقيقي، والارتفاع مكبّر مرتين زي باقي الخريطة.' % (pyr['site'], pyr['base'], pyr['h'], d)
+GIZA_BASE = {'Pyramid of Khufu': 60, 'Pyramid of Khafre': 70, 'Pyramid of Menkaure': 73}   # base levels a.s.l. used by the plateau model
+for pyr in pyramids:
+    if pyr['en'] in GIZA_BASE: pyr['giza'] = True; pyr['asl'] = GIZA_BASE[pyr['en']]
 extras['pyramids'] = pyramids; extras['landmarks'] = landmarks
+extras['terrain'] = json.load(open('terrain.json')); extras['terrain']['file'] = 'terrain.bin'; extras['terrain']['img'] = 'sat.jpg'; extras['terrain']['vex'] = 2
 data = {
  'meta': {'title': 'Nevera · 3D Masterplan', 'source': 'Media City_Landuse Update_MP&Phase 01_20261023_Bind.dwg', 'source_short': 'Landuse Update · 23 Oct 2026',
           'source_date': '23 أكتوبر 2026', 'updated': now, 'total_area': 34870160, 'units': 'm, local origin = DWG (318595, 3305622)',
+          'geo_src': 'التضاريس: SRTM 30 م (AWS Terrain Tiles). صورة القمر الصناعي: Sentinel-2 cloudless 2016 من EOX (CC BY 4.0). الأهرامات التلاتة والمتحف المصري الكبير منقولين من موديلات خريطة «مسيرة التنمية» (OpenStreetMap + SRTM).',
           'facts': [{'k': 'م² مساحة التطوير', 'v': '25.33M'}, {'k': 'وحدة سكنية', 'v': '76,945'}, {'k': 'مفتاح فندقي', 'v': '5,714'}, {'k': 'قطعة أرض في الملف', 'v': str(len(zones))}],
           'height_note': 'الارتفاع = أقصى عدد أدوار من بطاقة القطعة × 4 م، مكبّر 3.5 مرة للوضوح.'},
  'cats': cats, 'zones': zones, 'roads': roads, 'boundary': g['boundary'], 'phase': g['phase'], 'extras': extras}
