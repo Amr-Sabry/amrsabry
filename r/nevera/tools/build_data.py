@@ -110,7 +110,7 @@ data = {
           'source_date': '23 أكتوبر 2026', 'updated': now, 'total_area': 34870160, 'units': 'm, local origin = DWG (318595, 3305622)',
           'geo_src': 'التضاريس: SRTM 30 م (AWS Terrain Tiles). صورة القمر الصناعي: Sentinel-2 cloudless 2016 من EOX (CC BY 4.0). الأهرامات التلاتة والمتحف المصري الكبير منقولين من موديلات خريطة «مسيرة التنمية» (OpenStreetMap + SRTM).',
           'facts': [{'k': 'م² مساحة التطوير', 'v': '25.33M'}, {'k': 'وحدة سكنية', 'v': '76,945'}, {'k': 'مفتاح فندقي', 'v': '5,714'}, {'k': 'قطعة أرض في الملف', 'v': str(len(zones))}],
-          'height_note': 'الارتفاع = أقصى عدد أدوار من بطاقة القطعة × 4 م، مكبّر 3.5 مرة للوضوح.'},
+          'height_note': 'المباني بلوكات رمزية متولّدة بالكود: الارتفاع = أقصى عدد أدوار من بطاقة القطعة × 4 م، مكبّر مرتين زي التضاريس، والمساحة المبنية من معامل البناء ÷ عدد الأدوار. ترتيب المباني جوه القطعة للعرض بس، ومش تصميم معماري.'},
  'cats': cats, 'zones': zones, 'roads': roads, 'boundary': g['boundary'], 'phase': g['phase'], 'extras': extras}
 json.dump(data, open('map/zones.json', 'w'), ensure_ascii=False, separators=(',', ':'))
 print('ok', len(zones), now)

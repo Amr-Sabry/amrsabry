@@ -256,6 +256,8 @@ function addLabel(o, text, sub, pos, cls, onClick){
   const lo = new CSS2DObject(el); lo.position.set(pos[0], pos[1], pos[2]); world.add(lo); return {el, lo};
 }
 
+const PLATE = 0.25;                  // ground plate under the buildings, scene units
+function plateH(k, z){ const c = CATS[k] || {}; if(c.overlay || k === 'pz') return z.h ?? 0.3; return k === 'gl' ? 0.1 : k === 'pk' ? 0.28 : k === 'gf' ? 0.26 : PLATE; }
 function build(){
   CATS = DATA.cats;
   // zones: one merged mesh per land use, with a face range per parcel for picking
@@ -265,17 +267,20 @@ function build(){
   for(const [k, list] of Object.entries(byCat)){
     const cat = CATS[k] || {color:'#999'}; const geos = [], ranges = []; let tri = 0;
     for(const z of list){
-      const h = z.h ?? 2;
+      // parcels are thin ground plates in the land-use colour; the buildings on them come from blocks.js
+      const h = plateH(k, z), top = Math.max(h, (z.h >= 1.4 ? Math.round(z.h / 1.4) : 0) * 4 * VEX * S + PLATE);
       const g = new THREE.ExtrudeGeometry(shapes(z.polys), {depth:h, bevelEnabled:false, curveSegments:2});
       const n = g.attributes.position.count / 3;
       const lp = z.label || centroidOf(z.polys);
-      const obj = {z, h, area:z.area||0, lp:[lp[0]*S, lp[1]*S], box:bounds(z.polys, h)};
+      const obj = {z, h:top, area:z.area||0, lp:[lp[0]*S, lp[1]*S], box:bounds(z.polys, top)};
       ranges.push([tri, tri+n, obj]); tri += n; geos.push(g);
       if(!cat.overlay){ edgeGeos.push(new THREE.EdgesGeometry(g, 35)); totalArea += obj.area; }
       zoneObjs.push(obj);
     }
     const merged = mergeGeometries(geos.map(g => { g.deleteAttribute('uv'); return g; }), false); geos.forEach(g => g.dispose());
-    const mat = new THREE.MeshStandardMaterial({color:new THREE.Color(cat.color), roughness:.85, transparent:!!cat.overlay, opacity:cat.overlay?0.3:1, depthWrite:!cat.overlay});
+    // built parcels get a muted version of their colour so the buildings read on top; parks, lakes and golf keep theirs
+    const pc = new THREE.Color(cat.color); if(!cat.overlay && !['pk','gl','gf','pz'].includes(k)) pc.lerp(new THREE.Color('#d6c4a4'), 0.42);
+    const mat = new THREE.MeshStandardMaterial({color:pc, roughness:.85, transparent:!!cat.overlay, opacity:cat.overlay?0.3:1, depthWrite:!cat.overlay});
     const mesh = new THREE.Mesh(merged, mat); mesh.castShadow = !cat.overlay; mesh.receiveShadow = true; mesh.userData.cat = k;
     world.add(mesh); catMesh[k] = mesh; catRanges[k] = ranges;
   }
@@ -446,6 +451,16 @@ async function addLandmarks(){
   renderer.shadowMap.needsUpdate = true; redraw();
 }
 
+/* ---------- buildings: procedural blocks on every parcel (blocks.js) ---------- */
+let BLK = null;
+async function addBlocks(){
+  const {buildBlocks} = await import(BASE + 'blocks.js'); const t0 = performance.now();
+  BLK = buildBlocks(THREE, DATA, {S, VEX, plate: PLATE, mobile});
+  for(const [k, g] of Object.entries(BLK.byCat)){ g.visible = !hidden.has(k); world.add(g); }
+  console.log('blocks', JSON.stringify(BLK.stats), Math.round(performance.now() - t0) + ' ms');
+  renderer.shadowMap.needsUpdate = true; redraw();
+}
+
 /* ---------- trains: two Velaro sets on Line 1, stopping at the station, looping ---------- */
 let trainLayer = null, TRAINS = [], animOn = !matchMedia('(prefers-reduced-motion: reduce)').matches;
 const clock = new THREE.Clock();
@@ -468,6 +483,7 @@ async function addTrains(stopXY){
   moveTrains(0);
 }
 function moveTrains(tt){
+  if(BLK) BLK.update(tt);
   for(const T of TRAINS) T.M.placeTrain(T.t, T.path, T.s(tt), (x, y) => [x*S, Math.max(0.45, terrainZ(x, y) + 0.45), -y*S], -1);
 }
 
@@ -654,7 +670,7 @@ function buildLegend(){
   if((DATA.phase||[]).length) chip('<i style="background:#ffd27a;border-radius:50%"></i>المرحلة الأولى 1A', true, b => { phaseGroup.visible = !phaseGroup.visible; b.classList.toggle('off', !phaseGroup.visible); });
   for(const [k, c] of Object.entries(CATS)){ if(!used.has(k)) continue;
     chip(`<i style="background:${c.color}"></i>${esc(c.ar)}`, false, b => { const off = !hidden.has(k); off ? hidden.add(k) : hidden.delete(k); b.classList.toggle('off', off);
-      if(catMesh[k]) catMesh[k].visible = !off; lblDirty = true; renderer.shadowMap.needsUpdate = true; }); }
+      if(catMesh[k]) catMesh[k].visible = !off; if(BLK && BLK.byCat[k]) BLK.byCat[k].visible = !off; lblDirty = true; renderer.shadowMap.needsUpdate = true; }); }
 }
 
 /* ---------- "last updated" ---------- */
@@ -677,6 +693,7 @@ function applyShift(){
 addEventListener('resize', () => { camera.aspect = innerWidth/innerHeight;
   if(shift.x||shift.y){ shiftFor(panel.classList.contains('open')); shift.x=shift.tx; shift.y=shift.ty; if(shift.x||shift.y) camera.setViewOffset(innerWidth, innerHeight, shift.x, shift.y, innerWidth, innerHeight); else camera.clearViewOffset(); }
   camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); lr.setSize(innerWidth, innerHeight); lblDirty = true; redraw(); });
+window.__nv = {camera, controls, redraw: () => redraw()};   // handle for scripted camera moves (film previs, tests)
 const az = new THREE.Spherical(); let lastLbl = 0;
 function loop(now){
   requestAnimationFrame(loop);
@@ -702,6 +719,7 @@ function loop(now){
     DATA = await getData();
     build(); buildLegend(); paintUpd(); addStation().catch(e => console.error(e));
     addTerrain().then(() => { settleOnTerrain(); return addLandmarks(); }).catch(e => console.error(e));
+    requestAnimationFrame(() => setTimeout(() => addBlocks().catch(e => console.error(e)), 30));
     camera.position.copy(HOME.pos).add(new THREE.Vector3(HOME.radius*0.4, HOME.radius*0.5, HOME.radius*0.4)); controls.target.copy(HOME.target);
     requestAnimationFrame(loop);
     $('#veil').classList.add('gone'); goHome(2400);
