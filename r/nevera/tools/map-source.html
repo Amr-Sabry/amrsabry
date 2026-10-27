@@ -91,6 +91,8 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .film{background:var(--ink);color:var(--sand);border-radius:12px;padding:12px 14px}
 .film h3{color:var(--camel)}
 .film p{color:var(--sand)}
+.go{display:inline-block;margin-top:4px;padding:10px 14px;border-radius:10px;background:var(--ink);color:var(--cream);text-decoration:none;font-weight:600;font-size:14px}
+.go:hover{background:#3d2f21}
 .src{margin-top:18px;font-size:11px;color:#8b7860;line-height:1.6}
 /* index list */
 .idx h4{font-size:11.5px;font-weight:600;color:var(--copper);margin:16px 0 6px;display:flex;align-items:center;gap:7px}
@@ -331,7 +333,7 @@ function buildExtras(){
     labelObjs.push({...addLabel(o, `<i style="background:#ffd27a"></i>${esc(X.rail.ar)}<small>${esc(X.rail.en)}</small>`, '', [best[0]*S - 40, best[1]*S + 40, 4], 'x', () => select(o, true)), o, arr:[o], cat:'_x', pri: 8e9, w: 160});
     o.labelRef = labelObjs[labelObjs.length-1];
   }
-  for(const key of ['station', 'depot']){
+  for(const key of ['depot']){
     const d = X[key]; if(!d) continue;
     const h = d.h || 0.3;
     const g = new THREE.ExtrudeGeometry(shapes([[d.poly]]), {depth:h, bevelEnabled:false});
@@ -385,6 +387,28 @@ function buildExtras(){
       o.labelRef = labelObjs[labelObjs.length-1];
     }
   }
+}
+
+/* the October Gardens station model, placed on the rail line next to its plot */
+async function addStation(){
+  const X = DATA.extras || {}, d = X.station, rail = X.rail && X.rail.p; if(!d || !rail) return;
+  const c = centroidOf([[d.poly]]); let best = null;
+  for(let i=1;i<rail.length;i++){ const a = rail[i-1], b = rail[i], dx = b[0]-a[0], dy = b[1]-a[1], L2 = dx*dx+dy*dy || 1;
+    const t = Math.max(0, Math.min(1, ((c[0]-a[0])*dx + (c[1]-a[1])*dy) / L2)), px = a[0]+t*dx, py = a[1]+t*dy, dd = Math.hypot(c[0]-px, c[1]-py);
+    if(!best || dd < best.dd) best = {dd, px, py, ang: Math.atan2(dy, dx)}; }
+  const {buildStation} = await import(BASE + 'station.js');
+  const {group} = buildStation(THREE, {detail:false});
+  // the model is y-up in metres; the map's world group is z-up in tens of metres
+  group.scale.set(S, S*2, S); group.rotation.x = Math.PI/2;
+  const holder = new THREE.Group(); holder.add(group); holder.position.set(best.px*S, best.py*S, 0.2); holder.rotation.z = best.ang;
+  group.traverse(m => { if(m.isMesh){ m.castShadow = true; m.receiveShadow = true; } });
+  extrasGroup.add(holder);
+  const o = {z:{id:'station', cat:'_x', ar:d.ar, en:d.en, desc:d.desc, film:d.film, extra:true, link: d.link ? BASE + d.link : ''}, h:7, area:0, lp:[best.px*S, best.py*S],
+    box:new THREE.Box3(new THREE.Vector3(best.px*S-40, 0, -best.py*S-40), new THREE.Vector3(best.px*S+40, 7, -best.py*S+40)), mesh:group, grp:true};
+  zoneObjs.push(o);
+  labelObjs.push({...addLabel(o, `<i style="background:#ffd27a"></i>${esc(d.ar)}<small>${esc(d.en)}</small>`, '', [best.px*S, best.py*S, 9], 'x', () => select(o, true)), o, arr:[o], cat:'_x', pri: 9e9, w: 190});
+  o.labelRef = labelObjs[labelObjs.length-1]; labelObjs.sort((a,b)=>b.pri-a.pri);
+  renderer.shadowMap.needsUpdate = true; lblDirty = true; redraw();
 }
 
 /* ---------- labels: priority + collision ---------- */
@@ -481,7 +505,8 @@ function extraHTML(o){
   return `<span class="cat"><i style="background:#ffd27a"></i>${z.cat==='_p' ? 'المعالم الأثرية' : 'بنية ومعالم'}</span>
   <div class="zn">${esc(z.ar)}</div><div class="ze">${esc(z.en)}</div>
   ${z.desc?`<div class="sec"><h3>عن المكان</h3><p>${esc(z.desc)}</p></div>`:''}
-  ${z.film?`<div class="sec film"><h3>في الفيلم</h3><p>${esc(z.film)}</p></div>`:''}`;
+  ${z.film?`<div class="sec film"><h3>في الفيلم</h3><p>${esc(z.film)}</p></div>`:''}
+  ${z.link?`<div class="sec"><a class="go" href="${esc(z.link)}" target="_blank" rel="noopener">افتح موديل المحطة 3D ←</a></div>`:''}`;
 }
 function indexHTML(q=''){
   const m = DATA.meta, byCat = {};
@@ -587,7 +612,7 @@ function loop(now){
 (async () => {
   try{
     DATA = await getData();
-    build(); buildLegend(); paintUpd();
+    build(); buildLegend(); paintUpd(); addStation().catch(e => console.error(e));
     camera.position.copy(HOME.pos).add(new THREE.Vector3(HOME.radius*0.4, HOME.radius*0.5, HOME.radius*0.4)); controls.target.copy(HOME.target);
     requestAnimationFrame(loop);
     $('#veil').classList.add('gone'); goHome(2400);

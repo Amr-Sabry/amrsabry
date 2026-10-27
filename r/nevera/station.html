@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>October Gardens Station Model</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Marcellus&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;
+  --cream:#f4efe6; --sand:#e7e0d3; --camel:#c8a883; --copper:#a97654; --umber:#5d4b35; --ink:#2b2117;
+  --glass:rgba(32,24,17,.9); --line:rgba(231,224,211,.16); --mute:rgba(231,224,211,.62); --gold:#ffd27a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#1b140e;color:var(--sand);font-family:'IBM Plex Sans Arabic',system-ui,sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+#stage{position:fixed;inset:0}
+#labels{position:fixed;inset:0;pointer-events:none;direction:ltr}
+#labels .lbl{left:0;top:0;direction:rtl}
+.lbl{padding:3px 9px 4px;border-radius:999px;background:rgba(27,20,14,.88);border:1px solid rgba(255,210,122,.6);white-space:nowrap;font-size:12.5px;font-weight:500;line-height:1.25;text-align:center;color:#ffe2a8;box-shadow:0 4px 14px rgba(0,0,0,.28)}
+.lbl small{display:block;font-family:Marcellus,serif;font-size:9.5px;letter-spacing:.08em;color:rgba(255,226,168,.7);text-transform:uppercase}
+#top{position:fixed;top:0;inset-inline:0;display:flex;align-items:center;gap:14px;padding:14px max(18px,env(safe-area-inset-right,0px)) 14px max(18px,env(safe-area-inset-left,0px));background:linear-gradient(to bottom,rgba(20,15,10,.85),rgba(20,15,10,0));z-index:5}
+.brand{display:flex;align-items:baseline;gap:10px;min-width:0}
+.brand b{font-family:Marcellus,serif;font-weight:400;font-size:24px;color:var(--cream)}
+.brand span{font-size:13px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#views{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);display:flex;gap:6px;padding:6px;border-radius:999px;background:var(--glass);border:1px solid var(--line);z-index:5;max-width:calc(100vw - 32px);overflow-x:auto}
+#views button{padding:8px 14px;border-radius:999px;font-size:13px;white-space:nowrap}
+#views button.on{background:var(--cream);color:var(--ink)}
+#views button:focus-visible,#card button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+#card{position:fixed;top:68px;inset-inline-start:max(18px,env(safe-area-inset-right,0px));width:340px;max-width:calc(100vw - 36px);background:rgba(244,239,230,.95);color:var(--ink);border-radius:16px;padding:16px 18px;z-index:6;box-shadow:0 14px 40px rgba(0,0,0,.35)}
+#card h1{font-size:19px;font-weight:700;line-height:1.35;text-wrap:balance}
+#card .en{font-family:Marcellus,serif;font-size:12px;letter-spacing:.06em;color:var(--copper);text-transform:uppercase;margin-top:2px}
+#card p{font-size:13.5px;line-height:1.75;color:#3a2e22;margin-top:10px}
+#card .facts{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px}
+#card .facts div{background:#fff;border:1px solid rgba(93,75,53,.12);border-radius:10px;padding:8px 10px}
+#card .facts b{display:block;font-size:15px}
+#card .facts span{font-size:11px;color:#7a6650}
+#card .src{font-size:11px;color:#8b7860;margin-top:10px;line-height:1.6}
+#card .src a{color:var(--copper)}
+#card .x{position:absolute;top:10px;inset-inline-end:10px;width:28px;height:28px;border-radius:8px;color:var(--umber)}
+#card.min{width:auto;padding:10px 14px}
+#card.min > :not(.x):not(h1){display:none}
+#card.min h1{font-size:14px;padding-inline-end:28px}
+@media (max-width:640px){ .brand span{display:none} #card{top:60px} #card:not(.min){max-height:46vh;overflow:auto} }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="labels"></div>
+<div id="top"><div class="brand"><b>nevera</b><span>محطة حدائق أكتوبر · موديل 3D</span></div></div>
+<aside id="card">
+  <button class="x" id="cx" aria-label="تصغير">–</button>
+  <h1>محطة حدائق أكتوبر التبادلية</h1>
+  <div class="en">October Gardens HSR Interchange</div>
+  <p>نقطة الالتقاء بين الخط الأول للقطار السريع (السخنة–العلمين–مطروح)، وده بيمشي على الأرض، والخط الثاني (أكتوبر–أسوان)، وده علوي. أرصفة الخطين على نفس المنسوب. المحطة عبارة عن مبنيين بتكسية حجر على جانبي القضبان، وبينهم كوبري صالة رئيسي و4 كباري مشاة.</p>
+  <div class="facts">
+    <div><b>2</b><span>مبنى على جانبي القضبان</span></div>
+    <div><b>5</b><span>كباري مشاة</span></div>
+    <div><b>4</b><span>أرصفة جزيرة</span></div>
+    <div><b>8</b><span>قضبان في الموديل</span></div>
+  </div>
+  <p class="src">الموديل معمول بالكود من صور الدرون (يناير 2025). المقاسات تقريبية ومتقدّرة من الصور. المصادر: <a href="https://www.youm7.com/6145060" target="_blank" rel="noopener">اليوم السابع</a> · <a href="https://www.elwatannews.com/news/details/7086841" target="_blank" rel="noopener">الوطن</a></p>
+</aside>
+<nav id="views" aria-label="زوايا الكاميرا">
+  <button data-v="drone" class="on">درون</button>
+  <button data-v="entry">المدخل</button>
+  <button data-v="platform">الأرصفة</button>
+  <button data-v="top">من فوق</button>
+  <button data-v="spin">لفّ</button>
+</nav>
+
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {CSS2DRenderer, CSS2DObject} from 'three/addons/renderers/CSS2DRenderer.js';
+import {buildStation} from './station.js';
+
+const mobile = matchMedia('(max-width:640px)').matches;
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio, mobile ? 1.5 : 1.5));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; renderer.shadowMap.autoUpdate = false;
+renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.08;
+document.getElementById('stage').appendChild(renderer.domElement);
+const lr = new CSS2DRenderer({element: document.getElementById('labels')}); lr.setSize(innerWidth, innerHeight);
+
+const scene = new THREE.Scene();
+{ const c = document.createElement('canvas'); c.width = 2; c.height = 256; const g = c.getContext('2d');
+  const gr = g.createLinearGradient(0,0,0,256); gr.addColorStop(0,'#7fa3c4'); gr.addColorStop(.6,'#cfd7d6'); gr.addColorStop(1,'#efd9b8');
+  g.fillStyle = gr; g.fillRect(0,0,2,256); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; scene.background = t; }
+scene.fog = new THREE.Fog(0xe9d8bc, 700, 2600);
+const camera = new THREE.PerspectiveCamera(34, innerWidth/innerHeight, 1, 6000);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.dampingFactor = .08; controls.maxPolarAngle = Math.PI*.495; controls.minDistance = 20; controls.maxDistance = 1600;
+let need = 2; controls.addEventListener('change', () => need = 2);
+
+scene.add(new THREE.HemisphereLight(0xfff4e2, 0x9c8463, 1.3));
+const sun = new THREE.DirectionalLight(0xfff0d6, 2.4); sun.position.set(-260, 320, 180); sun.castShadow = true;
+sun.shadow.mapSize.set(mobile ? 1024 : 2048, mobile ? 1024 : 2048); const sc = sun.shadow.camera; sc.left = -420; sc.right = 420; sc.top = 260; sc.bottom = -260; sc.far = 1200; sun.shadow.bias = -0.0004; sun.shadow.normalBias = .5;
+scene.add(sun);
+const desert = new THREE.Mesh(new THREE.CircleGeometry(3000, 48), new THREE.MeshStandardMaterial({color:0xd4b88f, roughness:1}));
+desert.rotation.x = -Math.PI/2; desert.position.y = -.45; desert.receiveShadow = true; scene.add(desert);
+
+const {group, anchors} = buildStation(THREE, {detail:true});
+scene.add(group);
+const labels = [];
+for(const a of anchors){
+  const el = document.createElement('div'); el.className = 'lbl'; el.innerHTML = `${a.ar}<small>${a.en}</small>`;
+  const o = new CSS2DObject(el); o.position.set(...a.p); scene.add(o); labels.push(o);
+}
+// hide a label when the building stands between it and the camera
+const ray = new THREE.Raycaster(), meshes = []; group.traverse(m => { if(m.isMesh) meshes.push(m); });
+function occlude(){ for(const o of labels){ const d = o.position.clone().sub(camera.position), L = d.length(); ray.set(camera.position, d.normalize()); ray.far = L - 3;
+  o.visible = ray.intersectObjects(meshes, false).length === 0; } }
+renderer.shadowMap.needsUpdate = true;
+
+const VIEWS = {
+  drone:   {pos:[620, 190, 0], target:[0, 10, 0]},
+  entry:   {pos:[60, 22, 330], target:[0, 18, 100]},
+  platform:{pos:[260, 5, 10.5], target:[0, 6, 10.5]},
+  top:     {pos:[0, 820, 1], target:[0, 0, 0]},
+};
+let anim = null, spin = false;
+function go(v, ms=1500){
+  const p0 = camera.position.clone(), t0 = controls.target.clone(), p1 = new THREE.Vector3(...VIEWS[v].pos), t1 = new THREE.Vector3(...VIEWS[v].target), st = performance.now();
+  anim = now => { let k = Math.min(1, (now-st)/ms); k = k<.5 ? 4*k*k*k : 1-Math.pow(-2*k+2,3)/2; camera.position.lerpVectors(p0,p1,k); controls.target.lerpVectors(t0,t1,k); if(k>=1) anim = null; };
+}
+document.querySelectorAll('#views button').forEach(b => b.onclick = () => {
+  if(b.dataset.v === 'spin'){ spin = !spin; controls.autoRotate = spin; controls.autoRotateSpeed = .6; b.classList.toggle('on', spin); need = 2; return; }
+  document.querySelectorAll('#views button').forEach(x => { if(x.dataset.v !== 'spin') x.classList.toggle('on', x === b); }); go(b.dataset.v);
+});
+document.getElementById('cx').onclick = () => { const c = document.getElementById('card'); c.classList.toggle('min'); document.getElementById('cx').textContent = c.classList.contains('min') ? '+' : '–'; };
+if(mobile) document.getElementById('card').classList.add('min');
+
+camera.position.set(900, 420, 300); controls.target.set(0, 10, 0); go('drone', 2200);
+addEventListener('resize', () => { camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); lr.setSize(innerWidth, innerHeight); need = 2; });
+renderer.domElement.addEventListener('pointerdown', () => { if(spin){ spin = false; controls.autoRotate = false; document.querySelector('[data-v=spin]').classList.remove('on'); } });
+(function loop(now){
+  requestAnimationFrame(loop);
+  if(anim){ anim(now); need = 2; }
+  if(controls.update()) need = 2;
+  if(spin) need = 2;
+  if(!need) return; need--;
+  if(!anim && !spin) occlude();
+  renderer.render(scene, camera); lr.render(scene, camera);
+})();
+</script>
+</body>
+</html>
