@@ -403,7 +403,9 @@ function terrainZ(x, y){                        // x, y in metres (local grid); 
 }
 async function addTerrain(){
   const T = (DATA.extras||{}).terrain; if(!T) return;
-  const buf = await (await fetch(BASE + T.file)).arrayBuffer();
+  // terrain.bin on the hub; hosts that don't serve binary files get the same bytes as base64 text (terrain.b64.txt)
+  let buf; try { const r = await fetch(BASE + T.file); if(!r.ok) throw 0; buf = await r.arrayBuffer(); }
+  catch(e){ const t = await (await fetch(BASE + T.file.replace(/\.bin$/, '.b64.txt'))).text(); const b = atob(t.trim()); const u = new Uint8Array(b.length); for(let i=0;i<b.length;i++) u[i] = b.charCodeAt(i); buf = u.buffer; }
   TER = {meta:T, dm:new Int16Array(buf)};
   const Wd = (T.X1 - T.X0) * S, Ht = (T.Y1 - T.Y0) * S;
   const step = mobile ? 2 : 1, nx = Math.floor((T.nx - 1) / step), ny = Math.floor((T.ny - 1) / step);
