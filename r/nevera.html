@@ -461,7 +461,7 @@ async function addStreets(){
 }
 
 /* ---------- gates, heritage seating, plaza decor and people (places.js) ---------- */
-let PLC = null;
+let PLC = null, STN = null;
 function extraLabel(key, ar, en, desc, film, xm, ym, z, pri){
   const o = {z:{id:key, cat:'_x', ar, en, desc, film, extra:true}, h:z, area:0, lp:[xm*S, ym*S],
     box:new THREE.Box3(new THREE.Vector3(xm*S-12, 0, -ym*S-12), new THREE.Vector3(xm*S+12, z, -ym*S+12)), near:22};
@@ -472,7 +472,7 @@ function extraLabel(key, ar, en, desc, film, xm, ym, z, pri){
 async function addPlaces(){
   const {buildPlaces} = await import(BASE + 'places.js');
   const ground = (x, y) => Math.max(PLATE, (typeof TER !== 'undefined' && TER ? terrainZ(x, y) : 0) + 0.02);
-  PLC = buildPlaces(THREE, DATA, {S, VEX, ground, plazas: BLK ? BLK.plazas : [], mobile}); world.add(PLC.group); window.__nv.places = PLC;
+  PLC = buildPlaces(THREE, DATA, {S, VEX, ground, plazas: BLK ? BLK.plazas : [], station: STN, mobile}); world.add(PLC.group); window.__nv.places = PLC;
   console.log('places', JSON.stringify(PLC.stats));
   if(PLC.heritage) extraLabel('heritage', 'منطقة الجلسات التراثية', 'Heritage seating', 'جلسات في حرم اليونسكو قدّام الأهرامات، من وحي صور الماستر بلان: مدرجات حجر حوالين نار، خيام بيضا بسجاد، أشرعة تظليل، وممشى مغطّي بأشرعة من طرف المدينة، وفوانيس وزرع صحراوي. المكان والمقاسات تقريبية للعرض.', 'الغروب والليل: الضيوف قاعدين حوالين النار والأهرامات ورا، وانتقال من صخب المدينة لهدوء الصحرا.', PLC.heritage.x, PLC.heritage.y + 40, 4, 7e9);
   const g0 = (PLC.gates || []).sort((a,b)=>b.w-a.w)[0];
@@ -530,7 +530,7 @@ async function addStation(){
   const {group} = buildStation(THREE, {detail:true, ground:false});
   // the model is y-up in metres; the map's world group is z-up in tens of metres
   group.scale.set(S, S*2, S); group.rotation.x = Math.PI/2;
-  const holder = new THREE.Group(); holder.add(group); holder.position.set(best.px*S, best.py*S, 0.2); holder.rotation.z = best.ang;
+  const holder = new THREE.Group(); holder.add(group); holder.position.set(best.px*S, best.py*S, 0.2); holder.rotation.z = best.ang; STN = {x: best.px, y: best.py, ang: best.ang};
   group.traverse(m => { if(m.isMesh){ m.castShadow = true; m.receiveShadow = true; } });
   extrasGroup.add(holder);
   const o = {z:{id:'station', cat:'_x', ar:d.ar, en:d.en, desc:d.desc, film:d.film, extra:true, link: d.link ? BASE + d.link : ''}, h:7, area:0, lp:[best.px*S, best.py*S],
@@ -749,10 +749,10 @@ function loop(now){
 (async () => {
   try{
     DATA = await getData();
-    build(); buildLegend(); paintUpd(); addStation().catch(e => console.error(e));
+    build(); buildLegend(); paintUpd(); const pS = addStation().catch(e => console.error(e));
     const pT = addTerrain().then(() => { settleOnTerrain(); return addLandmarks(); }).catch(e => console.error(e));
     requestAnimationFrame(() => setTimeout(() => { addStreets().catch(e => console.error(e));
-      const pB = addBlocks().catch(e => console.error(e)); Promise.all([pT, pB]).then(() => addPlaces()).catch(e => console.error(e)); }, 30));
+      const pB = addBlocks().catch(e => console.error(e)); Promise.all([pT, pB, pS]).then(() => addPlaces()).catch(e => console.error(e)); }, 30));
     camera.position.copy(HOME.pos).add(new THREE.Vector3(HOME.radius*0.4, HOME.radius*0.5, HOME.radius*0.4)); controls.target.copy(HOME.target);
     requestAnimationFrame(loop);
     $('#veil').classList.add('gone'); goHome(2400);
