@@ -78,7 +78,7 @@ export function buildPlaces(THREE, data, opt = {}) {
     for (const s of [-1, 1]) {
       mesh(frustum(9, 10, 24, .78), M.pylon, P, 0, s * half, 0);
       mesh(box(9.6, 10.6, .8), M.bronze, P, 0, s * half, 24).scale.set(.78, .78, 1);
-      mesh(new THREE.ConeGeometry(2.2, 4, 4).rotateY(Math.PI / 4).rotateX(Math.PI / 2).translate(0, 0, 2), M.gold, P, 0, s * half, 24.8);
+      mesh(new THREE.ConeGeometry(2.2, 2 / VEX, 4).rotateY(Math.PI / 4).rotateX(Math.PI / 2).translate(0, 0, 1 / VEX), M.gold, P, 0, s * half, 24.8);   // true pyramid proportion
       mesh(box(1.2, 6.5, 14), M.bronze, P, 4.7, s * half, 4);                 // recessed bronze panel on the face
       for (const k of [-1, 1]) mesh(cyl(.25, .2, 9, 6), M.pole, P, k * 12, s * half, 0, false);
     }
@@ -406,7 +406,7 @@ export function buildPlaces(THREE, data, opt = {}) {
       const nx = -(b[1] - a[1]) / L, ny = (b[0] - a[0]) / L;
       for (let s = R() * 60; s < L; s += 55) for (const side of [-1, 1]) { if (R() < .35) continue;
         const t = s / L, x = a[0] + (b[0] - a[0]) * t + nx * o * side, y = a[1] + (b[1] - a[1]) * t + ny * o * side, len = 20 + R() * 30, dx = (b[0] - a[0]) / L * len, dy = (b[1] - a[1]) / L * len;
-        walker(x, y, x + dx, y + dy, .16); } }
+        walker(x, y, x + dx, y + dy, .31); } }
   }
 
   /* ---------- parked cars round the station (static, instanced) ---------- */

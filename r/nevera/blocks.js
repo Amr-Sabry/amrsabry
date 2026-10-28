@@ -137,7 +137,7 @@ export function buildBlocks(THREE, data, opt = {}) {
     put(c, 'trunk', 'trunk', x, y, z0, .7, .7, H, 0, 0xffffff);
     put(c, 'crown', 'frond', x, y, z0 + H, D, D, D * S * 1.2, R() * 6.28, pick(R, FROND));
   }
-  const glassPyr = (c, x, y, a, b, z0 = PT) => { put(c, 'box', 'pave', x, y, z0, b * 2.2, b * 2.2, 0.03, a, 0xffffff); put(c, 'pyr', 'glass', x, y, z0 + 0.03, b, b, b * .64 * VEX * S, a, 0xffffff); };
+  const glassPyr = (c, x, y, a, b, z0 = PT) => { put(c, 'box', 'pave', x, y, z0, b * 2.2, b * 2.2, 0.03, a, 0xffffff); put(c, 'pyr', 'glass', x, y, z0 + 0.03, b, b, b * .64 * S, a, 0xffffff); };   // true pyramid proportion (Louvre-like 0.64 of the base)
 
   /* ---------- the slide's urban fabric ---------- */
   const ringArea = r => { let A = 0; for (let i = 0, j = r.length - 1; i < r.length; j = i++) A += r[j][0] * r[i][1] - r[i][0] * r[j][1]; return A / 2; };
@@ -333,7 +333,7 @@ export function buildBlocks(THREE, data, opt = {}) {
     },
     ut(c, P, R, fl, cov, Z) {
       if (farOf(Z) > 0 && P.area < 120000) slots(P, R, 34, 34, 46, 46, 6, (x, y, a) => { if (R() < .75) { put(c, 'cyl', 'plain', x, y, PT, 30, 30, 1.6 * F, 0, 0xd8d2c6); put(c, 'cyl', 'plain', x, y, PT + 1.6 * F, 31, 31, .05, 0, 0x9aa0a0); } else slab(c, x, y, a, 30, 18, 2, 0xbdb6aa, PT, 'plain'); }, .5, 0);
-      else slots(P, R, 80, 5, 86, 9, 4, (x, y, a) => put(c, 'box', 'solar', x, y, PT + .08, 80, 5, .08, a, 0xffffff), 0, 0);
+      else slots(P, R, 120, 90, 126, 96, 4, (x, y, a) => put(c, 'box', 'solarField', x, y, PT + .01, 120, 90, .06, a, 0xffffff), 0, 0);
     },
     pk(c, P, R) { scatter(P, R, 22 / Math.sqrt(TD), (x, y) => { const r = R(); if (r < .45) tree(c, R, x, y, PT + .03); else if (r < .7) palm(c, R, x, y, PT + .03); }); },
     gf(c, P, R) { const [x, y] = P.w((P.u0 + P.u1) / 2, (P.v0 + P.v1) / 2); stepped(c, R, x, y, P.ang, 60, 26, 2, 0xefe6d6); scatter(P, R, 30, (x2, y2) => { if (R() < .35 && Math.hypot(x2 - x, y2 - y) > 45) palm(c, R, x2, y2); }); },
@@ -366,25 +366,52 @@ export function buildBlocks(THREE, data, opt = {}) {
   const RR = rngOf(99);
   for (const r of roads) {
     if (r.w === 30 && !MOB) { const p = r.p; for (let i = 1; i < p.length; i++) { const a = p[i - 1], b = p[i], L = Math.hypot(b[0] - a[0], b[1] - a[1]); if (!L) continue;
-      const dx = (b[0] - a[0]) / L, dy = (b[1] - a[1]) / L; for (let s2 = 12; s2 < L; s2 += 26) for (const o of [-11, 11]) tree('_road', RR, a[0] + dx * s2 - dy * o, a[1] + dy * s2 + dx * o, 0.15, .85); } continue; }
+      const dx = (b[0] - a[0]) / L, dy = (b[1] - a[1]) / L; for (let s2 = 12; s2 < L; s2 += 26) for (const o of [-11, 11]) tree('_road', RR, a[0] + dx * s2 - dy * o, a[1] + dy * s2 + dx * o, 0.3, .85); } continue; }
     if (!(r.w >= 100 || (r.w >= 60 && !MOB))) continue;
     const p = r.p, step = r.w >= 100 ? 28 : 36, offs = r.w >= 100 ? [-(r.w / 2 - 5), 0, r.w / 2 - 5] : [-(r.w / 2 - 4), r.w / 2 - 4];
     let carry = 0;
     for (let i = 1; i < p.length; i++) {
       const a = p[i - 1], b = p[i], L = Math.hypot(b[0] - a[0], b[1] - a[1]); if (!L) continue; const dx = (b[0] - a[0]) / L, dy = (b[1] - a[1]) / L;
-      for (let s = carry; s < L; s += step) for (const o of offs) palm('_road', RR, a[0] + dx * s - dy * o, a[1] + dy * s + dx * o, 0.15);
+      for (let s = carry; s < L; s += step) for (const o of offs) palm('_road', RR, a[0] + dx * s - dy * o, a[1] + dy * s + dx * o, 0.3);
       carry = (carry - L) % step; if (carry < 0) carry += step;
     }
   }
 
-  // train depot (extras.depot): long maintenance sheds and sidings along the plot's long edge
+  // train depot (extras.depot): a lead track off the main line, a ladder fanning into 16 storage tracks, two maintenance
+  // sheds the tracks run into (roofs fully covered with solar panels), an admin block, a service road, and a solar farm on
+  // the rest of the plot. Tracks use the 'track' material (ballast, sleepers and rails drawn in the shader, fading with
+  // distance) so they read as tracks instead of a mass of thin lines.
   const dep = data.extras && data.extras.depot;
   if (dep && dep.poly) {
-    const P = prep([dep.poly]), R = rngOf(31), DZ = dep.h || 0.3;
-    slots(P, R, 260, 36, 300, 120, 20, (x, y, a, row) => { slab('_depot', x, y, a, 260, 36, 3, 0xb9b2a6, DZ, 'plain');
-      put('_depot', 'box', 'plain', x, y, DZ + 3 * F, 262, 12, .25, a, 0x8d8a85); });
-    for (let v = P.v0 + 30; v < P.v1 - 30; v += 14) { const [x1, y1] = P.w(P.u0 + 40, v), [x2, y2] = P.w(P.u1 - 40, v), [mx, my] = [(x1 + x2) / 2, (y1 + y2) / 2];
-      if (inP(P, mx, my)) put('_depot', 'box', 'plain', mx, my, DZ, P.u1 - P.u0 - 80, 3.5, .04, P.ang, 0x4b443d); }
+    const P = prep([dep.poly]), R = rngOf(31), DZ = (dep.h || 0.3) + .005, A = P.ang, Wd = (u, v) => P.w(u, v);
+    const trackSeg = (u0, v0, u1, v1) => { const [x0, y0] = Wd(u0, v0), [x1, y1] = Wd(u1, v1), L = Math.hypot(x1 - x0, y1 - y0);
+      put('_depot', 'box', 'track', (x0 + x1) / 2, (y0 + y1) / 2, DZ, L, 4.4, .05, Math.atan2(y1 - y0, x1 - x0), 0xffffff); };
+    // the main line in this frame (to aim the lead at it)
+    const rail = (data.extras.rail || {}).p || [];
+    const toUV = ([x, y]) => { const dx = x - P.cx, dy = y - P.cy; return [dx * P.ca + dy * P.sa, -dx * P.sa + dy * P.ca]; };
+    let lead0 = null; { let bd = 1e18; for (let i = 1; i < rail.length; i++) { const a = toUV(rail[i - 1]), b = toUV(rail[i]);
+      for (let t = 0; t <= 1; t += .02) { const u = a[0] + (b[0] - a[0]) * t, v = a[1] + (b[1] - a[1]) * t, d = Math.hypot(u - (P.u1 - 120), v - (P.v0 + P.v1) / 2 + 80); if (d < bd) { bd = d; lead0 = [u, v]; } } } }
+    const NT = 16, TS = 6, vY0 = (P.v0 + P.v1) / 2 - 60, uThroat = P.u1 - 260, tanL = Math.tan(10 * Math.PI / 180), uWest = uThroat - 1000, shedU0 = uWest - 470;   // ~500 m of storage beyond the ladder, then the sheds
+    if (lead0) trackSeg(lead0[0], lead0[1], uThroat, vY0);                              // lead from the main line
+    const uk = k => uThroat - (k * TS) / tanL;
+    trackSeg(uThroat, vY0, uk(NT - 1), vY0 + (NT - 1) * TS);                            // the ladder
+    for (let k = 0; k < NT; k++) trackSeg(uk(k), vY0 + k * TS, shedU0 - 20, vY0 + k * TS);   // storage tracks into the sheds
+    // two maintenance sheds over the west end of the tracks, roofs covered in solar panels
+    for (const [k0, k1] of [[0, 7], [8, 15]]) {
+      const v0 = vY0 + k0 * TS - 5, v1 = vY0 + k1 * TS + 5, vm = (v0 + v1) / 2, um = (shedU0 + uWest) / 2, L = uWest - shedU0, Wd2 = v1 - v0, [x, y] = Wd(um, vm);
+      slab('_depot', x, y, A, L, Wd2, 3, 0xd7d3cc, DZ, 'plain');
+      put('_depot', 'box', 'solar', x, y, DZ + 3 * F, L - 3, Wd2 - 3, .06, A, 0xffffff);
+      for (let k = k0; k <= k1; k++) { const [dx, dy] = Wd(uWest + 1.5, vY0 + k * TS); put('_depot', 'box', 'plain', dx, dy, DZ, 3, 5, 2.4 * F, A, 0x55514b); }   // door per track
+    }
+    // wash shed on the lead, admin block, service road along the yard
+    { const [x, y] = Wd(uThroat - 60, vY0); slab('_depot', x, y, A, 80, 14, 2, 0xd7d3cc, DZ, 'plain'); put('_depot', 'box', 'solar', x, y, DZ + 2 * F, 77, 12, .06, A, 0xffffff); }
+    { const [x, y] = Wd(shedU0 - 80, vY0 + NT * TS + 40); modern('_depot', R, x, y, A, 90, 26, 4, 0xe4dccc); }
+    { const vr = vY0 + NT * TS + 8, [x0, y0] = Wd(shedU0 - 40, vr), [x1, y1] = Wd(uThroat, vr); put('_depot', 'box', 'plain', (x0 + x1) / 2, (y0 + y1) / 2, DZ, Math.hypot(x1 - x0, y1 - y0), 9, .03, A, 0x3e3c39); }
+    // solar farm on the rest of the plot: fields of panel rows, 6 m service lanes between fields
+    const busy = (u, v, hw, hd) => u + hw > shedU0 - 140 && u - hw < P.u1 && v + hd > vY0 - 30 && v - hd < vY0 + NT * TS + 70;
+    for (let v = P.v0 + 50; v < P.v1 - 40; v += 96) for (let u = P.u0 + 60; u < P.u1 - 50; u += 126) {
+      if (busy(u, v, 60, 45)) continue; const [x, y] = Wd(u, v); if (!fits(P, x, y, 64, 48, A)) continue;
+      put('_depot', 'box', 'solarField', x, y, DZ, 120, 90, .06, A, 0xffffff); }
   }
 
   /* ---------- geometry + materials ---------- */
@@ -440,6 +467,44 @@ export function buildBlocks(THREE, data, opt = {}) {
     };
     return mat;
   }
+  // panels, panel fields and railway tracks, drawn in instance-local metres and faded to their average colour with
+  // distance so they never shimmer
+  function pattern(mat, kind) {
+    mat.customProgramCacheKey = () => 'nv-' + kind;
+    mat.onBeforeCompile = sh => {
+      sh.uniforms.uS = { value: S };
+      sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec2 vLoc; varying float vNz; uniform float uS;')
+        .replace('#include <begin_vertex>', `#include <begin_vertex>
+          vec3 nvSc = vec3(1.0);
+          #ifdef USE_INSTANCING
+            nvSc = vec3(length(instanceMatrix[0].xyz), length(instanceMatrix[1].xyz), length(instanceMatrix[2].xyz));
+          #endif
+          vLoc = transformed.xy * nvSc.xy / uS; vNz = normal.z;`);
+      const body = {
+        solar: `vec2 c = vec2(vLoc.x / 1.05, vLoc.y / 1.75), f = fract(c); float fw = max(fwidth(c.x), fwidth(c.y));
+          float fr = 1.0 - step(.05, f.x) * step(f.x, .95) * step(.04, f.y) * step(f.y, .96);
+          float hh = fract(sin(dot(floor(c), vec2(12.9898, 78.233))) * 43758.5453);
+          vec3 cell = vec3(.07, .11, .2) + vec3(.03, .05, .08) * hh, col = mix(cell, vec3(.66, .7, .74), fr), avg = vec3(.15, .19, .27);
+          vec3 outc = mix(col, avg, clamp(fw * 2.2 - .4, 0., 1.));`,
+        solarField: `float rv = vLoc.y / 9.0 + .5, rf = fract(rv), fwr = fwidth(rv); float band = step(.08, rf) * step(rf, .64);
+          vec2 c = vec2(vLoc.x / 1.05, vLoc.y / 1.1), f = fract(c); float fw = max(fwidth(c.x), fwidth(c.y));
+          float fr = 1.0 - step(.05, f.x) * step(f.x, .95) * step(.05, f.y) * step(f.y, .95);
+          vec3 panel = mix(mix(vec3(.08, .12, .21), vec3(.62, .66, .7), fr), vec3(.13, .17, .26), clamp(fw * 2.2 - .4, 0., 1.));
+          vec3 gnd = vec3(.78, .69, .52);
+          vec3 outc = mix(mix(gnd, panel, band), mix(gnd, vec3(.13, .17, .26), .56), clamp(fwr * 3.0 - .3, 0., 1.));`,
+        track: `float y = abs(vLoc.y), fwy = fwidth(vLoc.y), sl = fract(vLoc.x / .65), fws = fwidth(vLoc.x / .65);
+          float n = fract(sin(dot(floor(vLoc * 6.0), vec2(12.9898, 78.233))) * 43758.5453);
+          vec3 col = vec3(.46, .42, .37) * (.9 + .2 * n);
+          float slp = step(sl, .36) * step(y, 1.3); col = mix(col, vec3(.33, .27, .21), mix(slp, .36 * step(y, 1.3), clamp(fws * 2.0 - .3, 0., 1.)));
+          float rl = step(.67, y) * step(y, .83); col = mix(col, vec3(.8, .8, .78), mix(rl, .1, clamp(fwy * 5.0 - .3, 0., 1.)));
+          vec3 outc = col;`,
+      }[kind];
+      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec2 vLoc; varying float vNz;')
+        .replace('#include <color_fragment>', `#include <color_fragment>
+          if (vNz > .5) { ${body} diffuseColor.rgb = outc; }`);
+    };
+    return mat;
+  }
   const M = {
     wall: windows(new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: .85 }), false),
     villa: windows(new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: .8 }), false),
@@ -449,7 +514,9 @@ export function buildBlocks(THREE, data, opt = {}) {
     lawn: new THREE.MeshStandardMaterial({ color: 0x7d9a52, roughness: 1 }),
     water: new THREE.MeshStandardMaterial({ color: 0x3f93ad, roughness: .2, metalness: .1, emissive: 0x0b2a33 }),
     pave: new THREE.MeshStandardMaterial({ color: 0xe9dcc4, roughness: .9 }),
-    solar: new THREE.MeshStandardMaterial({ color: 0x1f2c3a, roughness: .35, metalness: .45 }),
+    solar: pattern(new THREE.MeshStandardMaterial({ color: 0x8d9298, roughness: .32, metalness: .25 }), 'solar'),
+    solarField: pattern(new THREE.MeshStandardMaterial({ color: 0x8d9298, roughness: .4, metalness: .2 }), 'solarField'),
+    track: pattern(new THREE.MeshStandardMaterial({ color: 0x6d655c, roughness: 1 }), 'track'),
     trunk: new THREE.MeshStandardMaterial({ color: 0x6b5640, roughness: 1 }),
     leaf: new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1, flatShading: true }),
     frond: new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1, flatShading: true, side: THREE.DoubleSide }),
@@ -466,7 +533,7 @@ export function buildBlocks(THREE, data, opt = {}) {
       mesh.setMatrixAt(i, m4.compose(pv, q, sv)); mesh.setColorAt(i, col.setHex(L[o + 7]));
     }
     mesh.instanceMatrix.needsUpdate = true; if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
-    mesh.castShadow = !['green', 'lawn', 'water', 'pave', 'solar'].includes(b.m) && !(MOB && (b.m === 'leaf' || b.m === 'frond' || b.m === 'trunk'));
+    mesh.castShadow = !['green', 'lawn', 'water', 'pave', 'solar', 'solarField', 'track'].includes(b.m) && !(MOB && (b.m === 'leaf' || b.m === 'frond' || b.m === 'trunk'));
     mesh.receiveShadow = true; mesh.computeBoundingSphere(); mesh.frustumCulled = true;
     (byCat[b.cat] ||= new THREE.Group()).add(mesh); inst += n;
     stats[b.cat] = (stats[b.cat] || 0) + n;

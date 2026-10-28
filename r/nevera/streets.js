@@ -9,6 +9,7 @@
 export function buildStreets(THREE, data, opt = {}) {
   const S = opt.S ?? 0.1, MOB = !!opt.mobile, roads = (data.roads || []).filter(r => (r.p || []).length > 1);
   const group = new THREE.Group(); group.name = 'streets';
+  const ZR = opt.z ?? .32;   // road surface height: above every parcel plate (0.25-0.28) and the pavements (0.30)
 
   // cross-sections (metres from the centreline, + = left of the drawing direction)
   const PRO = {
@@ -85,14 +86,14 @@ export function buildStreets(THREE, data, opt = {}) {
   const A = { pos: [], uv: [], idx: [] }, Md = { pos: [], uv: [], idx: [] }, D = { pos: [], uv: [], idx: [] }, X = { pos: [], uv: [], idx: [] };
   for (const L of lines) {
     const { line, pro } = L;
-    for (const [a, b] of pro.asphalt) strip(line, 0, line.total, a, b, .16, A);
+    for (const [a, b] of pro.asphalt) strip(line, 0, line.total, a, b, ZR, A);
     for (const [s0, s1] of openRanges(L)) {
-      for (const [a, b] of pro.median) strip(line, s0, s1, a, b, .17, Md);
-      for (const o of pro.dash) strip(line, s0 + 3, s1 - 3, o - .18, o + .18, .165, D, 7);   // 3.5 m dash, 3.5 m gap
+      for (const [a, b] of pro.median) strip(line, s0, s1, a, b, ZR + .012, Md);
+      for (const o of pro.dash) strip(line, s0 + 3, s1 - 3, o - .18, o + .18, ZR + .006, D, 7);   // 3.5 m dash, 3.5 m gap
     }
     // a zebra crossing and a stop line before every junction, on both sides
     for (const c of L.cuts) for (const sd of [-1, 1]) { const s = c.s + sd * (c.hw + 1.5); if (s < 2 || s > line.total - 2) continue;
-      strip(line, s - 1.5, s + 1.5, -pro.edge, pro.edge, .166, X, 1, true); }
+      strip(line, s - 1.5, s + 1.5, -pro.edge, pro.edge, ZR + .007, X, 1, true); }
   }
   const geo = G => { const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(G.pos, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(G.uv, 2)); g.setIndex(G.idx); g.computeVertexNormals(); return g; };
   const off = (m, f) => { m.polygonOffset = true; m.polygonOffsetFactor = f; m.polygonOffsetUnits = f; return m; };
@@ -110,6 +111,7 @@ export function buildStreets(THREE, data, opt = {}) {
   const sigGeo = new THREE.BoxGeometry(1.2, 1.2, 1.2).translate(0, 0, .6), sigPole = new THREE.CylinderGeometry(.18, .18, 1, 5).rotateX(Math.PI / 2).translate(0, 0, .5);
   const sigs = [];
   for (const L of lines) for (const c of L.cuts) for (const sd of [-1, 1]) {
+    if (Math.min(lines[c.J.i].r.w || 20, lines[c.J.j].r.w || 20) < 30) continue;
     const s = c.s + sd * (c.hw + 3); if (s < 2 || s > L.line.total - 2) continue;
     const q = at(L.line, s), side = -sd;                              // on the right of the approaching traffic
     const x = q.x + q.nx * side * (L.pro.edge + 2), y = q.y + q.ny * side * (L.pro.edge + 2);
@@ -121,8 +123,8 @@ export function buildStreets(THREE, data, opt = {}) {
   const poleMesh = new THREE.InstancedMesh(sigPole, new THREE.MeshStandardMaterial({ color: 0x2a2b2d, roughness: .6 }), Math.max(1, sigs.length));
   const lampMesh = new THREE.InstancedMesh(sigGeo, new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false }), Math.max(1, sigs.length));
   { const m4 = new THREE.Matrix4(), q = new THREE.Quaternion();
-    sigs.forEach((g, i) => { poleMesh.setMatrixAt(i, m4.compose(new THREE.Vector3(g.x * S, g.y * S, .16), q, new THREE.Vector3(S, S, 6 * S * 1.5)));
-      lampMesh.setMatrixAt(i, m4.compose(new THREE.Vector3(g.x * S, g.y * S, .16 + 6 * S * 1.5), q, new THREE.Vector3(S, S, S * 1.5))); });
+    sigs.forEach((g, i) => { poleMesh.setMatrixAt(i, m4.compose(new THREE.Vector3(g.x * S, g.y * S, ZR), q, new THREE.Vector3(S, S, 6 * S * 1.5)));
+      lampMesh.setMatrixAt(i, m4.compose(new THREE.Vector3(g.x * S, g.y * S, ZR + 6 * S * 1.5), q, new THREE.Vector3(S, S, S * 1.5))); });
     poleMesh.count = lampMesh.count = sigs.length; }
   group.add(poleMesh, lampMesh);
 
@@ -198,7 +200,7 @@ export function buildStreets(THREE, data, opt = {}) {
         car.v += Math.max(-9 * dt, Math.min(2.8 * dt, target - car.v)); if (gap < .5) car.v = 0; if (car.v < 0) car.v = 0;
         car.d += car.v * dt; if (car.d >= T) car.d -= T;
         const s = lane.dir > 0 ? car.d : T - car.d, p = at(line, s), fade = Math.max(0, Math.min(1, (car.d - lane.hideA) / 10, (lane.hideB - car.d) / 10));
-        pv.set((p.x + p.nx * lane.o) * S, (p.y + p.ny * lane.o) * S, .17); q.setFromAxisAngle(Z, p.ang + (lane.dir < 0 ? Math.PI : 0));
+        pv.set((p.x + p.nx * lane.o) * S, (p.y + p.ny * lane.o) * S, ZR + .012); q.setFromAxisAngle(Z, p.ang + (lane.dir < 0 ? Math.PI : 0));
         sc.set(S * fade, S * fade, S * 1.5 * fade); (car.bus ? busMesh : carMesh).setMatrixAt(car.idx, m4.compose(pv, q, sc));
       }
     }

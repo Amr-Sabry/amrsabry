@@ -288,7 +288,7 @@ function build(){
     world.add(new THREE.LineSegments(eg, new THREE.LineBasicMaterial({color:0xfff4e2, transparent:true, opacity:.28}))); }
 
   // roads: one merged mesh, width = right-of-way
-  const rg = []; for(const r of (DATA.roads||[])) if((r.p||[]).length > 1) rg.push(ribbon(r.p, (r.w||20)*S*0.5, 0.15));
+  const rg = []; for(const r of (DATA.roads||[])) if((r.p||[]).length > 1) rg.push(ribbon(r.p, (r.w||20)*S*0.5, 0.30));
   if(rg.length){ const m = new THREE.Mesh(mergeGeometries(rg,false), new THREE.MeshStandardMaterial({color:0xa79b87, roughness:.95}));   // right-of-way: pavements and verges (streets.js draws the carriageways)
  m.receiveShadow = true; world.add(m); rg.forEach(g=>g.dispose()); }
   for(const b of (DATA.boundary||[])){ const pts = b.map(p => new THREE.Vector3(p[0]*S, p[1]*S, 0.6)); pts.push(pts[0]);
@@ -355,7 +355,8 @@ function buildExtras(){
   if(X.pyramids){
     pyrGroup = new THREE.Group(); world.add(pyrGroup);
     for(const d of X.pyramids){
-      const b = d.base*S, h = d.h*S*VEX, x = d.p[0]*S, y = d.p[1]*S, mat = new THREE.MeshStandardMaterial({color:new THREE.Color(d.color), roughness:.9, flatShading:true});
+      const b = d.base*S, h = d.h*S, x = d.p[0]*S,   // true height: pyramids are not exaggerated
+      y = d.p[1]*S, mat = new THREE.MeshStandardMaterial({color:new THREE.Color(d.color), roughness:.9, flatShading:true});
       const z0 = d.giza ? (d.asl - DATA.extras.terrain.E0) * VEX * S : 0;
       const g = new THREE.Group(); g.position.set(x, y, z0); g.userData.onTerrain = !d.giza;
       const add = geo => { const m = new THREE.Mesh(geo, mat); m.rotation.x = Math.PI/2; m.castShadow = m.receiveShadow = true; g.add(m); return m; };
@@ -438,6 +439,25 @@ function settleOnTerrain(){
   }
   lblDirty = true;
 }
+// The plateau model carries its own terrain, which is exaggerated with the rest of the map (VEX). Its monuments (pyramids,
+// casing caps, the Sphinx, temples) are re-mapped so they keep their true heights on top of that exaggerated ground:
+// y -> base*VEX + (y - base), where base is the ground contact of the stack the part belongs to.
+function trueHeights(root, vex){
+  root.updateMatrixWorld(true);
+  const parts = [];
+  root.traverse(m => { if(!m.isMesh) return; const b = new THREE.Box3().setFromObject(m), s = b.getSize(new THREE.Vector3());
+    if(b.min.y > 1.5 && Math.max(s.x, s.z) < 400 && s.y > .5) parts.push({m, b}); });
+  for(const p of parts){ const c = p.b.getCenter(new THREE.Vector3()); let base = p.b.min.y;
+    for(const q of parts) if(q.b.min.y < base && c.x >= q.b.min.x && c.x <= q.b.max.x && c.z >= q.b.min.z && c.z <= q.b.max.z) base = q.b.min.y;
+    p.base = base; }
+  const inv = new THREE.Matrix4().copy(root.matrixWorld).invert();
+  for(const {m, base} of parts){
+    const g = m.geometry.clone(); g.applyMatrix4(new THREE.Matrix4().multiplyMatrices(inv, m.matrixWorld));
+    const P = g.attributes.position; for(let i=0;i<P.count;i++){ const y = P.getY(i); P.setY(i, (base*vex + (y - base)) / vex); }
+    P.needsUpdate = true; g.computeVertexNormals(); g.computeBoundingBox(); g.computeBoundingSphere();
+    m.geometry = g; m.position.set(0,0,0); m.rotation.set(0,0,0); m.scale.set(1,1,1); root.add(m);
+  }
+}
 async function addLandmarks(){
   const T = (DATA.extras||{}).terrain; if(!T) return;
   const L = await import(BASE + 'landmarks.js'); L.install(THREE);
@@ -446,7 +466,7 @@ async function addLandmarks(){
     const h = new THREE.Group(); h.add(obj); h.position.set(x*S, y*S, z); h.rotation.z = rotDeg * Math.PI/180;
     obj.traverse(m => { if(m.isMesh){ m.castShadow = true; m.receiveShadow = true; } }); pyrGroup.add(h); return h;
   };
-  const gz = L.buildGiza(); place(gz.group, T.giza.p[0], T.giza.p[1], (T.giza.base - T.E0) * VEX * S, T.giza.rot);
+  const gz = L.buildGiza(); trueHeights(gz.group, VEX); place(gz.group, T.giza.p[0], T.giza.p[1], (T.giza.base - T.E0) * VEX * S, T.giza.rot);
   const gem = L.buildGEM(THREE); place(gem.group, T.gem.p[0], T.gem.p[1], terrainZ(T.gem.p[0], T.gem.p[1]), T.gem.rot);
   const gemO = zoneObjs.find(o => o.z.id === 'lm-Grand Egyptian Museum'); if(gemO){ gemO.mesh = gem.group; gemO.grp = true; }
   renderer.shadowMap.needsUpdate = true; redraw();
