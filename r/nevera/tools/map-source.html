@@ -383,14 +383,8 @@ function buildExtras(){
   }
   if(X.circuit){
     const d = X.circuit, pz = DATA.zones.filter(z => z.cat === 'pz');
-    const tex = new THREE.TextureLoader().load(BASE + d.img, () => redraw()); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
-    const [a,b,c,e,f,gg] = d.m, [cx, cy, cw, ch] = d.crop;
+    // the circuit itself is built in 3D by circuit.js (addCircuit); this keeps its label and info card
     for(const z of pz){
-      const g = new THREE.ShapeGeometry(shapes(z.polys));
-      const pos = g.attributes.position, uv = new Float32Array(pos.count*2);
-      for(let i=0;i<pos.count;i++){ const x = pos.getX(i)/S, y = pos.getY(i)/S; const sx = a*x + b*y + c, sy = e*x + f*y + gg; uv[i*2] = (sx - cx)/cw; uv[i*2+1] = 1 - (sy - cy)/ch; }
-      g.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
-      const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({map:tex, roughness:.9})); m.position.z = (z.h||0.35) + 0.05; m.receiveShadow = true; extrasGroup.add(m);
       const ct = centroidOf(z.polys), o = xo('circuit', d, [ct[0]*S, ct[1]*S], 1, bounds(z.polys, 2)); zoneObjs.push(o);
       labelObjs.push({...addLabel(o, `<i style="background:#ffd27a"></i>${esc(d.ar)}<small>${esc(d.en)}</small>`, '', [ct[0]*S + 30, ct[1]*S - 60, 3], 'x', () => select(o, true)), o, arr:[o], cat:'_x', pri: 7e9, w: 130});
       o.labelRef = labelObjs[labelObjs.length-1];
@@ -500,6 +494,14 @@ async function addPlaces(){
   renderer.shadowMap.needsUpdate = true; redraw();
 }
 
+/* ---------- the race circuit in 3D (circuit.js) ---------- */
+let CIR = null;
+async function addCircuit(){
+  const {buildCircuit} = await import(BASE + 'circuit.js');
+  CIR = buildCircuit(THREE, DATA, {S, VEX, z: .38}); extrasGroup.add(CIR.group); window.__nv.circuit = CIR;
+  console.log('circuit', JSON.stringify(CIR.stats)); renderer.shadowMap.needsUpdate = true; redraw();
+}
+
 /* ---------- buildings: procedural blocks on every parcel (blocks.js) ---------- */
 let BLK = null;
 async function addBlocks(){
@@ -536,6 +538,7 @@ function moveTrains(tt){
   if(BLK) BLK.update(tt);
   if(STR) STR.update(tt);
   if(PLC) PLC.update(tt);
+  if(CIR) CIR.update(tt);
   for(const T of TRAINS) T.M.placeTrain(T.t, T.path, T.s(tt), (x, y) => [x*S, Math.max(0.45, terrainZ(x, y) + 0.45), -y*S], -1);
 }
 
@@ -771,7 +774,7 @@ function loop(now){
     DATA = await getData();
     build(); buildLegend(); paintUpd(); const pS = addStation().catch(e => console.error(e));
     const pT = addTerrain().then(() => { settleOnTerrain(); return addLandmarks(); }).catch(e => console.error(e));
-    requestAnimationFrame(() => setTimeout(() => { addStreets().catch(e => console.error(e));
+    requestAnimationFrame(() => setTimeout(() => { addStreets().catch(e => console.error(e)); addCircuit().catch(e => console.error(e));
       const pB = addBlocks().catch(e => console.error(e)); Promise.all([pT, pB, pS]).then(() => addPlaces()).catch(e => console.error(e)); }, 30));
     camera.position.copy(HOME.pos).add(new THREE.Vector3(HOME.radius*0.4, HOME.radius*0.5, HOME.radius*0.4)); controls.target.copy(HOME.target);
     requestAnimationFrame(loop);
