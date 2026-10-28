@@ -77,9 +77,11 @@ export function buildBlocks(THREE, data, opt = {}) {
   function put(cat, g, m, x, y, z0, w, d, h, a, col) {
     if (g === 'trunk') { treeOut = onCarriage(x, y); if (treeOut) { drop.trees++; return; } }
     else if (g === 'ico' || g === 'crown') { if (treeOut) return; }
-    else if (z0 <= PT + .045) {                               // ground-level item: its footprint must stay off the roads
+    else if (z0 <= PT + .045 || (cat === '_depot' && z0 < .32)) {   // ground-level item (incl. the depot yard on its own plate): its footprint must stay off the roads
       const c = Math.cos(a), s2 = Math.sin(a); let hit = inROW(x, y);
-      for (const [i, j] of [[-1, -1], [1, -1], [1, 1], [-1, 1], [0, -1], [0, 1], [-1, 0], [1, 0]]) { if (hit) break; hit = inROW(x + i * w / 2 * c - j * d / 2 * s2, y + i * w / 2 * s2 + j * d / 2 * c); }
+      // sample the footprint densely enough that a road can't slip between the samples (step <= 8 m)
+      const nu = Math.max(2, Math.ceil(w / 8)), nv = Math.max(2, Math.ceil(d / 8));
+      for (let iu = 0; iu <= nu && !hit; iu++) for (let iv = 0; iv <= nv && !hit; iv++) { const i = iu / nu * 2 - 1, j = iv / nv * 2 - 1; hit = inROW(x + i * w / 2 * c - j * d / 2 * s2, y + i * w / 2 * s2 + j * d / 2 * c); }
       if (hit) { rejected.push({ x, y, a, w, d }); if (rejected.length > 6) rejected.shift(); drop.roads++; return; }
     } else if (rectHit(x, y)) return;                         // stacked on something that was dropped
     const k = cat + '|' + g + '|' + m; let b = bins.get(k); if (!b) { b = { cat, g, m, L: [] }; bins.set(k, b); }
@@ -414,7 +416,7 @@ export function buildBlocks(THREE, data, opt = {}) {
   // distance) so they read as tracks instead of a mass of thin lines.
   const dep = data.extras && data.extras.depot;
   if (dep && dep.poly) {
-    const P = prep([dep.poly]), R = rngOf(31), DZ = (dep.h || 0.3) + .005, A = P.ang, Wd = (u, v) => P.w(u, v);
+    const P = prep([dep.poly]), R = rngOf(31), DZ = (dep.h || 0.3) + .005, A = P.ang, Wd = (u, v) => P.w(u, v), DEPOT_KEEP = [];
     const trackSeg = (u0, v0, u1, v1) => { const [x0, y0] = Wd(u0, v0), [x1, y1] = Wd(u1, v1), L = Math.hypot(x1 - x0, y1 - y0);
       put('_depot', 'box', 'track', (x0 + x1) / 2, (y0 + y1) / 2, DZ, L, 4.4, .05, Math.atan2(y1 - y0, x1 - x0), 0xffffff); };
     // the main line in this frame (to aim the lead at it)
@@ -436,10 +438,23 @@ export function buildBlocks(THREE, data, opt = {}) {
     }
     // wash shed on the lead, admin block, service road along the yard
     { const [x, y] = Wd(uThroat - 60, vY0); slab('_depot', x, y, A, 80, 14, 2, 0xd7d3cc, DZ, 'plain'); put('_depot', 'box', 'solar', x, y, DZ + 2 * F, 77, 12, .06, A, 0xffffff); }
-    { const [x, y] = Wd(shedU0 - 80, vY0 + NT * TS + 40); modern('_depot', R, x, y, A, 90, 26, 4, 0xe4dccc); }
+    const adminUV = [shedU0 - 80, vY0 + NT * TS + 40];
+    { const [x, y] = Wd(...adminUV); modern('_depot', R, x, y, A, 90, 26, 4, 0xe4dccc); }
+    // gates where city roads reach the plot: gatehouse, barrier, and a service road on to the admin block
+    for (const gt of (dep.gates || [])) {
+      const [gx, gy] = gt.p, ga = gt.ang, ux = Math.cos(ga), uy = Math.sin(ga);
+      const [hx, hy] = [gx + ux * 12 - uy * 11, gy + uy * 12 + ux * 11]; slab('_depot', hx, hy, ga, 8, 6, 1, 0xe4dccc, DZ, 'plain');
+      put('_depot', 'box', 'plain', gx + ux * 6, gy + uy * 6, DZ, 1, 12, .12 * F, ga + Math.PI / 2, 0xc8202f);
+      const [ax, ay] = Wd(adminUV[0], adminUV[1] - 26), pts = [[gx, gy], [gx + ux * 40, gy + uy * 40], [ax, ay]];
+      for (let i = 1; i < pts.length; i++) { const p0 = pts[i - 1], p1 = pts[i], L = Math.hypot(p1[0] - p0[0], p1[1] - p0[1]);
+        put('_depot', 'box', 'plain', (p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2, DZ + .002, L + 9, 9, .03, Math.atan2(p1[1] - p0[1], p1[0] - p0[0]), 0x3e3c39);
+        DEPOT_KEEP.push([p0, p1]); }
+    }
     { const vr = vY0 + NT * TS + 8, [x0, y0] = Wd(shedU0 - 40, vr), [x1, y1] = Wd(uThroat, vr); put('_depot', 'box', 'plain', (x0 + x1) / 2, (y0 + y1) / 2, DZ, Math.hypot(x1 - x0, y1 - y0), 9, .03, A, 0x3e3c39); }
     // solar farm on the rest of the plot: fields of panel rows, 6 m service lanes between fields
-    const busy = (u, v, hw, hd) => u + hw > shedU0 - 140 && u - hw < P.u1 && v + hd > vY0 - 30 && v - hd < vY0 + NT * TS + 70;
+    const dSeg2 = (x, y, a2, b2) => { const dx = b2[0] - a2[0], dy = b2[1] - a2[1], L2 = dx * dx + dy * dy || 1, t = Math.max(0, Math.min(1, ((x - a2[0]) * dx + (y - a2[1]) * dy) / L2)); return Math.hypot(x - a2[0] - dx * t, y - a2[1] - dy * t); };
+    const busy = (u, v, hw, hd) => (u + hw > shedU0 - 140 && u - hw < P.u1 && v + hd > vY0 - 30 && v - hd < vY0 + NT * TS + 70)
+      || DEPOT_KEEP.some(([a2, b2]) => { const [x, y] = Wd(u, v); return dSeg2(x, y, a2, b2) < Math.hypot(hw, hd) + 6; });
     for (let v = P.v0 + 50; v < P.v1 - 40; v += 96) for (let u = P.u0 + 60; u < P.u1 - 50; u += 126) {
       if (busy(u, v, 60, 45)) continue; const [x, y] = Wd(u, v); if (!fits(P, x, y, 64, 48, A)) continue;
       put('_depot', 'box', 'solarField', x, y, DZ, 120, 90, .06, A, 0xffffff); }

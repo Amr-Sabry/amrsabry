@@ -1,3 +1,4 @@
+import math
 import json, datetime
 g = json.load(open('geo_s.json'))
 LV = 1.4
@@ -109,6 +110,32 @@ for pyr in pyramids:
     if pyr['en'] in GIZA_BASE: pyr['giza'] = True; pyr['asl'] = GIZA_BASE[pyr['en']]
 extras['pyramids'] = pyramids; extras['landmarks'] = landmarks
 extras['terrain'] = json.load(open('terrain.json')); extras['terrain']['file'] = 'terrain.bin'; extras['terrain']['img'] = 'sat.jpg'; extras['terrain']['vex'] = 2
+# a road that dead-ends inside the depot plot stops at the plot edge, where the depot gate stands
+def _inr(x, y, r):
+    c = False; j = len(r) - 1
+    for i in range(len(r)):
+        a, b = r[i], r[j]
+        if (a[1] > y) != (b[1] > y) and x < (b[0] - a[0]) * (y - a[1]) / (b[1] - a[1]) + a[0]: c = not c
+        j = i
+    return c
+_dep = extras['depot']['poly']; _gates = []
+for r in roads:
+    p = r['p']
+    for end in (0, -1):
+        if not _inr(p[end][0], p[end][1], _dep): continue
+        q = p if end == -1 else p[::-1]                       # walk from outside to the inner end
+        k = next((i for i in range(len(q)) if _inr(q[i][0], q[i][1], _dep)), None)
+        if not k: continue
+        a, b = q[k - 1], q[k]; lo, hi = 0.0, 1.0
+        for _ in range(30):
+            m = (lo + hi) / 2; x, y = a[0] + (b[0] - a[0]) * m, a[1] + (b[1] - a[1]) * m
+            if _inr(x, y, _dep): hi = m
+            else: lo = m
+        gp = [round(a[0] + (b[0] - a[0]) * lo, 1), round(a[1] + (b[1] - a[1]) * lo, 1)]
+        q2 = q[:k] + [gp]; r['p'] = q2 if end == -1 else q2[::-1]
+        _gates.append({'p': gp, 'ang': round(math.atan2(b[1] - a[1], b[0] - a[0]), 4), 'w': r['w']})
+extras['depot']['gates'] = _gates
+print('depot gates', len(_gates))
 data = {
  'meta': {'title': 'Nevera · 3D Masterplan', 'source': 'Media City_Landuse Update_MP&Phase 01_20261023_Bind.dwg', 'source_short': 'Landuse Update · 23 Oct 2026',
           'source_date': '23 أكتوبر 2026', 'updated': now, 'total_area': 34870160, 'units': 'm, local origin = DWG (318595, 3305622)',
