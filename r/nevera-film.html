@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta charset="utf-8">
+<title>Nevera · Film Animatic</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" crossorigin="anonymous" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&display=swap">
+<style>
+/* Layout: a live stage rendered in the page (1600x900 board scaled to fit), transport + scrub timeline under it, the scene feed beside it */
+:root{
+  --bg:#081012; --panel:#0e1a1d; --line:rgba(217,169,91,.24); --line-soft:rgba(217,169,91,.10);
+  --ink:#efe7da; --soft:#d6ccbb; --mute:#9d917c; --amber:#d9a95b; --amber-hi:#f0c987; --teal:#1e7884;
+  --f-ar:'IBM Plex Sans Arabic',system-ui,sans-serif; --f-vo:'Amiri','Times New Roman',serif; --f-en:'Cormorant Garamond',Georgia,serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ar);
+  background-image:radial-gradient(1100px 600px at 100% -10%,rgba(217,169,91,.13),transparent 60%),radial-gradient(900px 640px at 0% 100%,rgba(30,120,132,.22),transparent 60%);background-attachment:fixed}
+.wrap{max-width:1500px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px;display:grid;gap:18px}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:10px 20px;border-bottom:1px solid var(--line);padding-bottom:14px}
+.kick{font-family:var(--f-en);font-style:italic;font-size:19px;color:var(--amber-hi);margin:0 0 2px}
+h1{margin:0;font-size:clamp(24px,3.4vw,36px);font-weight:700;text-wrap:balance}
+.chips{display:flex;flex-wrap:wrap;gap:8px;font-size:13px;color:var(--mute)}
+.chips span{border:1px solid var(--line);border-radius:999px;padding:4px 12px}
+.chips .live{color:var(--amber-hi);border-color:rgba(240,201,135,.6);display:inline-flex;align-items:center;gap:7px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--mute)}
+.playing .dot{background:#ff6a4d;animation:pulse 1.4s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 8px rgba(255,106,77,0)}0%{box-shadow:0 0 0 0 rgba(255,106,77,.6)}}
+
+.grid{display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
+@media (min-width:1180px){.grid{grid-template-columns:minmax(0,1fr) 400px}}
+.main{display:grid;gap:12px;min-width:0;align-content:start}
+
+/* ---------- stage ---------- */
+.stage{position:relative;aspect-ratio:16/9;max-width:100%;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#071012;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.canvas{position:absolute;top:0;left:0;width:1600px;height:900px;transform-origin:0 0;direction:rtl}
+.bgl{position:absolute;inset:0;background:radial-gradient(1000px 600px at 90% -10%,rgba(217,169,91,.22),transparent 60%),radial-gradient(900px 640px at -5% 115%,rgba(30,120,132,.42),transparent 62%),linear-gradient(180deg,#0c171a,#071012)}
+.glow{position:absolute;inset:0;background:radial-gradient(800px 500px at 22% 40%,rgba(240,201,135,.16),transparent 70%);opacity:0}
+.vign{position:absolute;inset:0;box-shadow:inset 0 0 220px rgba(0,0,0,.75)}
+.top{position:absolute;top:42px;right:72px;left:72px;display:flex;justify-content:space-between;align-items:center}
+.mv{display:flex;align-items:baseline;gap:16px}
+.mv .ar{font-size:24px;font-weight:600;color:var(--amber-hi)}
+.mv .en{font-family:var(--f-en);font-size:18px;letter-spacing:.24em;color:var(--mute);text-transform:uppercase}
+.tc{direction:ltr;font-family:var(--f-en);font-size:30px;font-weight:600;letter-spacing:.04em;font-variant-numeric:lining-nums tabular-nums}
+.tc b{color:var(--amber-hi);font-weight:600}
+.tc small{font-size:18px;color:var(--mute);margin-left:12px}
+.rule{position:absolute;top:92px;right:72px;left:72px;height:1px;background:linear-gradient(90deg,transparent,rgba(217,169,91,.6),transparent)}
+.body{position:absolute;top:116px;right:72px;width:860px;display:grid;gap:16px}
+.head{display:grid;grid-template-columns:auto 1fr;align-items:end;column-gap:20px}
+.no{font-family:var(--f-en);font-weight:600;font-size:92px;line-height:.82;color:transparent;-webkit-text-stroke:1.3px var(--amber);direction:ltr;font-variant-numeric:lining-nums}
+.title{font-size:42px;font-weight:700;line-height:1.15}
+.scene{font-size:21px;font-weight:300;line-height:1.5;color:var(--soft);grid-column:1/-1;margin-top:6px}
+/* the shot being played right now */
+.shot{position:relative;border:1px solid rgba(217,169,91,.42);border-radius:16px;padding:16px 20px 18px;background:rgba(217,169,91,.06);overflow:hidden}
+.shot .meta{display:flex;justify-content:space-between;align-items:center;font-size:16px;color:var(--amber);font-weight:600}
+.shot .meta .ty{border:1px solid rgba(217,169,91,.5);border-radius:999px;padding:2px 12px;color:var(--amber-hi);font-weight:500}
+.shot .txt{font-size:31px;font-weight:600;line-height:1.4;margin-top:8px;min-height:88px}
+.ticks{display:flex;gap:5px;margin-top:12px;direction:rtl}
+.ticks i{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.13)}
+.ticks i.done{background:rgba(217,169,91,.5)} .ticks i.on{background:var(--amber-hi);box-shadow:0 0 10px rgba(240,201,135,.7)}
+.shot.cut .txt{animation:cutin .32s cubic-bezier(.2,.8,.2,1)}
+.shot.cut::after{content:"";position:absolute;inset:0;background:#fff3d6;animation:blink .22s ease-out forwards;pointer-events:none}
+@keyframes cutin{from{opacity:0;transform:translateX(-26px)}to{opacity:1;transform:none}}
+@keyframes blink{from{opacity:.35}to{opacity:0}}
+.fields{display:grid;gap:6px;margin:0}
+.f{display:grid;grid-template-columns:96px 1fr;column-gap:14px;align-items:baseline}
+.f dt{font-size:15px;font-weight:600;color:var(--amber)}
+.f dd{margin:0;font-size:18px;line-height:1.45;color:var(--soft)}
+.f dd .k{color:var(--mute);font-size:15px;margin-inline-end:5px}
+.f dd .arrow{color:var(--amber);margin:0 8px}
+.panel{position:absolute;left:72px;top:150px;width:540px;height:400px;border:1px solid rgba(217,169,91,.35);border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.01));overflow:hidden}
+.panel .lbl{position:absolute;top:22px;left:26px;right:26px;display:flex;justify-content:space-between;direction:ltr;font-family:var(--f-en);font-size:14px;letter-spacing:.3em;color:var(--mute)}
+.panel .lbl i{font-style:normal;color:var(--amber)}
+.panel .inst{position:absolute;left:26px;right:26px;top:54px;text-align:right}
+.panel .inst .ar{display:block;font-size:38px;font-weight:700;line-height:1.15}
+.panel .inst .en{display:block;font-family:var(--f-en);font-weight:600;font-size:18px;letter-spacing:.2em;color:var(--mute);direction:ltr;text-align:right;margin-top:6px}
+.panel .inst .bpm{display:inline-block;margin-top:10px;border:1px solid var(--line);border-radius:999px;padding:2px 12px;font-size:15px;color:var(--soft)}
+.panel canvas{position:absolute;left:26px;right:26px;top:190px;width:488px;height:150px}
+.panel .foot{position:absolute;bottom:18px;left:26px;right:26px;font-size:17px;color:var(--mute);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vo{position:absolute;right:72px;left:72px;bottom:64px;border-top:1px solid rgba(217,169,91,.35);padding-top:18px;min-height:150px;text-align:center}
+.vo .tag{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:#0a1416;padding:0 14px;font-family:var(--f-en);font-size:14px;letter-spacing:.3em;color:var(--amber)}
+.vo-en{font-family:var(--f-en);font-weight:600;font-size:44px;line-height:1.2;color:var(--ink);direction:ltr;text-wrap:balance}
+.vo-ar{font-family:var(--f-vo);font-size:25px;line-height:1.5;color:var(--soft);margin-top:6px}
+.w{opacity:.2;transition:opacity .3s ease}
+.w.on{opacity:1}
+.vo-none{font-size:22px;color:var(--mute);padding-top:28px}
+.stl{position:absolute;left:72px;right:72px;bottom:30px;height:5px;direction:ltr}
+.stl i{position:absolute;top:0;height:5px;border-radius:3px;background:rgba(255,255,255,.12)}
+.stl i.past{background:rgba(217,169,91,.45)} .stl i.cur{background:var(--amber-hi);box-shadow:0 0 12px rgba(240,201,135,.7)}
+.stl b{position:absolute;top:-7px;width:3px;height:19px;background:#ffe2a8;border-radius:2px}
+.in .no,.in .title,.in .scene,.in .fields,.in .panel .inst{animation:rise .5s cubic-bezier(.2,.7,.2,1) both}
+.in .title{animation-delay:.04s}.in .scene{animation-delay:.08s}.in .fields{animation-delay:.12s}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+.cover{position:absolute;inset:0;display:grid;place-items:center;background:rgba(5,10,11,.45);border:0;color:var(--ink);cursor:pointer;font:inherit}
+.cover[hidden]{display:none!important}
+.cover span{display:grid;justify-items:center;gap:10px}
+.cover .ring{width:92px;height:92px;border-radius:50%;border:1.5px solid var(--amber-hi);display:grid;place-items:center;background:rgba(217,169,91,.12)}
+.cover .ring::after{content:"";border-style:solid;border-width:16px 0 16px 26px;border-color:transparent transparent transparent var(--amber-hi);margin-left:6px}
+.cover em{font-style:normal;font-size:15px;color:var(--soft)}
+.cover:focus-visible .ring{outline:2px solid var(--amber-hi);outline-offset:4px}
+
+/* ---------- transport ---------- */
+.transport{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.btn{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:8px 14px;font:inherit;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.btn:hover{border-color:var(--amber)} .btn:focus-visible{outline:2px solid var(--amber-hi);outline-offset:2px}
+.btn.primary{background:var(--amber);color:#1a1307;border-color:var(--amber);font-weight:700;min-width:96px;justify-content:center}
+.btn[aria-pressed="false"]{color:var(--mute);text-decoration:line-through}
+.time{font-family:var(--f-en);font-size:20px;font-weight:600;direction:ltr;font-variant-numeric:lining-nums tabular-nums;color:var(--soft)}
+.spacer{flex:1}
+.status{font-size:13px;color:var(--mute)}
+.scrub{position:relative;height:46px;direction:ltr;cursor:pointer;touch-action:none;user-select:none}
+.scrub .lab{position:absolute;top:0;font-size:12px;color:var(--mute);text-align:center;white-space:nowrap;overflow:hidden;direction:rtl}
+.scrub .lab.on{color:var(--amber-hi)}
+.scrub .seg{position:absolute;top:24px;height:8px;border-radius:4px;background:rgba(255,255,255,.12)}
+.scrub .seg.past{background:rgba(217,169,91,.45)} .scrub .seg.cur{background:var(--amber-hi)}
+.scrub .seg:hover{background:rgba(240,201,135,.75)}
+.scrub .tk{position:absolute;top:34px;width:1px;height:6px;background:rgba(240,201,135,.45)}
+.scrub .ph{position:absolute;top:18px;width:3px;height:22px;margin-left:-1px;background:#ffe2a8;border-radius:2px;box-shadow:0 0 10px rgba(255,226,168,.8)}
+.scrub:focus-visible{outline:2px solid var(--amber-hi);outline-offset:4px;border-radius:6px}
+
+/* ---------- live feed ---------- */
+.feed{border:1px solid var(--line);border-radius:14px;background:rgba(14,26,29,.75);display:grid;grid-template-rows:auto 1fr;min-width:0}
+@media (min-width:1180px){.feed{max-height:calc(100vh - 140px);position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px)}}
+.feed h2{margin:0;padding:14px 16px;font-size:16px;font-weight:600;color:var(--amber-hi);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.feed h2 small{font-size:12px;font-weight:400;color:var(--mute)}
+.list{overflow:auto;padding:6px;display:grid;gap:4px;align-content:start;max-height:640px}
+@media (min-width:1180px){.list{max-height:none}}
+.mvh{padding:12px 10px 4px;font-size:13px;font-weight:600;color:var(--soft);display:flex;justify-content:space-between}
+.mvh em{font-family:var(--f-en);color:var(--mute);font-style:normal;letter-spacing:.14em;text-transform:uppercase;font-size:12px}
+.item{appearance:none;width:100%;text-align:right;border:1px solid transparent;background:transparent;color:var(--ink);font:inherit;border-radius:10px;padding:10px;cursor:pointer;display:grid;grid-template-columns:52px minmax(0,1fr);gap:10px}
+.item:hover{background:rgba(255,255,255,.03);border-color:var(--line-soft)}
+.item:focus-visible{outline:2px solid var(--amber-hi)}
+.item .n{font-family:var(--f-en);font-size:24px;font-weight:600;color:var(--amber);line-height:1;font-variant-numeric:lining-nums}
+.item .n small{display:block;font-size:12px;color:var(--mute);margin-top:4px;direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
+.item strong{display:block;font-size:15px}
+.item .i{display:block;font-size:13px;color:var(--soft)}
+.item .d{display:none;margin-top:8px;font-size:13px;color:var(--soft);line-height:1.6}
+.item .d ol{margin:6px 0 0;padding:0 18px 0 0}
+.item .d li{color:var(--mute)} .item .d li.on{color:var(--amber-hi);font-weight:600}
+.item .d .en{font-family:var(--f-en);font-weight:600;font-size:16px;direction:ltr;text-align:left;color:var(--ink);margin:8px 0 0}
+.item.on{background:rgba(217,169,91,.10);border-color:rgba(240,201,135,.55)}
+.item.on .d{display:block}
+.item.on strong::after{content:"● LIVE";font-family:var(--f-en);font-size:11px;letter-spacing:.2em;color:#ff8a70;margin-inline-start:8px}
+.note{margin:0;color:var(--mute);font-size:14px;line-height:1.7;max-width:80ch}
+@media (prefers-reduced-motion:reduce){.in *,.shot.cut .txt,.shot.cut::after{animation:none!important}.w{transition:none}.playing .dot{animation:none}}
+</style>
+<!-- AromaMascot: off for this page -->
+</head>
+<body>
+
+<div class="wrap" dir="rtl">
+  <header>
+    <div>
+      <p class="kick" dir="ltr">The orchestra city · live animatic</p>
+      <h1>أنيماتيك فيلم المدينة</h1>
+    </div>
+    <div class="chips"><span class="live"><i class="dot"></i>لايف</span><span>٥ دقايق</span><span id="sceneCount"></span><span id="shotCount"></span></div>
+  </header>
+
+  <div class="grid">
+    <div class="main">
+      <div class="stage" id="stage">
+        <div class="canvas" id="cv">
+          <div class="bgl"></div><div class="glow" id="glow"></div><div class="vign"></div>
+          <div class="top"><div class="mv"><span class="ar" id="mvAr"></span><span class="en" id="mvEn"></span></div><div class="tc" id="tc"></div></div>
+          <div class="rule"></div>
+          <div class="body">
+            <div class="head"><div class="no" id="no"></div><div class="title" id="title"></div><div class="scene" id="scene"></div></div>
+            <div class="shot" id="shot">
+              <div class="meta"><span id="shotN"></span><span class="ty" id="shotTy"></span></div>
+              <div class="txt" id="shotTxt"></div>
+              <div class="ticks" id="ticks"></div>
+            </div>
+            <dl class="fields">
+              <div class="f"><dt>العازف</dt><dd id="mus"></dd></div>
+              <div class="f"><dt>التجربة</dt><dd id="person"></dd></div>
+              <div class="f"><dt>النقلة</dt><dd id="tr"></dd></div>
+            </dl>
+          </div>
+          <div class="panel" id="panel">
+            <div class="lbl"><span>THE ORCHESTRA</span><i>● LIVE SCORE</i></div>
+            <div class="inst" id="inst"></div>
+            <canvas id="wave" width="976" height="300"></canvas>
+            <div class="foot" id="foot"></div>
+          </div>
+          <div class="vo"><span class="tag">VO</span><div id="vo"></div></div>
+          <div class="stl" id="stl"></div>
+        </div>
+        <button class="cover" id="cover" type="button" aria-label="شغّل الأنيماتيك"><span><i class="ring"></i><em id="coverTxt">بيحمّل الصوت…</em></span></button>
+      </div>
+
+      <div class="transport">
+        <button class="btn primary" id="play" type="button">▶ شغّل</button>
+        <button class="btn" id="prev" type="button" aria-label="المشهد اللي فات">→ اللي فات</button>
+        <button class="btn" id="next" type="button" aria-label="المشهد اللي جاي">اللي جاي ←</button>
+        <span class="time" id="time">0:00.0 / 5:00</span>
+        <span class="spacer"></span>
+        <button class="btn" id="tVo" type="button" aria-pressed="true">الراوي</button>
+        <button class="btn" id="tSub" type="button" aria-pressed="true">الترجمة</button>
+        <span class="status" id="status"></span>
+      </div>
+      <div class="scrub" id="scrub" tabindex="0" role="slider" aria-label="مكان التشغيل" aria-valuemin="0" aria-valuemax="300" aria-valuenow="0"></div>
+      <p class="note">كل مشهد متقسّم لقطات، وكل قطع واقع على ضربة في المزيكا. الراوي متسجّل في تسجيلة واحدة، وكل جملة بتبدأ على نبضة موسيقية، والمزيكا بتوسّع له مكان في الصوت وقت الكلام بدل ما توطى فجأة. اضغط على أي مشهد أو على الشريط عشان تروح له، والمسافة بتشغّل وتوقّف.</p>
+    </div>
+
+    <aside class="feed" aria-label="قائمة المشاهد">
+      <h2>المشاهد واللقطات <small>الحالي بيتعلّم لايف</small></h2>
+      <div class="list" id="list"></div>
+    </aside>
+  </div>
+</div>
+
+<script>
+(function(){
+var S=[{"n": 1, "s": 0.0, "e": 6.0, "mv": "التمهيد", "mv_en": "OVERTURE", "title": "النقش يتحرّك", "scene": "ضوء الفجر يكشف نقشًا فرعونيًا على جدار مقبرة في سقارة.", "mus": "عازفة هارب منقوشة على الجدار", "person": "الكادرات المنقوشة تتحرّك واحدًا تلو الآخر، كأنها أول فيلم في التاريخ.", "from": "الظلام", "to": "النقش", "tempo": "إيقاع حر", "shot": "لقطة قريبة جدًا", "inst_ar": "الهارب", "inst_en": "HARP", "vo": "v01", "vo_en": "Before the world knew what a story was… Egypt was already telling it.", "vo_ar": "قبل أن يعرفَ العالمُ معنى الحكاية… كانت مصرُ ترويها.", "shots": [{"t": 0.0, "type": "ماكرو", "text": "ضوء الفجر يزحف على جدار المقبرة."}, {"t": 4.063, "type": "قريبة", "text": "النقوش تتحرّك كادرًا بعد كادر، وعازفة الهارب المنقوشة تبدأ العزف."}], "vo_t": 0.2, "vo_at": 0.2, "vo_dur": 6.766}, {"n": 2, "s": 6.0, "e": 12.0, "mv": "التمهيد", "mv_en": "OVERTURE", "title": "النَّفَس قبل الضربة", "scene": "العازفون في أنحاء المدينة يرفعون آلاتهم في اللحظة نفسها.", "mus": "المايسترو يرفع العصا", "person": "كمان على كثيب، وطبّال على سطح، وتشيلو بجوار بحيرة… والجميع ينتظر.", "from": "يد العازفة المنقوشة", "to": "يد عازفة حقيقية على كثيب عند الفجر", "tempo": "صمت", "shot": "قطعات سريعة", "inst_ar": "المايسترو", "inst_en": "CONDUCTOR", "vo": "", "vo_en": "", "vo_ar": "", "shots": [{"t": 6.0, "type": "قريبة جدًا", "text": "يد العازفة المنقوشة على الوتر."}, {"t": 7.2, "type": "قريبة جدًا", "text": "يد عازفة حقيقية على كثيب عند الفجر."}, {"t": 8.069, "type": "متوسطة", "text": "عازف كمان يرفع قوسه فوق الكثبان."}, {"t": 9.6, "type": "متوسطة", "text": "طبّال على سطح يرفع عصاه."}, {"t": 10.461, "type": "قريبة", "text": "عصا المايسترو ترتفع… ثم السكون."}]}, {"n": 3, "s": 12.0, "e": 20.0, "mv": "التمهيد", "mv_en": "OVERTURE", "title": "الضربة الأولى", "scene": "الشمس تنفجر فوق قمة الهرم، والمدينة تضيء حيًّا بعد حي.", "mus": "الأوركسترا كاملة", "person": "طائرة درون تنطلق فوق الكثبان، وكل ضربة تُضيء حيًّا جديدًا.", "from": "يد عازفة على كثيب", "to": "المدينة كاملة", "tempo": "ضربة واحدة", "shot": "درون سريع ثم لقطة واسعة ثابتة", "inst_ar": "الأوركسترا كاملة", "inst_en": "FULL ORCHESTRA", "vo": "p03", "vo_en": "And today… at the foot of eternity… a city rises.", "vo_ar": "واليوم… عند أقدامِ الخلود، تنهضُ مدينة.", "shots": [{"t": 12.0, "type": "واسعة", "text": "الشمس تنفجر فوق قمة الهرم."}, {"t": 14.06, "type": "درون سريع", "text": "الكاميرا تنطلق فوق الكثبان."}, {"t": 15.07, "type": "واسعة", "text": "أول حي يضيء مع الضربة الأولى."}, {"t": 16.834, "type": "واسعة", "text": "حيّان آخران يضيئان مع كل ضربة."}, {"t": 18.054, "type": "واسعة ثابتة", "text": "المدينة كاملة، والأهرامات في الأفق."}], "vo_t": 13.96, "vo_at": 1.96, "vo_dur": 6.322}, {"n": 4, "s": 20.0, "e": 40.25, "mv": "المدينة والحياة فيها", "mv_en": "CITY LIFE", "title": "المخطط والوصول", "scene": "المدينة على الخريطة: مطار سفنكس، والمتحف المصري الكبير، والأهرامات، وسقارة ودهشور، وخطوط القطار إلى البحرين والصعيد.", "mus": "عازف كونترباص على رصيف محطة القطار السريع", "person": "مسافرة تنزل من القطار وتمشي إلى قلب المدينة، والموسيقى تحملها.", "from": "المدينة كاملة", "to": "قضبان القطار", "tempo": "100 BPM", "shot": "من المدار إلى الأرض", "inst_ar": "الكونترباص", "inst_en": "DOUBLE BASS", "vo": "v12", "vo_en": "Within reach of two seas and the ancient South… and minutes from the world.", "vo_ar": "في متناولِ بحرين، وجنوبٍ عريق… وعلى بُعدِ دقائق من العالم.", "shots": [{"t": 20.0, "type": "من المدار", "text": "المخطط كاملًا من الأعلى، بحدوده الحقيقية."}, {"t": 23.324, "type": "خريطة حيّة", "text": "أقواس من الضوء: مطار سفنكس، والمتحف الكبير، والأهرامات، وسقارة ودهشور وأبوصير."}, {"t": 27.074, "type": "خريطة حيّة", "text": "خطوط القطار تمتد إلى الساحل، وإلى الأقصر وأسوان."}, {"t": 30.081, "type": "متوسطة", "text": "عازف الكونترباص على الرصيف، والقطار السريع يدخل المحطة."}, {"t": 33.077, "type": "قريبة", "text": "مسافرة تنزل من القطار، والموسيقى تحملها."}, {"t": 38.081, "type": "متابعة", "text": "تمشي من المحطة عبر محور المدخل إلى قلب المدينة."}], "vo_t": 23.973, "vo_at": 3.973, "vo_dur": 7.131}, {"n": 5, "s": 40.25, "e": 57.25, "mv": "المدينة والحياة فيها", "mv_en": "CITY LIFE", "title": "الضيافة الفاخرة", "scene": "فندق فاخر بروح مصرية على حافة الصحراء، والأهرامات في كل نافذة.", "mus": "عازف تشيلو في بهو الفندق", "person": "ضيفة تصل متعبة من الرحلة… يُفتح الستار في جناحها فترى الأهرامات، فتقرّر أن تمدّد إقامتها.", "from": "خطوات المسافرة", "to": "ستار يُفتح على الأهرامات", "tempo": "60 BPM", "shot": "حركة ناعمة مستمرة", "inst_ar": "التشيلو", "inst_en": "SOLO CELLO", "vo": "v15", "vo_en": "One night was never enough… to witness eternity.", "vo_ar": "ليلةٌ واحدة… لم تكن يومًا تكفي لرؤيةِ الخلود.", "shots": [{"t": 40.25, "type": "واسعة", "text": "مدخل الفندق بروح مصرية، والأهرامات خلفه."}, {"t": 43.328, "type": "متوسطة", "text": "استقبال دافئ بالقهوة والتمر، وعازف التشيلو في البهو."}, {"t": 47.078, "type": "قريبة", "text": "الخادم الشخصي يفتح الستار… والأهرامات في النافذة."}, {"t": 49.784, "type": "متوسطة", "text": "فطور على التراس فوق مسبح يطلّ على الصحراء."}, {"t": 53.812, "type": "قريبة", "text": "الضيفة تمدّد إقامتها بلمسة على الشاشة."}], "vo_t": 43.234, "vo_at": 2.984, "vo_dur": 4.833}, {"n": 6, "s": 57.25, "e": 69.75, "mv": "المدينة والحياة فيها", "mv_en": "CITY LIFE", "title": "الساحات والملاعب", "scene": "شوارع مظلّلة تتمشّى فيها، وساحات عامة وحدائق، وملاعب مفتوحة لكل العائلة.", "mus": "عازفة فلوت في الساحة، ثم الإيقاع على أطراف الملاعب", "person": "جدّ يمشي مع حفيده في شارع مظلّل… ثم يهتف معه حين يسجّل هدفه الأول.", "from": "ستار الجناح", "to": "صافرة الملعب", "tempo": "80 ← 120 BPM", "shot": "كاميرا محمولة ترافق الناس", "inst_ar": "الفلوت والإيقاع", "inst_en": "FLUTE & PERCUSSION", "vo": "n05", "vo_en": "A city to walk in… and to belong to.", "vo_ar": "مدينةٌ تمشي فيها… وتنتمي إليها.", "shots": [{"t": 57.25, "type": "واسعة", "text": "شارع مظلّل بالأشجار، ومقاهٍ وناس يتمشّون."}, {"t": 58.828, "type": "متوسطة", "text": "ساحة عامة ونافورة، وعازفة الفلوت بين الناس."}, {"t": 62.578, "type": "قريبة", "text": "جدّ يمسك يد حفيده في الحديقة."}, {"t": 65.573, "type": "حركة سريعة", "text": "الملاعب على الإيقاع: كرة قدم وبادل، ودراجات حول البحيرة."}, {"t": 67.338, "type": "قريبة", "text": "الحفيد يسجّل هدفه الأول… والجد يهتف."}], "vo_t": 58.728, "vo_at": 1.478, "vo_dur": 5.068}, {"n": 7, "s": 69.75, "e": 91.0, "mv": "المدينة والحياة فيها", "mv_en": "CITY LIFE", "title": "مجلس في منطقة التراث العالمي", "scene": "مجلس بدوي على حافة منطقة التراث العالمي (اليونسكو)، تحت سماء مليئة بالنجوم.", "mus": "عازف قانون في المجلس", "person": "عائلة من المنتجع تجلس مع المضيف البدوي حول النار، وطفل يشير إلى شهاب يعبر السماء مع آخر نغمة.", "from": "هتاف الملعب", "to": "شرارة النار", "tempo": "80 BPM", "shot": "كرين من النار إلى السماء", "inst_ar": "القانون", "inst_en": "QANUN", "vo": "v13", "vo_en": "Where the desert whispers its secrets… beneath a sky of stars.", "vo_ar": "حيث تهمسُ الصحراءُ بأسرارها… تحت سماءٍ من نجوم.", "shots": [{"t": 69.75, "type": "واسعة", "text": "الغروب على الكثبان، والهرم المدرّج في الأفق."}, {"t": 73.584, "type": "متوسطة", "text": "المجلس البدوي: سجاد وفوانيس ونار هادئة."}, {"t": 76.324, "type": "قريبة", "text": "قهوة عربية تُصبّ، وعازف القانون إلى جوار النار."}, {"t": 80.573, "type": "متوسطة", "text": "العائلة تجلس مع المضيف وتسمع حكاياته."}, {"t": 84.068, "type": "قريبة", "text": "طفل يشير إلى شهاب يعبر السماء."}, {"t": 88.573, "type": "كرين", "text": "من النار إلى سماء النجوم فوق منطقة التراث."}], "vo_t": 72.482, "vo_at": 2.732, "vo_dur": 5.564}, {"n": 8, "s": 91.0, "e": 111.0, "mv": "المدينة والحياة فيها", "mv_en": "CITY LIFE", "title": "المدينة الذكية", "scene": "يوم داخل بيت ذكي، وغرفة التحكم التي تدير المدينة، وطاقة من الشمس.", "mus": "عازف ماريمبا في غرفة التحكم", "person": "أم تبدأ يومها والبيت يفتح الستائر ويضبط الضوء وحده… وفي غرفة التحكم، المدينة كلها على الشاشات.", "from": "النجوم", "to": "شبكة المدينة", "tempo": "120 BPM", "shot": "لقطات متوازية بين البيت وغرفة التحكم", "inst_ar": "الماريمبا", "inst_en": "MARIMBA & CELESTA", "vo": "v16", "vo_en": "A city powered by the very sun that has lit the pyramids for five thousand years.", "vo_ar": "مدينةٌ تستمدُّ قوّتها… من الشمسِ ذاتها التي أضاءت الأهرامات.", "shots": [{"t": 91.0, "type": "قريبة", "text": "البيت الذكي يستيقظ: الستائر تُفتح والضوء يتدرّج وحده."}, {"t": 94.064, "type": "متوسطة", "text": "الأم تطلب سيارة ذاتية القيادة بصوتها، والقهوة جاهزة."}, {"t": 96.061, "type": "قريبة", "text": "مطارق الماريمبا."}, {"t": 100.066, "type": "واسعة", "text": "غرفة التحكم: شاشات المراقبة تعرض المدينة لحظة بلحظة."}, {"t": 102.063, "type": "قريبة", "text": "المرور والطاقة والمياه والأمان… على الشاشات."}, {"t": 106.069, "type": "علوية", "text": "مظلات الألواح الشمسية تضيء واحدًا تلو الآخر مع كل ضربة."}, {"t": 108.066, "type": "واسعة", "text": "شبكة المدينة تنبض بالضوء."}], "vo_t": 94.472, "vo_at": 3.472, "vo_dur": 8.124}, {"n": 9, "s": 111.0, "e": 127.5, "mv": "عاصمة الترفيه", "mv_en": "ENTERTAINMENT CAPITAL", "title": "الساحة الكبرى والمدينة الترفيهية", "scene": "مع الغروب تمتلئ الساحة الكبرى بالناس، وتضيء المدينة الترفيهية.", "mus": "فرقة نحاسية في الساحة الكبرى", "person": "طفل على كتفي أبيه يرى الأنوار تضيء مع البوق، وركّاب الأفعوانية يرفعون أيديهم.", "from": "شبكة المدينة", "to": "ضوء على وجه الطفل", "tempo": "110 BPM", "shot": "كاميرا محمولة", "inst_ar": "الفرقة النحاسية", "inst_en": "BRASS BAND", "vo": "n09", "vo_en": "And when the sun goes down… the city rises to celebrate.", "vo_ar": "وحين تغيبُ الشمس… تنهضُ المدينةُ للاحتفال.", "shots": [{"t": 111.0, "type": "متوسطة", "text": "الفرقة النحاسية في الساحة الكبرى."}, {"t": 114.08, "type": "قريبة", "text": "طفل على كتفي أبيه."}, {"t": 116.077, "type": "واسعة", "text": "أنوار الساحة تضيء مع البوق."}, {"t": 119.084, "type": "كاميرا محمولة", "text": "الناس بين المطاعم والعروض المفتوحة."}, {"t": 122.091, "type": "واسعة", "text": "المدينة الترفيهية تضيء مع الغروب."}, {"t": 125.098, "type": "متوسطة", "text": "ركّاب الأفعوانية يرفعون أيديهم مع ذروة النحاس."}], "vo_t": 111.992, "vo_at": 0.992, "vo_dur": 5.172}, {"n": 10, "s": 127.5, "e": 144.4, "mv": "عاصمة الترفيه", "mv_en": "ENTERTAINMENT CAPITAL", "title": "منطقة الأداء العالي", "scene": "سرعة ودقة وخطوط ضوء تشقّ الليل.", "mus": "عازف تيمباني فوق المدرجات", "person": "متفرّج عند السور يشعر بالضربة في صدره.", "from": "دورة الأفعوانية", "to": "سكون مفاجئ", "tempo": "160 BPM", "shot": "ضبابية حركة", "inst_ar": "التيمباني والتشيلو الكهربائي", "inst_en": "TIMPANI & ELECTRIC CELLO", "vo": "v09", "vo_en": "Speed… that steals the breath.", "vo_ar": "سرعةٌ… تحبسُ الأنفاس.", "shots": [{"t": 127.5, "type": "واسعة", "text": "المدرجات مضاءة في الليل."}, {"t": 129.335, "type": "قريبة", "text": "عصا التيمباني تهبط."}, {"t": 132.331, "type": "حركة سريعة", "text": "خط ضوء يشقّ الليل."}, {"t": 133.341, "type": "قريبة", "text": "عازف التشيلو الكهربائي."}, {"t": 135.837, "type": "ضبابية حركة", "text": "خطّان من الضوء يتسابقان."}, {"t": 138.333, "type": "قريبة", "text": "متفرّج عند السور يشعر بالضربة في صدره."}, {"t": 140.086, "type": "علوية", "text": "المنطقة كلها خطوط ضوء."}, {"t": 143.081, "type": "قريبة", "text": "الضربة الأخيرة… ثم سكون."}], "vo_t": 132.24, "vo_at": 4.74, "vo_dur": 3.37}, {"n": 11, "s": 144.4, "e": 151.6, "mv": "المحرك الإبداعي", "mv_en": "THE CREATIVE ENGINE", "title": "الحكاية تعود", "scene": "نغمة الهارب من أول الفيلم ترجع: النقش اللي بدأنا بيه يظهر على شاشة الاستوديو.", "mus": "عازفة الهارب المنقوشة على شاشة LED في الاستوديو", "person": "الكادرات المنقوشة تتحرّك وتتحوّل إلى شريط فيلم… والحكاية تدخل الاستوديو.", "from": "سكون خطوط الضوء", "to": "النقش يصير شاشة", "tempo": "إيقاع حر", "shot": "ماكرو", "inst_ar": "الهارب", "inst_en": "HARP", "vo": "", "vo_en": "", "vo_ar": "", "shots": [{"t": 144.4, "type": "ماكرو", "text": "نغمة الهارب من المقدمة… والنقش على شاشة LED."}, {"t": 146.889, "type": "قريبة", "text": "الكادرات المنقوشة تتحرّك وتتحوّل إلى شريط فيلم."}, {"t": 148.863, "type": "قريبة جدًا", "text": "الشريط يدخل الكاميرا… والحكاية تبدأ من جديد."}]}, {"n": 12, "s": 151.6, "e": 167.6, "mv": "المحرك الإبداعي", "mv_en": "THE CREATIVE ENGINE", "title": "من البلاتوه إلى المشهد النهائي", "scene": "داخل البلاتوه: شاشة LED عملاقة تعرض الأهرامات، والكاميرا تعبر إلى المشهد النهائي كما سيراه الجمهور.", "mus": "قسم الكمان داخل الاستوديو", "person": "ممثلة بالأزياء… مع صعود الأوتار يشتعل أداؤها.", "from": "شريط الفيلم", "to": "بكسلات شاشة الـLED", "tempo": "120 BPM", "shot": "كرين يتحرّك مع الجملة الموسيقية", "inst_ar": "الكمان", "inst_en": "VIOLINS · STACCATO", "vo": "v04", "vo_en": "Here, films are not simply made… worlds are born.", "vo_ar": "هنا… لا تُصنعُ الأفلامُ فحسب، بل تُولدُ العوالم.", "shots": [{"t": 151.6, "type": "متوسطة", "text": "قسم الكمان يعزف داخل الاستوديو."}, {"t": 154.657, "type": "قريبة", "text": "الأقواس تتحرّك في وقت واحد."}, {"t": 158.662, "type": "كرين", "text": "الكاميرا تصعد مع الجملة الموسيقية فوق موقع التصوير."}, {"t": 160.659, "type": "قريبة", "text": "ممثلة بالأزياء… أداؤها يشتعل مع صعود الأوتار."}, {"t": 164.664, "type": "واسعة", "text": "الكاميرا تعبر من البلاتوه إلى المشهد النهائي… والأهرامات الحقيقية خلف باب الاستوديو."}], "vo_t": 153.06, "vo_at": 1.46, "vo_dur": 6.06}, {"n": 13, "s": 167.6, "e": 185.6, "mv": "المحرك الإبداعي", "mv_en": "THE CREATIVE ENGINE", "title": "مواقع التصوير المفتوحة", "scene": "شارع ديكور في مواقع التصوير المفتوحة يتحوّل إلى مدن العالم، ومشهد مطاردة قيد التصوير.", "mus": "طبّال على سطح الديكور", "person": "مؤدّي المشاهد الخطرة يقفز عبر الشارع على الضربة، والطاقم يهلّل.", "from": "ضربة قوس الكمان", "to": "حركة كاميرا خاطفة داخل المطاردة", "tempo": "140 BPM", "shot": "تسريع وإبطاء للحركة", "inst_ar": "الطبول والنحاس", "inst_en": "SNARE & BRASS", "vo": "v05", "vo_en": "Every age of the world… beneath a single sky.", "vo_ar": "كلُّ عصورِ الأرض… تحت سماءٍ واحدة.", "shots": [{"t": 167.6, "type": "متوسطة", "text": "طبّال على سطح الديكور يبدأ الإيقاع."}, {"t": 169.657, "type": "واسعة", "text": "شارع الديكور يتحوّل من مدينة إلى أخرى."}, {"t": 173.662, "type": "كاميرا محمولة", "text": "مطاردة بالدراجات بين المباني."}, {"t": 175.659, "type": "قريبة", "text": "قدم المؤدّي على حافة السطح."}, {"t": 177.667, "type": "حركة بطيئة", "text": "القفزة عبر الشارع على الضربة."}, {"t": 179.664, "type": "متوسطة", "text": "الهبوط… والطاقم يهلّل."}, {"t": 182.671, "type": "قريبة", "text": "المخرج يرفع إبهامه."}], "vo_t": 169.569, "vo_at": 1.969, "vo_dur": 4.493}, {"n": 14, "s": 185.6, "e": 199.6, "mv": "المحرك الإبداعي", "mv_en": "THE CREATIVE ENGINE", "title": "خدمات الإنتاج في مكتب واحد", "scene": "كل التصاريح والمعدّات والمواقع في مكان واحد.", "mus": "وتريات بالنقر في بهو المكتب", "person": "منتجة أجنبية… تصريح يُختم مع كل نقرة، وتنظر إلى ساعتها غير مصدّقة.", "from": "ضربة عصا الطبلة", "to": "الختم على التصريح", "tempo": "130 BPM", "shot": "لقطة علوية", "inst_ar": "الوتريات بالنقر", "inst_en": "PIZZICATO STRINGS", "vo": "v06", "vo_en": "Every door stands open… for great stories do not wait.", "vo_ar": "كلُّ الأبوابِ مفتوحة… فالحكاياتُ العظيمةُ لا تنتظر.", "shots": [{"t": 185.6, "type": "علوية", "text": "بهو مكتب التصوير، وعازفو الوتريات بالنقر."}, {"t": 188.163, "type": "قريبة", "text": "تصريح التصوير… ختم."}, {"t": 190.16, "type": "قريبة", "text": "تصريح المعدّات… ختم."}, {"t": 193.654, "type": "قريبة", "text": "تصريح الموقع… ختم."}, {"t": 196.661, "type": "متوسطة", "text": "المنتجة تنظر إلى ساعتها غير مصدّقة."}], "vo_t": 186.566, "vo_at": 0.966, "vo_dur": 6.269}, {"n": 15, "s": 199.6, "e": 217.6, "mv": "المحرك الإبداعي", "mv_en": "THE CREATIVE ENGINE", "title": "أكاديمية الفنون والإعلام", "scene": "الجيل الجديد من صُنّاع السينما والموسيقى.", "mus": "أوركسترا طلاب الأكاديمية", "person": "مخرجة شابة تشاهد فيلمها الأول على الشاشة، وعيناها تدمعان.", "from": "نقرة الوتر", "to": "تكّة شريط الفيلم في جهاز العرض", "tempo": "هادئ", "shot": "لقطة واحدة متصلة", "inst_ar": "أوركسترا الطلاب", "inst_en": "YOUTH ORCHESTRA", "vo": "v07", "vo_en": "And a new generation carries the torch of those who built eternity.", "vo_ar": "وجيلٌ جديد… يحملُ الشعلةَ عن أجدادٍ صنعوا الخلود.", "shots": [{"t": 199.6, "type": "واسعة", "text": "أوركسترا الطلاب في قاعة الأكاديمية."}, {"t": 204.173, "type": "قريبة", "text": "تكّة شريط الفيلم في جهاز العرض."}, {"t": 209.177, "type": "متوسطة", "text": "فيلم الطالبة الأول على الشاشة."}, {"t": 213.438, "type": "قريبة", "text": "عيناها تدمعان."}], "vo_t": 202.6, "vo_at": 3.0, "vo_dur": 6.504}, {"n": 16, "s": 217.6, "e": 238.75, "mv": "المحرك الإبداعي", "mv_en": "THE CREATIVE ENGINE", "title": "متاحف السينما والموسيقى", "scene": "قرن من السينما والموسيقى المصرية.", "mus": "عازف بيانو في قاعة المتحف", "person": "رجل مسنّ أمام ملصق فيلم شاهده في شبابه، ويده على الزجاج.", "from": "تكّة شريط الفيلم", "to": "لافتة نيون قديمة", "tempo": "72 BPM", "shot": "انزلاق ناعم", "inst_ar": "البيانو", "inst_en": "GRAND PIANO", "vo": "v10", "vo_en": "A century of cinema… and the light still burns.", "vo_ar": "قرنٌ كاملٌ من السينما… ولا يزالُ الضوءُ مشتعلًا.", "shots": [{"t": 217.6, "type": "انزلاق ناعم", "text": "لافتة نيون قديمة تضيء في قاعة المتحف."}, {"t": 221.878, "type": "متوسطة", "text": "عازف البيانو في القاعة."}, {"t": 228.461, "type": "قريبة", "text": "رجل مسنّ يضع يده على زجاج ملصق فيلم شاهده في شبابه."}, {"t": 234.057, "type": "متوسطة", "text": "قاعة الموسيقى: آلات تاريخية خلف الزجاج، ونوتة أول تسجيل."}], "vo_t": 220.49, "vo_at": 2.89, "vo_dur": 4.807}, {"n": 17, "s": 238.75, "e": 262.25, "mv": "المحرك الإبداعي", "mv_en": "THE CREATIVE ENGINE", "title": "العرض الأول", "scene": "السجادة الحمراء، والأهرامات في الخلفية.", "mus": "نحاسيات وكورال على السجادة الحمراء", "person": "نجمة عالمية تنزل من السيارة، تلتفت فترى الأهرامات مضاءة… وتتوقف مبهورة.", "from": "ضغطة مفتاح البيانو", "to": "وميض الكاميرات", "tempo": "ذروة", "shot": "حركة بطيئة", "inst_ar": "النحاسيات والكورال", "inst_en": "FANFARE & CHOIR", "vo": "v11", "vo_en": "Where pharaohs once walked… stars now arrive.", "vo_ar": "ونجومٌ تمشي اليوم… حيث مشى الملوك.", "shots": [{"t": 238.75, "type": "قريبة", "text": "ضغطة مفتاح البيانو تتحوّل إلى وميض كاميرا."}, {"t": 242.834, "type": "واسعة", "text": "السجادة الحمراء، والأهرامات مضاءة في الخلفية."}, {"t": 245.597, "type": "متوسطة", "text": "النحاسيات والكورال على جانبي السجادة."}, {"t": 250.601, "type": "قريبة", "text": "نجمة عالمية تنزل من السيارة."}, {"t": 254.096, "type": "حركة بطيئة", "text": "تلتفت… فترى الأهرامات."}, {"t": 257.927, "type": "واسعة", "text": "الوميض يملأ المكان مع ذروة الموسيقى."}], "vo_t": 241.75, "vo_at": 3.0, "vo_dur": 4.754}, {"n": 18, "s": 262.25, "e": 288.2, "mv": "الخاتمة", "mv_en": "FINALE", "title": "السيمفونية الكاملة", "scene": "المدينة كلها تعزف معًا.", "mus": "الأوركسترا كاملة في كل أنحاء المدينة", "person": "كل من قابلناهم ينظرون إلى الأفق نفسه في اللحظة نفسها.", "from": "وميض الكاميرات", "to": "عصا المايسترو", "tempo": "ذروة ثم صمت تام", "shot": "شاشة مقسّمة متناظرة", "inst_ar": "الأوركسترا والكورال", "inst_en": "TUTTI & CHOIR", "vo": "v17", "vo_en": "Five thousand years of stories… and the symphony is not yet complete.", "vo_ar": "خمسةُ آلافِ عامٍ من الحكايات… والسيمفونيةُ لم تكتمل بعد.", "shots": [{"t": 262.25, "type": "قريبة", "text": "عصا المايسترو ترتفع."}, {"t": 265.927, "type": "متوسطة", "text": "الضيفة في جناحها تنظر إلى الأفق."}, {"t": 269.421, "type": "متوسطة", "text": "الجد وحفيده في الملعب ينظران إلى الأفق."}, {"t": 271.43, "type": "متوسطة", "text": "المضيف البدوي والطفل عند النار."}, {"t": 275.923, "type": "شاشة مقسّمة", "text": "العازفون في كل أنحاء المدينة يعزفون معًا."}, {"t": 277.42, "type": "واسعة", "text": "المدينة كاملة تتوهّج في الليل."}, {"t": 281.925, "type": "قريبة", "text": "الممثلة والمخرجة الشابة والنجمة في اللحظة نفسها."}, {"t": 283.922, "type": "قريبة", "text": "قبضة المايسترو تُغلق… والقاعة تتنفّس."}], "vo_t": 267.329, "vo_at": 5.079, "vo_dur": 6.531}, {"n": 19, "s": 288.2, "e": 300.95, "mv": "الخاتمة", "mv_en": "FINALE", "title": "الكادر الأخير", "scene": "عودة إلى النقش حيث بدأنا.", "mus": "الهارب", "person": "آخر كادر منقوش فارغ، والضوء يملؤه بأنوار المدينة… ثم: Where Heritage Meets the Future.", "from": "قبضة المايسترو", "to": "النقش", "tempo": "النغمة الأخيرة", "shot": "لقطة نهاية", "inst_ar": "الهارب", "inst_en": "HARP", "vo": "v18", "vo_en": "The next movement… is yours to write.", "vo_ar": "الحركةُ القادمة… تكتبها أنت.", "shots": [{"t": 288.2, "type": "سواد", "text": "صدى الأوركسترا يتلاشى، ثم نغمة هارب."}, {"t": 292.571, "type": "قريبة", "text": "النقش من جديد… آخر كادر فارغ."}, {"t": 296.031, "type": "واسعة", "text": "الضوء يملأ الكادر بأنوار المدينة… Where Heritage Meets the Future · حيث يلتقي التراث بالمستقبل."}], "vo_t": 292.319, "vo_at": 4.119, "vo_dur": 3.527}];
+var TOTAL=S[S.length-1].e;
+var MVN={}; S.forEach(function(s){ if(!(s.mv in MVN)) MVN[s.mv]=String(Object.keys(MVN).length+1).replace(/\d/g,function(d){return "٠١٢٣٤٥٦٧٨٩"[+d]}) });
+function voSrc(i){ if(S[i].vo) return i; if(i>0&&S[i-1].vo&&S[i-1].vo_t+(S[i-1].vo_dur||0)>S[i].s) return i-1; return -1; }
+var AN=["٠","١","٢","٣","٤","٥","٦","٧","٨","٩"]; function an(n){return String(n).replace(/\d/g,function(d){return AN[+d]})}
+var $=function(id){return document.getElementById(id)};
+function fmt(t,dec){t=Math.max(0,t);var m=Math.floor(t/60),s=t-m*60;return m+":"+(s<10?"0":"")+(dec?s.toFixed(1):Math.floor(s))}
+function esc(x){return String(x).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+var totalShots=S.reduce(function(a,s){return a+s.shots.length},0); $("shotCount").textContent=an(totalShots)+" لقطة"; $("sceneCount").textContent=an(S.length)+" مشهد"; $("scrub").setAttribute("aria-valuemax",Math.round(TOTAL));
+
+/* ---------- stage scale ---------- */
+var stage=$("stage"), cv=$("cv");
+function fit(){cv.style.transform="scale("+(stage.clientWidth/1600)+")"}
+try{new ResizeObserver(fit).observe(stage)}catch(e){window.addEventListener("resize",fit)} fit();
+
+/* ---------- static builds ---------- */
+var stl=$("stl"), scrub=$("scrub"), list=$("list"), segsStage=[], segsScrub=[], labs=[], items=[];
+S.forEach(function(s){
+  var x=s.s/TOTAL*100, w=(s.e-s.s)/TOTAL*100;
+  var a=document.createElement("i"); a.style.left=x+"%"; a.style.width="calc("+w+"% - 3px)"; stl.appendChild(a); segsStage.push(a);
+  var b=document.createElement("div"); b.className="seg"; b.style.left=x+"%"; b.style.width="calc("+w+"% - 3px)"; b.title=s.n+" · "+s.title; scrub.appendChild(b); segsScrub.push(b);
+  s.shots.forEach(function(sh,k){ if(!k) return; var t=document.createElement("i"); t.className="tk"; t.style.left=(sh.t/TOTAL*100)+"%"; scrub.appendChild(t); });
+});
+var phS=document.createElement("b"); stl.appendChild(phS);
+var mvs=[]; S.forEach(function(s){ if(!mvs.length||mvs[mvs.length-1].mv!==s.mv) mvs.push({mv:s.mv,s:s.s,e:s.e}); else mvs[mvs.length-1].e=s.e; });
+mvs.forEach(function(m){var l=document.createElement("div"); l.className="lab"; l.textContent=m.mv; l.style.left=(m.s/TOTAL*100)+"%"; l.style.width=((m.e-m.s)/TOTAL*100)+"%"; scrub.appendChild(l); labs.push({el:l,mv:m.mv});});
+var ph=document.createElement("div"); ph.className="ph"; scrub.appendChild(ph);
+var lastMv=null;
+S.forEach(function(s,i){
+  if(s.mv!==lastMv){var h=document.createElement("div"); h.className="mvh"; h.innerHTML="<span>الحركة "+MVN[s.mv]+" · "+esc(s.mv)+"</span><em>"+esc(s.mv_en)+"</em>"; list.appendChild(h); lastMv=s.mv;}
+  var b=document.createElement("button"); b.type="button"; b.className="item";
+  b.innerHTML="<span class='n'>"+String(s.n).padStart(2,"0")+"<small>"+fmt(s.s)+"</small></span><span><strong>"+esc(s.title)+"</strong><span class='i'>"+esc(s.inst_ar)+" · "+an(s.shots.length)+" لقطات · <bdi>"+esc(s.tempo)+"</bdi></span>"+
+    "<span class='d'><ol>"+s.shots.map(function(sh){return "<li>"+esc(sh.text)+"</li>"}).join("")+"</ol>"+(s.vo_en?"<p class='en'>"+esc(s.vo_en)+"</p>":"")+"</span></span>";
+  b.addEventListener("click",function(){seek(s.s+0.01,true)});
+  list.appendChild(b); items.push(b);
+});
+
+/* ---------- scene + shot render ---------- */
+var cur=-1, curShot=-1, curVo=-1, voWords={ar:[],en:[]}, subsOn=true;
+function words(txt){return txt.split(/\s+/).filter(Boolean).map(function(w){return "<span class='w'>"+esc(w)+"</span>"}).join(" ")}
+function setScene(i,animate){
+  if(i===cur) return; cur=i; curShot=-1; var s=S[i];
+  $("mvAr").textContent="الحركة "+MVN[s.mv]+" · "+s.mv; $("mvEn").textContent=s.mv_en;
+  $("no").textContent=String(s.n).padStart(2,"0");
+  $("title").textContent=s.title; $("scene").textContent=s.scene;
+  $("mus").textContent=s.mus; $("person").textContent=s.person;
+  $("tr").innerHTML="<span class='k'>من</span>"+esc(s.from)+"<span class='arrow'>←</span><span class='k'>إلى</span>"+esc(s.to);
+  $("inst").innerHTML="<span class='ar'>"+esc(s.inst_ar)+"</span><span class='en'>"+esc(s.inst_en)+"</span><span class='bpm'><bdi>"+esc(s.tempo)+"</bdi></span>";
+  $("foot").textContent=s.mus;
+  $("ticks").innerHTML=s.shots.map(function(){return "<i></i>"}).join("");
+  var vo=$("vo"); curVo=voSrc(i); var vs=curVo>=0?S[curVo]:null;
+  if(vs){vo.innerHTML="<div class='vo-en'>"+words(vs.vo_en)+"</div><div class='vo-ar'>"+words(vs.vo_ar)+"</div>";
+    voWords.en=[].slice.call(vo.querySelectorAll(".vo-en .w")); voWords.ar=[].slice.call(vo.querySelectorAll(".vo-ar .w"));}
+  else {vo.innerHTML="<div class='vo-none'>مزيكا فقط · MUSIC ONLY</div>"; voWords={ar:[],en:[]};}
+  vo.style.visibility=subsOn?"visible":"hidden";
+  segsStage.forEach(function(el,k){el.className=k<i?"past":(k===i?"cur":"")});
+  segsScrub.forEach(function(el,k){el.className="seg"+(k<i?" past":(k===i?" cur":""))});
+  labs.forEach(function(l){l.el.classList.toggle("on",l.mv===s.mv)});
+  items.forEach(function(el,k){el.classList.toggle("on",k===i)});
+  var it=items[i]; list.scrollTo({top:it.offsetTop-list.offsetTop-list.clientHeight/4,behavior:animate?"smooth":"auto"});
+  if(animate){cv.classList.remove("in"); void cv.offsetWidth; cv.classList.add("in");}
+}
+function setShot(i,k,animate){
+  if(k===curShot) return; curShot=k; var s=S[i], sh=s.shots[k];
+  $("shotN").textContent="لقطة "+an(k+1)+" من "+an(s.shots.length);
+  $("shotTy").textContent=sh.type; $("shotTxt").textContent=sh.text;
+  [].slice.call($("ticks").children).forEach(function(el,j){el.className=j<k?"done":(j===k?"on":"")});
+  var lis=items[i].querySelectorAll("li"); [].slice.call(lis).forEach(function(el,j){el.classList.toggle("on",j===k)});
+  if(animate){var b=$("shot"); b.classList.remove("cut"); void b.offsetWidth; b.classList.add("cut");}
+}
+function sceneAt(t){for(var i=S.length-1;i>=0;i--) if(t>=S[i].s) return i; return 0}
+function shotAt(s,t){for(var k=s.shots.length-1;k>=0;k--) if(t>=s.shots[k].t) return k; return 0}
+
+/* ---------- audio engine: score bus + narration bus, mixed live ---------- */
+var AC=window.AudioContext||window.webkitAudioContext, ctx=null, score=null, vo={}, analyser, mEq, mGain, vComp, vGain, verb, verbGain, master;
+var playing=false, startCtx=0, offset=0, nodes=[], voOn=true, loaded=false;
+function status(t){$("status").textContent=t}
+function hallIR(sec){var n=Math.floor(ctx.sampleRate*sec), b=ctx.createBuffer(2,n,ctx.sampleRate);
+  for(var c=0;c<2;c++){var d=b.getChannelData(c), lp=0; for(var i=0;i<n;i++){var a=0.25+0.7*i/n; lp=(1-a)*(Math.random()*2-1)+a*lp; d[i]=lp*Math.exp(-6.9*i/n)}} return b}
+function load(){
+  try{ctx=new AC()}catch(e){status("المتصفح ده مش بيشغّل الصوت التفاعلي"); return}
+  analyser=ctx.createAnalyser(); analyser.fftSize=2048; analyser.smoothingTimeConstant=0.6;
+  mEq=ctx.createBiquadFilter(); mEq.type="peaking"; mEq.frequency.value=2300; mEq.Q.value=0.8; mEq.gain.value=0;
+  mGain=ctx.createGain();
+  vComp=ctx.createDynamicsCompressor(); vComp.threshold.value=-26; vComp.ratio.value=3; vComp.attack.value=0.008; vComp.release.value=0.2; vComp.knee.value=8;
+  vGain=ctx.createGain(); verb=ctx.createConvolver(); verb.buffer=hallIR(2.2); verbGain=ctx.createGain(); verbGain.gain.value=0.16;
+  master=ctx.createDynamicsCompressor(); master.threshold.value=-12; master.ratio.value=2.2; master.knee.value=10; master.attack.value=0.02; master.release.value=0.25;
+  analyser.connect(mEq); mEq.connect(mGain); mGain.connect(master);
+  vComp.connect(vGain); vGain.connect(master); vGain.connect(verb); verb.connect(verbGain); verbGain.connect(master);
+  master.connect(ctx.destination);
+  function get(u){return fetch(u).then(function(r){if(!r.ok)throw 0;return r.arrayBuffer()}).then(function(b){return new Promise(function(res,rej){ctx.decodeAudioData(b,res,rej)})})}
+  var jobs=[get("/r/nevera-film/score.mp3").then(function(b){score=b})];
+  S.forEach(function(s){ if(s.vo) jobs.push(get("/r/nevera-film/vo/"+s.vo+".mp3").then(function(b){vo[s.vo]=b})) });
+  var done=0; jobs.forEach(function(j){j.then(function(){done++; $("coverTxt").textContent="بيحمّل الصوت… "+an(Math.round(done/jobs.length*100))+"٪"})});
+  Promise.all(jobs).then(function(){loaded=true; $("coverTxt").textContent="شغّل الأنيماتيك"}).catch(function(){$("coverTxt").textContent="الصوت ما اتحمّلش. اعمل ريفرش للصفحة"});
+}
+function now(){return playing?Math.min(TOTAL,offset+(ctx.currentTime-startCtx)):offset}
+function stopNodes(){nodes.forEach(function(n){try{n.stop()}catch(e){}}); nodes=[]}
+function start(at){
+  if(!loaded) return;
+  stopNodes(); offset=Math.max(0,Math.min(TOTAL-0.05,at));
+  var t0=ctx.currentTime+0.06; startCtx=t0;
+  var src=ctx.createBufferSource(); src.buffer=score; src.connect(analyser); src.start(t0,offset); nodes.push(src);
+  src.onended=function(){ if(playing&&now()>=TOTAL-0.25){pause(); offset=TOTAL} };
+  var g=mGain.gain, q=mEq.gain; g.cancelScheduledValues(0); q.cancelScheduledValues(0);
+  g.setValueAtTime(1,ctx.currentTime); q.setValueAtTime(0,ctx.currentTime);
+  vGain.gain.setValueAtTime(voOn?1:0,ctx.currentTime);
+  S.forEach(function(s){
+    if(!s.vo||!vo[s.vo]) return;
+    var ws=s.vo_t, we=s.vo_t+vo[s.vo].duration; if(we<=offset) return;
+    var n=ctx.createBufferSource(); n.buffer=vo[s.vo]; n.connect(vComp);
+    if(ws>=offset) n.start(t0+(ws-offset)); else n.start(t0,offset-ws);
+    nodes.push(n);
+    if(!voOn) return;
+    // make room for the voice: a soft dip in level plus a scoop in the speech band, eased in and out
+    var a=Math.max(t0,t0+(ws-offset)-0.6), b=t0+(we-offset);
+    g.setTargetAtTime(0.6,a,0.22); q.setTargetAtTime(-4.5,a,0.22);
+    g.setTargetAtTime(1,b,0.7); q.setTargetAtTime(0,b,0.7);
+  });
+  playing=true; document.body.classList.add("playing"); $("play").textContent="❚❚ وقّف";
+}
+function pause(){ if(!playing) return; offset=now(); playing=false; stopNodes(); document.body.classList.remove("playing"); $("play").textContent="▶ شغّل"; }
+/* phones: start the audio inside the tap, route it as media playback (so the iPhone silent switch does not mute it) */
+var unlocked=false, SILENT="data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYwLjE2LjEwMAAAAAAAAAAAAAAA//NwwAAAAAAAAAAAAEluZm8AAAAPAAAACAAAA/oAR0dHR0dHR0dHR0dHYmJiYmJiYmJiYmJifHx8fHx8fHx8fHx8fJaWlpaWlpaWlpaWlrGxsbGxsbGxsbGxsbHLy8vLy8vLy8vLy8vl5eXl5eXl5eXl5eXl////////////////AAAAAExhdmM2MC4zMQAAAAAAAAAAAAAAACQC1AAAAAAAAAP6yysejgAAAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NCxKMAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NAxKQAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/80LEowAAA0gAAAAAVVVVVVVVVVVVVVVVVVVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/80DEpAAAA0gAAAAAVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsSjAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVQ==";
+function unlock(){ try{ if(navigator.audioSession) navigator.audioSession.type="playback"; }catch(e){}
+  if(ctx&&ctx.state!=="running") ctx.resume();
+  if(!unlocked){ unlocked=true; try{ var a=new Audio(SILENT); a.setAttribute("playsinline",""); a.play().catch(function(){}); }catch(e){} } }
+function play(){ if(!loaded) return; $("cover").hidden=true; unlock(); start(offset>=TOTAL-0.1?0:offset); }
+function seek(t,autoplay){ var was=playing||autoplay; offset=Math.max(0,Math.min(TOTAL,t)); if(was&&loaded){ $("cover").hidden=true; unlock(); start(offset)} }
+
+/* ---------- controls ---------- */
+$("cover").addEventListener("click",play);
+$("play").addEventListener("click",function(){ if(!loaded) return; $("cover").hidden=true; playing?pause():play() });
+$("prev").addEventListener("click",function(){var t=now(),i=sceneAt(t); seek(t-S[i].s>1.5?S[i].s+0.01:S[Math.max(0,i-1)].s+0.01)});
+$("next").addEventListener("click",function(){var i=sceneAt(now()); seek(S[Math.min(S.length-1,i+1)].s+0.01)});
+$("tVo").addEventListener("click",function(){voOn=!voOn; this.setAttribute("aria-pressed",voOn); if(playing) start(now())});
+$("tSub").addEventListener("click",function(){subsOn=!subsOn; this.setAttribute("aria-pressed",subsOn); $("vo").style.visibility=subsOn?"visible":"hidden"});
+document.addEventListener("keydown",function(e){
+  if(e.code==="Space"){ if(e.target.closest&&e.target.closest("input,textarea")) return; e.preventDefault(); if(loaded){$("cover").hidden=true; playing?pause():play()} }
+  else if(e.key==="ArrowLeft"){e.preventDefault(); $("next").click()}
+  else if(e.key==="ArrowRight"){e.preventDefault(); $("prev").click()}
+});
+var drag=false;
+function scrubTo(e){var r=scrub.getBoundingClientRect(); return Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*TOTAL}
+scrub.addEventListener("pointerdown",function(e){drag=true; scrub.setPointerCapture(e.pointerId); if(playing) pause(); offset=scrubTo(e)});
+scrub.addEventListener("pointermove",function(e){ if(drag) offset=scrubTo(e)});
+scrub.addEventListener("pointerup",function(e){ if(!drag) return; drag=false; seek(scrubTo(e),true)});
+
+/* ---------- live draw ---------- */
+var wave=$("wave"), wx=wave.getContext("2d"), td=new Uint8Array(2048), fd=new Uint8Array(1024), glow=$("glow"), panel=$("panel");
+function draw(){
+  var W=wave.width,H=wave.height, level=0; wx.clearRect(0,0,W,H);
+  if(playing){
+    analyser.getByteFrequencyData(fd); analyser.getByteTimeDomainData(td);
+    var bars=64; for(var k=0;k<bars;k++){var v=fd[Math.floor(Math.pow(k/bars,1.7)*fd.length*0.7)]/255; level+=v; var bh=v*H*0.55; wx.fillStyle="rgba(217,169,91,"+(0.1+v*0.25)+")"; wx.fillRect(k*(W/bars)+2,H-bh,W/bars-4,bh)}
+    level/=bars;
+    wx.beginPath(); for(var i=0;i<td.length;i+=4){var x=i/td.length*W, y=H/2+(td[i]-128)/128*H*0.42; i?wx.lineTo(x,y):wx.moveTo(x,y)}
+    wx.strokeStyle="#f0c987"; wx.lineWidth=3; wx.shadowColor="rgba(240,201,135,.6)"; wx.shadowBlur=12; wx.stroke(); wx.shadowBlur=0;
+  } else { wx.beginPath(); wx.moveTo(0,H/2); wx.lineTo(W,H/2); wx.strokeStyle="rgba(240,201,135,.45)"; wx.lineWidth=2; wx.stroke(); }
+  glow.style.opacity=Math.min(1,level*2.2).toFixed(3);
+  panel.style.borderColor="rgba(217,169,91,"+(0.35+level*0.9).toFixed(3)+")";
+  panel.style.boxShadow="0 0 "+Math.round(level*60)+"px rgba(240,201,135,"+(level*0.35).toFixed(3)+")";
+}
+function tick(){
+  var t=now(), i=sceneAt(t), s=S[i];
+  if(i!==cur) setScene(i,playing);
+  setShot(i,shotAt(s,t),playing);
+  $("tc").innerHTML="<b>"+fmt(t,true)+"</b> — "+fmt(s.e)+"<small>"+Math.round(s.e-s.s)+"s</small>";
+  $("time").textContent=fmt(t,true)+" / "+fmt(TOTAL);
+  var p=t/TOTAL*100; phS.style.left="calc("+p+"% - 1px)"; ph.style.left=p+"%"; scrub.setAttribute("aria-valuenow",Math.round(t));
+  var vs=curVo>=0?S[curVo]:null; if(vs&&vo[vs.vo]){var f=(t-vs.vo_t-0.1)/(vo[vs.vo].duration*0.9);
+    [voWords.en,voWords.ar].forEach(function(arr){var n=arr.length; arr.forEach(function(w,k){w.classList.toggle("on",f>=k/n)})});}
+}
+function loop(){ tick(); draw(); requestAnimationFrame(loop) }
+setScene(0,false); setShot(0,0,false); tick(); requestAnimationFrame(loop); load();
+})();
+</script>
+
+<!-- aroma-notes -->
+<script>window.AROMA_NOTES={room:'nevera-film',endpoint:'/api/notes'};</script>
+<script src="/r/hub/aroma-notes.js?v=5a77139a96" defer></script>
+<!-- /aroma-notes -->
+</body>
+</html>
