@@ -84,10 +84,11 @@ export function buildBlocks(THREE, data, opt = {}) {
   }
 
   /* ---------- palettes (from the renders) ---------- */
-  const SAND = [0xf3f1ec, 0xeeebe4, 0xe8e4db, 0xf6f4f0, 0xe4dfd5, 0xf1eee8, 0xddd6c9, 0xd8c8ac];   // mostly white, a light-stone accent
-  const CREAM = [0xf7f5f1, 0xf1eee8, 0xece8e0, 0xf4f1ea];
-  const WARM = [0xefe8dc, 0xe6dccb, 0xf3eee6, 0xdccdb4];
-  const STAGE = [0x6a645c, 0x77706a, 0x5e5a55, 0x837a6e];
+  // from the Nevera profile renders: warm sandstone and limestone mid-rise, cream stone villas, white sound stages
+  const SAND = [0xdcc4a0, 0xd2b68e, 0xe4d1b2, 0xc8aa82, 0xe9dcc4, 0xd6bf9b, 0xcfb38c, 0xe1cdae];
+  const CREAM = [0xeee5d4, 0xe8dcc6, 0xf1eadc, 0xe3d4ba];
+  const WARM = [0xd9bc94, 0xcfae84, 0xe2c9a6, 0xc9a67b];
+  const STAGE = [0xf0f0ec, 0xe8e8e3, 0xdedfda, 0xf4f4f0];
   const GREY = [0x9ea3a8, 0xb2b5b8, 0x8f959b];
   const SET = [0xc98b5a, 0xe8dcc4, 0xb77a4f, 0xd9b48a, 0xa8876a, 0xefe6d6, 0x9c6b4b];
   const LEAF = [0x5f7f3f, 0x6d8c45, 0x4f6e36, 0x7b9a4f, 0x587a3c];
@@ -113,17 +114,30 @@ export function buildBlocks(THREE, data, opt = {}) {
     for (const s of [-1, 1]) { const [ax, ay] = off(x, y, a, s * (W - k) / 2, 0); slab(c, ax, ay, a, k, D - 2 * k, Math.max(1, fl - (R() < .4 ? 1 : 0)), col); }
     const [gx, gy] = off(x, y, a, 0, open ? k / 2 : 0); roofG(c, gx, gy, a, W - 2 * k - 2, D - 2 * k - (open ? 0 : 2), PT);
   }
-  function tower(c, R, x, y, a, w, fl, glass = true) {
-    const t = slab(c, x, y, a, w * 1.6, w * 1.4, 2, pick(R, SAND));
-    slab(c, x, y, a, w, w * (.8 + R() * .3), fl, glass ? 0xffffff : pick(R, CREAM), t, glass ? 'glass' : 'wall');
+  function tower(c, R, x, y, a, w, fl, glass = true) {               // stone podium, bronze-glass shaft held by a stone frame
+    const st = pick(R, SAND), t = slab(c, x, y, a, w * 1.6, w * 1.4, 2, st), d = w * (.8 + R() * .3);
+    const top = slab(c, x, y, a, w, d, fl, glass ? 0xffffff : pick(R, CREAM), t, glass ? 'glass' : 'wall');
+    if (glass) { for (const [i, j] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) put(c, 'box', 'stone', ...off(x, y, a, i * (w / 2 - .9), j * (d / 2 - .9)), t, 2.2, 2.2, top - t + .9 * F * .5, a, st);
+      put(c, 'box', 'stone', x, y, top, w + .8, d + .8, .9 * F * .5, a, st); }
+    cap(c, x, y, a, w * 1.6, w * 1.4, t, st);
   }
+  // a thin lighter stone coping on every roof edge (one slightly larger, very low box)
+  const cap = (c, x, y, a, w, d, z, col) => { if (w > 4 && d > 4) put(c, 'box', 'stone', x, y, z, w + .5, d + .5, .25 * F, a, col); };
+  // timber pergola over a roof terrace, with planters along it (the renders' roof gardens)
+  const pergola = (c, R, x, y, a, w, d, z) => { if (MOB || w < 8 || d < 6) return; const pw = Math.min(w * .6, 16), pd = Math.min(d * .7, 8);
+    put(c, 'box', 'pergola', x, y, z + .55 * F, pw, pd, .08 * F, a, 0xffffff);
+    for (const [i, j] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) put(c, 'box', 'wood', ...off(x, y, a, i * (pw / 2 - .3), j * (pd / 2 - .3)), z, .35, .35, .55 * F, a, 0x7a5636);
+    put(c, 'box', 'green', ...off(x, y, a, 0, pd / 2 + .8), z, pw, 1, .12 * F, a, 0xffffff); };
+  // shop canopy along the street face of a ground floor
+  const awning = (c, R, x, y, a, w, d, side = 1) => { if (MOB || w < 10) return; put(c, 'box', R() < .5 ? 'plain' : 'wood', ...off(x, y, a, 0, side * (d / 2 + 1.3)), PT + .82 * F, w * .92, 2.6, .07 * F, a, pick(R, [0x5a4632, 0x6b543a, 0x3d3a36, 0xe8dfcf])); };
   function villa(c, R, x, y, a, s = 1, col) {
     col ??= pick(R, CREAM);
     const w = (15 + R() * 5) * s, d = (11 + R() * 3) * s;
     put(c, 'box', 'lawn', ...off(x, y, a, 0, 3 * s), PT, w + 7 * s, d + 13 * s, .03, a, 0xffffff);
     const t = slab(c, x, y, a, w, d, 1, col, PT + .03, 'villa');
     const sg = R() < .5 ? -1 : 1, [ux, uy] = off(x, y, a, sg * w * .18, -d * .08);
-    slab(c, ux, uy, a, w * .6, d * .75, 1, col, t, 'villa');
+    const t2 = slab(c, ux, uy, a, w * .6, d * .75, 1, col, t, 'villa'); cap(c, ux, uy, a, w * .6, d * .75, t2, col);
+    pergola(c, R, ...off(x, y, a, -sg * w * .3, 0), a, w * .35, d * .6, t);
     const [px, py] = off(x, y, a, -sg * w * .12, d / 2 + 4 * s); put(c, 'box', 'water', px, py, PT + .03, 9 * s, 4.5 * s, 0.03, a, 0xffffff);
     if (R() < .8 * TD) { const [tx, ty] = off(x, y, a, sg * (w / 2 + 3), d / 2 + 2); palm(c, R, tx, ty, PT); }
   }
@@ -168,15 +182,22 @@ export function buildBlocks(THREE, data, opt = {}) {
     return pts;
   }
   // one modern building: white volume, sometimes a recessed top floor, roof garden or plant on top
-  function modern(c, R, x, y, a, w, d, fl, col) {
+  function modern(c, R, x, y, a, w, d, fl, col, shops = SHOPS.has(c)) {
     let t;
-    if (fl >= 4 && R() < .5) { t = slab(c, x, y, a, w, d, fl - 1, col); const sh = (R() - .5) * w * .12; const [ux, uy] = off(x, y, a, sh, -d * .06);
-      roofG(c, x, y, a, w * .96, d * .9, t); t = slab(c, ux, uy, a, w * .8, d * .72, 1, col, t + .05); }
-    else t = slab(c, x, y, a, w, d, fl, col);
+    if (fl >= 4 && R() < .55) { t = slab(c, x, y, a, w, d, fl - 1, col); cap(c, x, y, a, w, d, t, col); const sh = (R() - .5) * w * .12; const [ux, uy] = off(x, y, a, sh, -d * .06);
+      roofG(c, x, y, a, w * .96, d * .9, t + .25 * F); pergola(c, R, ...off(x, y, a, -sh * 2 - w * .2, d * .3), a, w * .4, d * .3, t + .25 * F);
+      t = slab(c, ux, uy, a, w * .8, d * .72, 1, col, t + .05); cap(c, ux, uy, a, w * .8, d * .72, t, col); }
+    else { t = slab(c, x, y, a, w, d, fl, col); cap(c, x, y, a, w, d, t, col); }
     const r = R();
-    if (r < .35) roofG(c, x, y, a, w * .7, d * .6, t);
+    if (r < .35) { roofG(c, x, y, a, w * .7, d * .6, t + .25 * F); pergola(c, R, x, y, a, w * .5, d * .5, t + .25 * F); }
     else if (r < .6) put(c, 'box', 'plain', ...off(x, y, a, (R() - .5) * w * .4, 0), t, Math.min(10, w * .3), Math.min(6, d * .4), .9 * F * .5, a, 0xd5d3ce);
+    if (shops && fl >= 2) awning(c, R, x, y, a, w, d, -1);
+    // planted balcony ledges on a few floors (the greenery spilling off the facades in the renders)
+    if (!MOB && fl >= 3 && w > 10) for (let k = 2; k < fl; k += 2) if (R() < .35) for (const sd of [-1, 1]) {
+      const [bx, by] = off(x, y, a, (R() - .5) * w * .3, sd * (d / 2 + .45)); put(c, 'box', 'stone', bx, by, PT + k * F - .06 * F, w * (.4 + R() * .4), .9, .08 * F, a, col);
+      put(c, 'box', 'green', bx, by, PT + k * F + .02 * F, w * .35, .7, .12 * F, a, 0xffffff); }
   }
+  const SHOPS = new Set(['cd', 'me', 'rm', 'mh', 'rt', 'ip', 'hu']);
   // buildings along every edge of a block (the perimeter blocks of the slide), courtyard in the middle
   function perimeter(c, R, poly, o) {
     const n = poly.length, dep = o.depth, sb = o.setback ?? 4;
@@ -293,8 +314,9 @@ export function buildBlocks(THREE, data, opt = {}) {
     mc(c, P, R, fl) {                                         // media city core: sound stages + production offices
       slots(P, R, 62, 42, 78, 60, 8, (x, y, a, row, col) => {
         if ((row + col) % 3 !== 2) { put(c, 'box', 'plain', x, y, PT, 62, 42, 4.5 * F, a, pick(R, STAGE));
-          put(c, 'box', 'plain', x, y, PT + 4.5 * F, 63, 43, 0.06, a, 0xa9a397);
-          for (let k = -24; k <= 24; k += 12) { const [ux, uy] = off(x, y, a, k, 0); put(c, 'box', 'plain', ux, uy, PT + 4.5 * F + .06, 3, 3, .12, a, 0x8a857c); } }
+          put(c, 'box', 'plain', x, y, PT + 3.9 * F, 62.3, 42.3, .25 * F, a, 0x3e4246);                              // dark band under the roof
+          put(c, 'box', 'solar', x, y, PT + 4.5 * F, 59, 39, .05, a, 0xffffff);                                       // solar roof
+          for (const s2 of [-1, 1]) put(c, 'box', 'plain', ...off(x, y, a, s2 * 31.2, 0), PT, .6, 14, 3 * F, a, 0x55595d); }   // stage doors
         else if (R() < .35) tower(c, R, x, y, a, 20, fl + 4);
         else modern(c, R, x, y, a, 58, 22, fl, pick(R, SAND));
       }, 0, 0);
@@ -431,10 +453,16 @@ export function buildBlocks(THREE, data, opt = {}) {
     for (const g of parts) { const P = g.attributes.position, I = g.index; for (let k = 0; k < P.count; k++) pos.push(P.getX(k), P.getY(k), P.getZ(k)); for (let k = 0; k < I.count; k++) idx.push(I.getX(k) + base); base += P.count; g.dispose(); }
     const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setIndex(idx); g.computeVertexNormals(); return g;
   }
-  function windows(mat, glass) {
-    mat.customProgramCacheKey = () => glass ? 'nv-glass' : 'nv-wall';
+  // facades drawn in the shader from world position, so every building gets them without extra geometry:
+  //  wall  - stone mid-rise: tall windows with bronze frames between stone piers, the odd recessed loggia, a stone string
+  //          course over the ground floor, glazed shopfronts with warm light at street level
+  //  villa - cream stone with wide openings, about half of them behind timber louvres
+  //  glass - bronze mullion grid over tinted glass, floor lines, lit floors at random
+  // Fine detail fades to the facade's average colour with distance so nothing shimmers.
+  function windows(mat, kind) {
+    mat.customProgramCacheKey = () => 'nv-' + kind;
     mat.onBeforeCompile = sh => {
-      sh.uniforms.uFloor = { value: F }; sh.uniforms.uBay = { value: (glass ? 3.2 : 4.4) * S }; sh.uniforms.uLit = { value: glass ? .55 : .42 };
+      sh.uniforms.uFloor = { value: F }; sh.uniforms.uBay = { value: ({ wall: 3.6, villa: 4.2, glass: 1.5 })[kind] * S }; sh.uniforms.uLit = { value: ({ wall: .5, villa: .35, glass: .5 })[kind] };
       sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vWP; varying vec3 vWN;')
         .replace('#include <project_vertex>', `#include <project_vertex>
           vec4 nvP = vec4(transformed, 1.0); vec3 nvN = objectNormal;
@@ -442,6 +470,45 @@ export function buildBlocks(THREE, data, opt = {}) {
             nvP = instanceMatrix * nvP; nvN = mat3(instanceMatrix) * nvN;
           #endif
           vWP = (modelMatrix * nvP).xyz; vWN = normalize(mat3(modelMatrix) * nvN);`);
+      const body = {
+        wall: `
+            float bay = floor(hc), hb = fract(sin(bay * 12.9898 + floor(vc) * 3.7) * 43758.5453), hcol = fract(sin(bay * 7.13 + dot(floor(vWP.xz / (uBay * 9.0)), vec2(3.1, 5.7))) * 4375.85);
+            float loggia = step(.82, hcol);
+            float wx0 = mix(.31, .10, loggia), wx1 = 1.0 - wx0;
+            float win = step(wx0, fx) * step(fx, wx1) * step(.20, fy) * step(fy, .84);
+            float frm = step(wx0 - .025, fx) * step(fx, wx1 + .025) * step(.18, fy) * step(fy, .86) - win;
+            float shop = 0.0, band = 0.0;
+            if (vc < 1.0) { win = step(.05, fx) * step(fx, .95) * step(.06, fy) * step(fy, .84); frm = step(.03, fx) * step(fx, .97) * step(.04, fy) * step(fy, .86) - win; shop = 1.0; }
+            band = step(.9, fy) * (1.0 - step(2.0, vc)) * step(1.0, vc + .1);
+            vec3 glassC = mix(vec3(.045, .052, .058), vec3(.17, .19, .20), clamp(fy * 1.2 - .2, 0., 1.));
+            if (loggia > .5) glassC *= .6;
+            vec3 stone = diffuseColor.rgb * (1.04 + .05 * step(.5, fract(hc * 2.0)) * (1.0 - win));
+            vec3 det = mix(stone, glassC, win); det = mix(det, vec3(.36, .27, .18), frm * .9); det = mix(det, diffuseColor.rgb * 1.1, band * (1.0 - win));
+            vec3 avgc = mix(diffuseColor.rgb, vec3(.12, .12, .12), .24);
+            float aa = clamp(2.2 - 2.0 * max(fwidth(hc), fwidth(vc)), 0., 1.);
+            nvLit = wall * (shop > .5 ? mix(.4, win * .85, aa) : mix(.05, win * step(.8, hb), aa));
+            diffuseColor.rgb = mix(diffuseColor.rgb, mix(avgc, det, aa), wall);`,
+        villa: `
+            float bay = floor(hc), hb = fract(sin(bay * 12.9898 + floor(vc) * 3.7) * 43758.5453);
+            float win = step(.12, fx) * step(fx, .88) * step(.10, fy) * step(fy, .86);
+            float louv = step(.45, hb), slat = step(.5, fract(vc * 14.0));
+            vec3 glassC = mix(vec3(.12, .14, .15), vec3(.32, .35, .36), fy);
+            vec3 wood = mix(vec3(.44, .30, .18), vec3(.58, .41, .25), slat);
+            vec3 det = mix(diffuseColor.rgb, louv > .5 ? wood : glassC, win);
+            det = mix(det, vec3(.4, .32, .24), (step(.09, fx) * step(fx, .91) * step(.08, fy) * step(fy, .88) - win) * .8);
+            float aa = clamp(2.2 - 2.0 * max(fwidth(hc), fwidth(vc)), 0., 1.);
+            vec3 avgc = mix(diffuseColor.rgb, vec3(.35, .3, .26), .3);
+            nvLit = wall * mix(.05, win * (1.0 - louv) * step(.6, fract(hb * 7.0)), aa);
+            diffuseColor.rgb = mix(diffuseColor.rgb, mix(avgc, det, aa), wall);`,
+        glass: `
+            float hb = fract(sin(floor(vc) * 12.9898 + floor(hc / 6.0) * 4.1) * 43758.5453);
+            float mul = 1.0 - step(.06, fx) * step(fx, .94), fl2 = 1.0 - step(.08, fy) * step(fy, .97);
+            vec3 glassC = mix(vec3(.16, .23, .27), vec3(.46, .54, .58), clamp(fy * .9 + .05, 0., 1.));
+            vec3 det = mix(glassC, vec3(.42, .31, .19), max(mul, fl2) * .9);
+            float aa = clamp(2.2 - 2.0 * max(fwidth(hc), fwidth(vc)), 0., 1.);
+            nvLit = wall * mix(.06, (1.0 - max(mul, fl2)) * step(.86, hb), aa);
+            diffuseColor.rgb = mix(diffuseColor.rgb, mix(vec3(.27, .32, .34), det, aa), wall);`,
+      }[kind];
       sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vWP; varying vec3 vWN; uniform float uFloor, uBay, uLit; float nvLit = 0.0;')
         .replace('#include <color_fragment>', `#include <color_fragment>
           {
@@ -449,21 +516,11 @@ export function buildBlocks(THREE, data, opt = {}) {
             vec2 t2 = normalize(vec2(-vWN.z, vWN.x) + vec2(1e-4));
             float hc = dot(vWP.xz, t2) / uBay, vc = (vWP.y - ${PT.toFixed(3)}) / uFloor;
             float fx = fract(hc), fy = fract(vc);
-            ${glass
-              ? 'float w = step(.07, fx) * step(fx, .93) * step(.10, fy) * step(fy, .95); float avg = .72;'
-              : 'float mf = clamp(2.2 - 3.0 * fwidth(hc), 0., 1.); float w = step(.34, fy) * step(fy, .88) * (1.0 - step(fx, .05) * mf); float avg = .5; if (vc < 1.0) { w = step(.08, fy) * step(fy, .92) * (1.0 - step(fx, .07) * mf); }'}
-            float aa = clamp(2.0 - 2.4 * fwidth(vc), 0., 1.);
-            float h = fract(sin(dot(floor(vec2(hc, vc)), vec2(12.9898, 78.233))) * 43758.5453);
-            nvLit = mix(avg * .32, w * step(.66, h), aa) * wall;
-            w = mix(avg, w, aa) * wall;
-            vec3 gcol = mix(vec3(.15, .19, .22), vec3(.38, .45, .5), clamp(fy * 1.1 - .2, 0., 1.) * .7);
-            ${glass ? '' : 'if (fy < .08 && vc > .9) diffuseColor.rgb = min(diffuseColor.rgb * 1.12, vec3(1.0));'}
-            diffuseColor.rgb = mix(diffuseColor.rgb, ${glass ? 'vec3(.20, .27, .31)' : 'gcol'}, w * ${glass ? '.9' : '.82'});
-            ${glass ? 'diffuseColor.rgb = mix(diffuseColor.rgb, vec3(.55, .54, .5), (1.0 - w) * wall * .6);' : ''}
-            if (vWN.y > .6) diffuseColor.rgb *= 1.05;
+            ${body}
+            if (vWN.y > .6) diffuseColor.rgb *= 1.03;
           }`)
         .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
-          totalEmissiveRadiance += vec3(1.0, .66, .36) * nvLit * uLit;`);
+          totalEmissiveRadiance += vec3(1.0, .68, .38) * nvLit * uLit;`);
     };
     return mat;
   }
@@ -492,6 +549,7 @@ export function buildBlocks(THREE, data, opt = {}) {
           vec3 panel = mix(mix(vec3(.08, .12, .21), vec3(.62, .66, .7), fr), vec3(.13, .17, .26), clamp(fw * 2.2 - .4, 0., 1.));
           vec3 gnd = vec3(.78, .69, .52);
           vec3 outc = mix(mix(gnd, panel, band), mix(gnd, vec3(.13, .17, .26), .56), clamp(fwr * 3.0 - .3, 0., 1.));`,
+        pergola: `float sl = fract(vLoc.x / .6); if (sl > .45 && fwidth(vLoc.x / .6) < .6) discard; vec3 outc = diffuseColor.rgb;`,
         track: `float y = abs(vLoc.y), fwy = fwidth(vLoc.y), sl = fract(vLoc.x / .65), fws = fwidth(vLoc.x / .65);
           float n = fract(sin(dot(floor(vLoc * 6.0), vec2(12.9898, 78.233))) * 43758.5453);
           vec3 col = vec3(.46, .42, .37) * (.9 + .2 * n);
@@ -506,10 +564,13 @@ export function buildBlocks(THREE, data, opt = {}) {
     return mat;
   }
   const M = {
-    wall: windows(new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: .85 }), false),
-    villa: windows(new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: .8 }), false),
-    glass: windows(new THREE.MeshStandardMaterial({ color: 0x9fb4bd, roughness: .25, metalness: .35 }), true),
+    wall: windows(new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: .85 }), 'wall'),
+    villa: windows(new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: .8 }), 'villa'),
+    glass: windows(new THREE.MeshStandardMaterial({ color: 0x9fb4bd, roughness: .22, metalness: .4 }), 'glass'),
     plain: new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: .9 }),
+    stone: new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: .85 }),
+    wood: new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: .8 }),
+    pergola: pattern(new THREE.MeshStandardMaterial({ color: 0x8a6440, roughness: .8, transparent: true, alphaTest: .5 }), 'pergola'),
     green: new THREE.MeshStandardMaterial({ color: 0x6f8b48, roughness: 1 }),
     lawn: new THREE.MeshStandardMaterial({ color: 0x7d9a52, roughness: 1 }),
     water: new THREE.MeshStandardMaterial({ color: 0x3f93ad, roughness: .2, metalness: .1, emissive: 0x0b2a33 }),
