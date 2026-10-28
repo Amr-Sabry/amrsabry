@@ -289,7 +289,7 @@ function build(){
     }
     const merged = mergeGeometries(geos.map(g => { g.deleteAttribute('uv'); return g; }), false); geos.forEach(g => g.dispose());
     // built parcels get a muted version of their colour so the buildings read on top; parks, lakes and golf keep theirs
-    const pc = new THREE.Color(cat.color); if(!cat.overlay && !['pk','gl','gf','pz'].includes(k)) pc.lerp(new THREE.Color('#8a857d'), 0.8);   // like the slide: grey streets between white blocks, a hint of the land-use colour
+    const pc = new THREE.Color(cat.color); if(!cat.overlay && !['pk','gl','gf','pz'].includes(k)) pc.lerp(new THREE.Color('#d3c7b0'), 0.86);   // built plots read as light stone paving, a hint of the land-use colour   // like the slide: grey streets between white blocks, a hint of the land-use colour
     const mat = new THREE.MeshStandardMaterial({color:pc, roughness:.85, transparent:!!cat.overlay, opacity:cat.overlay?0.3:1, depthWrite:!cat.overlay});
     const mesh = new THREE.Mesh(merged, mat); mesh.castShadow = !cat.overlay; mesh.receiveShadow = true; mesh.userData.cat = k;
     world.add(mesh); catMesh[k] = mesh; catRanges[k] = ranges;

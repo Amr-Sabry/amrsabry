@@ -24,6 +24,12 @@ export function buildBlocks(THREE, data, opt = {}) {
     for (let i = 0; i < outer.length; i++) { const a = outer[i], b = outer[(i + 1) % outer.length], L = Math.hypot(b[0] - a[0], b[1] - a[1]);
       if (L > best) { best = L; ang = Math.atan2(b[1] - a[1], b[0] - a[0]); }
       x0 = Math.min(x0, a[0]); y0 = Math.min(y0, a[1]); x1 = Math.max(x1, a[0]); y1 = Math.max(y1, a[1]); }
+    // the edge that fronts the widest road (length x road width) sets the grid, so blocks face their boulevard
+    if (typeof rgrid !== 'undefined' && rgrid.size) { let bs = 0;
+      for (let i = 0; i < outer.length; i++) { const a = outer[i], b = outer[(i + 1) % outer.length], L = Math.hypot(b[0] - a[0], b[1] - a[1]); if (L < 40) continue;
+        const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2, Lc = rgrid.get(Math.floor(mx / RC) + ',' + Math.floor(my / RC)); if (!Lc) continue;
+        for (const sg of Lc) { if (dSeg(mx, my, sg.a, sg.b) > sg.w / 2 + 25) continue; const ea = Math.atan2(b[1] - a[1], b[0] - a[0]), ra = Math.atan2(sg.b[1] - sg.a[1], sg.b[0] - sg.a[0]);
+          const par = Math.abs(Math.cos(ea - ra)); if (par < .9) continue; const sc = L * sg.w * par; if (sc > bs) { bs = sc; ang = ea; } } } }
     const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, ca = Math.cos(ang), sa = Math.sin(ang);
     let u0 = 1e9, u1 = -1e9, v0 = 1e9, v1 = -1e9;
     for (const p of outer) { const u = (p[0] - cx) * ca + (p[1] - cy) * sa, v = -(p[0] - cx) * sa + (p[1] - cy) * ca; u0 = Math.min(u0, u); u1 = Math.max(u1, u); v0 = Math.min(v0, v); v1 = Math.max(v1, v); }
@@ -68,6 +74,43 @@ export function buildBlocks(THREE, data, opt = {}) {
   const rejected = []; let treeOut = false;
   const rectHit = (x, y) => rejected.some(r => { const c = Math.cos(r.a), s2 = Math.sin(r.a), u = (x - r.x) * c + (y - r.y) * s2, v = -(x - r.x) * s2 + (y - r.y) * c; return Math.abs(u) <= r.w / 2 + .5 && Math.abs(v) <= r.d / 2 + .5; });
   const drop = { roads: 0, trees: 0 };
+
+  /* ---------- urban design rules (the consultant's code, from the framework plan p.21 and the developed plan p.31) ---------- */
+  // centre of gravity = the station; heritage edge = the UNESCO buffer; the Giza heritage axis runs from the centre to Khufu
+  const stPoly = (data.extras && data.extras.station && data.extras.station.poly) || [[0, 0]];
+  const C0 = stPoly.reduce((a, p) => [a[0] + p[0] / stPoly.length, a[1] + p[1] / stPoly.length], [0, 0]);
+  const whZ = zones.find(z => z.cat === 'wh'), whRing = whZ ? whZ.polys[0][0] : null;
+  const khufu = ((data.extras && data.extras.pyramids) || []).find(p => /Khufu/.test(p.en || ''));
+  const gAx = khufu ? (() => { const dx = khufu.p[0] - C0[0], dy = khufu.p[1] - C0[1], L = Math.hypot(dx, dy); return [dx / L, dy / L]; })() : [0, 1];
+  const dRing = (r, x, y) => { let d = 1e9; for (let i = 0, j = r.length - 1; i < r.length; j = i++) d = Math.min(d, dSeg(x, y, r[j], r[i])); return d; };
+  const inRingP = (r, x, y) => { let c = false; for (let i = 0, j = r.length - 1; i < r.length; j = i++) { const a = r[i], b = r[j]; if ((a[1] > y) !== (b[1] > y) && x < (b[0] - a[0]) * (y - a[1]) / (b[1] - a[1]) + a[0]) c = !c; } return c; };
+  const heritageDist = (x, y) => !whRing ? 1e9 : inRingP(whRing, x, y) ? 0 : dRing(whRing, x, y);
+  const inGizaCorridor = (x, y) => { const dx = x - C0[0], dy = y - C0[1], t = dx * gAx[0] + dy * gAx[1]; return t > 200 && Math.abs(-dx * gAx[1] + dy * gAx[0]) < 160; };
+  const nearRoad = (x, y, minW, pad) => { const L = rgrid.get(Math.floor(x / RC) + ',' + Math.floor(y / RC)); if (L) for (const sg of L) if (sg.w >= minW && dSeg(x, y, sg.a, sg.b) < sg.w / 2 + pad) return sg; return null; };
+  // junctions of the 100 m boulevards: tower nodes
+  const nodes100 = []; { const R100 = roads.filter(r => (r.w || 0) >= 100);
+    for (let i = 0; i < R100.length; i++) for (let j = i + 1; j < R100.length; j++) for (let a = 1; a < R100[i].p.length; a++) for (let b = 1; b < R100[j].p.length; b++) {
+      const p1 = R100[i].p[a - 1], p2 = R100[i].p[a], p3 = R100[j].p[b - 1], p4 = R100[j].p[b], d = (p2[0] - p1[0]) * (p4[1] - p3[1]) - (p2[1] - p1[1]) * (p4[0] - p3[0]); if (Math.abs(d) < 1e-9) continue;
+      const t = ((p3[0] - p1[0]) * (p4[1] - p3[1]) - (p3[1] - p1[1]) * (p4[0] - p3[0])) / d, u = ((p3[0] - p1[0]) * (p2[1] - p1[1]) - (p3[1] - p1[1]) * (p2[0] - p1[0])) / d;
+      if (t >= 0 && t <= 1 && u >= 0 && u <= 1) nodes100.push([p1[0] + (p2[0] - p1[0]) * t, p1[1] + (p2[1] - p1[1]) * t]); } }
+  // floors for a building at (x, y) under the parcel's regulated maximum (DWG): full height around the centre and on the
+  // boulevards, a gentle fall-off towards the edges, 3-4 floors within 700 m of the UNESCO buffer and in the Giza corridor
+  const PLAN = { capped: 0, towersAllowed: 0 };
+  function floorsAt(x, y, flMax, R, corner = false) {
+    const dC = Math.hypot(x - C0[0], y - C0[1]);
+    let f = flMax * (1 - .32 * Math.min(1, Math.max(0, (dC - 1400) / 3600)));
+    if (!corner && !nearRoad(x, y, 60, 45)) f -= R() < .5 ? 1 : 0;             // interior streets a floor lower now and then
+    const dH = heritageDist(x, y);
+    if (dH < 700 || inGizaCorridor(x, y)) { const cap = dH < 300 ? 3 : 4; if (f > cap) { f = cap; PLAN.capped++; } }
+    return Math.max(1, Math.min(flMax, Math.round(f)));
+  }
+  // towers (landmark buildings at the regulated maximum, glass) only at nodes: near the station or a 100 m junction in the core
+  function towerOK(x, y) {
+    if (heritageDist(x, y) < 900 || inGizaCorridor(x, y)) return false;
+    const dC = Math.hypot(x - C0[0], y - C0[1]); if (dC < 900) return true;
+    return dC < 3200 && nodes100.some(n => Math.hypot(n[0] - x, n[1] - y) < 260);
+  }
+  let curFar = 0;                                    // FAR of the parcel being built (from its DWG tag)
 
   /* ---------- instance bins: one InstancedMesh per (category, geometry, material) ---------- */
   const bins = new Map(), plazas = [], records = [];
@@ -212,7 +255,16 @@ export function buildBlocks(THREE, data, opt = {}) {
   // buildings along every edge of a block (the perimeter blocks of the slide), courtyard in the middle
   function perimeter(c, R, poly, o) {
     const n = poly.length, dep = o.depth, sb = o.setback ?? 4;
+    // openness by whole sides, not random gaps: an open block becomes a U or an L that keeps its street fronts
+    // (the sides facing the widest roads), the way the developed plan opens its blocks to gardens
+    let keep = null; const pf = o.porosityFar ?? 0;
+    if (pf > .08 && n >= 3) {
+      const sc = poly.map((a, i) => { const b = poly[(i + 1) % n], L = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1, nx = -(b[1] - a[1]) / L, ny = (b[0] - a[0]) / L;
+        const mx = (a[0] + b[0]) / 2 - nx * 14, my = (a[1] + b[1]) / 2 - ny * 14, rd = nearRoad(mx, my, 0, 14); return [(rd ? rd.w : 0) * 1000 + L, i]; });
+      sc.sort((x, y) => y[0] - x[0]); keep = new Set(sc.slice(0, Math.max(Math.min(2, n), Math.round(n * (1 - pf) + .3))).map(t => t[1]));
+    }
     for (let i = 0; i < n; i++) {
+      if (keep && !keep.has(i)) continue;
       const a = poly[i], b = poly[(i + 1) % n], L = Math.hypot(b[0] - a[0], b[1] - a[1]);
       const ux = (b[0] - a[0]) / L, uy = (b[1] - a[1]) / L, nx = -uy, ny = ux, ang = Math.atan2(uy, ux);
       const usable = L - dep * (o.openCorners ? 1.6 : 1);
@@ -222,20 +274,25 @@ export function buildBlocks(THREE, data, opt = {}) {
           if (R() < (o.porosity ?? 0)) continue;
           const sAl = (L - usable) / 2 + j * (bl + gap) + bl / 2;
           const cx = a[0] + ux * sAl + nx * (dep / 2 + sb), cy = a[1] + uy * sAl + ny * (dep / 2 + sb);
-          modern(c, R, cx, cy, ang, bl, dep, Math.max(1, Math.round(o.fl * (.45 + R() * .35))), pick(R, o.pal));
+          modern(c, R, cx, cy, ang, bl, dep, floorsAt(cx, cy, o.fl, R), pick(R, o.pal));
         }
       }
       // corner accent: a square, slightly taller volume where two long edges meet
       const pn = poly[(i + 2) % n], L2 = Math.hypot(pn[0] - b[0], pn[1] - b[1]);
-      if (!o.openCorners && L >= 24 && L2 >= 24 && R() < (o.corner ?? .5)) {
+      if (!o.openCorners && L >= 24 && L2 >= 24 && (!keep || keep.has((i + 1) % n)) && R() < (o.corner ?? .5)) {
         const cx = b[0] - ux * (dep / 2) + nx * (dep / 2 + sb), cy = b[1] - uy * (dep / 2) + ny * (dep / 2 + sb);
-        modern(c, R, cx, cy, ang, dep, dep, Math.max(1, Math.round(o.fl * (.75 + R() * .25))), pick(R, o.pal));
+        modern(c, R, cx, cy, ang, dep, dep, floorsAt(cx, cy, o.fl, R, true), pick(R, o.pal));
       }
     }
   }
   // split a parcel into street blocks aligned with its long edge; edge blocks follow the parcel's curves
   function perimBlocks(c, P, R, o) {
     const outer = ccw(P.outer), cw = o.cw, chh = o.ch, s2 = o.street / 2;
+    // openness from the regulated FAR: built area = FAR x plot / floors, so the ring of buildings opens up (gaps, U-blocks)
+    // until its footprint matches what the DWG allows
+    if (curFar > 0 && !o.noFar) { const B = cw - o.street, C = chh - o.street, dp = o.depth, ring = (B * C - Math.max(0, B - 2 * dp) * Math.max(0, C - 2 * dp)) / (cw * chh);
+      const meanF = Math.max(1, o.fl * .92), target = curFar / meanF;
+      o.porosityFar = Math.max(o.noPorosity ? 0 : (o.porosity || 0), Math.min(.62, 1 - target / ring)); }
     const u00 = P.u0 - (((P.u1 - P.u0) % cw) / 2), v00 = P.v0 - (((P.v1 - P.v0) % chh) / 2);
     for (let v = v00; v < P.v1; v += chh) for (let u = u00; u < P.u1; u += cw) {
       const q = [[u + s2, v + s2], [u + cw - s2, v + s2], [u + cw - s2, v + chh - s2], [u + s2, v + chh - s2]].map(([a, b]) => P.w(a, b));
@@ -250,6 +307,7 @@ export function buildBlocks(THREE, data, opt = {}) {
       const full = A > (cw - o.street) * (chh - o.street) * .8, inner = Math.min(cw, chh) - o.street - 2 * (o.depth + 2);
       if (full && inner > 10) {
         const [gx, gy] = P.w(u + cw / 2, v + chh / 2); put(c, 'box', 'green', gx, gy, PT, cw - o.street - 2 * o.depth - 6, chh - o.street - 2 * o.depth - 6, .04, P.ang, 0xffffff);
+        if (['rp', 'rm', 'hb', 'hu', 'mh', 'hl'].includes(c) && R() < .3) { const [px, py] = P.w(u + cw / 2 + (R() - .5) * 8, v + chh / 2); put(c, 'box', 'pave', px, py, PT + .04, Math.min(26, inner - 6), Math.min(12, inner * .45), .02, P.ang, 0xffffff); put(c, 'box', 'water', px, py, PT + .045, Math.min(20, inner - 10), Math.min(7, inner * .3), .02, P.ang, 0xffffff); }
         const nT = Math.round((inner * inner) / 420 * TD * (o.trees ?? 1));
         for (let k = 0; k < nT; k++) { const [tx, ty] = P.w(u + cw / 2 + (R() - .5) * (cw - o.street - 2 * o.depth - 10), v + chh / 2 + (R() - .5) * (chh - o.street - 2 * o.depth - 10)); if (R() < .75) tree(c, R, tx, ty, PT + .04); else palm(c, R, tx, ty, PT + .04); }
       }
@@ -300,17 +358,17 @@ export function buildBlocks(THREE, data, opt = {}) {
   }
   const GEN = {
     rl(c, P, R) { villaRings(c, P, R, { first: 16, step: 30, street: 18, spacing: 27, min: 23, scale: 1 }); },   // villas along curved streets, lakes and golf
-    rp(c, P, R, fl) { perimBlocks(c, P, R, { cw: 118, ch: 92, street: 24, depth: 13, seg: 30, gap: 11, porosity: .12, corner: .2, fl, pal: SAND, trees: 1.3 }); },
-    rm(c, P, R, fl) { perimBlocks(c, P, R, { cw: 104, ch: 82, street: 22, depth: 14, seg: 42, gap: 9, porosity: .05, corner: .45, fl, pal: SAND }); },
-    rh(c, P, R, fl) { perimBlocks(c, P, R, { cw: 92, ch: 74, street: 20, depth: 14, seg: 58, gap: 6, corner: .6, fl, pal: SAND, vary: 1 }); },
+    rp(c, P, R, fl) { perimBlocks(c, P, R, { cw: 84, ch: 70, street: 18, depth: 13, seg: 30, gap: 10, porosity: .12, corner: .3, fl, pal: SAND, trees: 1.3 }); },
+    rm(c, P, R, fl) { perimBlocks(c, P, R, { cw: 78, ch: 66, street: 18, depth: 13, seg: 36, gap: 8, porosity: .05, corner: .6, fl, pal: SAND }); },
+    rh(c, P, R, fl) { perimBlocks(c, P, R, { cw: 76, ch: 64, street: 17, depth: 14, seg: 40, gap: 6, corner: .7, fl, pal: SAND, vary: 1 }); },
     cd(c, P, R, fl, cov, Z) {                                 // district core: podium + stepped mid-rise, towers, glass pyramid plaza
       let pyr = null;
       if (P.area > 60000) { const [x, y] = P.w((P.u0 + P.u1) / 2, (P.v0 + P.v1) / 2); if (fits(P, x, y, 40, 40, P.ang)) { glassPyr(c, x, y, P.ang, 34); pyr = [x, y]; plazas.push({ x, y, a: P.ang, b: 34 });
         put(c, 'box', 'pave', x, y, PT - .005, 150, 150, .03, P.ang, 0xffffff);
         for (let k = 0; k < 16; k++) { const t = k / 16 * Math.PI * 2; palm(c, R, x + Math.cos(t) * 66, y + Math.sin(t) * 66); } } }
-      perimBlocks(c, P, R, { cw: 120, ch: 100, street: 26, depth: 17, seg: 46, gap: 8, corner: .7, fl, pal: SAND,
+      perimBlocks(c, P, R, { cw: 88, ch: 76, street: 20, depth: 16, seg: 40, gap: 7, corner: .85, fl, pal: SAND,
         special: (x, y, blk, A) => { if (pyr && (Math.hypot(x - pyr[0], y - pyr[1]) < 100 || blk.some(p => Math.hypot(p[0] - pyr[0], p[1] - pyr[1]) < 78))) return true;
-          if (fl >= 6 && A > 5000 && R() < .12) { tower(c, R, x, y, P.ang, 22, Math.round(fl * 1.5)); return true; } return false; } });
+          if (fl >= 6 && A > 3000 && towerOK(x, y) && R() < .35) { tower(c, R, x, y, P.ang, 22, fl); PLAN.towersAllowed++; return true; } return false; } });
     },
     me(c, P, R, fl, cov) {                                    // entry district: a long colonnade facing the axis + blocks
       const [x, y] = P.w(P.u0 + (P.u1 - P.u0) * .5, P.v0 + 26);
@@ -319,7 +377,7 @@ export function buildBlocks(THREE, data, opt = {}) {
         for (let k = -60; k <= 60; k += 6) { const [cx, cy] = off(x, y, P.ang, k, -13); put(c, 'cyl', 'plain', cx, cy, PT, 1.6, 1.6, 2.6 * F, 0, 0xf6f1e8); }
         const [wx, wy] = off(x, y, P.ang, 0, -40); put(c, 'box', 'water', wx, wy, PT, 14, 50, .03, P.ang, 0xffffff);
       }
-      perimBlocks(c, P, R, { cw: 104, ch: 86, street: 24, depth: 15, seg: 44, gap: 8, corner: .6, fl, pal: WARM,
+      perimBlocks(c, P, R, { cw: 84, ch: 72, street: 20, depth: 15, seg: 40, gap: 8, corner: .7, fl, pal: WARM,
         special: (x2, y2) => Math.hypot(x2 - x, y2 - y) < 90 && P.area > 60000 });
     },
     mc(c, P, R, fl) {                                         // media city core: sound stages + production offices
@@ -328,8 +386,8 @@ export function buildBlocks(THREE, data, opt = {}) {
           put(c, 'box', 'plain', x, y, PT + 3.9 * F, 62.3, 42.3, .25 * F, a, 0x3e4246);                              // dark band under the roof
           put(c, 'box', 'solar', x, y, PT + 4.5 * F, 59, 39, .05, a, 0xffffff);                                       // solar roof
           for (const s2 of [-1, 1]) put(c, 'box', 'plain', ...off(x, y, a, s2 * 31.2, 0), PT, .6, 14, 3 * F, a, 0x55595d); }   // stage doors
-        else if (R() < .35) tower(c, R, x, y, a, 20, fl + 4);
-        else modern(c, R, x, y, a, 58, 22, fl, pick(R, SAND));
+        else if (towerOK(x, y) && R() < .5) { tower(c, R, x, y, a, 20, fl); PLAN.towersAllowed++; }
+        else modern(c, R, x, y, a, 58, 22, floorsAt(x, y, fl, R), pick(R, SAND));
       }, 0, 0);
     },
     mb(c, P, R) {                                             // backlots: streets of film-set facades
@@ -340,21 +398,21 @@ export function buildBlocks(THREE, data, opt = {}) {
         if (R() < .2 * TD) palm(c, R, ...off(x, y, a, w / 2 + 2, d / 2 + 2));
       }, 0, 3);
     },
-    mh(c, P, R, fl) { perimBlocks(c, P, R, { cw: 120, ch: 96, street: 20, depth: 16, seg: 56, gap: 14, porosity: .1, corner: .5, fl, pal: CREAM,
-      special: (x, y, blk, A) => { if (A > 6000 && R() < .25) { tower(c, R, x, y, P.ang, 22, fl + 3); put(c, 'box', 'water', ...off(x, y, P.ang, 0, 34), PT, 30, 10, .03, P.ang, 0xffffff); return true; } return false; } }); },
+    mh(c, P, R, fl) { perimBlocks(c, P, R, { cw: 96, ch: 80, street: 18, depth: 15, seg: 48, gap: 12, porosity: .1, corner: .5, fl, pal: CREAM,
+      special: (x, y, blk, A) => { if (A > 4000 && towerOK(x, y) && R() < .4) { tower(c, R, x, y, P.ang, 22, fl); PLAN.towersAllowed++; put(c, 'box', 'water', ...off(x, y, P.ang, 0, 34), PT, 30, 10, .03, P.ang, 0xffffff); return true; } return false; } }); },
     hl(c, P, R, fl) {                                         // luxury resort: main lodge, pavilions, pools, palms
       const [x, y] = P.w((P.u0 + P.u1) / 2, (P.v0 + P.v1) / 2); if (fits(P, x, y, 40, 18, P.ang)) stepped(c, R, x, y, P.ang, 80, 30, fl + 1, 0xe7d3b3);
       slots(P, R, 18, 14, 32, 30, 6, (x2, y2, a) => { if (Math.hypot(x2 - x, y2 - y) < 60) return; villa(c, R, x2, y2, a, 1.1, pick(R, WARM)); }, .5, 6);
       scatter(P, R, 26 / Math.sqrt(TD), (x2, y2) => { if (R() < .3) palm(c, R, x2, y2); });
     },
-    hu(c, P, R, fl) { perimBlocks(c, P, R, { cw: 108, ch: 88, street: 18, depth: 15, seg: 44, gap: 12, porosity: .18, corner: .4, fl, pal: WARM, trees: 1.2 }); },
+    hu(c, P, R, fl) { perimBlocks(c, P, R, { cw: 90, ch: 74, street: 18, depth: 14, seg: 40, gap: 12, porosity: .18, corner: .4, fl, pal: WARM, trees: 1.2 }); },
     hb(c, P, R, fl) {                                         // branded residences: courtyard blocks near the streets, villas behind
       if (P.area > 250000) villaRings(c, P, R, { first: 18, step: 33, street: 18, spacing: 30, min: 26, scale: 1.15, pal: CREAM });
       else perimBlocks(c, P, R, { cw: 100, ch: 80, street: 18, depth: 13, seg: 30, gap: 10, porosity: .2, corner: .3, fl, pal: CREAM, trees: 1.4 });
     },
     ed(c, P, R, fl) { perimBlocks(c, P, R, { cw: 140, ch: 110, street: 22, depth: 16, seg: 52, gap: 18, porosity: .25, openCorners: true, fl, pal: SAND, trees: 1.5 }); },
-    ip(c, P, R, fl) { perimBlocks(c, P, R, { cw: 104, ch: 84, street: 18, depth: 18, seg: 40, gap: 12, porosity: .1, corner: .3, fl, pal: SAND }); },
-    in(c, P, R, fl) { perimBlocks(c, P, R, { cw: 120, ch: 96, street: 20, depth: 16, seg: 50, gap: 14, porosity: .15, openCorners: true, fl, pal: CREAM, trees: 1.3 }); },
+    ip(c, P, R, fl) { perimBlocks(c, P, R, { cw: 86, ch: 72, street: 18, depth: 17, seg: 38, gap: 12, porosity: .1, corner: .4, fl, pal: SAND }); },
+    in(c, P, R, fl) { perimBlocks(c, P, R, { cw: 100, ch: 80, street: 20, depth: 16, seg: 44, gap: 14, porosity: .15, openCorners: true, fl, pal: CREAM, trees: 1.3, noFar: true }); },
     rt(c, P, R) {                                             // retail: big mall halls with glass-pyramid skylights
       slots(P, R, 120, 70, 150, 110, 10, (x, y, a) => { const t = slab(c, x, y, a, 120, 70, 2, pick(R, SAND), PT, 'plain'); glassPyr(c, x, y, a, 26, t); for (const s of [-1, 1]) palm(c, R, ...off(x, y, a, s * 64, 40)); }, .5, 0);
     },
@@ -383,7 +441,9 @@ export function buildBlocks(THREE, data, opt = {}) {
   for (const Z of zones) {
     const gen = GEN[Z.cat]; if (!gen) continue;
     const R = rngOf(hashStr(Z.id || Z.pid || Z.ar)), fl = Math.max(1, lv(Z)), far = farOf(Z), cov = far ? far / fl : .2;
+    curFar = far;
     for (const poly of Z.polys) { const P = prep(poly); if (P.area < 800) continue; gen(Z.cat, P, R, fl, cov, Z); }
+    curFar = 0;
   }
   // the theme park's signature rides on its biggest parcel
   const tps = zones.filter(z => z.cat === 'tp').sort((a, b) => (b.area || 0) - (a.area || 0));
@@ -406,6 +466,8 @@ export function buildBlocks(THREE, data, opt = {}) {
     for (let i = 1; i < p.length; i++) {
       const a = p[i - 1], b = p[i], L = Math.hypot(b[0] - a[0], b[1] - a[1]); if (!L) continue; const dx = (b[0] - a[0]) / L, dy = (b[1] - a[1]) / L;
       for (let s = carry; s < L; s += step) for (const o of offs) palm('_road', RR, a[0] + dx * s - dy * o, a[1] + dy * s + dx * o, 0.3);
+      const so = r.w >= 100 ? [-41, 41] : [-19.5, 19.5];                       // shade trees on the pavement, between the palms
+      if (!MOB) for (let s = carry + step / 2; s < L; s += step) for (const o of so) tree('_road', RR, a[0] + dx * s - dy * o, a[1] + dy * s + dx * o, 0.3, .9);
       carry = (carry - L) % step; if (carry < 0) carry += step;
     }
   }
@@ -666,6 +728,6 @@ export function buildBlocks(THREE, data, opt = {}) {
       else b.mesh.setMatrixAt(i, zero);
       b.mesh.instanceMatrix.needsUpdate = true; }
   }
-  stats.records = records.length;
+  stats.records = records.length; stats.plan = { ...PLAN, nodes100: nodes100.length, centre: C0.map(Math.round) };
   return { byCat, extra, stats, plazas, records, show, levels: lv, update: t => { for (const f of spinners) f(t); } };
 }
