@@ -70,7 +70,10 @@ export function buildBlocks(THREE, data, opt = {}) {
   const drop = { roads: 0, trees: 0 };
 
   /* ---------- instance bins: one InstancedMesh per (category, geometry, material) ---------- */
-  const bins = new Map(), plazas = [];
+  const bins = new Map(), plazas = [], records = [];
+  let curRec = null;
+  const beginRec = rec => { const prev = curRec; rec.parts = []; rec.prev = prev; curRec = rec; return rec; };
+  const endRec = rec => { curRec = rec.prev; delete rec.prev; if (rec.parts.length) { rec.id = records.length; records.push(rec); } };
   function put(cat, g, m, x, y, z0, w, d, h, a, col) {
     if (g === 'trunk') { treeOut = onCarriage(x, y); if (treeOut) { drop.trees++; return; } }
     else if (g === 'ico' || g === 'crown') { if (treeOut) return; }
@@ -81,6 +84,7 @@ export function buildBlocks(THREE, data, opt = {}) {
     } else if (rectHit(x, y)) return;                         // stacked on something that was dropped
     const k = cat + '|' + g + '|' + m; let b = bins.get(k); if (!b) { b = { cat, g, m, L: [] }; bins.set(k, b); }
     b.L.push(x, y, z0, w, d, h, a, col);
+    if (curRec && !['lawn', 'leaf', 'frond', 'trunk'].includes(m) && g !== 'trunk') curRec.parts.push(b, b.L.length / 8 - 1);
   }
 
   /* ---------- palettes (from the renders) ---------- */
@@ -115,11 +119,12 @@ export function buildBlocks(THREE, data, opt = {}) {
     const [gx, gy] = off(x, y, a, 0, open ? k / 2 : 0); roofG(c, gx, gy, a, W - 2 * k - 2, D - 2 * k - (open ? 0 : 2), PT);
   }
   function tower(c, R, x, y, a, w, fl, glass = true) {               // stone podium, bronze-glass shaft held by a stone frame
-    const st = pick(R, SAND), t = slab(c, x, y, a, w * 1.6, w * 1.4, 2, st), d = w * (.8 + R() * .3);
+    const st = pick(R, SAND), d0 = w * (.8 + R() * .3), rec = beginRec({ type: 'tower', cat: c, x, y, a, w, d: d0, fl, col: st });
+    const t = slab(c, x, y, a, w * 1.6, w * 1.4, 2, st), d = d0;
     const top = slab(c, x, y, a, w, d, fl, glass ? 0xffffff : pick(R, CREAM), t, glass ? 'glass' : 'wall');
     if (glass) { for (const [i, j] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) put(c, 'box', 'stone', ...off(x, y, a, i * (w / 2 - .9), j * (d / 2 - .9)), t, 2.2, 2.2, top - t + .9 * F * .5, a, st);
       put(c, 'box', 'stone', x, y, top, w + .8, d + .8, .9 * F * .5, a, st); }
-    cap(c, x, y, a, w * 1.6, w * 1.4, t, st);
+    cap(c, x, y, a, w * 1.6, w * 1.4, t, st); endRec(rec);
   }
   // a thin lighter stone coping on every roof edge (one slightly larger, very low box)
   const cap = (c, x, y, a, w, d, z, col) => { if (w > 4 && d > 4) put(c, 'box', 'stone', x, y, z, w + .5, d + .5, .25 * F, a, col); };
@@ -132,7 +137,7 @@ export function buildBlocks(THREE, data, opt = {}) {
   const awning = (c, R, x, y, a, w, d, side = 1) => { if (MOB || w < 10) return; put(c, 'box', R() < .5 ? 'plain' : 'wood', ...off(x, y, a, 0, side * (d / 2 + 1.3)), PT + .82 * F, w * .92, 2.6, .07 * F, a, pick(R, [0x5a4632, 0x6b543a, 0x3d3a36, 0xe8dfcf])); };
   function villa(c, R, x, y, a, s = 1, col) {
     col ??= pick(R, CREAM);
-    const w = (15 + R() * 5) * s, d = (11 + R() * 3) * s;
+    const w = (15 + R() * 5) * s, d = (11 + R() * 3) * s, rec = beginRec({ type: 'villa', cat: c, x, y, a, w, d, fl: 2, col });
     put(c, 'box', 'lawn', ...off(x, y, a, 0, 3 * s), PT, w + 7 * s, d + 13 * s, .03, a, 0xffffff);
     const t = slab(c, x, y, a, w, d, 1, col, PT + .03, 'villa');
     const sg = R() < .5 ? -1 : 1, [ux, uy] = off(x, y, a, sg * w * .18, -d * .08);
@@ -140,6 +145,7 @@ export function buildBlocks(THREE, data, opt = {}) {
     pergola(c, R, ...off(x, y, a, -sg * w * .3, 0), a, w * .35, d * .6, t);
     const [px, py] = off(x, y, a, -sg * w * .12, d / 2 + 4 * s); put(c, 'box', 'water', px, py, PT + .03, 9 * s, 4.5 * s, 0.03, a, 0xffffff);
     if (R() < .8 * TD) { const [tx, ty] = off(x, y, a, sg * (w / 2 + 3), d / 2 + 2); palm(c, R, tx, ty, PT); }
+    endRec(rec);
   }
   function tree(c, R, x, y, z0 = PT, big = 1) {
     const H = (6 + R() * 6) * big * VEX * S, D = (6 + R() * 5) * big;
@@ -183,6 +189,8 @@ export function buildBlocks(THREE, data, opt = {}) {
   }
   // one modern building: white volume, sometimes a recessed top floor, roof garden or plant on top
   function modern(c, R, x, y, a, w, d, fl, col, shops = SHOPS.has(c)) {
+    const hsh = ((Math.round(x) * 73856093) ^ (Math.round(y) * 19349663)) >>> 0;
+    const rec = beginRec({ type: (['rp', 'hb', 'hu', 'rm'].includes(c) && fl >= 3 && d >= 14 && hsh % 10 < 3) ? 'terrace' : 'mid', cat: c, x, y, a, w, d, fl, col });
     let t;
     if (fl >= 4 && R() < .55) { t = slab(c, x, y, a, w, d, fl - 1, col); cap(c, x, y, a, w, d, t, col); const sh = (R() - .5) * w * .12; const [ux, uy] = off(x, y, a, sh, -d * .06);
       roofG(c, x, y, a, w * .96, d * .9, t + .25 * F); pergola(c, R, ...off(x, y, a, -sh * 2 - w * .2, d * .3), a, w * .4, d * .3, t + .25 * F);
@@ -196,6 +204,7 @@ export function buildBlocks(THREE, data, opt = {}) {
     if (!MOB && fl >= 3 && w > 10) for (let k = 2; k < fl; k += 2) if (R() < .35) for (const sd of [-1, 1]) {
       const [bx, by] = off(x, y, a, (R() - .5) * w * .3, sd * (d / 2 + .45)); put(c, 'box', 'stone', bx, by, PT + k * F - .06 * F, w * (.4 + R() * .4), .9, .08 * F, a, col);
       put(c, 'box', 'green', bx, by, PT + k * F + .02 * F, w * .35, .7, .12 * F, a, 0xffffff); }
+    endRec(rec);
   }
   const SHOPS = new Set(['cd', 'me', 'rm', 'mh', 'rt', 'ip', 'hu']);
   // buildings along every edge of a block (the perimeter blocks of the slide), courtyard in the middle
@@ -586,7 +595,7 @@ export function buildBlocks(THREE, data, opt = {}) {
   const byCat = {}, m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), Zax = new THREE.Vector3(0, 0, 1), pv = new THREE.Vector3(), sv = new THREE.Vector3(), col = new THREE.Color();
   let inst = 0;
   for (const b of bins.values()) {
-    const n = b.L.length / 8, mesh = new THREE.InstancedMesh(GEO[b.g], M[b.m], n); mesh.name = b.g + '|' + b.m;
+    const n = b.L.length / 8, mesh = new THREE.InstancedMesh(GEO[b.g], M[b.m], n); mesh.name = b.g + '|' + b.m; b.mesh = mesh;
     for (let i = 0; i < n; i++) {
       const o = i * 8, L = b.L;
       pv.set(L[o] * S, L[o + 1] * S, L[o + 2]); q.setFromAxisAngle(Zax, L[o + 6]);
@@ -635,5 +644,13 @@ export function buildBlocks(THREE, data, opt = {}) {
     g.traverse(m => { if (m.isMesh) { m.castShadow = true; } }); return g;
   }
 
-  return { byCat, extra, stats, plazas, levels: lv, update: t => { for (const f of spinners) f(t); } };
+  const zero = new THREE.Matrix4().makeScale(0, 0, 0);
+  function show(rec, on) {                          // hide (on = false) or restore the simple version of one building
+    for (let k = 0; k < rec.parts.length; k += 2) { const b = rec.parts[k], i = rec.parts[k + 1], L = b.L, o = i * 8; if (!b.mesh) continue;
+      if (on) { pv.set(L[o] * S, L[o + 1] * S, L[o + 2]); q.setFromAxisAngle(Zax, L[o + 6]); sv.set(Math.max(.01, L[o + 3] * S), Math.max(.01, L[o + 4] * S), Math.max(.005, L[o + 5])); b.mesh.setMatrixAt(i, m4.compose(pv, q, sv)); }
+      else b.mesh.setMatrixAt(i, zero);
+      b.mesh.instanceMatrix.needsUpdate = true; }
+  }
+  stats.records = records.length;
+  return { byCat, extra, stats, plazas, records, show, levels: lv, update: t => { for (const f of spinners) f(t); } };
 }

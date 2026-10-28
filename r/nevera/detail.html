@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nevera detail sample</title>
+<style>
+  :root { --bg: #1a140f; --ink: #f3e7cf; }
+  html, body { margin: 0; height: 100%; background: var(--bg); overflow: hidden; font-family: system-ui, sans-serif; color: var(--ink); }
+  #stage { position: fixed; inset: 0; }
+  #views { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  #views button { background: rgba(26,20,15,.78); color: var(--ink); border: 1px solid rgba(243,231,207,.25); border-radius: 999px; padding: 8px 14px; font: inherit; cursor: pointer; }
+  #title { position: fixed; top: 16px; right: 16px; font-size: 14px; opacity: .85; }
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+</head>
+<body>
+<div id="stage"></div>
+<div id="title">nevera · عيّنة مستوى التفاصيل</div>
+<div id="views"></div>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {buildDetail} from './detail.js';
+
+const renderer = new THREE.WebGLRenderer({antialias: true});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5)); renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
+document.getElementById('stage').appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(35, innerWidth / innerHeight, .5, 4000);
+const controls = new OrbitControls(camera, renderer.domElement); controls.enableDamping = true; controls.maxPolarAngle = Math.PI * .49;
+
+// sky: warm late-afternoon gradient with a bright sun patch, used for the background and as the environment light
+function skyEnv() {
+  const sky = new THREE.Scene(), g = new THREE.SphereGeometry(100, 48, 24);
+  const m = new THREE.ShaderMaterial({ side: THREE.BackSide, uniforms: { sunDir: { value: new THREE.Vector3(-.55, .42, .72).normalize() } },
+    vertexShader: 'varying vec3 vD; void main(){ vD = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: `uniform vec3 sunDir; varying vec3 vD;
+      void main(){ float h = vD.y; vec3 zen = vec3(.33,.46,.62), hor = vec3(1.0,.80,.58), gnd = vec3(.42,.34,.26);
+        vec3 c = h > 0.0 ? mix(hor, zen, pow(h, .55)) : mix(hor * .8, gnd, pow(-h, .4));
+        float s = max(dot(normalize(vD), sunDir), 0.0); c += vec3(1.0,.85,.6) * (pow(s, 600.0) * 30.0 + pow(s, 8.0) * .5);
+        gl_FragColor = vec4(c, 1.0); }` });
+  sky.add(new THREE.Mesh(g, m));
+  const pm = new THREE.PMREMGenerator(renderer), rt = pm.fromScene(sky, .02); return { env: rt.texture, sky };
+}
+const { env } = skyEnv(); scene.environment = env; scene.environmentIntensity = .75;
+{ const c = document.createElement('canvas'); c.width = 2; c.height = 256; const g = c.getContext('2d'), gr = g.createLinearGradient(0, 0, 0, 256);
+  gr.addColorStop(0, '#5576a0'); gr.addColorStop(.6, '#d9b48a'); gr.addColorStop(1, '#f1d2a6'); g.fillStyle = gr; g.fillRect(0, 0, 2, 256);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; scene.background = t; }
+scene.fog = new THREE.Fog(0xe0c29a, 400, 2200);
+const sun = new THREE.DirectionalLight(0xffe0b8, 3.2); sun.position.set(-110, 85, 145); sun.castShadow = true;
+sun.shadow.mapSize.set(4096, 4096); const sc = sun.shadow.camera; sc.left = -140; sc.right = 140; sc.top = 140; sc.bottom = -140; sc.near = 1; sc.far = 600;
+sun.shadow.bias = -.0002; sun.shadow.normalBias = .04; sun.shadow.radius = 3; scene.add(sun);
+scene.add(new THREE.HemisphereLight(0xcfe0ff, 0x6b5640, .35));
+
+const world = new THREE.Group(); world.rotation.x = -Math.PI / 2; scene.add(world);   // z up, like the map
+// ground: paved street, asphalt, kerbs, lawn
+const mk = (w, d, col, z, x = 0, y = 0, rough = .95) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, d, .2).translate(0, 0, -.1 + z), new THREE.MeshStandardMaterial({ color: col, roughness: rough })); m.position.set(x, y, 0); m.receiveShadow = true; world.add(m); return m; };
+mk(900, 900, 0xc9b38e, 0); mk(900, 16, 0x2f2e2c, .02, 0, 0, .9); for (const s of [-1, 1]) mk(900, 5, 0xd8c6a6, .15, 0, s * 10.5);
+for (let x = -440; x < 440; x += 7) mk(3.5, .18, 0xe9e3d6, .03, x, 0);
+mk(160, 70, 0x7d9a52, .05, -20, 60); mk(160, 60, 0x7d9a52, .05, 10, -62);
+// street trees and palms
+const trunkG = new THREE.CylinderGeometry(.18, .28, 1, 6).rotateX(Math.PI / 2).translate(0, 0, .5), crownG = new THREE.IcosahedronGeometry(1, 1);
+const leaf = new THREE.MeshStandardMaterial({ color: 0x4d6c30, roughness: .95 }), bark = new THREE.MeshStandardMaterial({ color: 0x6b5640, roughness: 1 });
+const frondG = (() => { const parts = []; for (let i = 0; i < 9; i++) { const g = new THREE.ConeGeometry(.35, 4.2, 3, 1, true); g.rotateZ(-Math.PI / 2); g.translate(2.1, 0, 0); g.rotateY(.5); g.rotateZ(i / 9 * Math.PI * 2); parts.push(g); }
+  const pos = [], idx = []; let b = 0; for (const g of parts) { const P = g.attributes.position, I = g.index; for (let k = 0; k < P.count; k++) pos.push(P.getX(k), P.getY(k), P.getZ(k)); for (let k = 0; k < I.count; k++) idx.push(I.getX(k) + b); b += P.count; }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setIndex(idx); g.computeVertexNormals(); return g; })();
+const frondM = new THREE.MeshStandardMaterial({ color: 0x5f7f39, roughness: .9, side: THREE.DoubleSide, flatShading: true });
+function tree(x, y, h = 7) { const t = new THREE.Mesh(trunkG, bark); t.scale.set(1, 1, h * .55); t.position.set(x, y, 0); t.castShadow = true; world.add(t);
+  for (let k = 0; k < 9; k++) { const c = new THREE.Mesh(crownG, leaf); c.scale.setScalar(.9 + Math.random() * .7); c.position.set(x + (Math.random() - .5) * 3.4, y + (Math.random() - .5) * 3.4, h * .62 + Math.random() * 2.6); c.castShadow = true; world.add(c); } }
+function palm(x, y, h = 11) { const t = new THREE.Mesh(trunkG, bark); t.scale.set(.8, .8, h); t.position.set(x, y, 0); t.castShadow = true; world.add(t);
+  const f = new THREE.Mesh(frondG, frondM); f.position.set(x, y, h); f.castShadow = true; world.add(f); }
+for (let x = -200; x <= 200; x += 12) { tree(x, 10.8); tree(x + 6, -10.8, 6.5); }
+
+// the sample street: stone mid-rise with colonnade and balconies, stepped terraces, a glass tower, two villas
+const list = [
+  { type: 'mid', x: 0, y: 32, a: 0, w: 46, d: 20, fl: 7, col: 0xd9c19c, seed: 3 },
+  { type: 'terrace', x: 58, y: 34, a: 0, w: 38, d: 24, fl: 6, col: 0xe2cfb0, seed: 5 },
+  { type: 'tower', x: -56, y: 36, a: 0, w: 22, d: 20, fl: 22, col: 0xd2b68e, seed: 7 },
+  { type: 'mid', x: -10, y: -34, a: Math.PI, w: 52, d: 20, fl: 6, col: 0xcfb38c, seed: 11 },
+  { type: 'villa', x: 50, y: -36, a: Math.PI, w: 18, d: 12, col: 0xeee5d4, seed: 13 },
+  { type: 'villa', x: 76, y: -38, a: Math.PI, w: 16, d: 12, col: 0xe8dcc6, seed: 17 },
+];
+const D = buildDetail(THREE, list, { S: 1 }); world.add(D.group);
+for (const [x, y] of [[40, -48], [64, -50], [88, -52], [30, 52], [86, 52]]) palm(x, y);
+console.log('detail', JSON.stringify(D.stats));
+
+const views = {
+  'العمارة': [[30, 22, 42], [0, 14, -30]], 'الرواق والمحلات': [[14, 3.2, 14], [0, 5, -26]], 'التراسات': [[78, 18, 8], [58, 14, -34]],
+  'البرج': [[-5, 30, 30], [-56, 45, -36]], 'الفيلات': [[60, 6, 62], [62, 3, 38]], 'من فوق': [[120, 120, 120], [0, 0, 0]],
+};
+const vb = document.getElementById('views');
+const go = n => { const [p, t] = views[n]; camera.position.set(p[0], p[1], p[2]); controls.target.set(t[0], t[1], t[2]); controls.update(); };
+for (const n of Object.keys(views)) { const b = document.createElement('button'); b.textContent = n; b.onclick = () => go(n); vb.appendChild(b); }
+go('العمارة'); window.__go = go;
+addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); });
+</script>
+</body>
+</html>

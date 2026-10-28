@@ -200,7 +200,7 @@ const mobile = matchMedia('(max-width:640px)').matches;
 const renderer = new THREE.WebGLRenderer({antialias:!mobile, powerPreference:'high-performance'});
 renderer.setPixelRatio(Math.min(devicePixelRatio, mobile ? 1.5 : 1.25));
 renderer.setSize(innerWidth, innerHeight);
-renderer.shadowMap.enabled = !mobile; renderer.shadowMap.type = THREE.PCFShadowMap; renderer.shadowMap.autoUpdate = false;
+renderer.shadowMap.enabled = !mobile; renderer.shadowMap.type = THREE.PCFSoftShadowMap; renderer.shadowMap.autoUpdate = false;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
 stage.appendChild(renderer.domElement);
@@ -218,13 +218,22 @@ controls.addEventListener('change', redraw);
   const gr = g.createLinearGradient(0,0,0,256); gr.addColorStop(0,'#18120d'); gr.addColorStop(.55,'#3a2a1d'); gr.addColorStop(.8,'#8a5d3b'); gr.addColorStop(1,'#c99366');
   g.fillStyle = gr; g.fillRect(0,0,2,256); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; scene.background = t; }
 scene.fog = new THREE.Fog(0x6e4c33, 2600, 9000);
-scene.add(new THREE.HemisphereLight(0xffe8cc, 0x4a3524, 1.2));
-const sun = new THREE.DirectionalLight(0xffd2a0, 2.2); sun.castShadow = !mobile; sun.shadow.mapSize.set(2048,2048); sun.shadow.bias = -0.0005; sun.shadow.normalBias = 0.8;
+const hemi = new THREE.HemisphereLight(0xffe8cc, 0x4a3524, .75); scene.add(hemi);
+{ // a warm late-afternoon sky, prefiltered as the environment: glass and water reflect it, shaded facades get soft sky light
+  const sky = new THREE.Scene(), m = new THREE.ShaderMaterial({ side: THREE.BackSide, uniforms: { sunDir: { value: new THREE.Vector3(-.55, .42, .72).normalize() } },
+    vertexShader: 'varying vec3 vD; void main(){ vD = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: `uniform vec3 sunDir; varying vec3 vD; void main(){ float h = vD.y; vec3 zen = vec3(.33,.46,.62), hor = vec3(1.0,.80,.58), gnd = vec3(.42,.34,.26);
+      vec3 c = h > 0.0 ? mix(hor, zen, pow(h, .55)) : mix(hor * .8, gnd, pow(-h, .4)); float s = max(dot(normalize(vD), sunDir), 0.0);
+      c += vec3(1.0,.85,.6) * (pow(s, 600.0) * 30.0 + pow(s, 8.0) * .5); gl_FragColor = vec4(c, 1.0); }` });
+  sky.add(new THREE.Mesh(new THREE.SphereGeometry(100, 48, 24), m));
+  const pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromScene(sky, .02).texture; scene.environmentIntensity = .55; pm.dispose(); }
+const sun = new THREE.DirectionalLight(0xffd8ac, 2.6); sun.castShadow = !mobile; sun.shadow.mapSize.set(4096,4096); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.6;
 scene.add(sun, sun.target);
 const world = new THREE.Group(); world.rotation.x = -Math.PI/2; scene.add(world);   // shape space: x east, y north, z up
 const ground = new THREE.Mesh(new THREE.CircleGeometry(9000, 64), new THREE.MeshStandardMaterial({color:0xb39470, roughness:1}));
 ground.receiveShadow = true; ground.position.z = -0.2; world.add(ground);
-const VEX = 2;                       // vertical exaggeration used for terrain, buildings and landmarks
+const VEX = 2;                       // vertical exaggeration of the terrain (relief only)
+const BVEX = 1;                      // buildings, station, trains, people, monuments: true proportions
 
 /* ---------- build ---------- */
 let DATA, CATS = {}, zoneObjs = [], labelObjs = [], hidden = new Set(), selected = null, totalArea = 0;
@@ -233,6 +242,7 @@ let phaseGroup = null, extrasGroup = null, railBed = null, railTop = null;
 const HOME = {target:new THREE.Vector3(), pos:new THREE.Vector3(), radius:1000};
 const WIDE = {target:new THREE.Vector3(), pos:new THREE.Vector3()};
 let pyrGroup = null;
+const SUNDIR = new THREE.Vector3(-.8, .5, .3).normalize();
 
 const toV = p => new THREE.Vector2(p[0]*S, p[1]*S);
 function shapes(polys){ return polys.map(poly => { const sh = new THREE.Shape(poly[0].map(toV)); for(let i=1;i<poly.length;i++) sh.holes.push(new THREE.Path(poly[i].map(toV))); return sh; }); }
@@ -268,7 +278,7 @@ function build(){
     const cat = CATS[k] || {color:'#999'}; const geos = [], ranges = []; let tri = 0;
     for(const z of list){
       // parcels are thin ground plates in the land-use colour; the buildings on them come from blocks.js
-      const h = plateH(k, z), top = Math.max(h, (z.h >= 1.4 ? Math.round(z.h / 1.4) : 0) * 4 * VEX * S + PLATE);
+      const h = plateH(k, z), top = Math.max(h, (z.h >= 1.4 ? Math.round(z.h / 1.4) : 0) * 4 * BVEX * S + PLATE);
       const g = new THREE.ExtrudeGeometry(shapes(z.polys), {depth:h, bevelEnabled:false, curveSegments:2});
       const n = g.attributes.position.count / 3;
       const lp = z.label || centroidOf(z.polys);
@@ -319,6 +329,7 @@ function build(){
   HOME.pos.set(ctr.x + HOME.radius*0.55*kk, HOME.radius*0.62*kk, ctr.z + HOME.radius*0.78*kk);
   const sc = sun.shadow.camera, R = HOME.radius*0.72; sc.left=-R; sc.right=R; sc.top=R; sc.bottom=-R; sc.near=1; sc.far=HOME.radius*4; sc.updateProjectionMatrix();
   sun.position.set(ctr.x - HOME.radius*0.9, HOME.radius*0.55, ctr.z + HOME.radius*0.35); sun.target.position.copy(ctr); sun.target.updateMatrixWorld();
+  SUNDIR.copy(sun.position).sub(ctr).normalize();
   scene.fog.near = HOME.radius*2.6; scene.fog.far = HOME.radius*10;
   WIDE.target.set(ctr.x + 250, -6, ctr.z - 330); WIDE.pos.set(ctr.x + 2400, 2600, ctr.z + 1500);
   renderer.shadowMap.needsUpdate = true;
@@ -455,13 +466,13 @@ function trueHeights(root, vex){
 async function addLandmarks(){
   const T = (DATA.extras||{}).terrain; if(!T) return;
   const L = await import(BASE + 'landmarks.js'); L.install(THREE);
-  const place = (obj, x, y, z, rotDeg) => {
-    obj.scale.set(S, S*VEX, S); obj.rotation.x = Math.PI/2;
+  const place = (obj, x, y, z, rotDeg, vex = VEX) => {
+    obj.scale.set(S, S*vex, S); obj.rotation.x = Math.PI/2;
     const h = new THREE.Group(); h.add(obj); h.position.set(x*S, y*S, z); h.rotation.z = rotDeg * Math.PI/180;
     obj.traverse(m => { if(m.isMesh){ m.castShadow = true; m.receiveShadow = true; } }); pyrGroup.add(h); return h;
   };
   const gz = L.buildGiza(); trueHeights(gz.group, VEX); place(gz.group, T.giza.p[0], T.giza.p[1], (T.giza.base - T.E0) * VEX * S, T.giza.rot);
-  const gem = L.buildGEM(THREE); place(gem.group, T.gem.p[0], T.gem.p[1], terrainZ(T.gem.p[0], T.gem.p[1]), T.gem.rot);
+  const gem = L.buildGEM(THREE); place(gem.group, T.gem.p[0], T.gem.p[1], terrainZ(T.gem.p[0], T.gem.p[1]), T.gem.rot, BVEX);
   const gemO = zoneObjs.find(o => o.z.id === 'lm-Grand Egyptian Museum'); if(gemO){ gemO.mesh = gem.group; gemO.grp = true; }
   renderer.shadowMap.needsUpdate = true; redraw();
 }
@@ -486,7 +497,7 @@ function extraLabel(key, ar, en, desc, film, xm, ym, z, pri){
 async function addPlaces(){
   const {buildPlaces} = await import(BASE + 'places.js');
   const ground = (x, y) => Math.max(PLATE, (typeof TER !== 'undefined' && TER ? terrainZ(x, y) : 0) + 0.02);
-  PLC = buildPlaces(THREE, DATA, {S, VEX, ground, plazas: BLK ? BLK.plazas : [], station: STN, mobile}); world.add(PLC.group); window.__nv.places = PLC;
+  PLC = buildPlaces(THREE, DATA, {S, VEX: BVEX, ground, plazas: BLK ? BLK.plazas : [], station: STN, mobile}); world.add(PLC.group); window.__nv.places = PLC;
   console.log('places', JSON.stringify(PLC.stats));
   if(PLC.heritage) extraLabel('heritage', 'منطقة الجلسات التراثية', 'Heritage seating', 'جلسات في حرم اليونسكو قدّام الأهرامات، من وحي صور الماستر بلان: مدرجات حجر حوالين نار، خيام بيضا بسجاد، أشرعة تظليل، وممشى مغطّي بأشرعة من طرف المدينة، وفوانيس وزرع صحراوي. المكان والمقاسات تقريبية للعرض.', 'الغروب والليل: الضيوف قاعدين حوالين النار والأهرامات ورا، وانتقال من صخب المدينة لهدوء الصحرا.', PLC.heritage.x, PLC.heritage.y + 40, 4, 7e9);
   const g0 = (PLC.gates || []).sort((a,b)=>b.w-a.w)[0];
@@ -498,18 +509,57 @@ async function addPlaces(){
 let CIR = null;
 async function addCircuit(){
   const {buildCircuit} = await import(BASE + 'circuit.js');
-  CIR = buildCircuit(THREE, DATA, {S, VEX, z: .38}); extrasGroup.add(CIR.group); window.__nv.circuit = CIR;
+  CIR = buildCircuit(THREE, DATA, {S, VEX: BVEX, z: .38}); extrasGroup.add(CIR.group); window.__nv.circuit = CIR;
   console.log('circuit', JSON.stringify(CIR.stats)); renderer.shadowMap.needsUpdate = true; redraw();
 }
+
+/* ---------- view-dependent quality: shadows that follow the camera, detailed buildings near it (detail.js) ---------- */
+function fitShadow(){
+  if(!sun.castShadow) return;
+  const d = camera.position.distanceTo(controls.target), R = Math.max(30, Math.min(HOME.radius*0.72, d*0.85)), sc = sun.shadow.camera;
+  sc.left = -R; sc.right = R; sc.top = R; sc.bottom = -R; sc.near = 1; sc.far = R*8 + 400; sc.updateProjectionMatrix();
+  sun.target.position.copy(controls.target); sun.target.updateMatrixWorld(); sun.position.copy(controls.target).addScaledVector(SUNDIR, R*3 + 150);
+  renderer.shadowMap.needsUpdate = true; redraw();
+}
+let detMod = null, DET = null, detOn = new Set(), detKey = '', detBusy = false, detTimer = 0;
+const DET_MAX = mobile ? 24 : 80;
+async function updateDetail(){
+  if(detBusy || !BLK || !BLK.records) return; detBusy = true;
+  try{
+    const dist = camera.position.distanceTo(controls.target) / S;               // metres
+    const tx = controls.target.x / S, ty = -controls.target.z / S;
+    let pick = [];
+    if(dist < 1500){
+      const r = Math.min(520, 140 + dist * .45), r2 = r*r;
+      for(const rec of BLK.records){ if(hidden.has(rec.cat)) continue; const dx = rec.x - tx, dy = rec.y - ty, dd = dx*dx + dy*dy; if(dd < r2) pick.push([dd, rec]); }
+      pick.sort((a, b) => a[0] - b[0]); pick = pick.slice(0, DET_MAX).map(p => p[1]);
+    }
+    const key = pick.map(r => r.id).sort((a, b) => a - b).join(',');
+    if(key === detKey) return; detKey = key;
+    if(!detMod && pick.length) detMod = await import(BASE + 'detail.js');
+    const next = new Set(pick);
+    for(const rec of detOn) if(!next.has(rec)) BLK.show(rec, true);
+    for(const rec of next) if(!detOn.has(rec)) BLK.show(rec, false);
+    detOn = next;
+    if(DET){ world.remove(DET.group); DET.group.traverse(m => { if(m.isMesh) m.geometry.dispose(); }); DET = null; }
+    if(pick.length){
+      DET = detMod.buildDetail(THREE, pick.map(r => ({type: r.type, x: r.x, y: r.y, a: r.a, w: r.w, d: r.d, fl: Math.max(1, r.fl), z: PLATE / S + .05, col: r.col, seed: r.id + 1})), {S});
+      DET.group.scale.setScalar(S); world.add(DET.group);
+    }
+    fitShadow(); window.__nv.detail = {n: pick.length, stats: DET ? DET.stats : null};
+  } finally { detBusy = false; }
+}
+function viewChanged(){ clearTimeout(detTimer); detTimer = setTimeout(() => { fitShadow(); updateDetail().catch(e => console.error(e)); }, 220); }
+controls.addEventListener('end', viewChanged);
 
 /* ---------- buildings: procedural blocks on every parcel (blocks.js) ---------- */
 let BLK = null;
 async function addBlocks(){
   const {buildBlocks} = await import(BASE + 'blocks.js'); const t0 = performance.now();
-  BLK = buildBlocks(THREE, DATA, {S, VEX, plate: PLATE, mobile});
+  BLK = buildBlocks(THREE, DATA, {S, VEX: BVEX, plate: PLATE, mobile});
   for(const [k, g] of Object.entries(BLK.byCat)){ g.visible = !hidden.has(k); world.add(g); }
   window.__nv.blocks = BLK;
-  console.log('blocks', JSON.stringify(BLK.stats), Math.round(performance.now() - t0) + ' ms');
+  console.log('blocks', JSON.stringify(BLK.stats), Math.round(performance.now() - t0) + ' ms'); viewChanged();
   renderer.shadowMap.needsUpdate = true; redraw();
 }
 
@@ -525,7 +575,7 @@ async function addTrains(stopXY){
     const o = pts.map((q,i) => { const a = pts[Math.max(0,i-1)], c = pts[Math.min(pts.length-1,i+1)]; let dx=c[0]-a[0], dy=c[1]-a[1]; const L=Math.hypot(dx,dy)||1; return [q[0]-dy/L*off*dir, q[1]+dx/L*off*dir]; });
     const path = M.makePath(o);
     let best = 0, bd = 1e18; for(let sArc = 0; sArc < path.total; sArc += 10){ const q = path.at(sArc), d = Math.hypot(q.x - stopXY[0], q.y - stopXY[1]); if(d < bd){ bd = d; best = sArc; } }
-    const t = M.buildTrain(THREE); t.cars.forEach(c => { c.scale.set(S, S*1.5, S); c.traverse(m => { if(m.isMesh){ m.castShadow = false; m.receiveShadow = true; } }); });
+    const t = M.buildTrain(THREE); t.cars.forEach(c => { c.scale.set(S, S*BVEX, S); c.traverse(m => { if(m.isMesh){ m.castShadow = false; m.receiveShadow = true; } }); });
     trainLayer.add(t.group);
     const sch0 = M.schedule({total: path.total, stopAt: best + 100, length: t.length, vmax: 55, acc: 0.9, dwell: 16, dir: 1});
     // first train pulls in a few seconds after the page opens, the second is already standing at the platform
@@ -552,7 +602,7 @@ async function addStation(){
   const {buildStation} = await import(BASE + 'station.js');
   const {group} = buildStation(THREE, {detail:true, ground:false});
   // the model is y-up in metres; the map's world group is z-up in tens of metres
-  group.scale.set(S, S*2, S); group.rotation.x = Math.PI/2;
+  group.scale.set(S, S*BVEX, S); group.rotation.x = Math.PI/2;
   const holder = new THREE.Group(); holder.add(group); holder.position.set(best.px*S, best.py*S, 0.2); holder.rotation.z = best.ang; STN = {x: best.px, y: best.py, ang: best.ang};
   group.traverse(m => { if(m.isMesh){ m.castShadow = true; m.receiveShadow = true; } });
   extrasGroup.add(holder);
@@ -689,7 +739,7 @@ let anim = null;
 function tweenTo(pos, target, ms=1400){
   const p0 = camera.position.clone(), t0 = controls.target.clone(), st = performance.now();
   anim = now => { let k = Math.min(1, (now-st)/ms); k = k<.5 ? 4*k*k*k : 1-Math.pow(-2*k+2,3)/2;
-    camera.position.lerpVectors(p0, pos, k); controls.target.lerpVectors(t0, target, k); lblDirty = true; if(k>=1) anim = null; };
+    camera.position.lerpVectors(p0, pos, k); controls.target.lerpVectors(t0, target, k); lblDirty = true; if(k>=1){ anim = null; viewChanged(); } };
 }
 function flyTo(o){
   const L = o.labelRef, arr = L ? L.arr : [o], box = new THREE.Box3(); for(const a of arr) box.union(a.box);
@@ -725,7 +775,7 @@ function buildLegend(){
   if((DATA.phase||[]).length) chip('<i style="background:#ffd27a;border-radius:50%"></i>المرحلة الأولى 1A', true, b => { phaseGroup.visible = !phaseGroup.visible; b.classList.toggle('off', !phaseGroup.visible); });
   for(const [k, c] of Object.entries(CATS)){ if(!used.has(k)) continue;
     chip(`<i style="background:${c.color}"></i>${esc(c.ar)}`, false, b => { const off = !hidden.has(k); off ? hidden.add(k) : hidden.delete(k); b.classList.toggle('off', off);
-      if(catMesh[k]) catMesh[k].visible = !off; if(BLK && BLK.byCat[k]) BLK.byCat[k].visible = !off; lblDirty = true; renderer.shadowMap.needsUpdate = true; }); }
+      if(catMesh[k]) catMesh[k].visible = !off; if(BLK && BLK.byCat[k]) BLK.byCat[k].visible = !off; detKey = ''; viewChanged(); lblDirty = true; renderer.shadowMap.needsUpdate = true; }); }
 }
 
 /* ---------- "last updated" ---------- */
@@ -748,7 +798,7 @@ function applyShift(){
 addEventListener('resize', () => { camera.aspect = innerWidth/innerHeight;
   if(shift.x||shift.y){ shiftFor(panel.classList.contains('open')); shift.x=shift.tx; shift.y=shift.ty; if(shift.x||shift.y) camera.setViewOffset(innerWidth, innerHeight, shift.x, shift.y, innerWidth, innerHeight); else camera.clearViewOffset(); }
   camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); lr.setSize(innerWidth, innerHeight); lblDirty = true; redraw(); });
-window.__nv = {camera, controls, redraw: () => redraw(), data: () => DATA, S};   // handle for scripted camera moves (film previs, tests)
+window.__nv = {camera, controls, redraw: () => { redraw(); viewChanged(); }, data: () => DATA, S};   // handle for scripted camera moves (film previs, tests)
 const az = new THREE.Spherical(); let lastLbl = 0;
 function loop(now){
   requestAnimationFrame(loop);
