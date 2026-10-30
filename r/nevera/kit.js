@@ -84,7 +84,10 @@ export function kit(texBase = 'tex/') {
     f.b(M.bronze, u0, u1, y1 - .07, y1, d - .06, d + .04); f.b(M.bronze, u0, u1, y0, y0 + .06, d - .06, d + .04);
     if (o.transom) f.b(M.bronze, u0, u1, o.transom - .03, o.transom + .03, d - .05, d + .03);
     if (LITE) return;
-    // room
+    // room (o.simple: back wall and floor only, for the many windows of a mid-rise)
+    if (o.simple) { f.b(M.inWall, u0 - .2, u1 + .2, y0 - .05, y1 + .3, d - 3.1, d - 3); f.b(M.inFloor, u0 - .2, u1 + .2, y0 - .1, y0 - .02, d - 3, d - .02); f.b(M.inCeil, u0 - .2, u1 + .2, y1 + .25, y1 + .32, d - 3, d - .02);
+      if (R() < .5) { const uc = u0 + (R() < .5 ? .1 : u1 - u0 - .7); for (let k = 0; k < 4; k++) f.b(M.curtain, u0 + uc - u0 + k * .16, u0 + uc - u0 + k * .16 + .17, y0 + .02, y1 + .2, d - .3 - (k % 2) * .05, d - .28 - (k % 2) * .05); }
+      return; }
     f.b(M.inWall, u0 - .3, u1 + .3, y0 - .05, y1 + .35, d - deep - .1, d - deep);
     f.b(M.inFloor, u0 - .3, u1 + .3, y0 - .1, y0 - .02, d - deep, d - .02);
     f.b(M.inCeil, u0 - .3, u1 + .3, y1 + .3, y1 + .38, d - deep, d - .02);
@@ -290,13 +293,62 @@ export function kit(texBase = 'tex/') {
   }
 
 
+  /* ================== mid-rise blocks after the atlas zone sheets (Z02 civic, Z03 arrival, Z14 apartments, Z15 park-side, Z16 mixed) ==================
+     style: bay, ground floor, upper floors, pier width, ground-floor treatment, balconies, stepped top floors. Front (street) = +z. */
+  const ST = {
+    civic:   { bay: 4.2, g: 4.8, up: 3.6, pier: 1.15, gf: 'colonnade', bal: 0,   steps: 2, pav: true },     // Z02-A terraced civic block, 65:35 solid:glass
+    arrival: { bay: 3.6, g: 4.5, up: 3.4, pier: .95,  gf: 'canopy',    bal: 0,   steps: 0, pav: false },    // Z03 portal blocks, transparent active plinth
+    mixed:   { bay: 3.6, g: 4.5, up: 3.3, pier: .85,  gf: 'shops',     bal: .5,  steps: 1, pav: true },     // Z16 shops below, private balconies above
+    apt:     { bay: 3.6, g: 3.9, up: 3.2, pier: .8,   gf: 'plinth',    bal: .5,  steps: 1, pav: true },     // Z14 recessed balconies, active low plinth
+    park:    { bay: 3.6, g: 3.7, up: 3.2, pier: .75,  gf: 'plinth',    bal: .75, steps: 2, pav: true },     // Z15 deep balconies, upper setbacks, shade ledges
+  };
+  function block(style, nb, D, fl) {
+    const T = ST[style] || ST.apt, W = nb * T.bay, x0 = -W / 2, zB = -D / 2;
+    box(M.pave, x0 - 1, -x0 + 1, 0, .3, zB - 1, D / 2 + 3.5);                       // plinth + front pavement
+    let y = .3; const steps = fl >= 4 ? T.steps : 0;
+    for (let i = 0; i < fl; i++) {
+      const h = i === 0 ? T.g : T.up, sb = Math.max(0, i - (fl - 1 - steps)) * 2.6, zF = D / 2 - sb, top = y + h;
+      const f = F(x0, zF, 0);
+      for (let j = 0; j <= nb; j++) f.b(M.stone, j * T.bay - T.pier / 2, j * T.bay + T.pier / 2, y, top, -.3, .25);   // stone piers, proud of the skin
+      if (i === 0 && T.gf === 'colonnade') for (let j = 0; j <= nb; j++) f.b(M.stone, j * T.bay - T.pier / 2, j * T.bay + T.pier / 2, y, top, -3, -.3);   // deep colonnade piers
+      for (let j = 0; j < nb; j++) { const u0 = j * T.bay + T.pier / 2, u1 = (j + 1) * T.bay - T.pier / 2;
+        if (i === 0) {
+          if (T.gf === 'colonnade') { win(f, u0, u1, y, top - .5, -3, { transom: y + 3.4 }); f.b(M.stone, u0, u1, top - .5, top, -3.1, 0); f.b(M.inCeil, u0, u1, top - .52, top - .5, -3, 0); f.b(M.pave, u0, u1, y - .02, y, -3, 0); }
+          else if (T.gf === 'plinth') { if (j % 3 === 1) { f.b(M.door, u0 + .3, u1 - .3, y, y + 2.9, -.6, -.5); f.b(M.stone, u0, u1, y + 2.9, top, -.35, 0); } else { f.b(M.stone, u0, u1, y, y + .9, -.35, 0); win(f, u0, u1, y + .9, top - .35, -.3, { simple: true }); f.b(M.stone, u0, u1, top - .35, top, -.35, 0); } }
+          else { win(f, u0, u1, y, top - .45, -.45, { transom: y + 3.2 }); f.b(M.stone, u0, u1, top - .45, top, -.35, 0); }
+        } else if (T.bal && (j + i) % 2 === 0) {                                      // recessed balcony: glass deep inside, rail at the facade, planter
+          win(f, u0, u1, y, top - .3, -T.bal * 3, { simple: true }); f.b(M.stone, u0, u1, top - .3, top, -T.bal * 3 - .1, 0); f.b(M.pave, u0, u1, y - .02, y + .03, -T.bal * 3, 0);
+          rail(f, u0 + .05, u1 - .05, y, .05); if (!LITE || R() < .3) { f.b(M.pot, u0 + .15, u0 + .75, y, y + .5, -.55, -.1); shrub(...f.P(u0 + .45, -.32), .32, y + .5); }
+        } else {                                                                      // window: stone spandrel, inset glazing, bronze frame
+          f.b(M.stone, u0, u1, y, y + .8, -.35, 0); win(f, u0, u1, y + .8, top - .35, -.3, { simple: true, bay: 1.8 }); f.b(M.stone, u0, u1, top - .35, top, -.35, 0); }
+      }
+      if (sb > 0) {                                                                   // stepped garden terrace in front of a set-back floor
+        const g = F(x0, zF + 2.6, 0); g.b(M.pave, 0, W, y - .1, y, -2.6, 0); rail(g, 0, W, y, -.08);
+        for (let u = 1.2; u < W - 1; u += LITE ? 4.2 : 2.1) { g.b(M.pot, u - .5, u + .5, y, y + .55, -.9, -.2); shrub(...g.P(u, -.55), .45, y + .55); if (!LITE && R() < .25) olive(...g.P(u, -1.6), 2.4, y); }
+      }
+      box(M.coping, x0 - .05, -x0 + .05, top, top + .42, zB, zF + .35);                 // floor band / slab edge
+      // sides and back: stone walls with punched windows
+      for (const [ox, oz, dir, len] of [[-x0, zF, 1, zF - zB], [-x0, zB, 2, W], [x0, zB, 3, zF - zB]]) { const g = F(ox, oz, dir);
+        g.b(M.stone, 0, len, y, top, -.35, 0);
+        for (let u = 1.6; u < len - 1.6; u += 3.6) g.b(M.glassLite, u - .7, u + .7, y + (i ? .9 : .6), top - .5, -.05, .02), g.b(M.bronze, u - .75, u + .75, top - .55, top - .5, -.06, .06); }
+      y = top + .42;
+    }
+    // roof: parapet, a set-back roof pavilion and a pergola terrace
+    const zF = D / 2 - steps * 2.6; roof(x0, -x0, zB, zF, y, .5);
+    if (T.pav && fl >= 3) { const pw = Math.min(W * .4, 14), px = -pw / 2 + (nb % 2 ? 2 : -2); box(M.stone, px, px + pw, y, y + 3.2, zB + 1, zB + 1 + Math.min(8, (zF - zB) * .5)); box(M.coping, px - .1, px + pw + .1, y + 3.2, y + 3.5, zB + .9, zB + 1.1 + Math.min(8, (zF - zB) * .5));
+      pergola(F(px, zB + 1 + Math.min(8, (zF - zB) * .5), 0), 0, pw, y + 3, 0, 3.2, true);
+      if (!LITE) for (const u of [.2, .5, .8]) pot(px + pw * u, zB + 1 + Math.min(8, (zF - zB) * .5) + 4.3, y, R() < .5); }
+    if (T.gf === 'canopy') pergola(F(x0, D / 2, 0), 0, W, T.g + .1, 0, 1.6, false);     // arrival canopy along the frontage
+  }
   const BUILD = { A: villaA, B: villaB, C: villaC }, cache = {};
   let LITE = false;
   // lite = the far detail ring: same massing, materials, pergolas and louvres; no interiors, fewer leaf cards
   function build(kind, lite = false) {
     const key = kind + (lite ? 'L' : '');
     if (cache[key]) return cache[key];
-    bins.clear(); SEED = { A: 7, B: 11, C: 23 }[kind] || 5; LITE = lite; BUILD[kind](0, 0); LITE = false;
+    bins.clear(); SEED = { A: 7, B: 11, C: 23 }[kind] || (5 + kind.length * 31) % 2147483646; LITE = lite;
+    if (kind.startsWith('blk:')) { const [, st, nb, D, fl] = kind.split(':'); block(st, +nb, +D, +fl); } else BUILD[kind](0, 0);
+    LITE = false;
     const parts = []; const bb = new THREE.Box3();
     for (const [m, list] of bins) { const g = mergeGeometries(list, false); if (!g) continue; g.computeBoundingBox(); if (m !== M.leaf && m !== M.shrub && m !== M.lav) bb.union(g.boundingBox); parts.push([m, g]); }
     const c = bb.getCenter(new THREE.Vector3());
@@ -308,5 +360,9 @@ export function kit(texBase = 'tex/') {
   // which parts cast shadows: not glass, interiors, lights or curtains
   const noCast = new Set([M.glass, M.rail, M.spot, M.curtain, M.inWall, M.inFloor, M.inCeil, M.inSofa, M.inDark]);
   const casts = m => !noCast.has(m);
-  return (KIT = { M, build, casts, kinds: Object.keys(BUILD) });
+  // a map record -> a cached block prototype: bays and depth quantised, the instance stretches the last few percent
+  const STYLE_OF = { cd: 'civic', me: 'arrival', rm: 'mixed', rh: 'apt', rp: 'park' };
+  function blockKey(cat, w, d, fl) { const st = STYLE_OF[cat]; if (!st) return null; const T = ST[st], nb = Math.max(2, Math.min(16, Math.round(w / T.bay))), D = Math.max(12, Math.min(26, Math.round(d / 2) * 2));
+    return { key: `blk:${st}:${nb}:${D}:${Math.max(1, Math.min(12, fl))}`, sx: w / (nb * T.bay), sz: d / D }; }
+  return (KIT = { M, build, casts, kinds: Object.keys(BUILD), blockKey });
 }

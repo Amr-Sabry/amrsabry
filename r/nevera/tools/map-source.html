@@ -556,10 +556,10 @@ async function updateDetail(){
     detOn = next;
     if(DET){ world.remove(DET.group); DET.group.traverse(m => { if(m.isMesh && !m.userData.keep) m.geometry.dispose(); if(m.isInstancedMesh) m.dispose(); }); DET = null; }
     if(pick.length){
-      DET = detMod.buildDetail(THREE, pick.map(r => ({type: r.type, x: r.x, y: r.y, a: r.a, w: r.w, d: r.d, fl: Math.max(1, r.fl), z: PLATE / S + .05, col: r.col, seed: r.id + 1})), {S, kit: detKit, kitFull: mobile ? 6 : 20});
+      DET = detMod.buildDetail(THREE, pick.map(r => ({type: r.type, cat: r.cat, x: r.x, y: r.y, a: r.a, w: r.w, d: r.d, fl: Math.max(1, r.fl), z: PLATE / S + .05, col: r.col, seed: r.id + 1})), {S, kit: detKit, kitFull: mobile ? 6 : 16, kitFullB: mobile ? 2 : 6});
       DET.group.scale.setScalar(S); world.add(DET.group);
     }
-    fitShadow(); window.__nv.detail = {n: pick.length, stats: DET ? DET.stats : null};
+    fitShadow(); window.__nv.detail = {n: pick.length, stats: DET ? DET.stats : null}; if(FC.on) camHud();
   } finally { detBusy = false; }
 }
 function viewChanged(){ clearTimeout(detTimer); detTimer = setTimeout(() => { fitShadow(); updateDetail().catch(e => console.error(e)); }, 220); }

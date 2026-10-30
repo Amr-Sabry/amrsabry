@@ -200,9 +200,11 @@ export function buildDetail(THREE, list, opts = {}) {
     bush(T, 0, 0, H + .6, w - 4, d - 4, .5);
   }
 
-  const kitV = []; let kvN = 0;                       // atlas Z17 villas A/B/C from the shared kit, instanced; the nearest kitFull in full detail (list is sorted by distance)
+  const kitV = [], kitB = {}; let kvN = 0, kbN = 0;                       // atlas Z17 villas A/B/C from the shared kit, instanced; the nearest kitFull in full detail (list is sorted by distance)
   for (const it of list) {
     const R = rng((it.seed || 1) * 7919 % 2147483646 + 1), T = { x: it.x, y: it.y, a: it.a || 0, z: it.z || 0 }, col = it.col || 0xd8c2a0; BR = rng((it.seed || 1) * 104729 % 2147483646 + 7);
+    if (opts.kit && it.type !== 'villa' && it.type !== 'tower' && it.cat) { const bk = opts.kit.blockKey(it.cat, it.w, it.d, it.fl);
+      if (bk) { const lite = kbN++ >= (opts.kitFullB ?? 6), k = bk.key + (lite ? '|L' : ''); (kitB[k] ||= []).push({ ...it, sx: bk.sx, sz: bk.sz }); continue; } }
     if (it.type === 'villa' && opts.kit) { const lite = kvN++ >= (opts.kitFull ?? 20); (kitV[((it.seed || 1) % 3) * 2 + (lite ? 1 : 0)] ||= []).push(it); continue; }
     if (it.type === 'villa') villa(T, R, it.w, it.d, col);
     else if (it.type === 'tower') tower(T, R, it.w, it.d, it.fl, col);
@@ -236,5 +238,12 @@ export function buildDetail(THREE, list, opts = {}) {
       items.forEach((it, i) => { rz.makeRotationZ(it.a || 0); tr.makeTranslation(it.x, it.y, it.z || 0); im.setMatrixAt(i, m4.copy(tr).multiply(rz).multiply(rx)); });
       im.castShadow = opts.kit.casts(mat) && !mat.transparent; im.receiveShadow = true; if (mat.transparent) im.renderOrder = 2; im.frustumCulled = false; group.add(im);
       kitTris += g.attributes.position.count / 3 * items.length; } });
-  return { group, stats: { boxes, bushes: bushes.length, tris: boxes * 10 + bushes.length * 80 + Math.round(kitTris), kitVillas: kitV.reduce((a, v) => a + (v ? v.length : 0), 0) } };
+  // kit mid-rise blocks (atlas zone styles): one prototype per quantised size, stretched by sx / sz
+  if (opts.kit) for (const [k, items] of Object.entries(kitB)) { const [key, L] = k.split('|'), P = opts.kit.build(key, L === 'L');
+    const m4 = new THREE.Matrix4(), rx = new THREE.Matrix4().makeRotationX(Math.PI / 2), rz = new THREE.Matrix4(), tr = new THREE.Matrix4(), sc = new THREE.Matrix4();
+    for (const [mat, g] of P.parts) { const im = new THREE.InstancedMesh(g, mat, items.length); im.userData.keep = true;
+      items.forEach((it, i) => { rz.makeRotationZ(it.a || 0); tr.makeTranslation(it.x, it.y, it.z || 0); sc.makeScale(it.sx, 1, it.sz); im.setMatrixAt(i, m4.copy(tr).multiply(rz).multiply(rx).multiply(sc)); });
+      im.castShadow = opts.kit.casts(mat) && !mat.transparent; im.receiveShadow = true; if (mat.transparent) im.renderOrder = 2; im.frustumCulled = false; group.add(im);
+      kitTris += g.attributes.position.count / 3 * items.length; } }
+  return { group, stats: { boxes, bushes: bushes.length, tris: boxes * 10 + bushes.length * 80 + Math.round(kitTris), kitBlocks: Object.values(kitB).reduce((a, v) => a + v.length, 0), kitVillas: kitV.reduce((a, v) => a + (v ? v.length : 0), 0) } };
 }
