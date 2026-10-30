@@ -812,7 +812,7 @@ addEventListener('resize', () => { camera.aspect = innerWidth/innerHeight;
   if(shift.x||shift.y){ shiftFor(panel.classList.contains('open')); shift.x=shift.tx; shift.y=shift.ty; if(shift.x||shift.y) camera.setViewOffset(innerWidth, innerHeight, shift.x, shift.y, innerWidth, innerHeight); else camera.clearViewOffset(); }
   camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); lr.setSize(innerWidth, innerHeight); lblDirty = true; redraw(); });
 /* ---------- free camera for film previs: fly (WASD/QE), look by dragging, real lens in mm, keyframed shots exported as JSON ---------- */
-const FC = { on: false, keys: new Set(), yaw: 0, pitch: 0, lens: 28, shots: [], play: null, last: 0 };
+const FC = { fr: [], on: false, keys: new Set(), yaw: 0, pitch: 0, lens: 28, shots: [], play: null, last: 0 };
 try { FC.shots = JSON.parse(localStorage.getItem('nv-shots') || '[]'); } catch(e) {}
 const lensFov = mm => 2 * Math.atan(12 / mm) * 180 / Math.PI;            // full-frame 36 x 24 mm, vertical FOV
 function setLens(mm){ FC.lens = mm; camera.fov = lensFov(mm); camera.updateProjectionMatrix(); document.querySelectorAll('#cam .lens button').forEach(b => b.classList.toggle('on', +b.dataset.mm === mm)); camHud(); redraw(); }
@@ -821,7 +821,7 @@ function fcAim(){ controls.target.copy(camera.position).addScaledVector(fcDir(),
 function groundBelow(p){                                                // ground under a point (scene units): site plates or the terrain sampler, no raycasting
   let z = PLATE + .005; try { z = Math.max(z, terrainZ(p.x / S, -p.z / S)); } catch(e) {} return z; }
 function camHud(){ const el = $('#camInfo'); if(!el) return; const g = groundBelow(camera.position), h = (camera.position.y - g) / S, dt = window.__nv && window.__nv.detail;
-  el.textContent = `${FC.lens} مم · ارتفاع ${h < 100 ? h.toFixed(1) : Math.round(h)} م · ${FC.shots.length} لقطة` + (dt && dt.n ? ` · ${dt.n} مبنى بالتفاصيل (${Math.round(dt.stats.tris / 1000)} ألف مثلث)` : ''); }
+  el.textContent = `${FC.lens} مم · ارتفاع ${h < 100 ? h.toFixed(1) : Math.round(h)} م · ${FC.shots.length} لقطة` + (dt && dt.n ? ` · ${dt.n} مبنى بالتفاصيل (${Math.round(dt.stats.tris / 1000)} ألف مثلث)` : '') + (FC.fr.length > 3 ? ` · ${FC.fr.length} FPS` : ''); }
 // fetch the detail modules early (idle), so the first close-up doesn't wait on the network
 function prefetchDetail(){ const go = async () => { try { detMod ||= await import(BASE + 'detail.js'); detKit ||= (await import(BASE + 'kit.js')).kit(BASE + 'tex/'); } catch(e) { console.error('detail prefetch', e); } };
   (window.requestIdleCallback || (f => setTimeout(f, 1500)))(go); }
@@ -894,7 +894,7 @@ function loop(now){
     az.setFromVector3(camera.position.clone().sub(controls.target));
     $('#north svg').style.transform = `rotate(${-az.theta*180/Math.PI}deg)`;
     lr.render(scene, camera); }
-  renderer.render(scene, camera);
+  renderer.render(scene, camera); FC.fr.push(now); while(FC.fr.length && now - FC.fr[0] > 1000) FC.fr.shift();
 }
 
 /* ---------- go ---------- */
