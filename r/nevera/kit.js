@@ -20,7 +20,7 @@ export function kit(texBase = 'tex/') {
     coping: pbr('sandstone_blocks_08', 9, { rough: .9, ns: .4, color: 0xf6efe4 }),          // M01 fine copings / slab edges (larger scale, fewer joints)
     pave: pbr('sandstone_blocks_08', 9, { rough: .95, ns: .45, color: 0xf6efe4 }),         // M09 terrace paving
     rubble: pbr('yellow_stone_wall', 2.4, { rough: 1, ns: 1.4 }),                           // M02 rough desert stone
-    timber: pbr('oak_wood_planks', 1.6, { rough: .6, ns: .6, color: 0xc4ae9a }),                             // M05 dark timber
+    timber: pbr('oak_wood_planks', 1.6, { rough: .95, ns: .6, color: 0xc4ae9a }),                             // M05 dark timber
     ground: pbr('dense_sand', 2.4, { rough: 1, ns: 1.3, color: 0xf2eadc }),                                      // M10 compacted desert aggregate
     bronze: new THREE.MeshStandardMaterial({ color: 0x5f4f3f, metalness: .7, roughness: .38 }),   // M03 window caps / mullions
     post: new THREE.MeshStandardMaterial({ color: 0x3b3631, metalness: .5, roughness: .5 }),
@@ -38,7 +38,7 @@ export function kit(texBase = 'tex/') {
     soil: new THREE.MeshStandardMaterial({ color: 0x7a6650, roughness: 1 }),
     pot: new THREE.MeshStandardMaterial({ color: 0xd2c4ab, roughness: .9 }),
     bark: new THREE.MeshStandardMaterial({ color: 0x6d6151, roughness: 1 }),
-    door: pbr('oak_wood_planks', 1.2, { rough: .55, ns: .5, color: 0xb08a68 }),
+    door: pbr('oak_wood_planks', 1.2, { rough: .9, ns: .5, color: 0xb08a68 }),
     glassLite: new THREE.MeshStandardMaterial({ color: 0x6a6860, metalness: .35, roughness: .1, envMapIntensity: 1.4, emissive: 0x4a2c12, emissiveIntensity: .45 }),
   };
 

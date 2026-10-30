@@ -572,7 +572,7 @@ async function addBlocks(){
   BLK = buildBlocks(THREE, DATA, {S, VEX: BVEX, plate: PLATE, mobile});
   for(const [k, g] of Object.entries(BLK.byCat)){ g.visible = !hidden.has(k); world.add(g); }
   window.__nv.blocks = BLK;
-  console.log('blocks', JSON.stringify(BLK.stats), Math.round(performance.now() - t0) + ' ms'); viewChanged();
+  console.log('blocks', JSON.stringify(BLK.stats), Math.round(performance.now() - t0) + ' ms'); viewChanged(); prefetchDetail();
   renderer.shadowMap.needsUpdate = true; redraw();
 }
 
@@ -818,12 +818,13 @@ const lensFov = mm => 2 * Math.atan(12 / mm) * 180 / Math.PI;            // full
 function setLens(mm){ FC.lens = mm; camera.fov = lensFov(mm); camera.updateProjectionMatrix(); document.querySelectorAll('#cam .lens button').forEach(b => b.classList.toggle('on', +b.dataset.mm === mm)); camHud(); redraw(); }
 function fcDir(){ return new THREE.Vector3(Math.cos(FC.pitch) * Math.sin(FC.yaw), Math.sin(FC.pitch), Math.cos(FC.pitch) * Math.cos(FC.yaw)); }
 function fcAim(){ controls.target.copy(camera.position).addScaledVector(fcDir(), .4); camera.lookAt(controls.target); }
-function groundBelow(p){                                                // terrain / plates under a point (scene units), regular meshes only
-  const rc = new THREE.Raycaster(new THREE.Vector3(p.x, 4000, p.z), new THREE.Vector3(0, -1, 0)); const L = [];
-  world.traverse(o => { if(o.isMesh && !o.isInstancedMesh && o.visible && o.geometry && o.geometry.attributes.position.count > 3) L.push(o); });
-  const h = rc.intersectObjects(L, false)[0]; return h ? h.point.y : 0; }
-function camHud(){ const el = $('#camInfo'); if(!el) return; const g = groundBelow(camera.position), h = (camera.position.y - g) / S;
-  el.textContent = `${FC.lens} مم · ارتفاع ${h < 100 ? h.toFixed(1) : Math.round(h)} م · ${FC.shots.length} لقطة`; }
+function groundBelow(p){                                                // ground under a point (scene units): site plates or the terrain sampler, no raycasting
+  let z = PLATE + .005; try { z = Math.max(z, terrainZ(p.x / S, -p.z / S)); } catch(e) {} return z; }
+function camHud(){ const el = $('#camInfo'); if(!el) return; const g = groundBelow(camera.position), h = (camera.position.y - g) / S, dt = window.__nv && window.__nv.detail;
+  el.textContent = `${FC.lens} مم · ارتفاع ${h < 100 ? h.toFixed(1) : Math.round(h)} م · ${FC.shots.length} لقطة` + (dt && dt.n ? ` · ${dt.n} مبنى بالتفاصيل (${Math.round(dt.stats.tris / 1000)} ألف مثلث)` : ''); }
+// fetch the detail modules early (idle), so the first close-up doesn't wait on the network
+function prefetchDetail(){ const go = async () => { try { detMod ||= await import(BASE + 'detail.js'); detKit ||= (await import(BASE + 'kit.js')).kit(BASE + 'tex/'); } catch(e) { console.error('detail prefetch', e); } };
+  (window.requestIdleCallback || (f => setTimeout(f, 1500)))(go); }
 let fcSky = null, fcBg = null;
 function freeCam(on){
   if(!fcSky){ const c = document.createElement('canvas'); c.width = 2; c.height = 512; const g = c.getContext('2d'), gr = g.createLinearGradient(0, 0, 0, 512);
@@ -873,7 +874,7 @@ $('#cam').addEventListener('click', e => { const b = e.target.closest('button');
     const out = { project: 'nevera', units: 'm', frame: 'x east, y north, z up (CAD shape space); terrain exaggerated x' + VEX, sensor: '36x24 mm full frame', secondsPerSegment: 4,
       shots: FC.shots.map((s, i) => ({ i, position: toM(s.p), target: toM(s.t), lensMm: s.lens })) };
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(out, null, 1)], { type: 'application/json' })); a.download = 'nevera-camera-shots.json'; a.click(); } });
-window.__nv = {camera, controls, freeCam, FC, redraw: () => { redraw(); viewChanged(); }, data: () => DATA, S};   // handle for scripted camera moves (film previs, tests)
+window.__nv = {camera, controls, freeCam, FC, detState: () => ({detBusy, key: detKey.length, mod: !!detMod, kit: !!detKit}), redraw: () => { redraw(); viewChanged(); }, data: () => DATA, S};   // handle for scripted camera moves (film previs, tests)
 const az = new THREE.Spherical(); let lastLbl = 0;
 function loop(now){
   requestAnimationFrame(loop);
