@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nevera villas sample</title>
+<style>
+  :root { --bg: #1a140f; --ink: #f3e7cf; }
+  html, body { margin: 0; height: 100%; background: var(--bg); overflow: hidden; font-family: system-ui, sans-serif; color: var(--ink); }
+  #stage { position: fixed; inset: 0; }
+  #views { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; width: calc(100% - 32px); }
+  #views button { background: rgba(26,20,15,.78); color: var(--ink); border: 1px solid rgba(243,231,207,.25); border-radius: 999px; padding: 8px 14px; font: inherit; cursor: pointer; }
+  #title { position: fixed; top: 16px; right: 16px; font-size: 14px; background: rgba(26,20,15,.6); padding: 6px 10px; border-radius: 8px; }
+  body.shot #views, body.shot #title { display: none; }
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+</head>
+<body>
+<div id="stage"></div>
+<div id="title">nevera · Z17 فيلات فاخرة · عيّنة تفاصيل (A / B / C)</div>
+<div id="views"></div>
+<script>if (location.search.includes('shot')) document.body.classList.add('shot');</script>
+<script type="module" src="./villas.js"></script>
+</body>
+</html>
