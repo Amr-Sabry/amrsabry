@@ -464,7 +464,10 @@ function contentFrame(ct,t){
   if(t<e0-.001||t>exitAt+.36*SLb){ct.classList.remove('on');return}
   ct.classList.add('on');
   const xk=cl((t-exitAt)/(.26*SLb));   /* exit progress */
-  ct._w.forEach((w,k)=>{const st=e0+dly+k*.045*SLb+(b.type==='intro'&&k>0?2.3*SLb:0)+(w._dl||0);const ek=eOutQ(cl((t-st)/(.55*SLb)));const xx=eIn(cl(xk*1.25-k*.01));w.style.transform='translateY('+((1-ek)*112-xx*112)+'%)'});
+  /* 30 Oct (Amr «الكلام مقصوص بتاع العناوين»): a long headline rose word by word until the very end of its beat, so it was never seen whole —
+     the words now rise faster when there are many, the whole headline standing by ~58% of the beat and held there to be read */
+  if(ct._stg==null){const n=ct._w.length,r0=.55*SLb,intro=b.type==='intro';ct._rise=intro?r0:Math.min(r0,.5);ct._stg=intro?.045*SLb:Math.min(.045*SLb,Math.max(.012,(.58*(e1-e0)-dly-ct._rise)/Math.max(1,n-1)))}
+  ct._w.forEach((w,k)=>{const st=e0+dly+k*ct._stg+(b.type==='intro'&&k>0?2.3*SLb:0)+(w._dl||0);const ek=eOutQ(cl((t-st)/ct._rise));const xx=eIn(cl(xk*1.25-k*.01));w.style.transform='translateY('+((1-ek)*112-xx*112)+'%)'});
   ct._chips.forEach((c,k)=>{const ek=eOut(cl((t-(e0+dly+(-.06+k*.06)*SLb))/(.45*SLb)));c.style.opacity=ek*(1-xk);c.style.transform='translateY('+(10*(1-ek))+'px)'});
   if(ct._bar){const ek=eOut(cl((t-(e0+dly))/(.5*SLb)));ct._bar.style.transform='scaleY('+ek+')';ct._bar.style.opacity=1-xk}
   /* 23:58 Amr «كل ما الرقم ينزل ما يبقاش كت، يبقى فيه انميشن بيبين الانهيار والتدهور»: a number that worsens counts from where it
