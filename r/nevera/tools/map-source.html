@@ -45,6 +45,12 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(127,194,138,.55)}70%{box-shadow:0 0 0 8px rgba(127,194,138,0)}100%{box-shadow:0 0 0 0 rgba(127,194,138,0)}}
 
 /* tools */
+#cam{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);z-index:6;background:var(--glass);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;display:flex;flex-direction:column;gap:8px;align-items:center;max-width:calc(100vw - 32px);color:var(--cream);font-size:12.5px}
+#cam[hidden]{display:none}
+#cam .row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+#cam button{background:rgba(231,224,211,.08);color:var(--cream);border:1px solid var(--line);border-radius:999px;padding:6px 11px;font:inherit;cursor:pointer}
+#cam button.on{background:var(--cream);color:var(--ink)}
+#cam .hint{color:var(--mute);font-size:11.5px;text-align:center}
 #tools{position:fixed;top:72px;inset-inline-end:18px;display:flex;flex-direction:column;gap:8px;z-index:5}
 .tb{width:42px;height:42px;border-radius:12px;background:var(--glass);border:1px solid var(--line);display:grid;place-items:center;transition:background .2s,border-color .2s}
 .tb:hover{background:var(--glass-hi);border-color:rgba(231,224,211,.32)}
@@ -148,7 +154,13 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   <button class="tb" id="bTop" data-tip="منظر من فوق (2D)"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 12h16M12 4v16"/></svg></button>
   <button class="tb on" id="bLabels" data-tip="الأسماء"><svg viewBox="0 0 24 24"><path d="M4 7V5h16v2M12 5v14M9 19h6"/></svg></button>
   <button class="tb" id="bAnim" data-tip="القطورات (أنيميشن)"><svg viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="14" rx="4"/><path d="M6 11h12M9 21l-2 0M15 21h2M9 17l-2 4M15 17l2 4"/><circle cx="9" cy="14" r=".6"/><circle cx="15" cy="14" r=".6"/></svg></button>
+  <button class="tb" id="bFree" data-tip="كاميرا حرة (للفيلم)"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="13" height="10" rx="2"/><path d="M16 11l5-3v8l-5-3"/></svg></button>
   <button class="tb" id="bSpin" data-tip="لفّ تلقائي"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 4v5h-5"/></svg></button>
+</div>
+<div id="cam" hidden>
+  <div class="row lens"><button data-mm="18">18</button><button data-mm="24">24</button><button data-mm="28">28</button><button data-mm="35">35</button><button data-mm="50">50</button><button data-mm="85">85 مم</button></div>
+  <div class="row"><button id="cEye">مستوى العين 1.6 م</button><button id="cAdd">＋ لقطة</button><button id="cPlay">▶ تشغيل المسار</button><button id="cExport">⬇ تصدير JSON</button><button id="cClear">مسح</button></div>
+  <div class="hint"><span id="camInfo"></span> · W A S D حركة · Q / E نزول وطلوع · Shift أسرع · اسحب للف · العجلة لقدام وورا</div>
 </div>
 
 <div id="north" title="الشمال"><svg viewBox="0 0 30 30"><path d="M15 3l5 12h-10z" fill="#e7e0d3"/><path d="M15 27l-5-12h10z" fill="rgba(231,224,211,.3)"/><text x="15" y="12.5" font-size="6" text-anchor="middle" fill="#2b2117" font-family="Marcellus">N</text></svg></div>
@@ -210,7 +222,7 @@ let need = 2; const redraw = () => { need = 2; };
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(38, innerWidth/innerHeight, 1, 20000);
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true; controls.dampingFactor = .08; controls.maxPolarAngle = Math.PI*0.47; controls.minDistance = 25; controls.maxDistance = 6000;
+controls.enableDamping = true; controls.dampingFactor = .08; controls.maxPolarAngle = Math.PI*0.499; controls.minDistance = .05; controls.maxDistance = 9000;   // free camera: down to street level, any angle
 controls.screenSpacePanning = false; controls.zoomToCursor = true;
 controls.addEventListener('change', redraw);
 
@@ -521,7 +533,7 @@ function fitShadow(){
   sun.target.position.copy(controls.target); sun.target.updateMatrixWorld(); sun.position.copy(controls.target).addScaledVector(SUNDIR, R*3 + 150);
   renderer.shadowMap.needsUpdate = true; redraw();
 }
-let detMod = null, DET = null, detOn = new Set(), detKey = '', detBusy = false, detTimer = 0;
+let detMod = null, detKit = null, DET = null, detOn = new Set(), detKey = '', detBusy = false, detTimer = 0;
 const DET_MAX = mobile ? 24 : 80;
 async function updateDetail(){
   if(detBusy || !BLK || !BLK.records) return; detBusy = true;
@@ -537,13 +549,14 @@ async function updateDetail(){
     const key = pick.map(r => r.id).sort((a, b) => a - b).join(',');
     if(key === detKey) return; detKey = key;
     if(!detMod && pick.length) detMod = await import(BASE + 'detail.js');
+    if(!detKit && pick.length) detKit = (await import(BASE + 'kit.js')).kit(BASE + 'tex/');
     const next = new Set(pick);
     for(const rec of detOn) if(!next.has(rec)) BLK.show(rec, true);
     for(const rec of next) if(!detOn.has(rec)) BLK.show(rec, false);
     detOn = next;
-    if(DET){ world.remove(DET.group); DET.group.traverse(m => { if(m.isMesh) m.geometry.dispose(); }); DET = null; }
+    if(DET){ world.remove(DET.group); DET.group.traverse(m => { if(m.isMesh && !m.userData.keep) m.geometry.dispose(); if(m.isInstancedMesh) m.dispose(); }); DET = null; }
     if(pick.length){
-      DET = detMod.buildDetail(THREE, pick.map(r => ({type: r.type, x: r.x, y: r.y, a: r.a, w: r.w, d: r.d, fl: Math.max(1, r.fl), z: PLATE / S + .05, col: r.col, seed: r.id + 1})), {S});
+      DET = detMod.buildDetail(THREE, pick.map(r => ({type: r.type, x: r.x, y: r.y, a: r.a, w: r.w, d: r.d, fl: Math.max(1, r.fl), z: PLATE / S + .05, col: r.col, seed: r.id + 1})), {S, kit: detKit, kitFull: mobile ? 6 : 20});
       DET.group.scale.setScalar(S); world.add(DET.group);
     }
     fitShadow(); window.__nv.detail = {n: pick.length, stats: DET ? DET.stats : null};
@@ -798,13 +811,78 @@ function applyShift(){
 addEventListener('resize', () => { camera.aspect = innerWidth/innerHeight;
   if(shift.x||shift.y){ shiftFor(panel.classList.contains('open')); shift.x=shift.tx; shift.y=shift.ty; if(shift.x||shift.y) camera.setViewOffset(innerWidth, innerHeight, shift.x, shift.y, innerWidth, innerHeight); else camera.clearViewOffset(); }
   camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); lr.setSize(innerWidth, innerHeight); lblDirty = true; redraw(); });
-window.__nv = {camera, controls, redraw: () => { redraw(); viewChanged(); }, data: () => DATA, S};   // handle for scripted camera moves (film previs, tests)
+/* ---------- free camera for film previs: fly (WASD/QE), look by dragging, real lens in mm, keyframed shots exported as JSON ---------- */
+const FC = { on: false, keys: new Set(), yaw: 0, pitch: 0, lens: 28, shots: [], play: null, last: 0 };
+try { FC.shots = JSON.parse(localStorage.getItem('nv-shots') || '[]'); } catch(e) {}
+const lensFov = mm => 2 * Math.atan(12 / mm) * 180 / Math.PI;            // full-frame 36 x 24 mm, vertical FOV
+function setLens(mm){ FC.lens = mm; camera.fov = lensFov(mm); camera.updateProjectionMatrix(); document.querySelectorAll('#cam .lens button').forEach(b => b.classList.toggle('on', +b.dataset.mm === mm)); camHud(); redraw(); }
+function fcDir(){ return new THREE.Vector3(Math.cos(FC.pitch) * Math.sin(FC.yaw), Math.sin(FC.pitch), Math.cos(FC.pitch) * Math.cos(FC.yaw)); }
+function fcAim(){ controls.target.copy(camera.position).addScaledVector(fcDir(), .4); camera.lookAt(controls.target); }
+function groundBelow(p){                                                // terrain / plates under a point (scene units), regular meshes only
+  const rc = new THREE.Raycaster(new THREE.Vector3(p.x, 4000, p.z), new THREE.Vector3(0, -1, 0)); const L = [];
+  world.traverse(o => { if(o.isMesh && !o.isInstancedMesh && o.visible && o.geometry && o.geometry.attributes.position.count > 3) L.push(o); });
+  const h = rc.intersectObjects(L, false)[0]; return h ? h.point.y : 0; }
+function camHud(){ const el = $('#camInfo'); if(!el) return; const g = groundBelow(camera.position), h = (camera.position.y - g) / S;
+  el.textContent = `${FC.lens} مم · ارتفاع ${h < 100 ? h.toFixed(1) : Math.round(h)} م · ${FC.shots.length} لقطة`; }
+let fcSky = null, fcBg = null;
+function freeCam(on){
+  if(!fcSky){ const c = document.createElement('canvas'); c.width = 2; c.height = 512; const g = c.getContext('2d'), gr = g.createLinearGradient(0, 0, 0, 512);
+    gr.addColorStop(0, '#6f97cf'); gr.addColorStop(.5, '#a9c1e0'); gr.addColorStop(.75, '#e3e4e2'); gr.addColorStop(1, '#efe4d4'); g.fillStyle = gr; g.fillRect(0, 0, 2, 512);
+    fcSky = new THREE.CanvasTexture(c); fcSky.colorSpace = THREE.SRGBColorSpace; }
+  if(on){ fcBg = scene.background; scene.background = fcSky; } else if(fcBg !== null){ scene.background = fcBg; }
+  lr.domElement.style.display = on ? 'none' : '';                       // clean frame: no labels in film mode
+  FC.on = on; $('#bFree').classList.toggle('on', on); $('#cam').hidden = !on; controls.enabled = !on;
+  if(on){ stopSpin(); const d = controls.target.clone().sub(camera.position).normalize(); FC.yaw = Math.atan2(d.x, d.z); FC.pitch = Math.asin(Math.max(-1, Math.min(1, d.y))); fcAim(); setLens(FC.lens); }
+  else { const d = fcDir(); controls.target.copy(camera.position).addScaledVector(d, 30); controls.update(); camera.fov = 38; camera.updateProjectionMatrix(); }
+  redraw(); viewChanged(); }
+{ let drag = null; const el = renderer.domElement;
+  el.addEventListener('pointerdown', e => { if(!FC.on || FC.play) return; drag = [e.clientX, e.clientY]; el.setPointerCapture(e.pointerId); });
+  el.addEventListener('pointermove', e => { if(!drag) return; FC.yaw -= (e.clientX - drag[0]) * .0035; FC.pitch = Math.max(-1.5, Math.min(1.5, FC.pitch - (e.clientY - drag[1]) * .0035)); drag = [e.clientX, e.clientY]; fcAim(); redraw(); });
+  el.addEventListener('pointerup', () => { if(drag){ drag = null; viewChanged(); } });
+  el.addEventListener('wheel', e => { if(!FC.on || FC.play) return; e.preventDefault(); const sp = (e.shiftKey ? 5 : 1) * .35; camera.position.addScaledVector(fcDir(), -Math.sign(e.deltaY) * sp); fcAim(); redraw(); viewChanged(); }, {passive: false});
+  addEventListener('keydown', e => { if(!FC.on || e.target.closest('input,textarea')) return; const k = e.key.toLowerCase(); if('wasdqe'.includes(k) || k === 'shift') { FC.keys.add(k); e.preventDefault(); } });
+  addEventListener('keyup', e => { FC.keys.delete(e.key.toLowerCase()); if(FC.on) viewChanged(); });
+  addEventListener('blur', () => FC.keys.clear()); }
+function fcStep(now){                                                   // called from the render loop
+  const dt = Math.min(.1, (now - (FC.last || now)) / 1000); FC.last = now;
+  if(FC.play){ const P = FC.play, t = Math.min(1, (now - P.t0) / P.dur); const u = t * t * (3 - 2 * t);
+    camera.position.copy(P.pos.getPoint(u)); controls.target.copy(P.tgt.getPoint(u)); camera.lookAt(controls.target);
+    const f = u * (P.lens.length - 1), i = Math.min(P.lens.length - 2, Math.floor(f)); camera.fov = lensFov(P.lens[i] + (P.lens[i + 1] - P.lens[i]) * (f - i)); camera.updateProjectionMatrix();
+    if(t >= 1){ FC.play = null; const d = controls.target.clone().sub(camera.position).normalize(); FC.yaw = Math.atan2(d.x, d.z); FC.pitch = Math.asin(d.y); fcAim(); viewChanged(); }
+    else if(now - (P.lastDet || 0) > 900){ P.lastDet = now; viewChanged(); }
+    return true; }
+  if(!FC.on || !FC.keys.size) return false;
+  const gh = Math.max(.15, (camera.position.y - (FC.gy ?? 0)));
+  const sp = (FC.keys.has('shift') ? 6 : 1) * Math.min(25, Math.max(.9, gh * .6)) * dt;   // ~9 m/s at street level, faster when high
+  const f = fcDir(), fl = new THREE.Vector3(f.x, 0, f.z).normalize(), r = new THREE.Vector3(fl.z, 0, -fl.x);
+  if(FC.keys.has('w')) camera.position.addScaledVector(fl, sp); if(FC.keys.has('s')) camera.position.addScaledVector(fl, -sp);
+  if(FC.keys.has('a')) camera.position.addScaledVector(r, sp); if(FC.keys.has('d')) camera.position.addScaledVector(r, -sp);
+  if(FC.keys.has('e')) camera.position.y += sp; if(FC.keys.has('q')) camera.position.y -= sp;
+  fcAim(); return true; }
+setInterval(() => { if(FC.on){ FC.gy = groundBelow(camera.position); camHud(); } }, 700);
+function saveShots(){ try { localStorage.setItem('nv-shots', JSON.stringify(FC.shots)); } catch(e) {} camHud(); }
+function shotsToPath(){ const V = a => new THREE.Vector3(...a); return { pos: new THREE.CatmullRomCurve3(FC.shots.map(s => V(s.p)), false, 'centripetal'), tgt: new THREE.CatmullRomCurve3(FC.shots.map(s => V(s.t)), false, 'centripetal'), lens: FC.shots.map(s => s.lens) }; }
+$('#bFree').onclick = () => freeCam(!FC.on);
+$('#cam').addEventListener('click', e => { const b = e.target.closest('button'); if(!b) return;
+  if(b.dataset.mm) setLens(+b.dataset.mm);
+  else if(b.id === 'cEye'){ camera.position.y = groundBelow(camera.position) + 1.6 * S; FC.pitch = 0; fcAim(); redraw(); viewChanged(); }
+  else if(b.id === 'cAdd'){ FC.shots.push({ p: camera.position.toArray(), t: controls.target.toArray(), lens: FC.lens }); saveShots(); }
+  else if(b.id === 'cPlay' && FC.shots.length > 1){ FC.play = { ...shotsToPath(), t0: performance.now(), dur: 4000 * (FC.shots.length - 1) }; }
+  else if(b.id === 'cClear'){ FC.shots = []; saveShots(); }
+  else if(b.id === 'cExport'){ const toM = a => [+(a[0] / S).toFixed(2), +(-a[2] / S).toFixed(2), +(a[1] / S).toFixed(2)];   // shape space metres: x east, y north, z up
+    const out = { project: 'nevera', units: 'm', frame: 'x east, y north, z up (CAD shape space); terrain exaggerated x' + VEX, sensor: '36x24 mm full frame', secondsPerSegment: 4,
+      shots: FC.shots.map((s, i) => ({ i, position: toM(s.p), target: toM(s.t), lensMm: s.lens })) };
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(out, null, 1)], { type: 'application/json' })); a.download = 'nevera-camera-shots.json'; a.click(); } });
+window.__nv = {camera, controls, freeCam, FC, redraw: () => { redraw(); viewChanged(); }, data: () => DATA, S};   // handle for scripted camera moves (film previs, tests)
 const az = new THREE.Spherical(); let lastLbl = 0;
 function loop(now){
   requestAnimationFrame(loop);
   if(anim){ anim(now); need = 2; }
   if(shift.x !== shift.tx || shift.y !== shift.ty){ applyShift(); need = 2; }
-  if(controls.update()) need = 2;
+  if(fcStep(now)) need = 2;
+  if(!FC.on && !FC.play && controls.update()) need = 2;
+  { const dd = camera.position.distanceTo(controls.target), nn = Math.min(1, Math.max(.03, (FC.on || FC.play ? .3 : dd) * .02));   // near plane follows the camera down to street level
+    if(Math.abs(nn - camera.near) > camera.near * .2){ camera.near = nn; camera.updateProjectionMatrix(); need = Math.max(need, 1); } }
   if(spinning) need = 2;
   const moving = animOn && TRAINS.length && !document.hidden;
   if(!need && !moving) return;

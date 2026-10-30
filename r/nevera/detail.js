@@ -200,8 +200,10 @@ export function buildDetail(THREE, list, opts = {}) {
     bush(T, 0, 0, H + .6, w - 4, d - 4, .5);
   }
 
+  const kitV = []; let kvN = 0;                       // atlas Z17 villas A/B/C from the shared kit, instanced; the nearest kitFull in full detail (list is sorted by distance)
   for (const it of list) {
     const R = rng((it.seed || 1) * 7919 % 2147483646 + 1), T = { x: it.x, y: it.y, a: it.a || 0, z: it.z || 0 }, col = it.col || 0xd8c2a0; BR = rng((it.seed || 1) * 104729 % 2147483646 + 7);
+    if (it.type === 'villa' && opts.kit) { const lite = kvN++ >= (opts.kitFull ?? 20); (kitV[((it.seed || 1) % 3) * 2 + (lite ? 1 : 0)] ||= []).push(it); continue; }
     if (it.type === 'villa') villa(T, R, it.w, it.d, col);
     else if (it.type === 'tower') tower(T, R, it.w, it.d, it.fl, col);
     else if (it.type === 'terrace') terrace(T, R, it.w, it.d, it.fl, col);
@@ -226,5 +228,13 @@ export function buildDetail(THREE, list, opts = {}) {
     bushes.forEach(([x, y, z, r, t], i) => { im.setMatrixAt(i, m4.compose(new THREE.Vector3(x, y, z), q, new THREE.Vector3(r, r, r))); im.setColorAt(i, c.setHex(tones[(t * tones.length) | 0])); });
     im.castShadow = true; im.receiveShadow = true; group.add(im);
   }
-  return { group, stats: { boxes, bushes: bushes.length, tris: boxes * 10 + bushes.length * 80 } };
+  // kit villas: one InstancedMesh per prototype part; y-up kit -> z-up map (Rx +90deg), front (+z: entrance, terrace) turned to the street side (-v)
+  let kitTris = 0;
+  if (opts.kit) kitV.forEach((items, k) => { if (!items || !items.length) return; const P = opts.kit.build(opts.kit.kinds[k >> 1], (k & 1) === 1);
+    const m4 = new THREE.Matrix4(), rx = new THREE.Matrix4().makeRotationX(Math.PI / 2), rz = new THREE.Matrix4(), tr = new THREE.Matrix4();
+    for (const [mat, g] of P.parts) { const im = new THREE.InstancedMesh(g, mat, items.length); im.userData.keep = true;
+      items.forEach((it, i) => { rz.makeRotationZ(it.a || 0); tr.makeTranslation(it.x, it.y, it.z || 0); im.setMatrixAt(i, m4.copy(tr).multiply(rz).multiply(rx)); });
+      im.castShadow = opts.kit.casts(mat) && !mat.transparent; im.receiveShadow = true; if (mat.transparent) im.renderOrder = 2; im.frustumCulled = false; group.add(im);
+      kitTris += g.attributes.position.count / 3 * items.length; } });
+  return { group, stats: { boxes, bushes: bushes.length, tris: boxes * 10 + bushes.length * 80 + Math.round(kitTris), kitVillas: kitV.reduce((a, v) => a + (v ? v.length : 0), 0) } };
 }
