@@ -1,6 +1,11 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
+<link rel="manifest" href="/r/nevera/app/manifest.webmanifest">
+<meta name="theme-color" content="#2b2117">
+<link rel="apple-touch-icon" href="/r/nevera/app/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Nevera">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
@@ -47,6 +52,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 /* tools */
 #cam{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);z-index:6;background:var(--glass);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;display:flex;flex-direction:column;gap:8px;align-items:center;max-width:calc(100vw - 32px);color:var(--cream);font-size:12.5px}
 #cam[hidden]{display:none}
+#appToast{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:9;background:var(--glass-hi);color:var(--cream);border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-size:13px;display:flex;gap:10px;align-items:center;max-width:calc(100vw - 32px)}
+#appToast[hidden]{display:none}
+#appToast button{background:var(--cream);color:var(--ink);border:0;border-radius:999px;padding:5px 12px;font:inherit;cursor:pointer}
 #cam .row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
 #cam button{background:rgba(231,224,211,.08);color:var(--cream);border:1px solid var(--line);border-radius:999px;padding:6px 11px;font:inherit;cursor:pointer}
 #cam button.on{background:var(--cream);color:var(--ink)}
@@ -154,11 +162,14 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   <button class="tb" id="bTop" data-tip="منظر من فوق (2D)"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 12h16M12 4v16"/></svg></button>
   <button class="tb on" id="bLabels" data-tip="الأسماء"><svg viewBox="0 0 24 24"><path d="M4 7V5h16v2M12 5v14M9 19h6"/></svg></button>
   <button class="tb" id="bAnim" data-tip="القطورات (أنيميشن)"><svg viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="14" rx="4"/><path d="M6 11h12M9 21l-2 0M15 21h2M9 17l-2 4M15 17l2 4"/><circle cx="9" cy="14" r=".6"/><circle cx="15" cy="14" r=".6"/></svg></button>
+  <button class="tb" id="bInstall" data-tip="ثبّت التطبيق (يشتغل من غير نت وياخد التحديثات من أروما هب)"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 17v3h16v-3"/></svg></button>
   <button class="tb" id="bFree" data-tip="كاميرا حرة (للفيلم)"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="13" height="10" rx="2"/><path d="M16 11l5-3v8l-5-3"/></svg></button>
   <button class="tb" id="bSpin" data-tip="لفّ تلقائي"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 4v5h-5"/></svg></button>
 </div>
+<div id="appToast" hidden></div>
 <div id="cam" hidden>
   <div class="row lens"><button data-mm="18">18</button><button data-mm="24">24</button><button data-mm="28">28</button><button data-mm="35">35</button><button data-mm="50">50</button><button data-mm="85">85 مم</button></div>
+  <div class="row" id="camLive" hidden></div>
   <div class="row"><button data-st="cd">شارع قلب المنطقة</button><button data-st="me">المدخل</button><button data-st="rm">السكن المختلط</button><button data-st="rh">عالي الكثافة</button><button data-st="rp">جنب الحدايق</button><button data-st="rl">الفيلات</button></div>
   <div class="row"><button id="cEye">مستوى العين 1.6 م</button><button id="cAdd">＋ لقطة</button><button id="cPlay">▶ تشغيل المسار</button><button id="cExport">⬇ تصدير JSON</button><button id="cClear">مسح</button></div>
   <div class="hint"><span id="camInfo"></span> · W A S D حركة · Q / E نزول وطلوع · Shift أسرع · اسحب للف · العجلة لقدام وورا</div>
@@ -887,6 +898,32 @@ $('#cam').addEventListener('click', e => { const b = e.target.closest('button');
     const out = { project: 'nevera', units: 'm', frame: 'x east, y north, z up (CAD shape space); terrain exaggerated x' + VEX, sensor: '36x24 mm full frame', secondsPerSegment: 4,
       shots: FC.shots.map((s, i) => ({ i, position: toM(s.p), target: toM(s.t), lensMm: s.lens })) };
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(out, null, 1)], { type: 'application/json' })); a.download = 'nevera-camera-shots.json'; a.click(); } });
+/* ---------- the Nevera app: install, offline, updates and the live channel from Aroma Hub ---------- */
+const NV_BUILD = '20261031081304';                                        // stamped on every publish; version.json carries the newest
+const APP = { prompt: null };
+if('serviceWorker' in navigator && /aromahub\.studio$/.test(location.hostname)) navigator.serviceWorker.register('/r/nevera/app/sw.js', { scope: '/nevera' }).catch(e => console.warn('sw', e));
+addEventListener('beforeinstallprompt', e => { e.preventDefault(); APP.prompt = e; });
+if(matchMedia('(display-mode: standalone)').matches || navigator.standalone) $('#bInstall').hidden = true;
+function toast(msg, ms = 4000, action){ const t = $('#appToast'); t.textContent = msg; if(action){ const b = document.createElement('button'); b.textContent = action[0]; b.onclick = action[1]; t.append(b); }
+  t.hidden = false; clearTimeout(t._h); if(ms) t._h = setTimeout(() => t.hidden = true, ms); }
+$('#bInstall').onclick = async () => {
+  if(APP.prompt){ APP.prompt.prompt(); const r = await APP.prompt.userChoice; APP.prompt = null; if(r.outcome === 'accepted') toast('اتثبّت ✓ هتلاقيه مع البرامج'); return; }
+  const ua = navigator.userAgent, touch = 'ontouchend' in document, ios = /iPad|iPhone/.test(ua) || (/Macintosh/.test(ua) && touch), safari = /Safari/.test(ua) && !/Chrome|Chromium|Edg|OPR/.test(ua);
+  toast(ios ? 'من زرار المشاركة ⬆︎ اختار «Add to Home Screen»' : safari ? 'من قايمة File فوق اختار «Add to Dock»' : 'من شريط العنوان دوس أيقونة التثبيت ⊕، أو من القايمة ⋮ ← Install Nevera', 9000); };
+async function checkUpdate(){ if(NV_BUILD.startsWith('__')) return; try { const v = await (await fetch('/r/nevera/app/version.json', { cache: 'no-store' })).json();
+  if(v.build && v.build > NV_BUILD) toast('فيه تحديث جديد من أروما هب' + (v.note ? ' · ' + v.note : ''), 0, ['حدّث دلوقتي', () => location.reload()]); } catch(e) {} }
+let liveNote = '';
+async function checkLive(){ try { const L = await (await fetch('/r/nevera/app/live.json', { cache: 'no-store' })).json(), row = $('#camLive');
+  row.textContent = ''; for(const s of (L.shots || [])){ const b = document.createElement('button'); b.textContent = '🎬 ' + s.name; b.onclick = () => playRemote(s); row.append(b); } row.hidden = !(L.shots || []).length;
+  if(L.note && L.note !== liveNote){ liveNote = L.note; if(!L.noteAt || Date.now() - Date.parse(L.noteAt) < 3 * 864e5) toast('من أروما: ' + L.note, 9000); } } catch(e) {} }
+function playRemote(s){                                                 // a shot pushed from the hub: keys in CAD metres, same format as the JSON export
+  const fromM = a => [a[0] * S, a[2] * S, -a[1] * S];
+  FC.shots = (s.keys || []).map(k => ({ p: fromM(k.position), t: fromM(k.target), lens: k.lensMm || 28 })); if(!FC.shots.length) return; saveShots(); if(!FC.on) freeCam(true);
+  if(FC.shots.length > 1){ FC.play = { ...shotsToPath(), t0: performance.now(), dur: 1000 * (s.secondsPerSegment || 4) * (FC.shots.length - 1) }; return; }
+  camera.position.fromArray(FC.shots[0].p); controls.target.fromArray(FC.shots[0].t); const d = controls.target.clone().sub(camera.position).normalize();
+  FC.yaw = Math.atan2(d.x, d.z); FC.pitch = Math.asin(d.y); fcAim(); setLens(FC.shots[0].lens); redraw(); viewChanged(); }
+setTimeout(() => { checkUpdate(); checkLive(); }, 6000); setInterval(() => { checkUpdate(); checkLive(); }, 180000);
+addEventListener('focus', () => { checkUpdate(); checkLive(); });
 window.__nv = {camera, controls, freeCam, goStreet, FC, detState: () => ({detBusy, key: detKey.length, mod: !!detMod, kit: !!detKit}), redraw: () => { redraw(); viewChanged(); }, data: () => DATA, S};   // handle for scripted camera moves (film previs, tests)
 const az = new THREE.Spherical(); let lastLbl = 0;
 function loop(now){
