@@ -159,6 +159,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 </div>
 <div id="cam" hidden>
   <div class="row lens"><button data-mm="18">18</button><button data-mm="24">24</button><button data-mm="28">28</button><button data-mm="35">35</button><button data-mm="50">50</button><button data-mm="85">85 مم</button></div>
+  <div class="row"><button data-st="cd">شارع قلب المنطقة</button><button data-st="me">المدخل</button><button data-st="rm">السكن المختلط</button><button data-st="rh">عالي الكثافة</button><button data-st="rp">جنب الحدايق</button><button data-st="rl">الفيلات</button></div>
   <div class="row"><button id="cEye">مستوى العين 1.6 م</button><button id="cAdd">＋ لقطة</button><button id="cPlay">▶ تشغيل المسار</button><button id="cExport">⬇ تصدير JSON</button><button id="cClear">مسح</button></div>
   <div class="hint"><span id="camInfo"></span> · W A S D حركة · Q / E نزول وطلوع · Shift أسرع · اسحب للف · العجلة لقدام وورا</div>
 </div>
@@ -573,6 +574,7 @@ async function addBlocks(){
   for(const [k, g] of Object.entries(BLK.byCat)){ g.visible = !hidden.has(k); world.add(g); }
   window.__nv.blocks = BLK;
   console.log('blocks', JSON.stringify(BLK.stats), Math.round(performance.now() - t0) + ' ms'); viewChanged(); prefetchDetail();
+  { const st = new URLSearchParams(location.search).get('shot'); if(st) setTimeout(() => goStreet(st), 2800); }
   renderer.shadowMap.needsUpdate = true; redraw();
 }
 
@@ -863,9 +865,20 @@ function fcStep(now){                                                   // calle
 setInterval(() => { if(FC.on){ FC.gy = groundBelow(camera.position); camHud(); } }, 700);
 function saveShots(){ try { localStorage.setItem('nv-shots', JSON.stringify(FC.shots)); } catch(e) {} camHud(); }
 function shotsToPath(){ const V = a => new THREE.Vector3(...a); return { pos: new THREE.CatmullRomCurve3(FC.shots.map(s => V(s.p)), false, 'centripetal'), tgt: new THREE.CatmullRomCurve3(FC.shots.map(s => V(s.t)), false, 'centripetal'), lens: FC.shots.map(s => s.lens) }; }
+// ready-made street views: eye level in front of a building of that zone, camera kept in the street (never inside a footprint)
+function insideAny(px, py){ for(const q of BLK.records){ const dx = px - q.x, dy = py - q.y; if(dx*dx + dy*dy > 4900) continue; const c = Math.cos(q.a || 0), s2 = Math.sin(q.a || 0), u = dx*c + dy*s2, v = -dx*s2 + dy*c; if(Math.abs(u) < q.w/2 + 1.5 && Math.abs(v) < q.d/2 + 1.5) return true; } return false; }
+function goStreet(cat){
+  if(!BLK) return; const L = BLK.records.filter(r => r.cat === cat && r.type !== 'tower'); if(!L.length) return;
+  const C = BLK.stats && BLK.stats.plan && BLK.stats.plan.centre || [0, 0]; L.sort((a, b) => Math.hypot(a.x - C[0], a.y - C[1]) - Math.hypot(b.x - C[0], b.y - C[1]));
+  for(const r of L.slice(0, 40)){ const a = r.a || 0, vx = -Math.sin(a), vy = Math.cos(a), ux = Math.cos(a), uy = Math.sin(a);
+    for(let back = r.d/2 + 19; back >= r.d/2 + 6; back -= 1.5){ const px = r.x - vx*back + ux*r.w*.35, py = r.y - vy*back + uy*r.w*.35; if(insideAny(px, py)) continue;
+      camera.position.set(px*S, 1, -py*S); controls.target.set(r.x*S, .6, -r.y*S);
+      if(!FC.on) freeCam(true); const d = controls.target.clone().sub(camera.position).normalize(); FC.yaw = Math.atan2(d.x, d.z);
+      camera.position.y = groundBelow(camera.position) + 1.6*S; FC.pitch = .1; fcAim(); setLens(24); redraw(); viewChanged(); return; } } }
 $('#bFree').onclick = () => freeCam(!FC.on);
 $('#cam').addEventListener('click', e => { const b = e.target.closest('button'); if(!b) return;
   if(b.dataset.mm) setLens(+b.dataset.mm);
+  else if(b.dataset.st) goStreet(b.dataset.st);
   else if(b.id === 'cEye'){ camera.position.y = groundBelow(camera.position) + 1.6 * S; FC.pitch = 0; fcAim(); redraw(); viewChanged(); }
   else if(b.id === 'cAdd'){ FC.shots.push({ p: camera.position.toArray(), t: controls.target.toArray(), lens: FC.lens }); saveShots(); }
   else if(b.id === 'cPlay' && FC.shots.length > 1){ FC.play = { ...shotsToPath(), t0: performance.now(), dur: 4000 * (FC.shots.length - 1) }; }
@@ -874,7 +887,7 @@ $('#cam').addEventListener('click', e => { const b = e.target.closest('button');
     const out = { project: 'nevera', units: 'm', frame: 'x east, y north, z up (CAD shape space); terrain exaggerated x' + VEX, sensor: '36x24 mm full frame', secondsPerSegment: 4,
       shots: FC.shots.map((s, i) => ({ i, position: toM(s.p), target: toM(s.t), lensMm: s.lens })) };
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(out, null, 1)], { type: 'application/json' })); a.download = 'nevera-camera-shots.json'; a.click(); } });
-window.__nv = {camera, controls, freeCam, FC, detState: () => ({detBusy, key: detKey.length, mod: !!detMod, kit: !!detKit}), redraw: () => { redraw(); viewChanged(); }, data: () => DATA, S};   // handle for scripted camera moves (film previs, tests)
+window.__nv = {camera, controls, freeCam, goStreet, FC, detState: () => ({detBusy, key: detKey.length, mod: !!detMod, kit: !!detKit}), redraw: () => { redraw(); viewChanged(); }, data: () => DATA, S};   // handle for scripted camera moves (film previs, tests)
 const az = new THREE.Spherical(); let lastLbl = 0;
 function loop(now){
   requestAnimationFrame(loop);
