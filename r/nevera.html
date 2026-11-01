@@ -291,7 +291,7 @@ function addLabel(o, text, sub, pos, cls, onClick){
 }
 
 const PLATE = 0.25;                  // ground plate under the buildings, scene units
-function plateH(k, z){ const c = CATS[k] || {}; if(c.overlay || k === 'pz') return z.h ?? 0.3; return k === 'gl' ? 0.1 : k === 'pk' ? 0.28 : k === 'gf' ? 0.26 : PLATE; }
+function plateH(k, z){ const c = CATS[k] || {}; if(c.overlay || k === 'pz') return Math.min(z.h ?? .255, .255); return k === 'gl' ? 0.1 : PLATE; }
 function build(){
   CATS = DATA.cats;
   // zones: one merged mesh per land use, with a face range per parcel for picking
@@ -322,7 +322,7 @@ function build(){
     world.add(new THREE.LineSegments(eg, new THREE.LineBasicMaterial({color:0xfff4e2, transparent:true, opacity:.28}))); }
 
   // roads: one merged mesh, width = right-of-way
-  const rg = []; for(const r of (DATA.roads||[])) if((r.p||[]).length > 1) rg.push(ribbon(r.p, (r.w||20)*S*0.5, 0.30));
+  const rg = []; for(const r of (DATA.roads||[])) if((r.p||[]).length > 1) rg.push(ribbon(r.p, (r.w||20)*S*0.5, 0.26));
   if(rg.length){ const m = new THREE.Mesh(mergeGeometries(rg,false), new THREE.MeshStandardMaterial({color:0xa79b87, roughness:.95}));   // right-of-way: pavements and verges (streets.js draws the carriageways)
  m.receiveShadow = true; world.add(m); rg.forEach(g=>g.dispose()); }
   for(const b of (DATA.boundary||[])){ const pts = b.map(p => new THREE.Vector3(p[0]*S, p[1]*S, 0.6)); pts.push(pts[0]);
@@ -429,12 +429,14 @@ function buildExtras(){
 
 /* ---------- terrain: SRTM relief + Sentinel-2 image around the site ---------- */
 let TER = null;
-function terrainZ(x, y){                        // x, y in metres (local grid); returns scene units
+const SITE_FLAT = -15;                           // the site cells were flattened to -1.5 m in build_data.py
+function terrainZ(x, y, raw = false){            // x, y in metres (local grid); returns scene units. raw = the flattened site as stored (rail bed)
   if(!TER) return 0; const T = TER.meta;
   const fx = (x - T.X0) / T.step, fy = (T.Y1 - y) / T.step;
   if(fx < 0 || fy < 0 || fx > T.nx - 1 || fy > T.ny - 1) return 0;
   const i = Math.floor(fx), j = Math.floor(fy), u = fx - i, w = fy - j, i1 = Math.min(i+1, T.nx-1), j1 = Math.min(j+1, T.ny-1), d = TER.dm;
-  const h = (d[j*T.nx+i]*(1-u) + d[j*T.nx+i1]*u)*(1-w) + (d[j1*T.nx+i]*(1-u) + d[j1*T.nx+i1]*u)*w;
+  const lift = v => (!raw && v === SITE_FLAT) ? (PLATE - .02) / (VEX * S) * 10 : v;      // site ground 20 cm under the plates
+  const h = (lift(d[j*T.nx+i])*(1-u) + lift(d[j*T.nx+i1])*u)*(1-w) + (lift(d[j1*T.nx+i])*(1-u) + lift(d[j1*T.nx+i1])*u)*w;
   return h / 10 * VEX * S;
 }
 async function addTerrain(){
@@ -446,7 +448,7 @@ async function addTerrain(){
   const Wd = (T.X1 - T.X0) * S, Ht = (T.Y1 - T.Y0) * S;
   const step = mobile ? 2 : 1, nx = Math.floor((T.nx - 1) / step), ny = Math.floor((T.ny - 1) / step);
   const g = new THREE.PlaneGeometry(Wd, Ht, nx, ny), pos = g.attributes.position;
-  for(let j=0;j<=ny;j++) for(let i=0;i<=nx;i++){ const k = j*(nx+1)+i; pos.setZ(k, TER.dm[(j*step)*T.nx + i*step] / 10 * VEX * S - 0.05); }
+  for(let j=0;j<=ny;j++) for(let i=0;i<=nx;i++){ const k = j*(nx+1)+i; const v = TER.dm[(j*step)*T.nx + i*step]; pos.setZ(k, v === SITE_FLAT ? PLATE - .02 : v / 10 * VEX * S - 0.05); }
   g.computeVertexNormals();
   const tex = new THREE.TextureLoader().load(BASE + T.img, () => { renderer.shadowMap.needsUpdate = true; redraw(); });
   tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
@@ -455,8 +457,8 @@ async function addTerrain(){
   ground.position.z = (20 - T.E0) * VEX * S - 1;                                   // the plain beyond the image sits at Nile level
   ground.material.color.set(0xc8ab7f);
   // the rail bed follows the ground outside the site
-  if(railBed){ const P = railBed.geometry.attributes.position; for(let k=0;k<P.count;k++){ const x = P.getX(k)/S, y = P.getY(k)/S; P.setZ(k, Math.max(0.35, terrainZ(x, y) + 0.35)); } P.needsUpdate = true;
-    const R = railTop.geometry.attributes.position; for(let k=0;k<R.count;k++){ const x = R.getX(k)/S, y = R.getY(k)/S; R.setZ(k, Math.max(0.45, terrainZ(x, y) + 0.45)); } R.needsUpdate = true; }
+  if(railBed){ const P = railBed.geometry.attributes.position; for(let k=0;k<P.count;k++){ const x = P.getX(k)/S, y = P.getY(k)/S; P.setZ(k, Math.max(0.35, terrainZ(x, y, true) + 0.35)); } P.needsUpdate = true;
+    const R = railTop.geometry.attributes.position; for(let k=0;k<R.count;k++){ const x = R.getX(k)/S, y = R.getY(k)/S; R.setZ(k, Math.max(0.45, terrainZ(x, y, true) + 0.45)); } R.needsUpdate = true; }
   renderer.shadowMap.needsUpdate = true; redraw();
 }
 
@@ -505,7 +507,7 @@ async function addLandmarks(){
 let STR = null;
 async function addStreets(){
   const {buildStreets} = await import(BASE + 'streets.js');
-  STR = buildStreets(THREE, DATA, {S, mobile}); world.add(STR.group); window.__nv.streets = STR;
+  STR = buildStreets(THREE, DATA, {S, mobile, z: .265}); world.add(STR.group); window.__nv.streets = STR;
   console.log('streets', JSON.stringify(STR.stats)); redraw();
 }
 
@@ -533,7 +535,7 @@ async function addPlaces(){
 let CIR = null;
 async function addCircuit(){
   const {buildCircuit} = await import(BASE + 'circuit.js');
-  CIR = buildCircuit(THREE, DATA, {S, VEX: BVEX, z: .38}); extrasGroup.add(CIR.group); window.__nv.circuit = CIR;
+  CIR = buildCircuit(THREE, DATA, {S, VEX: BVEX, z: .262}); extrasGroup.add(CIR.group); window.__nv.circuit = CIR;
   console.log('circuit', JSON.stringify(CIR.stats)); renderer.shadowMap.needsUpdate = true; redraw();
 }
 
@@ -899,7 +901,7 @@ $('#cam').addEventListener('click', e => { const b = e.target.closest('button');
       shots: FC.shots.map((s, i) => ({ i, position: toM(s.p), target: toM(s.t), lensMm: s.lens })) };
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(out, null, 1)], { type: 'application/json' })); a.download = 'nevera-camera-shots.json'; a.click(); } });
 /* ---------- the Nevera app: install, offline, updates and the live channel from Aroma Hub ---------- */
-const NV_BUILD = '20261031081304';                                        // stamped on every publish; version.json carries the newest
+const NV_BUILD = '20261101084449';                                        // stamped on every publish; version.json carries the newest
 const APP = { prompt: null };
 if('serviceWorker' in navigator && /aromahub\.studio$/.test(location.hostname)) navigator.serviceWorker.register('/r/nevera/app/sw.js', { scope: '/nevera' }).catch(e => console.warn('sw', e));
 addEventListener('beforeinstallprompt', e => { e.preventDefault(); APP.prompt = e; });
@@ -932,6 +934,7 @@ function loop(now){
   if(shift.x !== shift.tx || shift.y !== shift.ty){ applyShift(); need = 2; }
   if(fcStep(now)) need = 2;
   if(!FC.on && !FC.play && controls.update()) need = 2;
+  { const gmin = groundBelow(camera.position) + .06; if(camera.position.y < gmin){ camera.position.y = gmin; if(FC.on) fcAim(); need = 2; } }   // never under the ground
   { const dd = camera.position.distanceTo(controls.target), nn = Math.min(1, Math.max(.03, (FC.on || FC.play ? .3 : dd) * .02));   // near plane follows the camera down to street level
     if(Math.abs(nn - camera.near) > camera.near * .2){ camera.near = nn; camera.updateProjectionMatrix(); need = Math.max(need, 1); } }
   if(spinning) need = 2;
