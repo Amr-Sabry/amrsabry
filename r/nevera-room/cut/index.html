@@ -315,7 +315,7 @@ let DUR = 324.906;
 let shots = [];            // sorted by tin
 let takes = {};            // id -> take
 let selId = null, filter = 'all', tool = 'select';
-let db = null, assets = null, dl = null, canWrite = false;
+let db = null, assets = null, dl = null, canWrite = false, seeding = false;
 let sprite = null, peaks = null;
 const undoStack = [];
 
@@ -335,7 +335,7 @@ function setShots(list) {
   if (!sel() && shots.length) selId = shots[0].id;
   renderList(); renderInspector(); drawTL(); updateClock();
 }
-async function seedIfNeeded() { if (!needSeed || !db || !canWrite) return; needSeed = false; for (const x of shots) { const { id, ...body } = x; await db.doc('shots/' + id).set(body); } setSync(); }
+async function seedIfNeeded() { if (!needSeed || !db || !canWrite) return; needSeed = false; seeding = true; try { for (const x of shots) { const { id, ...body } = x; await db.doc('shots/' + id).set(body); } } finally { seeding = false; } setSync(); }
 async function writeShot(s, fields) {
   if (!db || !canWrite) return;
   await seedIfNeeded();
@@ -369,6 +369,7 @@ async function initData() {
   db.collection('shots').onSnapshot((snap) => {
     const list = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     if (!snap.metadata.fromCache) { clearTimeout(timer); first = false; setSync(); }
+    if (seeding || (list.length && list.length < shots.length - 5)) return;   // the first save writes the shots one by one
     if (list.length) setShots(list);
     else if (!snap.metadata.fromCache) { fallback().then(() => { needSeed = true; setSync('The v5 cut: your first edit saves it for the team'); }); }
   }, (e) => { clearTimeout(timer); setSync(`Shots could not load (${e.code})`); fallback(); });
