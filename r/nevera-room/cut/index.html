@@ -333,7 +333,7 @@ const esc = (s) => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<':
 function setShots(list) {
   shots = list.filter(s => (s.ver || VER) === VER).sort((a, b) => a.tin - b.tin);
   if (!sel() && shots.length) selId = shots[0].id;
-  renderList(); renderInspector(); drawTL(); updateBadge();
+  renderList(); renderInspector(); drawTL(); updateClock();
 }
 async function seedIfNeeded() { if (!needSeed || !db || !canWrite) return; needSeed = false; for (const x of shots) { const { id, ...body } = x; await db.doc('shots/' + id).set(body); } setSync(); }
 async function writeShot(s, fields) {

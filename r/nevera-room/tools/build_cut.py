@@ -94,6 +94,7 @@ rep("const v1 = $('#v1'), v2 = $('#v2');","const v1 = $('#v1'), v2 = $('#v2'), f
 rep("let DUR = 60.08;","let DUR = 324.906;")
 rep("const shotNo = (s) => 'SH' + String(shots.indexOf(s) + 1).padStart(2, '0');","const shotNo = (s) => 'SH' + String(shots.indexOf(s) + 1).padStart(3, '0');")
 # ---------- data: an empty store seeds itself on the first edit ----------
+rep("renderList(); renderInspector(); drawTL(); updateBadge();\n}\nasync function writeShot","renderList(); renderInspector(); drawTL(); updateClock();\n}\nasync function writeShot")
 rep("async function writeShot(s, fields) {\n  if (!db || !canWrite) return;","async function seedIfNeeded() { if (!needSeed || !db || !canWrite) return; needSeed = false; for (const x of shots) { const { id, ...body } = x; await db.doc('shots/' + id).set(body); } setSync(); }\nasync function writeShot(s, fields) {\n  if (!db || !canWrite) return;\n  await seedIfNeeded();")
 rep("async function setShotDoc(s) { if (!db || !canWrite) return; const { id, ...body } = s;","async function setShotDoc(s) { if (!db || !canWrite) return; await seedIfNeeded(); const { id, ...body } = s;")
 rep("async function deleteShotDoc(id) { if (!db || !canWrite) return; await","async function deleteShotDoc(id) { if (!db || !canWrite) return; await seedIfNeeded(); await")
