@@ -17,6 +17,7 @@
 | الحاجة | اللينك | آخر تحديث |
 |---|---|---|
 | صفحة المشروع على الهب (المخطط 3D) | https://aromahub.studio/nevera | 2026-10-30 09:40 |
+| غرفة الفيلم: Cutting Room و112 شوت وViewer الماستر بلان والفيجرز وAuto stage (الملف r/nevera-room/README.md) | https://aromahub.studio/nevera-room | 2026-11-02 13:15 |
 | موديل محطة حدائق أكتوبر 3D | https://aromahub.studio/r/nevera/station | 2026-10-27 20:50 |
 | داتا المخطط (JSON، اللي الصفحة بتقراه) | https://aromahub.studio/r/nevera/zones.json | 2026-10-28 02:40 |
 | تضاريس المنطقة (ارتفاعات Int16 بالديسيمتر) + صورة القمر الصناعي | https://aromahub.studio/r/nevera/terrain.bin · https://aromahub.studio/r/nevera/sat.jpg | 2026-10-27 20:50 |
