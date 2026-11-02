@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex"><base href="/r/nevera-room/"></head><body style="margin:0">
+<title>Nevera Film Room</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one header band, the Cutting Room as a wide hero row, then one plinth per stage still being built, then the update log. Single dark look on purpose: storyboards are judged on neutral ground. */
+:root{
+  color-scheme:dark;
+  --ground:#101113; --plinth:#18191c; --plinth-2:#202125; --edge:#2d2e33;
+  --sand:#e7e0d3; --dune:#d7c2a4; --ash:#a09b91; --live:#a9c79a; --work:#e2bf85; --queue:#77736c;
+  --f-display:"Marcellus","Times New Roman",serif;
+  --f-body:"IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{direction:rtl}
+body{background:var(--ground);color:var(--sand);font-family:var(--f-body);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+.wrap{max-width:1180px;margin:0 auto}
+header{padding-block:40px 26px;display:grid;gap:8px;border-bottom:1px solid var(--edge);margin-bottom:26px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;color:var(--ash);direction:ltr;text-align:right}
+h1{font-family:var(--f-display);font-weight:400;font-size:clamp(32px,5vw,52px);line-height:1.05;margin:0;direction:ltr;text-align:right}
+.lede{color:var(--ash);max-width:62ch;margin:0}
+.room,.card{background:var(--plinth);border:1px solid var(--edge);border-radius:4px;overflow:hidden;min-width:0}
+.room{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);margin-bottom:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:20px}
+.card{display:grid;grid-template-rows:auto 1fr}
+.shot{position:relative;aspect-ratio:16/9;max-width:100%;background:#000;overflow:hidden}
+.room .shot{aspect-ratio:auto;min-height:260px}
+.shot img{width:100%;height:100%;object-fit:cover;display:block;filter:contrast(1.05) brightness(.9)}
+.pill{position:absolute;top:12px;inset-inline-start:12px;display:inline-flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;padding:5px 9px;border-radius:2px;background:rgba(16,17,19,.84);border:1px solid var(--edge);direction:ltr}
+.pill i{width:7px;height:7px;border-radius:50%;background:currentColor;display:block}
+.pill.live{color:var(--live)} .pill.work{color:var(--work)} .pill.queue{color:var(--queue)}
+.pill.work i{animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.pill.work i{animation:none}}
+.body{padding:18px 20px 20px;display:grid;gap:13px;align-content:start;min-width:0}
+h2{font-family:var(--f-display);font-weight:400;font-size:24px;line-height:1.2;margin:0;direction:ltr;text-align:right}
+dl{margin:0;display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;font-size:14px}
+dt{color:var(--ash);font-size:12.5px;padding-top:2px}
+dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.mono{font-family:var(--f-mono);font-size:12.5px;font-variant-numeric:tabular-nums}
+.eta{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;padding:10px 12px;background:var(--plinth-2);border:1px solid var(--edge);border-radius:3px}
+.eta b{font-weight:600;font-size:14px}
+.eta span{color:var(--ash);font-size:13px}
+.eta.done b{color:var(--live)}
+.state{font-size:14px;color:var(--ash);margin:0}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:8px;font:600 14px/1 var(--f-body);padding:12px 18px;border-radius:3px;text-decoration:none;border:1px solid var(--dune);color:#141414;background:var(--dune)}
+.btn:hover{background:var(--sand)}
+.btn:focus-visible{outline:2px solid var(--live);outline-offset:2px}
+section.log{margin-top:34px;border-top:1px solid var(--edge);padding-top:18px;display:grid;gap:10px}
+.log h3{margin:0;font-size:13px;font-weight:500;color:var(--ash)}
+.log ol{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+.log li{display:grid;grid-template-columns:8.5em 1fr;gap:12px;font-size:14px}
+.log time{font-family:var(--f-mono);font-size:12px;color:var(--ash);font-variant-numeric:tabular-nums;padding-top:2px;direction:ltr;text-align:right}
+@media (max-width:760px){.room{grid-template-columns:1fr}.room .shot{aspect-ratio:16/9;min-height:0}}
+@media (max-width:520px){.body{padding:16px}.log li{grid-template-columns:1fr;gap:0}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">NEVERA &middot; 5 MIN B2B LAUNCH FILM &middot; AROMA STUDIOS</div>
+    <h1>Film Room</h1>
+    <p class="lede">كل شوت في الفيلم ليه صف شغل: معمول من إيه، وواصل لفين، ومتقارن بالستوري بورد. الصفحة دي بتتحدّث مع كل مرحلة بتخلص.</p>
+  </header>
+
+  <section class="room" aria-label="Cutting Room">
+    <div class="shot"><img src="thumbs/cut.jpg" alt="الـ Cutting Room: الستوري بورد مقسوم شوتات على تايم لاين، والمونيتور في النص"><span class="pill live"><i></i>LIVE</span></div>
+    <div class="body">
+      <h2>Cutting Room</h2>
+      <p class="state">أنيماتيك v5 مقسوم 112 شوت على تايم لاين: الفريمات على V1، والمزيكا والـ VO على A1، والمشاهد والأرقام اللي على الشاشة في طبقات لوحدها. كل تعديل بيتحفظ للفريق، وأي take بترفعه بينزل على V2 جنب الستوري بورد.</p>
+      <dl>
+        <dt>الشوتات</dt><dd class="mono" id="counts">112 &middot; 32 Masterplan 3D &middot; 78 Seedance &middot; 2 Graphics</dd>
+        <dt>المدة</dt><dd class="mono">5:25 &middot; 16 scenes &middot; 25 fps</dd>
+        <dt>الأماكن</dt><dd>كل شوت مربوط بقطعته في الماستر بلان بتاعنا (26 شوت محتاجين تأكيد)</dd>
+        <dt>التصدير</dt><dd>شيت الشوتات (CSV)، وSeedance pack بالفريم والتايمنج لكل شوت</dd>
+      </dl>
+      <div class="actions"><a class="btn" href="cut/index.html">افتح الـ Cutting Room</a></div>
+    </div>
+  </section>
+
+  <main class="grid">
+    <article class="card">
+      <div class="shot"><img src="thumbs/cast.jpg" alt="فريم من الستوري بورد: المايسترو يرفع عصاه"><span class="pill work"><i></i>IN PROGRESS</span></div>
+      <div class="body">
+        <h2>Cast figures</h2>
+        <div class="eta"><b>حوالي 1:00 الضهر</b><span>بتوقيت دبي</span></div>
+        <p class="state">الكاست 3D على مانيكانات بمفاصل: المايسترو، والعازفين بآلاتهم، والمسافرة، والجد وحفيده، وباقي الناس في المشاهد.</p>
+      </div>
+    </article>
+    <article class="card">
+      <div class="shot"><img src="thumbs/seed.jpg" alt="فريم من الستوري بورد: الكاميرا فوق موقع التصوير"><span class="pill queue"><i></i>QUEUED</span></div>
+      <div class="body">
+        <h2>Seedance pack</h2>
+        <div class="eta"><b>حوالي 1:30</b><span>بعد الفيجرز</span></div>
+        <p class="state">لكل شوت برومبت، ومعاه الكاراكترز واللوكيشن والفريم كريفرنس. الفريم مش هيتحرّك كـ start frame.</p>
+      </div>
+    </article>
+    <article class="card">
+      <div class="shot"><img src="thumbs/mp.jpg" alt="فريم من الستوري بورد: المخطط كاملًا من فوق"><span class="pill queue"><i></i>QUEUED</span></div>
+      <div class="body">
+        <h2>Masterplan viewer</h2>
+        <div class="eta"><b>حوالي 3:00</b><span>الماستر بلان بتاعنا</span></div>
+        <p class="state">نفس المخطط اللي على الهب، على محرك HRID: Director وكي فريمز وCurves وعدسة وشمس وريندر. حجمه <span class="mono">3.4M</span> مثلث، وده أقل من موديلات HRID.</p>
+      </div>
+    </article>
+    <article class="card">
+      <div class="shot"><img src="thumbs/stage.jpg" alt="فريم من الستوري بورد: المدينة كاملة والأهرامات في الخلفية"><span class="pill queue"><i></i>QUEUED</span></div>
+      <div class="body">
+        <h2>Auto stage</h2>
+        <div class="eta"><b>حوالي 4:30</b><span>الأماكن والفيجرز مع بعض</span></div>
+        <p class="state">كل شوت يتفتح جاهز بكادر مبدئي في مكانه على المخطط، والكاست واقف فيه، والستوري بورد فوقيه Overlay عشان تظبط عليه.</p>
+      </div>
+    </article>
+  </main>
+
+  <section class="log" aria-label="التحديثات">
+    <h3>التحديثات</h3>
+    <ol id="log">
+      <li><time>Nov 2 &middot; 12:25</time><span>كل شوت اتربط بقطعته في الماستر بلان بتاعنا. 26 شوت مالهمش قطعة بالاسم، فاتحط لهم أقرب مكان وعليهم «محتاج تأكيد».</span></li>
+      <li><time>Nov 2 &middot; 12:10</time><span>الـ Cutting Room بقى لايف: 112 شوت بالفريمات والصوت، ورفع الـ takes على V2.</span></li>
+    </ol>
+  </section>
+</div>
+
+</body></html>
