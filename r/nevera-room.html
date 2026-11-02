@@ -57,6 +57,15 @@ section.log{margin-top:34px;border-top:1px solid var(--edge);padding-top:18px;di
 .log ol{list-style:none;margin:0;padding:0;display:grid;gap:7px}
 .log li{display:grid;grid-template-columns:8.5em 1fr;gap:12px;font-size:14px}
 .log time{font-family:var(--f-mono);font-size:12px;color:var(--ash);font-variant-numeric:tabular-nums;padding-top:2px;direction:ltr;text-align:right}
+.test{display:grid;gap:12px;margin-bottom:24px}
+.test h3{margin:0;font-size:13px;font-weight:500;color:var(--ash)}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:16px}
+.tgrid figure{margin:0;background:var(--plinth);border:1px solid var(--edge);border-radius:4px;overflow:hidden;display:grid;grid-template-rows:auto 1fr;min-width:0}
+.tgrid img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
+.tgrid figcaption{padding:12px 14px 14px;display:grid;gap:5px;align-content:start;font-size:13.5px}
+.tgrid figcaption span{color:var(--ash);font-size:12.5px}
+.tgrid p{margin:0}
+.tgrid .flaw{color:var(--work);font-size:12.5px}
 @media (max-width:760px){.room{grid-template-columns:1fr}.room .shot{aspect-ratio:16/9;min-height:0}}
 @media (max-width:520px){.body{padding:16px}.log li{grid-template-columns:1fr;gap:0}}
 </style>
@@ -80,6 +89,17 @@ section.log{margin-top:34px;border-top:1px solid var(--edge);padding-top:18px;di
         <dt>التصدير</dt><dd>شيت الشوتات (CSV)، وSeedance pack بالفريم والتايمنج لكل شوت</dd>
       </dl>
       <div class="actions"><a class="btn" href="cut/index.html">افتح الـ Cutting Room</a></div>
+    </div>
+  </section>
+
+  <section class="test" aria-label="تست السينماتوجرافي">
+    <h3>تست السينماتوجرافي &middot; 5 فريمات على Nano Banana 2.1</h3>
+    <div class="tgrid">
+      <figure><img src="test/sh006.jpg" alt="SH006: علوية عمودية · 24mm · 40 م فوق الرمل" loading="lazy"><figcaption><b class="mono">SH006</b> <span>علوية عمودية · 24mm · 40 م فوق الرمل</span><p>الضل هو الشوت: شمس شروق واطية بتحوّل الأوركسترا لساعة شمسية، والمايسترو في النص هو المؤشر.</p><p class="flaw">لسه فيه بقعتين ضل صغيرين على القرص، والكاميرا مش عمودية 100%.</p></figcaption></figure>
+      <figure><img src="test/sh019.jpg" alt="SH019: مستوى الركبة · 28mm anamorphic" loading="lazy"><figcaption><b class="mono">SH019</b> <span>مستوى الركبة · 28mm anamorphic</span><p>المحطة من موديلنا مش من الستوري بورد: أرصفة مفتوحة ومظلات ومبنى حجر وكوبري الصالة. الخطوط كلها رايحة لنقطة هروب ورا القوس.</p><p class="flaw">الكاميرا طلعت أعلى من الركبة، والسما قربت من الغروب مع إن الشوت صبح.</p></figcaption></figure>
+      <figure><img src="test/sh025.jpg" alt="SH025: 40mm · مستوى عين الضيفة · Expose للبرّه" loading="lazy"><figcaption><b class="mono">SH025</b> <span>40mm · مستوى عين الضيفة · Expose للبرّه</span><p>الأوضة أربع ستوبات تحت، فالنور الوحيد هو اللي الستارة بتدخّله. النافذة كادر جوه الكادر.</p><p class="flaw">شعاع النور باين مضاف. والأهرامات Cheat: من القطعة HL-74 بعيدة 11.6 كم، وبعدسة 40mm هتبقى 3.6% بس من ارتفاع الكادر.</p></figcaption></figure>
+      <figure><img src="test/sh037.jpg" alt="SH037: 100mm macro · T2.8 · مستوى الفحم" loading="lazy"><figcaption><b class="mono">SH037</b> <span>100mm macro · T2.8 · مستوى الفحم</span><p>النار هي المصدر الدافي الوحيد ومن تحت، والـ blue hour من ورا بيدي تيل بارد على البخار. الفوكس على خط الشاي.</p><p class="flaw">الفوكس لسه مش رفيع كفاية لعدسة ماكرو، والقانون أوضح من اللازم.</p></figcaption></figure>
+      <figure><img src="test/sh100.jpg" alt="SH100: 135mm · Over the shoulder · بالليل" loading="lazy"><figcaption><b class="mono">SH100</b> <span>135mm · Over the shoulder · بالليل</span><p>اللونج لينس بيضغط الصحفيين والأهرامات في حيطة واحدة، وفلاش واحد بس بيضرب العدسة ويعمل الـ streak.</p><p class="flaw">سطح الأهرامات لسه فيه شقوق زيادة. والحجم Cheat: من MC-69 بعدسة 135mm الهرم هيبقى 11% من الكادر مش 40%.</p></figcaption></figure>
     </div>
   </section>
 
@@ -121,6 +141,7 @@ section.log{margin-top:34px;border-top:1px solid var(--edge);padding-top:18px;di
   <section class="log" aria-label="التحديثات">
     <h3>التحديثات</h3>
     <ol id="log">
+      <li><time>Nov 2 &middot; 12:30</time><span>تست سينماتوجرافي: 5 فريمات ملوّنة من الستوري بورد، والمحطة فيها مبنية على موديلنا.</span></li>
       <li><time>Nov 2 &middot; 12:25</time><span>كل شوت اتربط بقطعته في الماستر بلان بتاعنا. 26 شوت مالهمش قطعة بالاسم، فاتحط لهم أقرب مكان وعليهم «محتاج تأكيد».</span></li>
       <li><time>Nov 2 &middot; 12:10</time><span>الـ Cutting Room بقى لايف: 112 شوت بالفريمات والصوت، ورفع الـ takes على V2.</span></li>
     </ol>
