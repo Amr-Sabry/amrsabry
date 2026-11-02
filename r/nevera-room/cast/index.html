@@ -292,7 +292,7 @@ select,input[type=number],input[type=text]{background:var(--panel-2);border:1px 
 #camhud .l{min-width:0}
 #refpipbox{position:absolute;z-index:3;border:1px solid rgba(255,255,255,.6);border-radius:4px;overflow:hidden;background:#000;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.45)}
 #refpipbox:hover{border-color:#fff}
-#refpipbox video{width:100%;height:100%;object-fit:fill;display:block}
+#refpipbox :is(video,img){width:100%;height:100%;object-fit:cover;display:block}
 #refpipbox span{position:absolute;left:0;top:0;font:600 9.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:#fff;background:rgba(10,13,16,.7);padding:3px 6px;border-bottom-right-radius:4px}
 #camtb{position:absolute;top:8px;right:8px;z-index:4;display:flex;gap:3px;align-items:center;padding:3px;background:rgba(22,24,27,.82);border:1px solid var(--line);border-radius:var(--r)}
 #camtb button{display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 8px;background:transparent;border:0;border-radius:calc(var(--r) - 2px);color:var(--muted);font-size:12px;white-space:nowrap}
@@ -578,7 +578,7 @@ input.hue{background:linear-gradient(90deg,#f33,#fa3,#ff3,#3f3,#3ff,#33f,#f3f,#f
       </div>
       <div class="group anim-card" id="stage-group" hidden>
         <h3><svg class="i li" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72" /> <path d="m14 7 3 3" /> <path d="M5 6v4" /> <path d="M19 14v4" /> <path d="M10 2v2" /> <path d="M7 8H3" /> <path d="M21 16h-4" /> <path d="M11 3H9" /></svg>Auto stage</h3>
-        <p class="hint" id="stage-info">The reference move of this shot, measured from the animatic.</p>
+        <p class="hint" id="stage-info">The camera move this shot asks for, from its type on the storyboard.</p>
         <div class="row"><label for="stage-start"><svg class="i li" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" /> <line x1="4" x2="4" y1="22" y2="15" /></svg>Start from</label><select id="stage-start"><option value="preset">Suggested framing</option><option value="view">Current view</option></select></div>
         <div class="row"><label for="stage-zoom"><svg class="i li" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /> <path d="M14 15H9v-5" /> <path d="M16 3h5v5" /> <path d="M21 3 9 15" /></svg>Push / pull</label><select id="stage-zoom"><option value="dolly">Camera moves</option><option value="lens">Lens zoom</option></select></div>
         <div class="row"><label for="stage-amt"><svg class="i li" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 14 4-4" /> <path d="M3.34 19a10 10 0 1 1 17.32 0" /></svg>Strength</label><input type="range" id="stage-amt" min="0" max="2" step="0.05" value="1"><output id="stage-amt-o">100%</output></div>
@@ -978,7 +978,7 @@ function applyLight() {
   scene.environmentIntensity = S.envI * lerp(0.15, 1, day);
   const fogDay = new THREE.Color(0xcad6e0), fogGold = new THREE.Color(0xe2b88f), fogNight = new THREE.Color(0x1a2433);
   fog.color.copy(fogNight).lerp(fogDay, day).lerp(fogGold, day * low * 0.6);
-  fog.density = S.haze * S.haze * 0.004;
+  fog.density = S.haze * S.haze * 0.004 * (CFG.fogK ?? 1);
   const warm = kelvinRGB(2900);
   for (const m of glassMats) { m.emissive.copy(warm); m.emissiveIntensity = S.glow * 0.9; }
   for (const m of lightMats) m.emissiveIntensity = m.userData.lightI * (0.35 + S.glow * 1.6) * lerp(2.2, 0.6, day);
@@ -2195,7 +2195,7 @@ let MFRAMES = null;
 async function loadMotion() {
   if (MOTION) return MOTION;
   try { MOTION = await (await fetch('../cut/motion.json')).json(); } catch { MOTION = { shots: {} }; }
-  try { MFRAMES = await (await fetch('../cut/motion_frames.json')).json(); } catch { MFRAMES = null; }
+  MFRAMES = null;
   return MOTION;
 }
 function motionFor(shot) {
@@ -2243,7 +2243,7 @@ function dropAutoTracks() { for (const k of Object.keys(T.p)) if (T.p[k].length 
 async function autoStage(shot, opts = stageOpts(), quiet) {
   await loadMotion();
   const m = motionFor(shot);
-  if (!m) { toast('No measured move for this shot yet.'); return false; }
+  if (!m) { toast('This shot has no camera move yet.'); return false; }
   const pre = STAGE_PRESETS[shot.id];
   const st = (opts.start === 'preset' && pre) ? { pos: pre.pos, target: pre.target, focal: pre.focal ?? S.focal, roll: pre.roll || 0 } : camState();
   const P0 = new THREE.Vector3(...st.pos), A0 = new THREE.Vector3(...st.target);
@@ -2292,7 +2292,7 @@ async function showStageInfo() {
   const g = $('#stage-group'); if (!curShot) { g.hidden = true; return; }
   g.hidden = false; await loadMotion();
   const m = motionFor(curShot); const pre = STAGE_PRESETS[curShot.id];
-  $('#stage-info').textContent = m ? `Reference move: ${m.summary} (pan ${m.total.pan.toFixed(1)}°, tilt ${m.total.tilt.toFixed(1)}°, roll ${m.total.roll.toFixed(1)}°, zoom ×${m.total.zoom.toFixed(2)}), measured with ${Math.round(m.confidence * 100)}% confidence.${pre ? ' Suggested framing: ' + pre.note + '.' : ''}` : 'No measured move for this shot.';
+  $('#stage-info').textContent = m ? `Camera move: ${m.summary} (pan ${m.total.pan.toFixed(1)}°, tilt ${m.total.tilt.toFixed(1)}°, roll ${m.total.roll.toFixed(1)}°, zoom ×${m.total.zoom.toFixed(2)}), measured with ${Math.round(m.confidence * 100)}% confidence.${pre ? ' Suggested framing: ' + pre.note + '.' : ''}` : 'No measured move for this shot.';
   $('#stage-start').value = pre ? 'preset' : 'view';
   const mine = SHOTS.filter(s => s.source === CFG.key).length;
   $('#btn-stage-all .lbl').textContent = `Stage all ${mine} shots`; $('#btn-stage-all').disabled = !mine || !sassets;

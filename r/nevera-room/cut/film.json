@@ -848,5 +848,179 @@
 "منطقة المدخل · ME-89",
 "مواقع التصوير المفتوحة · MB-49",
 "مواقع التصوير المفتوحة · MB-60"
-]
+],
+"cast": {
+"maestro": {
+"label": "Maestro",
+"ar": "المايسترو"
+},
+"harpist": {
+"label": "Harpist",
+"ar": "عازفة الهارب"
+},
+"bassist": {
+"label": "Double bass",
+"ar": "عازف الكونترباص"
+},
+"cellist": {
+"label": "Cello",
+"ar": "عازف التشيلو"
+},
+"violin1": {
+"label": "Violin, first",
+"ar": "عازفة الكمان"
+},
+"violin2": {
+"label": "Violin, second",
+"ar": "عازف الكمان"
+},
+"flutist": {
+"label": "Flute",
+"ar": "عازفة الفلوت"
+},
+"qanun": {
+"label": "Qanun",
+"ar": "عازف القانون"
+},
+"marimba": {
+"label": "Marimba",
+"ar": "عازف الماريمبا"
+},
+"trumpet": {
+"label": "Trumpet",
+"ar": "عازف الترومبيت"
+},
+"trombone": {
+"label": "Trombone",
+"ar": "عازفة الترومبون"
+},
+"tuba": {
+"label": "Tuba",
+"ar": "عازف التوبا"
+},
+"timpani": {
+"label": "Timpani",
+"ar": "عازف التيمباني"
+},
+"ecello": {
+"label": "Electric cello",
+"ar": "عازفة التشيلو الكهربائي"
+},
+"drummer": {
+"label": "Drummer",
+"ar": "الطبّال"
+},
+"pianist": {
+"label": "Pianist",
+"ar": "عازف البيانو"
+},
+"choir1": {
+"label": "Choir, woman",
+"ar": "الكورال (سيدة)"
+},
+"choir2": {
+"label": "Choir, man",
+"ar": "الكورال (رجل)"
+},
+"traveler": {
+"label": "Traveller",
+"ar": "المسافرة"
+},
+"guest": {
+"label": "Hotel guest",
+"ar": "الضيفة"
+},
+"butler": {
+"label": "Butler",
+"ar": "الخادم الشخصي"
+},
+"grandfather": {
+"label": "Grandfather",
+"ar": "الجد"
+},
+"grandson": {
+"label": "Grandson",
+"ar": "الحفيد"
+},
+"mother": {
+"label": "Mother",
+"ar": "الأم"
+},
+"father": {
+"label": "Father",
+"ar": "الأب"
+},
+"child": {
+"label": "Child on the shoulders",
+"ar": "الطفل"
+},
+"host": {
+"label": "Evening host",
+"ar": "صاحب السمر"
+},
+"tourist1": {
+"label": "Tourist, woman",
+"ar": "سائحة"
+},
+"tourist2": {
+"label": "Tourist, man",
+"ar": "سائح"
+},
+"childpoint": {
+"label": "Child pointing",
+"ar": "الطفل يشير للشهاب"
+},
+"spectator": {
+"label": "Spectator",
+"ar": "المتفرّجة"
+},
+"actress": {
+"label": "Actress",
+"ar": "الممثلة"
+},
+"stunt": {
+"label": "Stunt performer",
+"ar": "مؤدّي المشاهد الخطرة"
+},
+"director": {
+"label": "Director",
+"ar": "المخرج"
+},
+"operator": {
+"label": "Camera operator",
+"ar": "المصوّر"
+},
+"producer": {
+"label": "Producer",
+"ar": "المنتجة"
+},
+"student1": {
+"label": "Student, woman",
+"ar": "طالبة"
+},
+"student2": {
+"label": "Student, man",
+"ar": "طالب"
+},
+"professor": {
+"label": "Professor",
+"ar": "الأستاذ"
+},
+"oldman": {
+"label": "Man at the poster",
+"ar": "الرجل المسن"
+},
+"star": {
+"label": "Star",
+"ar": "النجمة"
+},
+"press1": {
+"label": "Press photographer",
+"ar": "مصوّر صحفي"
+},
+"press2": {
+"label": "Press, phone",
+"ar": "صحفية بالموبايل"
+}
+}
 }

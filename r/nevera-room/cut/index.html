@@ -69,6 +69,7 @@ button{cursor:pointer}
 #screen{position:relative;flex:1;min-height:0;display:grid;place-items:center;overflow:hidden}
 #frame{position:relative;aspect-ratio:16/9;max-width:100%;max-height:100%;width:100%;background:#000}
 @supports (container-type:size){#screen{container-type:size}#frame{width:min(100cqw,calc(100cqh * 16 / 9));height:auto}}
+#stillb{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
 #frame video,#f1{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
 #f1wrap{position:absolute;inset:0;overflow:hidden;background:#000}
 #f1{transform-origin:50% 50%;filter:contrast(1.04)}
@@ -154,22 +155,22 @@ svg.i{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.75;str
 #t-live[aria-pressed="true"]{border-color:var(--ok);color:var(--ok)}
 #livebox{position:absolute;inset:0;pointer-events:none;background:#000}
 #livebox iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
-#frame.cm-ref :is(#livebox,#v2){display:none!important}
+#frame.cm-ref :is(#livebox,#v2,#stillb){display:none!important}
 #frame.cm-split{aspect-ratio:32/9}
 @supports (container-type:size){#frame.cm-split{width:min(100cqw,calc(100cqh * 32 / 9))}}
 #frame.cm-split #f1wrap{width:50%}
-#frame.cm-split :is(#livebox,#v2){left:50%;width:50%;opacity:1!important}
+#frame.cm-split :is(#livebox,#v2,#stillb){left:50%;width:50%;opacity:1!important}
 #frame.cm-split::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--head);opacity:.8;pointer-events:none;z-index:3}
-#frame.cm-wipe :is(#livebox,#v2){clip-path:inset(0 0 0 var(--wx,50%));opacity:1!important}
+#frame.cm-wipe :is(#livebox,#v2,#stillb){clip-path:inset(0 0 0 var(--wx,50%));opacity:1!important}
 #frame.cm-wipe #split-empty{left:var(--wx,50%);width:auto;right:0}
 #wipe{position:absolute;inset:0;pointer-events:none;z-index:4}
 #wipe i{position:absolute;top:0;bottom:0;left:var(--wx,50%);width:14px;margin-left:-7px;cursor:ew-resize;pointer-events:auto;touch-action:none}
 #wipe i::before{content:"";position:absolute;left:6px;top:0;bottom:0;width:2px;background:var(--head)}
 #wipe i::after{content:"";position:absolute;left:0;top:50%;width:14px;height:44px;margin-top:-22px;border-radius:7px;background:var(--head)}
-#frame.cm-pip :is(#livebox,#v2){left:auto;top:auto;right:12px;bottom:12px;width:34%;height:34%;border:1px solid rgba(255,255,255,.7);border-radius:4px;opacity:1!important;box-shadow:0 6px 24px rgba(0,0,0,.6);z-index:3}
+#frame.cm-pip :is(#livebox,#v2,#stillb){left:auto;top:auto;right:12px;bottom:12px;width:34%;height:34%;border:1px solid rgba(255,255,255,.7);border-radius:4px;opacity:1!important;box-shadow:0 6px 24px rgba(0,0,0,.6);z-index:3}
 #frame.cm-pip #split-empty{left:auto;top:auto;right:12px;bottom:12px;width:34%;height:34%;font-size:11px;padding:8px;border-radius:4px}
-#frame.cm-diff :is(#livebox,#v2){mix-blend-mode:difference;opacity:1!important}
-#frame.cm-auto :is(#livebox,#v2){opacity:1!important}
+#frame.cm-diff :is(#livebox,#v2,#stillb){mix-blend-mode:difference;opacity:1!important}
+#frame.cm-auto :is(#livebox,#v2,#stillb){opacity:1!important}
 #frame.cm-auto #f1wrap{opacity:0}
 #frame.cm-wipe #split-lab span:last-child{left:auto;right:10px}
 #frame.cm-pip #split-lab span:last-child{left:auto;right:calc(12px + 34% - 10px);transform:translateX(100%);bottom:calc(12px + 34% + 6px)}
@@ -236,6 +237,7 @@ input[type=file].up{position:absolute;width:1px;height:1px;opacity:0;pointer-eve
         <div id="tcbig">00:00:00:00</div>
         <div id="caps"></div>
         <div id="onion" hidden>V2 take</div>
+        <img id="stillb" alt="3D frame of this shot" hidden>
         <div id="livebox" hidden></div>
         <div id="split-empty" hidden></div>
         <div id="livemsg" hidden></div>
@@ -298,11 +300,11 @@ const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const FPS = 25, VER = 'v5-1029';
 const F_UI = '"IBM Plex Sans","IBM Plex Sans Arabic",sans-serif';
 const SOURCES = {
-  mp: { name: 'Masterplan 3D', kind: '3D model', page: null, c: '--s-mp' },
+  mp: { name: 'Masterplan 3D', kind: '3D model', page: '../mp/index.html', c: '--s-mp' },
   ai: { name: 'Seedance', kind: 'Seedance', page: null, c: '--s-ai' },
   gfx: { name: 'Edit and graphics', kind: 'graphics', page: null, c: '--s-gfx' },
 };
-const stageKey = (s) => s.source;
+const stageKey = (s) => (s.place && s.place.ar ? 'mp' : s.source);   // every shot with a place opens on the masterplan
 const stageSrc = (s) => SOURCES[stageKey(s)] || SOURCES.ai;
 const STAGES = { cut: { name: 'Storyboard', c: '--st-cut' }, anim: { name: 'Model animatic', c: '--st-anim' }, seed: { name: 'Seedance', c: '--st-seed' }, ok: { name: 'Approved', c: '--st-ok' } };
 const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
@@ -503,6 +505,7 @@ function renderInspector() {
       <div class="field"><label for="f-label">Place on the masterplan</label><input id="f-label" data-f="label" dir="auto" list="plots" value="${esc(s.label)}" placeholder="No place yet" ${ro}></div>
     </div>
     ${s.place && !s.place.sure ? `<p class="hint" dir="auto">محتاج تأكيد: ${esc(s.place.note)}</p>` : ''}
+    ${s.cast?.length ? `<div class="field"><span class="fl">Cast</span><div class="figs">${s.cast.map(c => `<a class="fig" style="text-decoration:none;color:inherit" href="../cast/index.html" dir="auto" title="${esc(FILM.cast?.[c]?.label || c)}">${esc(FILM.cast?.[c]?.ar || c)}</a>`).join('')}</div></div>` : ''}
     ${timedText(s)}
     <div class="pair" style="grid-template-columns:1fr 1fr">
       <div class="field"><label for="f-source">Made from</label><select id="f-source" data-f="source" ${ro}>${Object.entries(SOURCES).map(([k, v]) => `<option value="${k}" ${k === s.source ? 'selected' : ''}>${v.name}</option>`).join('')}</select></div>
@@ -577,7 +580,7 @@ v1.addEventListener('loadedmetadata', () => { fitZoom(); drawTL(); });
 v1.addEventListener('seeked', () => { drawTL(); updateClock(); });
 let v2On = true, v2Src = '';
 function activeTake(t) { const s = shotAt(t); if (!s || !s.take || !takes[s.take]) return null; return { s, take: takes[s.take] }; }
-let splitOn = false, MODE = 'over', liveOn = true, SCENES = {};
+let splitOn = false, MODE = 'over', liveOn = false, SCENES = {};
 try { const m = localStorage.getItem('nevera.cut.mode'); if (m) MODE = m; const l = localStorage.getItem('nevera.cut.live'); if (l) liveOn = l === '1'; } catch {}
 function autoTakeOf(s) {
   if (s.autoTake && takes[s.autoTake]) return takes[s.autoTake];
@@ -645,6 +648,7 @@ function syncV2(force) {
   const live = syncLive();
   const t = now(); const a = live ? null : overlayTake(t);
   const se = $('#split-empty');
+  { const s0 = shotAt(t), sb = $('#stillb'), wantS = !live && !a && !['ref', 'over'].includes(MODE) && !!s0?.place?.ar; sb.hidden = !wantS; if (wantS) { const u = `../stage/${s0.id}.jpg`; if (sb.getAttribute('src') !== u) sb.src = u; $('#lab-b').textContent = '3D FRAME · MASTERPLAN'; } else if (!live) labelB(); if (wantS) { $('#split-empty').hidden = true; $('#onion').hidden = true; if (!v2.hidden) { v2.hidden = true; v2.pause(); } return; } }
   if (!live && ['split', 'wipe', 'pip'].includes(MODE) && !a) { const s = shotAt(t); const src = s ? stageSrc(s) : null; se.hidden = false; se.innerHTML = !s ? '' : src.kind === '3D model' ? `<div><b>${shotNo(s)} is not staged yet</b>${src.page ? 'Turn on Live 3D to see it now, or click its clip on the Auto stage layer (AS).' : esc(src.name) + ' is being built.'}</div>` : `<div><b>${shotNo(s)}: ${esc(src.name)}</b>No take yet. Upload one in the shot panel.</div>`; }
   else se.hidden = true;
   if (!a) { if (!v2.hidden) { v2.hidden = true; v2.pause(); } $('#onion').hidden = true; return; }
@@ -900,7 +904,7 @@ async function save(filename, blob) {
 async function saveFrames(s) {
   try { await save(`Nevera_${shotNo(s)}_frame.jpg`, await frameBlob(s)); } catch (e) { toast(`The frame was not saved (${e.message}).`); }
 }
-function shotRow(s) { const src = SOURCES[s.source] || SOURCES.ai; const c = FILM.scenes.find(x => x.n === s.sc); return { shot: shotNo(s), code: s.code || '', scene: c ? `${c.n} ${c.title}` : '', type: s.type || '', in: tc(s.tin), out: tc(s.tout), in_s: +s.tin.toFixed(3), out_s: +s.tout.toFixed(3), seconds: +(s.tout - s.tin).toFixed(2), frames: Math.round((s.tout - s.tin) * FPS), place: s.label || '', place_confirmed: s.place ? (s.place.sure ? 'yes' : 'no') : '', what: s.desc || '', frame: s.frame || '', made_from: src.name, stage: (STAGES[s.stage] || STAGES.cut).name, prompt: s.prompt || '', notes: s.notes || '', has_take: !!(s.take && takes[s.take]) }; }
+function shotRow(s) { const src = SOURCES[s.source] || SOURCES.ai; const c = FILM.scenes.find(x => x.n === s.sc); return { shot: shotNo(s), code: s.code || '', scene: c ? `${c.n} ${c.title}` : '', type: s.type || '', in: tc(s.tin), out: tc(s.tout), in_s: +s.tin.toFixed(3), out_s: +s.tout.toFixed(3), seconds: +(s.tout - s.tin).toFixed(2), frames: Math.round((s.tout - s.tin) * FPS), cast: (s.cast || []).map(c => FILM.cast?.[c]?.label || c).join('; '), lens_mm: s.lens || '', place: s.label || '', place_confirmed: s.place ? (s.place.sure ? 'yes' : 'no') : '', what: s.desc || '', frame: s.frame || '', made_from: src.name, stage: (STAGES[s.stage] || STAGES.cut).name, prompt: s.prompt || '', notes: s.notes || '', has_take: !!(s.take && takes[s.take]) }; }
 $('#btn-csv').onclick = () => {
   const rows = shots.map(shotRow); const keys = Object.keys(rows[0] || {});
   const q = (v) => `"${String(v).replace(/"/g, '""')}"`;
@@ -913,11 +917,12 @@ $('#btn-pack').onclick = async () => {
   busy(true, 'Seedance pack', `${list.length} shots`, 0);
   try {
     const zip = new JSZip();
-    zip.file('README.txt', `Nevera film - Seedance pack\nStoryboard animatic v5, 25 fps\nEach folder: the storyboard keyframe, the take if there is one, shot.json with timing, place, VO and notes, and prompt.txt.\nFeed the characters, the location and the keyframe as references and let the model generate the shot. Do not animate the still as a start frame. Keep the camera dynamic.\n`);
+    zip.file('README.txt', `Nevera film - Seedance pack\nStoryboard animatic v5, 25 fps\nEach folder: the storyboard keyframe, a 3D frame of the place from our masterplan with the cast standing in it, the take if there is one, shot.json with timing, place, cast, VO and notes, and prompt.txt.\nFeed the characters, the location and the keyframe as references and let the model generate the shot. Do not animate the still as a start frame. Keep the camera dynamic.\n`);
     for (const [i, s] of list.entries()) {
       busy(true, undefined, `${shotNo(s)} (${i + 1} of ${list.length})`, i / list.length);
       const dir = zip.folder(`${shotNo(s)}_${s.code || ''}`);
       dir.file('ref_keyframe.jpg', await frameBlob(s));
+      if (s.place?.ar) { try { const r3 = await fetch(`../stage/${s.id}.jpg`); if (r3.ok) dir.file('ref_location_3d.jpg', await r3.blob()); } catch {} }
       const tk = s.take && takes[s.take];
       if (tk) {
         try { const blob = await (await fetch('/_blob/' + tk.asset)).blob(); dir.file('model_take.mp4', blob); } catch {}
@@ -937,7 +942,7 @@ renderFilters();
 const img = new Image(); img.onload = () => { sprite = img; renderList(); drawTL(); }; img.src = 'sprite.jpg';
 fetch('film.json').then(r => r.json()).then(j => { FILM = j; DUR = j.total || DUR; $('#plots').innerHTML = (j.plots || []).map(p => `<option value="${esc(p)}"></option>`).join(''); renderFilters(); renderList(); renderInspector(); fitZoom(); capKey = '?'; updateClock(); }).catch(() => {});
 fetch('audio/peaks.json').then(r => r.json()).then(j => { peaks = j.peaks; drawTL(); }).catch(() => {});
-$('#t-live').hidden = !Object.values(SOURCES).some(s => s.page);
+$('#t-live').setAttribute('aria-pressed', liveOn);
 setTimeout(() => { setMode(MODE, true); applyLanes(); updateClock(); }, 60);
 if (window.innerWidth <= 860) { $('#i-close').hidden = false; $('#insp').classList.add('closed'); }
 initData();

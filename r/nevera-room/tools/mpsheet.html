@@ -1,0 +1,17 @@
+<!doctype html><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js"}}</script><script type="module">
+import * as THREE from 'three';
+const meta=await (await fetch('/mp/scene.json')).json();
+const bufs=[];for(const p of meta.parts){const b64=await (await fetch('/mp/'+p)).text();const bin=atob(b64);const u8=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u8[i]=bin.charCodeAt(i);bufs.push(u8);}
+const raw=await new Response(new Blob(bufs).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x9fb7c9);
+const tl=new THREE.TextureLoader();
+const mats=meta.materials.map(m=>{const o={color:new THREE.Color().setRGB(m.color[0]/255,m.color[1]/255,m.color[2]/255,THREE.SRGBColorSpace),roughness:.85,side:THREE.DoubleSide,transparent:m.opacity<.98,opacity:m.opacity};const a=new THREE.MeshStandardMaterial(o);if(m.map){const t=tl.load('/mp/'+m.map);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.colorSpace=THREE.SRGBColorSpace;a.map=t;a.color.set(0xffffff);}return a;});
+const geos=meta.meshes.map(m=>{const qp=new Uint16Array(raw,m.p,m.nv*3);const pos=new Float32Array(m.nv*3);for(let i=0;i<m.nv;i++){for(let k=0;k<3;k++)pos[i*3+k]=m.bmin[k]+qp[i*3+k]/65535*m.ext[k];}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));g.setAttribute('normal',new THREE.InterleavedBufferAttribute(new THREE.InterleavedBuffer(new Int8Array(raw,m.n,m.nv*4),4),3,0,true));if(m.uv!==undefined)g.setAttribute('uv',new THREE.BufferAttribute(new Float32Array(raw,m.uv,m.nv*2),2));g.setIndex(new THREE.BufferAttribute(m.i32?new Uint32Array(raw,m.i,m.ni):new Uint16Array(raw,m.i,m.ni),1));return g;});
+for(const grp of meta.groups){if(grp.inst===undefined){const mi=grp.meshes[0];scene.add(new THREE.Mesh(geos[mi],mats[meta.meshes[mi].m]));continue;}
+ const src=new Float32Array(raw,grp.inst,grp.count*12);for(const mi of grp.meshes){const im=new THREE.InstancedMesh(geos[mi],mats[meta.meshes[mi].m],grp.count);const a=im.instanceMatrix.array;for(let j=0;j<grp.count;j++){const s=j*12,d=j*16;a[d]=src[s];a[d+1]=src[s+1];a[d+2]=src[s+2];a[d+3]=0;a[d+4]=src[s+3];a[d+5]=src[s+4];a[d+6]=src[s+5];a[d+7]=0;a[d+8]=src[s+6];a[d+9]=src[s+7];a[d+10]=src[s+8];a[d+11]=0;a[d+12]=src[s+9];a[d+13]=src[s+10];a[d+14]=src[s+11];a[d+15]=1;}im.frustumCulled=false;scene.add(im);}}
+scene.add(new THREE.HemisphereLight(0xdfeeff,0x887766,1.25));const d=new THREE.DirectionalLight(0xffe8cc,2.3);d.position.set(-.6,.6,.5);scene.add(d);
+const r=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true,logarithmicDepthBuffer:true});r.setSize(512,288);r.toneMapping=THREE.ACESFilmicToneMapping;document.body.appendChild(r.domElement);
+const cam=new THREE.PerspectiveCamera(30,16/9,.3,120000);
+window.shot=(p)=>{cam.fov=2*Math.atan(12/ (p.focal||35))*180/Math.PI*(9/16)*1.0;cam.fov=2*Math.atan(0.5*20.25/(p.focal||35))*180/Math.PI;cam.updateProjectionMatrix();cam.position.set(...p.pos);cam.lookAt(...p.target);r.render(scene,cam);return r.domElement.toDataURL('image/jpeg',.82)};
+window.ready=true;
+</script>
