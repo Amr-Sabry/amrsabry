@@ -10,234 +10,272 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap">
 <style>
-/* Layout: slim title bar, the edit across the full screen width, a transport + timeline bar that sticks to the top while scrolling,
-   then the summary and the shot plan table. Picking a shot on the timeline scrolls the table to that shot. */
+/* Layout: slim title bar; the edit across the full screen width; a transport + timeline bar that sticks to the top;
+   one row of filter tabs; then the shot list. Rows are compact and open one at a time for the full breakdown.
+   Picking a shot on the timeline scrolls the list to that shot and opens it.
+   Colour: status colours mean status only; Aroma orange is for actions; selection is white. */
 :root{
-  --bg:#0A0A0F; --card:#0F1117; --card2:#151822; --line:rgba(240,240,239,.09); --line2:rgba(240,240,239,.16);
-  --text:#F0F0EF; --soft:#c9c9c7; --mute:#888; --dim:#55555d;
-  --red:#EF4122; --orange:#FF6B35; --green:#4CAF50; --yellow:#F59E0B;
-  --cyan:#4ECDC4; --blue:#3B82F6; --purple:#8B5CF6; --magenta:#D946EF;
+  --bg:#0A0A0F; --card:#11131b; --card2:#171a25; --line:rgba(240,240,239,.08); --line2:rgba(240,240,239,.18);
+  --text:#F0F0EF; --soft:#c9c9c7; --mute:#8d8d93; --dim:#5b5b64;
+  --red:#EF4122; --orange:#FF6B35; --green:#4CAF50; --yellow:#F5B301;
   --f:'IBM Plex Sans Arabic',system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif;
   --m:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-  --px:max(18px,env(safe-area-inset-left,0px));
+  --px:max(24px,env(safe-area-inset-left,0px));
   color-scheme:dark;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--text);font-family:var(--f);font-size:14px;line-height:1.55}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--f);font-size:15px;line-height:1.6}
 button,input{font:inherit;color:inherit}
-button{cursor:pointer}
+button{cursor:pointer;background:none;border:0;padding:0}
 bdi,.ltr{direction:ltr;unicode-bidi:isolate}
 .mono{font-family:var(--m);font-variant-numeric:tabular-nums}
+svg.i{width:18px;height:18px;flex:none;display:block}
+:focus-visible{outline:2px solid var(--orange);outline-offset:2px;border-radius:6px}
 
 /* title bar */
-.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 18px;padding:9px var(--px);
-  background:radial-gradient(700px 120px at 100% 0,rgba(239,65,34,.16),transparent 70%)}
-.ttl{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;min-width:0}
-.kick{font-family:var(--m);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--orange);margin:0;display:flex;align-items:center;gap:9px}
-.kick::before{content:"";width:18px;height:2px;background:var(--red);box-shadow:0 0 10px var(--red)}
-h1{margin:0;font-size:19px;line-height:1.2;font-weight:700;letter-spacing:-.01em}
-.chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line2);border-radius:999px;padding:2px 10px;font-size:12px;color:var(--soft);background:rgba(255,255,255,.02);white-space:nowrap}
-.chip b{font-weight:600;color:var(--text)}
-.chip .over{color:var(--red);font-weight:600}
+.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 24px;padding:8px var(--px)}
+.ttl{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 16px;min-width:0}
+.kick{font-family:var(--m);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--orange);margin:0;display:flex;align-items:center;gap:8px}
+.kick::before{content:"";width:16px;height:2px;background:var(--red)}
+h1{margin:0;font-size:19px;line-height:1.3;font-weight:700}
+.facts{display:flex;flex-wrap:wrap;gap:8px 24px;font-size:14px;color:var(--mute)}
+.facts b{color:var(--text);font-weight:600}
+.facts .over{color:#ff7b63;font-weight:600}
 
 /* the edit, full width */
-.theater{background:#000;border-block:1px solid var(--line)}
-.stage{position:relative;width:100%;aspect-ratio:1920/872;max-height:calc(100vh - var(--chrome,170px));max-height:calc(100dvh - var(--chrome,170px));min-height:170px;background:#000;overflow:hidden;direction:ltr}
-.frame{position:absolute;top:0;left:50%;transform:translateX(-50%);height:100%;aspect-ratio:1920/872;overflow:hidden;background:#000}
+.theater{background:#000}
+.stage{position:relative;width:100%;aspect-ratio:1920/872;max-height:calc(100vh - var(--chrome,220px));max-height:calc(100dvh - var(--chrome,220px));min-height:168px;background:#000;overflow:hidden;direction:ltr}
+.frame,.asframe{position:absolute;top:0;left:50%;transform:translateX(-50%);height:100%;aspect-ratio:1920/872;overflow:hidden;background:#000}
 .frame video,.poster{position:absolute;left:0;top:50%;transform:translateY(-50%);width:100%;aspect-ratio:16/9;height:auto;display:block}
 .frame video{opacity:0;background:transparent}
-.stage.ready video{opacity:1;background:#000}
+.stage.ready .frame video{opacity:1;background:#000}
 .poster{background-color:#000;background-repeat:no-repeat;opacity:.6}
 .stage.ready .poster{display:none}
-.bigplay{position:absolute;inset:0;margin:auto;width:72px;height:72px;border-radius:50%;border:1px solid rgba(255,255,255,.4);background:rgba(10,10,15,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:grid;place-items:center;color:#fff;padding:0}
-.bigplay svg{width:28px;height:28px;margin-left:3px}
+.bigplay{position:absolute;inset:0;margin:auto;width:80px;height:80px;border-radius:50%;border:1px solid rgba(255,255,255,.45);background:rgba(10,10,15,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:grid;place-items:center;color:#fff}
+.bigplay svg{width:30px;height:30px;margin-left:4px}
 .stage.playing .bigplay{display:none}
-.verr{position:absolute;left:10px;right:10px;bottom:10px;background:rgba(15,17,23,.92);border:1px solid rgba(239,65,34,.6);border-radius:6px;padding:8px 12px;font-size:12.5px;color:#ffb4a6;direction:rtl;text-align:start}
-.hud{position:absolute;top:10px;left:12px;display:flex;gap:6px;pointer-events:none}
-.hud span{font-family:var(--m);font-size:12px;background:rgba(10,10,15,.72);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:1px 7px;color:#fff}
+.verr{position:absolute;left:16px;right:16px;bottom:16px;background:rgba(15,17,23,.92);border:1px solid rgba(239,65,34,.6);border-radius:8px;padding:8px 16px;font-size:13px;color:#ffb4a6;direction:rtl;text-align:start}
+.hud{position:absolute;top:12px;left:16px;display:flex;gap:8px;pointer-events:none}
+.hud span,.flab{font-family:var(--m);font-size:12px;background:rgba(10,10,15,.72);border:1px solid rgba(255,255,255,.16);border-radius:4px;padding:0 8px;color:#fff;line-height:22px}
 .hud .lab{color:#ffb199;border-color:rgba(239,65,34,.6)}
+.flab{position:absolute;bottom:12px;left:16px;display:none;font-family:var(--f);font-weight:600;font-size:12.5px;pointer-events:none}
+/* compare with the Auto stage take: the edit on one half, our model on the other */
+.asframe{display:none;left:75%;background:#07080c}
+.stage.cmp{aspect-ratio:3840/872}
+.stage.cmp .frame:not(.pip){left:25%}
+.stage.cmp .asframe{display:block}
+.stage.cmp .flab{display:block}
+.stage.cmp::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--bg);pointer-events:none}
+.asframe video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;display:block}
+.asnone{position:absolute;inset:0;display:none;place-items:center;align-content:center;justify-items:center;gap:8px;color:var(--mute);font-size:14px;direction:rtl;text-align:center;padding:16px}
+.asnone svg{width:28px;height:28px}
+.asframe.none video{visibility:hidden}
+.asframe.none .asnone{display:grid}
+.asframe.none .flab{display:none}
 /* when the big picture is scrolled away it keeps playing in a corner */
-.frame.pip{position:fixed;top:auto;left:16px;bottom:16px;transform:none;height:auto;width:min(400px,46vw);z-index:25;border-radius:8px;border:1px solid var(--line2);box-shadow:0 14px 44px rgba(0,0,0,.7)}
-.frame.pip .bigplay{width:44px;height:44px}.frame.pip .bigplay svg{width:18px;height:18px}
-.frame.pip .hud{top:6px;left:6px}.frame.pip .hud span{font-size:10.5px}
-.pipup{position:absolute;top:6px;right:6px;height:26px;padding:0 9px;border-radius:5px;border:1px solid rgba(255,255,255,.3);background:rgba(10,10,15,.75);color:#fff;font-size:11.5px;display:inline-flex;align-items:center;gap:5px;direction:rtl}
+.frame.pip{position:fixed;top:auto;left:16px;bottom:16px;transform:none;height:auto;width:min(400px,46vw);z-index:25;border-radius:8px;border:1px solid var(--line2);box-shadow:0 16px 48px rgba(0,0,0,.7)}
+.frame.pip .bigplay{width:44px;height:44px}.frame.pip .bigplay svg{width:18px;height:18px;margin-left:2px}
+.frame.pip .hud{top:8px;left:8px}.frame.pip .flab{display:none}
+.pipup{position:absolute;top:8px;right:8px;height:28px;padding:0 10px;border-radius:6px;border:1px solid rgba(255,255,255,.3);background:rgba(10,10,15,.78);color:#fff;font-size:12px;display:inline-flex;align-items:center;gap:6px;direction:rtl}
 .pipup:hover{border-color:var(--orange)}
-.pipup svg{width:13px;height:13px}
+.pipup svg{width:14px;height:14px}
 
 /* transport + timeline: sticks to the top */
-.deck{position:sticky;top:0;z-index:30;background:rgba(12,13,19,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line2);padding:8px var(--px) 3px;display:grid;gap:7px;direction:ltr}
-.tr{display:flex;align-items:center;gap:6px;min-width:0}
-.tb{height:32px;min-width:34px;padding:0 8px;border-radius:6px;border:1px solid var(--line2);background:#161924;display:inline-flex;align-items:center;justify-content:center;gap:6px;color:var(--soft);flex:none;white-space:nowrap}
-.tb:hover{border-color:rgba(255,107,53,.7);color:#fff}
-.tb svg{width:16px;height:16px;display:block;flex:none}
-.tb.on{background:rgba(239,65,34,.16);border-color:var(--red);color:#ff8a70}
-.tb.pp{min-width:46px;background:var(--red);border-color:var(--red);color:#fff}
+.deck{position:sticky;top:0;z-index:30;background:rgba(12,13,19,.97);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line2);padding:6px var(--px) 6px;display:grid;gap:6px;direction:ltr}
+.tr{display:flex;align-items:center;gap:8px 16px;min-width:0}
+.grp{display:flex;align-items:center;gap:4px;flex:none}
+.tb{display:grid;justify-items:center;align-content:center;gap:2px;min-width:60px;height:48px;padding:3px 8px;border-radius:10px;color:var(--soft);flex:none;direction:rtl}
+.tb>svg,.tb .ic svg{width:20px;height:20px}
+.tb>span:last-child{font-size:11.5px;line-height:1.3;white-space:nowrap}
+.tb:hover{background:#1b1e2b;color:#fff}
+.tb.on{background:rgba(255,255,255,.1);color:#fff}
+.tb.pp{min-width:80px;background:var(--red);color:#fff}
 .tb.pp:hover{background:#ff5436}
-.tb.tx{font-size:12px;direction:rtl}
-.rates{display:inline-flex;border:1px solid var(--line2);border-radius:6px;overflow:hidden;flex:none}
-.rates button{height:30px;padding:0 8px;border:0;background:#161924;color:var(--mute);font-family:var(--m);font-size:11.5px}
-.rates button+button{border-left:1px solid var(--line2)}
-.rates button.on{background:#262a38;color:#fff}
-.now{display:flex;align-items:baseline;gap:8px;min-width:0;margin-left:10px;flex:0 1 auto}
-.now .s{font-family:var(--m);font-size:15px;font-weight:600;color:var(--orange);flex:none}
-.now .n{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.vo{flex:1 1 0;min-width:0;display:flex;gap:8px;align-items:baseline;font-size:13px;color:var(--soft);margin-left:12px;white-space:nowrap;overflow:hidden}
-.vo em{font-style:normal;font-family:var(--m);font-size:10.5px;color:var(--orange);border:1px solid rgba(255,107,53,.45);border-radius:4px;padding:0 5px;flex:none}
+.tb.cmpb{border:1px solid rgba(255,107,53,.7);color:#ffb08f;padding-inline:12px}
+.tb.cmpb:hover{background:rgba(255,107,53,.14);color:#fff}
+.tb.cmpb.on{background:var(--orange);border-color:var(--orange);color:#14100e}
+.tb.cmpb.off{border-color:var(--line2);color:var(--dim)}
+.now{flex:1 1 0;min-width:0;display:grid;gap:0;padding:0 8px;direction:ltr;text-align:left}
+.now1{display:flex;align-items:center;gap:12px;min-width:0;overflow:hidden}
+.now1 .pill{flex:none}
+.now .s{font-family:var(--m);font-size:21px;font-weight:600;color:#fff;flex:none;line-height:1.3}
+.now .n{font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.vo{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--mute);white-space:nowrap;overflow:hidden;min-height:20px}
+.vo svg{width:14px;height:14px}
 .vo span{font-style:italic;min-width:0;overflow:hidden;text-overflow:ellipsis}
-.vo .none{color:var(--dim);font-style:normal}
-.tcbox{margin-left:auto;display:flex;align-items:baseline;gap:9px;font-family:var(--m);font-variant-numeric:tabular-nums;white-space:nowrap;flex:none}
-.tcbox .t{font-size:17px;font-weight:600;letter-spacing:.02em}
-.tcbox .f{font-size:11.5px;color:var(--mute)}
+.tcbox{font-family:var(--m);font-variant-numeric:tabular-nums;font-size:15px;color:var(--soft);white-space:nowrap;padding:0 8px;flex:none}
 .tl{position:relative;direction:ltr;user-select:none;-webkit-user-select:none;touch-action:none}
-.strip{position:relative;display:flex;height:44px;border-radius:5px;overflow:hidden;background:#12141c;cursor:pointer}
-.blk{position:relative;min-width:0;height:100%;background:var(--sc);opacity:.42;border-top:3px solid var(--kc);box-shadow:inset 1px 0 0 var(--bg);overflow:hidden;transition:opacity .12s}
-.blk b{position:absolute;left:5px;bottom:3px;font-family:var(--m);font-size:10.5px;font-weight:500;color:#fff;opacity:.9;pointer-events:none}
+.strip{position:relative;display:flex;height:42px;border-radius:6px;overflow:hidden;background:#12141c;cursor:pointer}
+.blk{position:relative;min-width:0;height:100%;background:var(--sc);opacity:.5;box-shadow:inset 1px 0 0 var(--bg);overflow:hidden;transition:opacity .12s}
+.blk b{position:absolute;left:5px;bottom:3px;font-family:var(--m);font-size:10.5px;font-weight:500;color:#fff;pointer-events:none}
+.blk.mdl::before{content:"";position:absolute;left:1px;right:0;top:0;height:4px;background:#fff}
+.blk svg{position:absolute;right:3px;top:7px;width:13px;height:13px;color:#fff;pointer-events:none}
 .blk.cur{opacity:1}
-.blk.hov{opacity:.8}
+.blk.hov{opacity:.85}
+.blk.off{opacity:.13}
+.blk.off.cur{opacity:.6}
 .ph{position:absolute;top:-2px;bottom:-2px;width:2px;margin-left:-1px;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.55),0 0 8px rgba(255,255,255,.7);pointer-events:none;left:0}
-.ruler{position:relative;height:15px;font-family:var(--m);font-size:10px;color:var(--dim)}
-.ruler span{position:absolute;top:3px;transform:translateX(-50%)}
-.ruler span::before{content:"";position:absolute;left:50%;top:-3px;width:1px;height:4px;background:var(--dim)}
-.ruler span:first-child{transform:none}.ruler span:first-child::before{left:0}
-.tip{position:absolute;top:48px;transform:translateX(-50%);background:#fff;color:#0A0A0F;border-radius:5px;padding:3px 8px;font-size:11.5px;font-weight:500;white-space:nowrap;pointer-events:none;z-index:3;max-width:min(360px,90%);overflow:hidden;text-overflow:ellipsis}
-.tip .mono{font-weight:600}
+.ruler{position:relative;height:14px;font-family:var(--m);font-size:10px;color:var(--dim)}
+.ruler span{position:absolute;top:2px;transform:translateX(-50%)}
+.ruler span:first-child{transform:none}
+.tip{position:absolute;top:48px;transform:translateX(-50%);background:#fff;color:#0A0A0F;border-radius:6px;padding:4px 10px;font-size:12.5px;font-weight:500;white-space:nowrap;pointer-events:none;z-index:3;max-width:min(420px,92%);overflow:hidden;text-overflow:ellipsis;direction:rtl}
+.under{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 24px;direction:rtl;font-size:12.5px;color:var(--mute);min-height:22px}
+.howto{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px}
+.howto span{display:inline-flex;align-items:center;gap:6px;color:var(--soft)}
+.howto svg{width:15px;height:15px;color:var(--orange)}
+.howto .ar{color:var(--dim)}
+.howto button{width:22px;height:22px;display:grid;place-items:center;border-radius:6px;color:var(--mute)}
+.howto button:hover{background:#1b1e2b;color:#fff}
+.howto button svg{width:13px;height:13px;color:inherit}
+.legend{display:flex;flex-wrap:wrap;align-items:center;gap:4px 16px;margin-inline-start:auto}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend svg{width:14px;height:14px;color:var(--c,#fff)}
+.pop{position:absolute;top:60px;right:var(--px);width:min(340px,calc(100vw - 32px));background:#1a1d29;border:1px solid var(--line2);border-radius:12px;padding:16px;box-shadow:0 20px 60px rgba(0,0,0,.6);direction:rtl;z-index:40;font-size:13.5px;display:grid;gap:8px}
+.pop h3{margin:0 0 4px;font-size:14px}
+.pop p{margin:0;display:flex;gap:10px;align-items:baseline;color:var(--soft)}
+.pop kbd{font-family:var(--m);font-size:11.5px;border:1px solid var(--line2);border-radius:5px;padding:0 6px;color:#fff;background:#0f1118;flex:none;min-width:30px;text-align:center}
 
 /* below the player */
-.wrap{padding:14px var(--px) 64px;display:grid;gap:12px;min-width:0}
-.card{background:var(--card);border:1px solid var(--line);border-radius:10px;min-width:0}
-.sec-t{margin:0;font-size:12px;font-weight:600;color:var(--mute);letter-spacing:.02em;display:flex;align-items:center;gap:8px}
-.sec-t::before{content:"";width:6px;height:6px;background:var(--red);border-radius:1px;flex:none}
-.sec-t small{font-weight:400;color:var(--mute)}
-
-/* summary */
-.sum{display:grid;grid-template-columns:1.25fr 1.25fr 1fr 1fr;gap:10px}
-.sum .card{padding:12px 14px;display:grid;gap:9px;align-content:start}
-.stats{display:flex;flex-wrap:wrap;gap:6px 16px}
-.stat{display:flex;align-items:baseline;gap:6px;font-size:12.5px;color:var(--soft)}
-.stat i{width:8px;height:8px;border-radius:2px;background:var(--c);flex:none;align-self:center}
-.stat b{font-family:var(--m);font-size:19px;font-weight:600;color:var(--text);line-height:1}
-.bar{display:flex;height:5px;border-radius:3px;overflow:hidden;background:#1b1e28;direction:ltr}
-.bar i{background:var(--c);min-width:2px}
-.big{font-family:var(--m);font-size:30px;font-weight:600;line-height:1;letter-spacing:-.02em}
-.big small{font-family:var(--f);font-size:13px;font-weight:400;color:var(--mute);letter-spacing:0;margin-inline-start:6px}
-.sub{font-size:12.5px;color:var(--mute);margin:0}
-.sub b{color:var(--soft);font-weight:500}
-.idchips{display:flex;flex-wrap:wrap;gap:5px}
-.idc{font-family:var(--m);font-size:11.5px;border:1px solid var(--line2);background:#151822;border-radius:5px;padding:1px 7px;color:var(--soft);direction:ltr}
-.idc:hover{border-color:var(--orange);color:#fff}
-.idc.temp{border-color:rgba(239,65,34,.5);color:#ff9a86}
-
-/* general notes */
-.flags{padding:13px 14px 14px;display:grid;gap:11px}
-.flags>summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px}
-.flags>summary::-webkit-details-marker{display:none}
-.flags>summary:focus-visible{outline:2px solid var(--orange);outline-offset:4px;border-radius:4px}
-.ftitles{display:flex;gap:6px;overflow:hidden;white-space:nowrap;mask-image:linear-gradient(to left,#000 88%,transparent);-webkit-mask-image:linear-gradient(to left,#000 88%,transparent)}
-.ftitles span{font-size:11.5px;color:var(--soft);border:1px solid var(--line);border-radius:999px;padding:2px 9px;flex:none}
-.flags[open] .ftitles{visibility:hidden}
-.fmore::before{content:'عرض';font-size:11.5px;color:var(--orange)}
-.flags[open] .fmore::before{content:'إخفاء'}
-.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:9px}
-.fl{background:var(--card2);border:1px solid var(--line);border-inline-start:3px solid var(--orange);border-radius:7px;padding:9px 12px 10px;display:grid;gap:5px;align-content:start}
-.fl h3{margin:0;font-size:13.5px;font-weight:600}
-.fl p{margin:0;font-size:12.5px;color:var(--soft)}
-
-/* badges */
-.bdg{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:500;border-radius:5px;padding:1px 7px;border:1px solid var(--c);color:var(--c);border:1px solid color-mix(in srgb,var(--c) 55%,transparent);color:color-mix(in srgb,var(--c) 70%,#fff);background:color-mix(in srgb,var(--c) 11%,transparent);white-space:nowrap}
-.bdg::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--c);flex:none}
-.bdg.k::before{border-radius:1px}
-.dp{font-family:var(--m);font-size:11px;border:1px solid var(--line2);border-radius:4px;padding:0 6px;color:var(--soft);direction:ltr;white-space:nowrap}
-.sz{display:inline-flex;align-items:baseline;gap:6px;font-size:12px;color:var(--soft);white-space:nowrap}
-.sz b{font-family:var(--m);font-weight:600;color:#fff;background:#262a38;border-radius:4px;padding:0 6px;font-size:11.5px}
-.sz.XL b{background:var(--red)}.sz.L b{background:#b4531f}
-.onlab{font-family:var(--m);font-size:11px;color:#ffb199;border:1px dashed rgba(239,65,34,.7);border-radius:4px;padding:0 6px;direction:ltr;white-space:nowrap}
-
-/* plan table */
-.plan{padding:13px 14px 14px;display:grid;gap:10px}
-.p-hd{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 14px}
-.p-hd h2{margin:0;font-size:17px;font-weight:700;display:flex;align-items:baseline;gap:9px}
-.p-hd h2 small{font-size:12px;font-weight:400;color:var(--mute)}
-.note{margin:0;color:var(--mute);font-size:12.5px}
-.search{height:32px;width:min(280px,100%);border:1px solid var(--line2);border-radius:6px;background:#12141c;padding:0 10px;font-size:13px;outline:none}
+.wrap{padding:16px var(--px) 64px;display:grid;gap:16px;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px}
+.tabs{display:flex;flex-wrap:wrap;gap:8px}
+.tab{display:inline-flex;align-items:center;gap:10px;height:56px;padding:0 16px;border-radius:12px;background:var(--card);border:1px solid var(--line);font-size:14.5px;color:var(--soft);white-space:nowrap}
+.tab svg{width:20px;height:20px;color:var(--c,var(--soft))}
+.tab b{font-family:var(--m);font-size:20px;font-weight:600;color:#fff;line-height:1}
+.tab:hover{border-color:var(--line2);color:#fff}
+.tab.on{background:#fff;border-color:#fff;color:#0A0A0F;font-weight:600}
+.tab.on b{color:#0A0A0F}
+.tab.on svg{color:#0A0A0F}
+.tools{display:flex;align-items:center;gap:8px;margin-inline-start:auto;min-width:0}
+.tbtn{display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-size:14px;color:var(--soft);white-space:nowrap}
+.tbtn:hover{border-color:var(--line2);color:#fff}
+.tbtn.on{border-color:var(--line2);color:#fff;background:var(--card2)}
+.tbtn b{font-family:var(--m);font-weight:600;color:#fff}
+.tbtn .chv{width:14px;height:14px;transition:transform .15s}
+.tbtn.on .chv{transform:rotate(180deg)}
+.search{height:44px;width:min(260px,60vw);border:1px solid var(--line2);border-radius:10px;background:#12141c;padding:0 14px;font-size:14px;outline:none}
 .search:focus{border-color:var(--orange)}
-.p-tools{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 18px}
-.filters{display:flex;flex-wrap:wrap;gap:6px 22px}
-.fg{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
-.fg>span{font-size:11.5px;color:var(--mute)}
-.fc{height:26px;border:1px solid var(--line2);background:transparent;border-radius:999px;padding:0 10px;font-size:12px;color:var(--soft);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
-.fc i{width:7px;height:7px;border-radius:50%;background:var(--c,#888)}
-.fc em{font-style:normal;font-family:var(--m);font-size:10.5px;color:var(--mute)}
-.fc:hover{border-color:var(--mute)}
-.fc.on{background:#fff;border-color:#fff;color:#0A0A0F;font-weight:600}
-.fc.on em{color:#444}
-.keys{font-size:11.5px;color:var(--dim);display:flex;flex-wrap:wrap;gap:4px 12px}
-.keys kbd{font-family:var(--m);font-size:10.5px;border:1px solid var(--line2);border-radius:4px;padding:0 5px;color:var(--mute);background:#12141c}
-.rows{display:grid;gap:6px}
-.rhead,.row{display:grid;grid-template-columns:190px 236px minmax(0,1fr) minmax(0,1.1fr) minmax(0,.9fr);gap:16px}
-.rhead{padding:2px 13px 0;font-size:11px;font-weight:600;color:var(--mute)}
-.row{padding:10px;background:var(--card2);border:1px solid var(--line);border-inline-start:3px solid var(--sc);border-radius:8px;cursor:pointer;text-align:start;scroll-margin-top:calc(var(--deck-h,120px) + 10px)}
-.row:hover{border-color:var(--line2);border-inline-start-color:var(--sc);background:#181b27}
-.row:focus-visible{outline:2px solid var(--orange);outline-offset:1px}
-.row.cur{background:#1c1f2c;border-color:rgba(255,107,53,.75);border-inline-start-color:var(--sc);box-shadow:0 0 0 1px rgba(255,107,53,.28),0 6px 22px rgba(0,0,0,.35)}
+.quiet{margin:-8px 0 0;font-size:13px;color:var(--mute)}
+.notes{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.fl{background:var(--card2);border-radius:8px;padding:10px 14px 12px;display:grid;gap:6px;align-content:start}
+.fl h3{margin:0;font-size:14.5px;font-weight:600}
+.fl p{margin:0;font-size:13.5px;color:var(--soft)}
+.idchips{display:flex;flex-wrap:wrap;gap:6px}
+.idc{font-family:var(--m);font-size:12px;border:1px solid var(--line2);background:transparent;border-radius:6px;padding:0 8px;color:var(--soft);direction:ltr;line-height:22px}
+.idc:hover{border-color:var(--orange);color:#fff}
+
+/* shot list */
+.rows{display:grid;gap:8px}
+.row{background:var(--card);border:1px solid var(--line);border-inline-start:4px solid var(--sc);border-radius:10px;scroll-margin-top:calc(var(--deck-h,170px) + 12px)}
+.row:hover{border-color:var(--line2);border-inline-start-color:var(--sc)}
+.row.cur{background:var(--card2);border-color:rgba(255,255,255,.55);border-inline-start-color:var(--sc)}
 .row.flash{animation:fl 1.2s ease-out}
-@keyframes fl{0%{box-shadow:0 0 0 4px rgba(255,107,53,.95),0 0 34px rgba(255,107,53,.45)}100%{box-shadow:0 0 0 1px rgba(255,107,53,.28),0 6px 22px rgba(0,0,0,.35)}}
-.th{position:relative;width:100%;aspect-ratio:16/9;background-color:#000;background-repeat:no-repeat;border-radius:5px;overflow:hidden;align-self:start;clip-path:polygon(0 0,100% 0,100% 100%,13px 100%,0 calc(100% - 13px))}
-.th .onlab{position:absolute;top:5px;left:5px;background:rgba(10,10,15,.8);font-size:10px}
-.th .lk{position:absolute;right:5px;bottom:5px;font-family:var(--m);font-size:9.5px;color:#fff;background:rgba(10,10,15,.7);border-radius:3px;padding:0 5px}
-.c{display:grid;gap:5px;min-width:0;align-content:start}
-.r-top{display:flex;flex-wrap:wrap;align-items:center;gap:5px 7px}
-.r-id{font-family:var(--m);font-size:17px;font-weight:600;color:var(--orange);line-height:1.2}
-.r-tc{font-family:var(--m);font-size:11.5px;color:var(--mute);font-variant-numeric:tabular-nums;white-space:nowrap}
-.r-ft{display:flex;flex-wrap:wrap;align-items:center;gap:5px 6px;margin-top:2px}
-.r-name{margin:0;font-size:14.5px;font-weight:600;direction:ltr;unicode-bidi:isolate;text-align:right;overflow-wrap:anywhere}
-.r-desc{margin:0;font-size:13px;color:var(--soft);overflow-wrap:anywhere}
-.r-vo{margin:2px 0 0;font-size:12.5px;color:var(--soft);direction:ltr;text-align:left;display:flex;gap:7px;align-items:baseline;border-left:2px solid var(--orange);padding-left:8px}
-.r-vo em{font-style:normal;font-family:var(--m);font-size:10px;color:var(--orange);flex:none}
+@keyframes fl{0%{box-shadow:0 0 0 4px rgba(255,255,255,.9),0 0 36px rgba(255,255,255,.35)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
+.rh{display:grid;grid-template-columns:112px minmax(0,1.5fr) 168px minmax(0,2fr) 24px;align-items:center;gap:16px;padding:8px 12px 8px 16px;cursor:pointer;border-radius:8px}
+.th{position:relative;width:100%;aspect-ratio:16/9;background-color:#000;background-repeat:no-repeat;border-radius:6px;overflow:hidden}
+.th .onlab{position:absolute;top:4px;left:4px;font-family:var(--m);font-size:9.5px;color:#ffb199;background:rgba(10,10,15,.82);border-radius:3px;padding:0 5px;direction:ltr;line-height:16px}
+.rt{display:grid;gap:2px;min-width:0}
+.rt1{display:flex;align-items:baseline;gap:12px;min-width:0}
+.r-id{font-family:var(--m);font-size:17px;font-weight:600;color:#fff;flex:none}
+.r-name{font-size:15.5px;font-weight:600;direction:ltr;unicode-bidi:isolate;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.rt2{display:flex;flex-wrap:wrap;align-items:center;gap:2px 16px;font-size:13px;color:var(--mute)}
+.rt2 span{display:inline-flex;align-items:center;gap:6px}
+.rt2 svg{width:15px;height:15px}
+.pill{display:inline-flex;align-items:center;gap:8px;height:30px;padding:0 12px;border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap;justify-self:start;color:var(--c);background:rgba(255,255,255,.06);color:color-mix(in srgb,var(--c) 78%,#fff);background:color-mix(in srgb,var(--c) 15%,transparent)}
+.pill svg{width:16px;height:16px;color:var(--c)}
+.tgs{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;min-width:0}
+.tg{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:8px;background:rgba(255,255,255,.05);font-size:13px;color:var(--soft);white-space:nowrap}
+.tg svg{width:15px;height:15px;color:var(--mute)}
+.tg b{font-family:var(--m);font-weight:600;color:#fff}
+.tg.mdl{color:#fff}.tg.mdl svg{color:#fff}
+.tg.as{background:rgba(255,107,53,.14);color:#ffb08f}.tg.as svg{color:var(--orange)}
+.tg.q{background:rgba(255,255,255,.1);color:#fff}.tg.q svg{color:#fff}
+.chev{display:grid;place-items:center;color:var(--mute);transition:transform .15s}
+.row.open .chev{transform:rotate(180deg);color:#fff}
+.rb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr) minmax(0,.9fr);gap:8px 32px;padding:8px 16px 20px;border-top:1px solid var(--line);margin:0 16px}
+.c{display:grid;gap:8px;min-width:0;align-content:start;padding-top:12px}
+.lbl{font-size:12.5px;color:var(--mute);font-weight:600;margin:0;display:flex;align-items:center;gap:8px}
+.lbl svg{width:15px;height:15px}
+.r-desc{margin:0;font-size:14.5px;color:var(--text);overflow-wrap:anywhere}
+.r-vo{margin:0;font-size:13.5px;color:var(--soft);direction:ltr;text-align:left;display:flex;gap:8px;align-items:baseline}
+.r-vo svg{width:14px;height:14px;color:var(--mute);align-self:center}
 .r-vo span{font-style:italic;overflow-wrap:anywhere;min-width:0}
-.lbl{font-size:11px;color:var(--mute);font-weight:600;margin:0}
-.m-only{display:none}
-.work{margin:0;padding:0;list-style:none;display:grid;gap:3px}
-.work li{position:relative;padding-inline-start:16px;font-size:13px;color:var(--text);overflow-wrap:anywhere}
-.work li::before{content:"";position:absolute;inset-inline-start:2px;top:.6em;width:7px;height:7px;border:1.5px solid var(--mute);border-radius:2px}
-.fnote{margin:0;padding:0;list-style:none;display:grid;gap:4px}
-.fnote li{font-size:12.5px;color:#f4cf9a;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.28);border-radius:6px;padding:3px 9px;overflow-wrap:anywhere}
-.qbox{font-size:12.5px;background:rgba(239,65,34,.10);border:1px solid rgba(239,65,34,.55);border-radius:7px;padding:5px 10px;color:#ffd2c8;overflow-wrap:anywhere}
-.qbox b{color:#ff8a70;font-weight:600;margin-inline-end:6px}
-.nil{color:var(--dim)}
-.empty{padding:26px;text-align:center;color:var(--mute);border:1px dashed var(--line2);border-radius:8px}
-.foot{color:var(--dim);font-size:11.5px;text-align:center;margin:6px 0 0}
+.r-meta{margin:0;font-size:12.5px;color:var(--mute)}
+.work{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.work li{position:relative;padding-inline-start:20px;font-size:14.5px;overflow-wrap:anywhere}
+.work li::before{content:"";position:absolute;inset-inline-start:2px;top:.62em;width:8px;height:8px;border:1.5px solid var(--mute);border-radius:2px}
+.depts{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12.5px;color:var(--mute)}
+.dp{font-family:var(--m);font-size:11.5px;border:1px solid var(--line2);border-radius:5px;padding:0 7px;color:var(--soft);direction:ltr;white-space:nowrap}
+.qbox{font-size:14px;background:rgba(255,255,255,.08);border-radius:8px;padding:8px 12px;color:#fff;overflow-wrap:anywhere;display:flex;gap:8px;align-items:flex-start}
+.qbox svg{width:16px;height:16px;margin-top:4px}
+.fnote{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.fnote li{position:relative;padding-inline-start:20px;font-size:14px;color:var(--soft);overflow-wrap:anywhere}
+.fnote li::before{content:"";position:absolute;inset-inline-start:4px;top:.72em;width:6px;height:6px;border-radius:50%;background:var(--mute)}
+.asnote{font-size:13.5px;background:rgba(255,107,53,.1);border-radius:8px;padding:8px 12px;color:#ffc6ae;display:flex;gap:8px;align-items:flex-start;overflow-wrap:anywhere}
+.asnote svg{width:16px;height:16px;margin-top:3px;color:var(--orange)}
+.nil{color:var(--dim);font-size:13.5px}
+.empty{padding:32px;text-align:center;color:var(--mute);border:1px dashed var(--line2);border-radius:10px}
+.foot{color:var(--dim);font-size:12.5px;text-align:center;margin:8px 0 0;display:grid;gap:4px}
 
 @media (max-width:1199px){
-  .sum{grid-template-columns:1fr 1fr}
-  .rhead{display:none}
-  .row{grid-template-columns:180px minmax(0,1fr);gap:6px 14px}
-  .row .th{grid-row:1 / span 4}
-  .row .c{grid-column:2}
-  .m-only{display:block}
+  .rh{grid-template-columns:104px minmax(0,1fr) auto 24px;gap:8px 16px}
+  .tgs{grid-column:2 / 4;grid-row:2}
+  .chev{grid-column:4;grid-row:1}
+  .rb{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 24px}
   .vo{display:none}
+  .now .n{font-size:15px}
+}
+@media (max-width:1099px){
+  .tb{min-width:44px;height:44px;padding:4px}
+  .tb>span:last-child{display:none}
+  .tb.pp{min-width:56px}
+  .tb.cmpb{display:flex;align-items:center;gap:8px;padding-inline:12px}
+  .tb.cmpb>span:last-child{display:block}
+}
+@media (max-width:860px){
+  .tr{flex-wrap:wrap}
+  .now{order:5;flex-basis:100%;padding:0}
+  .grp.end{margin-left:auto}
 }
 @media (max-width:700px){
-  body{font-size:13.5px}
+  :root{--px:12px}
+  body{font-size:14.5px}
   h1{font-size:17px}
-  .wrap{padding-top:10px;gap:10px}
-  .sum{grid-template-columns:1fr}
-  .fgrid{grid-template-columns:1fr}
-  .row{grid-template-columns:112px minmax(0,1fr);gap:7px 9px;padding:8px}
-  .row .th{grid-row:1;grid-column:1}
-  .row .c{grid-column:1 / -1}
-  .row .c-id{grid-column:2}
-  .deck{padding-top:6px;gap:5px}
-  .tr{flex-wrap:wrap}
-  .rates,.now .n{display:none}
-  .tb.tx span{display:none}
+  .facts{font-size:13px;gap:4px 16px}
+  .wrap{padding-top:12px;gap:12px}
+  .tab{height:48px;padding:0 12px;gap:8px;font-size:13.5px}
+  .tab b{font-size:17px}
+  .tools{margin-inline-start:0;width:100%;flex-wrap:wrap}
+  .search{flex:1 1 100%;width:auto;min-width:0;order:3}
+  .rh{grid-template-columns:96px minmax(0,1fr) 20px;gap:8px 12px;padding:8px}
+  .pill{grid-column:1 / -1;grid-row:2}
+  .tgs{grid-column:1 / -1;grid-row:3}
+  .chev{grid-column:3;grid-row:1}
+  .rt1{flex-wrap:wrap;gap:0 8px}
+  .r-name{white-space:normal}
+  .rb{grid-template-columns:minmax(0,1fr);margin:0 8px;padding:4px 8px 16px}
   .strip{height:38px}
-  .tip{top:42px}
-  .keys{display:none}
-  .search{width:100%}
+  .tip{top:44px}
+  .ruler,.howto,.tcbox{display:none}
+  .tr{gap:6px 4px}
+  .grp{gap:2px}
+  .tb{min-width:40px;height:40px}
+  .tb.pp{min-width:52px}
+  .tb.cmpb{order:4;height:36px;display:flex;align-items:center;gap:6px;padding-inline:10px}
+  .now{order:5}
+  .now .s{font-size:18px}.now .n{font-size:14.5px}
+  .now1{gap:8px}
+  .now1 .pill{height:26px;padding:0 10px;font-size:12px}
+  .under{font-size:11.5px;min-height:0}
+  .legend{gap:2px 12px;margin-inline-start:0}
+  .stage.cmp{aspect-ratio:1920/1744}
+  .stage.cmp .frame:not(.pip){left:50%;height:50%}
+  .stage.cmp .asframe{left:50%;top:50%;height:50%}
+  .stage.cmp::after{left:0;right:0;top:50%;bottom:auto;width:auto;height:2px;margin:-1px 0 0}
   .frame.pip{left:8px;bottom:8px;width:52vw}
+  .pop{right:8px;top:56px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 </style>
@@ -249,7 +287,7 @@ h1{margin:0;font-size:19px;line-height:1.2;font-weight:700;letter-spacing:-.01em
     <p class="kick"><bdi>Aroma Studios · Director Room</bdi></p>
     <h1 id="h1" dir="auto"></h1>
   </div>
-  <div class="chips" id="chips"></div>
+  <div class="facts" id="facts"></div>
 </header>
 
 <section class="theater" id="player" aria-label="الإيديت">
@@ -258,97 +296,165 @@ h1{margin:0;font-size:19px;line-height:1.2;font-weight:700;letter-spacing:-.01em
       <div class="poster" id="poster"></div>
       <video id="v" playsinline preload="metadata"></video>
       <div class="hud"><span id="hud-id">SH01</span><span class="lab" id="hud-lab" hidden></span></div>
-      <button class="bigplay" id="bigplay" type="button" aria-label="تشغيل"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg></button>
-      <button class="pipup" id="pipup" type="button" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>كبّر الفيديو</button>
+      <span class="flab">الإيديت</span>
+      <button class="bigplay" id="bigplay" type="button" aria-label="تشغيل"><i data-ico="play"></i></button>
+      <button class="pipup" id="pipup" type="button" hidden><i data-ico="up"></i>كبّر الفيديو</button>
       <div class="verr" id="verr" hidden></div>
+    </div>
+    <div class="asframe none" id="asframe">
+      <video id="av" muted playsinline preload="auto"></video>
+      <span class="flab" id="as-tag">Auto stage</span>
+      <div class="asnone"><i data-ico="building"></i><span id="as-msg">مفيش Auto stage للشوت ده</span></div>
     </div>
   </div>
 </section>
 
 <div class="deck" id="deck">
   <div class="tr">
-    <button class="tb" id="b-prev" type="button" title="الشوت اللي قبله (←)" aria-label="الشوت السابق"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2.4v14H6zM20 5.2v13.6L9.6 12z"/></svg></button>
-    <button class="tb pp" id="b-play" type="button" title="تشغيل / إيقاف (Space)" aria-label="تشغيل أو إيقاف"><svg viewBox="0 0 24 24" fill="currentColor"><path id="pp-ico" d="M7 4.5v15l13-7.5z"/></svg></button>
-    <button class="tb" id="b-next" type="button" title="الشوت اللي بعده (→)" aria-label="الشوت التالي"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.6 5H18v14h-2.4zM4 5.2v13.6L14.4 12z"/></svg></button>
-    <button class="tb" id="b-loop" type="button" title="إعادة الشوت (L)" aria-label="إعادة الشوت" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg></button>
-    <button class="tb" id="b-mute" type="button" title="كتم الصوت (M)" aria-label="كتم الصوت" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4z" fill="currentColor"/><path id="mute-ico" d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg></button>
-    <span class="rates" id="rates" role="group" aria-label="سرعة العرض"><button type="button" data-r="0.25">0.25×</button><button type="button" data-r="0.5">0.5×</button><button type="button" data-r="1" class="on">1×</button></span>
-    <button class="tb tx" id="b-follow" type="button" title="لما تختار شوت من الـ timeline، الجدول ينزل لحد الشوت ده" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h10M4 12h7M4 18h7"/><path d="M18 8v10M14 14l4 4 4-4"/></svg><span>الجدول يتحرك مع الشوت</span></button>
-    <span class="now"><span class="s" id="tc-s">SH01</span><span class="n" id="now-n"></span></span>
-    <span class="vo" id="vo"><em>VO</em><span class="none">—</span></span>
-    <span class="tcbox"><span class="t" id="tc">00:00:00:00</span><span class="f" id="tc-f">f 0</span></span>
+    <div class="grp">
+      <button class="tb" id="b-prev" type="button" title="الشوت اللي قبله (←)"><i data-ico="prev"></i><span>السابق</span></button>
+      <button class="tb pp" id="b-play" type="button" title="تشغيل / إيقاف (Space)"><span class="ic" id="pp-ico"></span><span id="pp-lbl">تشغيل</span></button>
+      <button class="tb" id="b-next" type="button" title="الشوت اللي بعده (→)"><i data-ico="next"></i><span>التالي</span></button>
+    </div>
+    <div class="grp">
+      <button class="tb" id="b-loop" type="button" title="يفضل يعيد نفس الشوت (L)" aria-pressed="false"><i data-ico="loop"></i><span>إعادة الشوت</span></button>
+      <button class="tb" id="b-mute" type="button" title="الصوت (M)" aria-pressed="false"><span class="ic" id="mute-ico"></span><span id="mute-lbl">صوت</span></button>
+      <button class="tb" id="b-rate" type="button" title="سرعة العرض"><i data-ico="gauge"></i><span>السرعة <bdi id="rate-lbl">1×</bdi></span></button>
+    </div>
+    <button class="tb cmpb" id="b-cmp" type="button" aria-pressed="false" hidden><i data-ico="compare"></i><span>قارن بالموديل</span></button>
+    <div class="now">
+      <div class="now1"><span class="s" id="tc-s">SH01</span><span class="n" id="now-n"></span><span id="now-st"></span></div>
+      <div class="vo" id="vo"></div>
+    </div>
+    <div class="grp end">
+      <span class="tcbox" id="tc" title="Timecode">00:00:00:00</span>
+      <button class="tb" id="b-follow" type="button" title="لما تختار شوت من الـ timeline، القايمة تنزل لحد الشوت ده" aria-pressed="true"><i data-ico="follow"></i><span>القايمة تتبع</span></button>
+      <button class="tb" id="b-help" type="button" aria-expanded="false" title="إزاي تستخدم الصفحة"><i data-ico="help"></i><span>مساعدة</span></button>
+    </div>
   </div>
   <div class="tl" id="tl">
     <div class="strip" id="strip"><div class="ph" id="ph"></div></div>
     <div class="ruler" id="ruler"></div>
     <div class="tip" id="tip" hidden></div>
   </div>
+  <div class="under">
+    <div class="howto" id="howto" hidden>
+      <span><i data-ico="hand"></i>دوس على شوت في الشريط</span><i class="ar">←</i>
+      <span><i data-ico="eye"></i>اتفرج عليه</span><i class="ar">←</i>
+      <span><i data-ico="list"></i>تفاصيله تحت</span>
+      <button type="button" id="howto-x" aria-label="إخفاء" title="إخفاء"><i data-ico="x"></i></button>
+    </div>
+    <div class="legend" id="legend"></div>
+  </div>
+  <div class="pop" id="help" hidden>
+    <h3>إزاي تستخدم الصفحة</h3>
+    <p><kbd>1</kbd><span>دوس على أي شوت في الشريط الملوّن: الفيديو يروح له والقايمة تحت تنزل لتفاصيله.</span></p>
+    <p><kbd>2</kbd><span>دوس على أي صف في القايمة: الشوت يتعاد loop وتتفتح تفاصيله.</span></p>
+    <p><kbd>3</kbd><span>التابات اللي فوق القايمة بتفلتر: اللي يتعمل من جديد، اللي محتاج شغل، مبانينا…</span></p>
+    <h3 style="margin-top:8px">الكيبورد</h3>
+    <p><kbd>Space</kbd><span>تشغيل / إيقاف</span></p>
+    <p><kbd>← →</kbd><span>الشوت اللي قبله / بعده</span></p>
+    <p><kbd>L</kbd><span>إعادة الشوت</span></p>
+    <p><kbd>M</kbd><span>كتم الصوت</span></p>
+  </div>
 </div>
 
 <div class="wrap">
-  <section class="sum" id="sum" aria-label="ملخص"></section>
-
-  <details class="card flags" id="flags">
-    <summary><h2 class="sec-t">ملاحظات عامة <small id="fcount"></small></h2><span class="ftitles" id="ftitles"></span><span class="fmore" aria-hidden="true"></span></summary>
-    <div class="fgrid" id="fgrid"></div>
-  </details>
-
-  <section class="card plan" id="plan">
-    <div class="p-hd">
-      <div>
-        <h2>جدول البلان <small id="count"></small></h2>
-        <p class="note" id="note"></p>
-      </div>
-      <input class="search" id="q" type="search" placeholder="دوّر: رقم شوت، كلمة، قسم…" autocomplete="off" aria-label="بحث في الشوتات">
+  <div class="bar">
+    <div class="tabs" id="tabs" role="tablist" aria-label="فلترة الشوتات"></div>
+    <div class="tools">
+      <input class="search" id="q" type="search" placeholder="دوّر: رقم شوت أو كلمة…" autocomplete="off" aria-label="بحث في الشوتات" hidden>
+      <button class="tbtn" id="b-search" type="button" aria-label="بحث" title="بحث"><i data-ico="search"></i></button>
+      <button class="tbtn" id="b-notes" type="button" aria-expanded="false" hidden><i data-ico="flag"></i>ملاحظات عامة <b id="fcount"></b><i data-ico="chevron" data-cls="chv"></i></button>
     </div>
-    <div class="p-tools">
-      <div class="filters" id="filters"></div>
-      <div class="keys"><span>دوس على شوت في الـ timeline ← الجدول ينزل له</span><span><kbd>Space</kbd> تشغيل</span><span><kbd>←</kbd> <kbd>→</kbd> شوت قبل / بعد</span><span><kbd>L</kbd> إعادة الشوت</span><span><kbd>M</kbd> كتم</span></div>
-    </div>
-    <div class="rhead" aria-hidden="true"><span>اللقطة</span><span>الشوت والتوقيت</span><span>الوصف والـ VO</span><span>الشغل المطلوب</span><span>ملاحظات وأسئلة</span></div>
-    <div class="rows" id="rows"></div>
-    <div class="empty" id="empty" hidden>مفيش شوتات بالفلتر ده.</div>
-  </section>
-  <p class="foot"><bdi>Aroma Studios</bdi> · التقديرات مبدئية وبتتظبط شوت شوت</p>
+  </div>
+  <p class="quiet" id="count"></p>
+  <section class="notes" id="notes" hidden aria-label="ملاحظات عامة"></section>
+  <div class="rows" id="rows"></div>
+  <div class="empty" id="empty" hidden>مفيش شوتات بالفلتر ده.</div>
+  <footer class="foot" id="foot"></footer>
 </div>
 
-<script id="hrid-data" type="application/json">{"meta":{"project":"HRID · One Line","edit":"v07 DC","fps":25,"frames":1609,"dur":64.36,"target":60,"src":"/r/hrid/edit_v07.mp4","sprite":"/r/hrid/thumbs_v07.webp","spriteCols":6,"tileW":384,"tileH":216,"updated":"15 Nov 2026","note":"قراءة أولى من الإيديت v07. المصدر والحالة والوقت تقديرات من الصورة — بنأكدهم شوت شوت."},"kinds":{"live":{"label":"تصوير"},"cg":{"label":"3D"},"ai":{"label":"AI"},"mix":{"label":"3D + AI"}},"status":{"final":{"label":"لقطة نهائية · Finishing"},"wip":{"label":"موجودة · محتاجة تطوير"},"temp":{"label":"Placeholder · تتعمل من جديد"}},"sizes":{"S":{"time":"30–60 د","hours":0.75},"M":{"time":"2–4 س","hours":3},"L":{"time":"1–2 يوم","hours":12},"XL":{"time":"3–5 أيام","hours":32}},"flags":[{"t":"5 لقطات لسه Placeholder","d":"عليها label على الصورة وهتتعمل من جديد، ومجموعها 12.72 ث من الفيلم. ده الشغل التقيل.","shots":["SH13","SH15","SH17","SH18","SH21"]},{"t":"الفيلم أطول من 60 ث","d":"الطول 64.36 ث (1609 فريم) — زيادة 4.36 ث (109 فريم). لو التسليم 60 ث يبقى فيه قص.","shots":[]},{"t":"مفيش end logo","d":"الفيلم بيخلص على التوقيع و fade للأسود. الـ treatment بيقول التوقيع بيتحول للوجو.","shots":["SH36"]},{"t":"حاجات لازم تتشال من الصورة","d":"سقف الاستوديو (SH20، SH27) · كرسي (SH20) · رقم «02» (SH34) · شعار العربية (SH24) · صورة المرجع والـ labels في الـ placeholders.","shots":["SH20","SH27","SH34","SH24","SH15"]},{"t":"دقة المكان","d":"SH34 فيه مية ومارينا والسليمانية مفيهاش · أبراج SH21 مش تصميم Downtown · حروف وجبل SH26 لازم يطابقوا الموقع الحقيقي · Vesta في SH04 و SH17 لازم يبقى نفس المبنى.","shots":["SH34","SH21","SH26","SH04","SH17"]},{"t":"مقاس الكادر مش موحّد","d":"الفيلم 1920×872 (2.20:1). SH13 جاي 1920×834 و SH22 جاي 1920×858، و SH28 فيه شريط أسود في الركن.","shots":["SH13","SH22","SH28"]},{"t":"الألوان","d":"أبيض وأسود من SH01 لـ SH19، ألوان من عين المهندسة SH20 لحد SH34، ورجوع أبيض وأسود في التوقيع. ده غير قاعدة الـ monochrome في الـ treatment — محتاج تأكيد إنه القرار النهائي.","shots":["SH20","SH35"]},{"t":"Kurdonia Towers","d":"مفيش لقطة واضحة لـ Kurdonia في v07 — يمكن فلاش SH10.","shots":["SH10"]}],"shots":[{"name":"Pens — opening macro","desc":"ماكرو على أقلام الحبر في الحامل، rack focus وهيز خفيف. افتتاحية الفيلم.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade أبيض وأسود موحّد مع لقطات المكتب","توحيد الـ grain","Fade in من الأسود لو مطلوب"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH01","f0":0,"f1":52,"vo":""},{"name":"Architect at desk — from behind","desc":"المعماري من ضهره على المكتب، لمبتين وهيز، push in بطيء.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade وتوحيد مستوى الأسود","الـ flares على يمين الكادر: تتساب ولا تتنضف"],"dept":["Grade","Comp"],"size":"S","flags":[],"q":"","id":"SH02","f0":52,"f1":107,"vo":"It begins"},{"name":"Nib lands on paper","desc":"ماكرو على سن القلم وهو بينزل على الورقة ويبدأ أول خط.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade","قرار الخط: حبر طبيعي زي ما هو، ولا لمعة خفيفة تربطه بخط النور بتاع الروبوتات"],"dept":["Grade","Comp"],"size":"S","flags":[],"q":"الخط يفضل حبر زي ما اتصور، ولا نضيف له لمعة خفيفة؟","id":"SH03","f0":107,"f1":177,"vo":"with a line, and a vision of what"},{"name":"Flash — Vesta model","desc":"فلاش 10 فريمات: مجسم مبنى (على الأغلب Vesta) على أرضية سودا عاكسة ونور من وراه.","kind":"ai","status":"wip","look":"bw","label":null,"work":["نتأكد إن شكل المبنى هو Vesta الحقيقي","نفس المبنى لازم يطابق لقطة SH17","Upscale + grain"],"dept":["AI","Grade"],"size":"S","flags":["مفيش 3D ولا CAD لـ Vesta — المرجع فريمات المخرج بس"],"q":"","id":"SH04","f0":177,"f1":187,"vo":"could"},{"name":"Flash — Downtown model, inverted","desc":"فلاش 12 فريم: مجسم Downtown Slemani العاجي والكاميرا مقلوبة فوق البلوكات، دخان.","kind":"mix","status":"wip","look":"bw","label":null,"work":["مطابقة مع موديل DTS الحقيقي","Upscale + grain"],"dept":["3D","Grade"],"size":"S","flags":[],"q":"","id":"SH05","f0":187,"f1":199,"vo":""},{"name":"Nib — closer","desc":"رجوع لسن القلم، أقرب، والخط ممتد.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade بنفس إعدادات SH03"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH06","f0":199,"f1":212,"vo":"be."},{"name":"Flash — Crossing Bridge interior","desc":"فلاش 8 فريمات: ممر الكوبري من جوه، درابزين وهيز ونور في آخره.","kind":"mix","status":"wip","look":"bw","label":null,"work":["مطابقة مع موديل Crossing Bridge الحقيقي","Upscale + grain"],"dept":["3D","Grade"],"size":"S","flags":[],"q":"","id":"SH07","f0":212,"f1":220,"vo":""},{"name":"Flash — Silos, low angle","desc":"فلاش 13 فريم: الصوامع من تحت وسما غامقة.","kind":"ai","status":"wip","look":"bw","label":null,"work":["مطابقة شكل الصوامع مع صور الموقع الحقيقي","Upscale + grain"],"dept":["AI","Grade"],"size":"S","flags":["مفيش 3D للصوامع — AI بس"],"q":"","id":"SH08","f0":220,"f1":233,"vo":""},{"name":"Nib draws the line","desc":"القلم بيشد الخط بسرعة على الورقة، motion blur.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade","استمرارية الخط مع SH03 و SH06"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH09","f0":233,"f1":268,"vo":""},{"name":"Flash — towers from below, night","desc":"فلاش 21 فريم: برجين من تحت بالليل، بلكونات وهيز وأنوار المدينة.","kind":"mix","status":"wip","look":"bw","label":null,"work":["نحدد المشروع ونطابقه مع الموديل","Upscale + grain"],"dept":["3D","Grade"],"size":"S","flags":[],"q":"اللقطة دي Kurdonia Towers ولا Downtown Slemani؟","id":"SH10","f0":268,"f1":289,"vo":""},{"name":"Plan — top shot","desc":"Top shot على المخطط: إيد المعماري بتعلّم بالقلم والمسطرة، والكاميرا بتلف.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade","مراجعة المخطط نفسه: مخطط حقيقي لـ HRID ومفيهوش بيانات مش عايزينها تبان"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH11","f0":289,"f1":364,"vo":"A vision shaped by Hiwa"},{"name":"Drawing hand — low angle","desc":"زاوية واطية على الإيد وهي بترسم، اللمبة وحامل الأقلام في الخلفية.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH12","f0":364,"f1":429,"vo":"Rauf, bold thinking realised"},{"name":"Robots build the bridge","desc":"Placeholder: أذرع الروبوت من فوق حوالين الشريط. المطلوب النهائي: الروبوتات بتركّب Crossing Bridge في الـ Prototype Hall. ده نص شغل SH09 القديم — الروبوتات والكوبري هنا، والمدينة واللوجو راحوا SH15.","kind":"cg","status":"temp","look":"bw","label":"BRIDGE","work":["نختار الـ option (1 / 2 / 3) ونقفل حركة الكاميرا على 2.32 ث","Render نهائي من Prototype Hall: الروبوتات + الكوبري","Dark look: هيز، أسود عميق، أشعة من اليمين","Comp + grain","مقاس الكادر يتظبط على 1920×872","شيل الـ label"],"dept":["3D","Comp","Grade"],"size":"XL","flags":["مقاس الكادر 1920×834 (2.30) والفيلم 1920×872 (2.20)"],"q":"نبني على أنهي option من شغل SH09؟","id":"SH13","f0":429,"f1":487,"vo":"with precision, grounded in"},{"name":"Architect's shadow","desc":"ضل المعماري الطويل على أرضية بيضا، حركة بطيئة.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade","تنضيف الأرضية (نقط وبقع)"],"dept":["Grade","Comp"],"size":"S","flags":[],"q":"","id":"SH14","f0":487,"f1":584,"vo":"engineering, guided by integrity and purpose."},{"name":"Flight to the logo","desc":"Placeholder: طيران فوق جبال وسحاب لحد لوجو Hiwa Rauf، وفي الركن صورة مرجع للمجسم الأبيض. المطلوب النهائي: الكاميرا تعدّي الكوبري والمدينة (المجسمات) وتوصل للوجو.","kind":"cg","status":"temp","look":"bw","label":"BRIDGE + CITY","work":["Render نهائي: كوبري ← مدينة ← لوجو على 3.88 ث","اللوجو مجسم ومتركّب بالروبوتات (مفيش حاجة بتطلع لوحدها)","اللوجو يبان كامل على كلمة «HRID» في الـ VO (26.18 ث)","Dark look + هيز","Comp + grade","شيل الـ label وصورة المرجع"],"dept":["3D","Comp","GFX","Grade"],"size":"XL","flags":[],"q":"","id":"SH15","f0":584,"f1":681,"vo":"In 2012, that vision became HRID,"},{"name":"Architect and the ladder","desc":"سيلويت المعماري بالمخططات الملفوفة على cyc أبيض، قدامه سلم، وبيخرج من شمال الكادر.","kind":"live","status":"wip","look":"bw","label":null,"work":["قرار السلم: يتساب، يتشال، ولا يتبدل بحاجة CG","تنضيف الـ cyc وحواف الكادر","Grade"],"dept":["Comp","Grade"],"size":"M","flags":[],"q":"السلم مقصود في الصورة، ولا مرجع هيتبدل؟","id":"SH16","f0":681,"f1":751,"vo":"building on decades of experience"},{"name":"Vesta Tower","desc":"Placeholder: إزاز غامق وانعكاسات نور، abstract. المطلوب النهائي: لقطة hero لـ Vesta Tower.","kind":"ai","status":"temp","look":"bw","label":"VESTA TOWER","work":["Keyframe لـ Vesta من فريمات المخرج","Seedance: المكان والـ keyframe كمراجع — مش start frame","كاميرا dynamic / handheld","Upscale + grade أبيض وأسود","شيل الـ label"],"dept":["AI","Grade"],"size":"L","flags":["مفيش 3D ولا CAD لـ Vesta"],"q":"","id":"SH17","f0":751,"f1":803,"vo":"to shape a new future for"},{"name":"Silos — wide","desc":"Placeholder: صف الصوامع مع الجبال والضباب، أبيض وأسود.","kind":"ai","status":"temp","look":"bw","label":"SILO","work":["لقطة AI نهائية للصوامع بحركة كاميرا","مطابقة شكل الصوامع الحقيقية (محتاجين صور الموقع)","Upscale + grade","شيل الـ label"],"dept":["AI","Grade"],"size":"M","flags":["مفيش 3D للصوامع"],"q":"","id":"SH18","f0":803,"f1":834,"vo":"Iraq. Trusted"},{"name":"Silo roof → iris","desc":"سقف الصومعة من فوق (شكله قزحية) وبيدوب في عين المهندسة.","kind":"ai","status":"wip","look":"bw","label":null,"work":["Match cut: محاذاة مركز وقطر السقف مع القزحية فريم بفريم","QC + upscale للقطة السقف"],"dept":["AI","Comp"],"size":"M","flags":[],"q":"","id":"SH19","f0":834,"f1":857,"vo":"public–private"},{"name":"Eye → the engineer, pull back","desc":"ماكرو على عين المهندسة والكاميرا بترجع لحد ما تبان كلها بالبالطو الأحمر على cyc أبيض. أول لقطة ملونة في الفيلم.","kind":"live","status":"final","look":"color","label":null,"work":["Paint out: سقف الاستوديو والـ rig فوق الكادر، والكرسي على الشمال في آخر اللقطة","تنضيف وتمديد الـ cyc","تنعيم الـ speed ramp","Grade: هنا التحول من أبيض وأسود لألوان","Dissolve نضيف لـ SH21"],"dept":["Comp","Grade"],"size":"M","flags":["سقف الاستوديو ظاهر فوق الكادر","كرسي ظاهر على شمال الكادر في آخر اللقطة"],"q":"","id":"SH20","f0":857,"f1":946,"vo":"partnerships. Sustainability as"},{"name":"Downtown Slemani — dive from the clouds","desc":"Placeholder: نزول من السحاب على أبراج دهبي. الأبراج AI عامة، مش تصميم Downtown الحقيقي.","kind":"mix","status":"temp","look":"color","label":"D.T. SLEMANI","work":["حركة الكاميرا من موديل DTS الحقيقي (Model Room)","Photoreal pass بالـ AI والـ 3D كمرجع","سحاب + comp مع الـ dissolve من SH20","Grade ملون","شيل الـ label"],"dept":["3D","AI","Comp","Grade"],"size":"L","flags":["الأبراج الحالية مش تصميم Downtown"],"q":"","id":"SH21","f0":946,"f1":1026,"vo":"a standard. Connecting"},{"name":"Plaza crowd — the engineer in red","desc":"ناس ماشية في الساحة والمهندسة بالأحمر وسطهم. باين إنها AI.","kind":"ai","status":"wip","look":"color","label":null,"work":["QC للوشوش والإيدين في الكومبارس","مطابقة شكل الممثلة ولبسها مع SH20 و SH30","المكان يطابق ساحة Downtown","Upscale + grade","مقاس الكادر يتظبط على 1920×872"],"dept":["AI","Comp","Grade"],"size":"M","flags":["مقاس الكادر 1920×858 (2.24)"],"q":"","id":"SH22","f0":1026,"f1":1074,"vo":"communities."},{"name":"Towers — top-down spin","desc":"Top-down بيلف بين الأبراج، ملعب كورة وأسطح المدينة تحت.","kind":"mix","status":"wip","look":"color","label":null,"work":["مطابقة الأبراج مع موديل DTS","QC للـ warping في المباني الصغيرة","Upscale + grade"],"dept":["3D","AI","Grade"],"size":"M","flags":[],"q":"","id":"SH23","f0":1074,"f1":1146,"vo":"Rising higher than Iraq has ever seen."},{"name":"Plaza entrance — dusk","desc":"مدخل الساحة وقت الغروب: نخل، نافورة، عربية، ناس، والأبراج ورا.","kind":"ai","status":"wip","look":"color","label":null,"work":["مطابقة مع تصميم Downtown (البوديوم والساحة)","QC لحركة الناس","شعار العربية يتشال","Upscale + grade"],"dept":["AI","Comp","Grade"],"size":"M","flags":["شعار ماركة العربية ظاهر"],"q":"","id":"SH24","f0":1146,"f1":1212,"vo":"Creating places to live, work"},{"name":"The boy — framing with his hand","desc":"الولد بيبص لفوق وبيعمل كادر بإيده، وضل بيعدّي على وشه.","kind":"live","status":"final","look":"color","label":null,"work":["تنضيف الخلفية (banding في الـ gradient)","Grade"],"dept":["Comp","Grade"],"size":"S","flags":[],"q":"","id":"SH25","f0":1212,"f1":1241,"vo":"and belong."},{"name":"SLEMANI sign — sunrise","desc":"كلمة SLEMANI على جبل Goizha والمدينة تحت، والشمس بتطلع.","kind":"mix","status":"wip","look":"color","label":null,"work":["مطابقة شكل الحروف مع الرسم المساحي الحقيقي","الجبل يمشي على شكل الموقع الحقيقي","QC للمدينة + upscale + grade"],"dept":["3D","AI","Grade"],"size":"M","flags":[],"q":"","id":"SH26","f0":1241,"f1":1292,"vo":"Honouring the identity of a city."},{"name":"The elder — low angle","desc":"الراجل الكبير من تحت، بيبتسم وبيبص لفوق.","kind":"live","status":"final","look":"color","label":null,"work":["Paint out: سقف الاستوديو فوق الكادر","Grade"],"dept":["Comp","Grade"],"size":"S","flags":["سقف الاستوديو ظاهر فوق الكادر"],"q":"","id":"SH27","f0":1292,"f1":1324,"vo":""},{"name":"Light on the walls","desc":"جوه مبنى غامق، بقع نور دافية بتتحرك على الحيطان والعمود.","kind":"ai","status":"wip","look":"color","label":null,"work":["الشريط الأسود تحت يمين الكادر يتصلح أو اللقطة تتعاد","Upscale + grade"],"dept":["AI","Comp"],"size":"S","flags":["شريط أسود صغير تحت يمين الصورة"],"q":"","id":"SH28","f0":1324,"f1":1349,"vo":"Opening possibilities"},{"name":"Look up — stone walls to the tower","desc":"من تحت بين حيطان حجر لبرج إزاز وسما.","kind":"ai","status":"wip","look":"color","label":null,"work":["مطابقة البرج مع Downtown","Upscale + grade"],"dept":["AI","Grade"],"size":"S","flags":[],"q":"","id":"SH29","f0":1349,"f1":1370,"vo":"for the"},{"name":"The engineer — close-up","desc":"كلوز على المهندسة بروفايل وبتبص لفوق.","kind":"live","status":"final","look":"color","label":null,"work":["Beauty خفيف","Grade"],"dept":["Comp","Grade"],"size":"S","flags":[],"q":"","id":"SH30","f0":1370,"f1":1394,"vo":"generations to"},{"name":"The boy — close-up","desc":"كلوز على الولد وبيبتسم للكاميرا.","kind":"live","status":"final","look":"color","label":null,"work":["Grade ومطابقة الخلفية مع SH25"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH31","f0":1394,"f1":1419,"vo":"come. Because"},{"name":"Lobby — people","desc":"لوبي بواجهة إزاز على الأبراج، ناس داخلة وخارجة.","kind":"ai","status":"wip","look":"color","label":null,"work":["QC لمشية الناس","مطابقة المعمار مع Downtown","Upscale + grade"],"dept":["AI","Grade"],"size":"M","flags":[],"q":"","id":"SH32","f0":1419,"f1":1447,"vo":"to shape a city"},{"name":"Towers and birds","desc":"برجين من تحت على سما تركواز وطيور.","kind":"ai","status":"wip","look":"color","label":null,"work":["مطابقة الأبراج مع موديل DTS","Upscale + grade"],"dept":["AI","Grade"],"size":"S","flags":[],"q":"","id":"SH33","f0":1447,"f1":1478,"vo":"is to make a promise"},{"name":"Towers — wide, haze","desc":"الأبراج واسعة في الضباب مع طيور والمدينة ورا.","kind":"ai","status":"wip","look":"color","label":null,"work":["الخلفية فيها مية ومارينا — السليمانية مفيهاش، تتعاد أو تتنضف","رقم «02» في الركن فوق شمال يتشال","مطابقة الأبراج مع موديل DTS","Upscale + grade"],"dept":["AI","Comp","Grade"],"size":"M","flags":["مية ومارينا في الخلفية","«02» ظاهرة في الركن فوق شمال"],"q":"","id":"SH34","f0":1478,"f1":1502,"vo":"to its future."},{"name":"Signing — ring in the foreground","desc":"إيد بخاتم في الـ foreground (out of focus) والمعماري بيوقّع في الخلفية.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade: رجوع للأبيض والأسود"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH35","f0":1502,"f1":1546,"vo":"A promise we put our"},{"name":"The signature","desc":"توقيع «Hiwa Rauf» بيكمل على الورقة جوه ماسك مقصوص الأركان، وبعدين fade للأسود.","kind":"live","status":"wip","look":"bw","label":null,"work":["قرار النهاية: التوقيع بس، ولا يتحول للوجو HRID","End card: اللوجو + أي سطر قانوني أو موقع","تنضيف الماسك وحوافه","Grade"],"dept":["GFX","Comp","Grade"],"size":"M","flags":["مفيش end logo في v07"],"q":"النهاية: التوقيع بس، ولا لازم يتحول للوجو HRID زي الـ treatment؟","id":"SH36","f0":1546,"f1":1609,"vo":"name to."}]}</script>
+<script id="hrid-data" type="application/json">{"meta":{"project":"HRID · One Line","edit":"v07 DC","fps":25,"frames":1609,"dur":64.36,"target":60,"src":"/r/hrid/edit_v07.mp4","sprite":"/r/hrid/thumbs_v07.webp","spriteCols":6,"tileW":384,"tileH":216,"updated":"15 Nov 2026","note":"قراءة أولى من الإيديت v07. المصدر والحالة والوقت تقديرات من الصورة — بنأكدهم شوت شوت."},"models":{"dts":{"label":"Downtown Slemani"},"kurdonia":{"label":"Kurdonia Towers"},"slemani":{"label":"SLEMANI Name"},"bridge":{"label":"Crossing Bridge"},"proto":{"label":"Prototype Hall"}},"kinds":{"live":{"label":"تصوير"},"cg":{"label":"3D"},"ai":{"label":"AI"},"mix":{"label":"3D + AI"}},"status":{"final":{"label":"لقطة نهائية · Finishing"},"wip":{"label":"موجودة · محتاجة تطوير"},"temp":{"label":"Placeholder · تتعمل من جديد"}},"sizes":{"S":{"time":"30–60 د","hours":0.75},"M":{"time":"2–4 س","hours":3},"L":{"time":"1–2 يوم","hours":12},"XL":{"time":"3–5 أيام","hours":32}},"flags":[{"t":"5 لقطات لسه Placeholder","d":"عليها label على الصورة وهتتعمل من جديد، ومجموعها 12.72 ث من الفيلم. ده الشغل التقيل.","shots":["SH13","SH15","SH17","SH18","SH21"]},{"t":"الفيلم أطول من 60 ث","d":"الطول 64.36 ث (1609 فريم) — زيادة 4.36 ث (109 فريم). لو التسليم 60 ث يبقى فيه قص.","shots":[]},{"t":"مفيش end logo","d":"الفيلم بيخلص على التوقيع و fade للأسود. الـ treatment بيقول التوقيع بيتحول للوجو.","shots":["SH36"]},{"t":"حاجات لازم تتشال من الصورة","d":"سقف الاستوديو (SH20، SH27) · كرسي (SH20) · رقم «02» (SH34) · شعار العربية (SH24) · صورة المرجع والـ labels في الـ placeholders.","shots":["SH20","SH27","SH34","SH24","SH15"]},{"t":"دقة المكان","d":"SH34 فيه مية ومارينا والسليمانية مفيهاش · أبراج SH21 مش تصميم Downtown · حروف وجبل SH26 لازم يطابقوا الموقع الحقيقي · Vesta في SH04 و SH17 لازم يبقى نفس المبنى.","shots":["SH34","SH21","SH26","SH04","SH17"]},{"t":"مقاس الكادر مش موحّد","d":"الفيلم 1920×872 (2.20:1). SH13 جاي 1920×834 و SH22 جاي 1920×858، و SH28 فيه شريط أسود في الركن.","shots":["SH13","SH22","SH28"]},{"t":"الألوان","d":"أبيض وأسود من SH01 لـ SH19، ألوان من عين المهندسة SH20 لحد SH34، ورجوع أبيض وأسود في التوقيع. ده غير قاعدة الـ monochrome في الـ treatment — محتاج تأكيد إنه القرار النهائي.","shots":["SH20","SH35"]},{"t":"Kurdonia Towers","d":"مفيش لقطة واضحة لـ Kurdonia في v07 — يمكن فلاش SH10.","shots":["SH10"]}],"shots":[{"name":"Pens — opening macro","desc":"ماكرو على أقلام الحبر في الحامل، rack focus وهيز خفيف. افتتاحية الفيلم.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade أبيض وأسود موحّد مع لقطات المكتب","توحيد الـ grain","Fade in من الأسود لو مطلوب"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH01","f0":0,"f1":52,"vo":""},{"name":"Architect at desk — from behind","desc":"المعماري من ضهره على المكتب، لمبتين وهيز، push in بطيء.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade وتوحيد مستوى الأسود","الـ flares على يمين الكادر: تتساب ولا تتنضف"],"dept":["Grade","Comp"],"size":"S","flags":[],"q":"","id":"SH02","f0":52,"f1":107,"vo":"It begins"},{"name":"Nib lands on paper","desc":"ماكرو على سن القلم وهو بينزل على الورقة ويبدأ أول خط.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade","قرار الخط: حبر طبيعي زي ما هو، ولا لمعة خفيفة تربطه بخط النور بتاع الروبوتات"],"dept":["Grade","Comp"],"size":"S","flags":[],"q":"الخط يفضل حبر زي ما اتصور، ولا نضيف له لمعة خفيفة؟","id":"SH03","f0":107,"f1":177,"vo":"with a line, and a vision of what"},{"name":"Flash — Vesta model","desc":"فلاش 10 فريمات: مجسم مبنى (على الأغلب Vesta) على أرضية سودا عاكسة ونور من وراه.","kind":"ai","status":"wip","look":"bw","label":null,"work":["نتأكد إن شكل المبنى هو Vesta الحقيقي","نفس المبنى لازم يطابق لقطة SH17","Upscale + grain"],"dept":["AI","Grade"],"size":"S","flags":["مفيش 3D ولا CAD لـ Vesta — المرجع فريمات المخرج بس"],"q":"","id":"SH04","f0":177,"f1":187,"vo":"could"},{"name":"Flash — Downtown model, inverted","desc":"فلاش 12 فريم: مجسم Downtown Slemani العاجي والكاميرا مقلوبة فوق البلوكات، دخان.","kind":"mix","status":"wip","look":"bw","label":null,"work":["مطابقة مع موديل DTS الحقيقي","Upscale + grain"],"dept":["3D","Grade"],"size":"S","flags":[],"q":"","model":"dts","id":"SH05","f0":187,"f1":199,"vo":""},{"name":"Nib — closer","desc":"رجوع لسن القلم، أقرب، والخط ممتد.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade بنفس إعدادات SH03"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH06","f0":199,"f1":212,"vo":"be."},{"name":"Flash — Crossing Bridge interior","desc":"فلاش 8 فريمات: ممر الكوبري من جوه، درابزين وهيز ونور في آخره.","kind":"mix","status":"wip","look":"bw","label":null,"work":["مطابقة مع موديل Crossing Bridge الحقيقي","Upscale + grain"],"dept":["3D","Grade"],"size":"S","flags":[],"q":"","model":"bridge","id":"SH07","f0":212,"f1":220,"vo":""},{"name":"Flash — Silos, low angle","desc":"فلاش 13 فريم: الصوامع من تحت وسما غامقة.","kind":"ai","status":"wip","look":"bw","label":null,"work":["مطابقة شكل الصوامع مع صور الموقع الحقيقي","Upscale + grain"],"dept":["AI","Grade"],"size":"S","flags":["مفيش 3D للصوامع — AI بس"],"q":"","id":"SH08","f0":220,"f1":233,"vo":""},{"name":"Nib draws the line","desc":"القلم بيشد الخط بسرعة على الورقة، motion blur.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade","استمرارية الخط مع SH03 و SH06"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH09","f0":233,"f1":268,"vo":""},{"name":"Flash — towers from below, night","desc":"فلاش 21 فريم: برجين من تحت بالليل، بلكونات وهيز وأنوار المدينة.","kind":"mix","status":"wip","look":"bw","label":null,"work":["نحدد المشروع ونطابقه مع الموديل","Upscale + grain"],"dept":["3D","Grade"],"size":"S","flags":[],"q":"اللقطة دي Kurdonia Towers ولا Downtown Slemani؟","model":"kurdonia","id":"SH10","f0":268,"f1":289,"vo":""},{"name":"Plan — top shot","desc":"Top shot على المخطط: إيد المعماري بتعلّم بالقلم والمسطرة، والكاميرا بتلف.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade","مراجعة المخطط نفسه: مخطط حقيقي لـ HRID ومفيهوش بيانات مش عايزينها تبان"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH11","f0":289,"f1":364,"vo":"A vision shaped by Hiwa"},{"name":"Drawing hand — low angle","desc":"زاوية واطية على الإيد وهي بترسم، اللمبة وحامل الأقلام في الخلفية.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH12","f0":364,"f1":429,"vo":"Rauf, bold thinking realised"},{"name":"Robots build the bridge","desc":"Placeholder: أذرع الروبوت من فوق حوالين الشريط. المطلوب النهائي: الروبوتات بتركّب Crossing Bridge في الـ Prototype Hall. ده نص شغل SH09 القديم — الروبوتات والكوبري هنا، والمدينة واللوجو راحوا SH15.","kind":"cg","status":"temp","look":"bw","label":"BRIDGE","work":["نختار الـ option (1 / 2 / 3) ونقفل حركة الكاميرا على 2.32 ث","Render نهائي من Prototype Hall: الروبوتات + الكوبري","Dark look: هيز، أسود عميق، أشعة من اليمين","Comp + grain","مقاس الكادر يتظبط على 1920×872","شيل الـ label"],"dept":["3D","Comp","Grade"],"size":"XL","flags":["مقاس الكادر 1920×834 (2.30) والفيلم 1920×872 (2.20)"],"q":"نبني على أنهي option من شغل SH09؟","model":"proto","id":"SH13","f0":429,"f1":487,"vo":"with precision, grounded in"},{"name":"Architect's shadow","desc":"ضل المعماري الطويل على أرضية بيضا، حركة بطيئة.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade","تنضيف الأرضية (نقط وبقع)"],"dept":["Grade","Comp"],"size":"S","flags":[],"q":"","id":"SH14","f0":487,"f1":584,"vo":"engineering, guided by integrity and purpose."},{"name":"Flight to the logo","desc":"Placeholder: طيران فوق جبال وسحاب لحد لوجو Hiwa Rauf، وفي الركن صورة مرجع للمجسم الأبيض. المطلوب النهائي: الكاميرا تعدّي الكوبري والمدينة (المجسمات) وتوصل للوجو.","kind":"cg","status":"temp","look":"bw","label":"BRIDGE + CITY","work":["Render نهائي: كوبري ← مدينة ← لوجو على 3.88 ث","اللوجو مجسم ومتركّب بالروبوتات (مفيش حاجة بتطلع لوحدها)","اللوجو يبان كامل على كلمة «HRID» في الـ VO (26.18 ث)","Dark look + هيز","Comp + grade","شيل الـ label وصورة المرجع"],"dept":["3D","Comp","GFX","Grade"],"size":"XL","flags":[],"q":"","model":"proto","id":"SH15","f0":584,"f1":681,"vo":"In 2012, that vision became HRID,"},{"name":"Architect and the ladder","desc":"سيلويت المعماري بالمخططات الملفوفة على cyc أبيض، قدامه سلم، وبيخرج من شمال الكادر.","kind":"live","status":"wip","look":"bw","label":null,"work":["قرار السلم: يتساب، يتشال، ولا يتبدل بحاجة CG","تنضيف الـ cyc وحواف الكادر","Grade"],"dept":["Comp","Grade"],"size":"M","flags":[],"q":"السلم مقصود في الصورة، ولا مرجع هيتبدل؟","id":"SH16","f0":681,"f1":751,"vo":"building on decades of experience"},{"name":"Vesta Tower","desc":"Placeholder: إزاز غامق وانعكاسات نور، abstract. المطلوب النهائي: لقطة hero لـ Vesta Tower.","kind":"ai","status":"temp","look":"bw","label":"VESTA TOWER","work":["Keyframe لـ Vesta من فريمات المخرج","Seedance: المكان والـ keyframe كمراجع — مش start frame","كاميرا dynamic / handheld","Upscale + grade أبيض وأسود","شيل الـ label"],"dept":["AI","Grade"],"size":"L","flags":["مفيش 3D ولا CAD لـ Vesta"],"q":"","id":"SH17","f0":751,"f1":803,"vo":"to shape a new future for"},{"name":"Silos — wide","desc":"Placeholder: صف الصوامع مع الجبال والضباب، أبيض وأسود.","kind":"ai","status":"temp","look":"bw","label":"SILO","work":["لقطة AI نهائية للصوامع بحركة كاميرا","مطابقة شكل الصوامع الحقيقية (محتاجين صور الموقع)","Upscale + grade","شيل الـ label"],"dept":["AI","Grade"],"size":"M","flags":["مفيش 3D للصوامع"],"q":"","id":"SH18","f0":803,"f1":834,"vo":"Iraq. Trusted"},{"name":"Silo roof → iris","desc":"سقف الصومعة من فوق (شكله قزحية) وبيدوب في عين المهندسة.","kind":"ai","status":"wip","look":"bw","label":null,"work":["Match cut: محاذاة مركز وقطر السقف مع القزحية فريم بفريم","QC + upscale للقطة السقف"],"dept":["AI","Comp"],"size":"M","flags":[],"q":"","id":"SH19","f0":834,"f1":857,"vo":"public–private"},{"name":"Eye → the engineer, pull back","desc":"ماكرو على عين المهندسة والكاميرا بترجع لحد ما تبان كلها بالبالطو الأحمر على cyc أبيض. أول لقطة ملونة في الفيلم.","kind":"live","status":"final","look":"color","label":null,"work":["Paint out: سقف الاستوديو والـ rig فوق الكادر، والكرسي على الشمال في آخر اللقطة","تنضيف وتمديد الـ cyc","تنعيم الـ speed ramp","Grade: هنا التحول من أبيض وأسود لألوان","Dissolve نضيف لـ SH21"],"dept":["Comp","Grade"],"size":"M","flags":["سقف الاستوديو ظاهر فوق الكادر","كرسي ظاهر على شمال الكادر في آخر اللقطة"],"q":"","id":"SH20","f0":857,"f1":946,"vo":"partnerships. Sustainability as"},{"name":"Downtown Slemani — dive from the clouds","desc":"Placeholder: نزول من السحاب على أبراج دهبي. الأبراج AI عامة، مش تصميم Downtown الحقيقي.","kind":"mix","status":"temp","look":"color","label":"D.T. SLEMANI","work":["حركة الكاميرا من موديل DTS الحقيقي (Model Room)","Photoreal pass بالـ AI والـ 3D كمرجع","سحاب + comp مع الـ dissolve من SH20","Grade ملون","شيل الـ label"],"dept":["3D","AI","Comp","Grade"],"size":"L","flags":["الأبراج الحالية مش تصميم Downtown"],"q":"","model":"dts","id":"SH21","f0":946,"f1":1026,"vo":"a standard. Connecting"},{"name":"Plaza crowd — the engineer in red","desc":"ناس ماشية في الساحة والمهندسة بالأحمر وسطهم. باين إنها AI.","kind":"ai","status":"wip","look":"color","label":null,"work":["QC للوشوش والإيدين في الكومبارس","مطابقة شكل الممثلة ولبسها مع SH20 و SH30","المكان يطابق ساحة Downtown","Upscale + grade","مقاس الكادر يتظبط على 1920×872"],"dept":["AI","Comp","Grade"],"size":"M","flags":["مقاس الكادر 1920×858 (2.24)"],"q":"","model":"dts","id":"SH22","f0":1026,"f1":1074,"vo":"communities."},{"name":"Towers — top-down spin","desc":"Top-down بيلف بين الأبراج، ملعب كورة وأسطح المدينة تحت.","kind":"mix","status":"wip","look":"color","label":null,"work":["مطابقة الأبراج مع موديل DTS","QC للـ warping في المباني الصغيرة","Upscale + grade"],"dept":["3D","AI","Grade"],"size":"M","flags":[],"q":"","model":"dts","id":"SH23","f0":1074,"f1":1146,"vo":"Rising higher than Iraq has ever seen."},{"name":"Plaza entrance — dusk","desc":"مدخل الساحة وقت الغروب: نخل، نافورة، عربية، ناس، والأبراج ورا.","kind":"ai","status":"wip","look":"color","label":null,"work":["مطابقة مع تصميم Downtown (البوديوم والساحة)","QC لحركة الناس","شعار العربية يتشال","Upscale + grade"],"dept":["AI","Comp","Grade"],"size":"M","flags":["شعار ماركة العربية ظاهر"],"q":"","model":"dts","id":"SH24","f0":1146,"f1":1212,"vo":"Creating places to live, work"},{"name":"The boy — framing with his hand","desc":"الولد بيبص لفوق وبيعمل كادر بإيده، وضل بيعدّي على وشه.","kind":"live","status":"final","look":"color","label":null,"work":["تنضيف الخلفية (banding في الـ gradient)","Grade"],"dept":["Comp","Grade"],"size":"S","flags":[],"q":"","id":"SH25","f0":1212,"f1":1241,"vo":"and belong."},{"name":"SLEMANI sign — sunrise","desc":"كلمة SLEMANI على جبل Goizha والمدينة تحت، والشمس بتطلع.","kind":"mix","status":"wip","look":"color","label":null,"work":["مطابقة شكل الحروف مع الرسم المساحي الحقيقي","الجبل يمشي على شكل الموقع الحقيقي","QC للمدينة + upscale + grade"],"dept":["3D","AI","Grade"],"size":"M","flags":[],"q":"","model":"slemani","id":"SH26","f0":1241,"f1":1292,"vo":"Honouring the identity of a city."},{"name":"The elder — low angle","desc":"الراجل الكبير من تحت، بيبتسم وبيبص لفوق.","kind":"live","status":"final","look":"color","label":null,"work":["Paint out: سقف الاستوديو فوق الكادر","Grade"],"dept":["Comp","Grade"],"size":"S","flags":["سقف الاستوديو ظاهر فوق الكادر"],"q":"","id":"SH27","f0":1292,"f1":1324,"vo":""},{"name":"Light on the walls","desc":"جوه مبنى غامق، بقع نور دافية بتتحرك على الحيطان والعمود.","kind":"ai","status":"wip","look":"color","label":null,"work":["الشريط الأسود تحت يمين الكادر يتصلح أو اللقطة تتعاد","Upscale + grade"],"dept":["AI","Comp"],"size":"S","flags":["شريط أسود صغير تحت يمين الصورة"],"q":"","id":"SH28","f0":1324,"f1":1349,"vo":"Opening possibilities"},{"name":"Look up — stone walls to the tower","desc":"من تحت بين حيطان حجر لبرج إزاز وسما.","kind":"ai","status":"wip","look":"color","label":null,"work":["مطابقة البرج مع Downtown","Upscale + grade"],"dept":["AI","Grade"],"size":"S","flags":[],"q":"","model":"dts","id":"SH29","f0":1349,"f1":1370,"vo":"for the"},{"name":"The engineer — close-up","desc":"كلوز على المهندسة بروفايل وبتبص لفوق.","kind":"live","status":"final","look":"color","label":null,"work":["Beauty خفيف","Grade"],"dept":["Comp","Grade"],"size":"S","flags":[],"q":"","id":"SH30","f0":1370,"f1":1394,"vo":"generations to"},{"name":"The boy — close-up","desc":"كلوز على الولد وبيبتسم للكاميرا.","kind":"live","status":"final","look":"color","label":null,"work":["Grade ومطابقة الخلفية مع SH25"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH31","f0":1394,"f1":1419,"vo":"come. Because"},{"name":"Lobby — people","desc":"لوبي بواجهة إزاز على الأبراج، ناس داخلة وخارجة.","kind":"ai","status":"wip","look":"color","label":null,"work":["QC لمشية الناس","مطابقة المعمار مع Downtown","Upscale + grade"],"dept":["AI","Grade"],"size":"M","flags":[],"q":"","id":"SH32","f0":1419,"f1":1447,"vo":"to shape a city"},{"name":"Towers and birds","desc":"برجين من تحت على سما تركواز وطيور.","kind":"ai","status":"wip","look":"color","label":null,"work":["مطابقة الأبراج مع موديل DTS","Upscale + grade"],"dept":["AI","Grade"],"size":"S","flags":[],"q":"","model":"dts","id":"SH33","f0":1447,"f1":1478,"vo":"is to make a promise"},{"name":"Towers — wide, haze","desc":"الأبراج واسعة في الضباب مع طيور والمدينة ورا.","kind":"ai","status":"wip","look":"color","label":null,"work":["الخلفية فيها مية ومارينا — السليمانية مفيهاش، تتعاد أو تتنضف","رقم «02» في الركن فوق شمال يتشال","مطابقة الأبراج مع موديل DTS","Upscale + grade"],"dept":["AI","Comp","Grade"],"size":"M","flags":["مية ومارينا في الخلفية","«02» ظاهرة في الركن فوق شمال"],"q":"","model":"dts","id":"SH34","f0":1478,"f1":1502,"vo":"to its future."},{"name":"Signing — ring in the foreground","desc":"إيد بخاتم في الـ foreground (out of focus) والمعماري بيوقّع في الخلفية.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade: رجوع للأبيض والأسود"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH35","f0":1502,"f1":1546,"vo":"A promise we put our"},{"name":"The signature","desc":"توقيع «Hiwa Rauf» بيكمل على الورقة جوه ماسك مقصوص الأركان، وبعدين fade للأسود.","kind":"live","status":"wip","look":"bw","label":null,"work":["قرار النهاية: التوقيع بس، ولا يتحول للوجو HRID","End card: اللوجو + أي سطر قانوني أو موقع","تنضيف الماسك وحوافه","Grade"],"dept":["GFX","Comp","Grade"],"size":"M","flags":["مفيش end logo في v07"],"q":"النهاية: التوقيع بس، ولا لازم يتحول للوجو HRID زي الـ treatment؟","id":"SH36","f0":1546,"f1":1609,"vo":"name to."}]}</script>
 <script>
 (function(){
 'use strict';
 var D;
 try{ D=JSON.parse(document.getElementById('hrid-data').textContent); }
-catch(e){ document.getElementById('note').textContent='بيانات الصفحة مش مقروءة.'; return; }
-var M=D.meta||{}, S=D.shots||[], KD=D.kinds||{}, ST=D.status||{}, SZ=D.sizes||{}, FL=D.flags||[];
+catch(e){ document.getElementById('count').textContent='بيانات الصفحة مش مقروءة.'; return; }
+var M=D.meta||{}, S=D.shots||[], KD=D.kinds||{}, ST=D.status||{}, SZ=D.sizes||{}, FL=D.flags||[], MD=D.models||{};
 var FPS=M.fps||25, FRAMES=M.frames||(S.length?S[S.length-1].f1:1), DUR=FRAMES/FPS;
-var SC={final:'#4CAF50',wip:'#F59E0B',temp:'#EF4122'}, KC={live:'#4ECDC4',cg:'#3B82F6',ai:'#8B5CF6',mix:'#D946EF'};
+var SC={final:'#4CAF50',wip:'#F5B301',temp:'#EF4122'};
+var SL={final:'جاهزة',wip:'محتاجة شغل',temp:'تتعمل من جديد'}, SI={final:'check',wip:'wrench',temp:'newbox'}, KI={live:'camera',cg:'cube',ai:'sparkles',mix:'layers'};
 var $=function(id){return document.getElementById(id);};
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function p2(n){return (n<10?'0':'')+n;}
 function tc(f){f=Math.max(0,Math.round(f));var s=Math.floor(f/FPS);return p2(Math.floor(s/3600))+':'+p2(Math.floor(s/60)%60)+':'+p2(s%60)+':'+p2(f%FPS);}
 function secs(fr){return (fr/FPS).toFixed(2);}
-function sc(s){return SC[s]||'#888';} function kc(k){return KC[k]||'#888';}
-function stLabel(s){return (ST[s]&&ST[s].label)||s||'';} function kdLabel(k){return (KD[k]&&KD[k].label)||k||'';}
-function shortSt(s){return stLabel(s).split(' · ')[0];}
+function sc(s){return SC[s]||'#888';}
+function stName(s){return SL[s]||((ST[s]&&ST[s].label)||s||'').split(' · ')[0];}
+function kdLabel(k){return (KD[k]&&KD[k].label)||k||'';}
+function mdLabel(k){return (MD[k]&&MD[k].label)||k||'';}
 function store(k,v){try{ if(v===undefined) return JSON.parse(localStorage.getItem('hrid-dr:'+k)); localStorage.setItem('hrid-dr:'+k,JSON.stringify(v)); }catch(e){ return null; }}
+var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+/* ---------- icons (inline, one stroke style) ---------- */
+var ICON={
+ play:'<path d="M7 4.5v15l13-7.5z" fill="currentColor" stroke="none"/>',
+ pause:'<path d="M6.5 4.5h4v15h-4zM13.5 4.5h4v15h-4z" fill="currentColor" stroke="none"/>',
+ prev:'<path d="M19 19.5L9 12l10-7.5z" fill="currentColor"/><path d="M5 5v14"/>',
+ next:'<path d="M5 4.5L15 12 5 19.5z" fill="currentColor"/><path d="M19 5v14"/>',
+ loop:'<path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/>',
+ vol:'<path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/>',
+ mute:'<path d="M11 5L6 9H3v6h3l5 4z"/><path d="M16 9l5 6M21 9l-5 6"/>',
+ gauge:'<path d="M12 14l4-4"/><path d="M3.3 19a10 10 0 1 1 17.4 0"/>',
+ compare:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16"/>',
+ follow:'<path d="M4 6h10M4 12h7M4 18h7"/><path d="M18 8v10M14 14l4 4 4-4"/>',
+ help:'<circle cx="12" cy="12" r="9"/><path d="M9.2 9.2a3 3 0 0 1 5.6 1c0 2-2.8 2.3-2.8 4"/><path d="M12 17.4h.01"/>',
+ search:'<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',
+ flag:'<path d="M5 21V4"/><path d="M5 4h13l-3 4.5 3 4.5H5"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ building:'<rect x="5" y="3" width="14" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2"/>',
+ chevron:'<path d="M6 9l6 6 6-6"/>',
+ x:'<path d="M6 6l12 12M18 6L6 18"/>',
+ up:'<path d="M12 19V5M5 12l7-7 7 7"/>',
+ check:'<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>',
+ wrench:'<path d="M14.7 6.3a4 4 0 0 0-5.3 5.3L3 18l3 3 6.4-6.4a4 4 0 0 0 5.3-5.3l-2.6 2.6-2.5-.6-.6-2.5z"/>',
+ newbox:'<rect x="4" y="4" width="16" height="16" rx="2" stroke-dasharray="3.2 3"/><path d="M12 8.5v7M8.5 12h7"/>',
+ film:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7.5 4v16M16.5 4v16M3 9h4.5M3 15h4.5M16.5 9H21M16.5 15H21"/>',
+ camera:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+ cube:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/>',
+ sparkles:'<path d="M11 4l1.8 5.2L18 11l-5.2 1.8L11 18l-1.8-5.2L4 11l5.2-1.8z"/><path d="M19 3v4M17 5h4"/>',
+ layers:'<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
+ mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
+ qmark:'<path d="M21 12a8.5 8.5 0 0 1-12.7 7.4L3 21l1.6-5.3A8.5 8.5 0 1 1 21 12z"/><path d="M9.8 9.6a2.4 2.4 0 0 1 4.6.8c0 1.6-2.3 1.8-2.3 3.2"/><path d="M12 16.3h.01"/>',
+ hand:'<path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10"/><path d="M12 10V8.5a1.5 1.5 0 0 1 3 0V11"/><path d="M15 11v-.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7L3.8 15a1.5 1.5 0 0 1 2.5-1.7L9 16V11"/>',
+ eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+ list:'<path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/>'
+};
+function ico(n,cls){ return '<svg class="i'+(cls?' '+cls:'')+'" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+(ICON[n]||'')+'</svg>'; }
+[].forEach.call(document.querySelectorAll('[data-ico]'),function(el){ el.outerHTML=ico(el.getAttribute('data-ico'),el.getAttribute('data-cls')||''); });
+
 var COLS=M.spriteCols||6, SROWS=Math.max(1,Math.ceil(S.length/COLS));
 function tile(i){ var c=i%COLS, r=Math.floor(i/COLS);
   return 'background-image:url('+JSON.stringify(M.sprite||'').replace(/"/g,"'")+');background-size:'+(COLS*100)+'% '+(SROWS*100)+'%;background-position:'+(COLS>1?c/(COLS-1)*100:0)+'% '+(SROWS>1?r/(SROWS-1)*100:0)+'%'; }
 var IDX={}; S.forEach(function(s,i){IDX[s.id]=i;});
-function idchip(id,cls){ return '<button type="button" class="idc '+(cls||'')+'" data-go="'+esc(id)+'">'+esc(id)+'</button>'; }
-var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+function idchip(id){ return '<button type="button" class="idc" data-go="'+esc(id)+'">'+esc(id)+'</button>'; }
+function pill(k){ return '<span class="pill" style="--c:'+sc(k)+'">'+ico(SI[k]||'check')+esc(stName(k))+'</span>'; }
+function hasAS(s){ return !!(s&&s.as&&s.as.src); }
+var anyAS=S.some(hasAS);
 
-/* ---------- title bar ---------- */
+/* ---------- title bar + footer ---------- */
 $('h1').textContent=M.project||'HRID';
-if(M.note) $('note').textContent=M.note; else $('note').hidden=true;
 (function(){
   var over=(M.target!=null)?(DUR-M.target):0, h='';
-  if(M.edit) h+='<span class="chip">Edit <b><bdi>'+esc(M.edit)+'</bdi></b></span>';
-  h+='<span class="chip"><b><bdi>'+S.length+'</bdi></b> شوت</span>';
-  h+='<span class="chip"><b><bdi>'+DUR.toFixed(2)+'</bdi></b> ث'+(M.target!=null?' / <bdi>'+esc(M.target)+'</bdi> ث'+(Math.abs(over)>0.005?' <span class="over"><bdi>'+(over>0?'+':'−')+Math.abs(over).toFixed(2)+'</bdi> ث</span>':''):'')+'</span>';
-  h+='<span class="chip"><b><bdi>'+FPS+'</bdi></b> <bdi>fps</bdi> · <bdi>'+FRAMES+'</bdi> <bdi>f</bdi></span>';
-  if(M.updated) h+='<span class="chip">آخر تحديث <b><bdi>'+esc(M.updated)+'</bdi></b></span>';
-  $('chips').innerHTML=h;
+  if(M.edit) h+='<span>الإيديت <b><bdi>'+esc(M.edit)+'</bdi></b></span>';
+  h+='<span><b><bdi>'+S.length+'</bdi></b> شوت</span>';
+  h+='<span><b><bdi>'+DUR.toFixed(2)+'</bdi></b> ث'+((M.target!=null&&Math.abs(over)>0.005)?' <span class="over">(<bdi>'+(over>0?'+':'−')+Math.abs(over).toFixed(2)+'</bdi> ث عن الـ <bdi>'+esc(M.target)+'</bdi>)</span>':'')+'</span>';
+  $('facts').innerHTML=h;
+  var f='<span><bdi>Aroma Studios</bdi> · <bdi>'+FPS+' fps</bdi> · <bdi>'+FRAMES+' f</bdi>'+(M.updated?' · آخر تحديث <bdi>'+esc(M.updated)+'</bdi>':'')+'</span>';
+  if(M.note) f+='<span>'+esc(M.note)+'</span>';
+  $('foot').innerHTML=f;
 })();
 
 /* ---------- sizes the layout depends on ---------- */
@@ -360,162 +466,223 @@ function measure(){
 measure(); addEventListener('resize',measure); addEventListener('load',measure);
 try{ var ro=new ResizeObserver(measure); ro.observe(deck); ro.observe(topEl); }catch(e){}
 
-/* ---------- summary ---------- */
-(function(){
-  var stc={},kdc={},szc={},stf={},kdf={},hours=0,temp=[],tempFr=0;
-  S.forEach(function(s){ stc[s.status]=(stc[s.status]||0)+1; kdc[s.kind]=(kdc[s.kind]||0)+1; szc[s.size]=(szc[s.size]||0)+1; stf[s.status]=(stf[s.status]||0)+s.f1-s.f0; kdf[s.kind]=(kdf[s.kind]||0)+s.f1-s.f0;
-    hours+=(SZ[s.size]&&SZ[s.size].hours)||0; if(s.status==='temp'){temp.push(s.id); tempFr+=s.f1-s.f0;} });
-  function block(title,keys,counts,lab,col,frs){
-    var st='',bar='',sub='';
-    keys.forEach(function(k){ var n=counts[k]||0; if(n) sub+=(sub?' · ':'')+'<span style="color:'+col(k)+'">●</span> <bdi>'+secs(frs[k]||0)+'</bdi> ث'; st+='<span class="stat" style="--c:'+col(k)+'"><i></i><b>'+n+'</b>'+esc(lab(k))+'</span>'; if(n) bar+='<i style="--c:'+col(k)+';flex:'+n+' 1 0"></i>'; });
-    return '<div class="card"><h2 class="sec-t">'+title+'</h2><div class="stats">'+st+'</div><div class="bar">'+bar+'</div><p class="sub">من زمن الفيلم: '+sub+'</p></div>';
-  }
-  var stKeys=Object.keys(ST).length?Object.keys(ST):Object.keys(stc), kdKeys=Object.keys(KD).length?Object.keys(KD):Object.keys(kdc);
-  var szs=Object.keys(SZ).filter(function(k){return szc[k];}).map(function(k){return '<bdi>'+szc[k]+'×'+esc(k)+'</bdi>';}).join(' · ');
-  var h=block('حالة الشوتات',stKeys,stc,shortSt,sc,stf)+block('نوع الشغل',kdKeys,kdc,kdLabel,kc,kdf);
-  h+='<div class="card"><h2 class="sec-t">الوقت التقديري</h2><div class="big"><bdi>≈ '+Math.round(hours)+'</bdi><small>ساعة شغل</small></div><p class="sub">≈ <b><bdi>'+Math.round(hours/8)+'</bdi> يوم</b> (اليوم <bdi>8</bdi> س) · '+szs+'</p></div>';
-  h+='<div class="card"><h2 class="sec-t">Placeholder · تتعمل من جديد</h2><div class="big" style="color:var(--red)"><bdi>'+temp.length+'</bdi><small>شوت · <bdi>'+secs(tempFr)+'</bdi> ث من الفيلم</small></div><div class="idchips">'+temp.map(function(id){return idchip(id,'temp');}).join('')+'</div></div>';
-  $('sum').innerHTML=h;
-})();
-
-/* ---------- general notes ---------- */
-(function(){
-  if(!FL.length){ $('flags').hidden=true; return; }
-  $('fcount').textContent='· '+FL.length;
-  $('ftitles').innerHTML=FL.map(function(f){return '<span>'+esc(f.t)+'</span>';}).join('');
-  try{ if(localStorage.getItem('hrid-flags')==='1') $('flags').open=true; }catch(e){}
-  $('flags').addEventListener('toggle',function(){ try{ localStorage.setItem('hrid-flags',$('flags').open?'1':'0'); }catch(e){} });
-  $('fgrid').innerHTML=FL.map(function(f){
-    return '<article class="fl"><h3>'+esc(f.t)+'</h3>'+(f.d?'<p>'+esc(f.d)+'</p>':'')+((f.shots&&f.shots.length)?'<div class="idchips">'+f.shots.map(function(id){return idchip(id);}).join('')+'</div>':'')+'</article>';
-  }).join('');
-})();
-
 /* ---------- timeline ---------- */
 var strip=$('strip'), ph=$('ph'), tip=$('tip'), blks=[];
 (function(){
   var frag=document.createDocumentFragment();
-  S.forEach(function(s,i){ var b=document.createElement('i'); b.className='blk'; b.style.cssText='flex:'+(s.f1-s.f0)+' 1 0;--sc:'+sc(s.status)+';--kc:'+kc(s.kind);
-    b.innerHTML='<b>'+esc(String(s.id).replace(/^\D+/,''))+'</b>'; frag.appendChild(b); blks.push(b); });
+  S.forEach(function(s){ var b=document.createElement('i'); b.className='blk'+(s.model?' mdl':''); b.style.cssText='flex:'+(s.f1-s.f0)+' 1 0;--sc:'+sc(s.status);
+    b.innerHTML='<b>'+esc(String(s.id).replace(/^\D+/,''))+'</b>'+(s.model?ico('building'):''); frag.appendChild(b); blks.push(b); });
   strip.insertBefore(frag,ph);
-  var r='',step=DUR>40?5:2; for(var t=0;t<=DUR;t+=step) r+='<span style="left:'+(t/DUR*100)+'%">'+t+'s</span>';
+  var r='',step=DUR>40?10:5; for(var t=0;t<=DUR;t+=step) r+='<span style="left:'+(t/DUR*100)+'%">'+t+'s</span>';
   $('ruler').innerHTML=r;
+  var lg=''; Object.keys(ST).length?Object.keys(ST).forEach(add):['final','wip','temp'].forEach(add);
+  function add(k){ lg+='<span style="--c:'+sc(k)+'">'+ico(SI[k]||'check')+esc(stName(k))+'</span>'; }
+  if(S.some(function(s){return s.model;})) lg+='<span>'+ico('building')+'مبانينا</span>';
+  $('legend').innerHTML=lg;
 })();
-function fitLabels(){ blks.forEach(function(b){ b.firstChild.style.display=b.offsetWidth>=21?'':'none'; }); }
+function fitLabels(){ blks.forEach(function(b){ var w=b.offsetWidth; b.firstChild.style.display=w>=21?'':'none'; var sv=b.lastChild; if(sv&&sv.tagName&&sv.tagName.toLowerCase()==='svg') sv.style.display=w>=40?'':'none'; }); }
 window.addEventListener('resize',fitLabels);
 
-/* ---------- plan rows ---------- */
-var rowsEl=$('rows'), rowEls=[];
-function workList(s){ return (s.work&&s.work.length)?'<ul class="work">'+s.work.map(function(w){return '<li>'+esc(w)+'</li>';}).join('')+'</ul>':'<span class="nil">—</span>'; }
-function sizeBadge(s){ var z=SZ[s.size]; return s.size?'<span class="sz '+esc(s.size)+'"><b>'+esc(s.size)+'</b>'+(z&&z.time?'<span>'+esc(z.time)+'</span>':'')+'</span>':''; }
+/* ---------- shot list ---------- */
+var rowsEl=$('rows'), rowEls=[], openIdx=-1;
 (function(){
   var h='';
   S.forEach(function(s,i){
-    var fr=s.f1-s.f0, fl=s.flags||[];
-    h+='<article class="row" data-i="'+i+'" tabindex="0" role="button" aria-label="'+esc(s.id+' '+(s.name||''))+'" style="--sc:'+sc(s.status)+'">'
-      +'<div class="th" style="'+tile(i)+'">'+(s.label?'<span class="onlab">'+esc(s.label)+'</span>':'')+'<span class="lk">'+(s.look==='color'?'COLOR':'B&amp;W')+'</span></div>'
-      +'<div class="c c-id"><div class="r-top"><bdi class="r-id">'+esc(s.id)+'</bdi><span class="bdg k" style="--c:'+kc(s.kind)+'">'+esc(kdLabel(s.kind))+'</span><span class="bdg" style="--c:'+sc(s.status)+'">'+esc(shortSt(s.status))+'</span></div>'
-      +'<div class="r-tc"><bdi>'+tc(s.f0)+'</bdi> ← <bdi>'+tc(s.f1-1)+'</bdi></div>'
-      +'<div class="r-tc"><bdi>'+secs(fr)+'</bdi> ث · <bdi>'+fr+' f</bdi></div>'
-      +'<div class="r-ft">'+sizeBadge(s)+(s.dept||[]).map(function(d){return '<span class="dp">'+esc(d)+'</span>';}).join('')+'</div></div>'
-      +'<div class="c c-what"><h3 class="r-name">'+esc(s.name)+'</h3>'+(s.desc?'<p class="r-desc">'+esc(s.desc)+'</p>':'')+(s.vo?'<p class="r-vo"><em>VO</em><span>'+esc(s.vo)+'</span></p>':'')+'</div>'
-      +'<div class="c c-work"><p class="lbl m-only">الشغل المطلوب</p>'+workList(s)+'</div>'
-      +'<div class="c c-notes">'+((s.q||fl.length)?'<p class="lbl m-only">ملاحظات وأسئلة</p>':'')+(s.q?'<div class="qbox"><b>سؤال مفتوح</b>'+esc(s.q)+'</div>':'')+(fl.length?'<ul class="fnote">'+fl.map(function(f){return '<li>'+esc(f)+'</li>';}).join('')+'</ul>':'')+((!s.q&&!fl.length)?'<span class="nil">—</span>':'')+'</div>'
-      +'</article>';
+    var fr=s.f1-s.f0, fl=s.flags||[], z=SZ[s.size], tags='';
+    if(s.size) tags+='<span class="tg" title="الحجم والوقت التقديري">'+ico('clock')+'<b>'+esc(s.size)+'</b>'+(z&&z.time?esc(z.time):'')+'</span>';
+    if(s.model) tags+='<span class="tg mdl" title="الشوت ده على موديل من مبانينا">'+ico('building')+esc(mdLabel(s.model))+'</span>';
+    if(hasAS(s)) tags+='<span class="tg as" title="فيه Auto stage للشوت ده">'+ico('compare')+'Auto stage'+(s.as.v!=null?' <bdi>v'+esc(s.as.v)+'</bdi>':'')+'</span>';
+    if(s.q) tags+='<span class="tg q" title="'+esc(s.q)+'">'+ico('qmark')+'سؤال</span>';
+    if(fl.length) tags+='<span class="tg" title="'+esc(fl.join(' · '))+'">'+ico('flag')+'<bdi>'+fl.length+'</bdi></span>';
+    var notes=(s.q?'<div class="qbox">'+ico('qmark')+'<span>'+esc(s.q)+'</span></div>':'')
+      +(fl.length?'<ul class="fnote">'+fl.map(function(f){return '<li>'+esc(f)+'</li>';}).join('')+'</ul>':'')
+      +(hasAS(s)?'<div class="asnote">'+ico('compare')+'<span><b>Auto stage'+(s.as.v!=null?' v'+esc(s.as.v):'')+'</b>'+(s.as.note?' — '+esc(s.as.note):'')+'</span></div>':'');
+    h+='<article class="row" data-i="'+i+'" style="--sc:'+sc(s.status)+'">'
+      +'<div class="rh" role="button" tabindex="0" aria-expanded="false" aria-label="'+esc(s.id+' '+(s.name||''))+'">'
+        +'<div class="th" style="'+tile(i)+'">'+(s.label?'<span class="onlab">'+esc(s.label)+'</span>':'')+'</div>'
+        +'<div class="rt"><div class="rt1"><bdi class="r-id">'+esc(s.id)+'</bdi><span class="r-name">'+esc(s.name)+'</span></div>'
+          +'<div class="rt2"><span>'+ico(KI[s.kind]||'film')+esc(kdLabel(s.kind))+'</span><span><bdi>'+secs(fr)+'</bdi> ث</span></div></div>'
+        +pill(s.status)
+        +'<div class="tgs">'+tags+'</div>'
+        +'<span class="chev">'+ico('chevron')+'</span>'
+      +'</div>'
+      +'<div class="rb" hidden>'
+        +'<div class="c"><p class="lbl">'+ico('eye')+'اللقطة</p>'+(s.desc?'<p class="r-desc">'+esc(s.desc)+'</p>':'')
+          +(s.vo?'<p class="r-vo">'+ico('mic')+'<span>'+esc(s.vo)+'</span></p>':'')
+          +'<p class="r-meta">من <bdi class="mono">'+tc(s.f0)+'</bdi> لـ <bdi class="mono">'+tc(s.f1-1)+'</bdi> · <bdi>'+fr+' f</bdi> · '+(s.look==='color'?'ألوان':'أبيض وأسود')+(s.label?' · مكتوب على الصورة: <bdi>'+esc(s.label)+'</bdi>':'')+'</p></div>'
+        +'<div class="c"><p class="lbl">'+ico('list')+'الشغل المطلوب</p>'+((s.work&&s.work.length)?'<ul class="work">'+s.work.map(function(w){return '<li>'+esc(w)+'</li>';}).join('')+'</ul>':'<span class="nil">—</span>')
+          +((s.dept&&s.dept.length)?'<div class="depts">الأقسام'+s.dept.map(function(d){return '<span class="dp">'+esc(d)+'</span>';}).join('')+'</div>':'')+'</div>'
+        +'<div class="c"><p class="lbl">'+ico('flag')+'ملاحظات وأسئلة</p>'+(notes||'<span class="nil">مفيش ملاحظات على الشوت ده.</span>')+'</div>'
+      +'</div></article>';
   });
   rowsEl.innerHTML=h; rowEls=[].slice.call(rowsEl.children);
 })();
+function openRow(i){
+  if(openIdx===i) return;
+  if(openIdx>=0){ var o=rowEls[openIdx]; o.classList.remove('open'); o.lastChild.hidden=true; o.firstChild.setAttribute('aria-expanded','false'); }
+  openIdx=i;
+  if(i>=0){ var r=rowEls[i]; r.classList.add('open'); r.lastChild.hidden=false; r.firstChild.setAttribute('aria-expanded','true'); }
+}
 
-/* ---------- filters ---------- */
-var F=store('filters')||{}; if(typeof F!=='object'||!F) F={}; F.st=F.st||'all'; F.kd=F.kd||'all'; F.q=F.q||'';
-if(F.st!=='all'&&!ST[F.st]) F.st='all'; if(F.kd!=='all'&&!KD[F.kd]) F.kd='all';
-function hay(s){ return [s.id,s.name,s.desc,s.vo,s.label,s.q,(s.work||[]).join(' '),(s.dept||[]).join(' '),(s.flags||[]).join(' '),kdLabel(s.kind),stLabel(s.status),s.size].join(' ').toLowerCase(); }
+/* ---------- filter tabs (they are the summary too) ---------- */
+var TABS=[{k:'all',ic:'film',lab:'الكل'}];
+['temp','wip','final'].forEach(function(k){ if(!Object.keys(ST).length||ST[k]) TABS.push({k:k,ic:SI[k],lab:SL[k],c:sc(k)}); });
+TABS.push({k:'model',ic:'building',lab:'مبانينا'},{k:'q',ic:'qmark',lab:'فيها سؤال'});
+function inTab(s,k){ return k==='all'||(k==='model'?!!s.model:(k==='q'?!!s.q:s.status===k)); }
+TABS=TABS.filter(function(t){ t.n=S.filter(function(s){return inTab(s,t.k);}).length; return t.k==='all'||t.n>0; });
+var F=store('f2')||{}; if(typeof F!=='object'||!F) F={}; F.tab=F.tab||'all'; F.q=F.q||'';
+if(!TABS.some(function(t){return t.k===F.tab;})) F.tab='all';
+function hay(s){ return [s.id,s.name,s.desc,s.vo,s.label,s.q,(s.work||[]).join(' '),(s.dept||[]).join(' '),(s.flags||[]).join(' '),kdLabel(s.kind),stName(s.status),mdLabel(s.model),s.size].join(' ').toLowerCase(); }
 var HAY=S.map(hay);
-function drawFilters(){
-  function grp(name,key,keys,lab,col,counts){
-    var h='<div class="fg"><span>'+name+'</span><button type="button" class="fc'+(F[key]==='all'?' on':'')+'" data-f="'+key+'" data-v="all">الكل <em>'+S.length+'</em></button>';
-    keys.forEach(function(k){ h+='<button type="button" class="fc'+(F[key]===k?' on':'')+'" data-f="'+key+'" data-v="'+esc(k)+'" style="--c:'+col(k)+'"><i></i>'+esc(lab(k))+' <em>'+(counts[k]||0)+'</em></button>'; });
-    return h+'</div>';
-  }
-  var stc={},kdc={}; S.forEach(function(s){stc[s.status]=(stc[s.status]||0)+1; kdc[s.kind]=(kdc[s.kind]||0)+1;});
-  $('filters').innerHTML=grp('الحالة','st',Object.keys(ST),shortSt,sc,stc)+grp('النوع','kd',Object.keys(KD),kdLabel,kc,kdc);
+function drawTabs(){
+  $('tabs').innerHTML=TABS.map(function(t){ return '<button type="button" role="tab" class="tab'+(F.tab===t.k?' on':'')+'" aria-selected="'+(F.tab===t.k)+'" data-tab="'+t.k+'"'+(t.c?' style="--c:'+t.c+'"':'')+'>'+ico(t.ic)+esc(t.lab)+'<b>'+t.n+'</b></button>'; }).join('');
 }
 function applyFilters(){
-  var q=(F.q||'').trim().toLowerCase(), n=0;
-  S.forEach(function(s,i){ var ok=(F.st==='all'||s.status===F.st)&&(F.kd==='all'||s.kind===F.kd)&&(!q||HAY[i].indexOf(q)>=0); rowEls[i].hidden=!ok; if(ok) n++; });
-  $('count').innerHTML=(n===S.length?'<bdi>'+n+'</bdi> شوت':'<bdi>'+n+'</bdi> من <bdi>'+S.length+'</bdi>');
-  $('empty').hidden=n>0; store('filters',F);
+  var q=(F.q||'').trim().toLowerCase(), n=0, fr=0, hrs=0;
+  S.forEach(function(s,i){ var ok=inTab(s,F.tab)&&(!q||HAY[i].indexOf(q)>=0); rowEls[i].hidden=!ok; blks[i].classList.toggle('off',!ok);
+    if(ok){ n++; fr+=s.f1-s.f0; hrs+=(SZ[s.size]&&SZ[s.size].hours)||0; } });
+  if(openIdx>=0&&rowEls[openIdx].hidden) openRow(-1);
+  $('count').innerHTML=(n===S.length?'<bdi>'+n+'</bdi> شوت':'<bdi>'+n+'</bdi> شوت من <bdi>'+S.length+'</bdi>')+' · <bdi>'+secs(fr)+'</bdi> ث من الفيلم'
+    +(n?' · الوقت التقديري ≈ <bdi>'+Math.round(hrs)+'</bdi> ساعة شغل (≈ <bdi>'+Math.max(1,Math.round(hrs/8))+'</bdi> يوم لشخص واحد) — أرقام مبدئية':'');
+  $('empty').hidden=n>0; store('f2',F);
 }
-$('filters').addEventListener('click',function(e){ var b=e.target.closest('.fc'); if(!b) return; F[b.dataset.f]=b.dataset.v; drawFilters(); applyFilters(); });
-$('q').value=F.q; $('q').addEventListener('input',function(){ F.q=this.value; applyFilters(); });
-drawFilters(); applyFilters();
+$('tabs').addEventListener('click',function(e){ var b=e.target.closest('.tab'); if(!b) return; F.tab=b.dataset.tab; drawTabs(); applyFilters(); });
+(function(){
+  var q=$('q'), b=$('b-search');
+  function show(on){ q.hidden=!on; b.classList.toggle('on',on); if(on) q.focus(); }
+  q.value=F.q; if(F.q) show(true);
+  b.addEventListener('click',function(){ if(q.hidden) show(true); else if(!q.value) show(false); else q.focus(); });
+  q.addEventListener('input',function(){ F.q=this.value; applyFilters(); });
+  q.addEventListener('keydown',function(e){ if(e.key==='Escape'){ q.value=''; F.q=''; applyFilters(); show(false); } });
+})();
+drawTabs(); applyFilters();
 
-/* ---------- the table follows the chosen shot ---------- */
+/* ---------- general notes ---------- */
+(function(){
+  if(!FL.length) return;
+  var b=$('b-notes'), p=$('notes'); b.hidden=false; $('fcount').textContent=FL.length;
+  p.innerHTML=FL.map(function(f){
+    return '<article class="fl"><h3>'+esc(f.t)+'</h3>'+(f.d?'<p>'+esc(f.d)+'</p>':'')+((f.shots&&f.shots.length)?'<div class="idchips">'+f.shots.map(idchip).join('')+'</div>':'')+'</article>';
+  }).join('');
+  function set(on){ p.hidden=!on; b.classList.toggle('on',on); b.setAttribute('aria-expanded',on); store('notes',!!on); }
+  set(!!store('notes')); b.addEventListener('click',function(){ set(p.hidden); });
+})();
+
+/* ---------- how-to line + help ---------- */
+(function(){
+  var h=$('howto'); h.hidden=!!store('howto-off');
+  $('howto-x').addEventListener('click',function(){ h.hidden=true; store('howto-off',true); measure(); });
+  var b=$('b-help'), p=$('help');
+  function set(on){ p.hidden=!on; b.classList.toggle('on',on); b.setAttribute('aria-expanded',on); }
+  b.addEventListener('click',function(e){ e.stopPropagation(); set(p.hidden); });
+  document.addEventListener('click',function(e){ if(!p.hidden&&!p.contains(e.target)) set(false); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!p.hidden) set(false); });
+})();
+
+/* ---------- the list follows the chosen shot ---------- */
 var follow=store('follow'); follow=(follow===null||follow===undefined)?true:!!follow;
 function setFollow(on){ follow=!!on; var b=$('b-follow'); b.classList.toggle('on',follow); b.setAttribute('aria-pressed',follow); store('follow',follow); }
 function toRow(i){
   var el=rowEls[i]; if(!el) return;
-  if(el.hidden){ F.st='all'; F.kd='all'; F.q=''; $('q').value=''; drawFilters(); applyFilters(); }
+  if(el.hidden){ F.tab='all'; F.q=''; $('q').value=''; drawTabs(); applyFilters(); }
+  openRow(i);
   el.scrollIntoView({block:'start',behavior:reduce?'auto':'smooth'});
   el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
 }
 
 /* ---------- player ---------- */
-var v=$('v'), stage=$('stage'), frame=$('frame'), cur=-1, loopIdx=-1, loop=!!store('loop'), failed=false, listHover=false, pendingT=null, pip=false;
+var v=$('v'), av=$('av'), stage=$('stage'), frame=$('frame'), asframe=$('asframe');
+var cur=-1, loopIdx=-1, loop=!!store('loop'), failed=false, listHover=false, pendingT=null, pip=false, cmp=false, asIdx=-1, asBad=false;
+var RATES=[1,0.5,0.25], rateI=0;
 function nowT(){ return (pendingT!=null)?pendingT:(v.currentTime||0); }
 function frameNow(){ return Math.min(FRAMES-1,Math.max(0,Math.floor(nowT()*FPS+1e-3))); }
 function shotAt(f){ var lo=0,hi=S.length-1; while(lo<hi){ var m=(lo+hi+1)>>1; if(S[m].f0<=f) lo=m; else hi=m-1; } return lo; }
 function setShot(i,playing){
   if(i===cur) return; if(cur>=0){ blks[cur].classList.remove('cur'); rowEls[cur].classList.remove('cur'); }
   cur=i; var s=S[i]; blks[i].classList.add('cur'); rowEls[i].classList.add('cur');
-  $('tc-s').textContent=s.id; $('now-n').textContent=s.name||''; $('hud-id').textContent=s.id; var hl=$('hud-lab'); hl.hidden=!s.label; hl.textContent=s.label||'';
-  $('vo').innerHTML='<em>VO</em>'+(s.vo?'<span>'+esc(s.vo)+'</span>':'<span class="none">—</span>');
+  $('tc-s').textContent=s.id; $('now-n').textContent=s.name||''; $('now-st').innerHTML=pill(s.status);
+  $('hud-id').textContent=s.id; var hl=$('hud-lab'); hl.hidden=!s.label; hl.textContent=s.label||'';
+  $('vo').innerHTML=s.vo?ico('mic')+'<span>'+esc(s.vo)+'</span>':'';
   $('poster').style.cssText=tile(i);
-  /* while it plays and the table is what is on screen, keep the current row in view */
+  if(anyAS){ var b=$('b-cmp'), ok=hasAS(s); b.classList.toggle('off',!ok&&!cmp); b.title=ok?'الإيديت جنب الـ Auto stage بتاع الموديل':'الشوت ده ملوش Auto stage لسه'; }
+  syncAS();
+  /* while it plays and the list is what is on screen, keep the current row in view */
   if(playing&&follow&&pip&&!listHover&&!rowEls[i].hidden){ var r=rowEls[i].getBoundingClientRect(); if(r.top<deck.offsetHeight+4||r.bottom>window.innerHeight-8) rowEls[i].scrollIntoView({block:'nearest',behavior:reduce?'auto':'smooth'}); }
 }
 function paint(){
   var t=nowT(), f=frameNow();
-  $('tc').textContent=tc(f); $('tc-f').textContent='f '+f; ph.style.left=Math.min(100,Math.max(0,t/DUR*100))+'%';
+  $('tc').textContent=tc(f); ph.style.left=Math.min(100,Math.max(0,t/DUR*100))+'%';
   setShot(shotAt(f),!v.paused);
 }
 function seek(t,keepLoop){
   t=Math.min(DUR-0.001,Math.max(0,t));
   if(!keepLoop) loopIdx=shotAt(Math.floor(t*FPS+1e-3));
   if(failed||v.readyState<1){ pendingT=t; } else { pendingT=null; try{ v.currentTime=t; }catch(e){} }
-  paint();
+  paint(); syncAS();
 }
 function goShot(i,play){ i=Math.min(S.length-1,Math.max(0,i)); loopIdx=i; seek(S[i].f0/FPS+0.002,true); if(play) playV(); }
 function playV(){ if(failed) return; var p=v.play(); if(p&&p.catch) p.catch(function(){}); }
 function toggle(){ if(v.paused){ if(v.ended||v.currentTime>=DUR-0.03) seek(0); playV(); } else v.pause(); }
 function setLoop(on){ loop=!!on; var b=$('b-loop'); b.classList.toggle('on',loop); b.setAttribute('aria-pressed',loop); if(loop) loopIdx=cur>=0?cur:0; store('loop',loop); }
 function setMute(on){ v.muted=!!on; var b=$('b-mute'); b.classList.toggle('on',v.muted); b.setAttribute('aria-pressed',v.muted);
-  $('mute-ico').setAttribute('d',v.muted?'M16 9l5 6M21 9l-5 6':'M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13'); }
+  $('mute-ico').innerHTML=ico(v.muted?'mute':'vol'); $('mute-lbl').textContent=v.muted?'مكتوم':'صوت'; }
+function setRate(i){ rateI=i%RATES.length; var r=RATES[rateI]; v.playbackRate=r; av.playbackRate=r; $('rate-lbl').textContent=r+'×'; $('b-rate').classList.toggle('on',r!==1); }
 function step(d){ var f=frameNow(), i=shotAt(f), to=(d<0)?((f-S[i].f0>12)?i:Math.max(0,i-1)):Math.min(S.length-1,i+1);
-  if(d>0&&to===i) return; goShot(to,!v.paused); if(follow&&pip) toRow(to); }
+  if(d>0&&to===i) return; goShot(to,!v.paused); if(follow&&pip) toRow(to); else if(!rowEls[to].hidden) openRow(to); }
+
+/* Auto stage take beside the edit: a second, muted video kept in step with the main one */
+function setCmp(on){
+  cmp=!!on&&anyAS; stage.classList.toggle('cmp',cmp); var b=$('b-cmp'); b.classList.toggle('on',cmp); b.setAttribute('aria-pressed',cmp);
+  b.lastChild.textContent=cmp?'الإيديت بس':'قارن بالموديل';
+  if(cur>=0) b.classList.toggle('off',!hasAS(S[cur])&&!cmp);
+  if(!cmp){ try{ av.pause(); }catch(e){} }
+  syncAS(); measure();
+}
+function syncAS(){
+  if(!cmp) return;
+  var s=cur>=0?S[cur]:null;
+  if(!hasAS(s)){ asframe.classList.add('none'); $('as-msg').textContent='مفيش Auto stage للشوت ده'; if(!av.paused) av.pause(); asIdx=-1; return; }
+  if(asIdx!==cur){ asIdx=cur; asBad=false; av.src=s.as.src; $('as-tag').textContent='Auto stage'+(s.as.v!=null?' · v'+s.as.v:'')+(s.model?' · '+mdLabel(s.model):''); }
+  if(asBad){ asframe.classList.add('none'); $('as-msg').textContent='الـ Auto stage بتاع الشوت ده مش راضي يحمّل.'; return; }
+  asframe.classList.remove('none');
+  if(av.readyState<1) return;
+  var d=av.duration||0, t=Math.max(0,nowT()-s.f0/FPS); if(d) t=Math.min(t,Math.max(0,d-0.03));
+  var atEnd=d&&t>=d-0.05;
+  if(Math.abs(av.currentTime-t)>(v.paused?0.03:0.14)){ try{ av.currentTime=t; }catch(e){} }
+  if(av.playbackRate!==v.playbackRate) av.playbackRate=v.playbackRate;
+  if(!v.paused&&!atEnd){ if(av.paused){ var p=av.play(); if(p&&p.catch) p.catch(function(){}); } }
+  else if(!av.paused) av.pause();
+}
+av.addEventListener('error',function(){ if(asIdx>=0){ asBad=true; syncAS(); } });
+av.addEventListener('loadedmetadata',syncAS);
+
 function tick(){
   if(!v.paused&&!failed){
     if(loop&&loopIdx>=0){ var s=S[loopIdx], end=s.f1/FPS, t=v.currentTime; if(t>=end-0.9/FPS||t<s.f0/FPS-0.05){ try{ v.currentTime=s.f0/FPS+0.002; }catch(e){} } }
-    paint();
+    paint(); if(cmp) syncAS();
   }
   requestAnimationFrame(tick);
 }
 function showErr(){ failed=true; stage.classList.remove('ready','playing'); var e=$('verr'); e.hidden=false;
-  e.innerHTML='الفيديو مش راضي يحمّل دلوقتي. الجدول والتوقيتات شغالين عادي — جرّب تعمل تحديث للصفحة. <bdi class="mono">'+esc(M.src||'')+'</bdi>'; $('bigplay').hidden=true; }
+  e.innerHTML='الفيديو مش راضي يحمّل دلوقتي. القايمة والتوقيتات شغالين عادي — جرّب تعمل تحديث للصفحة. <bdi class="mono">'+esc(M.src||'')+'</bdi>'; $('bigplay').hidden=true; }
+function ppState(){ var on=!v.paused; $('pp-ico').innerHTML=ico(on?'pause':'play'); $('pp-lbl').textContent=on?'إيقاف':'تشغيل'; }
 v.addEventListener('error',showErr);
 v.addEventListener('loadedmetadata',function(){ if(pendingT!=null){ var t=pendingT; pendingT=null; try{ v.currentTime=t; }catch(e){} } });
 v.addEventListener('loadeddata',function(){ stage.classList.add('ready'); });
-v.addEventListener('play',function(){ stage.classList.add('playing','ready'); $('pp-ico').setAttribute('d','M6.5 4.5h4v15h-4zM13.5 4.5h4v15h-4z'); });
-v.addEventListener('pause',function(){ stage.classList.remove('playing'); $('pp-ico').setAttribute('d','M7 4.5v15l13-7.5z'); paint(); });
-v.addEventListener('seeked',paint); v.addEventListener('timeupdate',function(){ if(v.paused) paint(); });
+v.addEventListener('play',function(){ stage.classList.add('playing','ready'); ppState(); syncAS(); });
+v.addEventListener('pause',function(){ stage.classList.remove('playing'); ppState(); paint(); syncAS(); });
+v.addEventListener('seeked',function(){ paint(); syncAS(); }); v.addEventListener('timeupdate',function(){ if(v.paused) paint(); });
 if(M.src){ v.src=M.src; } else showErr();
 
 $('b-play').addEventListener('click',toggle); $('bigplay').addEventListener('click',toggle);
 v.addEventListener('click',toggle);
 $('b-prev').addEventListener('click',function(){ step(-1); }); $('b-next').addEventListener('click',function(){ step(1); });
 $('b-loop').addEventListener('click',function(){ setLoop(!loop); }); $('b-mute').addEventListener('click',function(){ setMute(!v.muted); });
+$('b-rate').addEventListener('click',function(){ setRate(rateI+1); });
 $('b-follow').addEventListener('click',function(){ setFollow(!follow); });
-$('rates').addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; v.playbackRate=parseFloat(b.dataset.r)||1; [].forEach.call(this.children,function(c){c.classList.toggle('on',c===b);}); });
+$('b-cmp').addEventListener('click',function(){ setCmp(!cmp); });
 $('pipup').addEventListener('click',function(e){ e.stopPropagation(); window.scrollTo({top:0,behavior:reduce?'auto':'smooth'}); });
+if(anyAS) $('b-cmp').hidden=false;
 
 /* the big picture left the screen -> keep it playing in the corner */
 if('IntersectionObserver' in window){
@@ -523,24 +690,30 @@ if('IntersectionObserver' in window){
     frame.classList.toggle('pip',pip); $('pipup').hidden=!pip; },{threshold:[0,0.3,0.6]}).observe(stage);
 }
 
-/* timeline: click or drag picks the part of the edit; on release the table goes to that shot */
+/* timeline: click or drag picks the part of the edit; on release the list goes to that shot and opens it */
 (function(){
   var drag=false, hov=-1;
   function at(e){ var r=strip.getBoundingClientRect(); return Math.min(1,Math.max(0,(e.clientX-r.left)/r.width)); }
   function tipAt(e){ var x=at(e), i=shotAt(Math.min(FRAMES-1,Math.floor(x*FRAMES))), s=S[i];
     if(hov!==i){ if(hov>=0) blks[hov].classList.remove('hov'); hov=i; blks[i].classList.add('hov'); }
-    tip.hidden=false; tip.innerHTML='<span class="mono">'+esc(s.id)+'</span> · '+esc(s.name||'')+' · <span class="mono">'+secs(s.f1-s.f0)+'s</span>';
+    tip.hidden=false; tip.innerHTML='<bdi class="mono">'+esc(s.id)+'</bdi> · <bdi>'+esc(s.name||'')+'</bdi> · '+esc(stName(s.status))+' · <bdi>'+secs(s.f1-s.f0)+'</bdi> ث';
     var w=strip.clientWidth, half=tip.offsetWidth/2; tip.style.left=Math.min(w-half,Math.max(half,x*w))+'px'; }
   function clr(){ tip.hidden=true; if(hov>=0){ blks[hov].classList.remove('hov'); hov=-1; } }
   strip.addEventListener('pointerdown',function(e){ if(e.button!=null&&e.button>0) return; drag=true; try{ strip.setPointerCapture(e.pointerId); }catch(x){} seek(at(e)*DUR); tipAt(e); e.preventDefault(); });
   strip.addEventListener('pointermove',function(e){ tipAt(e); if(drag) seek(at(e)*DUR); });
-  function up(e,cancelled){ if(drag){ drag=false; try{ strip.releasePointerCapture(e.pointerId); }catch(x){} if(!cancelled&&follow&&cur>=0) toRow(cur); } if(e.pointerType!=='mouse') clr(); }
+  function up(e,cancelled){ if(drag){ drag=false; try{ strip.releasePointerCapture(e.pointerId); }catch(x){} if(!cancelled&&cur>=0){ if(follow) toRow(cur); else if(!rowEls[cur].hidden) openRow(cur); } } if(e.pointerType!=='mouse') clr(); }
   strip.addEventListener('pointerup',function(e){ up(e,false); }); strip.addEventListener('pointercancel',function(e){ up(e,true); }); strip.addEventListener('pointerleave',function(){ if(!drag) clr(); });
 })();
 
-/* rows + id chips */
-rowsEl.addEventListener('click',function(e){ var r=e.target.closest('.row'); if(!r) return; if(!loop) setLoop(true); goShot(+r.dataset.i,true); });
-rowsEl.addEventListener('keydown',function(e){ if(e.key==='Enter'&&e.target.classList.contains('row')){ e.preventDefault(); if(!loop) setLoop(true); goShot(+e.target.dataset.i,true); } });
+/* rows: a click opens the breakdown and plays the shot on a loop; a click on the open row closes it */
+function rowAct(h){
+  var row=h.parentNode, i=+row.dataset.i, y0=h.getBoundingClientRect().top;
+  if(openIdx===i){ openRow(-1); return; }
+  openRow(i); var dy=h.getBoundingClientRect().top-y0; if(Math.abs(dy)>1) window.scrollBy(0,dy);
+  if(!loop) setLoop(true); goShot(i,true);
+}
+rowsEl.addEventListener('click',function(e){ var h=e.target.closest('.rh'); if(h) rowAct(h); });
+rowsEl.addEventListener('keydown',function(e){ if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('rh')){ e.preventDefault(); rowAct(e.target); } });
 rowsEl.addEventListener('pointerenter',function(){ listHover=true; }); rowsEl.addEventListener('pointerleave',function(){ listHover=false; });
 document.addEventListener('click',function(e){ var b=e.target.closest('[data-go]'); if(!b) return; var i=IDX[b.dataset.go]; if(i==null) return; goShot(i,false); toRow(i); });
 
@@ -556,7 +729,7 @@ document.addEventListener('keydown',function(e){
   else if(k==='m'||k==='M'||k==='ة'){ setMute(!v.muted); }
 });
 
-setLoop(loop); setMute(false); setFollow(follow); paint(); fitLabels(); measure(); requestAnimationFrame(tick);
+ppState(); setLoop(loop); setMute(false); setRate(0); setFollow(follow); paint(); fitLabels(); measure(); requestAnimationFrame(tick);
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(function(){ fitLabels(); measure(); });
 })();
 </script>
