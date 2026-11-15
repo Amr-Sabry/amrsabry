@@ -106,8 +106,33 @@ h1{margin:0;font-size:19px;line-height:1.3;font-weight:700}
 .vo svg{width:14px;height:14px}
 .vo span{font-style:italic;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .tcbox{font-family:var(--m);font-variant-numeric:tabular-nums;font-size:15px;color:var(--soft);white-space:nowrap;padding:0 8px;flex:none}
-.tl{position:relative;direction:ltr;user-select:none;-webkit-user-select:none;touch-action:none}
-.strip{position:relative;display:flex;height:42px;border-radius:6px;overflow:hidden;background:#12141c;cursor:pointer}
+.tl{position:relative;direction:ltr;user-select:none;-webkit-user-select:none;touch-action:none;--hw:176px}
+.tracks{position:relative;display:grid;gap:3px;cursor:pointer}
+.trk{display:grid;grid-template-columns:var(--hw) minmax(0,1fr);gap:6px;height:22px;--lc:#38BDF8}
+.trk.v1{height:42px;--lc:#fff}
+.trk.hid{height:14px}
+.hd{display:flex;align-items:center;gap:6px;min-width:0;padding:0 3px 0 7px;border-radius:5px;background:#12141c;color:var(--soft);font-size:11.5px;white-space:nowrap;overflow:hidden;cursor:pointer;box-shadow:inset 3px 0 0 var(--lc)}
+.hd:hover{background:#1a1d29;color:#fff}
+.hd svg{width:13px;height:13px;flex:none;color:var(--lc)}
+.hd .code{font-family:var(--m);font-size:10px;font-weight:600;color:var(--lc);flex:none;min-width:17px}
+.hd .nm{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.hd .ct{font-family:var(--m);font-size:10px;color:var(--mute);flex:none;padding:0 2px}
+.hd .eye{width:18px;height:18px;display:grid;place-items:center;border-radius:4px;color:var(--mute);flex:none}
+.hd .eye svg{width:13px;height:13px;color:inherit}
+.hd .eye:hover{color:#fff;background:#262a3a}
+.trk.act .hd{background:#1d2130;color:#fff;box-shadow:inset 3px 0 0 var(--lc),inset 0 0 0 1px var(--lc)}
+.trk.act .lane{box-shadow:inset 0 0 0 1px var(--lc)}
+.trk.hid .hd{font-size:10px}
+.trk.hid .hd>svg,.trk.hid .hd .nm,.trk.hid .hd .ct{display:none}
+.trk.hid .hd .eye{width:14px;height:14px}
+.trk.hid .lane .clip,.trk.hid .lane .lempty{display:none}
+.lane{position:relative;border-radius:5px;background:#12141c;overflow:hidden}
+.clip{position:absolute;top:2px;bottom:2px;border-radius:3px;background:var(--lc);opacity:.5;box-shadow:inset 0 0 0 1px rgba(0,0,0,.4);overflow:hidden;min-width:3px;transition:opacity .12s}
+.clip b{position:absolute;left:4px;top:50%;transform:translateY(-50%);font-family:var(--m);font-size:9.5px;font-weight:600;color:#0A0A0F;pointer-events:none;white-space:nowrap}
+.clip.hov{opacity:.8}
+.clip.cur{opacity:1;box-shadow:0 0 0 1.5px #fff}
+.lempty{position:absolute;inset:0;display:flex;align-items:center;padding:0 10px;font-size:11px;color:var(--dim);direction:rtl;white-space:nowrap;overflow:hidden;pointer-events:none}
+.strip{position:relative;display:flex;height:100%;border-radius:6px;overflow:hidden;background:#12141c}
 .blk{position:relative;min-width:0;height:100%;background:var(--sc);opacity:.5;box-shadow:inset 1px 0 0 var(--bg);overflow:hidden;transition:opacity .12s}
 .blk b{position:absolute;left:5px;bottom:3px;font-family:var(--m);font-size:10.5px;font-weight:500;color:#fff;pointer-events:none}
 .blk.mdl::before{content:"";position:absolute;left:1px;right:0;top:0;height:4px;background:#fff}
@@ -116,8 +141,8 @@ h1{margin:0;font-size:19px;line-height:1.3;font-weight:700}
 .blk.hov{opacity:.85}
 .blk.off{opacity:.13}
 .blk.off.cur{opacity:.6}
-.ph{position:absolute;top:-2px;bottom:-2px;width:2px;margin-left:-1px;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.55),0 0 8px rgba(255,255,255,.7);pointer-events:none;left:0}
-.ruler{position:relative;height:14px;font-family:var(--m);font-size:10px;color:var(--dim)}
+.ph{position:absolute;top:-2px;bottom:-2px;width:2px;margin-left:-1px;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.55),0 0 8px rgba(255,255,255,.7);pointer-events:none;left:calc(var(--hw) + 6px + (100% - var(--hw) - 6px) * var(--p,0));z-index:2}
+.ruler{position:relative;height:14px;font-family:var(--m);font-size:10px;color:var(--dim);margin-left:calc(var(--hw) + 6px)}
 .ruler span{position:absolute;top:2px;transform:translateX(-50%)}
 .ruler span:first-child{transform:none}
 .tip{position:absolute;top:48px;transform:translateX(-50%);background:#fff;color:#0A0A0F;border-radius:6px;padding:4px 10px;font-size:12.5px;font-weight:500;white-space:nowrap;pointer-events:none;z-index:3;max-width:min(420px,92%);overflow:hidden;text-overflow:ellipsis;direction:rtl}
@@ -190,7 +215,7 @@ h1{margin:0;font-size:19px;line-height:1.3;font-weight:700}
 .tg svg{width:15px;height:15px;color:var(--mute)}
 .tg b{font-family:var(--m);font-weight:600;color:#fff}
 .tg.mdl{color:#fff}.tg.mdl svg{color:#fff}
-.tg.as{background:rgba(255,107,53,.14);color:#ffb08f}.tg.as svg{color:var(--orange)}
+.tg.as{background:rgba(56,189,248,.14);background:color-mix(in srgb,var(--lc,#38BDF8) 16%,transparent);color:#e6f6ff}.tg.as svg{color:var(--lc,#38BDF8)}
 .tg.q{background:rgba(255,255,255,.1);color:#fff}.tg.q svg{color:#fff}
 .chev{display:grid;place-items:center;color:var(--mute);transition:transform .15s}
 .row.open .chev{transform:rotate(180deg);color:#fff}
@@ -213,8 +238,8 @@ h1{margin:0;font-size:19px;line-height:1.3;font-weight:700}
 .fnote{margin:0;padding:0;list-style:none;display:grid;gap:6px}
 .fnote li{position:relative;padding-inline-start:20px;font-size:14px;color:var(--soft);overflow-wrap:anywhere}
 .fnote li::before{content:"";position:absolute;inset-inline-start:4px;top:.72em;width:6px;height:6px;border-radius:50%;background:var(--mute)}
-.asnote{font-size:13.5px;background:rgba(255,107,53,.1);border-radius:8px;padding:8px 12px;color:#ffc6ae;display:flex;gap:8px;align-items:flex-start;overflow-wrap:anywhere}
-.asnote svg{width:16px;height:16px;margin-top:3px;color:var(--orange)}
+.asnote{font-size:13.5px;background:rgba(56,189,248,.1);background:color-mix(in srgb,var(--lc,#38BDF8) 11%,transparent);border-radius:8px;padding:8px 12px;color:#dbe9f5;display:flex;gap:8px;align-items:flex-start;overflow-wrap:anywhere}
+.asnote svg{width:16px;height:16px;margin-top:3px;color:var(--lc,#38BDF8)}
 .nil{color:var(--dim);font-size:13.5px}
 .empty{padding:32px;text-align:center;color:var(--mute);border:1px dashed var(--line2);border-radius:10px}
 .foot{color:var(--dim);font-size:12.5px;text-align:center;margin:8px 0 0;display:grid;gap:4px}
@@ -256,7 +281,11 @@ h1{margin:0;font-size:19px;line-height:1.3;font-weight:700}
   .rt1{flex-wrap:wrap;gap:0 8px}
   .r-name{white-space:normal}
   .rb{grid-template-columns:minmax(0,1fr);margin:0 8px;padding:4px 8px 16px}
-  .strip{height:38px}
+  .trk.v1{height:38px}
+  .tl{--hw:50px}
+  .hd{padding:0 2px 0 6px;gap:3px}
+  .hd>svg,.hd .nm,.hd .ct{display:none}
+  .lempty{font-size:10px}
   .tip{top:44px}
   .ruler,.howto,.tcbox{display:none}
   .tr{gap:6px 4px}
@@ -333,7 +362,10 @@ h1{margin:0;font-size:19px;line-height:1.3;font-weight:700}
     </div>
   </div>
   <div class="tl" id="tl">
-    <div class="strip" id="strip"><div class="ph" id="ph"></div></div>
+    <div class="tracks" id="tracks">
+      <div class="trk v1" data-k=""><div class="hd" role="button" tabindex="0" title="الإيديت لوحده (من غير مقارنة)"><span class="code">V1</span><i data-ico="film"></i><span class="nm" id="v1nm">الإيديت</span><span class="ct" id="v1ct"></span></div><div class="strip" id="strip"></div></div>
+      <div class="ph" id="ph"></div>
+    </div>
     <div class="ruler" id="ruler"></div>
     <div class="tip" id="tip" hidden></div>
   </div>
@@ -351,11 +383,13 @@ h1{margin:0;font-size:19px;line-height:1.3;font-weight:700}
     <p><kbd>1</kbd><span>دوس على أي شوت في الشريط الملوّن: الفيديو يروح له والقايمة تحت تنزل لتفاصيله.</span></p>
     <p><kbd>2</kbd><span>دوس على أي صف في القايمة: الشوت يتعاد loop وتتفتح تفاصيله.</span></p>
     <p><kbd>3</kbd><span>التابات اللي فوق القايمة بتفلتر: اللي يتعمل من جديد، اللي محتاج شغل، مبانينا…</span></p>
+    <p><kbd>4</kbd><span>التراكات في الـ timeline: V1 الإيديت، وتحته كل حاجة بنضيفها (Auto stage، Seedance…). دوس على كليب في أي تراك يتعرض جنب الإيديت، ودوس على اسم التراك تختاره، والعين تخفيه.</span></p>
     <h3 style="margin-top:8px">الكيبورد</h3>
     <p><kbd>Space</kbd><span>تشغيل / إيقاف</span></p>
     <p><kbd>← →</kbd><span>الشوت اللي قبله / بعده</span></p>
     <p><kbd>L</kbd><span>إعادة الشوت</span></p>
     <p><kbd>M</kbd><span>كتم الصوت</span></p>
+    <p><kbd>C</kbd><span>قارن / الإيديت بس</span></p>
   </div>
 </div>
 
@@ -375,7 +409,7 @@ h1{margin:0;font-size:19px;line-height:1.3;font-weight:700}
   <footer class="foot" id="foot"></footer>
 </div>
 
-<script id="hrid-data" type="application/json">{"meta":{"project":"HRID · One Line","edit":"v07 DC","fps":25,"frames":1609,"dur":64.36,"target":60,"src":"/r/hrid/edit_v07.mp4","sprite":"/r/hrid/thumbs_v07.webp","spriteCols":6,"tileW":384,"tileH":216,"updated":"15 Nov 2026","note":"قراءة أولى من الإيديت v07. المصدر والحالة والوقت تقديرات من الصورة — بنأكدهم شوت شوت."},"models":{"dts":{"label":"Downtown Slemani"},"kurdonia":{"label":"Kurdonia Towers"},"slemani":{"label":"SLEMANI Name"},"bridge":{"label":"Crossing Bridge"},"proto":{"label":"Prototype Hall"}},"kinds":{"live":{"label":"تصوير"},"cg":{"label":"3D"},"ai":{"label":"AI"},"mix":{"label":"3D + AI"}},"status":{"final":{"label":"لقطة نهائية · Finishing"},"wip":{"label":"موجودة · محتاجة تطوير"},"temp":{"label":"Placeholder · تتعمل من جديد"}},"sizes":{"S":{"time":"30–60 د","hours":0.75},"M":{"time":"2–4 س","hours":3},"L":{"time":"1–2 يوم","hours":12},"XL":{"time":"3–5 أيام","hours":32}},"flags":[{"t":"5 لقطات لسه Placeholder","d":"عليها label على الصورة وهتتعمل من جديد، ومجموعها 12.72 ث من الفيلم. ده الشغل التقيل.","shots":["SH13","SH15","SH17","SH18","SH21"]},{"t":"الفيلم أطول من 60 ث","d":"الطول 64.36 ث (1609 فريم) — زيادة 4.36 ث (109 فريم). لو التسليم 60 ث يبقى فيه قص.","shots":[]},{"t":"مفيش end logo","d":"الفيلم بيخلص على التوقيع و fade للأسود. الـ treatment بيقول التوقيع بيتحول للوجو.","shots":["SH36"]},{"t":"حاجات لازم تتشال من الصورة","d":"سقف الاستوديو (SH20، SH27) · كرسي (SH20) · رقم «02» (SH34) · شعار العربية (SH24) · صورة المرجع والـ labels في الـ placeholders.","shots":["SH20","SH27","SH34","SH24","SH15"]},{"t":"دقة المكان","d":"SH34 فيه مية ومارينا والسليمانية مفيهاش · أبراج SH21 مش تصميم Downtown · حروف وجبل SH26 لازم يطابقوا الموقع الحقيقي · Vesta في SH04 و SH17 لازم يبقى نفس المبنى.","shots":["SH34","SH21","SH26","SH04","SH17"]},{"t":"مقاس الكادر مش موحّد","d":"الفيلم 1920×872 (2.20:1). SH13 جاي 1920×834 و SH22 جاي 1920×858، و SH28 فيه شريط أسود في الركن.","shots":["SH13","SH22","SH28"]},{"t":"الألوان","d":"أبيض وأسود من SH01 لـ SH19، ألوان من عين المهندسة SH20 لحد SH34، ورجوع أبيض وأسود في التوقيع. ده غير قاعدة الـ monochrome في الـ treatment — محتاج تأكيد إنه القرار النهائي.","shots":["SH20","SH35"]},{"t":"Kurdonia Towers","d":"مفيش لقطة واضحة لـ Kurdonia في v07 — يمكن فلاش SH10.","shots":["SH10"]}],"shots":[{"name":"Pens — opening macro","desc":"ماكرو على أقلام الحبر في الحامل، rack focus وهيز خفيف. افتتاحية الفيلم.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade أبيض وأسود موحّد مع لقطات المكتب","توحيد الـ grain","Fade in من الأسود لو مطلوب"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH01","f0":0,"f1":52,"vo":""},{"name":"Architect at desk — from behind","desc":"المعماري من ضهره على المكتب، لمبتين وهيز، push in بطيء.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade وتوحيد مستوى الأسود","الـ flares على يمين الكادر: تتساب ولا تتنضف"],"dept":["Grade","Comp"],"size":"S","flags":[],"q":"","id":"SH02","f0":52,"f1":107,"vo":"It begins"},{"name":"Nib lands on paper","desc":"ماكرو على سن القلم وهو بينزل على الورقة ويبدأ أول خط.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade","قرار الخط: حبر طبيعي زي ما هو، ولا لمعة خفيفة تربطه بخط النور بتاع الروبوتات"],"dept":["Grade","Comp"],"size":"S","flags":[],"q":"الخط يفضل حبر زي ما اتصور، ولا نضيف له لمعة خفيفة؟","id":"SH03","f0":107,"f1":177,"vo":"with a line, and a vision of what"},{"name":"Flash — Vesta model","desc":"فلاش 10 فريمات: مجسم مبنى (على الأغلب Vesta) على أرضية سودا عاكسة ونور من وراه.","kind":"ai","status":"wip","look":"bw","label":null,"work":["نتأكد إن شكل المبنى هو Vesta الحقيقي","نفس المبنى لازم يطابق لقطة SH17","Upscale + grain"],"dept":["AI","Grade"],"size":"S","flags":["مفيش 3D ولا CAD لـ Vesta — المرجع فريمات المخرج بس"],"q":"","id":"SH04","f0":177,"f1":187,"vo":"could"},{"name":"Flash — Downtown model, inverted","desc":"فلاش 12 فريم: مجسم Downtown Slemani العاجي والكاميرا مقلوبة فوق البلوكات، دخان.","kind":"mix","status":"wip","look":"bw","label":null,"work":["مطابقة مع موديل DTS الحقيقي","Upscale + grain"],"dept":["3D","Grade"],"size":"S","flags":[],"q":"","model":"dts","as":{"note":"Downtown مقلوب من تحت، ليل — الحركة متقاسة من v07","src":"/r/hrid/as/sh05_v1.mp4","v":1},"id":"SH05","f0":187,"f1":199,"vo":""},{"name":"Nib — closer","desc":"رجوع لسن القلم، أقرب، والخط ممتد.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade بنفس إعدادات SH03"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH06","f0":199,"f1":212,"vo":"be."},{"name":"Flash — Crossing Bridge interior","desc":"فلاش 8 فريمات: ممر الكوبري من جوه، درابزين وهيز ونور في آخره.","kind":"mix","status":"wip","look":"bw","label":null,"work":["مطابقة مع موديل Crossing Bridge الحقيقي","Upscale + grain"],"dept":["3D","Grade"],"size":"S","flags":[],"q":"","model":"bridge","as":{"note":"جوه ممر الكوبري على مستوى العين — مطابق للإيديت","src":"/r/hrid/as/sh07_v1.mp4","v":1},"id":"SH07","f0":212,"f1":220,"vo":""},{"name":"Flash — Silos, low angle","desc":"فلاش 13 فريم: الصوامع من تحت وسما غامقة.","kind":"ai","status":"wip","look":"bw","label":null,"work":["مطابقة شكل الصوامع مع صور الموقع الحقيقي","Upscale + grain"],"dept":["AI","Grade"],"size":"S","flags":["مفيش 3D للصوامع — AI بس"],"q":"","id":"SH08","f0":220,"f1":233,"vo":""},{"name":"Nib draws the line","desc":"القلم بيشد الخط بسرعة على الورقة، motion blur.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade","استمرارية الخط مع SH03 و SH06"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH09","f0":233,"f1":268,"vo":""},{"name":"Flash — towers from below, night","desc":"فلاش 21 فريم: برجين من تحت بالليل، بلكونات وهيز وأنوار المدينة.","kind":"mix","status":"wip","look":"bw","label":null,"work":["نحدد المشروع ونطابقه مع الموديل","Upscale + grain"],"dept":["3D","Grade"],"size":"S","flags":[],"q":"اللقطة دي Kurdonia Towers ولا Downtown Slemani؟","model":"kurdonia","as":{"note":"من تحت بين كتلتين Kurdonia، ليل — مكان الكاميرا محتاج ضبط يدوي","src":"/r/hrid/as/sh10_v1.mp4","v":1},"id":"SH10","f0":268,"f1":289,"vo":""},{"name":"Plan — top shot","desc":"Top shot على المخطط: إيد المعماري بتعلّم بالقلم والمسطرة، والكاميرا بتلف.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade","مراجعة المخطط نفسه: مخطط حقيقي لـ HRID ومفيهوش بيانات مش عايزينها تبان"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH11","f0":289,"f1":364,"vo":"A vision shaped by Hiwa"},{"name":"Drawing hand — low angle","desc":"زاوية واطية على الإيد وهي بترسم، اللمبة وحامل الأقلام في الخلفية.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH12","f0":364,"f1":429,"vo":"Rauf, bold thinking realised"},{"name":"Robots build the bridge","desc":"Placeholder: أذرع الروبوت من فوق حوالين الشريط. المطلوب النهائي: الروبوتات بتركّب Crossing Bridge في الـ Prototype Hall. ده نص شغل SH09 القديم — الروبوتات والكوبري هنا، والمدينة واللوجو راحوا SH15.","kind":"cg","status":"temp","look":"bw","label":"BRIDGE","work":["نختار الـ option (1 / 2 / 3) ونقفل حركة الكاميرا على 2.32 ث","Render نهائي من Prototype Hall: الروبوتات + الكوبري","Dark look: هيز، أسود عميق، أشعة من اليمين","Comp + grain","مقاس الكادر يتظبط على 1920×872","شيل الـ label"],"dept":["3D","Comp","Grade"],"size":"XL","flags":["مقاس الكادر 1920×834 (2.30) والفيلم 1920×872 (2.20)"],"q":"نبني على أنهي option من شغل SH09؟","model":"proto","id":"SH13","f0":429,"f1":487,"vo":"with precision, grounded in"},{"name":"Architect's shadow","desc":"ضل المعماري الطويل على أرضية بيضا، حركة بطيئة.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade","تنضيف الأرضية (نقط وبقع)"],"dept":["Grade","Comp"],"size":"S","flags":[],"q":"","id":"SH14","f0":487,"f1":584,"vo":"engineering, guided by integrity and purpose."},{"name":"Flight to the logo","desc":"Placeholder: طيران فوق جبال وسحاب لحد لوجو Hiwa Rauf، وفي الركن صورة مرجع للمجسم الأبيض. المطلوب النهائي: الكاميرا تعدّي الكوبري والمدينة (المجسمات) وتوصل للوجو.","kind":"cg","status":"temp","look":"bw","label":"BRIDGE + CITY","work":["Render نهائي: كوبري ← مدينة ← لوجو على 3.88 ث","اللوجو مجسم ومتركّب بالروبوتات (مفيش حاجة بتطلع لوحدها)","اللوجو يبان كامل على كلمة «HRID» في الـ VO (26.18 ث)","Dark look + هيز","Comp + grade","شيل الـ label وصورة المرجع"],"dept":["3D","Comp","GFX","Grade"],"size":"XL","flags":[],"q":"","model":"proto","id":"SH15","f0":584,"f1":681,"vo":"In 2012, that vision became HRID,"},{"name":"Architect and the ladder","desc":"سيلويت المعماري بالمخططات الملفوفة على cyc أبيض، قدامه سلم، وبيخرج من شمال الكادر.","kind":"live","status":"wip","look":"bw","label":null,"work":["قرار السلم: يتساب، يتشال، ولا يتبدل بحاجة CG","تنضيف الـ cyc وحواف الكادر","Grade"],"dept":["Comp","Grade"],"size":"M","flags":[],"q":"السلم مقصود في الصورة، ولا مرجع هيتبدل؟","id":"SH16","f0":681,"f1":751,"vo":"building on decades of experience"},{"name":"Vesta Tower","desc":"Placeholder: إزاز غامق وانعكاسات نور، abstract. المطلوب النهائي: لقطة hero لـ Vesta Tower.","kind":"ai","status":"temp","look":"bw","label":"VESTA TOWER","work":["Keyframe لـ Vesta من فريمات المخرج","Seedance: المكان والـ keyframe كمراجع — مش start frame","كاميرا dynamic / handheld","Upscale + grade أبيض وأسود","شيل الـ label"],"dept":["AI","Grade"],"size":"L","flags":["مفيش 3D ولا CAD لـ Vesta"],"q":"","id":"SH17","f0":751,"f1":803,"vo":"to shape a new future for"},{"name":"Silos — wide","desc":"Placeholder: صف الصوامع مع الجبال والضباب، أبيض وأسود.","kind":"ai","status":"temp","look":"bw","label":"SILO","work":["لقطة AI نهائية للصوامع بحركة كاميرا","مطابقة شكل الصوامع الحقيقية (محتاجين صور الموقع)","Upscale + grade","شيل الـ label"],"dept":["AI","Grade"],"size":"M","flags":["مفيش 3D للصوامع"],"q":"","id":"SH18","f0":803,"f1":834,"vo":"Iraq. Trusted"},{"name":"Silo roof → iris","desc":"سقف الصومعة من فوق (شكله قزحية) وبيدوب في عين المهندسة.","kind":"ai","status":"wip","look":"bw","label":null,"work":["Match cut: محاذاة مركز وقطر السقف مع القزحية فريم بفريم","QC + upscale للقطة السقف"],"dept":["AI","Comp"],"size":"M","flags":[],"q":"","id":"SH19","f0":834,"f1":857,"vo":"public–private"},{"name":"Eye → the engineer, pull back","desc":"ماكرو على عين المهندسة والكاميرا بترجع لحد ما تبان كلها بالبالطو الأحمر على cyc أبيض. أول لقطة ملونة في الفيلم.","kind":"live","status":"final","look":"color","label":null,"work":["Paint out: سقف الاستوديو والـ rig فوق الكادر، والكرسي على الشمال في آخر اللقطة","تنضيف وتمديد الـ cyc","تنعيم الـ speed ramp","Grade: هنا التحول من أبيض وأسود لألوان","Dissolve نضيف لـ SH21"],"dept":["Comp","Grade"],"size":"M","flags":["سقف الاستوديو ظاهر فوق الكادر","كرسي ظاهر على شمال الكادر في آخر اللقطة"],"q":"","id":"SH20","f0":857,"f1":946,"vo":"partnerships. Sustainability as"},{"name":"Downtown Slemani — dive from the clouds","desc":"Placeholder: نزول من السحاب على أبراج دهبي. الأبراج AI عامة، مش تصميم Downtown الحقيقي.","kind":"mix","status":"temp","look":"color","label":"D.T. SLEMANI","work":["حركة الكاميرا من موديل DTS الحقيقي (Model Room)","Photoreal pass بالـ AI والـ 3D كمرجع","سحاب + comp مع الـ dissolve من SH20","Grade ملون","شيل الـ label"],"dept":["3D","AI","Comp","Grade"],"size":"L","flags":["الأبراج الحالية مش تصميم Downtown"],"q":"","model":"dts","as":{"note":"النزول من السحاب لحد ما تبص من فوق على Downtown","src":"/r/hrid/as/sh21_v1.mp4","v":1},"id":"SH21","f0":946,"f1":1026,"vo":"a standard. Connecting"},{"name":"Plaza crowd — the engineer in red","desc":"ناس ماشية في الساحة والمهندسة بالأحمر وسطهم. باين إنها AI.","kind":"ai","status":"wip","look":"color","label":null,"work":["QC للوشوش والإيدين في الكومبارس","مطابقة شكل الممثلة ولبسها مع SH20 و SH30","المكان يطابق ساحة Downtown","Upscale + grade","مقاس الكادر يتظبط على 1920×872"],"dept":["AI","Comp","Grade"],"size":"M","flags":["مقاس الكادر 1920×858 (2.24)"],"q":"","model":"dts","as":{"note":"مستوى العين قدام المبنى، ضهر الزحمة","src":"/r/hrid/as/sh22_v1.mp4","v":1},"id":"SH22","f0":1026,"f1":1074,"vo":"communities."},{"name":"Towers — top-down spin","desc":"Top-down بيلف بين الأبراج، ملعب كورة وأسطح المدينة تحت.","kind":"mix","status":"wip","look":"color","label":null,"work":["مطابقة الأبراج مع موديل DTS","QC للـ warping في المباني الصغيرة","Upscale + grade"],"dept":["3D","AI","Grade"],"size":"M","flags":[],"q":"","model":"dts","as":{"note":"من فوق بين الأبراج، طالع ولافف — مطابق للإيديت","src":"/r/hrid/as/sh23_v1.mp4","v":1},"id":"SH23","f0":1074,"f1":1146,"vo":"Rising higher than Iraq has ever seen."},{"name":"Plaza entrance — dusk","desc":"مدخل الساحة وقت الغروب: نخل، نافورة، عربية، ناس، والأبراج ورا.","kind":"ai","status":"wip","look":"color","label":null,"work":["مطابقة مع تصميم Downtown (البوديوم والساحة)","QC لحركة الناس","شعار العربية يتشال","Upscale + grade"],"dept":["AI","Comp","Grade"],"size":"M","flags":["شعار ماركة العربية ظاهر"],"q":"","model":"dts","as":{"note":"مدخل البلازا والأبراج ورا، شمس واطية","src":"/r/hrid/as/sh24_v1.mp4","v":1},"id":"SH24","f0":1146,"f1":1212,"vo":"Creating places to live, work"},{"name":"The boy — framing with his hand","desc":"الولد بيبص لفوق وبيعمل كادر بإيده، وضل بيعدّي على وشه.","kind":"live","status":"final","look":"color","label":null,"work":["تنضيف الخلفية (banding في الـ gradient)","Grade"],"dept":["Comp","Grade"],"size":"S","flags":[],"q":"","id":"SH25","f0":1212,"f1":1241,"vo":"and belong."},{"name":"SLEMANI sign — sunrise","desc":"كلمة SLEMANI على جبل Goizha والمدينة تحت، والشمس بتطلع.","kind":"mix","status":"wip","look":"color","label":null,"work":["مطابقة شكل الحروف مع الرسم المساحي الحقيقي","الجبل يمشي على شكل الموقع الحقيقي","QC للمدينة + upscale + grade"],"dept":["3D","AI","Grade"],"size":"M","flags":[],"q":"","model":"slemani","as":{"note":"الجبل والمدينة يمين، حروف SLEMANI تحت شمال — الكادر محتاج ضبط يدوي","src":"/r/hrid/as/sh26_v1.mp4","v":1},"id":"SH26","f0":1241,"f1":1292,"vo":"Honouring the identity of a city."},{"name":"The elder — low angle","desc":"الراجل الكبير من تحت، بيبتسم وبيبص لفوق.","kind":"live","status":"final","look":"color","label":null,"work":["Paint out: سقف الاستوديو فوق الكادر","Grade"],"dept":["Comp","Grade"],"size":"S","flags":["سقف الاستوديو ظاهر فوق الكادر"],"q":"","id":"SH27","f0":1292,"f1":1324,"vo":""},{"name":"Light on the walls","desc":"جوه مبنى غامق، بقع نور دافية بتتحرك على الحيطان والعمود.","kind":"ai","status":"wip","look":"color","label":null,"work":["الشريط الأسود تحت يمين الكادر يتصلح أو اللقطة تتعاد","Upscale + grade"],"dept":["AI","Comp"],"size":"S","flags":["شريط أسود صغير تحت يمين الصورة"],"q":"","id":"SH28","f0":1324,"f1":1349,"vo":"Opening possibilities"},{"name":"Look up — stone walls to the tower","desc":"من تحت بين حيطان حجر لبرج إزاز وسما.","kind":"ai","status":"wip","look":"color","label":null,"work":["مطابقة البرج مع Downtown","Upscale + grade"],"dept":["AI","Grade"],"size":"S","flags":[],"q":"","model":"dts","as":{"note":"من تحت لفوق على البرج، مايل","src":"/r/hrid/as/sh29_v1.mp4","v":1},"id":"SH29","f0":1349,"f1":1370,"vo":"for the"},{"name":"The engineer — close-up","desc":"كلوز على المهندسة بروفايل وبتبص لفوق.","kind":"live","status":"final","look":"color","label":null,"work":["Beauty خفيف","Grade"],"dept":["Comp","Grade"],"size":"S","flags":[],"q":"","id":"SH30","f0":1370,"f1":1394,"vo":"generations to"},{"name":"The boy — close-up","desc":"كلوز على الولد وبيبتسم للكاميرا.","kind":"live","status":"final","look":"color","label":null,"work":["Grade ومطابقة الخلفية مع SH25"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH31","f0":1394,"f1":1419,"vo":"come. Because"},{"name":"Lobby — people","desc":"لوبي بواجهة إزاز على الأبراج، ناس داخلة وخارجة.","kind":"ai","status":"wip","look":"color","label":null,"work":["QC لمشية الناس","مطابقة المعمار مع Downtown","Upscale + grade"],"dept":["AI","Grade"],"size":"M","flags":[],"q":"","id":"SH32","f0":1419,"f1":1447,"vo":"to shape a city"},{"name":"Towers and birds","desc":"برجين من تحت على سما تركواز وطيور.","kind":"ai","status":"wip","look":"color","label":null,"work":["مطابقة الأبراج مع موديل DTS","Upscale + grade"],"dept":["AI","Grade"],"size":"S","flags":[],"q":"","model":"dts","as":{"note":"برجين من تحت قدام السما","src":"/r/hrid/as/sh33_v1.mp4","v":1},"id":"SH33","f0":1447,"f1":1478,"vo":"is to make a promise"},{"name":"Towers — wide, haze","desc":"الأبراج واسعة في الضباب مع طيور والمدينة ورا.","kind":"ai","status":"wip","look":"color","label":null,"work":["الخلفية فيها مية ومارينا — السليمانية مفيهاش، تتعاد أو تتنضف","رقم «02» في الركن فوق شمال يتشال","مطابقة الأبراج مع موديل DTS","Upscale + grade"],"dept":["AI","Comp","Grade"],"size":"M","flags":["مية ومارينا في الخلفية","«02» ظاهرة في الركن فوق شمال"],"q":"","model":"dts","as":{"note":"صف الأبراج في الشبورة، عدسة طويلة — مطابق للإيديت","src":"/r/hrid/as/sh34_v1.mp4","v":1},"id":"SH34","f0":1478,"f1":1502,"vo":"to its future."},{"name":"Signing — ring in the foreground","desc":"إيد بخاتم في الـ foreground (out of focus) والمعماري بيوقّع في الخلفية.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade: رجوع للأبيض والأسود"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH35","f0":1502,"f1":1546,"vo":"A promise we put our"},{"name":"The signature","desc":"توقيع «Hiwa Rauf» بيكمل على الورقة جوه ماسك مقصوص الأركان، وبعدين fade للأسود.","kind":"live","status":"wip","look":"bw","label":null,"work":["قرار النهاية: التوقيع بس، ولا يتحول للوجو HRID","End card: اللوجو + أي سطر قانوني أو موقع","تنضيف الماسك وحوافه","Grade"],"dept":["GFX","Comp","Grade"],"size":"M","flags":["مفيش end logo في v07"],"q":"النهاية: التوقيع بس، ولا لازم يتحول للوجو HRID زي الـ treatment؟","id":"SH36","f0":1546,"f1":1609,"vo":"name to."}]}</script>
+<script id="hrid-data" type="application/json">{"meta":{"project":"HRID · One Line","edit":"v07 DC","fps":25,"frames":1609,"dur":64.36,"target":60,"src":"/r/hrid/edit_v07.mp4","sprite":"/r/hrid/thumbs_v07.webp","spriteCols":6,"tileW":384,"tileH":216,"updated":"15 Nov 2026","note":"قراءة أولى من الإيديت v07. المصدر والحالة والوقت تقديرات من الصورة — بنأكدهم شوت شوت."},"models":{"dts":{"label":"Downtown Slemani"},"kurdonia":{"label":"Kurdonia Towers"},"slemani":{"label":"SLEMANI Name"},"bridge":{"label":"Crossing Bridge"},"proto":{"label":"Prototype Hall"}},"layers":[{"key":"as","code":"V2","label":"Auto stage","icon":"cube","color":"#38BDF8","note":"رندر 3D من موديلاتنا على حركة كاميرا الإيديت"},{"key":"sd","code":"V3","label":"Seedance 2.5","icon":"sparkles","color":"#A78BFA","note":"بريفيو AI من Higgsfield · 720p","empty":"لسه مفيش Seedance — أول ما نولّد هيظهر هنا"}],"kinds":{"live":{"label":"تصوير"},"cg":{"label":"3D"},"ai":{"label":"AI"},"mix":{"label":"3D + AI"}},"status":{"final":{"label":"لقطة نهائية · Finishing"},"wip":{"label":"موجودة · محتاجة تطوير"},"temp":{"label":"Placeholder · تتعمل من جديد"}},"sizes":{"S":{"time":"30–60 د","hours":0.75},"M":{"time":"2–4 س","hours":3},"L":{"time":"1–2 يوم","hours":12},"XL":{"time":"3–5 أيام","hours":32}},"flags":[{"t":"5 لقطات لسه Placeholder","d":"عليها label على الصورة وهتتعمل من جديد، ومجموعها 12.72 ث من الفيلم. ده الشغل التقيل.","shots":["SH13","SH15","SH17","SH18","SH21"]},{"t":"الفيلم أطول من 60 ث","d":"الطول 64.36 ث (1609 فريم) — زيادة 4.36 ث (109 فريم). لو التسليم 60 ث يبقى فيه قص.","shots":[]},{"t":"مفيش end logo","d":"الفيلم بيخلص على التوقيع و fade للأسود. الـ treatment بيقول التوقيع بيتحول للوجو.","shots":["SH36"]},{"t":"حاجات لازم تتشال من الصورة","d":"سقف الاستوديو (SH20، SH27) · كرسي (SH20) · رقم «02» (SH34) · شعار العربية (SH24) · صورة المرجع والـ labels في الـ placeholders.","shots":["SH20","SH27","SH34","SH24","SH15"]},{"t":"دقة المكان","d":"SH34 فيه مية ومارينا والسليمانية مفيهاش · أبراج SH21 مش تصميم Downtown · حروف وجبل SH26 لازم يطابقوا الموقع الحقيقي · Vesta في SH04 و SH17 لازم يبقى نفس المبنى.","shots":["SH34","SH21","SH26","SH04","SH17"]},{"t":"مقاس الكادر مش موحّد","d":"الفيلم 1920×872 (2.20:1). SH13 جاي 1920×834 و SH22 جاي 1920×858، و SH28 فيه شريط أسود في الركن.","shots":["SH13","SH22","SH28"]},{"t":"الألوان","d":"أبيض وأسود من SH01 لـ SH19، ألوان من عين المهندسة SH20 لحد SH34، ورجوع أبيض وأسود في التوقيع. ده غير قاعدة الـ monochrome في الـ treatment — محتاج تأكيد إنه القرار النهائي.","shots":["SH20","SH35"]},{"t":"Kurdonia Towers","d":"مفيش لقطة واضحة لـ Kurdonia في v07 — يمكن فلاش SH10.","shots":["SH10"]}],"shots":[{"name":"Pens — opening macro","desc":"ماكرو على أقلام الحبر في الحامل، rack focus وهيز خفيف. افتتاحية الفيلم.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade أبيض وأسود موحّد مع لقطات المكتب","توحيد الـ grain","Fade in من الأسود لو مطلوب"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH01","f0":0,"f1":52,"vo":""},{"name":"Architect at desk — from behind","desc":"المعماري من ضهره على المكتب، لمبتين وهيز، push in بطيء.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade وتوحيد مستوى الأسود","الـ flares على يمين الكادر: تتساب ولا تتنضف"],"dept":["Grade","Comp"],"size":"S","flags":[],"q":"","id":"SH02","f0":52,"f1":107,"vo":"It begins"},{"name":"Nib lands on paper","desc":"ماكرو على سن القلم وهو بينزل على الورقة ويبدأ أول خط.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade","قرار الخط: حبر طبيعي زي ما هو، ولا لمعة خفيفة تربطه بخط النور بتاع الروبوتات"],"dept":["Grade","Comp"],"size":"S","flags":[],"q":"الخط يفضل حبر زي ما اتصور، ولا نضيف له لمعة خفيفة؟","id":"SH03","f0":107,"f1":177,"vo":"with a line, and a vision of what"},{"name":"Flash — Vesta model","desc":"فلاش 10 فريمات: مجسم مبنى (على الأغلب Vesta) على أرضية سودا عاكسة ونور من وراه.","kind":"ai","status":"wip","look":"bw","label":null,"work":["نتأكد إن شكل المبنى هو Vesta الحقيقي","نفس المبنى لازم يطابق لقطة SH17","Upscale + grain"],"dept":["AI","Grade"],"size":"S","flags":["مفيش 3D ولا CAD لـ Vesta — المرجع فريمات المخرج بس"],"q":"","id":"SH04","f0":177,"f1":187,"vo":"could"},{"name":"Flash — Downtown model, inverted","desc":"فلاش 12 فريم: مجسم Downtown Slemani العاجي والكاميرا مقلوبة فوق البلوكات، دخان.","kind":"mix","status":"wip","look":"bw","label":null,"work":["مطابقة مع موديل DTS الحقيقي","Upscale + grain"],"dept":["3D","Grade"],"size":"S","flags":[],"q":"","model":"dts","as":{"note":"Downtown مقلوب من تحت، ليل — الحركة متقاسة من v07","src":"/r/hrid/as/sh05_v1.mp4","v":1},"id":"SH05","f0":187,"f1":199,"vo":""},{"name":"Nib — closer","desc":"رجوع لسن القلم، أقرب، والخط ممتد.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade بنفس إعدادات SH03"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH06","f0":199,"f1":212,"vo":"be."},{"name":"Flash — Crossing Bridge interior","desc":"فلاش 8 فريمات: ممر الكوبري من جوه، درابزين وهيز ونور في آخره.","kind":"mix","status":"wip","look":"bw","label":null,"work":["مطابقة مع موديل Crossing Bridge الحقيقي","Upscale + grain"],"dept":["3D","Grade"],"size":"S","flags":[],"q":"","model":"bridge","as":{"note":"جوه ممر الكوبري على مستوى العين — مطابق للإيديت","src":"/r/hrid/as/sh07_v1.mp4","v":1},"id":"SH07","f0":212,"f1":220,"vo":""},{"name":"Flash — Silos, low angle","desc":"فلاش 13 فريم: الصوامع من تحت وسما غامقة.","kind":"ai","status":"wip","look":"bw","label":null,"work":["مطابقة شكل الصوامع مع صور الموقع الحقيقي","Upscale + grain"],"dept":["AI","Grade"],"size":"S","flags":["مفيش 3D للصوامع — AI بس"],"q":"","id":"SH08","f0":220,"f1":233,"vo":""},{"name":"Nib draws the line","desc":"القلم بيشد الخط بسرعة على الورقة، motion blur.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade","استمرارية الخط مع SH03 و SH06"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH09","f0":233,"f1":268,"vo":""},{"name":"Flash — towers from below, night","desc":"فلاش 21 فريم: برجين من تحت بالليل، بلكونات وهيز وأنوار المدينة.","kind":"mix","status":"wip","look":"bw","label":null,"work":["نحدد المشروع ونطابقه مع الموديل","Upscale + grain"],"dept":["3D","Grade"],"size":"S","flags":[],"q":"اللقطة دي Kurdonia Towers ولا Downtown Slemani؟","model":"kurdonia","as":{"note":"من تحت بين كتلتين Kurdonia، ليل — مكان الكاميرا محتاج ضبط يدوي","src":"/r/hrid/as/sh10_v1.mp4","v":1},"id":"SH10","f0":268,"f1":289,"vo":""},{"name":"Plan — top shot","desc":"Top shot على المخطط: إيد المعماري بتعلّم بالقلم والمسطرة، والكاميرا بتلف.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade","مراجعة المخطط نفسه: مخطط حقيقي لـ HRID ومفيهوش بيانات مش عايزينها تبان"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH11","f0":289,"f1":364,"vo":"A vision shaped by Hiwa"},{"name":"Drawing hand — low angle","desc":"زاوية واطية على الإيد وهي بترسم، اللمبة وحامل الأقلام في الخلفية.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH12","f0":364,"f1":429,"vo":"Rauf, bold thinking realised"},{"name":"Robots build the bridge","desc":"Placeholder: أذرع الروبوت من فوق حوالين الشريط. المطلوب النهائي: الروبوتات بتركّب Crossing Bridge في الـ Prototype Hall. ده نص شغل SH09 القديم — الروبوتات والكوبري هنا، والمدينة واللوجو راحوا SH15.","kind":"cg","status":"temp","look":"bw","label":"BRIDGE","work":["نختار الـ option (1 / 2 / 3) ونقفل حركة الكاميرا على 2.32 ث","Render نهائي من Prototype Hall: الروبوتات + الكوبري","Dark look: هيز، أسود عميق، أشعة من اليمين","Comp + grain","مقاس الكادر يتظبط على 1920×872","شيل الـ label"],"dept":["3D","Comp","Grade"],"size":"XL","flags":["مقاس الكادر 1920×834 (2.30) والفيلم 1920×872 (2.20)"],"q":"نبني على أنهي option من شغل SH09؟","model":"proto","id":"SH13","f0":429,"f1":487,"vo":"with precision, grounded in"},{"name":"Architect's shadow","desc":"ضل المعماري الطويل على أرضية بيضا، حركة بطيئة.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade","تنضيف الأرضية (نقط وبقع)"],"dept":["Grade","Comp"],"size":"S","flags":[],"q":"","id":"SH14","f0":487,"f1":584,"vo":"engineering, guided by integrity and purpose."},{"name":"Flight to the logo","desc":"Placeholder: طيران فوق جبال وسحاب لحد لوجو Hiwa Rauf، وفي الركن صورة مرجع للمجسم الأبيض. المطلوب النهائي: الكاميرا تعدّي الكوبري والمدينة (المجسمات) وتوصل للوجو.","kind":"cg","status":"temp","look":"bw","label":"BRIDGE + CITY","work":["Render نهائي: كوبري ← مدينة ← لوجو على 3.88 ث","اللوجو مجسم ومتركّب بالروبوتات (مفيش حاجة بتطلع لوحدها)","اللوجو يبان كامل على كلمة «HRID» في الـ VO (26.18 ث)","Dark look + هيز","Comp + grade","شيل الـ label وصورة المرجع"],"dept":["3D","Comp","GFX","Grade"],"size":"XL","flags":[],"q":"","model":"proto","id":"SH15","f0":584,"f1":681,"vo":"In 2012, that vision became HRID,"},{"name":"Architect and the ladder","desc":"سيلويت المعماري بالمخططات الملفوفة على cyc أبيض، قدامه سلم، وبيخرج من شمال الكادر.","kind":"live","status":"wip","look":"bw","label":null,"work":["قرار السلم: يتساب، يتشال، ولا يتبدل بحاجة CG","تنضيف الـ cyc وحواف الكادر","Grade"],"dept":["Comp","Grade"],"size":"M","flags":[],"q":"السلم مقصود في الصورة، ولا مرجع هيتبدل؟","id":"SH16","f0":681,"f1":751,"vo":"building on decades of experience"},{"name":"Vesta Tower","desc":"Placeholder: إزاز غامق وانعكاسات نور، abstract. المطلوب النهائي: لقطة hero لـ Vesta Tower.","kind":"ai","status":"temp","look":"bw","label":"VESTA TOWER","work":["Keyframe لـ Vesta من فريمات المخرج","Seedance: المكان والـ keyframe كمراجع — مش start frame","كاميرا dynamic / handheld","Upscale + grade أبيض وأسود","شيل الـ label"],"dept":["AI","Grade"],"size":"L","flags":["مفيش 3D ولا CAD لـ Vesta"],"q":"","id":"SH17","f0":751,"f1":803,"vo":"to shape a new future for"},{"name":"Silos — wide","desc":"Placeholder: صف الصوامع مع الجبال والضباب، أبيض وأسود.","kind":"ai","status":"temp","look":"bw","label":"SILO","work":["لقطة AI نهائية للصوامع بحركة كاميرا","مطابقة شكل الصوامع الحقيقية (محتاجين صور الموقع)","Upscale + grade","شيل الـ label"],"dept":["AI","Grade"],"size":"M","flags":["مفيش 3D للصوامع"],"q":"","id":"SH18","f0":803,"f1":834,"vo":"Iraq. Trusted"},{"name":"Silo roof → iris","desc":"سقف الصومعة من فوق (شكله قزحية) وبيدوب في عين المهندسة.","kind":"ai","status":"wip","look":"bw","label":null,"work":["Match cut: محاذاة مركز وقطر السقف مع القزحية فريم بفريم","QC + upscale للقطة السقف"],"dept":["AI","Comp"],"size":"M","flags":[],"q":"","id":"SH19","f0":834,"f1":857,"vo":"public–private"},{"name":"Eye → the engineer, pull back","desc":"ماكرو على عين المهندسة والكاميرا بترجع لحد ما تبان كلها بالبالطو الأحمر على cyc أبيض. أول لقطة ملونة في الفيلم.","kind":"live","status":"final","look":"color","label":null,"work":["Paint out: سقف الاستوديو والـ rig فوق الكادر، والكرسي على الشمال في آخر اللقطة","تنضيف وتمديد الـ cyc","تنعيم الـ speed ramp","Grade: هنا التحول من أبيض وأسود لألوان","Dissolve نضيف لـ SH21"],"dept":["Comp","Grade"],"size":"M","flags":["سقف الاستوديو ظاهر فوق الكادر","كرسي ظاهر على شمال الكادر في آخر اللقطة"],"q":"","id":"SH20","f0":857,"f1":946,"vo":"partnerships. Sustainability as"},{"name":"Downtown Slemani — dive from the clouds","desc":"Placeholder: نزول من السحاب على أبراج دهبي. الأبراج AI عامة، مش تصميم Downtown الحقيقي.","kind":"mix","status":"temp","look":"color","label":"D.T. SLEMANI","work":["حركة الكاميرا من موديل DTS الحقيقي (Model Room)","Photoreal pass بالـ AI والـ 3D كمرجع","سحاب + comp مع الـ dissolve من SH20","Grade ملون","شيل الـ label"],"dept":["3D","AI","Comp","Grade"],"size":"L","flags":["الأبراج الحالية مش تصميم Downtown"],"q":"","model":"dts","as":{"note":"النزول من السحاب لحد ما تبص من فوق على Downtown","src":"/r/hrid/as/sh21_v1.mp4","v":1},"id":"SH21","f0":946,"f1":1026,"vo":"a standard. Connecting"},{"name":"Plaza crowd — the engineer in red","desc":"ناس ماشية في الساحة والمهندسة بالأحمر وسطهم. باين إنها AI.","kind":"ai","status":"wip","look":"color","label":null,"work":["QC للوشوش والإيدين في الكومبارس","مطابقة شكل الممثلة ولبسها مع SH20 و SH30","المكان يطابق ساحة Downtown","Upscale + grade","مقاس الكادر يتظبط على 1920×872"],"dept":["AI","Comp","Grade"],"size":"M","flags":["مقاس الكادر 1920×858 (2.24)"],"q":"","model":"dts","as":{"note":"مستوى العين قدام المبنى، ضهر الزحمة","src":"/r/hrid/as/sh22_v1.mp4","v":1},"id":"SH22","f0":1026,"f1":1074,"vo":"communities."},{"name":"Towers — top-down spin","desc":"Top-down بيلف بين الأبراج، ملعب كورة وأسطح المدينة تحت.","kind":"mix","status":"wip","look":"color","label":null,"work":["مطابقة الأبراج مع موديل DTS","QC للـ warping في المباني الصغيرة","Upscale + grade"],"dept":["3D","AI","Grade"],"size":"M","flags":[],"q":"","model":"dts","as":{"note":"من فوق بين الأبراج، طالع ولافف — مطابق للإيديت","src":"/r/hrid/as/sh23_v1.mp4","v":1},"id":"SH23","f0":1074,"f1":1146,"vo":"Rising higher than Iraq has ever seen."},{"name":"Plaza entrance — dusk","desc":"مدخل الساحة وقت الغروب: نخل، نافورة، عربية، ناس، والأبراج ورا.","kind":"ai","status":"wip","look":"color","label":null,"work":["مطابقة مع تصميم Downtown (البوديوم والساحة)","QC لحركة الناس","شعار العربية يتشال","Upscale + grade"],"dept":["AI","Comp","Grade"],"size":"M","flags":["شعار ماركة العربية ظاهر"],"q":"","model":"dts","as":{"note":"مدخل البلازا والأبراج ورا، شمس واطية","src":"/r/hrid/as/sh24_v1.mp4","v":1},"id":"SH24","f0":1146,"f1":1212,"vo":"Creating places to live, work"},{"name":"The boy — framing with his hand","desc":"الولد بيبص لفوق وبيعمل كادر بإيده، وضل بيعدّي على وشه.","kind":"live","status":"final","look":"color","label":null,"work":["تنضيف الخلفية (banding في الـ gradient)","Grade"],"dept":["Comp","Grade"],"size":"S","flags":[],"q":"","id":"SH25","f0":1212,"f1":1241,"vo":"and belong."},{"name":"SLEMANI sign — sunrise","desc":"كلمة SLEMANI على جبل Goizha والمدينة تحت، والشمس بتطلع.","kind":"mix","status":"wip","look":"color","label":null,"work":["مطابقة شكل الحروف مع الرسم المساحي الحقيقي","الجبل يمشي على شكل الموقع الحقيقي","QC للمدينة + upscale + grade"],"dept":["3D","AI","Grade"],"size":"M","flags":[],"q":"","model":"slemani","as":{"note":"الجبل والمدينة يمين، حروف SLEMANI تحت شمال — الكادر محتاج ضبط يدوي","src":"/r/hrid/as/sh26_v1.mp4","v":1},"id":"SH26","f0":1241,"f1":1292,"vo":"Honouring the identity of a city."},{"name":"The elder — low angle","desc":"الراجل الكبير من تحت، بيبتسم وبيبص لفوق.","kind":"live","status":"final","look":"color","label":null,"work":["Paint out: سقف الاستوديو فوق الكادر","Grade"],"dept":["Comp","Grade"],"size":"S","flags":["سقف الاستوديو ظاهر فوق الكادر"],"q":"","id":"SH27","f0":1292,"f1":1324,"vo":""},{"name":"Light on the walls","desc":"جوه مبنى غامق، بقع نور دافية بتتحرك على الحيطان والعمود.","kind":"ai","status":"wip","look":"color","label":null,"work":["الشريط الأسود تحت يمين الكادر يتصلح أو اللقطة تتعاد","Upscale + grade"],"dept":["AI","Comp"],"size":"S","flags":["شريط أسود صغير تحت يمين الصورة"],"q":"","id":"SH28","f0":1324,"f1":1349,"vo":"Opening possibilities"},{"name":"Look up — stone walls to the tower","desc":"من تحت بين حيطان حجر لبرج إزاز وسما.","kind":"ai","status":"wip","look":"color","label":null,"work":["مطابقة البرج مع Downtown","Upscale + grade"],"dept":["AI","Grade"],"size":"S","flags":[],"q":"","model":"dts","as":{"note":"من تحت لفوق على البرج، مايل","src":"/r/hrid/as/sh29_v1.mp4","v":1},"id":"SH29","f0":1349,"f1":1370,"vo":"for the"},{"name":"The engineer — close-up","desc":"كلوز على المهندسة بروفايل وبتبص لفوق.","kind":"live","status":"final","look":"color","label":null,"work":["Beauty خفيف","Grade"],"dept":["Comp","Grade"],"size":"S","flags":[],"q":"","id":"SH30","f0":1370,"f1":1394,"vo":"generations to"},{"name":"The boy — close-up","desc":"كلوز على الولد وبيبتسم للكاميرا.","kind":"live","status":"final","look":"color","label":null,"work":["Grade ومطابقة الخلفية مع SH25"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH31","f0":1394,"f1":1419,"vo":"come. Because"},{"name":"Lobby — people","desc":"لوبي بواجهة إزاز على الأبراج، ناس داخلة وخارجة.","kind":"ai","status":"wip","look":"color","label":null,"work":["QC لمشية الناس","مطابقة المعمار مع Downtown","Upscale + grade"],"dept":["AI","Grade"],"size":"M","flags":[],"q":"","id":"SH32","f0":1419,"f1":1447,"vo":"to shape a city"},{"name":"Towers and birds","desc":"برجين من تحت على سما تركواز وطيور.","kind":"ai","status":"wip","look":"color","label":null,"work":["مطابقة الأبراج مع موديل DTS","Upscale + grade"],"dept":["AI","Grade"],"size":"S","flags":[],"q":"","model":"dts","as":{"note":"برجين من تحت قدام السما","src":"/r/hrid/as/sh33_v1.mp4","v":1},"id":"SH33","f0":1447,"f1":1478,"vo":"is to make a promise"},{"name":"Towers — wide, haze","desc":"الأبراج واسعة في الضباب مع طيور والمدينة ورا.","kind":"ai","status":"wip","look":"color","label":null,"work":["الخلفية فيها مية ومارينا — السليمانية مفيهاش، تتعاد أو تتنضف","رقم «02» في الركن فوق شمال يتشال","مطابقة الأبراج مع موديل DTS","Upscale + grade"],"dept":["AI","Comp","Grade"],"size":"M","flags":["مية ومارينا في الخلفية","«02» ظاهرة في الركن فوق شمال"],"q":"","model":"dts","as":{"note":"صف الأبراج في الشبورة، عدسة طويلة — مطابق للإيديت","src":"/r/hrid/as/sh34_v1.mp4","v":1},"id":"SH34","f0":1478,"f1":1502,"vo":"to its future."},{"name":"Signing — ring in the foreground","desc":"إيد بخاتم في الـ foreground (out of focus) والمعماري بيوقّع في الخلفية.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade: رجوع للأبيض والأسود"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH35","f0":1502,"f1":1546,"vo":"A promise we put our"},{"name":"The signature","desc":"توقيع «Hiwa Rauf» بيكمل على الورقة جوه ماسك مقصوص الأركان، وبعدين fade للأسود.","kind":"live","status":"wip","look":"bw","label":null,"work":["قرار النهاية: التوقيع بس، ولا يتحول للوجو HRID","End card: اللوجو + أي سطر قانوني أو موقع","تنضيف الماسك وحوافه","Grade"],"dept":["GFX","Comp","Grade"],"size":"M","flags":["مفيش end logo في v07"],"q":"النهاية: التوقيع بس، ولا لازم يتحول للوجو HRID زي الـ treatment؟","id":"SH36","f0":1546,"f1":1609,"vo":"name to."}]}</script>
 <script>
 (function(){
 'use strict';
@@ -430,7 +464,8 @@ var ICON={
  qmark:'<path d="M21 12a8.5 8.5 0 0 1-12.7 7.4L3 21l1.6-5.3A8.5 8.5 0 1 1 21 12z"/><path d="M9.8 9.6a2.4 2.4 0 0 1 4.6.8c0 1.6-2.3 1.8-2.3 3.2"/><path d="M12 16.3h.01"/>',
  hand:'<path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10"/><path d="M12 10V8.5a1.5 1.5 0 0 1 3 0V11"/><path d="M15 11v-.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7L3.8 15a1.5 1.5 0 0 1 2.5-1.7L9 16V11"/>',
  eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
- list:'<path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/>'
+ list:'<path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/>',
+ eyeoff:'<path d="M3 3l18 18"/><path d="M10.6 5.1A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.1 3.9"/><path d="M6.1 6.1C3.4 8 2 12 2 12s3.6 7 10 7a9.6 9.6 0 0 0 4.9-1.4"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>'
 };
 function ico(n,cls){ return '<svg class="i'+(cls?' '+cls:'')+'" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+(ICON[n]||'')+'</svg>'; }
 [].forEach.call(document.querySelectorAll('[data-ico]'),function(el){ el.outerHTML=ico(el.getAttribute('data-ico'),el.getAttribute('data-cls')||''); });
@@ -441,8 +476,15 @@ function tile(i){ var c=i%COLS, r=Math.floor(i/COLS);
 var IDX={}; S.forEach(function(s,i){IDX[s.id]=i;});
 function idchip(id){ return '<button type="button" class="idc" data-go="'+esc(id)+'">'+esc(id)+'</button>'; }
 function pill(k){ return '<span class="pill" style="--c:'+sc(k)+'">'+ico(SI[k]||'check')+esc(stName(k))+'</span>'; }
-function hasAS(s){ return !!(s&&s.as&&s.as.src); }
-var anyAS=S.some(hasAS);
+/* layers: every thing we add to a shot (Auto stage, Seedance, ...) is a track under the edit */
+var LY=(D.layers||[]).filter(function(l){ return l&&l.key; }), LK={};
+LY.forEach(function(l,i){ LK[l.key]=l; if(!l.code) l.code='V'+(i+2); });
+function clipOf(s,k){ var c=s&&k?s[k]:null; return (c&&c.src)?c:null; }
+function lcount(k){ var n=0; S.forEach(function(s){ if(clipOf(s,k)) n++; }); return n; }
+var anyAS=LY.some(function(l){ return lcount(l.key)>0; });
+var cmpL=store('cmpL'); if(!LK[cmpL]||!lcount(cmpL)){ cmpL=null; LY.some(function(l){ if(lcount(l.key)){ cmpL=l.key; return true; } }); if(!cmpL&&LY.length) cmpL=LY[0].key; }
+function hasAS(s){ return !!clipOf(s,cmpL); }
+function lname(k){ return (LK[k]&&LK[k].label)||k; }
 
 /* ---------- title bar + footer ---------- */
 $('h1').textContent=M.project||'HRID';
@@ -467,12 +509,26 @@ measure(); addEventListener('resize',measure); addEventListener('load',measure);
 try{ var ro=new ResizeObserver(measure); ro.observe(deck); ro.observe(topEl); }catch(e){}
 
 /* ---------- timeline ---------- */
-var strip=$('strip'), ph=$('ph'), tip=$('tip'), blks=[];
+var strip=$('strip'), ph=$('ph'), tip=$('tip'), tracks=$('tracks'), blks=[], clipEls={}, trkEls={}, hidL=store('hidL')||{};
+if(typeof hidL!=='object'||!hidL) hidL={};
 (function(){
   var frag=document.createDocumentFragment();
   S.forEach(function(s){ var b=document.createElement('i'); b.className='blk'+(s.model?' mdl':''); b.style.cssText='flex:'+(s.f1-s.f0)+' 1 0;--sc:'+sc(s.status);
     b.innerHTML='<b>'+esc(String(s.id).replace(/^\D+/,''))+'</b>'+(s.model?ico('building'):''); frag.appendChild(b); blks.push(b); });
-  strip.insertBefore(frag,ph);
+  strip.appendChild(frag);
+  $('v1ct').textContent=S.length; if(M.edit) $('v1nm').parentNode.title='V1 · الإيديت '+M.edit+' — دوس تشوف الإيديت لوحده';
+  LY.forEach(function(L){
+    var t=document.createElement('div'), n=0, h='';
+    t.className='trk'+(hidL[L.key]?' hid':''); t.dataset.k=L.key; if(L.color) t.style.setProperty('--lc',L.color);
+    clipEls[L.key]=[];
+    S.forEach(function(s,i){ var c=clipOf(s,L.key); if(!c) return; n++;
+      h+='<i class="clip" data-i="'+i+'" style="left:'+(s.f0/FRAMES*100)+'%;width:'+((s.f1-s.f0)/FRAMES*100)+'%" title="'+esc(s.id+' · '+L.label+(c.v!=null?' v'+c.v:''))+'"><b>'+esc(String(s.id).replace(/^\D+/,''))+(c.v!=null?'<small> v'+esc(c.v)+'</small>':'')+'</b></i>'; });
+    t.innerHTML='<div class="hd" role="button" tabindex="0" title="'+esc(L.label+(L.note?' — '+L.note:'')+' · دوس تعرضه جنب الإيديت')+'"><span class="code">'+esc(L.code)+'</span>'+ico(L.icon||'layers')+'<span class="nm">'+esc(L.label)+'</span><span class="ct">'+n+'</span><button type="button" class="eye" aria-label="إظهار / إخفاء التراك" title="إظهار / إخفاء التراك">'+ico(hidL[L.key]?'eyeoff':'eye')+'</button></div>'
+      +'<div class="lane">'+(n?h:'<span class="lempty">'+esc(L.empty||'لسه مفيش كليبات على التراك ده')+'</span>')+'</div>';
+    tracks.insertBefore(t,ph);
+    [].forEach.call(t.querySelectorAll('.clip'),function(el){ clipEls[L.key][+el.dataset.i]=el; });
+    trkEls[L.key]=t;
+  });
   var r='',step=DUR>40?10:5; for(var t=0;t<=DUR;t+=step) r+='<span style="left:'+(t/DUR*100)+'%">'+t+'s</span>';
   $('ruler').innerHTML=r;
   var lg=''; Object.keys(ST).length?Object.keys(ST).forEach(add):['final','wip','temp'].forEach(add);
@@ -480,7 +536,10 @@ var strip=$('strip'), ph=$('ph'), tip=$('tip'), blks=[];
   if(S.some(function(s){return s.model;})) lg+='<span>'+ico('building')+'مبانينا</span>';
   $('legend').innerHTML=lg;
 })();
-function fitLabels(){ blks.forEach(function(b){ var w=b.offsetWidth; b.firstChild.style.display=w>=21?'':'none'; var sv=b.lastChild; if(sv&&sv.tagName&&sv.tagName.toLowerCase()==='svg') sv.style.display=w>=40?'':'none'; }); }
+function fitLabels(){ blks.forEach(function(b){ var w=b.offsetWidth; b.firstChild.style.display=w>=21?'':'none'; var sv=b.lastChild; if(sv&&sv.tagName&&sv.tagName.toLowerCase()==='svg') sv.style.display=w>=40?'':'none'; });
+  Object.keys(clipEls).forEach(function(k){ clipEls[k].forEach(function(c){ if(!c) return; var w=c.offsetWidth, b=c.firstChild; b.style.display=w>=18?'':'none'; var sm=b.querySelector('small'); if(sm) sm.style.display=w>=44?'':'none'; }); }); }
+function markLayers(){ Object.keys(trkEls).forEach(function(k){ trkEls[k].classList.toggle('act',cmp&&k===cmpL); }); tracks.querySelector('.trk.v1').classList.toggle('act',!cmp); }
+function setHid(k,on){ if(on) hidL[k]=1; else delete hidL[k]; store('hidL',hidL); var t=trkEls[k]; if(!t) return; t.classList.toggle('hid',!!on); t.querySelector('.eye').innerHTML=ico(on?'eyeoff':'eye'); measure(); fitLabels(); }
 window.addEventListener('resize',fitLabels);
 
 /* ---------- shot list ---------- */
@@ -491,12 +550,12 @@ var rowsEl=$('rows'), rowEls=[], openIdx=-1;
     var fr=s.f1-s.f0, fl=s.flags||[], z=SZ[s.size], tags='';
     if(s.size) tags+='<span class="tg" title="الحجم والوقت التقديري">'+ico('clock')+'<b>'+esc(s.size)+'</b>'+(z&&z.time?esc(z.time):'')+'</span>';
     if(s.model) tags+='<span class="tg mdl" title="الشوت ده على موديل من مبانينا">'+ico('building')+esc(mdLabel(s.model))+'</span>';
-    if(hasAS(s)) tags+='<span class="tg as" title="فيه Auto stage للشوت ده">'+ico('compare')+'Auto stage'+(s.as.v!=null?' <bdi>v'+esc(s.as.v)+'</bdi>':'')+'</span>';
+    LY.forEach(function(L){ var c=clipOf(s,L.key); if(c) tags+='<span class="tg as" style="--lc:'+esc(L.color||'#38BDF8')+'" title="فيه '+esc(L.label)+' للشوت ده">'+ico(L.icon||'layers')+esc(L.label)+(c.v!=null?' <bdi>v'+esc(c.v)+'</bdi>':'')+'</span>'; });
     if(s.q) tags+='<span class="tg q" title="'+esc(s.q)+'">'+ico('qmark')+'سؤال</span>';
     if(fl.length) tags+='<span class="tg" title="'+esc(fl.join(' · '))+'">'+ico('flag')+'<bdi>'+fl.length+'</bdi></span>';
     var notes=(s.q?'<div class="qbox">'+ico('qmark')+'<span>'+esc(s.q)+'</span></div>':'')
       +(fl.length?'<ul class="fnote">'+fl.map(function(f){return '<li>'+esc(f)+'</li>';}).join('')+'</ul>':'')
-      +(hasAS(s)?'<div class="asnote">'+ico('compare')+'<span><b>Auto stage'+(s.as.v!=null?' v'+esc(s.as.v):'')+'</b>'+(s.as.note?' — '+esc(s.as.note):'')+'</span></div>':'');
+      +LY.map(function(L){ var c=clipOf(s,L.key); return c?'<div class="asnote" style="--lc:'+esc(L.color||'#38BDF8')+'">'+ico(L.icon||'layers')+'<span><b>'+esc(L.code+' · '+L.label)+(c.v!=null?' v'+esc(c.v):'')+'</b>'+(c.note?' — '+esc(c.note):'')+'</span></div>':''; }).join('');
     h+='<article class="row" data-i="'+i+'" style="--sc:'+sc(s.status)+'">'
       +'<div class="rh" role="button" tabindex="0" aria-expanded="false" aria-label="'+esc(s.id+' '+(s.name||''))+'">'
         +'<div class="th" style="'+tile(i)+'">'+(s.label?'<span class="onlab">'+esc(s.label)+'</span>':'')+'</div>'
@@ -592,26 +651,26 @@ function toRow(i){
 
 /* ---------- player ---------- */
 var v=$('v'), av=$('av'), stage=$('stage'), frame=$('frame'), asframe=$('asframe');
-var cur=-1, loopIdx=-1, loop=!!store('loop'), failed=false, listHover=false, pendingT=null, pip=false, cmp=false, asIdx=-1, asBad=false;
+var cur=-1, loopIdx=-1, loop=!!store('loop'), failed=false, listHover=false, pendingT=null, pip=false, cmp=false, asIdx='', asBad=false;
 var RATES=[1,0.5,0.25], rateI=0;
 function nowT(){ return (pendingT!=null)?pendingT:(v.currentTime||0); }
 function frameNow(){ return Math.min(FRAMES-1,Math.max(0,Math.floor(nowT()*FPS+1e-3))); }
 function shotAt(f){ var lo=0,hi=S.length-1; while(lo<hi){ var m=(lo+hi+1)>>1; if(S[m].f0<=f) lo=m; else hi=m-1; } return lo; }
 function setShot(i,playing){
-  if(i===cur) return; if(cur>=0){ blks[cur].classList.remove('cur'); rowEls[cur].classList.remove('cur'); }
-  cur=i; var s=S[i]; blks[i].classList.add('cur'); rowEls[i].classList.add('cur');
+  if(i===cur) return; if(cur>=0){ blks[cur].classList.remove('cur'); rowEls[cur].classList.remove('cur'); Object.keys(clipEls).forEach(function(k){ var c=clipEls[k][cur]; if(c) c.classList.remove('cur'); }); }
+  cur=i; var s=S[i]; blks[i].classList.add('cur'); rowEls[i].classList.add('cur'); Object.keys(clipEls).forEach(function(k){ var c=clipEls[k][i]; if(c) c.classList.add('cur'); });
   $('tc-s').textContent=s.id; $('now-n').textContent=s.name||''; $('now-st').innerHTML=pill(s.status);
   $('hud-id').textContent=s.id; var hl=$('hud-lab'); hl.hidden=!s.label; hl.textContent=s.label||'';
   $('vo').innerHTML=s.vo?ico('mic')+'<span>'+esc(s.vo)+'</span>':'';
   $('poster').style.cssText=tile(i);
-  if(anyAS){ var b=$('b-cmp'), ok=hasAS(s); b.classList.toggle('off',!ok&&!cmp); b.title=ok?'الإيديت جنب الـ Auto stage بتاع الموديل':'الشوت ده ملوش Auto stage لسه'; }
+  if(anyAS){ var b=$('b-cmp'), ok=hasAS(s); b.classList.toggle('off',!ok&&!cmp); b.title=ok?'الإيديت جنب '+lname(cmpL):'الشوت ده ملوش '+lname(cmpL)+' لسه'; }
   syncAS();
   /* while it plays and the list is what is on screen, keep the current row in view */
   if(playing&&follow&&pip&&!listHover&&!rowEls[i].hidden){ var r=rowEls[i].getBoundingClientRect(); if(r.top<deck.offsetHeight+4||r.bottom>window.innerHeight-8) rowEls[i].scrollIntoView({block:'nearest',behavior:reduce?'auto':'smooth'}); }
 }
 function paint(){
   var t=nowT(), f=frameNow();
-  $('tc').textContent=tc(f); ph.style.left=Math.min(100,Math.max(0,t/DUR*100))+'%';
+  $('tc').textContent=tc(f); ph.style.setProperty('--p',Math.min(1,Math.max(0,t/DUR)));
   setShot(shotAt(f),!v.paused);
 }
 function seek(t,keepLoop){
@@ -633,17 +692,22 @@ function step(d){ var f=frameNow(), i=shotAt(f), to=(d<0)?((f-S[i].f0>12)?i:Math
 /* Auto stage take beside the edit: a second, muted video kept in step with the main one */
 function setCmp(on){
   cmp=!!on&&anyAS; stage.classList.toggle('cmp',cmp); var b=$('b-cmp'); b.classList.toggle('on',cmp); b.setAttribute('aria-pressed',cmp);
-  b.lastChild.textContent=cmp?'الإيديت بس':'قارن بالموديل';
+  b.lastChild.textContent=cmp?'الإيديت بس':'قارن · '+lname(cmpL);
   if(cur>=0) b.classList.toggle('off',!hasAS(S[cur])&&!cmp);
   if(!cmp){ try{ av.pause(); }catch(e){} }
-  syncAS(); measure();
+  markLayers(); syncAS(); measure();
 }
+function setLayer(k){ if(!LK[k]) return; cmpL=k; store('cmpL',k); asIdx=''; var b=$('b-cmp'); if(!cmp) b.lastChild.textContent='قارن · '+lname(k);
+  if(cur>=0){ var ok=hasAS(S[cur]); b.classList.toggle('off',!ok&&!cmp); b.title=ok?'الإيديت جنب '+lname(k):'الشوت ده ملوش '+lname(k)+' لسه'; }
+  markLayers(); syncAS(); }
 function syncAS(){
   if(!cmp) return;
   var s=cur>=0?S[cur]:null;
-  if(!hasAS(s)){ asframe.classList.add('none'); $('as-msg').textContent='مفيش Auto stage للشوت ده'; if(!av.paused) av.pause(); asIdx=-1; return; }
-  if(asIdx!==cur){ asIdx=cur; asBad=false; av.src=s.as.src; $('as-tag').textContent='Auto stage'+(s.as.v!=null?' · v'+s.as.v:'')+(s.model?' · '+mdLabel(s.model):''); }
-  if(asBad){ asframe.classList.add('none'); $('as-msg').textContent='الـ Auto stage بتاع الشوت ده مش راضي يحمّل.'; return; }
+  var c=clipOf(s,cmpL), L=LK[cmpL]||{};
+  if(!c){ asframe.classList.add('none'); $('as-msg').textContent='مفيش '+lname(cmpL)+' للشوت ده لسه'; if(!av.paused) av.pause(); asIdx=''; return; }
+  var key=cur+'|'+cmpL;
+  if(asIdx!==key){ asIdx=key; asBad=false; av.src=c.src; $('as-tag').textContent=(L.code?L.code+' · ':'')+lname(cmpL)+(c.v!=null?' · v'+c.v:'')+(cmpL==='as'&&s.model?' · '+mdLabel(s.model):''); }
+  if(asBad){ asframe.classList.add('none'); $('as-msg').textContent=lname(cmpL)+' بتاع الشوت ده مش راضي يحمّل.'; return; }
   asframe.classList.remove('none');
   if(av.readyState<1) return;
   var d=av.duration||0, t=Math.max(0,nowT()-s.f0/FPS); if(d) t=Math.min(t,Math.max(0,d-0.03));
@@ -653,7 +717,7 @@ function syncAS(){
   if(!v.paused&&!atEnd){ if(av.paused){ var p=av.play(); if(p&&p.catch) p.catch(function(){}); } }
   else if(!av.paused) av.pause();
 }
-av.addEventListener('error',function(){ if(asIdx>=0){ asBad=true; syncAS(); } });
+av.addEventListener('error',function(){ if(asIdx){ asBad=true; syncAS(); } });
 av.addEventListener('loadedmetadata',syncAS);
 
 function tick(){
@@ -682,7 +746,8 @@ $('b-rate').addEventListener('click',function(){ setRate(rateI+1); });
 $('b-follow').addEventListener('click',function(){ setFollow(!follow); });
 $('b-cmp').addEventListener('click',function(){ setCmp(!cmp); });
 $('pipup').addEventListener('click',function(e){ e.stopPropagation(); window.scrollTo({top:0,behavior:reduce?'auto':'smooth'}); });
-if(anyAS) $('b-cmp').hidden=false;
+if(anyAS){ $('b-cmp').hidden=false; $('b-cmp').lastChild.textContent='قارن · '+lname(cmpL); }
+markLayers();
 
 /* the big picture left the screen -> keep it playing in the corner */
 if('IntersectionObserver' in window){
@@ -692,17 +757,33 @@ if('IntersectionObserver' in window){
 
 /* timeline: click or drag picks the part of the edit; on release the list goes to that shot and opens it */
 (function(){
-  var drag=false, hov=-1;
+  var drag=false, hov=-1, hovK='', downK=null;
   function at(e){ var r=strip.getBoundingClientRect(); return Math.min(1,Math.max(0,(e.clientX-r.left)/r.width)); }
-  function tipAt(e){ var x=at(e), i=shotAt(Math.min(FRAMES-1,Math.floor(x*FRAMES))), s=S[i];
-    if(hov!==i){ if(hov>=0) blks[hov].classList.remove('hov'); hov=i; blks[i].classList.add('hov'); }
-    tip.hidden=false; tip.innerHTML='<bdi class="mono">'+esc(s.id)+'</bdi> · <bdi>'+esc(s.name||'')+'</bdi> · '+esc(stName(s.status))+' · <bdi>'+secs(s.f1-s.f0)+'</bdi> ث';
-    var w=strip.clientWidth, half=tip.offsetWidth/2; tip.style.left=Math.min(w-half,Math.max(half,x*w))+'px'; }
-  function clr(){ tip.hidden=true; if(hov>=0){ blks[hov].classList.remove('hov'); hov=-1; } }
-  strip.addEventListener('pointerdown',function(e){ if(e.button!=null&&e.button>0) return; drag=true; try{ strip.setPointerCapture(e.pointerId); }catch(x){} seek(at(e)*DUR); tipAt(e); e.preventDefault(); });
-  strip.addEventListener('pointermove',function(e){ tipAt(e); if(drag) seek(at(e)*DUR); });
-  function up(e,cancelled){ if(drag){ drag=false; try{ strip.releasePointerCapture(e.pointerId); }catch(x){} if(!cancelled&&cur>=0){ if(follow) toRow(cur); else if(!rowEls[cur].hidden) openRow(cur); } } if(e.pointerType!=='mouse') clr(); }
-  strip.addEventListener('pointerup',function(e){ up(e,false); }); strip.addEventListener('pointercancel',function(e){ up(e,true); }); strip.addEventListener('pointerleave',function(){ if(!drag) clr(); });
+  function laneK(e){ var t=e.target.closest&&e.target.closest('.trk'); return t?(t.dataset.k||''):null; }
+  function tipAt(e,k){ var x=at(e), i=shotAt(Math.min(FRAMES-1,Math.floor(x*FRAMES))), s=S[i];
+    if(k==null) k=hovK;
+    if(hov!==i||hovK!==k){ unhov(); hov=i; hovK=k; blks[i].classList.add('hov'); var c=k&&clipEls[k]&&clipEls[k][i]; if(c) c.classList.add('hov'); }
+    var c2=k?clipOf(s,k):null;
+    tip.hidden=false; tip.innerHTML='<bdi class="mono">'+esc(s.id)+'</bdi> · <bdi>'+esc(s.name||'')+'</bdi> · '+(k?(c2?'<b>'+esc(lname(k))+(c2.v!=null?' v'+esc(c2.v):'')+'</b> — دوس تعرضه':'مفيش '+esc(lname(k))+' هنا'):esc(stName(s.status)))+' · <bdi>'+secs(s.f1-s.f0)+'</bdi> ث';
+    var tl=$('tl').getBoundingClientRect(), sr=strip.getBoundingClientRect(), w=sr.width, half=tip.offsetWidth/2, off=sr.left-tl.left;
+    tip.style.top=(tracks.offsetHeight+6)+'px';
+    tip.style.left=(off+Math.min(w-half,Math.max(half,x*w)))+'px'; }
+  function unhov(){ if(hov>=0){ blks[hov].classList.remove('hov'); if(hovK&&clipEls[hovK]&&clipEls[hovK][hov]) clipEls[hovK][hov].classList.remove('hov'); } hov=-1; hovK=''; }
+  function clr(){ tip.hidden=true; unhov(); }
+  tracks.addEventListener('pointerdown',function(e){ if(e.button!=null&&e.button>0) return; if(e.target.closest('.hd')) return; downK=laneK(e); drag=true; try{ tracks.setPointerCapture(e.pointerId); }catch(x){} seek(at(e)*DUR); tipAt(e,downK); e.preventDefault(); });
+  tracks.addEventListener('pointermove',function(e){ if(!drag&&e.target.closest('.hd')){ clr(); return; } tipAt(e,drag?downK:laneK(e)); if(drag) seek(at(e)*DUR); });
+  function up(e,cancelled){ if(drag){ drag=false; try{ tracks.releasePointerCapture(e.pointerId); }catch(x){}
+      if(!cancelled&&cur>=0){ if(downK&&clipOf(S[cur],downK)){ setLayer(downK); if(!cmp) setCmp(true); } if(follow) toRow(cur); else if(!rowEls[cur].hidden) openRow(cur); } downK=null; }
+    if(e.pointerType!=='mouse') clr(); }
+  tracks.addEventListener('pointerup',function(e){ up(e,false); }); tracks.addEventListener('pointercancel',function(e){ up(e,true); }); tracks.addEventListener('pointerleave',function(){ if(!drag) clr(); });
+  /* track heads: the name picks what shows beside the edit (V1 = the edit alone); the eye folds the track */
+  function headAct(hd){ var t=hd.parentNode, k=t.dataset.k||'';
+    if(!k){ setCmp(false); return; }
+    if(cmp&&cmpL===k){ setCmp(false); return; }
+    setLayer(k); if(trkEls[k].classList.contains('hid')) setHid(k,false); if(anyAS) setCmp(true); }
+  tracks.addEventListener('click',function(e){ var eye=e.target.closest('.eye'); if(eye){ e.stopPropagation(); var k=eye.closest('.trk').dataset.k; setHid(k,!hidL[k]); return; }
+    var hd=e.target.closest('.hd'); if(hd) headAct(hd); });
+  tracks.addEventListener('keydown',function(e){ if((e.key==='Enter'||e.key===' ')&&e.target.classList&&e.target.classList.contains('hd')){ e.preventDefault(); headAct(e.target); } });
 })();
 
 /* rows: a click opens the breakdown and plays the shot on a loop; a click on the open row closes it */
@@ -727,6 +808,7 @@ document.addEventListener('keydown',function(e){
   else if(k==='ArrowLeft'){ e.preventDefault(); step(-1); }
   else if(k==='l'||k==='L'||k==='م'){ setLoop(!loop); }
   else if(k==='m'||k==='M'||k==='ة'){ setMute(!v.muted); }
+  else if((k==='c'||k==='C'||k==='ؤ')&&anyAS){ setCmp(!cmp); }
 });
 
 ppState(); setLoop(loop); setMute(false); setRate(0); setFollow(follow); paint(); fitLabels(); measure(); requestAnimationFrame(tick);
