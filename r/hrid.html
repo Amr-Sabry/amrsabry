@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -8,7 +8,7 @@
 <title>HRID · Director Room</title>
 <link rel="icon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap">
 <style>
 /* Layout: slim title bar; the edit across the full screen width; a transport + timeline bar that sticks to the top;
    one row of filter tabs; then the shot list. Rows are compact and open one at a time for the full breakdown.
@@ -18,7 +18,7 @@
   --bg:#0A0A0F; --card:#11131b; --card2:#171a25; --line:rgba(240,240,239,.08); --line2:rgba(240,240,239,.18);
   --text:#F0F0EF; --soft:#c9c9c7; --mute:#8d8d93; --dim:#5b5b64;
   --red:#EF4122; --orange:#FF6B35; --green:#4CAF50; --yellow:#F5B301;
-  --f:'IBM Plex Sans Arabic',system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif;
+  --f:'IBM Plex Sans','IBM Plex Sans Arabic',system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif;
   --m:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   --px:max(24px,env(safe-area-inset-left,0px));
   color-scheme:dark;
@@ -56,7 +56,7 @@ h1{margin:0;font-size:19px;line-height:1.3;font-weight:700}
 .bigplay{position:absolute;inset:0;margin:auto;width:80px;height:80px;border-radius:50%;border:1px solid rgba(255,255,255,.45);background:rgba(10,10,15,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:grid;place-items:center;color:#fff}
 .bigplay svg{width:30px;height:30px;margin-left:4px}
 .stage.playing .bigplay{display:none}
-.verr{position:absolute;left:16px;right:16px;bottom:16px;background:rgba(15,17,23,.92);border:1px solid rgba(239,65,34,.6);border-radius:8px;padding:8px 16px;font-size:13px;color:#ffb4a6;direction:rtl;text-align:start}
+.verr{position:absolute;left:16px;right:16px;bottom:16px;background:rgba(15,17,23,.92);border:1px solid rgba(239,65,34,.6);border-radius:8px;padding:8px 16px;font-size:13px;color:#ffb4a6;direction:ltr;text-align:start}
 .hud{position:absolute;top:12px;left:16px;display:flex;gap:8px;pointer-events:none}
 .hud span,.flab{font-family:var(--m);font-size:12px;background:rgba(10,10,15,.72);border:1px solid rgba(255,255,255,.16);border-radius:4px;padding:0 8px;color:#fff;line-height:22px}
 .hud .lab{color:#ffb199;border-color:rgba(239,65,34,.6)}
@@ -69,7 +69,7 @@ h1{margin:0;font-size:19px;line-height:1.3;font-weight:700}
 .stage.cmp .flab{display:block}
 .stage.cmp::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--bg);pointer-events:none}
 .asframe video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;display:block}
-.asnone{position:absolute;inset:0;display:none;place-items:center;align-content:center;justify-items:center;gap:8px;color:var(--mute);font-size:14px;direction:rtl;text-align:center;padding:16px}
+.asnone{position:absolute;inset:0;display:none;place-items:center;align-content:center;justify-items:center;gap:8px;color:var(--mute);font-size:14px;direction:ltr;text-align:center;padding:16px}
 .asnone svg{width:28px;height:28px}
 .asframe.none video{visibility:hidden}
 .asframe.none .asnone{display:grid}
@@ -78,7 +78,7 @@ h1{margin:0;font-size:19px;line-height:1.3;font-weight:700}
 .frame.pip{position:fixed;top:auto;left:16px;bottom:16px;transform:none;height:auto;width:min(400px,46vw);z-index:25;border-radius:8px;border:1px solid var(--line2);box-shadow:0 16px 48px rgba(0,0,0,.7)}
 .frame.pip .bigplay{width:44px;height:44px}.frame.pip .bigplay svg{width:18px;height:18px;margin-left:2px}
 .frame.pip .hud{top:8px;left:8px}.frame.pip .flab{display:none}
-.pipup{position:absolute;top:8px;right:8px;height:28px;padding:0 10px;border-radius:6px;border:1px solid rgba(255,255,255,.3);background:rgba(10,10,15,.78);color:#fff;font-size:12px;display:inline-flex;align-items:center;gap:6px;direction:rtl}
+.pipup{position:absolute;top:8px;right:8px;height:28px;padding:0 10px;border-radius:6px;border:1px solid rgba(255,255,255,.3);background:rgba(10,10,15,.78);color:#fff;font-size:12px;display:inline-flex;align-items:center;gap:6px;direction:ltr}
 .pipup:hover{border-color:var(--orange)}
 .pipup svg{width:14px;height:14px}
 
@@ -86,7 +86,7 @@ h1{margin:0;font-size:19px;line-height:1.3;font-weight:700}
 .deck{position:sticky;top:0;z-index:30;background:rgba(12,13,19,.97);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line2);padding:6px var(--px) 6px;display:grid;gap:6px;direction:ltr}
 .tr{display:flex;align-items:center;gap:8px 16px;min-width:0}
 .grp{display:flex;align-items:center;gap:4px;flex:none}
-.tb{display:grid;justify-items:center;align-content:center;gap:2px;min-width:60px;height:48px;padding:3px 8px;border-radius:10px;color:var(--soft);flex:none;direction:rtl}
+.tb{display:grid;justify-items:center;align-content:center;gap:2px;min-width:60px;height:48px;padding:3px 8px;border-radius:10px;color:var(--soft);flex:none;direction:ltr}
 .tb>svg,.tb .ic svg{width:20px;height:20px}
 .tb>span:last-child{font-size:11.5px;line-height:1.3;white-space:nowrap}
 .tb:hover{background:#1b1e2b;color:#fff}
@@ -131,7 +131,7 @@ h1{margin:0;font-size:19px;line-height:1.3;font-weight:700}
 .clip b{position:absolute;left:4px;top:50%;transform:translateY(-50%);font-family:var(--m);font-size:9.5px;font-weight:600;color:#0A0A0F;pointer-events:none;white-space:nowrap}
 .clip.hov{opacity:.8}
 .clip.cur{opacity:1;box-shadow:0 0 0 1.5px #fff}
-.lempty{position:absolute;inset:0;display:flex;align-items:center;padding:0 10px;font-size:11px;color:var(--dim);direction:rtl;white-space:nowrap;overflow:hidden;pointer-events:none}
+.lempty{position:absolute;inset:0;display:flex;align-items:center;padding:0 10px;font-size:11px;color:var(--dim);direction:ltr;white-space:nowrap;overflow:hidden;pointer-events:none}
 .strip{position:relative;display:flex;height:100%;border-radius:6px;overflow:hidden;background:#12141c}
 .blk{position:relative;min-width:0;height:100%;background:var(--sc);opacity:.5;box-shadow:inset 1px 0 0 var(--bg);overflow:hidden;transition:opacity .12s}
 .blk b{position:absolute;left:5px;bottom:3px;font-family:var(--m);font-size:10.5px;font-weight:500;color:#fff;pointer-events:none}
@@ -145,8 +145,8 @@ h1{margin:0;font-size:19px;line-height:1.3;font-weight:700}
 .ruler{position:relative;height:14px;font-family:var(--m);font-size:10px;color:var(--dim);margin-left:calc(var(--hw) + 6px)}
 .ruler span{position:absolute;top:2px;transform:translateX(-50%)}
 .ruler span:first-child{transform:none}
-.tip{position:absolute;top:48px;transform:translateX(-50%);background:#fff;color:#0A0A0F;border-radius:6px;padding:4px 10px;font-size:12.5px;font-weight:500;white-space:nowrap;pointer-events:none;z-index:3;max-width:min(420px,92%);overflow:hidden;text-overflow:ellipsis;direction:rtl}
-.under{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 24px;direction:rtl;font-size:12.5px;color:var(--mute);min-height:22px}
+.tip{position:absolute;top:48px;transform:translateX(-50%);background:#fff;color:#0A0A0F;border-radius:6px;padding:4px 10px;font-size:12.5px;font-weight:500;white-space:nowrap;pointer-events:none;z-index:3;max-width:min(420px,92%);overflow:hidden;text-overflow:ellipsis;direction:ltr}
+.under{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 24px;direction:ltr;font-size:12.5px;color:var(--mute);min-height:22px}
 .howto{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px}
 .howto span{display:inline-flex;align-items:center;gap:6px;color:var(--soft)}
 .howto svg{width:15px;height:15px;color:var(--orange)}
@@ -157,7 +157,7 @@ h1{margin:0;font-size:19px;line-height:1.3;font-weight:700}
 .legend{display:flex;flex-wrap:wrap;align-items:center;gap:4px 16px;margin-inline-start:auto}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .legend svg{width:14px;height:14px;color:var(--c,#fff)}
-.pop{position:absolute;top:60px;right:var(--px);width:min(340px,calc(100vw - 32px));background:#1a1d29;border:1px solid var(--line2);border-radius:12px;padding:16px;box-shadow:0 20px 60px rgba(0,0,0,.6);direction:rtl;z-index:40;font-size:13.5px;display:grid;gap:8px}
+.pop{position:absolute;top:60px;right:var(--px);width:min(340px,calc(100vw - 32px));background:#1a1d29;border:1px solid var(--line2);border-radius:12px;padding:16px;box-shadow:0 20px 60px rgba(0,0,0,.6);direction:ltr;z-index:40;font-size:13.5px;display:grid;gap:8px}
 .pop h3{margin:0 0 4px;font-size:14px}
 .pop p{margin:0;display:flex;gap:10px;align-items:baseline;color:var(--soft)}
 .pop kbd{font-family:var(--m);font-size:11.5px;border:1px solid var(--line2);border-radius:5px;padding:0 6px;color:#fff;background:#0f1118;flex:none;min-width:30px;text-align:center}
@@ -324,13 +324,13 @@ h1{margin:0;font-size:19px;line-height:1.3;font-weight:700}
 </head>
 <body>
 <div class="boot" id="boot" role="status" aria-live="polite"><div class="bx">
-  <p class="bt">بيحمّل الإيديت وكل اللايرز</p>
-  <p class="bs">بنحمّل كل الفيديوهات الأول، عشان التشغيل والمقارنة ما يقطعوش.</p>
+  <p class="bt">Loading the edit and every layer</p>
+  <p class="bs">All the videos load first, so playback and the comparison never stall.</p>
   <div class="bar" id="boot-bar"><i></i></div>
   <div class="row"><span class="mono" id="boot-sz">…</span><span class="mono" id="boot-pct">0%</span></div>
-  <div class="row"><span></span><button type="button" class="skip" id="boot-skip">ابدأ من غير ما تستنى</button></div>
+  <div class="row"><span></span><button type="button" class="skip" id="boot-skip">Start without waiting</button></div>
 </div></div>
-<div class="upd" id="upd" hidden>نزل تحديث جديد · بيتحمّل…<button type="button" id="upd-go">حدّث دلوقتي</button></div>
+<div class="upd" id="upd" hidden>A new version is up · loading…<button type="button" id="upd-go">Update now</button></div>
 
 <header class="top" id="top">
   <div class="ttl">
@@ -340,21 +340,21 @@ h1{margin:0;font-size:19px;line-height:1.3;font-weight:700}
   <div class="facts" id="facts"></div>
 </header>
 
-<section class="theater" id="player" aria-label="الإيديت">
+<section class="theater" id="player" aria-label="The edit">
   <div class="stage" id="stage">
     <div class="frame" id="frame">
       <div class="poster" id="poster"></div>
       <video id="v" playsinline preload="metadata"></video>
       <div class="hud"><span id="hud-id">SH01</span><span class="lab" id="hud-lab" hidden></span></div>
-      <span class="flab">الإيديت</span>
-      <button class="bigplay" id="bigplay" type="button" aria-label="تشغيل"><i data-ico="play"></i></button>
-      <button class="pipup" id="pipup" type="button" hidden><i data-ico="up"></i>كبّر الفيديو</button>
+      <span class="flab">Edit</span>
+      <button class="bigplay" id="bigplay" type="button" aria-label="Play"><i data-ico="play"></i></button>
+      <button class="pipup" id="pipup" type="button" hidden><i data-ico="up"></i>Back to the big picture</button>
       <div class="verr" id="verr" hidden></div>
     </div>
     <div class="asframe none" id="asframe">
       <video id="av" muted playsinline preload="auto"></video>
       <span class="flab" id="as-tag">Auto stage</span>
-      <div class="asnone"><i data-ico="building"></i><span id="as-msg">مفيش Auto stage للشوت ده</span></div>
+      <div class="asnone"><i data-ico="building"></i><span id="as-msg">No Auto stage for this shot</span></div>
     </div>
   </div>
 </section>
@@ -362,29 +362,29 @@ h1{margin:0;font-size:19px;line-height:1.3;font-weight:700}
 <div class="deck" id="deck">
   <div class="tr">
     <div class="grp">
-      <button class="tb" id="b-prev" type="button" title="الشوت اللي قبله (←)"><i data-ico="prev"></i><span>السابق</span></button>
-      <button class="tb pp" id="b-play" type="button" title="تشغيل / إيقاف (Space)"><span class="ic" id="pp-ico"></span><span id="pp-lbl">تشغيل</span></button>
-      <button class="tb" id="b-next" type="button" title="الشوت اللي بعده (→)"><i data-ico="next"></i><span>التالي</span></button>
+      <button class="tb" id="b-prev" type="button" title="Previous shot (←)"><i data-ico="prev"></i><span>Previous</span></button>
+      <button class="tb pp" id="b-play" type="button" title="Play / pause (Space)"><span class="ic" id="pp-ico"></span><span id="pp-lbl">Play</span></button>
+      <button class="tb" id="b-next" type="button" title="Next shot (→)"><i data-ico="next"></i><span>Next</span></button>
     </div>
     <div class="grp">
-      <button class="tb" id="b-loop" type="button" title="يفضل يعيد نفس الشوت (L)" aria-pressed="false"><i data-ico="loop"></i><span>إعادة الشوت</span></button>
-      <button class="tb" id="b-mute" type="button" title="الصوت (M)" aria-pressed="false"><span class="ic" id="mute-ico"></span><span id="mute-lbl">صوت</span></button>
-      <button class="tb" id="b-rate" type="button" title="سرعة العرض"><i data-ico="gauge"></i><span>السرعة <bdi id="rate-lbl">1×</bdi></span></button>
+      <button class="tb" id="b-loop" type="button" title="Keep looping the same shot (L)" aria-pressed="false"><i data-ico="loop"></i><span>Loop shot</span></button>
+      <button class="tb" id="b-mute" type="button" title="Sound (M)" aria-pressed="false"><span class="ic" id="mute-ico"></span><span id="mute-lbl">Sound</span></button>
+      <button class="tb" id="b-rate" type="button" title="Playback speed"><i data-ico="gauge"></i><span>Speed <bdi id="rate-lbl">1×</bdi></span></button>
     </div>
-    <button class="tb cmpb" id="b-cmp" type="button" aria-pressed="false" hidden><i data-ico="compare"></i><span>قارن بالموديل</span></button>
+    <button class="tb cmpb" id="b-cmp" type="button" aria-pressed="false" hidden><i data-ico="compare"></i><span>Compare</span></button>
     <div class="now">
       <div class="now1"><span class="s" id="tc-s">SH01</span><span class="n" id="now-n"></span><span id="now-st"></span></div>
       <div class="vo" id="vo"></div>
     </div>
     <div class="grp end">
       <span class="tcbox" id="tc" title="Timecode">00:00:00:00</span>
-      <button class="tb" id="b-follow" type="button" title="لما تختار شوت من الـ timeline، القايمة تنزل لحد الشوت ده" aria-pressed="true"><i data-ico="follow"></i><span>القايمة تتبع</span></button>
-      <button class="tb" id="b-help" type="button" aria-expanded="false" title="إزاي تستخدم الصفحة"><i data-ico="help"></i><span>مساعدة</span></button>
+      <button class="tb" id="b-follow" type="button" title="When you pick a shot on the timeline, the list scrolls to it" aria-pressed="true"><i data-ico="follow"></i><span>List follows</span></button>
+      <button class="tb" id="b-help" type="button" aria-expanded="false" title="How to use this page"><i data-ico="help"></i><span>Help</span></button>
     </div>
   </div>
   <div class="tl" id="tl">
     <div class="tracks" id="tracks">
-      <div class="trk v1" data-k=""><div class="hd" role="button" tabindex="0" title="الإيديت لوحده (من غير مقارنة)"><span class="code">V1</span><i data-ico="film"></i><span class="nm" id="v1nm">الإيديت</span><span class="ct" id="v1ct"></span></div><div class="strip" id="strip"></div></div>
+      <div class="trk v1" data-k=""><div class="hd" role="button" tabindex="0" title="The edit alone (no comparison)"><span class="code">V1</span><i data-ico="film"></i><span class="nm" id="v1nm">Edit</span><span class="ct" id="v1ct"></span></div><div class="strip" id="strip"></div></div>
       <div class="ph" id="ph"></div>
     </div>
     <div class="ruler" id="ruler"></div>
@@ -392,55 +392,55 @@ h1{margin:0;font-size:19px;line-height:1.3;font-weight:700}
   </div>
   <div class="under">
     <div class="howto" id="howto" hidden>
-      <span><i data-ico="hand"></i>دوس على شوت في الشريط</span><i class="ar">←</i>
-      <span><i data-ico="eye"></i>اتفرج عليه</span><i class="ar">←</i>
-      <span><i data-ico="list"></i>تفاصيله تحت</span>
-      <button type="button" id="howto-x" aria-label="إخفاء" title="إخفاء"><i data-ico="x"></i></button>
+      <span><i data-ico="hand"></i>Click a shot on the strip</span><i class="ar">→</i>
+      <span><i data-ico="eye"></i>Watch it</span><i class="ar">→</i>
+      <span><i data-ico="list"></i>Its plan opens below</span>
+      <button type="button" id="howto-x" aria-label="Hide" title="Hide"><i data-ico="x"></i></button>
     </div>
     <div class="legend" id="legend"></div>
   </div>
   <div class="pop" id="help" hidden>
-    <h3>إزاي تستخدم الصفحة</h3>
-    <p><kbd>1</kbd><span>دوس على أي شوت في الشريط الملوّن: الفيديو يروح له والقايمة تحت تنزل لتفاصيله.</span></p>
-    <p><kbd>2</kbd><span>دوس على أي صف في القايمة: الشوت يتعاد loop وتتفتح تفاصيله.</span></p>
-    <p><kbd>3</kbd><span>التابات اللي فوق القايمة بتفلتر: اللي يتعمل من جديد، اللي محتاج شغل، مبانينا…</span></p>
-    <p><kbd>4</kbd><span>التراكات في الـ timeline: V1 الإيديت، وتحته كل حاجة بنضيفها (Auto stage، Seedance…). دوس على كليب في أي تراك يتعرض جنب الإيديت، ودوس على اسم التراك تختاره، والعين تخفيه.</span></p>
-    <h3 style="margin-top:8px">الكيبورد</h3>
-    <p><kbd>Space</kbd><span>تشغيل / إيقاف</span></p>
-    <p><kbd>← →</kbd><span>الشوت اللي قبله / بعده</span></p>
-    <p><kbd>L</kbd><span>إعادة الشوت</span></p>
-    <p><kbd>M</kbd><span>كتم الصوت</span></p>
-    <p><kbd>C</kbd><span>قارن / الإيديت بس</span></p>
+    <h3>How to use this page</h3>
+    <p><kbd>1</kbd><span>Click any shot on the coloured strip: the video jumps to it and the list below opens its plan.</span></p>
+    <p><kbd>2</kbd><span>Click any row in the list: the shot loops and its plan opens.</span></p>
+    <p><kbd>3</kbd><span>The tabs above the list filter it: to redo, needs work, our buildings…</span></p>
+    <p><kbd>4</kbd><span>Timeline tracks: V1 is the edit, and under it everything we add (Auto stage, Seedance…). Click a clip on any track to show it beside the edit, click a track name to pick it, and the eye hides it.</span></p>
+    <h3 style="margin-top:8px">Keyboard</h3>
+    <p><kbd>Space</kbd><span>Play / pause</span></p>
+    <p><kbd>← →</kbd><span>Previous / next shot</span></p>
+    <p><kbd>L</kbd><span>Loop shot</span></p>
+    <p><kbd>M</kbd><span>Mute</span></p>
+    <p><kbd>C</kbd><span>Compare / edit only</span></p>
   </div>
 </div>
 
 <div class="wrap">
   <div class="bar">
-    <div class="tabs" id="tabs" role="tablist" aria-label="فلترة الشوتات"></div>
+    <div class="tabs" id="tabs" role="tablist" aria-label="Filter shots"></div>
     <div class="tools">
-      <input class="search" id="q" type="search" placeholder="دوّر: رقم شوت أو كلمة…" autocomplete="off" aria-label="بحث في الشوتات" hidden>
-      <button class="tbtn" id="b-search" type="button" aria-label="بحث" title="بحث"><i data-ico="search"></i></button>
-      <button class="tbtn" id="b-notes" type="button" aria-expanded="false" hidden><i data-ico="flag"></i>ملاحظات عامة <b id="fcount"></b><i data-ico="chevron" data-cls="chv"></i></button>
+      <input class="search" id="q" type="search" placeholder="Search: shot number or a word…" autocomplete="off" aria-label="Search shots" hidden>
+      <button class="tbtn" id="b-search" type="button" aria-label="Search" title="Search"><i data-ico="search"></i></button>
+      <button class="tbtn" id="b-notes" type="button" aria-expanded="false" hidden><i data-ico="flag"></i>General notes <b id="fcount"></b><i data-ico="chevron" data-cls="chv"></i></button>
     </div>
   </div>
   <p class="quiet" id="count"></p>
-  <section class="notes" id="notes" hidden aria-label="ملاحظات عامة"></section>
+  <section class="notes" id="notes" hidden aria-label="General notes"></section>
   <div class="rows" id="rows"></div>
-  <div class="empty" id="empty" hidden>مفيش شوتات بالفلتر ده.</div>
+  <div class="empty" id="empty" hidden>No shots match this filter.</div>
   <footer class="foot" id="foot"></footer>
 </div>
 
-<script id="hrid-data" type="application/json">{"meta":{"project":"HRID · One Line","edit":"v07 DC","fps":25,"frames":1609,"dur":64.36,"target":60,"src":"/r/hrid/edit_v07.mp4","sprite":"/r/hrid/thumbs_v07.webp","spriteCols":6,"tileW":384,"tileH":216,"updated":"15 Nov 2026","note":"قراءة أولى من الإيديت v07. المصدر والحالة والوقت تقديرات من الصورة — بنأكدهم شوت شوت.","build":"ad5a995e6e8f"},"models":{"dts":{"label":"Downtown Slemani"},"kurdonia":{"label":"Kurdonia Towers"},"slemani":{"label":"SLEMANI Name"},"bridge":{"label":"Crossing Bridge"},"proto":{"label":"Prototype Hall"}},"layers":[{"key":"as","code":"V2","label":"Auto stage","icon":"cube","color":"#38BDF8","note":"رندر 3D من موديلاتنا على حركة كاميرا الإيديت"},{"key":"sd","code":"V3","label":"Seedance 2.5","icon":"sparkles","color":"#A78BFA","note":"بريفيو AI من Higgsfield · 720p","empty":"لسه مفيش Seedance — أول ما نولّد هيظهر هنا"}],"kinds":{"live":{"label":"تصوير"},"cg":{"label":"3D"},"ai":{"label":"AI"},"mix":{"label":"3D + AI"}},"status":{"final":{"label":"لقطة نهائية · Finishing"},"wip":{"label":"موجودة · محتاجة تطوير"},"temp":{"label":"Placeholder · تتعمل من جديد"}},"sizes":{"S":{"time":"30–60 د","hours":0.75},"M":{"time":"2–4 س","hours":3},"L":{"time":"1–2 يوم","hours":12},"XL":{"time":"3–5 أيام","hours":32}},"flags":[{"t":"5 لقطات لسه Placeholder","d":"عليها label على الصورة وهتتعمل من جديد، ومجموعها 12.72 ث من الفيلم. ده الشغل التقيل.","shots":["SH13","SH15","SH17","SH18","SH21"]},{"t":"الفيلم أطول من 60 ث","d":"الطول 64.36 ث (1609 فريم) — زيادة 4.36 ث (109 فريم). لو التسليم 60 ث يبقى فيه قص.","shots":[]},{"t":"مفيش end logo","d":"الفيلم بيخلص على التوقيع و fade للأسود. الـ treatment بيقول التوقيع بيتحول للوجو.","shots":["SH36"]},{"t":"حاجات لازم تتشال من الصورة","d":"سقف الاستوديو (SH20، SH27) · كرسي (SH20) · رقم «02» (SH34) · شعار العربية (SH24) · صورة المرجع والـ labels في الـ placeholders.","shots":["SH20","SH27","SH34","SH24","SH15"]},{"t":"دقة المكان","d":"SH34 فيه مية ومارينا والسليمانية مفيهاش · أبراج SH21 مش تصميم Downtown · حروف وجبل SH26 لازم يطابقوا الموقع الحقيقي · Vesta في SH04 و SH17 لازم يبقى نفس المبنى.","shots":["SH34","SH21","SH26","SH04","SH17"]},{"t":"مقاس الكادر مش موحّد","d":"الفيلم 1920×872 (2.20:1). SH13 جاي 1920×834 و SH22 جاي 1920×858، و SH28 فيه شريط أسود في الركن.","shots":["SH13","SH22","SH28"]},{"t":"الألوان","d":"أبيض وأسود من SH01 لـ SH19، ألوان من عين المهندسة SH20 لحد SH34، ورجوع أبيض وأسود في التوقيع. ده غير قاعدة الـ monochrome في الـ treatment — محتاج تأكيد إنه القرار النهائي.","shots":["SH20","SH35"]},{"t":"Kurdonia Towers","d":"مفيش لقطة واضحة لـ Kurdonia في v07 — يمكن فلاش SH10.","shots":["SH10"]}],"shots":[{"name":"Pens — opening macro","desc":"ماكرو على أقلام الحبر في الحامل، rack focus وهيز خفيف. افتتاحية الفيلم.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade أبيض وأسود موحّد مع لقطات المكتب","توحيد الـ grain","Fade in من الأسود لو مطلوب"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH01","f0":0,"f1":52,"vo":""},{"name":"Architect at desk — from behind","desc":"المعماري من ضهره على المكتب، لمبتين وهيز، push in بطيء.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade وتوحيد مستوى الأسود","الـ flares على يمين الكادر: تتساب ولا تتنضف"],"dept":["Grade","Comp"],"size":"S","flags":[],"q":"","id":"SH02","f0":52,"f1":107,"vo":"It begins"},{"name":"Nib lands on paper","desc":"ماكرو على سن القلم وهو بينزل على الورقة ويبدأ أول خط.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade","قرار الخط: حبر طبيعي زي ما هو، ولا لمعة خفيفة تربطه بخط النور بتاع الروبوتات"],"dept":["Grade","Comp"],"size":"S","flags":[],"q":"الخط يفضل حبر زي ما اتصور، ولا نضيف له لمعة خفيفة؟","sd":{"v":2,"note":"v2 · Seedance 2.5 Edit 720p: القلم فاضل في الكادر وبيكتب الخط لآخره زي الإيديت، والحبر السايل بيطلع من ورا السنّ ويتشد لفوق زيرو جرافيتي (ريفرنس الحبر بتاع عمرو)","src":"/r/hrid/sd/sh03_v2.mp4"},"id":"SH03","f0":107,"f1":177,"vo":"with a line, and a vision of what"},{"name":"Flash — Vesta model","desc":"فلاش 10 فريمات: مجسم مبنى (على الأغلب Vesta) على أرضية سودا عاكسة ونور من وراه.","kind":"ai","status":"wip","look":"bw","label":null,"work":["نتأكد إن شكل المبنى هو Vesta الحقيقي","نفس المبنى لازم يطابق لقطة SH17","Upscale + grain"],"dept":["AI","Grade"],"size":"S","flags":["مفيش 3D ولا CAD لـ Vesta — المرجع فريمات المخرج بس"],"q":"","id":"SH04","f0":177,"f1":187,"vo":"could"},{"name":"Flash — Downtown model, inverted","desc":"فلاش 12 فريم: مجسم Downtown Slemani العاجي والكاميرا مقلوبة فوق البلوكات، دخان.","kind":"mix","status":"wip","look":"bw","label":null,"work":["مطابقة مع موديل DTS الحقيقي","Upscale + grain"],"dept":["3D","Grade"],"size":"S","flags":[],"q":"","model":"dts","as":{"note":"Downtown مقلوب من تحت، ليل — الحركة متقاسة من v07","src":"/r/hrid/as/sh05_v1.mp4","v":1},"id":"SH05","f0":187,"f1":199,"vo":""},{"name":"Nib — closer","desc":"رجوع لسن القلم، أقرب، والخط ممتد.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade بنفس إعدادات SH03"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH06","f0":199,"f1":212,"vo":"be."},{"name":"Flash — Crossing Bridge interior","desc":"فلاش 8 فريمات: ممر الكوبري من جوه، درابزين وهيز ونور في آخره.","kind":"mix","status":"wip","look":"bw","label":null,"work":["مطابقة مع موديل Crossing Bridge الحقيقي","Upscale + grain"],"dept":["3D","Grade"],"size":"S","flags":[],"q":"","model":"bridge","as":{"note":"جوه ممر الكوبري على مستوى العين — مطابق للإيديت","src":"/r/hrid/as/sh07_v1.mp4","v":1},"id":"SH07","f0":212,"f1":220,"vo":""},{"name":"Flash — Silos, low angle","desc":"فلاش 13 فريم: الصوامع من تحت وسما غامقة.","kind":"ai","status":"wip","look":"bw","label":null,"work":["مطابقة شكل الصوامع مع صور الموقع الحقيقي","Upscale + grain"],"dept":["AI","Grade"],"size":"S","flags":["مفيش 3D للصوامع — AI بس"],"q":"","id":"SH08","f0":220,"f1":233,"vo":""},{"name":"Nib draws the line","desc":"القلم بيشد الخط بسرعة على الورقة، motion blur.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade","استمرارية الخط مع SH03 و SH06"],"dept":["Grade"],"size":"S","flags":[],"q":"","sd":{"v":2,"note":"v2 · Seedance 2.5 Edit 720p: حبر سايل بيتشد من الخط لفوق زيرو جرافيتي ويعمل مورفينج لحد ما يبقى خطوط هندسية (ريفرنس الحبر بتاع عمرو). اتعمل هنا بالغلط بدل SH03، والأصل رايح على SH03","src":"/r/hrid/sd/sh09_v2.mp4"},"id":"SH09","f0":233,"f1":268,"vo":""},{"name":"Flash — towers from below, night","desc":"فلاش 21 فريم: برجين من تحت بالليل، بلكونات وهيز وأنوار المدينة.","kind":"mix","status":"wip","look":"bw","label":null,"work":["نحدد المشروع ونطابقه مع الموديل","Upscale + grain"],"dept":["3D","Grade"],"size":"S","flags":[],"q":"اللقطة دي Kurdonia Towers ولا Downtown Slemani؟","model":"kurdonia","as":{"note":"من تحت بين كتلتين Kurdonia، ليل — مكان الكاميرا محتاج ضبط يدوي","src":"/r/hrid/as/sh10_v1.mp4","v":1},"id":"SH10","f0":268,"f1":289,"vo":""},{"name":"Plan — top shot","desc":"Top shot على المخطط: إيد المعماري بتعلّم بالقلم والمسطرة، والكاميرا بتلف.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade","مراجعة المخطط نفسه: مخطط حقيقي لـ HRID ومفيهوش بيانات مش عايزينها تبان"],"dept":["Grade"],"size":"S","flags":[],"q":"","sd":{"v":2,"note":"✅ الأوبشن المعتمد من عمرو · v2 · Seedance 2.5 Edit 720p: خطوط الماستر بلان نفسها بتطلع من الورقة وتبني تفاصيل المعمار (حيطان وأدوار وشجر وناس صغيرين) من غير ما تكمل للآخر، والإيد والقلم والإضاءة والحركة زي ما هم","src":"/r/hrid/sd/sh11_v2.mp4"},"id":"SH11","f0":289,"f1":364,"vo":"A vision shaped by Hiwa"},{"name":"Drawing hand — low angle","desc":"زاوية واطية على الإيد وهي بترسم، اللمبة وحامل الأقلام في الخلفية.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH12","f0":364,"f1":429,"vo":"Rauf, bold thinking realised"},{"name":"Robots build the bridge","desc":"Placeholder: أذرع الروبوت من فوق حوالين الشريط. المطلوب النهائي: الروبوتات بتركّب Crossing Bridge في الـ Prototype Hall. ده نص شغل SH09 القديم — الروبوتات والكوبري هنا، والمدينة واللوجو راحوا SH15.","kind":"cg","status":"temp","look":"bw","label":"BRIDGE","work":["نختار الـ option (1 / 2 / 3) ونقفل حركة الكاميرا على 2.32 ث","Render نهائي من Prototype Hall: الروبوتات + الكوبري","Dark look: هيز، أسود عميق، أشعة من اليمين","Comp + grain","مقاس الكادر يتظبط على 1920×872","شيل الـ label"],"dept":["3D","Comp","Grade"],"size":"XL","flags":["مقاس الكادر 1920×834 (2.30) والفيلم 1920×872 (2.20)"],"q":"نبني على أنهي option من شغل SH09؟","model":"proto","id":"SH13","f0":429,"f1":487,"vo":"with precision, grounded in"},{"name":"Architect's shadow","desc":"ضل المعماري الطويل على أرضية بيضا، حركة بطيئة.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade","تنضيف الأرضية (نقط وبقع)"],"dept":["Grade","Comp"],"size":"S","flags":[],"q":"","id":"SH14","f0":487,"f1":584,"vo":"engineering, guided by integrity and purpose."},{"name":"Flight to the logo","desc":"Placeholder: طيران فوق جبال وسحاب لحد لوجو Hiwa Rauf، وفي الركن صورة مرجع للمجسم الأبيض. المطلوب النهائي: الكاميرا تعدّي الكوبري والمدينة (المجسمات) وتوصل للوجو.","kind":"cg","status":"temp","look":"bw","label":"BRIDGE + CITY","work":["Render نهائي: كوبري ← مدينة ← لوجو على 3.88 ث","اللوجو مجسم ومتركّب بالروبوتات (مفيش حاجة بتطلع لوحدها)","اللوجو يبان كامل على كلمة «HRID» في الـ VO (26.18 ث)","Dark look + هيز","Comp + grade","شيل الـ label وصورة المرجع"],"dept":["3D","Comp","GFX","Grade"],"size":"XL","flags":[],"q":"","model":"proto","id":"SH15","f0":584,"f1":681,"vo":"In 2012, that vision became HRID,"},{"name":"Architect and the ladder","desc":"سيلويت المعماري بالمخططات الملفوفة على cyc أبيض، قدامه سلم، وبيخرج من شمال الكادر.","kind":"live","status":"wip","look":"bw","label":null,"work":["قرار السلم: يتساب، يتشال، ولا يتبدل بحاجة CG","تنضيف الـ cyc وحواف الكادر","Grade"],"dept":["Comp","Grade"],"size":"M","flags":[],"q":"السلم مقصود في الصورة، ولا مرجع هيتبدل؟","id":"SH16","f0":681,"f1":751,"vo":"building on decades of experience"},{"name":"Vesta Tower","desc":"Placeholder: إزاز غامق وانعكاسات نور، abstract. المطلوب النهائي: لقطة hero لـ Vesta Tower.","kind":"ai","status":"temp","look":"bw","label":"VESTA TOWER","work":["Keyframe لـ Vesta من فريمات المخرج","Seedance: المكان والـ keyframe كمراجع — مش start frame","كاميرا dynamic / handheld","Upscale + grade أبيض وأسود","شيل الـ label"],"dept":["AI","Grade"],"size":"L","flags":["مفيش 3D ولا CAD لـ Vesta"],"q":"","id":"SH17","f0":751,"f1":803,"vo":"to shape a new future for"},{"name":"Silos — wide","desc":"Placeholder: صف الصوامع مع الجبال والضباب، أبيض وأسود.","kind":"ai","status":"temp","look":"bw","label":"SILO","work":["لقطة AI نهائية للصوامع بحركة كاميرا","مطابقة شكل الصوامع الحقيقية (محتاجين صور الموقع)","Upscale + grade","شيل الـ label"],"dept":["AI","Grade"],"size":"M","flags":["مفيش 3D للصوامع"],"q":"","id":"SH18","f0":803,"f1":834,"vo":"Iraq. Trusted"},{"name":"Silo roof → iris","desc":"سقف الصومعة من فوق (شكله قزحية) وبيدوب في عين المهندسة.","kind":"ai","status":"wip","look":"bw","label":null,"work":["Match cut: محاذاة مركز وقطر السقف مع القزحية فريم بفريم","QC + upscale للقطة السقف"],"dept":["AI","Comp"],"size":"M","flags":[],"q":"","id":"SH19","f0":834,"f1":857,"vo":"public–private"},{"name":"Eye → the engineer, pull back","desc":"ماكرو على عين المهندسة والكاميرا بترجع لحد ما تبان كلها بالبالطو الأحمر على cyc أبيض. أول لقطة ملونة في الفيلم.","kind":"live","status":"final","look":"color","label":null,"work":["Paint out: سقف الاستوديو والـ rig فوق الكادر، والكرسي على الشمال في آخر اللقطة","تنضيف وتمديد الـ cyc","تنعيم الـ speed ramp","Grade: هنا التحول من أبيض وأسود لألوان","Dissolve نضيف لـ SH21"],"dept":["Comp","Grade"],"size":"M","flags":["سقف الاستوديو ظاهر فوق الكادر","كرسي ظاهر على شمال الكادر في آخر اللقطة"],"q":"","id":"SH20","f0":857,"f1":946,"vo":"partnerships. Sustainability as"},{"name":"Downtown Slemani — dive from the clouds","desc":"Placeholder: نزول من السحاب على أبراج دهبي. الأبراج AI عامة، مش تصميم Downtown الحقيقي.","kind":"mix","status":"temp","look":"color","label":"D.T. SLEMANI","work":["حركة الكاميرا من موديل DTS الحقيقي (Model Room)","Photoreal pass بالـ AI والـ 3D كمرجع","سحاب + comp مع الـ dissolve من SH20","Grade ملون","شيل الـ label"],"dept":["3D","AI","Comp","Grade"],"size":"L","flags":["الأبراج الحالية مش تصميم Downtown"],"q":"","model":"dts","as":{"note":"النزول من السحاب لحد ما تبص من فوق على Downtown","src":"/r/hrid/as/sh21_v1.mp4","v":1},"id":"SH21","f0":946,"f1":1026,"vo":"a standard. Connecting"},{"name":"Plaza crowd — the engineer in red","desc":"ناس ماشية في الساحة والمهندسة بالأحمر وسطهم. باين إنها AI.","kind":"ai","status":"wip","look":"color","label":null,"work":["QC للوشوش والإيدين في الكومبارس","مطابقة شكل الممثلة ولبسها مع SH20 و SH30","المكان يطابق ساحة Downtown","Upscale + grade","مقاس الكادر يتظبط على 1920×872"],"dept":["AI","Comp","Grade"],"size":"M","flags":["مقاس الكادر 1920×858 (2.24)"],"q":"","model":"dts","as":{"note":"مستوى العين قدام المبنى، ضهر الزحمة","src":"/r/hrid/as/sh22_v1.mp4","v":1},"id":"SH22","f0":1026,"f1":1074,"vo":"communities."},{"name":"Towers — top-down spin","desc":"Top-down بيلف بين الأبراج، ملعب كورة وأسطح المدينة تحت.","kind":"mix","status":"wip","look":"color","label":null,"work":["مطابقة الأبراج مع موديل DTS","QC للـ warping في المباني الصغيرة","Upscale + grade"],"dept":["3D","AI","Grade"],"size":"M","flags":[],"q":"","model":"dts","as":{"v":2,"note":"v2: الكاميرا نازلة بين برجين فوق السطح، طالعة ولافّة زي الإيديت","src":"/r/hrid/as/sh23_v2.mp4"},"id":"SH23","f0":1074,"f1":1146,"vo":"Rising higher than Iraq has ever seen."},{"name":"Plaza entrance — dusk","desc":"مدخل الساحة وقت الغروب: نخل، نافورة، عربية، ناس، والأبراج ورا.","kind":"ai","status":"wip","look":"color","label":null,"work":["مطابقة مع تصميم Downtown (البوديوم والساحة)","QC لحركة الناس","شعار العربية يتشال","Upscale + grade"],"dept":["AI","Comp","Grade"],"size":"M","flags":["شعار ماركة العربية ظاهر"],"q":"","model":"dts","as":{"note":"مدخل البلازا والأبراج ورا، شمس واطية","src":"/r/hrid/as/sh24_v1.mp4","v":1},"id":"SH24","f0":1146,"f1":1212,"vo":"Creating places to live, work"},{"name":"The boy — framing with his hand","desc":"الولد بيبص لفوق وبيعمل كادر بإيده، وضل بيعدّي على وشه.","kind":"live","status":"final","look":"color","label":null,"work":["تنضيف الخلفية (banding في الـ gradient)","Grade"],"dept":["Comp","Grade"],"size":"S","flags":[],"q":"","sd":{"v":4,"note":"v4 · Seedance 2.5 Edit 720p: لوك v3 الدهبي (هيز وبوكيه وفلير أوربز) والشمس قدّامه فوق، فإيده بترمي ضل على وشه وعينه زي الإيديت. الخلفية البلازا بتاعتنا بوكيه، من غير سكايلاين دبي","src":"/r/hrid/sd/sh25_v4.mp4"},"id":"SH25","f0":1212,"f1":1241,"vo":"and belong."},{"name":"SLEMANI sign — sunrise","desc":"كلمة SLEMANI على جبل Goizha والمدينة تحت، والشمس بتطلع.","kind":"mix","status":"wip","look":"color","label":null,"work":["مطابقة شكل الحروف مع الرسم المساحي الحقيقي","الجبل يمشي على شكل الموقع الحقيقي","QC للمدينة + upscale + grade"],"dept":["3D","AI","Grade"],"size":"M","flags":[],"q":"","model":"slemani","as":{"note":"الجبل والمدينة يمين، حروف SLEMANI تحت شمال — الكادر محتاج ضبط يدوي","src":"/r/hrid/as/sh26_v1.mp4","v":1},"id":"SH26","f0":1241,"f1":1292,"vo":"Honouring the identity of a city."},{"name":"The elder — low angle","desc":"الراجل الكبير من تحت، بيبتسم وبيبص لفوق.","kind":"live","status":"final","look":"color","label":null,"work":["Paint out: سقف الاستوديو فوق الكادر","Grade"],"dept":["Comp","Grade"],"size":"S","flags":["سقف الاستوديو ظاهر فوق الكادر"],"q":"","id":"SH27","f0":1292,"f1":1324,"vo":""},{"name":"Light on the walls","desc":"جوه مبنى غامق، بقع نور دافية بتتحرك على الحيطان والعمود.","kind":"ai","status":"wip","look":"color","label":null,"work":["الشريط الأسود تحت يمين الكادر يتصلح أو اللقطة تتعاد","Upscale + grade"],"dept":["AI","Comp"],"size":"S","flags":["شريط أسود صغير تحت يمين الصورة"],"q":"","id":"SH28","f0":1324,"f1":1349,"vo":"Opening possibilities"},{"name":"Look up — stone walls to the tower","desc":"من تحت بين حيطان حجر لبرج إزاز وسما.","kind":"ai","status":"wip","look":"color","label":null,"work":["مطابقة البرج مع Downtown","Upscale + grade"],"dept":["AI","Grade"],"size":"S","flags":[],"q":"","model":"dts","as":{"note":"من تحت لفوق على البرج، مايل","src":"/r/hrid/as/sh29_v1.mp4","v":1},"id":"SH29","f0":1349,"f1":1370,"vo":"for the"},{"name":"The engineer — close-up","desc":"كلوز على المهندسة بروفايل وبتبص لفوق.","kind":"live","status":"final","look":"color","label":null,"work":["Beauty خفيف","Grade"],"dept":["Comp","Grade"],"size":"S","flags":[],"q":"","id":"SH30","f0":1370,"f1":1394,"vo":"generations to"},{"name":"The boy — close-up","desc":"كلوز على الولد وبيبتسم للكاميرا.","kind":"live","status":"final","look":"color","label":null,"work":["Grade ومطابقة الخلفية مع SH25"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH31","f0":1394,"f1":1419,"vo":"come. Because"},{"name":"Lobby — people","desc":"لوبي بواجهة إزاز على الأبراج، ناس داخلة وخارجة.","kind":"ai","status":"wip","look":"color","label":null,"work":["QC لمشية الناس","مطابقة المعمار مع Downtown","Upscale + grade"],"dept":["AI","Grade"],"size":"M","flags":[],"q":"","id":"SH32","f0":1419,"f1":1447,"vo":"to shape a city"},{"name":"Towers and birds","desc":"برجين من تحت على سما تركواز وطيور.","kind":"ai","status":"wip","look":"color","label":null,"work":["مطابقة الأبراج مع موديل DTS","Upscale + grade"],"dept":["AI","Grade"],"size":"S","flags":[],"q":"","model":"dts","as":{"note":"برجين من تحت قدام السما","src":"/r/hrid/as/sh33_v1.mp4","v":1},"id":"SH33","f0":1447,"f1":1478,"vo":"is to make a promise"},{"name":"Towers — wide, haze","desc":"الأبراج واسعة في الضباب مع طيور والمدينة ورا.","kind":"ai","status":"wip","look":"color","label":null,"work":["الخلفية فيها مية ومارينا — السليمانية مفيهاش، تتعاد أو تتنضف","رقم «02» في الركن فوق شمال يتشال","مطابقة الأبراج مع موديل DTS","Upscale + grade"],"dept":["AI","Comp","Grade"],"size":"M","flags":["مية ومارينا في الخلفية","«02» ظاهرة في الركن فوق شمال"],"q":"","model":"dts","as":{"note":"صف الأبراج في الشبورة، عدسة طويلة — مطابق للإيديت","src":"/r/hrid/as/sh34_v1.mp4","v":1},"id":"SH34","f0":1478,"f1":1502,"vo":"to its future."},{"name":"Signing — ring in the foreground","desc":"إيد بخاتم في الـ foreground (out of focus) والمعماري بيوقّع في الخلفية.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade: رجوع للأبيض والأسود"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH35","f0":1502,"f1":1546,"vo":"A promise we put our"},{"name":"The signature","desc":"توقيع «Hiwa Rauf» بيكمل على الورقة جوه ماسك مقصوص الأركان، وبعدين fade للأسود.","kind":"live","status":"wip","look":"bw","label":null,"work":["قرار النهاية: التوقيع بس، ولا يتحول للوجو HRID","End card: اللوجو + أي سطر قانوني أو موقع","تنضيف الماسك وحوافه","Grade"],"dept":["GFX","Comp","Grade"],"size":"M","flags":["مفيش end logo في v07"],"q":"النهاية: التوقيع بس، ولا لازم يتحول للوجو HRID زي الـ treatment؟","id":"SH36","f0":1546,"f1":1609,"vo":"name to."}]}</script>
+<script id="hrid-data" type="application/json">{"meta":{"project":"HRID · One Line","edit":"v07 DC","fps":25,"frames":1609,"dur":64.36,"target":60,"src":"/r/hrid/edit_v07.mp4","sprite":"/r/hrid/thumbs_v07.webp","spriteCols":6,"tileW":384,"tileH":216,"updated":"15 Nov 2026","note":"First reading of edit v07. Source, status and time are estimates from the picture — to be confirmed shot by shot.","build":"004df00fcafc"},"models":{"dts":{"label":"Downtown Slemani"},"kurdonia":{"label":"Kurdonia Towers"},"slemani":{"label":"SLEMANI Name"},"bridge":{"label":"Crossing Bridge"},"proto":{"label":"Prototype Hall"}},"layers":[{"key":"as","code":"V2","label":"Auto stage","icon":"cube","color":"#38BDF8","note":"3D renders of our own models on the edit's camera moves"},{"key":"sd","code":"V3","label":"Seedance 2.5","icon":"sparkles","color":"#A78BFA","note":"AI previews from Higgsfield · 720p","empty":"No Seedance yet — clips appear here as soon as they are generated"}],"kinds":{"live":{"label":"Live action"},"cg":{"label":"3D"},"ai":{"label":"AI"},"mix":{"label":"3D + AI"}},"status":{"final":{"label":"Final shot · Finishing"},"wip":{"label":"Exists · needs work"},"temp":{"label":"Placeholder · to be redone"}},"sizes":{"S":{"time":"30–60 min","hours":0.75},"M":{"time":"2–4 h","hours":3},"L":{"time":"1–2 days","hours":12},"XL":{"time":"3–5 days","hours":32}},"flags":[{"t":"5 shots are still placeholders","d":"They carry a label on the picture and will be redone; together they are 12.72 s of the film. This is the heavy work.","shots":["SH13","SH15","SH17","SH18","SH21"]},{"t":"The film runs over 60 s","d":"Length 64.36 s (1609 frames) — 4.36 s (109 frames) over. If delivery is 60 s, something has to be cut.","shots":[]},{"t":"No end logo","d":"The film ends on the signature and a fade to black. The treatment has the signature turning into the logo.","shots":["SH36"]},{"t":"Things to remove from the picture","d":"Studio ceiling (SH20, SH27) · a chair (SH20) · the \"02\" (SH34) · the car badge (SH24) · the reference picture and labels in the placeholders.","shots":["SH20","SH27","SH34","SH24","SH15"]},{"t":"Location accuracy","d":"SH34 has water and a marina; Slemani has none · the SH21 towers are not the Downtown design · the SH26 letters and mountain must match the real site · Vesta in SH04 and SH17 must be the same building.","shots":["SH34","SH21","SH26","SH04","SH17"]},{"t":"Frame size is not consistent","d":"The film is 1920×872 (2.20:1). SH13 comes in at 1920×834 and SH22 at 1920×858, and SH28 has a black strip in the corner.","shots":["SH13","SH22","SH28"]},{"t":"Colour","d":"Black and white from SH01 to SH19, colour from the engineer's eye (SH20) to SH34, back to black and white for the signature. This differs from the treatment's monochrome rule — needs confirming as final.","shots":["SH20","SH35"]},{"t":"Kurdonia Towers","d":"No clear Kurdonia shot in v07 — possibly the SH10 flash.","shots":["SH10"]}],"shots":[{"name":"Pens — opening macro","desc":"Macro on fountain pens in their stand, rack focus and light haze. The film opens here.","kind":"live","status":"final","look":"bw","label":null,"work":["Black-and-white grade matched to the desk shots","Match the grain","Fade in from black if needed"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH01","f0":0,"f1":52,"vo":""},{"name":"Architect at desk — from behind","desc":"The architect from behind at his desk, two lamps and haze, slow push in.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade and match the black level","Flares on the right of frame: keep or clean"],"dept":["Grade","Comp"],"size":"S","flags":[],"q":"","id":"SH02","f0":52,"f1":107,"vo":"It begins"},{"name":"Nib lands on paper","desc":"Macro on the nib as it comes down to the paper and starts the first line.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade","Decide the line: natural ink as shot, or a faint sheen that ties it to the robots' line of light"],"dept":["Grade","Comp"],"size":"S","flags":[],"q":"Does the line stay ink as shot, or do we add a faint sheen?","sd":{"v":2,"note":"v2 · Seedance 2.5 Edit 720p: the pen stays in frame and draws the line to the end as in the edit, while liquid ink lifts off the line behind the nib and rises in zero gravity (Amr's ink reference)","src":"/r/hrid/sd/sh03_v2.mp4"},"id":"SH03","f0":107,"f1":177,"vo":"with a line, and a vision of what"},{"name":"Flash — Vesta model","desc":"10-frame flash: a building model (most likely Vesta) on a black reflective floor, backlit.","kind":"ai","status":"wip","look":"bw","label":null,"work":["Confirm the building is the real Vesta","Must match the same building in SH17","Upscale + grain"],"dept":["AI","Grade"],"size":"S","flags":["No 3D or CAD for Vesta — the director's frames are the only reference"],"q":"","id":"SH04","f0":177,"f1":187,"vo":"could"},{"name":"Flash — Downtown model, inverted","desc":"12-frame flash: the ivory Downtown Slemani model, camera upside down over the blocks, smoke.","kind":"mix","status":"wip","look":"bw","label":null,"work":["Match to the real DTS model","Upscale + grain"],"dept":["3D","Grade"],"size":"S","flags":[],"q":"","model":"dts","as":{"note":"Downtown upside down from below, night — move measured from v07","src":"/r/hrid/as/sh05_v1.mp4","v":1},"id":"SH05","f0":187,"f1":199,"vo":""},{"name":"Nib — closer","desc":"Back to the nib, closer, the line extending.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade with the SH03 settings"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH06","f0":199,"f1":212,"vo":"be."},{"name":"Flash — Crossing Bridge interior","desc":"8-frame flash: inside the bridge walkway, railings, haze and light at the end.","kind":"mix","status":"wip","look":"bw","label":null,"work":["Match to the real Crossing Bridge model","Upscale + grain"],"dept":["3D","Grade"],"size":"S","flags":[],"q":"","model":"bridge","as":{"note":"Inside the bridge walkway at eye level — matches the edit","src":"/r/hrid/as/sh07_v1.mp4","v":1},"id":"SH07","f0":212,"f1":220,"vo":""},{"name":"Flash — Silos, low angle","desc":"13-frame flash: the silos from below against a dark sky.","kind":"ai","status":"wip","look":"bw","label":null,"work":["Match the silos to photos of the real site","Upscale + grain"],"dept":["AI","Grade"],"size":"S","flags":["No 3D for the silos — AI only"],"q":"","id":"SH08","f0":220,"f1":233,"vo":""},{"name":"Nib draws the line","desc":"The pen pulls the line fast across the paper, motion blur.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade","Line continuity with SH03 and SH06"],"dept":["Grade"],"size":"S","flags":[],"q":"","sd":{"v":2,"note":"v2 · Seedance 2.5 Edit 720p: liquid ink pulled up off the line in zero gravity, morphing into geometric lines (Amr's ink reference). Made here by mistake instead of SH03; the brief went to SH03","src":"/r/hrid/sd/sh09_v2.mp4"},"id":"SH09","f0":233,"f1":268,"vo":""},{"name":"Flash — towers from below, night","desc":"21-frame flash: two towers from below at night, balconies, haze and city lights.","kind":"mix","status":"wip","look":"bw","label":null,"work":["Identify the project and match it to the model","Upscale + grain"],"dept":["3D","Grade"],"size":"S","flags":[],"q":"Is this Kurdonia Towers or Downtown Slemani?","model":"kurdonia","as":{"note":"From below between two Kurdonia blocks, night — camera position needs a manual pass","src":"/r/hrid/as/sh10_v1.mp4","v":1},"id":"SH10","f0":268,"f1":289,"vo":""},{"name":"Plan — top shot","desc":"Top shot on the plan: the architect's hand marks it with pen and ruler while the camera turns.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade","Check the plan itself: a real HRID plan, with nothing on it we don't want seen"],"dept":["Grade"],"size":"S","flags":[],"q":"","sd":{"v":2,"note":"✅ Approved by Amr · v2 · Seedance 2.5 Edit 720p: the master plan's own lines lift off the paper and build the architecture in detail (walls, floors, trees, tiny people), left unfinished; hand, pen, light and move unchanged","src":"/r/hrid/sd/sh11_v2.mp4"},"id":"SH11","f0":289,"f1":364,"vo":"A vision shaped by Hiwa"},{"name":"Drawing hand — low angle","desc":"Low angle on the hand drawing, the lamp and the pen stand behind.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH12","f0":364,"f1":429,"vo":"Rauf, bold thinking realised"},{"name":"Robots build the bridge","desc":"Placeholder: robot arms from above around the strip. Final: the robots assemble the Crossing Bridge in the Prototype Hall. This is half of the old SH09 work — robots and bridge here; the city and logo moved to SH15.","kind":"cg","status":"temp","look":"bw","label":"BRIDGE","work":["Pick the option (1 / 2 / 3) and lock the camera move to 2.32 s","Final render from the Prototype Hall: robots + bridge","Dark look: haze, deep blacks, light shafts from the right","Comp + grain","Conform the frame to 1920×872","Remove the label"],"dept":["3D","Comp","Grade"],"size":"XL","flags":["Frame is 1920×834 (2.30); the film is 1920×872 (2.20)"],"q":"Which option of the SH09 work do we build on?","model":"proto","id":"SH13","f0":429,"f1":487,"vo":"with precision, grounded in"},{"name":"Architect's shadow","desc":"The architect's long shadow on a white floor, slow move.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade","Clean the floor (dots and marks)"],"dept":["Grade","Comp"],"size":"S","flags":[],"q":"","id":"SH14","f0":487,"f1":584,"vo":"engineering, guided by integrity and purpose."},{"name":"Flight to the logo","desc":"Placeholder: a flight over mountains and clouds to the Hiwa Rauf logo, with a reference picture of the white model in the corner. Final: the camera passes the bridge and the city (the models) and arrives at the logo.","kind":"cg","status":"temp","look":"bw","label":"BRIDGE + CITY","work":["Final render: bridge → city → logo in 3.88 s","The logo is a model assembled by the robots (nothing rises on its own)","The logo reads in full on the word \"HRID\" in the VO (26.18 s)","Dark look + haze","Comp + grade","Remove the label and the reference picture"],"dept":["3D","Comp","GFX","Grade"],"size":"XL","flags":[],"q":"","model":"proto","id":"SH15","f0":584,"f1":681,"vo":"In 2012, that vision became HRID,"},{"name":"Architect and the ladder","desc":"Silhouette of the architect with rolled plans on a white cyc, a ladder in front of him; he exits frame left.","kind":"live","status":"wip","look":"bw","label":null,"work":["Decide the ladder: keep it, remove it, or replace it with something CG","Clean the cyc and the frame edges","Grade"],"dept":["Comp","Grade"],"size":"M","flags":[],"q":"Is the ladder meant to be in the picture, or a stand-in to be replaced?","id":"SH16","f0":681,"f1":751,"vo":"building on decades of experience"},{"name":"Vesta Tower","desc":"Placeholder: dark glass and light reflections, abstract. Final: a hero shot of Vesta Tower.","kind":"ai","status":"temp","look":"bw","label":"VESTA TOWER","work":["Keyframe of Vesta from the director's frames","Seedance: location and keyframe as references — not a start frame","Dynamic / handheld camera","Upscale + black-and-white grade","Remove the label"],"dept":["AI","Grade"],"size":"L","flags":["No 3D or CAD for Vesta"],"q":"","id":"SH17","f0":751,"f1":803,"vo":"to shape a new future for"},{"name":"Silos — wide","desc":"Placeholder: the row of silos with mountains and mist, black and white.","kind":"ai","status":"temp","look":"bw","label":"SILO","work":["Final AI shot of the silos with a camera move","Match the real silos (site photos needed)","Upscale + grade","Remove the label"],"dept":["AI","Grade"],"size":"M","flags":["No 3D for the silos"],"q":"","id":"SH18","f0":803,"f1":834,"vo":"Iraq. Trusted"},{"name":"Silo roof → iris","desc":"The silo roof from above (it reads as an iris) dissolves into the engineer's eye.","kind":"ai","status":"wip","look":"bw","label":null,"work":["Match cut: line up the roof's centre and diameter with the iris frame by frame","QC + upscale of the roof shot"],"dept":["AI","Comp"],"size":"M","flags":[],"q":"","id":"SH19","f0":834,"f1":857,"vo":"public–private"},{"name":"Eye → the engineer, pull back","desc":"Macro on the engineer's eye; the camera pulls back until she is seen in full in a red coat on a white cyc. The first colour shot of the film.","kind":"live","status":"final","look":"color","label":null,"work":["Paint out: studio ceiling and rig above frame, and the chair at frame left at the end of the shot","Clean and extend the cyc","Smooth the speed ramp","Grade: this is where black and white turns to colour","Clean dissolve into SH21"],"dept":["Comp","Grade"],"size":"M","flags":["Studio ceiling visible above frame","A chair visible at frame left at the end of the shot"],"q":"","id":"SH20","f0":857,"f1":946,"vo":"partnerships. Sustainability as"},{"name":"Downtown Slemani — dive from the clouds","desc":"Placeholder: a dive from the clouds onto gold towers. The towers are generic AI, not the real Downtown design.","kind":"mix","status":"temp","look":"color","label":"D.T. SLEMANI","work":["Camera move from the real DTS model (Model Room)","Photoreal AI pass with the 3D as reference","Clouds + comp with the dissolve from SH20","Colour grade","Remove the label"],"dept":["3D","AI","Comp","Grade"],"size":"L","flags":["The current towers are not the Downtown design"],"q":"","model":"dts","as":{"note":"The dive from the clouds down to a look over Downtown","src":"/r/hrid/as/sh21_v1.mp4","v":1},"id":"SH21","f0":946,"f1":1026,"vo":"a standard. Connecting"},{"name":"Plaza crowd — the engineer in red","desc":"People walking in the plaza with the engineer in red among them. Reads as AI.","kind":"ai","status":"wip","look":"color","label":null,"work":["QC of faces and hands in the extras","Match the actress and her wardrobe to SH20 and SH30","The location matches the Downtown plaza","Upscale + grade","Conform the frame to 1920×872"],"dept":["AI","Comp","Grade"],"size":"M","flags":["Frame is 1920×858 (2.24)"],"q":"","model":"dts","as":{"note":"Eye level in front of the building, behind the crowd","src":"/r/hrid/as/sh22_v1.mp4","v":1},"id":"SH22","f0":1026,"f1":1074,"vo":"communities."},{"name":"Towers — top-down spin","desc":"Top-down spin between the towers, a football pitch and city roofs below.","kind":"mix","status":"wip","look":"color","label":null,"work":["Match the towers to the DTS model","QC warping in the small buildings","Upscale + grade"],"dept":["3D","AI","Grade"],"size":"M","flags":[],"q":"","model":"dts","as":{"v":2,"note":"v2: camera just above the roofs between two towers, rising and turning like the edit","src":"/r/hrid/as/sh23_v2.mp4"},"id":"SH23","f0":1074,"f1":1146,"vo":"Rising higher than Iraq has ever seen."},{"name":"Plaza entrance — dusk","desc":"The plaza entrance at sunset: palms, fountain, a car, people, the towers behind.","kind":"ai","status":"wip","look":"color","label":null,"work":["Match to the Downtown design (podium and plaza)","QC the people's movement","Remove the car badge","Upscale + grade"],"dept":["AI","Comp","Grade"],"size":"M","flags":["Car brand badge visible"],"q":"","model":"dts","as":{"note":"Plaza entrance with the towers behind, low sun","src":"/r/hrid/as/sh24_v1.mp4","v":1},"id":"SH24","f0":1146,"f1":1212,"vo":"Creating places to live, work"},{"name":"The boy — framing with his hand","desc":"The boy looks up and frames with his hand; a shadow passes over his face.","kind":"live","status":"final","look":"color","label":null,"work":["Clean the background (banding in the gradient)","Grade"],"dept":["Comp","Grade"],"size":"S","flags":[],"q":"","sd":{"v":4,"note":"v4 · Seedance 2.5 Edit 720p: the v3 golden look (haze, bokeh, flare orbs) with the sun in front and high, so his hand throws its shadow across his face and eyes as in the edit. Background: our plaza in bokeh, no Dubai skyline","src":"/r/hrid/sd/sh25_v4.mp4"},"id":"SH25","f0":1212,"f1":1241,"vo":"and belong."},{"name":"SLEMANI sign — sunrise","desc":"The word SLEMANI on Goizha mountain with the city below, sun rising.","kind":"mix","status":"wip","look":"color","label":null,"work":["Match the letters to the real survey drawing","The mountain follows the real site","City QC + upscale + grade"],"dept":["3D","AI","Grade"],"size":"M","flags":[],"q":"","model":"slemani","as":{"note":"Mountain and city on the right, SLEMANI letters bottom left — framing needs a manual pass","src":"/r/hrid/as/sh26_v1.mp4","v":1},"id":"SH26","f0":1241,"f1":1292,"vo":"Honouring the identity of a city."},{"name":"The elder — low angle","desc":"The old man from below, smiling and looking up.","kind":"live","status":"final","look":"color","label":null,"work":["Paint out: studio ceiling above frame","Grade"],"dept":["Comp","Grade"],"size":"S","flags":["Studio ceiling visible above frame"],"q":"","id":"SH27","f0":1292,"f1":1324,"vo":""},{"name":"Light on the walls","desc":"Inside a dark building, warm pools of light moving over the walls and a column.","kind":"ai","status":"wip","look":"color","label":null,"work":["Fix the black strip at bottom right, or redo the shot","Upscale + grade"],"dept":["AI","Comp"],"size":"S","flags":["Small black strip at the bottom right of the picture"],"q":"","id":"SH28","f0":1324,"f1":1349,"vo":"Opening possibilities"},{"name":"Look up — stone walls to the tower","desc":"From below between stone walls up to a glass tower and sky.","kind":"ai","status":"wip","look":"color","label":null,"work":["Match the tower to Downtown","Upscale + grade"],"dept":["AI","Grade"],"size":"S","flags":[],"q":"","model":"dts","as":{"note":"From below looking up the tower, tilted","src":"/r/hrid/as/sh29_v1.mp4","v":1},"id":"SH29","f0":1349,"f1":1370,"vo":"for the"},{"name":"The engineer — close-up","desc":"Close-up of the engineer in profile, looking up.","kind":"live","status":"final","look":"color","label":null,"work":["Light beauty pass","Grade"],"dept":["Comp","Grade"],"size":"S","flags":[],"q":"","id":"SH30","f0":1370,"f1":1394,"vo":"generations to"},{"name":"The boy — close-up","desc":"Close-up of the boy smiling to camera.","kind":"live","status":"final","look":"color","label":null,"work":["Grade and match the background to SH25"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH31","f0":1394,"f1":1419,"vo":"come. Because"},{"name":"Lobby — people","desc":"A lobby with a glass front onto the towers, people coming and going.","kind":"ai","status":"wip","look":"color","label":null,"work":["QC people's walk","Match the architecture to Downtown","Upscale + grade"],"dept":["AI","Grade"],"size":"M","flags":[],"q":"","id":"SH32","f0":1419,"f1":1447,"vo":"to shape a city"},{"name":"Towers and birds","desc":"Two towers from below against a turquoise sky, with birds.","kind":"ai","status":"wip","look":"color","label":null,"work":["Match the towers to the DTS model","Upscale + grade"],"dept":["AI","Grade"],"size":"S","flags":[],"q":"","model":"dts","as":{"note":"Two towers from below against the sky","src":"/r/hrid/as/sh33_v1.mp4","v":1},"id":"SH33","f0":1447,"f1":1478,"vo":"is to make a promise"},{"name":"Towers — wide, haze","desc":"The towers wide in haze, birds, the city behind.","kind":"ai","status":"wip","look":"color","label":null,"work":["The background has water and a marina — Slemani has none; redo or clean","Remove the \"02\" in the top-left corner","Match the towers to the DTS model","Upscale + grade"],"dept":["AI","Comp","Grade"],"size":"M","flags":["Water and a marina in the background","\"02\" visible in the top-left corner"],"q":"","model":"dts","as":{"note":"The row of towers in haze, long lens — matches the edit","src":"/r/hrid/as/sh34_v1.mp4","v":1},"id":"SH34","f0":1478,"f1":1502,"vo":"to its future."},{"name":"Signing — ring in the foreground","desc":"A hand with a ring in the foreground (out of focus), the architect signing behind.","kind":"live","status":"final","look":"bw","label":null,"work":["Grade: back to black and white"],"dept":["Grade"],"size":"S","flags":[],"q":"","id":"SH35","f0":1502,"f1":1546,"vo":"A promise we put our"},{"name":"The signature","desc":"The \"Hiwa Rauf\" signature completes on the paper inside a cut-corner mask, then fades to black.","kind":"live","status":"wip","look":"bw","label":null,"work":["Decide the ending: the signature alone, or it turns into the HRID logo","End card: logo + any legal line or website","Clean the mask and its edges","Grade"],"dept":["GFX","Comp","Grade"],"size":"M","flags":["No end logo in v07"],"q":"The ending: the signature alone, or must it turn into the HRID logo as in the treatment?","id":"SH36","f0":1546,"f1":1609,"vo":"name to."}]}</script>
 <script>
 (function(){
 'use strict';
 var D;
 try{ D=JSON.parse(document.getElementById('hrid-data').textContent); }
-catch(e){ document.getElementById('count').textContent='بيانات الصفحة مش مقروءة.'; return; }
+catch(e){ document.getElementById('count').textContent='The page data could not be read.'; return; }
 var M=D.meta||{}, S=D.shots||[], KD=D.kinds||{}, ST=D.status||{}, SZ=D.sizes||{}, FL=D.flags||[], MD=D.models||{};
 var FPS=M.fps||25, FRAMES=M.frames||(S.length?S[S.length-1].f1:1), DUR=FRAMES/FPS;
 var SC={final:'#4CAF50',wip:'#F5B301',temp:'#EF4122'};
-var SL={final:'جاهزة',wip:'محتاجة شغل',temp:'تتعمل من جديد'}, SI={final:'check',wip:'wrench',temp:'newbox'}, KI={live:'camera',cg:'cube',ai:'sparkles',mix:'layers'};
+var SL={final:'Ready',wip:'Needs work',temp:'To redo'}, SI={final:'check',wip:'wrench',temp:'newbox'}, KI={live:'camera',cg:'cube',ai:'sparkles',mix:'layers'};
 var $=function(id){return document.getElementById(id);};
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function p2(n){return (n<10?'0':'')+n;}
@@ -507,18 +507,18 @@ var cmpL=store('cmpL'); if(!LK[cmpL]||!lcount(cmpL)){ cmpL=null; LY.some(functio
 var cmpPref=cmpL;
 function hasAS(s){ return !!clipOf(s,cmpL); }
 /* per shot, show the layer the user picked if the shot has it, otherwise whichever layer the shot does have (newest first) */
-function autoL(s){ if(!s||!LY.length) return; var k=clipOf(s,cmpPref)?cmpPref:null; if(!k){ for(var j=LY.length-1;j>=0;j--){ if(clipOf(s,LY[j].key)){ k=LY[j].key; break; } } } if(!k) k=cmpPref||cmpL; if(k!==cmpL){ cmpL=k; asIdx=''; markLayers(); if(!cmp){ var b=$('b-cmp'); if(b) b.lastChild.textContent='قارن · '+lname(k); } } }
+function autoL(s){ if(!s||!LY.length) return; var k=clipOf(s,cmpPref)?cmpPref:null; if(!k){ for(var j=LY.length-1;j>=0;j--){ if(clipOf(s,LY[j].key)){ k=LY[j].key; break; } } } if(!k) k=cmpPref||cmpL; if(k!==cmpL){ cmpL=k; asIdx=''; markLayers(); if(!cmp){ var b=$('b-cmp'); if(b) b.lastChild.textContent='Compare · '+lname(k); } } }
 function lname(k){ return (LK[k]&&LK[k].label)||k; }
 
 /* ---------- title bar + footer ---------- */
 $('h1').textContent=M.project||'HRID';
 (function(){
   var over=(M.target!=null)?(DUR-M.target):0, h='';
-  if(M.edit) h+='<span>الإيديت <b><bdi>'+esc(M.edit)+'</bdi></b></span>';
-  h+='<span><b><bdi>'+S.length+'</bdi></b> شوت</span>';
-  h+='<span><b><bdi>'+DUR.toFixed(2)+'</bdi></b> ث'+((M.target!=null&&Math.abs(over)>0.005)?' <span class="over">(<bdi>'+(over>0?'+':'−')+Math.abs(over).toFixed(2)+'</bdi> ث عن الـ <bdi>'+esc(M.target)+'</bdi>)</span>':'')+'</span>';
+  if(M.edit) h+='<span>Edit <b><bdi>'+esc(M.edit)+'</bdi></b></span>';
+  h+='<span><b><bdi>'+S.length+'</bdi></b> shots</span>';
+  h+='<span><b><bdi>'+DUR.toFixed(2)+'</bdi></b> s'+((M.target!=null&&Math.abs(over)>0.005)?' <span class="over">(<bdi>'+(over>0?'+':'−')+Math.abs(over).toFixed(2)+'</bdi> s vs <bdi>'+esc(M.target)+'</bdi>)</span>':'')+'</span>';
   $('facts').innerHTML=h;
-  var f='<span><bdi>Aroma Studios</bdi> · <bdi>'+FPS+' fps</bdi> · <bdi>'+FRAMES+' f</bdi>'+(M.updated?' · آخر تحديث <bdi>'+esc(M.updated)+'</bdi>':'')+'</span>';
+  var f='<span><bdi>Aroma Studios</bdi> · <bdi>'+FPS+' fps</bdi> · <bdi>'+FRAMES+' f</bdi>'+(M.updated?' · updated <bdi>'+esc(M.updated)+'</bdi>':'')+'</span>';
   if(M.note) f+='<span>'+esc(M.note)+'</span>';
   $('foot').innerHTML=f;
 })();
@@ -540,15 +540,15 @@ if(typeof hidL!=='object'||!hidL) hidL={};
   S.forEach(function(s){ var b=document.createElement('i'); b.className='blk'+(s.model?' mdl':''); b.style.cssText='flex:'+(s.f1-s.f0)+' 1 0;--sc:'+sc(s.status);
     b.innerHTML='<b>'+esc(String(s.id).replace(/^\D+/,''))+'</b>'+(s.model?ico('building'):''); frag.appendChild(b); blks.push(b); });
   strip.appendChild(frag);
-  $('v1ct').textContent=S.length; if(M.edit) $('v1nm').parentNode.title='V1 · الإيديت '+M.edit+' — دوس تشوف الإيديت لوحده';
+  $('v1ct').textContent=S.length; if(M.edit) $('v1nm').parentNode.title='V1 · edit '+M.edit+' — click to see the edit alone';
   LY.forEach(function(L){
     var t=document.createElement('div'), n=0, h='';
     t.className='trk'+(hidL[L.key]?' hid':''); t.dataset.k=L.key; if(L.color) t.style.setProperty('--lc',L.color);
     clipEls[L.key]=[];
     S.forEach(function(s,i){ var c=clipOf(s,L.key); if(!c) return; n++;
       h+='<i class="clip" data-i="'+i+'" style="left:'+(s.f0/FRAMES*100)+'%;width:'+((s.f1-s.f0)/FRAMES*100)+'%" title="'+esc(s.id+' · '+L.label+(c.v!=null?' v'+c.v:''))+'"><b>'+esc(String(s.id).replace(/^\D+/,''))+(c.v!=null?'<small> v'+esc(c.v)+'</small>':'')+'</b></i>'; });
-    t.innerHTML='<div class="hd" role="button" tabindex="0" title="'+esc(L.label+(L.note?' — '+L.note:'')+' · دوس تعرضه جنب الإيديت')+'"><span class="code">'+esc(L.code)+'</span>'+ico(L.icon||'layers')+'<span class="nm">'+esc(L.label)+'</span><span class="ct">'+n+'</span><button type="button" class="eye" aria-label="إظهار / إخفاء التراك" title="إظهار / إخفاء التراك">'+ico(hidL[L.key]?'eyeoff':'eye')+'</button></div>'
-      +'<div class="lane">'+(n?h:'<span class="lempty">'+esc(L.empty||'لسه مفيش كليبات على التراك ده')+'</span>')+'</div>';
+    t.innerHTML='<div class="hd" role="button" tabindex="0" title="'+esc(L.label+(L.note?' — '+L.note:'')+' · click to show it beside the edit')+'"><span class="code">'+esc(L.code)+'</span>'+ico(L.icon||'layers')+'<span class="nm">'+esc(L.label)+'</span><span class="ct">'+n+'</span><button type="button" class="eye" aria-label="Show / hide track" title="Show / hide track">'+ico(hidL[L.key]?'eyeoff':'eye')+'</button></div>'
+      +'<div class="lane">'+(n?h:'<span class="lempty">'+esc(L.empty||'No clips on this track yet')+'</span>')+'</div>';
     tracks.insertBefore(t,ph);
     [].forEach.call(t.querySelectorAll('.clip'),function(el){ clipEls[L.key][+el.dataset.i]=el; });
     trkEls[L.key]=t;
@@ -557,7 +557,7 @@ if(typeof hidL!=='object'||!hidL) hidL={};
   $('ruler').innerHTML=r;
   var lg=''; Object.keys(ST).length?Object.keys(ST).forEach(add):['final','wip','temp'].forEach(add);
   function add(k){ lg+='<span style="--c:'+sc(k)+'">'+ico(SI[k]||'check')+esc(stName(k))+'</span>'; }
-  if(S.some(function(s){return s.model;})) lg+='<span>'+ico('building')+'مبانينا</span>';
+  if(S.some(function(s){return s.model;})) lg+='<span>'+ico('building')+'Our buildings</span>';
   $('legend').innerHTML=lg;
 })();
 function fitLabels(){ blks.forEach(function(b){ var w=b.offsetWidth; b.firstChild.style.display=w>=21?'':'none'; var sv=b.lastChild; if(sv&&sv.tagName&&sv.tagName.toLowerCase()==='svg') sv.style.display=w>=40?'':'none'; });
@@ -572,10 +572,10 @@ var rowsEl=$('rows'), rowEls=[], openIdx=-1;
   var h='';
   S.forEach(function(s,i){
     var fr=s.f1-s.f0, fl=s.flags||[], z=SZ[s.size], tags='';
-    if(s.size) tags+='<span class="tg" title="الحجم والوقت التقديري">'+ico('clock')+'<b>'+esc(s.size)+'</b>'+(z&&z.time?esc(z.time):'')+'</span>';
-    if(s.model) tags+='<span class="tg mdl" title="الشوت ده على موديل من مبانينا">'+ico('building')+esc(mdLabel(s.model))+'</span>';
-    LY.forEach(function(L){ var c=clipOf(s,L.key); if(c) tags+='<span class="tg as" style="--lc:'+esc(L.color||'#38BDF8')+'" title="فيه '+esc(L.label)+' للشوت ده">'+ico(L.icon||'layers')+esc(L.label)+(c.v!=null?' <bdi>v'+esc(c.v)+'</bdi>':'')+'</span>'; });
-    if(s.q) tags+='<span class="tg q" title="'+esc(s.q)+'">'+ico('qmark')+'سؤال</span>';
+    if(s.size) tags+='<span class="tg" title="Size and estimated time">'+ico('clock')+'<b>'+esc(s.size)+'</b>'+(z&&z.time?esc(z.time):'')+'</span>';
+    if(s.model) tags+='<span class="tg mdl" title="This shot is on one of our building models">'+ico('building')+esc(mdLabel(s.model))+'</span>';
+    LY.forEach(function(L){ var c=clipOf(s,L.key); if(c) tags+='<span class="tg as" style="--lc:'+esc(L.color||'#38BDF8')+'" title="This shot has '+esc(L.label)+'">'+ico(L.icon||'layers')+esc(L.label)+(c.v!=null?' <bdi>v'+esc(c.v)+'</bdi>':'')+'</span>'; });
+    if(s.q) tags+='<span class="tg q" title="'+esc(s.q)+'">'+ico('qmark')+'Question</span>';
     if(fl.length) tags+='<span class="tg" title="'+esc(fl.join(' · '))+'">'+ico('flag')+'<bdi>'+fl.length+'</bdi></span>';
     var notes=(s.q?'<div class="qbox">'+ico('qmark')+'<span>'+esc(s.q)+'</span></div>':'')
       +(fl.length?'<ul class="fnote">'+fl.map(function(f){return '<li>'+esc(f)+'</li>';}).join('')+'</ul>':'')
@@ -584,18 +584,18 @@ var rowsEl=$('rows'), rowEls=[], openIdx=-1;
       +'<div class="rh" role="button" tabindex="0" aria-expanded="false" aria-label="'+esc(s.id+' '+(s.name||''))+'">'
         +'<div class="th" style="'+tile(i)+'">'+(s.label?'<span class="onlab">'+esc(s.label)+'</span>':'')+'</div>'
         +'<div class="rt"><div class="rt1"><bdi class="r-id">'+esc(s.id)+'</bdi><span class="r-name">'+esc(s.name)+'</span></div>'
-          +'<div class="rt2"><span>'+ico(KI[s.kind]||'film')+esc(kdLabel(s.kind))+'</span><span><bdi>'+secs(fr)+'</bdi> ث</span></div></div>'
+          +'<div class="rt2"><span>'+ico(KI[s.kind]||'film')+esc(kdLabel(s.kind))+'</span><span><bdi>'+secs(fr)+'</bdi> s</span></div></div>'
         +pill(s.status)
         +'<div class="tgs">'+tags+'</div>'
         +'<span class="chev">'+ico('chevron')+'</span>'
       +'</div>'
       +'<div class="rb" hidden>'
-        +'<div class="c"><p class="lbl">'+ico('eye')+'اللقطة</p>'+(s.desc?'<p class="r-desc">'+esc(s.desc)+'</p>':'')
+        +'<div class="c"><p class="lbl">'+ico('eye')+'The shot</p>'+(s.desc?'<p class="r-desc">'+esc(s.desc)+'</p>':'')
           +(s.vo?'<p class="r-vo">'+ico('mic')+'<span>'+esc(s.vo)+'</span></p>':'')
-          +'<p class="r-meta">من <bdi class="mono">'+tc(s.f0)+'</bdi> لـ <bdi class="mono">'+tc(s.f1-1)+'</bdi> · <bdi>'+fr+' f</bdi> · '+(s.look==='color'?'ألوان':'أبيض وأسود')+(s.label?' · مكتوب على الصورة: <bdi>'+esc(s.label)+'</bdi>':'')+'</p></div>'
-        +'<div class="c"><p class="lbl">'+ico('list')+'الشغل المطلوب</p>'+((s.work&&s.work.length)?'<ul class="work">'+s.work.map(function(w){return '<li>'+esc(w)+'</li>';}).join('')+'</ul>':'<span class="nil">—</span>')
-          +((s.dept&&s.dept.length)?'<div class="depts">الأقسام'+s.dept.map(function(d){return '<span class="dp">'+esc(d)+'</span>';}).join('')+'</div>':'')+'</div>'
-        +'<div class="c"><p class="lbl">'+ico('flag')+'ملاحظات وأسئلة</p>'+(notes||'<span class="nil">مفيش ملاحظات على الشوت ده.</span>')+'</div>'
+          +'<p class="r-meta">From <bdi class="mono">'+tc(s.f0)+'</bdi> to <bdi class="mono">'+tc(s.f1-1)+'</bdi> · <bdi>'+fr+' f</bdi> · '+(s.look==='color'?'Colour':'Black and white')+(s.label?' · label on the picture: <bdi>'+esc(s.label)+'</bdi>':'')+'</p></div>'
+        +'<div class="c"><p class="lbl">'+ico('list')+'Work to do</p>'+((s.work&&s.work.length)?'<ul class="work">'+s.work.map(function(w){return '<li>'+esc(w)+'</li>';}).join('')+'</ul>':'<span class="nil">—</span>')
+          +((s.dept&&s.dept.length)?'<div class="depts">Departments'+s.dept.map(function(d){return '<span class="dp">'+esc(d)+'</span>';}).join('')+'</div>':'')+'</div>'
+        +'<div class="c"><p class="lbl">'+ico('flag')+'Notes and questions</p>'+(notes||'<span class="nil">No notes on this shot.</span>')+'</div>'
       +'</div></article>';
   });
   rowsEl.innerHTML=h; rowEls=[].slice.call(rowsEl.children);
@@ -608,9 +608,9 @@ function openRow(i){
 }
 
 /* ---------- filter tabs (they are the summary too) ---------- */
-var TABS=[{k:'all',ic:'film',lab:'الكل'}];
+var TABS=[{k:'all',ic:'film',lab:'All'}];
 ['temp','wip','final'].forEach(function(k){ if(!Object.keys(ST).length||ST[k]) TABS.push({k:k,ic:SI[k],lab:SL[k],c:sc(k)}); });
-TABS.push({k:'model',ic:'building',lab:'مبانينا'},{k:'q',ic:'qmark',lab:'فيها سؤال'});
+TABS.push({k:'model',ic:'building',lab:'Our buildings'},{k:'q',ic:'qmark',lab:'Questions'});
 function inTab(s,k){ return k==='all'||(k==='model'?!!s.model:(k==='q'?!!s.q:s.status===k)); }
 TABS=TABS.filter(function(t){ t.n=S.filter(function(s){return inTab(s,t.k);}).length; return t.k==='all'||t.n>0; });
 var F=store('f2')||{}; if(typeof F!=='object'||!F) F={}; F.tab=F.tab||'all'; F.q=F.q||'';
@@ -625,8 +625,8 @@ function applyFilters(){
   S.forEach(function(s,i){ var ok=inTab(s,F.tab)&&(!q||HAY[i].indexOf(q)>=0); rowEls[i].hidden=!ok; blks[i].classList.toggle('off',!ok);
     if(ok){ n++; fr+=s.f1-s.f0; hrs+=(SZ[s.size]&&SZ[s.size].hours)||0; } });
   if(openIdx>=0&&rowEls[openIdx].hidden) openRow(-1);
-  $('count').innerHTML=(n===S.length?'<bdi>'+n+'</bdi> شوت':'<bdi>'+n+'</bdi> شوت من <bdi>'+S.length+'</bdi>')+' · <bdi>'+secs(fr)+'</bdi> ث من الفيلم'
-    +(n?' · الوقت التقديري ≈ <bdi>'+Math.round(hrs)+'</bdi> ساعة شغل (≈ <bdi>'+Math.max(1,Math.round(hrs/8))+'</bdi> يوم لشخص واحد) — أرقام مبدئية':'');
+  $('count').innerHTML=(n===S.length?'<bdi>'+n+'</bdi> shots':'<bdi>'+n+'</bdi> of <bdi>'+S.length+'</bdi> shots')+' · <bdi>'+secs(fr)+'</bdi> s of the film'
+    +(n?' · estimated ≈ <bdi>'+Math.round(hrs)+'</bdi> working hours (≈ <bdi>'+Math.max(1,Math.round(hrs/8))+'</bdi> days for one person) — first estimates':'');
   $('empty').hidden=n>0; store('f2',F);
 }
 $('tabs').addEventListener('click',function(e){ var b=e.target.closest('.tab'); if(!b) return; F.tab=b.dataset.tab; drawTabs(); applyFilters(); });
@@ -687,7 +687,7 @@ function setShot(i,playing){
   $('hud-id').textContent=s.id; var hl=$('hud-lab'); hl.hidden=!s.label; hl.textContent=s.label||'';
   $('vo').innerHTML=s.vo?ico('mic')+'<span>'+esc(s.vo)+'</span>':'';
   $('poster').style.cssText=tile(i);
-  if(anyAS){ var b=$('b-cmp'), ok=hasAS(s); b.classList.toggle('off',!ok&&!cmp); b.title=ok?'الإيديت جنب '+lname(cmpL):'الشوت ده ملوش '+lname(cmpL)+' لسه'; }
+  if(anyAS){ var b=$('b-cmp'), ok=hasAS(s); b.classList.toggle('off',!ok&&!cmp); b.title=ok?'The edit beside '+lname(cmpL):'No '+lname(cmpL)+' for this shot yet'; }
   syncAS();
   /* while it plays and the list is what is on screen, keep the current row in view */
   if(playing&&follow&&pip&&!listHover&&!rowEls[i].hidden){ var r=rowEls[i].getBoundingClientRect(); if(r.top<deck.offsetHeight+4||r.bottom>window.innerHeight-8) rowEls[i].scrollIntoView({block:'nearest',behavior:reduce?'auto':'smooth'}); }
@@ -708,7 +708,7 @@ function playV(){ if(failed) return; var p=v.play(); if(p&&p.catch) p.catch(func
 function toggle(){ if(v.paused){ if(v.ended||v.currentTime>=DUR-0.03) seek(0); playV(); } else v.pause(); }
 function setLoop(on){ loop=!!on; var b=$('b-loop'); b.classList.toggle('on',loop); b.setAttribute('aria-pressed',loop); if(loop) loopIdx=cur>=0?cur:0; store('loop',loop); }
 function setMute(on){ v.muted=!!on; var b=$('b-mute'); b.classList.toggle('on',v.muted); b.setAttribute('aria-pressed',v.muted);
-  $('mute-ico').innerHTML=ico(v.muted?'mute':'vol'); $('mute-lbl').textContent=v.muted?'مكتوم':'صوت'; }
+  $('mute-ico').innerHTML=ico(v.muted?'mute':'vol'); $('mute-lbl').textContent=v.muted?'Muted':'Sound'; }
 function setRate(i){ rateI=i%RATES.length; var r=RATES[rateI]; v.playbackRate=r; av.playbackRate=r; $('rate-lbl').textContent=r+'×'; $('b-rate').classList.toggle('on',r!==1); }
 function step(d){ var f=frameNow(), i=shotAt(f), to=(d<0)?((f-S[i].f0>12)?i:Math.max(0,i-1)):Math.min(S.length-1,i+1);
   if(d>0&&to===i) return; goShot(to,!v.paused); if(follow&&pip) toRow(to); else if(!rowEls[to].hidden) openRow(to); }
@@ -716,13 +716,13 @@ function step(d){ var f=frameNow(), i=shotAt(f), to=(d<0)?((f-S[i].f0>12)?i:Math
 /* Auto stage take beside the edit: a second, muted video kept in step with the main one */
 function setCmp(on){
   cmp=!!on&&anyAS; stage.classList.toggle('cmp',cmp); var b=$('b-cmp'); b.classList.toggle('on',cmp); b.setAttribute('aria-pressed',cmp);
-  b.lastChild.textContent=cmp?'الإيديت بس':'قارن · '+lname(cmpL);
+  b.lastChild.textContent=cmp?'Edit only':'Compare · '+lname(cmpL);
   if(cur>=0) b.classList.toggle('off',!hasAS(S[cur])&&!cmp);
   if(!cmp){ try{ av.pause(); }catch(e){} }
   markLayers(); syncAS(); measure();
 }
-function setLayer(k){ if(!LK[k]) return; cmpL=k; cmpPref=k; store('cmpL',k); asIdx=''; var b=$('b-cmp'); if(!cmp) b.lastChild.textContent='قارن · '+lname(k);
-  if(cur>=0){ var ok=hasAS(S[cur]); b.classList.toggle('off',!ok&&!cmp); b.title=ok?'الإيديت جنب '+lname(k):'الشوت ده ملوش '+lname(k)+' لسه'; }
+function setLayer(k){ if(!LK[k]) return; cmpL=k; cmpPref=k; store('cmpL',k); asIdx=''; var b=$('b-cmp'); if(!cmp) b.lastChild.textContent='Compare · '+lname(k);
+  if(cur>=0){ var ok=hasAS(S[cur]); b.classList.toggle('off',!ok&&!cmp); b.title=ok?'The edit beside '+lname(k):'No '+lname(k)+' for this shot yet'; }
   markLayers(); syncAS(); }
 function syncAS(){
   if(!cmp) return;
@@ -730,10 +730,10 @@ function syncAS(){
   var c=clipOf(s,cmpL), L=LK[cmpL]||{};
   /* compare stays on by default; a shot with nothing to compare plays the edit full width */
   if(stage.classList.contains('cmp')!==!!c){ stage.classList.toggle('cmp',!!c); measure(); }
-  if(!c){ asframe.classList.add('none'); $('as-msg').textContent='مفيش '+lname(cmpL)+' للشوت ده لسه'; if(!av.paused) av.pause(); asIdx=''; return; }
+  if(!c){ asframe.classList.add('none'); $('as-msg').textContent='No '+lname(cmpL)+' for this shot yet'; if(!av.paused) av.pause(); asIdx=''; return; }
   var key=cur+'|'+cmpL;
   if(asIdx!==key){ asIdx=key; asBad=false; av.src=clipSrc(c.src); $('as-tag').textContent=(L.code?L.code+' · ':'')+lname(cmpL)+(c.v!=null?' · v'+c.v:'')+(cmpL==='as'&&s.model?' · '+mdLabel(s.model):''); }
-  if(asBad){ asframe.classList.add('none'); $('as-msg').textContent=lname(cmpL)+' بتاع الشوت ده مش راضي يحمّل.'; return; }
+  if(asBad){ asframe.classList.add('none'); $('as-msg').textContent='This shot\'s '+lname(cmpL)+' would not load.'; return; }
   asframe.classList.remove('none');
   if(av.readyState<1) return;
   var d=av.duration||0, t=Math.max(0,nowT()-s.f0/FPS); if(d) t=Math.min(t,Math.max(0,d-0.03));
@@ -754,8 +754,8 @@ function tick(){
   requestAnimationFrame(tick);
 }
 function showErr(){ failed=true; stage.classList.remove('ready','playing'); var e=$('verr'); e.hidden=false;
-  e.innerHTML='الفيديو مش راضي يحمّل دلوقتي. القايمة والتوقيتات شغالين عادي — جرّب تعمل تحديث للصفحة. <bdi class="mono">'+esc(M.src||'')+'</bdi>'; $('bigplay').hidden=true; }
-function ppState(){ var on=!v.paused; $('pp-ico').innerHTML=ico(on?'pause':'play'); $('pp-lbl').textContent=on?'إيقاف':'تشغيل'; }
+  e.innerHTML='The video would not load right now. The list and timings still work — try reloading the page. <bdi class="mono">'+esc(M.src||'')+'</bdi>'; $('bigplay').hidden=true; }
+function ppState(){ var on=!v.paused; $('pp-ico').innerHTML=ico(on?'pause':'play'); $('pp-lbl').textContent=on?'Pause':'Play'; }
 v.addEventListener('error',showErr);
 v.addEventListener('loadedmetadata',function(){ if(pendingT!=null){ var t=pendingT; pendingT=null; try{ v.currentTime=t; }catch(e){} } });
 v.addEventListener('loadeddata',function(){ stage.classList.add('ready'); });
@@ -780,7 +780,7 @@ try{ R=JSON.parse(sessionStorage.getItem('hrid-dr:resume')||'null'); sessionStor
   function paintBoot(){ var g=0,T=0,unk=0; urls.forEach(function(u){ g+=got[u]||0; if(tot[u]) T+=tot[u]; else unk++; });
     var p=T?Math.min(1,g/T):0; if(unk) p=Math.min(p,0.95);
     $('boot-bar').style.setProperty('--p',p); $('boot-pct').textContent=Math.round(p*100)+'%';
-    $('boot-sz').textContent=(g/MB).toFixed(1)+' / '+(T&&!unk?(T/MB).toFixed(1):'…')+' MB · '+done+'/'+urls.length+' ملف'; }
+    $('boot-sz').textContent=(g/MB).toFixed(1)+' / '+(T&&!unk?(T/MB).toFixed(1):'…')+' MB · '+done+'/'+urls.length+' files'; }
   function one(u){
     return fetch(u).then(function(r){ if(!r.ok) throw new Error(r.status); tot[u]=+r.headers.get('content-length')||0; var type=r.headers.get('content-type')||'';
       if(!r.body||!r.body.getReader) return r.blob();
@@ -819,7 +819,7 @@ $('b-rate').addEventListener('click',function(){ setRate(rateI+1); });
 $('b-follow').addEventListener('click',function(){ setFollow(!follow); });
 $('b-cmp').addEventListener('click',function(){ setCmp(!cmp); });
 $('pipup').addEventListener('click',function(e){ e.stopPropagation(); window.scrollTo({top:0,behavior:reduce?'auto':'smooth'}); });
-if(anyAS){ $('b-cmp').hidden=false; $('b-cmp').lastChild.textContent='قارن · '+lname(cmpL); }
+if(anyAS){ $('b-cmp').hidden=false; $('b-cmp').lastChild.textContent='Compare · '+lname(cmpL); }
 markLayers();
 
 /* the big picture left the screen -> keep it playing in the corner */
@@ -837,7 +837,7 @@ if('IntersectionObserver' in window){
     if(k==null) k=hovK;
     if(hov!==i||hovK!==k){ unhov(); hov=i; hovK=k; blks[i].classList.add('hov'); var c=k&&clipEls[k]&&clipEls[k][i]; if(c) c.classList.add('hov'); }
     var c2=k?clipOf(s,k):null;
-    tip.hidden=false; tip.innerHTML='<bdi class="mono">'+esc(s.id)+'</bdi> · <bdi>'+esc(s.name||'')+'</bdi> · '+(k?(c2?'<b>'+esc(lname(k))+(c2.v!=null?' v'+esc(c2.v):'')+'</b> — دوس تعرضه':'مفيش '+esc(lname(k))+' هنا'):esc(stName(s.status)))+' · <bdi>'+secs(s.f1-s.f0)+'</bdi> ث';
+    tip.hidden=false; tip.innerHTML='<bdi class="mono">'+esc(s.id)+'</bdi> · <bdi>'+esc(s.name||'')+'</bdi> · '+(k?(c2?'<b>'+esc(lname(k))+(c2.v!=null?' v'+esc(c2.v):'')+'</b> — click to show':'No '+esc(lname(k))+' here'):esc(stName(s.status)))+' · <bdi>'+secs(s.f1-s.f0)+'</bdi> s';
     var tl=$('tl').getBoundingClientRect(), sr=strip.getBoundingClientRect(), w=sr.width, half=tip.offsetWidth/2, off=sr.left-tl.left;
     tip.style.top=(tracks.offsetHeight+6)+'px';
     tip.style.left=(off+Math.min(w-half,Math.max(half,x*w)))+'px'; }
