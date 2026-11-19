@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>مصر 2014 ← 2026 · الفيلم</title>
+<link rel="preload" href="../fonts/sv/readex-ar.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:D;src:url(../fonts/sv/readex-ar.woff2) format('woff2');font-weight:160 700;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFC}
+@font-face{font-family:D;src:url(../fonts/sv/readex-la.woff2) format('woff2');font-weight:160 700;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+2000-206F,U+2190-21FF,U+2212,U+2215}
+@font-face{font-family:B;src:url(../fonts/sv/plex-ar-400.woff2);font-weight:400;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFC}
+@font-face{font-family:B;src:url(../fonts/sv/plex-ar-600.woff2);font-weight:600;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFC}
+@font-face{font-family:B;src:url(../fonts/sv/plex-la-400.woff2);font-weight:400;unicode-range:U+0000-00FF,U+2000-206F,U+2190-21FF}
+@font-face{font-family:B;src:url(../fonts/sv/plex-la-600.woff2);font-weight:600;unicode-range:U+0000-00FF,U+2000-206F,U+2190-21FF}
+:root{--bg:#05070b;--panel:#0b1019;--line:#1c2332;--ink:#efe9dd;--mute:#9aa0ab;--dim:#5d6573;--gold:#d6b26e;--gold2:#f6dda0}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg);-webkit-text-size-adjust:100%}
+body{background:radial-gradient(1200px 520px at 70% -120px,rgba(214,178,110,.13),transparent 70%),var(--bg);color:var(--ink);font:400 15px/1.7 B,system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
+.wrap{max-width:1180px;margin:0 auto;padding:44px 24px 72px}
+.eyebrow{display:flex;align-items:center;gap:12px;color:var(--gold);font:500 13px/1 D,B,sans-serif;letter-spacing:.02em}
+.eyebrow:after{content:"";height:1px;width:56px;background:linear-gradient(to left,transparent,var(--gold))}
+h1{font:700 clamp(30px,5vw,52px)/1.15 D,B,sans-serif;margin:14px 0 8px}
+h1 .ar{color:var(--gold);font-weight:500;margin:0 .25em}
+.sub{color:var(--mute);font-size:15px}
+.stage{margin-top:30px;border:1px solid var(--line);border-radius:14px;background:#000;overflow:hidden;box-shadow:0 30px 80px -40px rgba(0,0,0,.9)}
+.stage video{display:block;width:100%;aspect-ratio:16/9;background:#000}
+.now{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 18px;padding:14px 18px 6px;background:var(--panel)}
+.now b{font:600 15px/1.4 D,B,sans-serif}
+.now span{color:var(--mute);font-size:13px}
+.rail{display:flex;gap:3px;padding:8px 18px 16px;background:var(--panel)}
+.seg{position:relative;height:30px;border:0;background:none;cursor:pointer;padding:0}
+.seg i{position:absolute;inset:auto 0 0 0;height:4px;border-radius:2px;background:#232b3a;overflow:hidden}
+.seg i:after{content:"";position:absolute;inset:0 0 0 auto;width:var(--p,0%);background:var(--gold)}
+.seg.done i:after{width:100%;background:#8c7448}
+.seg em{position:absolute;top:2px;right:2px;font:500 11px/1 D,B,sans-serif;font-style:normal;color:var(--dim)}
+.seg.on em{color:var(--gold2)}
+.seg:hover i{background:#323c50}
+.seg[disabled]{cursor:default;opacity:.35}
+.bar{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 0}
+.btn{display:inline-flex;align-items:center;gap:9px;height:44px;padding:0 20px;border-radius:10px;border:1px solid var(--gold);background:transparent;color:var(--gold2);font:600 14px/1 B,sans-serif;text-decoration:none;cursor:pointer;transition:background .2s,color .2s}
+.btn:hover{background:rgba(214,178,110,.12)}
+.btn.pri{background:var(--gold);color:#140f05}
+.btn.pri:hover{background:var(--gold2)}
+.btn svg{width:18px;height:18px;flex:none}
+.note{color:var(--dim);font-size:13px;margin-top:10px}
+h2{font:600 22px/1.3 D,B,sans-serif;margin:54px 0 18px;display:flex;align-items:baseline;gap:12px}
+h2 small{font:400 13px B,sans-serif;color:var(--mute)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.card.on{border-color:var(--gold)}
+.thumb{position:relative;display:block;width:100%;aspect-ratio:16/9;border:0;padding:0;background:#000 center/cover no-repeat;cursor:pointer}
+.thumb:after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(5,7,11,.55),transparent 55%)}
+.thumb .n{position:absolute;top:10px;left:12px;z-index:1;font:700 22px/1 D,B,sans-serif;color:var(--gold2);background:rgba(5,7,11,.62);border:1px solid rgba(214,178,110,.35);border-radius:8px;padding:6px 9px 5px}
+.thumb .play{position:absolute;inset:0;margin:auto;z-index:1;width:54px;height:54px;border-radius:50%;border:1.5px solid rgba(246,221,160,.85);display:grid;place-items:center;opacity:0;transform:scale(.9);transition:.2s}
+.thumb:hover .play,.thumb:focus-visible .play{opacity:1;transform:none}
+.thumb .play svg{width:22px;height:22px;stroke:var(--gold2);margin-right:-3px}
+.body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:12px;flex:1}
+.body h3{font:600 17px/1.4 D,B,sans-serif}
+.meta{color:var(--mute);font-size:13px;display:flex;gap:14px}
+.acts{display:flex;gap:8px;margin-top:auto}
+.acts .btn{height:38px;padding:0 14px;font-size:13px;flex:1;justify-content:center}
+.wait{color:var(--dim);font-size:13px;margin-top:auto;display:flex;align-items:center;gap:8px}
+.wait:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--gold);animation:pulse 1.4s infinite}
+@keyframes pulse{50%{opacity:.25}}
+footer{margin-top:56px;color:var(--dim);font-size:12px;border-top:1px solid var(--line);padding-top:18px}
+@media (max-width:640px){.wrap{padding:28px 16px 56px}.rail{padding:8px 10px 14px;gap:2px}.seg em{display:none}.now{padding:12px 12px 4px}.grid{grid-template-columns:1fr}.bar .btn{flex:1;justify-content:center}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">منتدى مصر 2026 · الجلسة الختامية</div>
+  <h1>مصر 2014<span class="ar">←</span>2026</h1>
+  <p class="sub">الفيلم كامل بالصوت · 10 فصول · 30 دقيقة · 1080p</p>
+
+  <div class="stage">
+    <video id="v" controls playsinline preload="metadata" poster="p00.jpg"></video>
+    <div class="now"><b id="nowT">الفيلم كامل</b><span id="nowM"></span></div>
+    <div class="rail" id="rail" aria-label="فصول الفيلم"></div>
+  </div>
+
+  <div class="bar">
+    <button class="btn pri" id="playAll" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M7 4.5v15l12-7.5z"/></svg>شغّل الفيلم كامل</button>
+    <button class="btn" id="dlAll" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14"/></svg>حمّل كل الفصول</button>
+  </div>
+  <p class="note" id="dlNote">الفيلم كامل = الفصول من 1 لـ 10 بالترتيب. لو المتصفح سأل «تحميل أكتر من ملف»، اختار «سماح».</p>
+
+  <h2>الفصول <small id="total"></small></h2>
+  <div class="grid" id="grid"></div>
+
+  <footer>Aroma Studios</footer>
+</div>
+<script>
+const CH = [{"n": 1, "t": "المقدمة والأزمة", "d": 402.97, "f": "VS7-ch01.mp4", "s": 0, "p": "p01.jpg"}, {"n": 2, "t": "إعادة بناء المقومات", "d": 24.05, "f": "VS7-ch02.mp4", "s": 9831738, "p": "p02.jpg"}, {"n": 3, "t": "التعمير", "d": 186.5, "f": "VS7-ch03.mp4", "s": 0, "p": "p03.jpg"}, {"n": 4, "t": "الربط", "d": 283.13, "f": "VS7-ch04.mp4", "s": 0, "p": "p04.jpg"}, {"n": 5, "t": "التمكين", "d": 142.6, "f": "VS7-ch05.mp4", "s": 89337786, "p": "p05.jpg"}, {"n": 6, "t": "الإنتاج والتشغيل", "d": 309.82, "f": "VS7-ch06.mp4", "s": 0, "p": "p06.jpg"}, {"n": 7, "t": "بناء الإنسان", "d": 160.82, "f": "VS7-ch07.mp4", "s": 0, "p": "p07.jpg"}, {"n": 8, "t": "حياة كريمة", "d": 212.63, "f": "VS7-ch08.mp4", "s": 0, "p": "p08.jpg"}, {"n": 9, "t": "ماذا لو لم تتدخل الدولة", "d": 40.35, "f": "VS7-ch09.mp4", "s": 16207597, "p": "p09.jpg"}, {"n": 10, "t": "مصر التي نريدها", "d": 37.73, "f": "VS7-ch10.mp4", "s": 22716045, "p": "p10.jpg"}];
+const $ = s => document.querySelector(s);
+const v = $('#v'), rail = $('#rail'), grid = $('#grid');
+const ready = c => c.s > 0;
+const fmtT = s => { s = Math.round(s); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+const fmtS = b => b >= 1e6 ? Math.round(b / 1e6) + ' ميجا' : Math.round(b / 1e3) + ' ك.ب';
+const dlName = c => 'VS7 ' + String(c.n).padStart(2, '0') + ' - ' + c.t + '.mp4';
+const ICON_PLAY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M7 4.5v15l12-7.5z"/></svg>';
+const ICON_DL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14"/></svg>';
+
+let cur = -1, whole = false;
+const tot = CH.reduce((a, c) => a + c.d, 0);
+const nReady = CH.filter(ready).length;
+$('#total').textContent = fmtT(tot) + (nReady < CH.length ? ' · ' + nReady + ' من ' + CH.length + ' جاهزين، والباقي بيترفع' : '');
+
+CH.forEach((c, i) => {
+  const s = document.createElement('button');
+  s.className = 'seg'; s.type = 'button'; s.style.flex = c.d; s.disabled = !ready(c);
+  s.title = c.n + ' · ' + c.t; s.setAttribute('aria-label', 'الفصل ' + c.n + ': ' + c.t);
+  s.innerHTML = '<em>' + c.n + '</em><i></i>';
+  s.onclick = () => play(i, true);
+  rail.appendChild(s); c.seg = s;
+
+  const k = document.createElement('article');
+  k.className = 'card';
+  k.innerHTML = '<button class="thumb" type="button" style="background-image:url(' + c.p + ')" aria-label="شغّل الفصل ' + c.n + '"><span class="n">' + String(c.n).padStart(2, '0') + '</span>' + (ready(c) ? '<span class="play">' + ICON_PLAY + '</span>' : '') + '</button>' +
+    '<div class="body"><h3>' + c.t + '</h3><div class="meta"><span>' + fmtT(c.d) + '</span>' + (ready(c) ? '<span>' + fmtS(c.s) + '</span>' : '') + '</div>' +
+    (ready(c) ? '<div class="acts"><button class="btn" type="button">' + ICON_PLAY + 'تشغيل</button><a class="btn" href="' + c.f + '" download="' + dlName(c) + '">' + ICON_DL + 'تحميل</a></div>'
+              : '<div class="wait">بيترفع دلوقتي</div>') + '</div>';
+  if (ready(c)) { k.querySelector('.thumb').onclick = k.querySelector('.acts button').onclick = () => { play(i, false); $('.stage').scrollIntoView({ behavior: 'smooth', block: 'start' }); }; }
+  grid.appendChild(k); c.card = k;
+});
+
+function mark() {
+  CH.forEach((c, i) => {
+    c.seg.classList.toggle('on', i === cur);
+    c.seg.classList.toggle('done', whole && i < cur);
+    if (i !== cur) c.seg.style.setProperty('--p', '0%');
+    c.card.classList.toggle('on', i === cur);
+  });
+}
+function play(i, asWhole) {
+  const c = CH[i]; if (!c || !ready(c)) return;
+  whole = asWhole; cur = i;
+  v.src = c.f; v.poster = c.p;
+  $('#nowT').textContent = (whole ? 'الفيلم كامل · ' : '') + 'الفصل ' + c.n + ': ' + c.t;
+  $('#nowM').textContent = fmtT(c.d) + ' · ' + fmtS(c.s);
+  mark();
+  v.play().catch(() => {});
+  history.replaceState(null, '', '#' + (whole ? 'all-' : 'ch') + c.n);
+}
+function nextReady(i) { for (let j = i + 1; j < CH.length; j++) if (ready(CH[j])) return j; return -1; }
+v.addEventListener('timeupdate', () => {
+  if (cur < 0 || !v.duration) return;
+  CH[cur].seg.style.setProperty('--p', (100 * v.currentTime / v.duration).toFixed(2) + '%');
+  if (whole && v.duration - v.currentTime < 8) { const j = nextReady(cur); if (j > 0 && !CH[j].warm) { CH[j].warm = 1; const w = document.createElement('video'); w.preload = 'auto'; w.muted = true; w.src = CH[j].f; } }
+});
+v.addEventListener('ended', () => { if (!whole) return; const j = nextReady(cur); if (j > 0) play(j, true); });
+$('#playAll').onclick = () => { const j = CH.findIndex(ready); if (j >= 0) play(j, true); };
+$('#dlAll').onclick = () => {
+  const list = CH.filter(ready); let k = 0;
+  const go = () => { if (k >= list.length) return; const c = list[k++]; const a = document.createElement('a'); a.href = c.f; a.download = dlName(c); document.body.appendChild(a); a.click(); a.remove(); setTimeout(go, 1500); };
+  go();
+};
+const h = location.hash.match(/^#(all-|ch)(\d+)$/);
+if (h) { const i = CH.findIndex(c => c.n === +h[2]); if (i >= 0 && ready(CH[i])) { whole = h[1] === 'all-'; cur = i; v.src = CH[i].f; v.poster = CH[i].p; $('#nowT').textContent = (whole ? 'الفيلم كامل · ' : '') + 'الفصل ' + CH[i].n + ': ' + CH[i].t; $('#nowM').textContent = fmtT(CH[i].d) + ' · ' + fmtS(CH[i].s); mark(); } }
+else { const j = CH.findIndex(ready); if (j >= 0) { cur = j; whole = true; v.src = CH[j].f; $('#nowM').textContent = fmtT(tot); mark(); } }
+</script>
+</body>
+</html>
