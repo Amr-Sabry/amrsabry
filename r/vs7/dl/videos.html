@@ -84,7 +84,7 @@ footer{margin-top:56px;color:var(--dim);font-size:12px;border-top:1px solid var(
     <button class="btn pri" id="playAll" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M7 4.5v15l12-7.5z"/></svg>شغّل الفيلم كامل</button>
     <button class="btn" id="dlAll" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14"/></svg>حمّل كل الفصول</button>
   </div>
-  <p class="note" id="dlNote">الفيلم كامل = الفصول من 1 لـ 10 بالترتيب. لو المتصفح سأل «تحميل أكتر من ملف»، اختار «سماح».</p>
+  <p class="note" id="dlNote">الفيلم كامل = الفصول من 1 لـ 10 بالترتيب. الفصول الطويلة متقسمة أجزاء بجودتها الكاملة. لو المتصفح سأل «تحميل أكتر من ملف»، اختار «سماح».</p>
 
   <h2>الفصول <small id="total"></small></h2>
   <div class="grid" id="grid"></div>
@@ -92,36 +92,48 @@ footer{margin-top:56px;color:var(--dim);font-size:12px;border-top:1px solid var(
   <footer>Aroma Studios</footer>
 </div>
 <script>
-const CH = [{"n": 1, "t": "المقدمة والأزمة", "d": 402.97, "f": "VS7-ch01.mp4", "s": 0, "p": "p01.jpg"}, {"n": 2, "t": "إعادة بناء المقومات", "d": 24.05, "f": "VS7-ch02.mp4", "s": 9831738, "p": "p02.jpg"}, {"n": 3, "t": "التعمير", "d": 186.5, "f": "VS7-ch03.mp4", "s": 0, "p": "p03.jpg"}, {"n": 4, "t": "الربط", "d": 283.13, "f": "VS7-ch04.mp4", "s": 0, "p": "p04.jpg"}, {"n": 5, "t": "التمكين", "d": 142.6, "f": "VS7-ch05.mp4", "s": 89337786, "p": "p05.jpg"}, {"n": 6, "t": "الإنتاج والتشغيل", "d": 309.82, "f": "VS7-ch06.mp4", "s": 0, "p": "p06.jpg"}, {"n": 7, "t": "بناء الإنسان", "d": 160.82, "f": "VS7-ch07.mp4", "s": 0, "p": "p07.jpg"}, {"n": 8, "t": "حياة كريمة", "d": 212.63, "f": "VS7-ch08.mp4", "s": 0, "p": "p08.jpg"}, {"n": 9, "t": "ماذا لو لم تتدخل الدولة", "d": 40.35, "f": "VS7-ch09.mp4", "s": 16207597, "p": "p09.jpg"}, {"n": 10, "t": "مصر التي نريدها", "d": 37.73, "f": "VS7-ch10.mp4", "s": 22716045, "p": "p10.jpg"}];
+const CH = [{"n": 1, "t": "المقدمة والأزمة", "d": 402.97, "parts": [{"f": "VS7-ch01-p0.mp4", "d": 101.982, "s": 76693372}, {"f": "VS7-ch01-p1.mp4", "d": 107.04, "s": 86634705}, {"f": "VS7-ch01-p2.mp4", "d": 97.88, "s": 61745507}, {"f": "VS7-ch01-p3.mp4", "d": 96.09, "s": 45471007}], "s": 270544591, "p": "p01.jpg"}, {"n": 2, "t": "إعادة بناء المقومات", "d": 24.05, "parts": [{"f": "VS7-ch02.mp4", "d": 24.05, "s": 9831738}], "s": 9831738, "p": "p02.jpg"}, {"n": 3, "t": "التعمير", "d": 186.5, "parts": [{"f": "VS7-ch03-p0.mp4", "d": 93.622, "s": 79533848}, {"f": "VS7-ch03-p1.mp4", "d": 92.92, "s": 79496379}], "s": 159030227, "p": "p03.jpg"}, {"n": 4, "t": "الربط", "d": 283.13, "parts": [{"f": "VS7-ch04-p0.mp4", "d": 101.302, "s": 64819814}, {"f": "VS7-ch04-p1.mp4", "d": 89.64, "s": 66044802}, {"f": "VS7-ch04-p2.mp4", "d": 92.205, "s": 62360088}], "s": 193224704, "p": "p04.jpg"}, {"n": 5, "t": "التمكين", "d": 142.6, "parts": [{"f": "VS7-ch05.mp4", "d": 142.613, "s": 89337786}], "s": 89337786, "p": "p05.jpg"}, {"n": 6, "t": "الإنتاج والتشغيل", "d": 309.82, "parts": [{"f": "VS7-ch06-p0.mp4", "d": 85.422, "s": 66782208}, {"f": "VS7-ch06-p1.mp4", "d": 70.32, "s": 55166387}, {"f": "VS7-ch06-p2.mp4", "d": 82.92, "s": 84120430}, {"f": "VS7-ch06-p3.mp4", "d": 71.2, "s": 72303442}], "s": 278372467, "p": "p06.jpg"}, {"n": 7, "t": "بناء الإنسان", "d": 160.82, "parts": [{"f": "VS7-ch07-p0.mp4", "d": 89.902, "s": 61420245}, {"f": "VS7-ch07-p1.mp4", "d": 70.96, "s": 53514646}], "s": 114934891, "p": "p07.jpg"}, {"n": 8, "t": "حياة كريمة", "d": 212.63, "parts": [{"f": "VS7-ch08-p0.mp4", "d": 79.462, "s": 69883453}, {"f": "VS7-ch08-p1.mp4", "d": 65.4, "s": 64273354}, {"f": "VS7-ch08-p2.mp4", "d": 67.8, "s": 56976454}], "s": 191133261, "p": "p08.jpg"}, {"n": 9, "t": "ماذا لو لم تتدخل الدولة", "d": 40.35, "parts": [{"f": "VS7-ch09.mp4", "d": 40.36, "s": 16207597}], "s": 16207597, "p": "p09.jpg"}, {"n": 10, "t": "مصر التي نريدها", "d": 37.73, "parts": [{"f": "VS7-ch10.mp4", "d": 37.725, "s": 22716045}], "s": 22716045, "p": "p10.jpg"}];
 const $ = s => document.querySelector(s);
 const v = $('#v'), rail = $('#rail'), grid = $('#grid');
 const ready = c => c.s > 0;
 const fmtT = s => { s = Math.round(s); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
 const fmtS = b => b >= 1e6 ? Math.round(b / 1e6) + ' ميجا' : Math.round(b / 1e3) + ' ك.ب';
-const dlName = c => 'VS7 ' + String(c.n).padStart(2, '0') + ' - ' + c.t + '.mp4';
+const AR = ['', 'جزء 1', 'جزء 2', 'جزء 3', 'جزء 4', 'جزء 5'];
+const dlName = (c, k) => 'VS7 ' + String(c.n).padStart(2, '0') + ' - ' + c.t + (c.parts.length > 1 ? ' - ' + AR[k + 1] + ' من ' + c.parts.length : '') + '.mp4';
 const ICON_PLAY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M7 4.5v15l12-7.5z"/></svg>';
 const ICON_DL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14"/></svg>';
 
-let cur = -1, whole = false;
+let cur = -1, part = 0, whole = false;
 const tot = CH.reduce((a, c) => a + c.d, 0);
 const nReady = CH.filter(ready).length;
 $('#total').textContent = fmtT(tot) + (nReady < CH.length ? ' · ' + nReady + ' من ' + CH.length + ' جاهزين، والباقي بيترفع' : '');
+
+function save(list) {   /* list of [chapter, partIndex]; one file every 1.5 s so the browser keeps up */
+  let k = 0;
+  const go = () => { if (k >= list.length) return; const [c, j] = list[k++]; const a = document.createElement('a'); a.href = c.parts[j].f; a.download = dlName(c, j); document.body.appendChild(a); a.click(); a.remove(); setTimeout(go, 1500); };
+  go();
+}
 
 CH.forEach((c, i) => {
   const s = document.createElement('button');
   s.className = 'seg'; s.type = 'button'; s.style.flex = c.d; s.disabled = !ready(c);
   s.title = c.n + ' · ' + c.t; s.setAttribute('aria-label', 'الفصل ' + c.n + ': ' + c.t);
   s.innerHTML = '<em>' + c.n + '</em><i></i>';
-  s.onclick = () => play(i, true);
+  s.onclick = () => play(i, true, 0);
   rail.appendChild(s); c.seg = s;
 
+  const np = c.parts.length;
   const k = document.createElement('article');
   k.className = 'card';
   k.innerHTML = '<button class="thumb" type="button" style="background-image:url(' + c.p + ')" aria-label="شغّل الفصل ' + c.n + '"><span class="n">' + String(c.n).padStart(2, '0') + '</span>' + (ready(c) ? '<span class="play">' + ICON_PLAY + '</span>' : '') + '</button>' +
-    '<div class="body"><h3>' + c.t + '</h3><div class="meta"><span>' + fmtT(c.d) + '</span>' + (ready(c) ? '<span>' + fmtS(c.s) + '</span>' : '') + '</div>' +
-    (ready(c) ? '<div class="acts"><button class="btn" type="button">' + ICON_PLAY + 'تشغيل</button><a class="btn" href="' + c.f + '" download="' + dlName(c) + '">' + ICON_DL + 'تحميل</a></div>'
+    '<div class="body"><h3>' + c.t + '</h3><div class="meta"><span>' + fmtT(c.d) + '</span>' + (ready(c) ? '<span>' + fmtS(c.s) + (np > 1 ? ' · ' + (np === 2 ? 'جزئين' : np + ' أجزاء') : '') + '</span>' : '') + '</div>' +
+    (ready(c) ? '<div class="acts"><button class="btn" type="button">' + ICON_PLAY + 'تشغيل</button>' +
+                (np > 1 ? '<button class="btn dl" type="button">' + ICON_DL + 'تحميل</button>' : '<a class="btn" href="' + c.parts[0].f + '" download="' + dlName(c, 0) + '">' + ICON_DL + 'تحميل</a>') + '</div>'
               : '<div class="wait">بيترفع دلوقتي</div>') + '</div>';
-  if (ready(c)) { k.querySelector('.thumb').onclick = k.querySelector('.acts button').onclick = () => { play(i, false); $('.stage').scrollIntoView({ behavior: 'smooth', block: 'start' }); }; }
+  if (ready(c)) {
+    k.querySelector('.thumb').onclick = k.querySelector('.acts button').onclick = () => { play(i, false, 0); $('.stage').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+    const d = k.querySelector('.dl'); if (d) d.onclick = () => save(c.parts.map((_, j) => [c, j]));
+  }
   grid.appendChild(k); c.card = k;
 });
 
@@ -133,32 +145,38 @@ function mark() {
     c.card.classList.toggle('on', i === cur);
   });
 }
-function play(i, asWhole) {
-  const c = CH[i]; if (!c || !ready(c)) return;
-  whole = asWhole; cur = i;
-  v.src = c.f; v.poster = c.p;
+function label() {
+  const c = CH[cur];
   $('#nowT').textContent = (whole ? 'الفيلم كامل · ' : '') + 'الفصل ' + c.n + ': ' + c.t;
   $('#nowM').textContent = fmtT(c.d) + ' · ' + fmtS(c.s);
-  mark();
+}
+function load(i, asWhole, j) { const c = CH[i]; whole = asWhole; cur = i; part = j; v.src = c.parts[j].f; if (j === 0) v.poster = c.p; label(); mark(); }
+function play(i, asWhole, j) {
+  const c = CH[i]; if (!c || !ready(c)) return;
+  load(i, asWhole, j || 0);
   v.play().catch(() => {});
   history.replaceState(null, '', '#' + (whole ? 'all-' : 'ch') + c.n);
 }
 function nextReady(i) { for (let j = i + 1; j < CH.length; j++) if (ready(CH[j])) return j; return -1; }
+function nextFile() { const c = CH[cur]; if (part + 1 < c.parts.length) return c.parts[part + 1].f; if (!whole) return null; const j = nextReady(cur); return j > 0 ? CH[j].parts[0].f : null; }
+const warmed = {};
 v.addEventListener('timeupdate', () => {
   if (cur < 0 || !v.duration) return;
-  CH[cur].seg.style.setProperty('--p', (100 * v.currentTime / v.duration).toFixed(2) + '%');
-  if (whole && v.duration - v.currentTime < 8) { const j = nextReady(cur); if (j > 0 && !CH[j].warm) { CH[j].warm = 1; const w = document.createElement('video'); w.preload = 'auto'; w.muted = true; w.src = CH[j].f; } }
+  const c = CH[cur]; const before = c.parts.slice(0, part).reduce((a, p) => a + p.d, 0);
+  c.seg.style.setProperty('--p', Math.min(100, 100 * (before + v.currentTime) / c.d).toFixed(2) + '%');
+  if (v.duration - v.currentTime < 10) { const f = nextFile(); if (f && !warmed[f]) { warmed[f] = 1; const w = document.createElement('video'); w.preload = 'auto'; w.muted = true; w.src = f; } }
 });
-v.addEventListener('ended', () => { if (!whole) return; const j = nextReady(cur); if (j > 0) play(j, true); });
-$('#playAll').onclick = () => { const j = CH.findIndex(ready); if (j >= 0) play(j, true); };
-$('#dlAll').onclick = () => {
-  const list = CH.filter(ready); let k = 0;
-  const go = () => { if (k >= list.length) return; const c = list[k++]; const a = document.createElement('a'); a.href = c.f; a.download = dlName(c); document.body.appendChild(a); a.click(); a.remove(); setTimeout(go, 1500); };
-  go();
-};
+v.addEventListener('ended', () => {
+  const c = CH[cur];
+  if (part + 1 < c.parts.length) { load(cur, whole, part + 1); v.play().catch(() => {}); return; }
+  if (!whole) return; const j = nextReady(cur); if (j > 0) play(j, true, 0);
+});
+$('#playAll').onclick = () => { const j = CH.findIndex(ready); if (j >= 0) play(j, true, 0); };
+$('#dlAll').onclick = () => save(CH.filter(ready).flatMap(c => c.parts.map((_, j) => [c, j])));
 const h = location.hash.match(/^#(all-|ch)(\d+)$/);
-if (h) { const i = CH.findIndex(c => c.n === +h[2]); if (i >= 0 && ready(CH[i])) { whole = h[1] === 'all-'; cur = i; v.src = CH[i].f; v.poster = CH[i].p; $('#nowT').textContent = (whole ? 'الفيلم كامل · ' : '') + 'الفصل ' + CH[i].n + ': ' + CH[i].t; $('#nowM').textContent = fmtT(CH[i].d) + ' · ' + fmtS(CH[i].s); mark(); } }
-else { const j = CH.findIndex(ready); if (j >= 0) { cur = j; whole = true; v.src = CH[j].f; $('#nowM').textContent = fmtT(tot); mark(); } }
+const hi = h ? CH.findIndex(c => c.n === +h[2]) : -1;
+if (hi >= 0 && ready(CH[hi])) load(hi, h[1] === 'all-', 0);
+else { const j = CH.findIndex(ready); if (j >= 0) { load(j, true, 0); v.poster = 'p00.jpg'; $('#nowT').textContent = 'الفيلم كامل'; $('#nowM').textContent = fmtT(tot); } }
 </script>
 </body>
 </html>
