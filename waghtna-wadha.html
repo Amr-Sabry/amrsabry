@@ -255,7 +255,7 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .cmpv .auto.off{color:var(--amber);border-color:rgba(255,176,84,.6)}
 .lb-frame .cmpv{position:absolute;inset:0}
 /* player: compare wipe over the running cut, or the reworked frame as a reference thumbnail */
-.pvx{position:absolute;inset:0;z-index:3;display:none}
+.pvx{position:absolute;inset:0;z-index:1;display:none}
 .screen.m-cmp .pvx.has{display:block}
 .pvx .lab{bottom:84px}
 .pvx .auto{top:auto;bottom:80px;left:50%;right:auto;margin-left:-16px}
@@ -548,7 +548,7 @@ const STATUS = {
 };
 const FPS = 25;
 const tc = t => { const f = Math.max(0, Math.round(t * FPS)); const s = Math.floor(f / FPS), ff = f % FPS; return [Math.floor(s / 60), s % 60, ff].map(n => String(n).padStart(2, '0')).join(':'); };
-const BUILD = 3;
+const BUILD = 4;
 let D = null, filter = 'all', view = 'rows', stamp = null, pendingReload = false;
 const verSel = {};
 
