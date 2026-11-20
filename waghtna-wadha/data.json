@@ -20,9 +20,26 @@
    "loop": "loop/sh01.mp4",
    "before": "before/sh01_m.webp",
    "beforeFull": "before/sh01.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Same raw concrete wall, same texture and window-light pattern, same sun and flare",
+     "done": true
+    },
+    {
+     "t": "Edges softened into flowing Zaha Hadid-style curves — fins sweep into the arch as one continuous surface",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh01_v1_m.webp",
+     "full": "after/sh01_v1.jpg",
+     "date": "20 Nov",
+     "note": "Zaha Hadid soft edges"
+    }
+   ]
   },
   {
    "id": "SH02",
@@ -1157,7 +1174,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T12:56:00+04:00",
+ "updated": "2026-11-20T12:58:00+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 6,
  "removed": [
