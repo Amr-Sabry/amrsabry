@@ -1280,6 +1280,10 @@
      "done": true
     },
     {
+     "t": "v5 / v6: rebuilt for realism — real drone / helicopter photography look, true scale, natural colours and haze, no CG light trails; Jeddah Light on its real pier at the harbour entrance",
+     "done": true
+    },
+    {
      "t": "v4: economic power — a mega ship enters with tugboats and a white wake, ten cranes working, trucks streaming with light trails, ships waiting on the horizon",
      "done": true
     },
@@ -1324,6 +1328,20 @@
      "full": "after/sh28_v4.jpg",
      "date": "20 Nov",
      "note": "Grandeur — mega ship entering, port at full power"
+    },
+    {
+     "v": "v5",
+     "image": "after/sh28_v5_m.webp",
+     "full": "after/sh28_v5.jpg",
+     "date": "20 Nov",
+     "note": "Realistic — cranes loading a docked ship"
+    },
+    {
+     "v": "v6",
+     "image": "after/sh28_v6_m.webp",
+     "full": "after/sh28_v6.jpg",
+     "date": "20 Nov",
+     "note": "Realistic — ship arriving with tugs, Jeddah Light on its pier"
     }
    ],
    "refs": [
@@ -1846,7 +1864,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T15:34:00+04:00",
+ "updated": "2026-11-20T15:37:00+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 9,
  "removed": [
