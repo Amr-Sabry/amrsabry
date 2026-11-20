@@ -45,6 +45,14 @@
     {
      "t": "v9 / v10: concrete column edges no longer sharp — fully rounded, tube-like, soft ends at the floor; light rolls over them as a smooth gradient. Same layout, LED lines and sun",
      "done": true
+    },
+    {
+     "t": "v12: back to v1's swooping style — same board-formed concrete as the wall (tie holes, board lines), ribs strictly parallel with wide gaps the sun pours through, no overlap; original framing, wall and sun kept",
+     "done": true
+    },
+    {
+     "t": "v11: alternative — free-standing parallel blades, widely spaced, same wall concrete (different framing)",
+     "done": true
     }
    ],
    "versions": [
@@ -103,6 +111,20 @@
      "full": "after/sh01_v10.jpg",
      "date": "20 Nov",
      "note": "v6 layout (parallel ribs) with soft rounded edges"
+    },
+    {
+     "v": "v11",
+     "image": "after/sh01_v11_m.webp",
+     "full": "after/sh01_v11.jpg",
+     "date": "20 Nov",
+     "note": "Parallel blades, wall concrete"
+    },
+    {
+     "v": "v12",
+     "image": "after/sh01_v12_m.webp",
+     "full": "after/sh01_v12.jpg",
+     "date": "20 Nov",
+     "note": "v1 style, parallel, wide gaps, wall concrete"
     }
    ],
    "refs": [
@@ -1995,7 +2017,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T17:22:00+04:00",
+ "updated": "2026-11-20T17:42:00+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 11,
  "removed": [
