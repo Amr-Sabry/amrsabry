@@ -1138,40 +1138,6 @@
   },
   {
    "id": "SH29",
-   "key": "sh29",
-   "title": "Honour Guard — Close",
-   "tag": "Defence",
-   "in": 90.84,
-   "out": 91.84,
-   "tcIn": "01:30:21",
-   "tcOut": "01:31:21",
-   "frames": 25,
-   "loop": "loop/sh29.mp4",
-   "before": "before/sh29_m.webp",
-   "beforeFull": "before/sh29.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
-  },
-  {
-   "id": "SH30",
-   "key": "sh30",
-   "title": "Honour Guard — Wide",
-   "tag": "Defence",
-   "in": 91.84,
-   "out": 92.88,
-   "tcIn": "01:31:21",
-   "tcOut": "01:32:22",
-   "frames": 26,
-   "loop": "loop/sh30.mp4",
-   "before": "before/sh30_m.webp",
-   "beforeFull": "before/sh30.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
-  },
-  {
-   "id": "SH33",
    "key": "sh33",
    "title": "Aircraft Overhead — Portal",
    "tag": "CG",
@@ -1235,10 +1201,11 @@
      "src": "SH23 · this cut",
      "href": "#sh23"
     }
-   ]
+   ],
+   "was": "SH33"
   },
   {
-   "id": "SH34",
+   "id": "SH30",
    "key": "sh34",
    "title": "Classroom — Raised Hand",
    "tag": "Interior",
@@ -1252,10 +1219,11 @@
    "beforeFull": "before/sh34.jpg",
    "status": "pending",
    "notes": [],
-   "versions": []
+   "versions": [],
+   "was": "SH34"
   },
   {
-   "id": "SH35",
+   "id": "SH31",
    "key": "sh35",
    "title": "Event Hall — Flag Screen",
    "tag": "Crowd",
@@ -1305,10 +1273,11 @@
      "src": "SH23 · this cut",
      "href": "#sh23"
     }
-   ]
+   ],
+   "was": "SH35"
   },
   {
-   "id": "SH36",
+   "id": "SH32",
    "key": "sh36",
    "title": "Celebration — Green Scarves",
    "tag": "Crowd",
@@ -1347,7 +1316,8 @@
      "src": "SH23 · this cut",
      "href": "#sh23"
     }
-   ]
+   ],
+   "was": "SH36"
   }
  ],
  "timeline": [
@@ -1558,14 +1528,14 @@
   {
    "in": 90.84,
    "out": 91.84,
-   "kind": "shot",
-   "id": "SH29"
+   "kind": "out",
+   "label": "Out"
   },
   {
    "in": 91.84,
    "out": 92.88,
-   "kind": "shot",
-   "id": "SH30"
+   "kind": "out",
+   "label": "Out"
   },
   {
    "in": 92.88,
@@ -1583,7 +1553,7 @@
    "in": 95.56,
    "out": 97.28,
    "kind": "shot",
-   "id": "SH33"
+   "id": "SH29"
   },
   {
    "in": 97.28,
@@ -1595,19 +1565,19 @@
    "in": 99.6,
    "out": 100.48,
    "kind": "shot",
-   "id": "SH34"
+   "id": "SH30"
   },
   {
    "in": 100.48,
    "out": 101.04,
    "kind": "shot",
-   "id": "SH35"
+   "id": "SH31"
   },
   {
    "in": 101.04,
    "out": 102.0,
    "kind": "shot",
-   "id": "SH36"
+   "id": "SH32"
   },
   {
    "in": 102.0,
@@ -1616,9 +1586,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T13:28:00+04:00",
+ "updated": "2026-11-20T13:31:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 8,
+ "build": 9,
  "removed": [
   {
    "id": "SH31",
@@ -1627,6 +1597,14 @@
   {
    "id": "SH32",
    "title": "Monorail Station"
+  },
+  {
+   "id": "SH29",
+   "title": "Honour Guard — Close"
+  },
+  {
+   "id": "SH30",
+   "title": "Honour Guard — Wide"
   }
  ]
 }
