@@ -420,7 +420,7 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
   <div class="wrap">
     <div class="sh rv"><div><div class="kick">01 — The Cut</div><h2>Current <em>edit</em></h2></div><p>Click any block on the strip to jump to that shot. Striped green blocks are chroma plates — handled in a separate pass.</p></div>
     <div class="theater rv">
-      <div class="screen bars idle-bars" id="screen">
+      <div class="screen bars idle-bars m-ref" id="screen">
         <video id="pv" playsinline preload="metadata" poster="waghtna-wadha/poster.jpg"></video>
         <div class="cmpv pvx" id="pvx"><img class="aft" alt=""><i class="bar"></i><span class="knob"><svg class="i" viewBox="0 0 24 24"><use href="#i-move"/></svg></span><span class="lab l"><span class="chip">ORIGINAL · LIVE</span></span><span class="lab r"><span class="chip" id="pvxLab">AFTER</span></span><button class="auto" data-auto title="Pause sweep" aria-label="Pause sweep"><svg class="i" viewBox="0 0 24 24"><use href="#i-pause"/></svg></button></div>
         <button class="pref" id="pref" title="Open this shot"><img alt=""><span class="none"><svg class="i" viewBox="0 0 24 24"><use href="#i-image-plus"/></svg>Awaiting rework</span><span class="cap"><b id="prefId"></b><span id="prefT"></span></span></button>
@@ -432,7 +432,7 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
           <button class="ib" id="nextShot" aria-label="Next shot" title="Next shot"><svg class="i" viewBox="0 0 24 24"><use href="#i-skip-fwd"/></svg></button>
           <div class="tc" id="tc">00:00:00 <span>/ 00:00:00</span></div>
           <div class="grow"></div>
-          <div class="modes" id="modes" role="tablist" aria-label="Player view"><button data-pm="orig" class="on" title="Original cut"><svg class="i" viewBox="0 0 24 24"><use href="#i-film"/></svg><span>Original</span></button><button data-pm="cmp" title="Wipe between the cut and the reworked frame"><svg class="i" viewBox="0 0 24 24"><use href="#i-columns"/></svg><span>Compare</span></button><button data-pm="ref" title="Reworked frame as a thumbnail reference"><svg class="i" viewBox="0 0 24 24"><use href="#i-image"/></svg><span>Ref</span></button></div>
+          <div class="modes" id="modes" role="tablist" aria-label="Player view"><button data-pm="orig" title="Original cut"><svg class="i" viewBox="0 0 24 24"><use href="#i-film"/></svg><span>Original</span></button><button data-pm="cmp" title="Wipe between the cut and the reworked frame"><svg class="i" viewBox="0 0 24 24"><use href="#i-columns"/></svg><span>Compare</span></button><button data-pm="ref" class="on" title="Reworked frame as a thumbnail reference"><svg class="i" viewBox="0 0 24 24"><use href="#i-image"/></svg><span>Ref</span></button></div>
           <button class="ib" id="toCard" aria-label="Open this shot's card" title="Go to this shot's card"><svg class="i" viewBox="0 0 24 24"><use href="#i-arrow-down"/></svg></button>
           <button class="ib" id="mute" aria-label="Mute"><svg class="i" viewBox="0 0 24 24"><use href="#i-vol"/></svg></button>
           <button class="ib" id="fs" aria-label="Fullscreen"><svg class="i" viewBox="0 0 24 24"><use href="#i-max"/></svg></button>
@@ -550,7 +550,7 @@ const STATUS = {
 };
 const FPS = 25;
 const tc = t => { const f = Math.max(0, Math.round(t * FPS)); const s = Math.floor(f / FPS), ff = f % FPS; return [Math.floor(s / 60), s % 60, ff].map(n => String(n).padStart(2, '0')).join(':'); };
-const BUILD = 5;
+const BUILD = 6;
 let D = null, filter = 'all', view = 'rows', stamp = null, pendingReload = false;
 const verSel = {};
 
@@ -818,11 +818,11 @@ function tick() {
   if (id !== cur) { cur = id; $$('.seg.shot', tl).forEach(el => el.classList.toggle('on', el.dataset.id === id)); markNow(); updatePX(); }
   $('#toCard').style.visibility = id ? 'visible' : 'hidden';
 }
-let pmode = 'orig';
+let pmode = 'ref';
 function setMode(m) {
   pmode = m; scr.classList.toggle('m-cmp', m === 'cmp'); scr.classList.toggle('m-ref', m === 'ref');
   $$('#modes button').forEach(b => b.classList.toggle('on', b.dataset.pm === m));
-  try { localStorage.setItem('ww-pmode', m); } catch {}
+  try { localStorage.setItem('ww-pmode2', m); } catch {}
   updatePX();
 }
 $$('#modes button').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); setMode(b.dataset.pm); }));
@@ -840,7 +840,7 @@ function updatePX() {
   }
 }
 $('#pref').addEventListener('click', e => { e.stopPropagation(); if (!cur) return; const s = D.shots.find(x => x.id === cur); openLB(cur, latest(s) ? 'compare' : 'before'); });
-try { const m = localStorage.getItem('ww-pmode'); if (m) setTimeout(() => setMode(m), 0); } catch {}
+{ let m = 'ref'; try { m = localStorage.getItem('ww-pmode2') || 'ref'; } catch {} setTimeout(() => setMode(m), 0); }
 function markNow() { $$('.card').forEach(c => c.classList.toggle('now', c.dataset.id === cur)); }
 const setPP = () => { $('#pp use').setAttribute('href', pv.paused ? '#i-play' : '#i-pause'); };
 const toggle = () => pv.paused ? pv.play() : pv.pause();
