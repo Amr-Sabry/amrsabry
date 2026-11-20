@@ -207,9 +207,26 @@
    "loop": "loop/sh08.mp4",
    "before": "before/sh08_m.webp",
    "beforeFull": "before/sh08.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "More dramatic: room falls into deep teal shadow, the surgical lamps are the only warm light",
+     "done": true
+    },
+    {
+     "t": "Warm light lands on the operating field and the team — the eye goes to it; light = clarity of vision",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh08_v1_m.webp",
+     "full": "after/sh08_v1.jpg",
+     "date": "20 Nov",
+     "note": "Chiaroscuro, warm lamp beam"
+    }
+   ]
   },
   {
    "id": "SH09",
@@ -403,6 +420,9 @@
     {
      "t": "Golden sun over a sea of clouds, warm rim light on her face, wing lit gold, flare from the window",
      "done": true
+    },
+    {
+     "t": "Fix: keep the aircraft outside the window exactly as in the original — v1 changed it"
     }
    ],
    "versions": [
@@ -1118,7 +1138,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T11:23:00+04:00",
+ "updated": "2026-11-20T12:42:00+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 4
 }
