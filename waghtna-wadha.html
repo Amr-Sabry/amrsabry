@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#060608">
-<title>Waghtna Wadha · Project Room · Amr Sabry</title>
+<title>Waghtna Wadha · Project Room</title>
 <meta property="og:title" content="Waghtna Wadha · Project Room">
 <meta property="og:description" content="Shot-by-shot director room — before, after and approvals.">
 <meta property="og:image" content="https://amrsabry.com/waghtna-wadha/poster.jpg">
@@ -53,6 +53,7 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .brand b{font-weight:600}
 .brand .sep{width:1px;height:16px;background:var(--line3)}
 .brand span{color:var(--mute)}
+.mark svg{width:15px;height:15px;color:var(--amber)}
 .mark{width:28px;height:28px;border-radius:50%;border:1px solid var(--line3);display:grid;place-items:center;font-family:var(--serif);font-weight:700;font-size:12px;letter-spacing:0}
 .navr{display:flex;align-items:center;gap:8px}
 .live{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11.5px;color:var(--soft);padding:6px 12px;border:1px solid var(--line);border-radius:99px;white-space:nowrap}
@@ -317,7 +318,8 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
   .brand>span:not(.mark),.brand .sep,.live .lt{display:none}
   .facts{grid-template-columns:repeat(2,minmax(0,1fr))}
   .facts .fact:last-child{grid-column:1/-1}
-  .fact .v{font-size:18px}
+  .fact .v{font-size:15px;letter-spacing:.01em}
+  .live{padding:0;width:38px;height:38px;justify-content:center;font-size:0}.live #upd{display:none}
   .panes{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;padding:12px;scrollbar-width:none}
   .panes::-webkit-scrollbar{display:none}
   .pane{flex:0 0 84%;scroll-snap-align:start}
@@ -346,7 +348,7 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 
 <header class="nav" id="nav">
   <div class="wrap">
-    <a class="brand" href="/"><span class="mark">A</span><b>Amr Sabry</b><i class="sep"></i><span>Project Room</span></a>
+    <div class="brand"><span class="mark"><svg class="i" viewBox="0 0 24 24"><use href="#i-aperture"/></svg></span><b>Waghtna Wadha</b><i class="sep"></i><span>Project Room</span></div>
     <div class="navr">
       <div class="live" title="This page updates as the work lands"><i></i><span class="lt">Live ·</span>&nbsp;<span id="upd">—</span></div>
       <button class="ib" id="share" aria-label="Copy page link" title="Copy link"><svg class="i" viewBox="0 0 24 24"><use href="#i-link"/></svg></button>
@@ -417,7 +419,7 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
       <div class="step rv"><span class="n">02</span><div class="ic"><svg class="i" viewBox="0 0 24 24"><use href="#i-eye"/></svg></div><h3>Client approval</h3><p>The still goes to the client. Nothing moves until the look is signed off.</p></div>
       <div class="step rv"><span class="n">03</span><div class="ic"><svg class="i" viewBox="0 0 24 24"><use href="#i-clapper"/></svg></div><h3>Motion</h3><p>The approved look is generated as a moving shot and drops into the cut on this page.</p></div>
     </div>
-    <footer class="foot"><span>Amr Sabry · Creative Director</span><span id="footUpd"></span></footer>
+    <footer class="foot"><span>Waghtna Wadha · Director Room</span><span id="footUpd"></span></footer>
   </div>
 </section>
 
