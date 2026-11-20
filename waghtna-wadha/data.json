@@ -41,10 +41,6 @@
     {
      "t": "v7: five soft rounded concrete ribbons, widely and evenly spaced, strictly parallel, golden LED line on the rib edge",
      "done": true
-    },
-    {
-     "t": "v8: SH02's own ribbon style — wide golden ribbons with LED on both rounded edges, widely spaced and parallel (material becomes metal, not concrete)",
-     "done": true
     }
    ],
    "versions": [
@@ -89,13 +85,6 @@
      "full": "after/sh01_v7.jpg",
      "date": "20 Nov",
      "note": "5 spaced concrete ribbons, soft edges"
-    },
-    {
-     "v": "v8",
-     "image": "after/sh01_v8_m.webp",
-     "full": "after/sh01_v8.jpg",
-     "date": "20 Nov",
-     "note": "SH02-style golden ribbons, LED on both edges"
     }
    ],
    "refs": [
@@ -1988,7 +1977,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T16:24:00+04:00",
+ "updated": "2026-11-20T17:15:00+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 11,
  "removed": [
