@@ -27,11 +27,11 @@
      "done": true
     },
     {
-     "t": "v4: columns rebuilt as fully fluid Zaha Hadid ribbons — rounded, pillowy, no hard edges",
+     "t": "v5: line language of SH02 — every rib follows the identical curve with the same gap, strictly parallel all the way into the arch",
      "done": true
     },
     {
-     "t": "v4: every ribbon follows the same S-curve — strictly parallel, equal gaps, never crossing",
+     "t": "Soft Zaha Hadid forms in raw concrete; sunlight rolls over the ribs as parallel highlights",
      "done": true
     }
    ],
@@ -56,9 +56,23 @@
      "full": "after/sh01_v4.jpg",
      "date": "20 Nov",
      "note": "Fluid parallel ribbons"
+    },
+    {
+     "v": "v5",
+     "image": "after/sh01_v5_m.webp",
+     "full": "after/sh01_v5.jpg",
+     "date": "20 Nov",
+     "note": "Strictly parallel ribs (SH02 lines)"
     }
    ],
    "refs": [
+    {
+     "img": "refs/sh02_parallel_lines_t.webp",
+     "full": "refs/sh02_parallel_lines.jpg",
+     "label": "Line language — the parallel ribbons of SH02 (next shot)",
+     "src": "SH02 · this cut",
+     "href": "#SH02"
+    },
     {
      "label": "Direction: Zaha Hadid fluid architecture — continuous curved surfaces, no hard edges",
      "src": "Creative direction"
@@ -891,7 +905,7 @@
      "done": true
     },
     {
-     "t": "Screen direction kept for the edit: everything travels right → left as in the original (v1 ran the wrong way — replaced)",
+     "t": "Screen direction kept for the edit: everything travels right → left as in the original, sun from the right, shadows fall left (v3)",
      "done": true
     },
     {
@@ -910,6 +924,13 @@
      "full": "after/sh22_v2.jpg",
      "date": "20 Nov",
      "note": "Action staging, direction right → left"
+    },
+    {
+     "v": "v3",
+     "image": "after/sh22_v3_m.webp",
+     "full": "after/sh22_v3.jpg",
+     "date": "20 Nov",
+     "note": "Right → left, same light direction as the original"
     }
    ],
    "refs": [
@@ -1774,7 +1795,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T14:53:00+04:00",
+ "updated": "2026-11-20T14:56:00+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 9,
  "removed": [
