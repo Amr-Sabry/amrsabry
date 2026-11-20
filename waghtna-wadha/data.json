@@ -479,9 +479,29 @@
    "loop": "loop/sh25.mp4",
    "before": "before/sh25_m.webp",
    "beforeFull": "before/sh25.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Same plantation, camera moved overhead — no horizon, palms feel endless",
+     "done": true
+    },
+    {
+     "t": "Mood: low golden sun, flare from top-left, long palm shadows",
+     "done": true
+    },
+    {
+     "t": "Option B (high tilt-down, rows fading into haze) in progress"
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh25_v1_m.webp",
+     "full": "after/sh25_v1.jpg",
+     "date": "20 Nov",
+     "note": "Top-down endless grid"
+    }
+   ]
   },
   {
    "id": "SH26",
@@ -937,6 +957,6 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T11:06:00+04:00",
+ "updated": "2026-11-20T11:12:00+04:00",
  "tagline": "#OurDestinationIsClear"
 }
