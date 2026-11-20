@@ -314,7 +314,7 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 }
 @media (max-width:760px){
   :root{--nav:56px}
-  .brand span,.brand .sep,.live .lt{display:none}
+  .brand>span:not(.mark),.brand .sep,.live .lt{display:none}
   .facts{grid-template-columns:repeat(2,minmax(0,1fr))}
   .facts .fact:last-child{grid-column:1/-1}
   .fact .v{font-size:22px}
