@@ -563,7 +563,7 @@ const STATUS = {
 };
 const FPS = 25;
 const tc = t => { const f = Math.max(0, Math.round(t * FPS)); const s = Math.floor(f / FPS), ff = f % FPS; return [Math.floor(s / 60), s % 60, ff].map(n => String(n).padStart(2, '0')).join(':'); };
-const BUILD = 7;
+const BUILD = 8;
 let D = null, filter = 'all', view = 'rows', stamp = null, pendingReload = false;
 const verSel = {};
 
@@ -719,7 +719,7 @@ function afterPane(s) {
     <figcaption><span>${ic('sparkles')}After · Proposal</span><span class="mono">—</span></figcaption></figure>`;
   const pm = v.video
     ? `<div class="pm" data-open="after"><video muted loop playsinline preload="none" poster="${BASE + v.image}" data-src="${BASE + v.video}"></video><span class="badge"><span class="chip">${ic('video')}MOTION · ${esc(v.v)}</span></span><span class="x">${ic('max')}</span><i class="ring2"></i></div>`
-    : `<div class="pm cmpv" data-cmp><img class="lz" data-src="${BASE + s.before}" alt="${esc(s.id)} before"><img class="lz aft" data-src="${BASE + v.image}" alt="${esc(s.id)} after ${esc(v.v)}"><i class="bar"></i><span class="knob">${ic('move')}</span><span class="lab l"><span class="chip">BEFORE</span></span><span class="lab r"><span class="chip">AFTER · ${esc(v.v)}</span></span><button class="auto" data-auto aria-label="Pause sweep">${ic('pause')}</button><span class="x" data-open="compare">${ic('max')}</span><i class="ring2"></i></div>`;
+    : `<div class="pm" data-open="after"><img class="lz" data-src="${BASE + v.image}" alt="${esc(s.id)} after ${esc(v.v)}"><span class="badge"><span class="chip">${ic('image')}STILL · ${esc(v.v)}</span></span><span class="x">${ic('max')}</span><i class="ring2"></i></div>`;
   return `<figure class="pane after">${pm}
     <figcaption><span>${ic('sparkles')}After · ${esc(v.v)}${v.date ? ' · ' + esc(v.date) : ''}</span><span class="acts">${chips}<button class="cmp" data-open="compare" title="Compare before / after">${ic('columns')}${chips ? '' : 'Compare'}</button></span></figcaption></figure>`;
 }
