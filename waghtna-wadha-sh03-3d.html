@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SH03 · 3D Blocking — Waghtna Wadha</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Chakra+Petch:wght@400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--amber:#ffb24d;--line:rgba(255,255,255,.12);--mono:'Share Tech Mono',ui-monospace,monospace}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#07070a;color:#eee;font-family:'Chakra Petch',system-ui,sans-serif;overflow:hidden}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block}
+.hud{position:fixed;left:0;right:0;pointer-events:none;padding:16px 20px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.top{top:0}
+.tag{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--amber)}
+.proj{margin-top:6px;font-family:'Orbitron',sans-serif;font-size:clamp(15px,2vw,22px);font-weight:700;letter-spacing:.06em;text-shadow:0 2px 12px #000}
+.proj small{display:block;font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;color:#cfc6b8;font-weight:400;margin-top:4px}
+.tc{font-family:var(--mono);font-size:13px;padding:6px 12px;border:1px solid var(--line);border-radius:99px;background:rgba(6,6,8,.55);backdrop-filter:blur(8px)}
+.bar{position:fixed;left:16px;right:16px;bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border:1px solid var(--line);border-radius:16px;background:rgba(6,6,8,.6);backdrop-filter:blur(10px)}
+.bar button{font-family:var(--mono);font-size:12px;color:#ddd;background:transparent;border:1px solid var(--line);border-radius:99px;padding:6px 12px;cursor:pointer;white-space:nowrap}
+.bar button.on{border-color:var(--amber);color:var(--amber)}
+.bar .grp{display:flex;gap:6px;align-items:center}
+.bar .sep{width:1px;height:22px;background:var(--line)}
+#scrub{flex:1;min-width:160px;accent-color:#ffb24d}
+.chips button b{color:var(--amber);font-weight:400;margin-right:4px}
+.frame{position:fixed;inset:0;pointer-events:none;border:1px solid rgba(255,255,255,.08)}
+.capture .hud,.capture .bar,.capture .frame{display:none}
+@media(max-width:760px){.chips button span{display:none}.bar{left:8px;right:8px}}
+</style>
+<script type="importmap">{"imports":{"three":"/waghtna-wadha/lib/three.module.min.js"}}</script>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="frame"></div>
+<div class="hud top">
+  <div><div class="tag">SH03 · 3D Blocking · v1 · FPV</div><div class="proj" id="proj">—</div></div>
+  <div class="tc" id="tc">00:00 / 08:02</div>
+</div>
+<div class="bar">
+  <div class="grp"><button id="play">❚❚ Pause</button></div>
+  <div class="grp" id="speeds"><button data-s="0.25">¼×</button><button data-s="0.5">½×</button><button data-s="1" class="on">1×</button></div>
+  <div class="sep"></div>
+  <div class="grp" id="modes"><button data-m="fpv" class="on">FPV camera</button><button data-m="orbit">Orbit / inspect</button></div>
+  <input id="scrub" type="range" min="0" max="8.08" step="0.01" value="0">
+  <div class="grp chips" id="chips"></div>
+</div>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from '/waghtna-wadha/lib/OrbitControls.js';
+
+const Q = new URLSearchParams(location.search);
+const CAPTURE = Q.has('capture');
+if (CAPTURE) document.body.classList.add('capture');
+const DUR = 8.08;
+
+/* ---------------- renderer / scene ---------------- */
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: CAPTURE });
+renderer.setPixelRatio(CAPTURE ? 1 : Math.min(devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const scene = new THREE.Scene();
+const HORIZON = new THREE.Color(0xe9a25c), ZENITH = new THREE.Color(0x24465e);
+scene.fog = new THREE.Fog(0xd99a5e, 260, 1500);
+
+const camera = new THREE.PerspectiveCamera(82, 16 / 9, 0.5, 6000);   // wide FPV lens
+
+/* sky dome with gradient + sun glow */
+const SUN_DIR = new THREE.Vector3(0.5, 0.17, 0.85).normalize();
+const sky = new THREE.Mesh(new THREE.SphereGeometry(4000, 48, 24), new THREE.ShaderMaterial({
+  side: THREE.BackSide, depthWrite: false, fog: false,
+  uniforms: { top: { value: ZENITH }, hor: { value: HORIZON }, sun: { value: SUN_DIR } },
+  vertexShader: `varying vec3 vW; void main(){ vW = normalize((modelMatrix*vec4(position,1.)).xyz - cameraPosition); gl_Position = projectionMatrix*viewMatrix*modelMatrix*vec4(position,1.);} `,
+  fragmentShader: `uniform vec3 top; uniform vec3 hor; uniform vec3 sun; varying vec3 vW;
+    void main(){ float h = clamp(vW.y*1.6+0.05,0.,1.); vec3 c = mix(hor, top, pow(h,0.65));
+      float s = max(dot(normalize(vW), normalize(sun)),0.); c += vec3(1.,.72,.38)*pow(s,24.)*0.9 + vec3(1.,.9,.7)*pow(s,900.)*4.;
+      gl_FragColor = vec4(c,1.); }`
+}));
+scene.add(sky);
+{ const envScene = new THREE.Scene(); envScene.add(sky.clone()); const pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromScene(envScene, 0.02).texture; }
+
+scene.add(new THREE.HemisphereLight(0x9cbcd0, 0x8a6a48, 1.05));
+const sun = new THREE.DirectionalLight(0xffc27e, 3.2);
+sun.castShadow = true;
+sun.shadow.mapSize.set(4096, 4096);
+const sc = sun.shadow.camera; sc.left = -170; sc.right = 170; sc.top = 170; sc.bottom = -170; sc.near = 1; sc.far = 900;
+sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.6;
+scene.add(sun, sun.target);
+
+/* ground */
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(6000, 6000), new THREE.MeshStandardMaterial({ color: 0xc9995f, roughness: 1 }));
+ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+
+/* materials */
+const M = {
+  clay: new THREE.MeshStandardMaterial({ color: 0xe2dbd0, roughness: .88 }),
+  stone: new THREE.MeshStandardMaterial({ color: 0xd8bf96, roughness: .9 }),
+  glass: new THREE.MeshStandardMaterial({ color: 0x6f90a8, roughness: .12, metalness: .35, envMapIntensity: 1.4 }),
+  dark: new THREE.MeshStandardMaterial({ color: 0x2c2c30, roughness: .7 }),
+  green: new THREE.MeshStandardMaterial({ color: 0x5f8048, roughness: 1 }),
+  palm: new THREE.MeshStandardMaterial({ color: 0x4c6a34, roughness: 1 }),
+  trunk: new THREE.MeshStandardMaterial({ color: 0x8a6a48, roughness: 1 }),
+  pave: new THREE.MeshStandardMaterial({ color: 0xd9c9b0, roughness: .95 }),
+  white: new THREE.MeshStandardMaterial({ color: 0xf3f3f1, roughness: .35, metalness: .1 }),
+  stripeG: new THREE.MeshStandardMaterial({ color: 0x1f7a4b, roughness: .5 }),
+  stripeY: new THREE.MeshStandardMaterial({ color: 0xc9a24a, roughness: .5 }),
+  rail: new THREE.MeshStandardMaterial({ color: 0x7a7a80, roughness: .4, metalness: .8 }),
+  ballast: new THREE.MeshStandardMaterial({ color: 0x8a8278, roughness: 1 }),
+  steel: new THREE.MeshStandardMaterial({ color: 0xc9ccd2, roughness: .3, metalness: .55, envMapIntensity: 1.3 }),
+  panel: new THREE.MeshStandardMaterial({ color: 0x2b4560, roughness: .22, metalness: .3, envMapIntensity: 1.6 }),
+  concrete: new THREE.MeshStandardMaterial({ color: 0xc7bba8, roughness: .92 }),
+};
+const add = (geo, mat, x, y, z, ry = 0, parent = scene) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.rotation.y = ry; m.castShadow = m.receiveShadow = true; parent.add(m); return m; };
+const box = (w, h, d, mat, x, y, z, ry) => add(new THREE.BoxGeometry(w, h, d), mat, x, y + h / 2, z, ry);
+const cyl = (r, h, mat, x, y, z, seg = 24) => add(new THREE.CylinderGeometry(r, r, h, seg), mat, x, y + h / 2, z);
+function palms(list) {
+  const n = list.length, tr = new THREE.InstancedMesh(new THREE.CylinderGeometry(.35, .5, 9, 6), M.trunk, n), cr = new THREE.InstancedMesh(new THREE.DodecahedronGeometry(3.2, 0), M.palm, n);
+  const o = new THREE.Object3D();
+  list.forEach(([x, z], i) => { o.position.set(x, 4.5, z); o.rotation.set(0, i, 0); o.updateMatrix(); tr.setMatrixAt(i, o.matrix); o.position.y = 9.4; o.scale.set(1, .45, 1); o.updateMatrix(); cr.setMatrixAt(i, o.matrix); o.scale.set(1, 1, 1); });
+  [tr, cr].forEach(m => { m.castShadow = true; scene.add(m); });
+}
+function label3D() {}
+
+/* ================= 01 · King Faisal Specialist Hospital (x≈0) ================= */
+(() => {
+  const X = 0, Z = -62;
+  box(96, 30, 26, M.clay, X, 0, Z);                        // main ward slab
+  box(18, 36, 30, M.glass, X - 46, 0, Z + 2);              // glass towers at both ends
+  box(18, 36, 30, M.glass, X + 46, 0, Z + 2);
+  box(22, 34, 6, M.glass, X + 8, 0, Z + 15);               // central glazed core
+  for (let i = 0; i < 4; i++) box(96, .8, 1.2, M.dark, X, 7 + i * 6.5, Z + 13.2);   // floor bands
+  box(30, .8, 16, M.clay, X + 8, 8, Z + 24);               // entrance canopy
+  for (const dx of [-5, 21]) cyl(.6, 8, M.clay, X + dx, 0, Z + 30, 8);
+  box(70, 10, 36, M.clay, X - 70, 0, Z - 6);               // side block
+  // mosque + dome + minaret
+  box(22, 8, 22, M.clay, X - 40, 0, Z + 46);
+  add(new THREE.SphereGeometry(7.5, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), M.stone, X - 40, 8, Z + 46);
+  cyl(2.3, 26, M.clay, X - 26, 0, Z + 36, 12); add(new THREE.ConeGeometry(2.6, 4, 12), M.stone, X - 26, 28, Z + 36);
+  // plaza, lawns, palms, shade sails
+  box(120, .2, 70, M.pave, X + 10, 0, Z + 65);
+  for (const [x, z, w, d] of [[-18, 52, 30, 18], [16, 52, 26, 18], [-18, 78, 30, 16], [16, 80, 26, 14]]) box(w, .5, d, M.green, X + x, 0, Z + z);
+  const pl = []; for (let i = 0; i < 18; i++) pl.push([X - 34 + (i % 6) * 12, Z + 48 + Math.floor(i / 6) * 14]); palms(pl);
+  for (let i = 0; i < 8; i++) add(new THREE.ConeGeometry(6, 3, 4), M.white, X + 52 + (i % 4) * 11, 6.5, Z + 50 + Math.floor(i / 4) * 12, Math.PI / 4).rotation.x = Math.PI;
+})();
+
+/* ================= 02 · Princess Nourah University (x≈190) ================= */
+(() => {
+  const CX = 190, CZ = 0, R = 52, W = 13;
+  // crescent arcaded wing: half ring opening toward +x (toward the domed hall)
+  const sh = new THREE.Shape(); sh.absarc(0, 0, R + W, Math.PI / 2, Math.PI * 1.5, false); sh.absarc(0, 0, R, Math.PI * 1.5, Math.PI / 2, true);
+  const g = new THREE.ExtrudeGeometry(sh, { depth: 15, bevelEnabled: false, curveSegments: 48 }); g.rotateX(-Math.PI / 2);
+  add(g, M.stone, CX, 0, CZ);
+  const gb = new THREE.ExtrudeGeometry((() => { const s = new THREE.Shape(); s.absarc(0, 0, R + W + .4, Math.PI / 2, Math.PI * 1.5, false); s.absarc(0, 0, R + W - .2, Math.PI * 1.5, Math.PI / 2, true); return s; })(), { depth: 6, bevelEnabled: false, curveSegments: 48 });
+  gb.rotateX(-Math.PI / 2); add(gb, M.dark, CX, 3, CZ);   // arcade band
+  box(16, 20, 18, M.stone, CX - R - W / 2, 0, CZ);          // gate pavilion on the axis
+  // flanking arcaded blocks
+  box(70, 16, 22, M.stone, CX + 25, 0, CZ - 75); box(70, 16, 22, M.stone, CX + 25, 0, CZ + 75);
+  // courtyard garden
+  box(70, .4, 80, M.pave, CX + 10, 0, CZ);
+  for (let i = 0; i < 12; i++) box(10, .6, 8, M.green, CX - 10 + (i % 4) * 14, 0, CZ - 22 + Math.floor(i / 4) * 16);
+  // domed main hall
+  const HX = CX + 70;
+  box(44, 28, 44, M.stone, HX, 0, CZ);
+  box(12, 22, 4, M.dark, HX - 22, 0, CZ);                   // portal
+  cyl(14, 7, M.stone, HX, 28, CZ, 32);
+  add(new THREE.SphereGeometry(14, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2), M.stone, HX, 35, CZ);
+  cyl(.6, 8, M.steel, HX, 49, CZ, 8);
+})();
+
+/* ================= 03 · Haramain High-Speed Railway (track z=60) ================= */
+const TRAIN = new THREE.Group(); scene.add(TRAIN);
+(() => {
+  const TZ = 62, X0 = 200, X1 = 700;
+  box(X1 - X0, 1, 9, M.ballast, (X0 + X1) / 2, 0, TZ);
+  for (const dz of [-1.5, 1.5]) box(X1 - X0, .3, .25, M.rail, (X0 + X1) / 2, 1, TZ + dz);
+  for (let x = X0; x < X1; x += 45) {                        // catenary masts + arms
+    cyl(.35, 9, M.steel, x, 0, TZ - 6, 8); box(.3, .3, 8, M.steel, x, 8.6, TZ - 2.5);
+  }
+  const wire = new THREE.Mesh(new THREE.BoxGeometry(X1 - X0, .06, .06), M.dark); wire.position.set((X0 + X1) / 2, 8.2, TZ); scene.add(wire);
+  // dunes
+  for (let i = 0; i < 9; i++) { const d = add(new THREE.SphereGeometry(1, 20, 10), new THREE.MeshStandardMaterial({ color: 0xc58f55, roughness: 1 }), 230 + i * 60, -6, TZ + 70 + (i % 3) * 25); d.scale.set(45, 14, 26); }
+  // train: 8 white cars with rounded nose, green & gold stripes
+  const L = 20;
+  for (let i = 0; i < 8; i++) {
+    const c = new THREE.Mesh(new THREE.BoxGeometry(L - .6, 3.6, 3), M.white); c.position.set(-i * L, 3.3, 0); c.castShadow = true; TRAIN.add(c);
+    const s1 = new THREE.Mesh(new THREE.BoxGeometry(L - .6, .25, 3.05), M.stripeG); s1.position.set(-i * L, 2.4, 0); TRAIN.add(s1);
+    const s2 = new THREE.Mesh(new THREE.BoxGeometry(L - .6, .12, 3.06), M.stripeY); s2.position.set(-i * L, 2.75, 0); TRAIN.add(s2);
+  }
+  const nose = new THREE.Mesh(new THREE.CapsuleGeometry(1.6, 6, 8, 16), M.white); nose.rotation.z = Math.PI / 2; nose.scale.set(1, 1, 1); nose.position.set(L / 2 + 1.5, 3, 0); nose.castShadow = true; TRAIN.add(nose);
+  const wind = new THREE.Mesh(new THREE.BoxGeometry(3, 1, 2.6), M.dark); wind.position.set(L / 2 - .5, 4.6, 0); wind.rotation.z = -.35; TRAIN.add(wind);
+  TRAIN.position.set(0, 0, TZ);
+})();
+const trainX = t => 330 + 112 * (t - 3.0);      // nose x position over time (m)
+
+/* ================= 04 · CST Commission HQ (x≈530) ================= */
+(() => {
+  const X = 530, Z = -12;
+  box(90, 10, 56, M.clay, X + 10, 0, Z + 8);                // podium
+  box(26, 104, 22, M.glass, X, 10, Z);                       // glass tower
+  box(8, 108, 10, M.clay, X + 15, 10, Z + 4);                // concrete core fin
+  const top = box(40, 1.2, 26, M.clay, X - 4, 112, Z); top.rotation.z = .22;   // angled roof plate
+  const wing = box(14, 1, 16, M.clay, X + 18, 104, Z + 6); wing.rotation.z = -.35;
+  cyl(1.2, 34, M.steel, X + 4, 113, Z, 12); cyl(.5, 14, M.steel, X + 4, 147, Z, 8);
+  const sph = add(new THREE.IcosahedronGeometry(17, 2), M.steel, X + 34, 26, Z + 24); sph.material = M.steel; sph.material.flatShading = true;
+  const pl = []; for (let i = 0; i < 12; i++) pl.push([X - 50 + i * 10, Z + 52]); palms(pl);
+})();
+
+/* ================= 05 · Solar + wind (x 600–860) ================= */
+const BLADES = [];
+(() => {
+  const rows = 22, cols = 34, n = rows * cols;
+  const inst = new THREE.InstancedMesh(new THREE.BoxGeometry(6.8, .12, 3.2), M.panel, n);
+  const o = new THREE.Object3D(); let k = 0;
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+    o.position.set(600 + c * 7.4, 1.6, 60 - r * 6.2); o.rotation.set(-.42, 0, 0); o.updateMatrix(); inst.setMatrixAt(k++, o.matrix);
+  }
+  inst.castShadow = inst.receiveShadow = true; scene.add(inst);
+  // wind farm on the horizon to the left
+  for (let i = 0; i < 9; i++) {
+    const x = 720 + i * 34 + (i % 2) * 10, z = -150 - (i % 3) * 45;
+    cyl(1.6, 78, M.white, x, 0, z, 16);
+    const hub = new THREE.Group(); hub.position.set(x - 2.5, 79, z); scene.add(hub);
+    const nac = new THREE.Mesh(new THREE.BoxGeometry(7, 3, 3), M.white); nac.position.x = 2.5; nac.castShadow = true; hub.add(nac);
+    const rot = new THREE.Group(); hub.add(rot); BLADES.push(rot);
+    for (let b = 0; b < 3; b++) { const bl = new THREE.Mesh(new THREE.BoxGeometry(.6, 40, 2.2), M.white); bl.position.y = 20; bl.castShadow = true; const p = new THREE.Group(); p.rotation.x = b * Math.PI * 2 / 3; p.add(bl); rot.add(p); }
+  }
+})();
+
+/* ================= 06 · Grain silos (x 880–1010) ================= */
+(() => {
+  const Z = -42;
+  box(18, 66, 18, M.concrete, 872, 0, Z);                    // elevator tower
+  for (let i = 0; i < 14; i++) cyl(6.2, 48, M.concrete, 892 + i * 12.6, 0, Z, 28);
+  box(14 * 12.6 + 6, 4, 14, M.concrete, 892 + 6.5 * 12.6, 48, Z);   // gallery on top
+  const tr = box(60, 3, 3, M.steel, 838, 34, Z); tr.rotation.z = -.32;   // conveyor bridge
+  box(30, 12, 22, M.steel, 820, 0, Z + 4);                   // intake shed
+})();
+
+/* ---------------- FPV camera path ---------------- */
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+const KEYS = [
+  [0.00, V(-125, 7, 72), V(-15, 14, -50), -6],
+  [0.45, V(-66, 11, 34), V(8, 18, -58), 4],
+  [0.95, V(-6, 16, 18), V(52, 20, -48), 12],
+  [1.35, V(48, 24, 16), V(118, 18, -8), 6],
+  [1.80, V(110, 32, 0), V(205, 14, 0), -4],
+  [2.30, V(166, 22, 2), V(262, 22, 0), 6],
+  [2.75, V(216, 26, 40), V(284, 6, 64), 14],
+  [3.10, V(274, 8, 76), V(330, 4.5, 62), -10],
+  [3.55, V(336, 5, 74), V(392, 4, 61), -6],
+  [4.00, V(400, 6, 75), V(448, 6, 60), 4],
+  [4.35, V(462, 16, 52), V(526, 62, -10), -10],
+  [4.80, V(512, 36, 22), V(566, 74, -22), -18],
+  [5.25, V(572, 40, 6), V(646, 10, 18), 12],
+  [5.60, V(632, 6, 14), V(720, 8, -38), 10],
+  [6.05, V(702, 5, -6), V(800, 28, -92), 6],
+  [6.50, V(772, 8, -2), V(862, 24, -34), -6],
+  [6.85, V(836, 14, 24), V(902, 28, -42), -14],
+  [7.35, V(893, 20, 28), V(962, 32, -42), -18],
+  [7.75, V(958, 28, 22), V(1014, 40, -42), -10],
+  [8.08, V(1012, 36, 14), V(1066, 46, -46), -6],
+];
+const ZONES = [
+  [0, 'King Faisal Specialist Hospital', 'Health sector', V(0, 15, -40)],
+  [1.38, 'Princess Nourah University', 'Education', V(220, 15, 0)],
+  [2.82, 'Haramain High-Speed Railway', 'Transport', V(400, 4, 62)],
+  [4.18, 'Communications, Space & Technology Commission', 'Communications · Space · Technology', V(530, 50, -10)],
+  [5.38, 'Solar & wind', 'Renewable energy', V(760, 10, -60)],
+  [6.72, 'Grain silos', 'Food security', V(960, 25, -42)],
+];
+function cr(p0, p1, p2, p3, s) { // uniform Catmull-Rom
+  const s2 = s * s, s3 = s2 * s;
+  return 0.5 * ((2 * p1) + (-p0 + p2) * s + (2 * p0 - 5 * p1 + 4 * p2 - p3) * s2 + (-p0 + 3 * p1 - 3 * p2 + p3) * s3);
+}
+function sample(t) {
+  t = Math.min(Math.max(t, 0), DUR);
+  let i = 0; while (i < KEYS.length - 2 && KEYS[i + 1][0] <= t) i++;
+  const k0 = KEYS[Math.max(i - 1, 0)], k1 = KEYS[i], k2 = KEYS[i + 1], k3 = KEYS[Math.min(i + 2, KEYS.length - 1)];
+  const s = (t - k1[0]) / (k2[0] - k1[0]);
+  const v = (a, b, c, d) => new THREE.Vector3(cr(a.x, b.x, c.x, d.x, s), cr(a.y, b.y, c.y, d.y, s), cr(a.z, b.z, c.z, d.z, s));
+  return { p: v(k0[1], k1[1], k2[1], k3[1]), l: v(k0[2], k1[2], k2[2], k3[2]), r: cr(k0[3], k1[3], k2[3], k3[3], s) };
+}
+const zoneAt = t => { let z = 0; ZONES.forEach((q, i) => { if (t >= q[0]) z = i; }); return z; };
+
+/* ---------------- render at time t ---------------- */
+const up = new THREE.Vector3(0, 1, 0);
+let mode = 'fpv';
+function place(t) {
+  TRAIN.position.x = trainX(t); TRAIN.visible = t > 2.2 && t < 5.2;
+  BLADES.forEach((b, i) => b.rotation.x = t * 1.4 + i);
+  if (mode === 'fpv') {
+    const { p, l, r } = sample(t);
+    // tiny FPV vibration
+    p.x += Math.sin(t * 37) * .06; p.y += Math.sin(t * 29 + 1) * .05;
+    camera.position.copy(p); camera.up.copy(up); camera.lookAt(l);
+    camera.rotateZ(THREE.MathUtils.degToRad(-r));
+  }
+  // keep the sun's shadow box around where we look
+  const focus = mode === 'fpv' ? sample(t).l.clone().lerp(camera.position, .5) : controls.target.clone();
+  sun.target.position.copy(focus); sun.position.copy(focus).addScaledVector(SUN_DIR, 420); sun.target.updateMatrixWorld();
+  sky.position.copy(camera.position);
+}
+function resize() {
+  const w = CAPTURE ? +(Q.get('w') || 1920) : innerWidth, h = CAPTURE ? +(Q.get('h') || 1080) : innerHeight;
+  renderer.setSize(w, h, !CAPTURE ? true : false);
+  if (CAPTURE) { canvas.style.width = w + 'px'; canvas.style.height = h + 'px'; }
+  camera.aspect = w / h; camera.updateProjectionMatrix();
+}
+addEventListener('resize', resize); resize();
+
+const controls = new OrbitControls(camera, canvas); controls.enabled = false; controls.enableDamping = true;
+
+window.WW = { renderAt(t) { place(t); renderer.render(scene, camera); return true; }, DUR };
+
+/* ---------------- UI / playback ---------------- */
+if (!CAPTURE) {
+  const $ = s => document.querySelector(s);
+  let t = 0, speed = 1, playing = true, last = performance.now();
+  const fmt = x => { const f = Math.round(x * 25); return String(Math.floor(f / 25)).padStart(2, '0') + ':' + String(f % 25).padStart(2, '0'); };
+  $('#chips').innerHTML = ZONES.map((z, i) => `<button data-z="${i}"><b>0${i + 1}</b><span>${['KFSH','PNU','Haramain','CST','Solar & wind','Silos'][i]}</span></button>`).join('');
+  document.querySelectorAll('#chips button').forEach(b => b.onclick = () => {
+    const z = ZONES[+b.dataset.z];
+    if (mode === 'orbit') { controls.target.copy(z[3]); camera.position.copy(z[3]).add(V(-90, 60, 110)); }
+    else { t = z[0] + .02; }
+  });
+  $('#play').onclick = () => { playing = !playing; $('#play').textContent = playing ? '❚❚ Pause' : '▶ Play'; };
+  document.querySelectorAll('#speeds button').forEach(b => b.onclick = () => { speed = +b.dataset.s; document.querySelectorAll('#speeds button').forEach(x => x.classList.toggle('on', x === b)); });
+  document.querySelectorAll('#modes button').forEach(b => b.onclick = () => {
+    mode = b.dataset.m; document.querySelectorAll('#modes button').forEach(x => x.classList.toggle('on', x === b));
+    controls.enabled = mode === 'orbit';
+    if (mode === 'orbit') { const z = ZONES[zoneAt(t)]; camera.up.set(0, 1, 0); controls.target.copy(z[3]); camera.position.copy(z[3]).add(V(-90, 60, 110)); controls.update(); }
+  });
+  const scrub = $('#scrub');
+  scrub.oninput = () => { t = +scrub.value; playing = false; $('#play').textContent = '▶ Play'; };
+  if (Q.has('t')) t = +Q.get('t');
+  (function loop(now) {
+    const dt = Math.min((now - last) / 1000, .1); last = now;
+    if (playing) { t += dt * speed; if (t > DUR) t = 0; }
+    if (mode === 'orbit') controls.update();
+    place(t); renderer.render(scene, camera);
+    const z = ZONES[zoneAt(t)], zi = zoneAt(t);
+    $('#proj').innerHTML = `0${zi + 1} · ${z[1]}<small>${z[2]}</small>`;
+    $('#tc').textContent = fmt(t) + ' / ' + fmt(DUR);
+    if (playing) scrub.value = t.toFixed(2);
+    document.querySelectorAll('#chips button').forEach((b, i) => b.classList.toggle('on', i === zi));
+    requestAnimationFrame(loop);
+  })(performance.now());
+}
+</script>
+</body>
+</html>

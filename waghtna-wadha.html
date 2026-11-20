@@ -225,6 +225,14 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .anim-f a:hover img{transform:scale(1.06)}
 .anim-f span{position:absolute;inset:auto 0 0 0;padding:14px 7px 5px;font-family:var(--mono);font-size:10.5px;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.75));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .anim-f b{color:var(--amber);font-weight:500;margin-right:5px}
+.anim-ch{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.anim-ch button{font-family:var(--mono);font-size:11.5px;padding:6px 11px;border-radius:99px;border:1px solid var(--line2);background:rgba(255,255,255,.02);color:var(--soft);cursor:pointer;white-space:nowrap}
+.anim-ch button b{color:var(--amber);font-weight:400;margin-right:6px}
+.anim-ch button.on,.anim-ch button:hover{border-color:var(--amber);color:#fff}
+.anim-vers button svg{width:12px;height:12px;vertical-align:-2px;margin-right:4px}
+.anim-x{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:99px;border:1px solid var(--line2);color:var(--soft)}
+.anim-x svg{width:13px;height:13px}
+.anim-v iframe{width:100%;height:100%;border:0;display:block;background:#000}
 .anim p{margin:10px 0 0;font-size:12.5px;color:var(--soft);line-height:1.55}
 .refs{margin:0 16px 16px;padding-top:12px;border-top:1px dashed var(--line2);display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap}
 .refs h4{margin:0 6px 0 0;display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);font-weight:500;white-space:nowrap}
@@ -563,6 +571,7 @@ a.ref:hover{border-color:var(--amber)}
   <symbol id="i-move" viewBox="0 0 24 24"><path d="m18 8 4 4-4 4"/><path d="M2 12h20"/><path d="m6 8-4 4 4 4"/></symbol>
   <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></symbol>
   <symbol id="i-ext" viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></symbol>
   <symbol id="i-film" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></symbol>
 </svg>
 
@@ -583,7 +592,7 @@ const STATUS = {
 };
 const FPS = 25;
 const tc = t => { const f = Math.max(0, Math.round(t * FPS)); const s = Math.floor(f / FPS), ff = f % FPS; return [Math.floor(s / 60), s % 60, ff].map(n => String(n).padStart(2, '0')).join(':'); };
-const BUILD = 10;
+const BUILD = 11;
 let D = null, filter = 'all', view = 'rows', stamp = null, pendingReload = false;
 const verSel = {}; const animSel = {};
 
@@ -759,10 +768,12 @@ function animHTML(s) {
   const a = s.animatic; if (!a || !(a.versions || []).length) return '';
   const k = animSel[s.id], v = a.versions.find(x => x.v === k) || a.versions[a.versions.length - 1];
   const vers = a.versions.length > 1 ? `<span class="anim-vers">${a.versions.map(x => `<button data-aver="${esc(x.v)}" class="${x === v ? 'on' : ''}">${esc(x.v)}</button>`).join('')}</span>` : '';
-  const fr = (a.frames || []).map((f, i) => `<li><a href="${BASE + (f.full || f.img)}" target="_blank" rel="noopener"><img loading="lazy" src="${BASE + f.img}" alt=""><span><b>${String(i + 1).padStart(2, '0')}</b>${esc(f.label)}</span></a></li>`).join('');
-  return `<div class="anim"><div class="anim-h"><h4>${ic('film')}${esc(a.title || 'Animatic')}</h4><span class="mono">${esc(v.meta || '')}</span>${vers}</div>
-    <div class="anim-v"><video muted loop playsinline controls preload="none" poster="${BASE + v.poster}" data-src="${BASE + v.video}"></video><span class="badge"><span class="chip">${ic('video')}ANIMATIC · ${esc(v.v)}</span></span></div>
-    ${fr ? `<ol class="anim-f">${fr}</ol>` : ''}${a.note ? `<p>${esc(a.note)}</p>` : ''}</div>`;
+  const modes = v.link ? `<span class="anim-vers"><button data-amode="video" class="on">${ic('video')}Video</button><button data-amode="3d">${ic('box')}Interactive 3D</button><a class="anim-x" href="${esc(v.link)}" target="_blank" rel="noopener" title="Open full screen">${ic('max')}</a></span>` : '';
+  const ch = (v.chapters || []).map((c, i) => `<button data-seek="${c.t}"><b>${String(i + 1).padStart(2, '0')}</b>${esc(c.label)}</button>`).join('');
+  const fr = (v.frames || []).map((f, i) => `<li><a href="${BASE + (f.full || f.img)}" target="_blank" rel="noopener"><img loading="lazy" src="${BASE + f.img}" alt=""><span><b>${String(i + 1).padStart(2, '0')}</b>${esc(f.label)}</span></a></li>`).join('');
+  return `<div class="anim"><div class="anim-h"><h4>${ic('film')}${esc(v.title || a.title || 'Animatic')}</h4><span class="mono">${esc(v.meta || '')}</span>${modes}${vers}</div>
+    <div class="anim-v" data-link="${esc(v.link || '')}"><video muted loop playsinline controls preload="none" poster="${BASE + v.poster}" data-src="${BASE + v.video}"></video><span class="badge"><span class="chip">${ic('video')}${esc(v.badge || 'ANIMATIC')} · ${esc(v.v)}</span></span></div>
+    ${ch ? `<div class="anim-ch">${ch}</div>` : ''}${fr ? `<ol class="anim-f">${fr}</ol>` : ''}${v.note || a.note ? `<p>${esc(v.note || a.note)}</p>` : ''}</div>`;
 }
 function cardHTML(s) {
   const st = STATUS[s.status] || STATUS.pending, step = st.step;
@@ -817,6 +828,26 @@ function bindCard(c) {
     const tmp = document.createElement('div'); tmp.innerHTML = cardHTML(s); const n = tmp.firstElementChild; n.classList.add('in');
     $$('video', c).forEach(v => { vIO.unobserve(v); v.pause(); });
     c.replaceWith(n); bindCard(n); markNow();
+  }));
+  $$('[data-seek]', c).forEach(b => b.addEventListener('click', e => {
+    e.stopPropagation(); const v = $('.anim-v video', c); if (!v) return;
+    if (!v.src && v.dataset.src) v.src = v.dataset.src;
+    v.currentTime = +b.dataset.seek; v.play().catch(() => {});
+    $$('[data-seek]', c).forEach(x => x.classList.toggle('on', x === b));
+  }));
+  $$('[data-amode]', c).forEach(b => b.addEventListener('click', e => {
+    e.stopPropagation(); const box = $('.anim-v', c); if (!box) return;
+    $$('[data-amode]', c).forEach(x => x.classList.toggle('on', x === b));
+    const vid = $('video', box), ifr = $('iframe', box);
+    if (b.dataset.amode === '3d') {
+      if (vid) { vid.pause(); vid.style.display = 'none'; }
+      if (!ifr) { const f = document.createElement('iframe'); f.src = box.dataset.link; f.allow = 'fullscreen'; f.loading = 'lazy'; box.prepend(f); } else ifr.style.display = '';
+      const bd = $('.badge', box); if (bd) bd.style.display = 'none';
+    } else {
+      if (ifr) ifr.remove();
+      if (vid) { vid.style.display = ''; vid.play().catch(() => {}); }
+      const bd = $('.badge', box); if (bd) bd.style.display = '';
+    }
   }));
   $$('[data-cmp]', c).forEach(el => attachCmp(el, () => openLB(s.id, 'compare')));
   $$('video', c).forEach(v => vIO.observe(v));

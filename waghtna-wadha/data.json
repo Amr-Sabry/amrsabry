@@ -145,72 +145,72 @@
    "status": "wip",
    "notes": [
     {
-     "t": "New direction: the FPV flythrough now travels through six real Saudi projects, in the client's order",
+     "t": "New direction: the FPV flythrough travels through six real Saudi projects, in the client's folder order",
      "done": true
     },
     {
-     "t": "Animatic v1: one keyframe per project with FPV push, roll and whip transitions — 8.08s, the original shot length",
+     "t": "3D blocking v1: massing model of every project + one continuous FPV camera (dives, skims, banking rolls), 8.08s — the original shot length",
      "done": true
     },
     {
-     "t": "Keyframes in the agreed mood: low golden sun, flare, long shadows",
+     "t": "Image-based animatic withdrawn — replaced by 3D blocking",
      "done": true
     },
     {
-     "t": "Next: approve the keyframes, then generate the motion shot from these references",
+     "t": "Interactive viewer: play / ¼× / ½×, scrub, jump to a project, orbit to inspect",
+     "done": true
+    },
+    {
+     "t": "Next: lock camera + layout with the director, then render the final shot over the blocking",
      "done": false
     }
    ],
    "versions": [
     {
      "v": "v1",
-     "image": "after/sh03_v1_m.webp",
-     "full": "after/sh03_k1.jpg",
+     "image": "after/sh03_blk_v1_m.webp",
+     "full": "after/sh03_blk_v1.jpg",
      "date": "20 Nov",
-     "note": "Opening keyframe — KFSH"
+     "note": "3D blocking frame — Haramain train"
     }
    ],
    "animatic": {
-    "title": "Animatic · FPV flythrough — six national projects",
-    "frames": [
-     {
-      "img": "after/sh03_k1_t.webp",
-      "full": "after/sh03_k1.jpg",
-      "label": "King Faisal Specialist Hospital · Health"
-     },
-     {
-      "img": "after/sh03_k2_t.webp",
-      "full": "after/sh03_k2.jpg",
-      "label": "Princess Nourah University · Education"
-     },
-     {
-      "img": "after/sh03_k3_t.webp",
-      "full": "after/sh03_k3.jpg",
-      "label": "Haramain High-Speed Railway · Transport"
-     },
-     {
-      "img": "after/sh03_k4_t.webp",
-      "full": "after/sh03_k4.jpg",
-      "label": "CST Commission HQ · Space & Tech"
-     },
-     {
-      "img": "after/sh03_k5_t.webp",
-      "full": "after/sh03_k5.jpg",
-      "label": "Solar & wind · Renewable energy"
-     },
-     {
-      "img": "after/sh03_k6_t.webp",
-      "full": "after/sh03_k6.jpg",
-      "label": "Grain silos · Food security"
-     }
-    ],
-    "note": "Same order as the client folder, same FPV language as the original shot: fast push-ins, banking rolls and whip transitions between projects. Keyframes are built from the client's real project photos in the agreed golden mood. This is the timing/motion guide for the final generated shot.",
     "versions": [
      {
       "v": "v1",
-      "video": "anim/sh03_v1.mp4",
-      "poster": "anim/sh03_v1_poster.jpg",
-      "meta": "8.08s · 6 projects · 25 fps"
+      "title": "3D blocking · FPV flythrough — six national projects",
+      "badge": "3D BLOCKING",
+      "video": "anim/sh03_blocking_v1.mp4",
+      "poster": "anim/sh03_blocking_v1_poster.jpg",
+      "meta": "8.08s · 25 fps · FPV 82° lens",
+      "link": "/waghtna-wadha-sh03-3d.html",
+      "chapters": [
+       {
+        "t": 0,
+        "label": "King Faisal Specialist Hospital"
+       },
+       {
+        "t": 1.38,
+        "label": "Princess Nourah University"
+       },
+       {
+        "t": 2.82,
+        "label": "Haramain High-Speed Railway"
+       },
+       {
+        "t": 4.18,
+        "label": "CST Commission HQ"
+       },
+       {
+        "t": 5.38,
+        "label": "Solar & wind"
+       },
+       {
+        "t": 6.72,
+        "label": "Grain silos"
+       }
+      ],
+      "note": "3D massing of each project, in the client's order, laid out on one continuous FPV path with the same language as the original shot — low skims, dives, banking rolls. Golden low sun from the side for long shadows. Switch to Interactive 3D to scrub, slow down, or orbit any project."
      }
     ]
    },
@@ -1988,9 +1988,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T15:52:00+04:00",
+ "updated": "2026-11-20T16:24:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 10,
+ "build": 11,
  "removed": [
   {
    "id": "SH31",
