@@ -27,7 +27,11 @@
      "done": true
     },
     {
-     "t": "Edges softened into flowing Zaha Hadid-style curves — fins sweep into the arch as one continuous surface",
+     "t": "v3: fins kept parallel — equal width, equal gaps, same curve into the arch",
+     "done": true
+    },
+    {
+     "t": "Edges softened Zaha Hadid style — rounded with large radii, light rolls over them",
      "done": true
     }
    ],
@@ -38,6 +42,13 @@
      "full": "after/sh01_v1.jpg",
      "date": "20 Nov",
      "note": "Zaha Hadid soft edges"
+    },
+    {
+     "v": "v3",
+     "image": "after/sh01_v3_m.webp",
+     "full": "after/sh01_v3.jpg",
+     "date": "20 Nov",
+     "note": "Parallel fins, soft edges"
     }
    ],
    "refs": [
@@ -1605,7 +1616,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T13:06:00+04:00",
+ "updated": "2026-11-20T13:28:00+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 8,
  "removed": [
