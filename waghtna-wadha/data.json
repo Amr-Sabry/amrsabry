@@ -1223,6 +1223,10 @@
     {
      "t": "v3: belly title replaced with the exact Saudia wordmark (supplied artwork), white on the green panel, matched to the panel tilt",
      "done": true
+    },
+    {
+     "t": "v4: wordmark now painted on, not stuck on — sits on the panel the scene itself lit, takes the same warm light as the white fuselage paint, panel keeps its natural curved edge and shadow, grain matched",
+     "done": true
     }
    ],
    "versions": [
@@ -1239,6 +1243,13 @@
      "full": "after/sh33_v3.jpg",
      "date": "20 Nov",
      "note": "Exact Saudia wordmark"
+    },
+    {
+     "v": "v4",
+     "image": "after/sh33_v4_m.webp",
+     "full": "after/sh33_v4.jpg",
+     "date": "20 Nov",
+     "note": "Wordmark integrated with the light"
     }
    ],
    "refs": [
@@ -1690,7 +1701,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T14:30:00+04:00",
+ "updated": "2026-11-20T14:50:00+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 9,
  "removed": [
