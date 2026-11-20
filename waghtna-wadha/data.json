@@ -37,6 +37,14 @@
     {
      "t": "v6: same parallel ribs as v5 + thin golden light lines along every rib, the exact line language of SH02 — the cut flows from SH01 into SH02",
      "done": true
+    },
+    {
+     "t": "v7: five soft rounded concrete ribbons, widely and evenly spaced, strictly parallel, golden LED line on the rib edge",
+     "done": true
+    },
+    {
+     "t": "v8: SH02's own ribbon style — wide golden ribbons with LED on both rounded edges, widely spaced and parallel (material becomes metal, not concrete)",
+     "done": true
     }
    ],
    "versions": [
@@ -74,6 +82,20 @@
      "full": "after/sh01_v6.jpg",
      "date": "20 Nov",
      "note": "Parallel ribs + SH02 golden light lines"
+    },
+    {
+     "v": "v7",
+     "image": "after/sh01_v7_m.webp",
+     "full": "after/sh01_v7.jpg",
+     "date": "20 Nov",
+     "note": "5 spaced concrete ribbons, soft edges"
+    },
+    {
+     "v": "v8",
+     "image": "after/sh01_v8_m.webp",
+     "full": "after/sh01_v8.jpg",
+     "date": "20 Nov",
+     "note": "SH02-style golden ribbons, LED on both edges"
     }
    ],
    "refs": [
@@ -926,6 +948,10 @@
     {
      "t": "Very low sun — huge long shadows across the dunes, heat haze, burning orange vs teal",
      "done": true
+    },
+    {
+     "t": "v4 / v5: real depth — the two helicopters at two different heights: one high, near the lens, huge and motion-blurred; one low over the sand, small, kicking a downwash ring",
+     "done": true
     }
    ],
    "versions": [
@@ -942,6 +968,20 @@
      "full": "after/sh22_v3.jpg",
      "date": "20 Nov",
      "note": "Right → left, same light direction as the original"
+    },
+    {
+     "v": "v4",
+     "image": "after/sh22_v4_m.webp",
+     "full": "after/sh22_v4.jpg",
+     "date": "20 Nov",
+     "note": "Depth — high heli top right, low heli by the vehicle"
+    },
+    {
+     "v": "v5",
+     "image": "after/sh22_v5_m.webp",
+     "full": "after/sh22_v5.jpg",
+     "date": "20 Nov",
+     "note": "Depth — near heli blurred in the foreground"
     }
    ],
    "refs": [
@@ -1806,7 +1846,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T14:58:30+04:00",
+ "updated": "2026-11-20T15:34:00+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 9,
  "removed": [
