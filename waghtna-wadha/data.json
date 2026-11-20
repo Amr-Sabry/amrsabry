@@ -53,6 +53,10 @@
     {
      "t": "v11: alternative — free-standing parallel blades, widely spaced, same wall concrete (different framing)",
      "done": true
+    },
+    {
+     "t": "v14: it is a wall, not free-standing columns — continuous back wall of the same board-formed concrete behind the ribs, no sky between them; ribs parallel, widely spaced, soft; sun only through the arch",
+     "done": true
     }
    ],
    "versions": [
@@ -125,6 +129,20 @@
      "full": "after/sh01_v12.jpg",
      "date": "20 Nov",
      "note": "v1 style, parallel, wide gaps, wall concrete"
+    },
+    {
+     "v": "v13",
+     "image": "after/sh01_v13_m.webp",
+     "full": "after/sh01_v13.jpg",
+     "date": "20 Nov",
+     "note": "Wall behind the fins (deeper recess)"
+    },
+    {
+     "v": "v14",
+     "image": "after/sh01_v14_m.webp",
+     "full": "after/sh01_v14.jpg",
+     "date": "20 Nov",
+     "note": "Wall behind the fins, sunlit — no sky between"
     }
    ],
    "refs": [
@@ -2117,7 +2135,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T17:47:00+04:00",
+ "updated": "2026-11-20T17:53:00+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 11,
  "removed": [
