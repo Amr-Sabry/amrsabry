@@ -258,9 +258,30 @@
    "loop": "loop/sh09.mp4",
    "before": "before/sh09_m.webp",
    "beforeFull": "before/sh09.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Doctor recast with Saudi features — same blue scrubs, same watch, same pose",
+     "done": true
+    },
+    {
+     "t": "Clinic reworked with clear medical cues: X-ray lightbox, scan monitor with heartbeat line, lab coat and stethoscope, exam bed",
+     "done": true
+    },
+    {
+     "t": "Mood: low golden sun through blinds, long striped shadows, warm rim light",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh09_v1_m.webp",
+     "full": "after/sh09_v1.jpg",
+     "date": "20 Nov",
+     "note": "Saudi doctor, medical clinic"
+    }
+   ]
   },
   {
    "id": "SH10",
@@ -1174,7 +1195,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T12:58:00+04:00",
+ "updated": "2026-11-20T12:59:00+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 6,
  "removed": [
