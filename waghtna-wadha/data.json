@@ -139,9 +139,26 @@
    "loop": "loop/sh06.mp4",
    "before": "before/sh06_m.webp",
    "beforeFull": "before/sh06.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
+     "done": true
+    },
+    {
+     "t": "Sun low from the left — overpasses, trees and cars throw long shadows, flare from top-left",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh06_v1_m.webp",
+     "full": "after/sh06_v1.jpg",
+     "date": "20 Nov",
+     "note": "Golden-hour relight"
+    }
+   ]
   },
   {
    "id": "SH07",
@@ -156,9 +173,26 @@
    "loop": "loop/sh07.mp4",
    "before": "before/sh07_m.webp",
    "beforeFull": "before/sh07.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
+     "done": true
+    },
+    {
+     "t": "Low sun rakes across the canopies — fabric glows amber, masts cast long shadows over the plaza",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh07_v1_m.webp",
+     "full": "after/sh07_v1.jpg",
+     "date": "20 Nov",
+     "note": "Golden-hour relight"
+    }
+   ]
   },
   {
    "id": "SH08",
@@ -258,9 +292,26 @@
    "loop": "loop/sh13.mp4",
    "before": "before/sh13_m.webp",
    "beforeFull": "before/sh13.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
+     "done": true
+    },
+    {
+     "t": "Sun beyond top-right — golden glare across the panels, each row throws a long shadow on orange sand",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh13_v1_m.webp",
+     "full": "after/sh13_v1.jpg",
+     "date": "20 Nov",
+     "note": "Golden-hour relight"
+    }
+   ]
   },
   {
    "id": "SH14",
@@ -275,9 +326,26 @@
    "loop": "loop/sh14.mp4",
    "before": "before/sh14_m.webp",
    "beforeFull": "before/sh14.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
+     "done": true
+    },
+    {
+     "t": "Sun bursts through the lattice tower as a starburst, steel rim-lit gold against a teal sky",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh14_v1_m.webp",
+     "full": "after/sh14_v1.jpg",
+     "date": "20 Nov",
+     "note": "Golden-hour relight"
+    }
+   ]
   },
   {
    "id": "SH15",
@@ -292,9 +360,26 @@
    "loop": "loop/sh15.mp4",
    "before": "before/sh15_m.webp",
    "beforeFull": "before/sh15.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
+     "done": true
+    },
+    {
+     "t": "Golden shafts through a high factory window, hot highlights on the cans, long shadows on the line",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh15_v1_m.webp",
+     "full": "after/sh15_v1.jpg",
+     "date": "20 Nov",
+     "note": "Golden-hour relight"
+    }
+   ]
   },
   {
    "id": "SH16",
@@ -309,9 +394,26 @@
    "loop": "loop/sh16.mp4",
    "before": "before/sh16_m.webp",
    "beforeFull": "before/sh16.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
+     "done": true
+    },
+    {
+     "t": "Golden sun over a sea of clouds, warm rim light on her face, wing lit gold, flare from the window",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh16_v1_m.webp",
+     "full": "after/sh16_v1.jpg",
+     "date": "20 Nov",
+     "note": "Golden-hour relight"
+    }
+   ]
   },
   {
    "id": "SH17",
@@ -326,9 +428,26 @@
    "loop": "loop/sh17.mp4",
    "before": "before/sh17_m.webp",
    "beforeFull": "before/sh17.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
+     "done": true
+    },
+    {
+     "t": "Golden sun-glint on the sea around the island, warm flare at the window, silhouette stays dark",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh17_v1_m.webp",
+     "full": "after/sh17_v1.jpg",
+     "date": "20 Nov",
+     "note": "Golden-hour relight"
+    }
+   ]
   },
   {
    "id": "SH18",
@@ -343,9 +462,26 @@
    "loop": "loop/sh18.mp4",
    "before": "before/sh18_m.webp",
    "beforeFull": "before/sh18.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
+     "done": true
+    },
+    {
+     "t": "Same sky and angle, the three turbines kept — a full wind farm added behind, sun on the cloud bank with flare",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh18_v1_m.webp",
+     "full": "after/sh18_v1.jpg",
+     "date": "20 Nov",
+     "note": "Golden-hour relight"
+    }
+   ]
   },
   {
    "id": "SH19",
@@ -360,9 +496,26 @@
    "loop": "loop/sh19.mp4",
    "before": "before/sh19_m.webp",
    "beforeFull": "before/sh19.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
+     "done": true
+    },
+    {
+     "t": "Pink haze shifted to warm gold — strong flare at left, fabric glows amber, mast shadows across the tents",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh19_v1_m.webp",
+     "full": "after/sh19_v1.jpg",
+     "date": "20 Nov",
+     "note": "Golden-hour relight"
+    }
+   ]
   },
   {
    "id": "SH20",
@@ -492,6 +645,9 @@
     {
      "t": "v1 top-down dropped — direction is between the palms",
      "done": true
+    },
+    {
+     "t": "Raised camera at frond height — in progress"
     }
    ],
    "versions": [
@@ -958,6 +1114,6 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T11:15:00+04:00",
+ "updated": "2026-11-20T11:20:00+04:00",
  "tagline": "#OurDestinationIsClear"
 }
