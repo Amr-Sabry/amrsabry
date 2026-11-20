@@ -41,6 +41,10 @@
     {
      "t": "v7: five soft rounded concrete ribbons, widely and evenly spaced, strictly parallel, golden LED line on the rib edge",
      "done": true
+    },
+    {
+     "t": "v9 / v10: concrete column edges no longer sharp — fully rounded, tube-like, soft ends at the floor; light rolls over them as a smooth gradient. Same layout, LED lines and sun",
+     "done": true
     }
    ],
    "versions": [
@@ -85,6 +89,20 @@
      "full": "after/sh01_v7.jpg",
      "date": "20 Nov",
      "note": "5 spaced concrete ribbons, soft edges"
+    },
+    {
+     "v": "v9",
+     "image": "after/sh01_v9_m.webp",
+     "full": "after/sh01_v9.jpg",
+     "date": "20 Nov",
+     "note": "v7 layout (5 columns) with soft rounded edges"
+    },
+    {
+     "v": "v10",
+     "image": "after/sh01_v10_m.webp",
+     "full": "after/sh01_v10.jpg",
+     "date": "20 Nov",
+     "note": "v6 layout (parallel ribs) with soft rounded edges"
     }
    ],
    "refs": [
@@ -1977,7 +1995,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T17:15:00+04:00",
+ "updated": "2026-11-20T17:22:00+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 11,
  "removed": [
