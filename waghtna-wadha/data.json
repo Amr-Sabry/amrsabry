@@ -774,40 +774,6 @@
    "versions": []
   },
   {
-   "id": "SH31",
-   "key": "sh31",
-   "title": "Night Dome Pavilion",
-   "tag": "Aerial · Night",
-   "in": 92.88,
-   "out": 94.24,
-   "tcIn": "01:32:22",
-   "tcOut": "01:34:06",
-   "frames": 34,
-   "loop": "loop/sh31.mp4",
-   "before": "before/sh31_m.webp",
-   "beforeFull": "before/sh31.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
-  },
-  {
-   "id": "SH32",
-   "key": "sh32",
-   "title": "Monorail Station",
-   "tag": "Exterior",
-   "in": 94.24,
-   "out": 95.56,
-   "tcIn": "01:34:06",
-   "tcOut": "01:35:14",
-   "frames": 33,
-   "loop": "loop/sh32.mp4",
-   "before": "before/sh32_m.webp",
-   "beforeFull": "before/sh32.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
-  },
-  {
    "id": "SH33",
    "key": "sh33",
    "title": "Aircraft Overhead — Portal",
@@ -1096,14 +1062,14 @@
   {
    "in": 92.88,
    "out": 94.24,
-   "kind": "shot",
-   "id": "SH31"
+   "kind": "out",
+   "label": "Out"
   },
   {
    "in": 94.24,
    "out": 95.56,
-   "kind": "shot",
-   "id": "SH32"
+   "kind": "out",
+   "label": "Out"
   },
   {
    "in": 95.56,
@@ -1142,7 +1108,17 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T12:45:00+04:00",
+ "updated": "2026-11-20T12:50:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 4
+ "build": 5,
+ "removed": [
+  {
+   "id": "SH31",
+   "title": "Night Dome Pavilion"
+  },
+  {
+   "id": "SH32",
+   "title": "Monorail Station"
+  }
+ ]
 }

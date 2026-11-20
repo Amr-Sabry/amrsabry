@@ -135,6 +135,8 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .seg.chroma{background:repeating-linear-gradient(-45deg,rgba(84,190,110,.16) 0 6px,rgba(84,190,110,.06) 6px 12px)}
 .seg.chroma span,.seg.slate span{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(130,227,156,.65);white-space:nowrap}
 .seg.slate{background:repeating-linear-gradient(90deg,#1c1c22 0 4px,#141418 4px 8px)}
+.seg.out{background:#0e0e12}
+.seg.out span{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--mono);font-size:10px;color:var(--dim)}
 .seg.slate span{color:var(--dim)}
 .ph{position:absolute;top:10px;bottom:12px;width:2px;margin-left:15px;background:var(--amber);box-shadow:0 0 12px var(--amber);pointer-events:none;z-index:3;left:0}
 .ph::before{content:"";position:absolute;top:-4px;left:-4px;width:10px;height:10px;border-radius:50%;background:var(--amber)}
@@ -439,7 +441,7 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
       <div class="tl">
         <div class="tl-row" id="tl"></div>
         <div class="ph" id="ph"></div>
-        <div class="tl-meta"><span id="tlCur">00:00:00</span><div class="tl-key"><span><i style="background:var(--amber)"></i>In scope</span><span><i style="background:repeating-linear-gradient(-45deg,rgba(84,190,110,.6) 0 3px,rgba(84,190,110,.2) 3px 6px)"></i>Chroma</span><span><i style="background:#1c1c22"></i>Slate</span></div><span id="tlDur">00:00:00</span></div>
+        <div class="tl-meta"><span id="tlCur">00:00:00</span><div class="tl-key"><span><i style="background:var(--amber)"></i>In scope</span><span><i style="background:repeating-linear-gradient(-45deg,rgba(84,190,110,.6) 0 3px,rgba(84,190,110,.2) 3px 6px)"></i>Chroma</span><span><i style="background:#0e0e12;box-shadow:inset 0 0 0 1px var(--line2)"></i>Not ours</span><span><i style="background:#1c1c22"></i>Slate</span></div><span id="tlDur">00:00:00</span></div>
       </div>
     </div>
   </div>
@@ -548,7 +550,7 @@ const STATUS = {
 };
 const FPS = 25;
 const tc = t => { const f = Math.max(0, Math.round(t * FPS)); const s = Math.floor(f / FPS), ff = f % FPS; return [Math.floor(s / 60), s % 60, ff].map(n => String(n).padStart(2, '0')).join(':'); };
-const BUILD = 4;
+const BUILD = 5;
 let D = null, filter = 'all', view = 'rows', stamp = null, pendingReload = false;
 const verSel = {};
 
@@ -812,7 +814,7 @@ function tick() {
   const seg = segAt(t), id = seg.kind === 'shot' ? seg.id : null;
   const hud = $('#hudShot');
   if (seg.kind === 'shot') { const s = D.shots.find(x => x.id === id); hud.classList.remove('chroma'); hud.innerHTML = `<b>${id}</b><span>${esc(s.title)}</span>`; }
-  else { hud.classList.toggle('chroma', seg.kind === 'chroma'); hud.innerHTML = seg.kind === 'chroma' ? `<b>CHROMA</b><span>Separate pass</span>` : `<b>HEAD</b><span>${seg.label === 'Bars' ? 'Bars' : 'Slate'}</span>`; }
+  else { hud.classList.toggle('chroma', seg.kind === 'chroma'); hud.innerHTML = seg.kind === 'chroma' ? `<b>CHROMA</b><span>Separate pass</span>` : seg.kind === 'out' ? `<b>OUT</b><span>Not in our scope</span>` : `<b>HEAD</b><span>${seg.label === 'Bars' ? 'Bars' : 'Slate'}</span>`; }
   if (id !== cur) { cur = id; $$('.seg.shot', tl).forEach(el => el.classList.toggle('on', el.dataset.id === id)); markNow(); updatePX(); }
   $('#toCard').style.visibility = id ? 'visible' : 'hidden';
 }
