@@ -142,9 +142,133 @@
    "loop": "loop/sh03.mp4",
    "before": "before/sh03_m.webp",
    "beforeFull": "before/sh03.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "New direction: the FPV flythrough now travels through six real Saudi projects, in the client's order",
+     "done": true
+    },
+    {
+     "t": "Animatic v1: one keyframe per project with FPV push, roll and whip transitions — 8.08s, the original shot length",
+     "done": true
+    },
+    {
+     "t": "Keyframes in the agreed mood: low golden sun, flare, long shadows",
+     "done": true
+    },
+    {
+     "t": "Next: approve the keyframes, then generate the motion shot from these references",
+     "done": false
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh03_v1_m.webp",
+     "full": "after/sh03_k1.jpg",
+     "date": "20 Nov",
+     "note": "Opening keyframe — KFSH"
+    }
+   ],
+   "animatic": {
+    "title": "Animatic · FPV flythrough — six national projects",
+    "frames": [
+     {
+      "img": "after/sh03_k1_t.webp",
+      "full": "after/sh03_k1.jpg",
+      "label": "King Faisal Specialist Hospital · Health"
+     },
+     {
+      "img": "after/sh03_k2_t.webp",
+      "full": "after/sh03_k2.jpg",
+      "label": "Princess Nourah University · Education"
+     },
+     {
+      "img": "after/sh03_k3_t.webp",
+      "full": "after/sh03_k3.jpg",
+      "label": "Haramain High-Speed Railway · Transport"
+     },
+     {
+      "img": "after/sh03_k4_t.webp",
+      "full": "after/sh03_k4.jpg",
+      "label": "CST Commission HQ · Space & Tech"
+     },
+     {
+      "img": "after/sh03_k5_t.webp",
+      "full": "after/sh03_k5.jpg",
+      "label": "Solar & wind · Renewable energy"
+     },
+     {
+      "img": "after/sh03_k6_t.webp",
+      "full": "after/sh03_k6.jpg",
+      "label": "Grain silos · Food security"
+     }
+    ],
+    "note": "Same order as the client folder, same FPV language as the original shot: fast push-ins, banking rolls and whip transitions between projects. Keyframes are built from the client's real project photos in the agreed golden mood. This is the timing/motion guide for the final generated shot.",
+    "versions": [
+     {
+      "v": "v1",
+      "video": "anim/sh03_v1.mp4",
+      "poster": "anim/sh03_v1_poster.jpg",
+      "meta": "8.08s · 6 projects · 25 fps"
+     }
+    ]
+   },
+   "refs": [
+    {
+     "img": "refs/sh03/01b_t.webp",
+     "full": "refs/sh03/01b.jpg",
+     "label": "01 King Faisal Specialist Hospital",
+     "src": "Client folder · Google Drive"
+    },
+    {
+     "img": "refs/sh03/02b_t.webp",
+     "full": "refs/sh03/02b.jpg",
+     "label": "02 Princess Nourah University",
+     "src": "Client folder · Google Drive"
+    },
+    {
+     "img": "refs/sh03/03e_t.webp",
+     "full": "refs/sh03/03e.jpg",
+     "label": "03 Haramain High-Speed Railway",
+     "src": "Client folder · Google Drive"
+    },
+    {
+     "img": "refs/sh03/04a_t.webp",
+     "full": "refs/sh03/04a.jpg",
+     "label": "04 CST Commission HQ",
+     "src": "Client folder · Google Drive"
+    },
+    {
+     "img": "refs/sh03/05a_t.webp",
+     "full": "refs/sh03/05a.jpg",
+     "label": "05 Solar farm",
+     "src": "Client folder · Google Drive"
+    },
+    {
+     "img": "refs/sh03/05d_t.webp",
+     "full": "refs/sh03/05d.jpg",
+     "label": "05 Wind farm",
+     "src": "Client folder · Google Drive"
+    },
+    {
+     "img": "refs/sh03/06b_t.webp",
+     "full": "refs/sh03/06b.jpg",
+     "label": "06 Grain silos",
+     "src": "Client folder · Google Drive"
+    },
+    {
+     "label": "All project photos — client folder",
+     "src": "Google Drive",
+     "href": "https://drive.google.com/drive/folders/1TiOjucbraafFJ8A-m72Ry3x7MFQQUyVW"
+    },
+    {
+     "img": "before/sh23_m.webp",
+     "label": "Mood frame — the agreed look",
+     "src": "SH23 · this cut",
+     "href": "#SH23"
+    }
+   ]
   },
   {
    "id": "SH04",
@@ -1864,9 +1988,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T15:37:00+04:00",
+ "updated": "2026-11-20T15:52:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 9,
+ "build": 10,
  "removed": [
   {
    "id": "SH31",

@@ -208,6 +208,24 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .notes h4 svg{width:14px;height:14px}
 .notes ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 22px;font-size:13px;color:var(--soft)}
 .notes li{display:flex;gap:8px;line-height:1.4}
+.anim{margin:0 16px 16px;padding:14px;border:1px solid rgba(255,183,77,.22);border-radius:16px;background:linear-gradient(180deg,rgba(255,170,60,.05),rgba(255,255,255,.012))}
+.anim-h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.anim-h h4{margin:0;display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);font-weight:500}
+.anim-h h4 svg{width:14px;height:14px}
+.anim-h .mono{font-size:11.5px;color:var(--mute)}
+.anim-vers{display:flex;gap:6px}
+.anim-vers button{font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:99px;border:1px solid var(--line2);background:transparent;color:var(--soft);cursor:pointer}
+.anim-vers button.on{border-color:var(--amber);color:var(--amber)}
+.anim-v{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;border:1px solid var(--line)}
+.anim-v video{width:100%;height:100%;object-fit:cover;display:block}
+.anim-v .badge{position:absolute;left:12px;top:12px;pointer-events:none}
+.anim-f{list-style:none;margin:10px 0 0;padding:0;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.anim-f a{display:block;position:relative;border-radius:9px;overflow:hidden;aspect-ratio:16/9;border:1px solid var(--line);background:#111}
+.anim-f img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s var(--ease)}
+.anim-f a:hover img{transform:scale(1.06)}
+.anim-f span{position:absolute;inset:auto 0 0 0;padding:14px 7px 5px;font-family:var(--mono);font-size:10.5px;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.75));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.anim-f b{color:var(--amber);font-weight:500;margin-right:5px}
+.anim p{margin:10px 0 0;font-size:12.5px;color:var(--soft);line-height:1.55}
 .refs{margin:0 16px 16px;padding-top:12px;border-top:1px dashed var(--line2);display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap}
 .refs h4{margin:0 6px 0 0;display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);font-weight:500;white-space:nowrap}
 .refs h4 svg{width:14px;height:14px}
@@ -379,6 +397,7 @@ a.ref:hover{border-color:var(--amber)}
   .meta .playedit{display:none}
   .notes{margin:auto 12px 14px}
   .refs{margin:0 12px 14px}.ref{max-width:100%}
+  .anim{margin:0 12px 14px;padding:10px}.anim-f{grid-template-columns:repeat(3,minmax(0,1fr))}
   .meta .status{grid-column:2;grid-row:auto;justify-self:start}
   .num b{font-size:38px}
   .ctrl{padding:30px 10px 8px}.ctrl .ib{width:34px;height:34px}
@@ -564,9 +583,9 @@ const STATUS = {
 };
 const FPS = 25;
 const tc = t => { const f = Math.max(0, Math.round(t * FPS)); const s = Math.floor(f / FPS), ff = f % FPS; return [Math.floor(s / 60), s % 60, ff].map(n => String(n).padStart(2, '0')).join(':'); };
-const BUILD = 9;
+const BUILD = 10;
 let D = null, filter = 'all', view = 'rows', stamp = null, pendingReload = false;
-const verSel = {};
+const verSel = {}; const animSel = {};
 
 /* ---------- title letters ---------- */
 (function splitTitle(){
@@ -736,6 +755,15 @@ function refsHTML(s) {
     return `<a class="ref" href="${esc(href)}"${ext ? ' target="_blank" rel="noopener"' : ''}>${body}</a>`;
   }).join('')}</div>`;
 }
+function animHTML(s) {
+  const a = s.animatic; if (!a || !(a.versions || []).length) return '';
+  const k = animSel[s.id], v = a.versions.find(x => x.v === k) || a.versions[a.versions.length - 1];
+  const vers = a.versions.length > 1 ? `<span class="anim-vers">${a.versions.map(x => `<button data-aver="${esc(x.v)}" class="${x === v ? 'on' : ''}">${esc(x.v)}</button>`).join('')}</span>` : '';
+  const fr = (a.frames || []).map((f, i) => `<li><a href="${BASE + (f.full || f.img)}" target="_blank" rel="noopener"><img loading="lazy" src="${BASE + f.img}" alt=""><span><b>${String(i + 1).padStart(2, '0')}</b>${esc(f.label)}</span></a></li>`).join('');
+  return `<div class="anim"><div class="anim-h"><h4>${ic('film')}${esc(a.title || 'Animatic')}</h4><span class="mono">${esc(v.meta || '')}</span>${vers}</div>
+    <div class="anim-v"><video muted loop playsinline controls preload="none" poster="${BASE + v.poster}" data-src="${BASE + v.video}"></video><span class="badge"><span class="chip">${ic('video')}ANIMATIC · ${esc(v.v)}</span></span></div>
+    ${fr ? `<ol class="anim-f">${fr}</ol>` : ''}${a.note ? `<p>${esc(a.note)}</p>` : ''}</div>`;
+}
 function cardHTML(s) {
   const st = STATUS[s.status] || STATUS.pending, step = st.step;
   const pipe = [1,2,3,4].map(i => `<i class="${step >= i ? 'done' : (Math.ceil(step + .01) === i && s.status !== 'pending' ? 'cur' : '')}"></i>`).join('');
@@ -758,6 +786,7 @@ function cardHTML(s) {
         <figcaption><span>${ic('image')}Before · Frame</span><span class="mono">${s.tcIn}</span></figcaption></figure>
       ${afterPane(s)}
     </div>
+    ${animHTML(s)}
     <div class="notes"><h4>${ic('pen')}Edit notes</h4>${notes}</div>
     ${refsHTML(s)}
     </div>
@@ -779,6 +808,12 @@ function bindCard(c) {
   $('[data-play]', c)?.addEventListener('click', () => playShot(s));
   $$('[data-ver]', c).forEach(b => b.addEventListener('click', e => {
     e.stopPropagation(); verSel[s.id] = b.dataset.ver;
+    const tmp = document.createElement('div'); tmp.innerHTML = cardHTML(s); const n = tmp.firstElementChild; n.classList.add('in');
+    $$('video', c).forEach(v => { vIO.unobserve(v); v.pause(); });
+    c.replaceWith(n); bindCard(n); markNow();
+  }));
+  $$('[data-aver]', c).forEach(b => b.addEventListener('click', e => {
+    e.stopPropagation(); animSel[s.id] = b.dataset.aver;
     const tmp = document.createElement('div'); tmp.innerHTML = cardHTML(s); const n = tmp.firstElementChild; n.classList.add('in');
     $$('video', c).forEach(v => { vIO.unobserve(v); v.pause(); });
     c.replaceWith(n); bindCard(n); markNow();
