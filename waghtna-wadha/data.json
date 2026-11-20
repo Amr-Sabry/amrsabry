@@ -1123,6 +1123,10 @@
     {
      "t": "Car becomes a rim-lit silhouette, red light bar glowing, long shadow back toward camera, golden dust, canyon in teal shade",
      "done": true
+    },
+    {
+     "t": "Fix: this is the car's FRONT approaching camera, not its rear — white DRL light bar + front plate, no red tail lights (v3)",
+     "done": true
     }
    ],
    "versions": [
@@ -1139,9 +1143,23 @@
      "full": "after/sh20_v2.jpg",
      "date": "20 Nov",
      "note": "Sun into the lens, anamorphic flare"
+    },
+    {
+     "v": "v3",
+     "image": "after/sh20_v3_m.webp",
+     "full": "after/sh20_v3.jpg",
+     "date": "20 Nov",
+     "note": "Car front toward camera — white LED bar, front plate"
     }
    ],
    "refs": [
+    {
+     "img": "refs/sh20_front_t.webp",
+     "full": "refs/sh20_front.jpg",
+     "label": "Car front — last frame of the original shot",
+     "src": "SH20 · original cut",
+     "href": "#sh20"
+    },
     {
      "img": "before/sh23_m.webp",
      "label": "Mood frame — the agreed look: low dramatic sun, flare, long shadows",
@@ -2177,7 +2195,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T18:16:00+04:00",
+ "updated": "2026-11-20T18:50:00+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 11,
  "removed": [
