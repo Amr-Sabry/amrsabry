@@ -27,11 +27,11 @@
      "done": true
     },
     {
-     "t": "v3: fins kept parallel — equal width, equal gaps, same curve into the arch",
+     "t": "v4: columns rebuilt as fully fluid Zaha Hadid ribbons — rounded, pillowy, no hard edges",
      "done": true
     },
     {
-     "t": "Edges softened Zaha Hadid style — rounded with large radii, light rolls over them",
+     "t": "v4: every ribbon follows the same S-curve — strictly parallel, equal gaps, never crossing",
      "done": true
     }
    ],
@@ -49,6 +49,13 @@
      "full": "after/sh01_v3.jpg",
      "date": "20 Nov",
      "note": "Parallel fins, soft edges"
+    },
+    {
+     "v": "v4",
+     "image": "after/sh01_v4_m.webp",
+     "full": "after/sh01_v4.jpg",
+     "date": "20 Nov",
+     "note": "Fluid parallel ribbons"
     }
    ],
    "refs": [
@@ -1600,7 +1607,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T13:36:00+04:00",
+ "updated": "2026-11-20T14:18:00+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 9,
  "removed": [
