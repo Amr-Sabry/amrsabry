@@ -1160,7 +1160,8 @@
      "done": true
     },
     {
-     "t": "Open: wordmark typeface is close but not the exact Saudia lettering — to refine"
+     "t": "v3: belly title replaced with the exact Saudia wordmark (supplied artwork), white on the green panel, matched to the panel tilt",
+     "done": true
     }
    ],
    "versions": [
@@ -1170,9 +1171,22 @@
      "full": "after/sh33_v2.jpg",
      "date": "20 Nov",
      "note": "Saudia livery from references"
+    },
+    {
+     "v": "v3",
+     "image": "after/sh33_v3_m.webp",
+     "full": "after/sh33_v3.jpg",
+     "date": "20 Nov",
+     "note": "Exact Saudia wordmark"
     }
    ],
    "refs": [
+    {
+     "img": "refs/saudia_wordmark.png",
+     "full": "refs/saudia_wordmark.png",
+     "label": "Saudia wordmark — exact lettering used on the belly",
+     "src": "Supplied artwork"
+    },
     {
      "img": "refs/saudia_787_underside_t.webp",
      "full": "refs/saudia_787_underside.jpg",
@@ -1586,7 +1600,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T13:31:00+04:00",
+ "updated": "2026-11-20T13:36:00+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 9,
  "removed": [
