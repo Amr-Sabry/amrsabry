@@ -71,9 +71,26 @@
    "loop": "loop/sh04.mp4",
    "before": "before/sh04_m.webp",
    "beforeFull": "before/sh04.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
+     "done": true
+    },
+    {
+     "t": "Sun low from the left — pivot arm and hub throw long shadows across the crop",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh04_v1_m.webp",
+     "full": "after/sh04_v1.jpg",
+     "date": "20 Nov",
+     "note": "Golden-hour relight · Seedream 5.5"
+    }
+   ]
   },
   {
    "id": "SH05",
@@ -88,9 +105,26 @@
    "loop": "loop/sh05.mp4",
    "before": "before/sh05_m.webp",
    "beforeFull": "before/sh05.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
+     "done": true
+    },
+    {
+     "t": "Golden sun-glint path across the sea, cage rings rim-lit with shadows on the water",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh05_v1_m.webp",
+     "full": "after/sh05_v1.jpg",
+     "date": "20 Nov",
+     "note": "Golden-hour relight · Seedream 5.5"
+    }
+   ]
   },
   {
    "id": "SH06",
@@ -411,9 +445,26 @@
    "loop": "loop/sh24.mp4",
    "before": "before/sh24_m.webp",
    "beforeFull": "before/sh24.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
+     "done": true
+    },
+    {
+     "t": "Sun just beyond top-right, valley falls into teal shade with haze",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh24_v1_m.webp",
+     "full": "after/sh24_v1.jpg",
+     "date": "20 Nov",
+     "note": "Golden-hour relight · Seedream 5.5"
+    }
+   ]
   },
   {
    "id": "SH25",
@@ -886,6 +937,6 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T10:50:00+04:00",
+ "updated": "2026-11-20T11:06:00+04:00",
  "tagline": "#OurDestinationIsClear"
 }
