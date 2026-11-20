@@ -739,9 +739,26 @@
    "loop": "loop/sh26.mp4",
    "before": "before/sh26_m.webp",
    "beforeFull": "before/sh26.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
+     "done": true
+    },
+    {
+     "t": "Low sun pours through the perforations — golden light dots on the lane, long cyclist shadows, facade glows amber",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh26_v1_m.webp",
+     "full": "after/sh26_v1.jpg",
+     "date": "20 Nov",
+     "note": "Golden-hour mood"
+    }
+   ]
   },
   {
    "id": "SH27",
@@ -756,9 +773,26 @@
    "loop": "loop/sh27.mp4",
    "before": "before/sh27_m.webp",
    "beforeFull": "before/sh27.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
+     "done": true
+    },
+    {
+     "t": "Cyan factory light replaced by golden shafts through haze, robot arms rim-lit with long shadows",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh27_v1_m.webp",
+     "full": "after/sh27_v1.jpg",
+     "date": "20 Nov",
+     "note": "Golden-hour mood"
+    }
+   ]
   },
   {
    "id": "SH28",
@@ -1195,7 +1229,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T12:59:00+04:00",
+ "updated": "2026-11-20T13:01:00+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 6,
  "removed": [
