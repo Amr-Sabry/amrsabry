@@ -1050,9 +1050,59 @@
    "loop": "loop/sh20.mp4",
    "before": "before/sh20_m.webp",
    "beforeFull": "before/sh20.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Same angle, car, road and canyon — mood only",
+     "done": true
+    },
+    {
+     "t": "Low sun straight ahead over the hills, flare hitting the lens — v2 with anamorphic streak and ghosts",
+     "done": true
+    },
+    {
+     "t": "Car becomes a rim-lit silhouette, red light bar glowing, long shadow back toward camera, golden dust, canyon in teal shade",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh20_v1_m.webp",
+     "full": "after/sh20_v1.jpg",
+     "date": "20 Nov",
+     "note": "Sun bursting over the ridge, soft flare"
+    },
+    {
+     "v": "v2",
+     "image": "after/sh20_v2_m.webp",
+     "full": "after/sh20_v2.jpg",
+     "date": "20 Nov",
+     "note": "Sun into the lens, anamorphic flare"
+    }
+   ],
+   "refs": [
+    {
+     "img": "before/sh23_m.webp",
+     "label": "Mood frame — the agreed look: low dramatic sun, flare, long shadows",
+     "src": "SH23 · this cut",
+     "href": "#sh23"
+    },
+    {
+     "img": "refs/mood_pin05_low_sun_t.webp",
+     "full": "refs/mood_pin05_low_sun.jpg",
+     "label": "Low sun & lens flare",
+     "src": "Mood board · Pinterest",
+     "href": "https://www.pinterest.com/amrsabry/sunny/"
+    },
+    {
+     "img": "refs/mood_pin09_long_shadows_t.webp",
+     "full": "refs/mood_pin09_long_shadows.jpg",
+     "label": "Long raking shadows",
+     "src": "Mood board · Pinterest",
+     "href": "https://www.pinterest.com/amrsabry/sunny/"
+    }
+   ]
   },
   {
    "id": "SH21",
@@ -1067,9 +1117,59 @@
    "loop": "loop/sh21.mp4",
    "before": "before/sh21_m.webp",
    "beforeFull": "before/sh21.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Same tracking angle, car, lane line and sandstone mesas — mood only",
+     "done": true
+    },
+    {
+     "t": "Low golden sun with hard flare into the lens; gold rim light on roofline and arches, glass reflecting the sunset",
+     "done": true
+    },
+    {
+     "t": "Long shadow racing toward camera, speed blur, dust glowing behind the wheels, mesas warm on top / teal in shade",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh21_v1_m.webp",
+     "full": "after/sh21_v1.jpg",
+     "date": "20 Nov",
+     "note": "Sun over the mesa, flare"
+    },
+    {
+     "v": "v2",
+     "image": "after/sh21_v2_m.webp",
+     "full": "after/sh21_v2.jpg",
+     "date": "20 Nov",
+     "note": "Sun peeking over the roofline, starburst"
+    }
+   ],
+   "refs": [
+    {
+     "img": "before/sh23_m.webp",
+     "label": "Mood frame — the agreed look: low dramatic sun, flare, long shadows",
+     "src": "SH23 · this cut",
+     "href": "#sh23"
+    },
+    {
+     "img": "refs/mood_pin05_low_sun_t.webp",
+     "full": "refs/mood_pin05_low_sun.jpg",
+     "label": "Low sun & lens flare",
+     "src": "Mood board · Pinterest",
+     "href": "https://www.pinterest.com/amrsabry/sunny/"
+    },
+    {
+     "img": "refs/mood_pin09_long_shadows_t.webp",
+     "full": "refs/mood_pin09_long_shadows.jpg",
+     "label": "Long raking shadows",
+     "src": "Mood board · Pinterest",
+     "href": "https://www.pinterest.com/amrsabry/sunny/"
+    }
+   ]
   },
   {
    "id": "SH22",
@@ -2017,7 +2117,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T17:42:00+04:00",
+ "updated": "2026-11-20T17:47:00+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 11,
  "removed": [
