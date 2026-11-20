@@ -240,6 +240,45 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .pm.empty .orb svg{width:20px;height:20px}
 .pm.empty b{font-weight:500;font-size:13.5px}
 .pm.empty small{font-family:var(--mono);font-size:10.5px;color:var(--mute);letter-spacing:.04em}
+/* animated before/after compare — sweeps on its own, follows the mouse, drag on touch */
+.cmpv{cursor:ew-resize;touch-action:pan-y;--cx:50%}
+.cmpv>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cmpv>img.aft{clip-path:inset(0 0 0 var(--cx))}
+.cmpv .bar{position:absolute;top:0;bottom:0;left:var(--cx);width:2px;margin-left:-1px;background:#fff;box-shadow:0 0 16px rgba(255,176,84,.9),0 0 2px rgba(0,0,0,.6);z-index:2;pointer-events:none}
+.cmpv .knob{position:absolute;top:50%;left:var(--cx);width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;display:grid;place-items:center;background:rgba(6,6,8,.55);border:1px solid #fff;color:#fff;z-index:3;pointer-events:none;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.cmpv .knob svg{width:15px;height:15px}
+.cmpv .lab{position:absolute;bottom:9px;z-index:2;pointer-events:none}
+.cmpv .lab .chip{font-size:10px;padding:3px 8px}
+.cmpv .lab.l{left:9px}.cmpv .lab.r{right:9px}
+.cmpv .auto{position:absolute;top:10px;right:50px;z-index:4;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:rgba(6,6,8,.55);border:1px solid rgba(255,255,255,.18);color:#fff;backdrop-filter:blur(8px);transition:.3s var(--ease)}
+.cmpv .auto svg{width:13px;height:13px}
+.cmpv .auto.off{color:var(--amber);border-color:rgba(255,176,84,.6)}
+.lb-frame .cmpv{position:absolute;inset:0}
+/* player: compare wipe over the running cut, or the reworked frame as a reference thumbnail */
+.pvx{position:absolute;inset:0;z-index:3;display:none}
+.screen.m-cmp .pvx.has{display:block}
+.pvx .lab{bottom:84px}
+.pvx .auto{top:auto;bottom:80px;left:50%;right:auto;margin-left:-16px}
+.screen.playing.idle .pvx .lab,.screen.playing.idle .pvx .auto{opacity:0;transition:opacity .5s}
+.pref{position:absolute;right:18px;top:58px;z-index:4;width:min(30%,380px);padding:0;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.22);background:#0b0b0e;box-shadow:0 20px 50px rgba(0,0,0,.65);opacity:0;transform:translateY(-10px) scale(.96);transition:opacity .45s var(--ease),transform .45s var(--ease);pointer-events:none;text-align:start;cursor:zoom-in}
+.screen.m-ref .pref.on{opacity:1;transform:none;pointer-events:auto}
+.pref img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;transition:opacity .35s}
+.pref .none{display:none;aspect-ratio:16/9;place-items:center;align-content:center;gap:6px;color:var(--mute);font-size:12px;background:repeating-linear-gradient(-45deg,#111116 0 8px,#0d0d11 8px 16px)}
+.pref .none svg{width:20px;height:20px;color:var(--amber)}
+.pref.empty img{display:none}.pref.empty .none{display:grid}
+.pref .cap{display:flex;gap:8px;align-items:center;padding:7px 10px;font-family:var(--mono);font-size:11px;color:#fff;border-top:1px solid rgba(255,255,255,.1)}
+.pref .cap b{color:var(--amber);font-weight:500}
+.modes{display:flex;gap:3px;padding:3px;border-radius:99px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.35);margin-right:6px}
+.modes button{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:99px;font-size:12px;color:rgba(255,255,255,.72);transition:.25s var(--ease)}
+.modes button svg{width:14px;height:14px}
+.modes button:hover{color:#fff}
+.modes button.on{background:#fff;color:#0a0a0c}
+.lb-frame .cmpv>img{object-fit:contain;background:#000}
+.lb-frame .cmpv .knob{width:48px;height:48px;margin:-24px 0 0 -24px}
+.lb-frame .cmpv .knob svg{width:20px;height:20px}
+.lb-frame .cmpv .lab{bottom:14px}.lb-frame .cmpv .lab.l{left:14px}.lb-frame .cmpv .lab.r{right:14px}
+.lb-frame .cmpv .lab .chip{font-size:11.5px;padding:5px 11px}
+.lb-frame .cmpv .auto{top:14px;right:14px;width:40px;height:40px}
 .pane .cmp{display:inline-flex;align-items:center;gap:5px;color:var(--soft);font-size:11.5px}
 .pane .cmp:hover{color:var(--amber)}
 .pane .cmp svg{width:14px;height:14px}
@@ -336,6 +375,9 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
   .lb-top{flex-wrap:wrap}.lb-stage{padding:0 8px}.nav-a{display:none}
   .tabs button{padding:6px 10px;font-size:12px}
   .views{display:none}
+  .modes button span{display:none}.modes button{padding:0 9px}
+  .pref{width:44%;top:44px;right:10px}
+  .pvx .lab{bottom:62px}.pvx .auto{bottom:58px}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
@@ -378,6 +420,8 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
     <div class="theater rv">
       <div class="screen bars idle-bars" id="screen">
         <video id="pv" playsinline preload="metadata" poster="waghtna-wadha/poster.jpg"></video>
+        <div class="cmpv pvx" id="pvx"><img class="aft" alt=""><i class="bar"></i><span class="knob"><svg class="i" viewBox="0 0 24 24"><use href="#i-move"/></svg></span><span class="lab l"><span class="chip">ORIGINAL · LIVE</span></span><span class="lab r"><span class="chip" id="pvxLab">AFTER</span></span><button class="auto" data-auto title="Pause sweep" aria-label="Pause sweep"><svg class="i" viewBox="0 0 24 24"><use href="#i-pause"/></svg></button></div>
+        <button class="pref" id="pref" title="Open this shot"><img alt=""><span class="none"><svg class="i" viewBox="0 0 24 24"><use href="#i-image-plus"/></svg>Awaiting rework</span><span class="cap"><b id="prefId"></b><span id="prefT"></span></span></button>
         <div class="hud"><span class="chip shot" id="hudShot"><b>—</b><span></span></span><span class="chip" id="hudRec" hidden><i class="dot"></i>PLAYING</span></div>
         <button class="bigplay" id="bigplay" aria-label="Play"><svg class="i" viewBox="0 0 24 24"><use href="#i-play"/></svg></button>
         <div class="ctrl" id="ctrl">
@@ -386,6 +430,7 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
           <button class="ib" id="nextShot" aria-label="Next shot" title="Next shot"><svg class="i" viewBox="0 0 24 24"><use href="#i-skip-fwd"/></svg></button>
           <div class="tc" id="tc">00:00:00 <span>/ 00:00:00</span></div>
           <div class="grow"></div>
+          <div class="modes" id="modes" role="tablist" aria-label="Player view"><button data-pm="orig" class="on" title="Original cut"><svg class="i" viewBox="0 0 24 24"><use href="#i-film"/></svg><span>Original</span></button><button data-pm="cmp" title="Wipe between the cut and the reworked frame"><svg class="i" viewBox="0 0 24 24"><use href="#i-columns"/></svg><span>Compare</span></button><button data-pm="ref" title="Reworked frame as a thumbnail reference"><svg class="i" viewBox="0 0 24 24"><use href="#i-image"/></svg><span>Ref</span></button></div>
           <button class="ib" id="toCard" aria-label="Open this shot's card" title="Go to this shot's card"><svg class="i" viewBox="0 0 24 24"><use href="#i-arrow-down"/></svg></button>
           <button class="ib" id="mute" aria-label="Mute"><svg class="i" viewBox="0 0 24 24"><use href="#i-vol"/></svg></button>
           <button class="ib" id="fs" aria-label="Fullscreen"><svg class="i" viewBox="0 0 24 24"><use href="#i-max"/></svg></button>
@@ -482,6 +527,7 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
   <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></symbol>
   <symbol id="i-rows" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M21 9H3"/><path d="M21 15H3"/></symbol>
   <symbol id="i-grid" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></symbol>
+  <symbol id="i-move" viewBox="0 0 24 24"><path d="m18 8 4 4-4 4"/><path d="M2 12h20"/><path d="m6 8-4 4 4 4"/></symbol>
   <symbol id="i-film" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></symbol>
 </svg>
 
@@ -502,7 +548,8 @@ const STATUS = {
 };
 const FPS = 25;
 const tc = t => { const f = Math.max(0, Math.round(t * FPS)); const s = Math.floor(f / FPS), ff = f % FPS; return [Math.floor(s / 60), s % 60, ff].map(n => String(n).padStart(2, '0')).join(':'); };
-let D = null, filter = 'all', view = 'rows', stamp = null;
+const BUILD = 3;
+let D = null, filter = 'all', view = 'rows', stamp = null, pendingReload = false;
 const verSel = {};
 
 /* ---------- title letters ---------- */
@@ -540,19 +587,85 @@ const vIO = new IntersectionObserver(es => es.forEach(e => {
 }), {rootMargin:'200px 0px', threshold:0.01});
 const imgIO = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { const im = e.target; im.src = im.dataset.src; im.onload = () => im.classList.add('ld'); imgIO.unobserve(im); } }), {rootMargin:'400px 0px'});
 
+/* ---------- animated compare: sweeps by itself, follows the mouse, drag on touch, pause button ---------- */
+const CMPS = new Set();
+const cmpIO = new IntersectionObserver(es => es.forEach(e => { const st = e.target._c; if (!st) return; if (e.isIntersecting) CMPS.add(st); else CMPS.delete(st); }), {rootMargin:'120px 0px'});
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function attachCmp(el, onTap, opt = {}) {
+  const st = {el, auto: !REDUCED, hover:false, drag:false, period: opt.period || 6.5, amp: opt.amp || 36, t: opt.t ?? Math.random() * 6, resume: 0, x: 50};
+  el._c = st;
+  st.set = x => { st.x = Math.max(0, Math.min(100, x)); el.style.setProperty('--cx', st.x + '%'); };
+  const xAt = e => { const r = el.getBoundingClientRect(); return (e.clientX - r.left) / r.width * 100; };
+  const sync = () => { const v = Math.max(-1, Math.min(1, (st.x - 50) / st.amp)); st.t = Math.asin(v) * st.period / (2 * Math.PI); };
+  let downX = null, moved = false;
+  el.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') st.hover = true; });
+  el.addEventListener('pointermove', e => {
+    if (downX != null && Math.abs(e.clientX - downX) > 5) moved = true;
+    if (st.drag || (st.hover && e.pointerType === 'mouse')) st.set(xAt(e));
+  });
+  el.addEventListener('pointerleave', () => { st.hover = false; sync(); st.resume = performance.now() + 900; });
+  el.addEventListener('pointerdown', e => {
+    if (e.target.closest('button,.x')) return;
+    st.drag = true; downX = e.clientX; moved = false;
+    if (e.pointerType === 'mouse') { try { el.setPointerCapture(e.pointerId); } catch {} st.set(xAt(e)); }
+  });
+  const up = e => {
+    if (!st.drag) return;
+    st.drag = false;
+    if (!moved && e.type === 'pointerup' && onTap) onTap();
+    downX = null; sync(); st.resume = performance.now() + (e.pointerType === 'mouse' ? 900 : 2500);
+  };
+  el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+  const btn = el.querySelector('[data-auto]');
+  const paint = () => { if (!btn) return; btn.classList.toggle('off', !st.auto); btn.querySelector('use').setAttribute('href', st.auto ? '#i-pause' : '#i-play'); btn.title = st.auto ? 'Pause sweep' : 'Play sweep'; };
+  if (btn) btn.addEventListener('click', e => { e.stopPropagation(); st.auto = !st.auto; if (st.auto) sync(); paint(); });
+  paint(); st.set(50); cmpIO.observe(el);
+  return st;
+}
+let lastT = performance.now();
+(function cmpLoop(now) {
+  const dt = Math.min(0.05, (now - lastT) / 1000); lastT = now;
+  CMPS.forEach(st => {
+    if (!st.el.isConnected) { CMPS.delete(st); return; }
+    if (st.auto && !st.hover && !st.drag && now > st.resume && st.el.offsetParent !== null) { st.t += dt; st.set(50 + st.amp * Math.sin(st.t * 2 * Math.PI / st.period)); }
+  });
+  requestAnimationFrame(cmpLoop);
+})(lastT);
+
 /* ---------- data ---------- */
 async function load(first) {
   const r = await fetch(BASE + 'data.json?t=' + Date.now(), {cache:'no-store'});
   const d = await r.json();
-  if (!first && d.updated !== stamp) { toast('New work just landed on this page', () => location.reload()); return; }
-  if (!first) return;
+  if (first) { D = d; stamp = d.updated; boot(); return; }
+  if ((d.build || 0) > BUILD) { pendingReload = true; maybeReload(); return; }
+  if (d.updated === stamp) return;
+  const changed = d.shots.filter(s => { const o = D.shots.find(x => x.id === s.id); return !o || JSON.stringify(o) !== JSON.stringify(s); }).map(s => s.id);
   D = d; stamp = d.updated;
-  boot();
+  liveUpdate(changed);
+}
+/* the page keeps itself current: new stills and notes slide in without a reload */
+function liveUpdate(changed) {
+  setFacts(); buildFilters();
+  changed.forEach(id => {
+    const old = document.getElementById(id), s = D.shots.find(x => x.id === id);
+    if (!old || !s) return;
+    const tmp = document.createElement('div'); tmp.innerHTML = cardHTML(s);
+    const c = tmp.firstElementChild; c.classList.add('in');
+    $$('video', old).forEach(v => { vIO.unobserve(v); v.pause(); v.removeAttribute('src'); v.load(); });
+    old.replaceWith(c); bindCard(c); c.classList.add('flash');
+  });
+  updatePX();
+  if ($('#lb').classList.contains('on') && changed.includes(lbId)) drawLB();
+  if (changed.length) toast('Live update · ' + changed.join(' · '));
+}
+function maybeReload() {
+  if (!pendingReload) return;
+  if (pv.paused && !$('#lb').classList.contains('on')) { sessionStorage.setItem('ww-y', String(scrollY)); location.reload(); }
 }
 const fmtUpd = iso => { try { return new Date(iso).toLocaleString('en-GB', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit', timeZone:'Asia/Dubai'}) + ' GST'; } catch { return iso; } };
 const latest = s => { const vs = s.versions || []; if (!vs.length) return null; const k = verSel[s.id]; return vs.find(v => v.v === k) || vs[vs.length - 1]; };
 
-function boot() {
+function setFacts() {
   $('#draft').textContent = D.draft;
   $('#upd').textContent = fmtUpd(D.updated);
   $('#footUpd').textContent = 'Last update · ' + fmtUpd(D.updated);
@@ -562,9 +675,13 @@ function boot() {
   const appr = D.shots.filter(s => ['approved','motion','final'].includes(s.status)).length;
   $('#f-appr').textContent = appr; $('#f-of').textContent = '/ ' + D.shots.length;
   setTimeout(() => $('#f-prog').style.width = (appr / D.shots.length * 100) + '%', 600);
-  buildPlayer(); buildFilters(); render();
-  if (location.hash) setTimeout(() => focusCard(location.hash.slice(1).toUpperCase(), true), 400);
-  setInterval(() => load(false).catch(() => {}), 60000);
+}
+function boot() {
+  setFacts(); buildPlayer(); buildFilters(); render();
+  const y = sessionStorage.getItem('ww-y'); if (y) { sessionStorage.removeItem('ww-y'); setTimeout(() => scrollTo(0, +y), 300); }
+  else if (location.hash) setTimeout(() => focusCard(location.hash.slice(1).toUpperCase(), true), 400);
+  setInterval(() => load(false).catch(() => {}), 15000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) load(false).catch(() => {}); });
 }
 
 /* ---------- filters ---------- */
@@ -585,8 +702,10 @@ function afterPane(s) {
   const chips = vs.length > 1 ? `<span class="vers">${vs.map(x => `<button data-ver="${esc(x.v)}" class="${x === v ? 'on' : ''}">${esc(x.v)}</button>`).join('')}</span>` : '';
   if (!v) return `<figure class="pane after"><div class="pm empty"><div class="ghost" style="background-image:url('${BASE + s.before}')"></div><div class="in"><div class="orb">${ic('image-plus')}</div><b>Awaiting rework</b><small>STILL → APPROVAL → MOTION</small></div></div>
     <figcaption><span>${ic('sparkles')}After · Proposal</span><span class="mono">—</span></figcaption></figure>`;
-  const media = v.video ? `<video muted loop playsinline preload="none" poster="${BASE + v.image}" data-src="${BASE + v.video}"></video>` : `<img class="lz" data-src="${BASE + v.image}" alt="${esc(s.id)} after ${esc(v.v)}">`;
-  return `<figure class="pane after"><div class="pm" data-open="after">${media}<span class="badge"><span class="chip">${v.video ? ic('video') + 'MOTION' : ic('image') + 'STILL'} · ${esc(v.v)}</span></span><span class="x">${ic('max')}</span><i class="ring2"></i></div>
+  const pm = v.video
+    ? `<div class="pm" data-open="after"><video muted loop playsinline preload="none" poster="${BASE + v.image}" data-src="${BASE + v.video}"></video><span class="badge"><span class="chip">${ic('video')}MOTION · ${esc(v.v)}</span></span><span class="x">${ic('max')}</span><i class="ring2"></i></div>`
+    : `<div class="pm cmpv" data-cmp><img class="lz" data-src="${BASE + s.before}" alt="${esc(s.id)} before"><img class="lz aft" data-src="${BASE + v.image}" alt="${esc(s.id)} after ${esc(v.v)}"><i class="bar"></i><span class="knob">${ic('move')}</span><span class="lab l"><span class="chip">BEFORE</span></span><span class="lab r"><span class="chip">AFTER · ${esc(v.v)}</span></span><button class="auto" data-auto aria-label="Pause sweep">${ic('pause')}</button><span class="x" data-open="compare">${ic('max')}</span><i class="ring2"></i></div>`;
+  return `<figure class="pane after">${pm}
     <figcaption><span>${ic('sparkles')}After · ${esc(v.v)}${v.date ? ' · ' + esc(v.date) : ''}</span><span class="acts">${chips}<button class="cmp" data-open="compare" title="Compare before / after">${ic('columns')}${chips ? '' : 'Compare'}</button></span></figcaption></figure>`;
 }
 function cardHTML(s) {
@@ -621,17 +740,24 @@ function render() {
   box.classList.toggle('grid', view === 'grid');
   const list = D.shots.filter(s => filter === 'all' || s.status === filter);
   box.innerHTML = list.length ? list.map(cardHTML).join('') : `<div class="notes"><div class="empty" style="padding:40px 0;text-align:center">No shots in this state yet</div></div>`;
-  $$('.card', box).forEach((c, i) => {
-    c.style.transitionDelay = (i % 3) * 60 + 'ms'; reveal(c);
-    c.addEventListener('pointermove', e => { const r = c.getBoundingClientRect(); c.style.setProperty('--mx', (e.clientX - r.left) + 'px'); c.style.setProperty('--my', (e.clientY - r.top) + 'px'); });
-    const s = D.shots.find(x => x.id === c.dataset.id);
-    $$('[data-open]', c).forEach(el => el.addEventListener('click', e => { e.stopPropagation(); openLB(s.id, el.dataset.open); }));
-    $('[data-play]', c)?.addEventListener('click', () => playShot(s));
-    $$('[data-ver]', c).forEach(b => b.addEventListener('click', e => { e.stopPropagation(); verSel[s.id] = b.dataset.ver; render(); focusCard(s.id); }));
-  });
-  $$('video', box).forEach(v => vIO.observe(v));
-  $$('img.lz', box).forEach(im => imgIO.observe(im));
+  $$('.card', box).forEach((c, i) => { c.style.transitionDelay = (i % 3) * 60 + 'ms'; reveal(c); bindCard(c); });
   markNow();
+}
+function bindCard(c) {
+  c.addEventListener('pointermove', e => { const r = c.getBoundingClientRect(); c.style.setProperty('--mx', (e.clientX - r.left) + 'px'); c.style.setProperty('--my', (e.clientY - r.top) + 'px'); });
+  const s = D.shots.find(x => x.id === c.dataset.id);
+  $$('[data-open]', c).forEach(el => el.addEventListener('click', e => { e.stopPropagation(); openLB(s.id, el.dataset.open); }));
+  $('[data-play]', c)?.addEventListener('click', () => playShot(s));
+  $$('[data-ver]', c).forEach(b => b.addEventListener('click', e => {
+    e.stopPropagation(); verSel[s.id] = b.dataset.ver;
+    const tmp = document.createElement('div'); tmp.innerHTML = cardHTML(s); const n = tmp.firstElementChild; n.classList.add('in');
+    $$('video', c).forEach(v => { vIO.unobserve(v); v.pause(); });
+    c.replaceWith(n); bindCard(n); markNow();
+  }));
+  $$('[data-cmp]', c).forEach(el => attachCmp(el, () => openLB(s.id, 'compare')));
+  $$('video', c).forEach(v => vIO.observe(v));
+  $$('img.lz', c).forEach(im => imgIO.observe(im));
+  c.classList.toggle('now', c.dataset.id === cur);
 }
 function focusCard(id, flash) {
   let c = document.getElementById(id);
@@ -664,7 +790,7 @@ function buildPlayer() {
   $$('.seg.shot', tl).forEach(el => el.addEventListener('dblclick', () => focusCard(el.dataset.id, true)));
   pv.addEventListener('timeupdate', tick); pv.addEventListener('seeked', tick); pv.addEventListener('loadedmetadata', tick);
   pv.addEventListener('play', () => { scr.classList.add('playing'); scr.classList.remove('idle-bars'); $('#hudRec').hidden = false; setPP(); });
-  pv.addEventListener('pause', () => { scr.classList.remove('playing'); $('#hudRec').hidden = true; setPP(); });
+  pv.addEventListener('pause', () => { scr.classList.remove('playing'); $('#hudRec').hidden = true; setPP(); maybeReload(); });
   tick();
 }
 function hover(e) {
@@ -687,13 +813,36 @@ function tick() {
   const hud = $('#hudShot');
   if (seg.kind === 'shot') { const s = D.shots.find(x => x.id === id); hud.classList.remove('chroma'); hud.innerHTML = `<b>${id}</b><span>${esc(s.title)}</span>`; }
   else { hud.classList.toggle('chroma', seg.kind === 'chroma'); hud.innerHTML = seg.kind === 'chroma' ? `<b>CHROMA</b><span>Separate pass</span>` : `<b>HEAD</b><span>${seg.label === 'Bars' ? 'Bars' : 'Slate'}</span>`; }
-  if (id !== cur) { cur = id; $$('.seg.shot', tl).forEach(el => el.classList.toggle('on', el.dataset.id === id)); markNow(); }
+  if (id !== cur) { cur = id; $$('.seg.shot', tl).forEach(el => el.classList.toggle('on', el.dataset.id === id)); markNow(); updatePX(); }
   $('#toCard').style.visibility = id ? 'visible' : 'hidden';
 }
+let pmode = 'orig';
+function setMode(m) {
+  pmode = m; scr.classList.toggle('m-cmp', m === 'cmp'); scr.classList.toggle('m-ref', m === 'ref');
+  $$('#modes button').forEach(b => b.classList.toggle('on', b.dataset.pm === m));
+  try { localStorage.setItem('ww-pmode', m); } catch {}
+  updatePX();
+}
+$$('#modes button').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); setMode(b.dataset.pm); }));
+const pxSt = attachCmp($('#pvx'), () => toggle(), {period:7, amp:38, t:0});
+function updatePX() {
+  if (!D) return;
+  const s = cur ? D.shots.find(x => x.id === cur) : null, v = s ? latest(s) : null;
+  const px = $('#pvx'), pr = $('#pref');
+  px.classList.toggle('has', !!v);
+  if (v) { const im = $('img.aft', px), src = BASE + (v.full || v.image); if (im.getAttribute('src') !== src) im.src = src; $('#pvxLab').textContent = 'AFTER · ' + v.v; }
+  pr.classList.toggle('on', !!s); pr.classList.toggle('empty', !v);
+  if (s) {
+    $('#prefId').textContent = s.id; $('#prefT').textContent = v ? 'After · ' + v.v : 'Not reworked yet';
+    if (v) { const im = $('img', pr), src = BASE + v.image; if (im.getAttribute('src') !== src) { im.style.opacity = 0; im.onload = () => im.style.opacity = 1; im.src = src; } }
+  }
+}
+$('#pref').addEventListener('click', e => { e.stopPropagation(); if (!cur) return; const s = D.shots.find(x => x.id === cur); openLB(cur, latest(s) ? 'compare' : 'before'); });
+try { const m = localStorage.getItem('ww-pmode'); if (m) setTimeout(() => setMode(m), 0); } catch {}
 function markNow() { $$('.card').forEach(c => c.classList.toggle('now', c.dataset.id === cur)); }
 const setPP = () => { $('#pp use').setAttribute('href', pv.paused ? '#i-play' : '#i-pause'); };
 const toggle = () => pv.paused ? pv.play() : pv.pause();
-scr.addEventListener('click', e => { if (e.target.closest('.ctrl')) return; toggle(); });
+scr.addEventListener('click', e => { if (e.target.closest('.ctrl,#pvx,#pref')) return; toggle(); });
 $('#pp').onclick = toggle;
 $('#mute').onclick = () => { pv.muted = !pv.muted; $('#mute use').setAttribute('href', pv.muted ? '#i-volx' : '#i-vol'); };
 $('#fs').onclick = () => { const el = scr; if (document.fullscreenElement) document.exitFullscreen(); else if (el.requestFullscreen) el.requestFullscreen(); else if (pv.webkitEnterFullscreen) pv.webkitEnterFullscreen(); };
@@ -713,7 +862,7 @@ addEventListener('keydown', e => {
 /* ---------- lightbox ---------- */
 const lb = $('#lb'); let lbId = null, lbMode = 'loop';
 function openLB(id, mode) { lbId = id; lbMode = mode; pv.pause(); lb.classList.add('on'); document.body.style.overflow = 'hidden'; drawLB(); }
-function closeLB() { lb.classList.remove('on'); document.body.style.overflow = ''; $('#lbF').innerHTML = ''; }
+function closeLB() { lb.classList.remove('on'); document.body.style.overflow = ''; $('#lbF').innerHTML = ''; maybeReload(); }
 function drawLB() {
   const s = D.shots.find(x => x.id === lbId), v = latest(s);
   if (!v && (lbMode === 'after' || lbMode === 'compare')) lbMode = 'before';
@@ -725,12 +874,8 @@ function drawLB() {
   else if (lbMode === 'before') F.innerHTML = `<img src="${BASE + s.beforeFull}" alt="">`;
   else if (lbMode === 'after') F.innerHTML = v.video ? `<video src="${BASE + v.video}" autoplay muted loop playsinline></video>` : `<img src="${BASE + (v.full || v.image)}" alt="">`;
   else {
-    F.innerHTML = `<div class="cmpw" id="cmpw"><img src="${BASE + s.beforeFull}" alt=""><img class="top" src="${BASE + (v.full || v.image)}" alt=""><i class="bar"></i><span class="knob">${ic('chev-l')}${ic('chev-r')}</span><span class="lab l chip">BEFORE</span><span class="lab r chip">AFTER · ${esc(v.v)}</span></div>`;
-    const w = $('#cmpw'); let dn = false;
-    const set = e => { const r = w.getBoundingClientRect(); w.style.setProperty('--cx', Math.min(100, Math.max(0, (e.clientX - r.left) / r.width * 100)) + '%'); };
-    w.addEventListener('pointerdown', e => { dn = true; w.setPointerCapture(e.pointerId); set(e); });
-    w.addEventListener('pointermove', e => dn && set(e));
-    w.addEventListener('pointerup', () => dn = false);
+    F.innerHTML = `<div class="cmpv" id="cmpw"><img src="${BASE + s.beforeFull}" alt=""><img class="aft" src="${BASE + (v.full || v.image)}" alt=""><i class="bar"></i><span class="knob">${ic('move')}</span><span class="lab l"><span class="chip">BEFORE</span></span><span class="lab r"><span class="chip">AFTER · ${esc(v.v)}</span></span><button class="auto" data-auto aria-label="Pause sweep">${ic('pause')}</button></div>`;
+    attachCmp($('#cmpw'), null, {period:8, amp:42, t:0});
   }
   history.replaceState(null, '', '#' + s.id.toLowerCase());
 }
@@ -743,7 +888,7 @@ addEventListener('keydown', e => {
   if (!lb.classList.contains('on')) return;
   if (e.key === 'Escape') closeLB(); else if (e.key === 'ArrowRight') step(1); else if (e.key === 'ArrowLeft') step(-1);
 });
-let sx = null; lb.addEventListener('touchstart', e => { if (!e.target.closest('.cmpw')) sx = e.touches[0].clientX; }, {passive:true});
+let sx = null; lb.addEventListener('touchstart', e => { if (!e.target.closest('.cmpv')) sx = e.touches[0].clientX; }, {passive:true});
 lb.addEventListener('touchend', e => { if (sx == null) return; const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 60) step(dx < 0 ? 1 : -1); sx = null; });
 
 load(true).catch(err => { document.body.insertAdjacentHTML('beforeend', `<p style="position:fixed;bottom:16px;left:16px;color:#ff8a70;font-family:monospace">Could not load shot data — ${esc(err.message)}</p>`); });
