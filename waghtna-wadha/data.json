@@ -192,19 +192,19 @@
    "status": "wip",
    "notes": [
     {
-     "t": "New direction: the FPV flythrough travels through six real Saudi projects, in the client's folder order",
+     "t": "FPV flythrough through six real Saudi projects, in the client's folder order",
      "done": true
     },
     {
-     "t": "3D blocking v1: massing model of every project + one continuous FPV camera (dives, skims, banking rolls), 8.08s — the original shot length",
+     "t": "v2 camera: one smooth continuous spline, natural banking into the turns, no jerks or collisions",
      "done": true
     },
     {
-     "t": "Image-based animatic withdrawn — replaced by 3D blocking",
+     "t": "v2 detail: buildings rebuilt from the photos; train follows the real Talgo 350 shape and livery",
      "done": true
     },
     {
-     "t": "Interactive viewer: play / ¼× / ½×, scrub, jump to a project, orbit to inspect",
+     "t": "v2 composition: projects set in a living city — roads with traffic, palms, people, mountains, Riyadh skyline — not empty desert",
      "done": true
     },
     {
@@ -219,6 +219,13 @@
      "full": "after/sh03_blk_v1.jpg",
      "date": "20 Nov",
      "note": "3D blocking frame — Haramain train"
+    },
+    {
+     "v": "v2",
+     "image": "after/sh03_blk_v2_m.webp",
+     "full": "after/sh03_blk_v2.jpg",
+     "date": "20 Nov",
+     "note": "Blocking v2 — Talgo with the CST tower behind"
     }
    ],
    "animatic": {
@@ -230,6 +237,41 @@
       "video": "anim/sh03_blocking_v1.mp4",
       "poster": "anim/sh03_blocking_v1_poster.jpg",
       "meta": "8.08s · 25 fps · FPV 82° lens",
+      "chapters": [
+       {
+        "t": 0,
+        "label": "King Faisal Specialist Hospital"
+       },
+       {
+        "t": 1.38,
+        "label": "Princess Nourah University"
+       },
+       {
+        "t": 2.82,
+        "label": "Haramain High-Speed Railway"
+       },
+       {
+        "t": 4.18,
+        "label": "CST Commission HQ"
+       },
+       {
+        "t": 5.38,
+        "label": "Solar & wind"
+       },
+       {
+        "t": 6.72,
+        "label": "Grain silos"
+       }
+      ],
+      "note": "First blocking pass — superseded by v2."
+     },
+     {
+      "v": "v2",
+      "title": "3D blocking v2 · FPV flythrough — six national projects",
+      "badge": "3D BLOCKING",
+      "video": "anim/sh03_blocking_v2.mp4",
+      "poster": "anim/sh03_blocking_v2_poster.jpg",
+      "meta": "8.08s · 25 fps · FPV 78° lens",
       "link": "/waghtna-wadha-sh03-3d.html",
       "chapters": [
        {
@@ -257,7 +299,7 @@
         "label": "Grain silos"
        }
       ],
-      "note": "3D massing of each project, in the client's order, laid out on one continuous FPV path with the same language as the original shot — low skims, dives, banking rolls. Golden low sun from the side for long shadows. Switch to Interactive 3D to scrub, slow down, or orbit any project."
+      "note": "v2: one smooth FPV spline with continuous speed and banking driven by the turns (no jerks). Buildings remodelled from the client photos — KFSH stone & angled glass bays + mosque and minaret, PNU two-level arcades + ribbed dome, the real Talgo duck-bill nose with green & gold swooshes on a viaduct through the station, CST splayed glass towers + silver core + geodesic sphere + lattice canopy with the Riyadh skyline behind, solar field + turbines on a ridge, silos with elevator tower and conveyor. Composed in a living setting: city, roads with traffic, palms, people, Madinah-style mountains, clouds."
      }
     ]
    },
@@ -2135,7 +2177,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T17:53:00+04:00",
+ "updated": "2026-11-20T18:16:00+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 11,
  "removed": [
