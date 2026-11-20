@@ -884,9 +884,52 @@
    "loop": "loop/sh22.mp4",
    "before": "before/sh22_m.webp",
    "beforeFull": "before/sh22.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Client's angle and idea kept: top-down, one armoured vehicle flanked by two helicopters",
+     "done": true
+    },
+    {
+     "t": "Re-staged like an action film: diagonal charge, helicopters banking in attack formation, dust plume and rotor downwash",
+     "done": true
+    },
+    {
+     "t": "Very low sun — huge long shadows across the dunes, heat haze, burning orange vs teal",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh22_v1_m.webp",
+     "full": "after/sh22_v1.jpg",
+     "date": "20 Nov",
+     "note": "Action-film staging"
+    }
+   ],
+   "refs": [
+    {
+     "img": "before/sh23_m.webp",
+     "label": "Mood frame — the agreed look: low dramatic sun, flare, long shadows",
+     "src": "SH23 · this cut",
+     "href": "#sh23"
+    },
+    {
+     "img": "refs/mood_pin05_low_sun_t.webp",
+     "full": "refs/mood_pin05_low_sun.jpg",
+     "label": "Low sun & lens flare",
+     "src": "Mood board · Pinterest",
+     "href": "https://www.pinterest.com/amrsabry/sunny/"
+    },
+    {
+     "img": "refs/mood_pin09_long_shadows_t.webp",
+     "full": "refs/mood_pin09_long_shadows.jpg",
+     "label": "Long raking shadows",
+     "src": "Mood board · Pinterest",
+     "href": "https://www.pinterest.com/amrsabry/sunny/"
+    }
+   ]
   },
   {
    "id": "SH23",
@@ -1106,6 +1149,10 @@
     {
      "t": "Cyan factory light replaced by golden shafts through haze, robot arms rim-lit with long shadows",
      "done": true
+    },
+    {
+     "t": "v2: blue technology accent — LED rings on robot joints, laser scan line on the battery pack, blue screens behind; gold stays the key light",
+     "done": true
     }
    ],
    "versions": [
@@ -1115,6 +1162,13 @@
      "full": "after/sh27_v1.jpg",
      "date": "20 Nov",
      "note": "Golden-hour mood"
+    },
+    {
+     "v": "v2",
+     "image": "after/sh27_v2_m.webp",
+     "full": "after/sh27_v2.jpg",
+     "date": "20 Nov",
+     "note": "Blue tech accent"
     }
    ],
    "refs": [
@@ -1238,10 +1292,39 @@
    "loop": "loop/sh34.mp4",
    "before": "before/sh34_m.webp",
    "beforeFull": "before/sh34.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": [],
-   "was": "SH34"
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Both boys recast as cute Saudi kids, same white thobes, same classroom and angle",
+     "done": true
+    },
+    {
+     "t": "Boy behind no longer makes a heart — he raises his hand and takes part too",
+     "done": true
+    },
+    {
+     "t": "Mood: low golden sun through the window, light beams and dust, warm glow on faces",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh34_v1_m.webp",
+     "full": "after/sh34_v1.jpg",
+     "date": "20 Nov",
+     "note": "Saudi kids, both participating"
+    }
+   ],
+   "was": "SH34",
+   "refs": [
+    {
+     "img": "before/sh23_m.webp",
+     "label": "Mood frame — the agreed look: low dramatic sun, flare, long shadows",
+     "src": "SH23 · this cut",
+     "href": "#sh23"
+    }
+   ]
   },
   {
    "id": "SH31",
@@ -1607,7 +1690,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T14:18:00+04:00",
+ "updated": "2026-11-20T14:30:00+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 9,
  "removed": [
