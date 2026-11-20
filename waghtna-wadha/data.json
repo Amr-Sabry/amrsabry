@@ -891,7 +891,11 @@
      "done": true
     },
     {
-     "t": "Re-staged like an action film: diagonal charge, helicopters banking in attack formation, dust plume and rotor downwash",
+     "t": "Screen direction kept for the edit: everything travels right → left as in the original (v1 ran the wrong way — replaced)",
+     "done": true
+    },
+    {
+     "t": "Re-staged like an action film: charge, helicopters banking in attack formation, dust plume and rotor downwash",
      "done": true
     },
     {
@@ -901,11 +905,11 @@
    ],
    "versions": [
     {
-     "v": "v1",
-     "image": "after/sh22_v1_m.webp",
-     "full": "after/sh22_v1.jpg",
+     "v": "v2",
+     "image": "after/sh22_v2_m.webp",
+     "full": "after/sh22_v2.jpg",
      "date": "20 Nov",
-     "note": "Action-film staging"
+     "note": "Action staging, direction right → left"
     }
    ],
    "refs": [
@@ -1196,7 +1200,7 @@
    "status": "wip",
    "notes": [
     {
-     "t": "Same port: orange ship-to-shore cranes, container stacks, ship at the quay",
+     "t": "Same port: orange ship-to-shore cranes, container stacks, ships at the quay",
      "done": true
     },
     {
@@ -1204,15 +1208,19 @@
      "done": true
     },
     {
-     "t": "v1: low drone pass along the line of cranes, the tower at the end of the perspective",
+     "t": "v4: economic power — a mega ship enters with tugboats and a white wake, ten cranes working, trucks streaming with light trails, ships waiting on the horizon",
      "done": true
     },
     {
-     "t": "v2: heroic low angle at the ship's bow — the nearest crane frames the sun, the tower stands like a monument",
+     "t": "v3: the heartbeat of trade — crane lifting a container in the foreground, trucks racing the quay, a second ship arriving",
      "done": true
     },
     {
-     "t": "Mood: low golden sun, flare, long crane shadows over the quay; broadcaster logo from the source frame removed",
+     "t": "v1 / v2: earlier angle studies (low drone along the cranes, heroic bow angle)",
+     "done": true
+    },
+    {
+     "t": "Mood: low golden sun, flare, long crane shadows over the yard; broadcaster logo from the source frame removed",
      "done": true
     }
    ],
@@ -1230,6 +1238,20 @@
      "full": "after/sh28_v2.jpg",
      "date": "20 Nov",
      "note": "Heroic angle, crane frames the sun"
+    },
+    {
+     "v": "v3",
+     "image": "after/sh28_v3_m.webp",
+     "full": "after/sh28_v3.jpg",
+     "date": "20 Nov",
+     "note": "Trade in motion — crane lift"
+    },
+    {
+     "v": "v4",
+     "image": "after/sh28_v4_m.webp",
+     "full": "after/sh28_v4.jpg",
+     "date": "20 Nov",
+     "note": "Grandeur — mega ship entering, port at full power"
     }
    ],
    "refs": [
@@ -1752,7 +1774,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T14:58:00+04:00",
+ "updated": "2026-11-20T14:53:00+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 9,
  "removed": [
