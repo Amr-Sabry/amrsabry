@@ -271,6 +271,10 @@
     {
      "t": "Mood: low golden sun through blinds, long striped shadows, warm rim light",
      "done": true
+    },
+    {
+     "t": "v2: phone changed to champagne gold — everything else unchanged",
+     "done": true
     }
    ],
    "versions": [
@@ -280,6 +284,13 @@
      "full": "after/sh09_v1.jpg",
      "date": "20 Nov",
      "note": "Saudi doctor, medical clinic"
+    },
+    {
+     "v": "v2",
+     "image": "after/sh09_v2_m.webp",
+     "full": "after/sh09_v2.jpg",
+     "date": "20 Nov",
+     "note": "Gold phone"
     }
    ]
   },
@@ -1229,7 +1240,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T13:01:00+04:00",
+ "updated": "2026-11-20T13:03:00+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 6,
  "removed": [
