@@ -786,26 +786,13 @@
    "loop": "loop/sh33.mp4",
    "before": "before/sh33_m.webp",
    "beforeFull": "before/sh33.jpg",
-   "status": "wip",
+   "status": "pending",
    "notes": [
     {
-     "t": "Aircraft repainted in the current Saudia livery: SAUDIA titles along the white belly, green engines, green tail with the palm emblem, green winglets, stripes along the fuselage",
-     "done": true
-    },
-    {
-     "t": "Low golden sun inside the portal with flare, portal rim-lit amber",
-     "done": true
+     "t": "v1 withdrawn — livery was not built from a real photo of the current Saudia belly; redoing from verified references"
     }
    ],
-   "versions": [
-    {
-     "v": "v1",
-     "image": "after/sh33_v1_m.webp",
-     "full": "after/sh33_v1.jpg",
-     "date": "20 Nov",
-     "note": "Golden-hour mood"
-    }
-   ]
+   "versions": []
   },
   {
    "id": "SH34",
@@ -846,6 +833,10 @@
     {
      "t": "Warm golden beams from the stage lights through haze, crowd rim-lit in gold — flag calligraphy kept exactly as the original",
      "done": true
+    },
+    {
+     "t": "v2: cheap flat ceiling replaced — high dark arena, heavy lighting rig, beams through haze",
+     "done": true
     }
    ],
    "versions": [
@@ -855,6 +846,13 @@
      "full": "after/sh35_v1.jpg",
      "date": "20 Nov",
      "note": "Golden-hour mood"
+    },
+    {
+     "v": "v2",
+     "image": "after/sh35_v2_m.webp",
+     "full": "after/sh35_v2.jpg",
+     "date": "20 Nov",
+     "note": "Premium ceiling"
     }
    ]
   },
@@ -1159,7 +1157,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T12:55:00+04:00",
+ "updated": "2026-11-20T12:56:00+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 6,
  "removed": [
