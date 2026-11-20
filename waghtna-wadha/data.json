@@ -33,6 +33,10 @@
     {
      "t": "Soft Zaha Hadid forms in raw concrete; sunlight rolls over the ribs as parallel highlights",
      "done": true
+    },
+    {
+     "t": "v6: same parallel ribs as v5 + thin golden light lines along every rib, the exact line language of SH02 — the cut flows from SH01 into SH02",
+     "done": true
     }
    ],
    "versions": [
@@ -63,6 +67,13 @@
      "full": "after/sh01_v5.jpg",
      "date": "20 Nov",
      "note": "Strictly parallel ribs (SH02 lines)"
+    },
+    {
+     "v": "v6",
+     "image": "after/sh01_v6_m.webp",
+     "full": "after/sh01_v6.jpg",
+     "date": "20 Nov",
+     "note": "Parallel ribs + SH02 golden light lines"
     }
    ],
    "refs": [
@@ -1795,7 +1806,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T14:56:00+04:00",
+ "updated": "2026-11-20T14:58:30+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 9,
  "removed": [
