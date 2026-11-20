@@ -1193,9 +1193,60 @@
    "loop": "loop/sh28.mp4",
    "before": "before/sh28_m.webp",
    "beforeFull": "before/sh28.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Same port: orange ship-to-shore cranes, container stacks, ship at the quay",
+     "done": true
+    },
+    {
+     "t": "Jeddah Light kept on the left and rebuilt from a real photo — twin white columns, flared base, arched sphere, lantern on top",
+     "done": true
+    },
+    {
+     "t": "v1: low drone pass along the line of cranes, the tower at the end of the perspective",
+     "done": true
+    },
+    {
+     "t": "v2: heroic low angle at the ship's bow — the nearest crane frames the sun, the tower stands like a monument",
+     "done": true
+    },
+    {
+     "t": "Mood: low golden sun, flare, long crane shadows over the quay; broadcaster logo from the source frame removed",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh28_v1_m.webp",
+     "full": "after/sh28_v1.jpg",
+     "date": "20 Nov",
+     "note": "Low drone along the cranes"
+    },
+    {
+     "v": "v2",
+     "image": "after/sh28_v2_m.webp",
+     "full": "after/sh28_v2.jpg",
+     "date": "20 Nov",
+     "note": "Heroic angle, crane frames the sun"
+    }
+   ],
+   "refs": [
+    {
+     "img": "refs/jeddah_light_t.webp",
+     "full": "refs/jeddah_light.jpg",
+     "label": "Jeddah Light — the real tower (twin columns, arched sphere, lantern)",
+     "src": "Wikimedia Commons",
+     "href": "https://commons.wikimedia.org/wiki/File:Jeddah_Light(1).jpg"
+    },
+    {
+     "img": "before/sh23_m.webp",
+     "label": "Mood frame — the agreed look: low dramatic sun, flare, long shadows",
+     "src": "SH23 · this cut",
+     "href": "#sh23"
+    }
+   ]
   },
   {
    "id": "SH29",
@@ -1701,7 +1752,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T14:50:00+04:00",
+ "updated": "2026-11-20T14:58:00+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 9,
  "removed": [
