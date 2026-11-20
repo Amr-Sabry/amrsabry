@@ -414,24 +414,28 @@
    "status": "wip",
    "notes": [
     {
-     "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
+     "t": "Mood: low golden sun outside the window, warm rim light on her face, flare from the window",
      "done": true
     },
     {
-     "t": "Golden sun over a sea of clouds, warm rim light on her face, wing lit gold, flare from the window",
+     "t": "Fixed: the aircraft tail outside the window kept exactly as in the original (v1 had changed it)",
      "done": true
-    },
-    {
-     "t": "Fix: keep the aircraft outside the window exactly as in the original — v1 changed it"
     }
    ],
    "versions": [
     {
-     "v": "v1",
-     "image": "after/sh16_v1_m.webp",
-     "full": "after/sh16_v1.jpg",
+     "v": "v2",
+     "image": "after/sh16_v2_m.webp",
+     "full": "after/sh16_v2.jpg",
      "date": "20 Nov",
-     "note": "Golden-hour relight"
+     "note": "Stronger flare"
+    },
+    {
+     "v": "v3",
+     "image": "after/sh16_v3_m.webp",
+     "full": "after/sh16_v3.jpg",
+     "date": "20 Nov",
+     "note": "Closest to the original, grade only"
     }
    ]
   },
@@ -1138,7 +1142,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T12:42:00+04:00",
+ "updated": "2026-11-20T12:45:00+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 4
 }
