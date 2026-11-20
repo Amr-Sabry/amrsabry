@@ -786,9 +786,26 @@
    "loop": "loop/sh33.mp4",
    "before": "before/sh33_m.webp",
    "beforeFull": "before/sh33.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Aircraft repainted in the current Saudia livery: SAUDIA titles along the white belly, green engines, green tail with the palm emblem, green winglets, stripes along the fuselage",
+     "done": true
+    },
+    {
+     "t": "Low golden sun inside the portal with flare, portal rim-lit amber",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh33_v1_m.webp",
+     "full": "after/sh33_v1.jpg",
+     "date": "20 Nov",
+     "note": "Golden-hour mood"
+    }
+   ]
   },
   {
    "id": "SH34",
@@ -810,7 +827,7 @@
   {
    "id": "SH35",
    "key": "sh35",
-   "title": "Stadium Flag",
+   "title": "Event Hall — Flag Screen",
    "tag": "Crowd",
    "in": 100.48,
    "out": 101.04,
@@ -820,9 +837,26 @@
    "loop": "loop/sh35.mp4",
    "before": "before/sh35_m.webp",
    "beforeFull": "before/sh35.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
+     "done": true
+    },
+    {
+     "t": "Warm golden beams from the stage lights through haze, crowd rim-lit in gold — flag calligraphy kept exactly as the original",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh35_v1_m.webp",
+     "full": "after/sh35_v1.jpg",
+     "date": "20 Nov",
+     "note": "Golden-hour mood"
+    }
+   ]
   },
   {
    "id": "SH36",
@@ -837,9 +871,26 @@
    "loop": "loop/sh36.mp4",
    "before": "before/sh36_m.webp",
    "beforeFull": "before/sh36.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
+     "done": true
+    },
+    {
+     "t": "Warm golden backlight rims the hijabs, faces and hands, flare from top-left, sashes and flag glow green",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh36_v1_m.webp",
+     "full": "after/sh36_v1.jpg",
+     "date": "20 Nov",
+     "note": "Golden-hour mood"
+    }
+   ]
   }
  ],
  "timeline": [
@@ -1108,7 +1159,7 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T12:50:00+04:00",
+ "updated": "2026-11-20T12:55:00+04:00",
  "tagline": "#OurDestinationIsClear",
  "build": 5,
  "removed": [
