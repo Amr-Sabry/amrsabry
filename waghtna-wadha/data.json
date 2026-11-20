@@ -643,11 +643,8 @@
      "done": true
     },
     {
-     "t": "v1 top-down dropped — direction is between the palms",
+     "t": "v3: camera raised to frond height, still between the palms, looking down the rows",
      "done": true
-    },
-    {
-     "t": "Raised camera at frond height — in progress"
     }
    ],
    "versions": [
@@ -657,6 +654,13 @@
      "full": "after/sh25_v2.jpg",
      "date": "20 Nov",
      "note": "Between the palms"
+    },
+    {
+     "v": "v3",
+     "image": "after/sh25_v3_m.webp",
+     "full": "after/sh25_v3.jpg",
+     "date": "20 Nov",
+     "note": "Between the palms, raised camera"
     }
    ]
   },
@@ -1114,6 +1118,6 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T11:20:00+04:00",
+ "updated": "2026-11-20T11:23:00+04:00",
  "tagline": "#OurDestinationIsClear"
 }
