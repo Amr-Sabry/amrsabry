@@ -242,6 +242,10 @@
     {
      "t": "SH03 t4 (21 Nov): sky → hospital → university → train → CST → solar → turbine pass → silos gap → sky, one take, no cut",
      "done": true
+    },
+    {
+     "t": "SH03 t5 (21 Nov): camera clears the dome and flies between the spinning turbines — per director note",
+     "done": true
     }
    ],
    "versions": [
@@ -563,7 +567,58 @@
         "label": "Sky"
        }
       ],
-      "note": "Director notes applied: opens on sky and ends on sky; the hospital and the university get real screen time; the camera paces the train instead of rushing past; the solar farm is close and short; the drone flies right past a spinning turbine blade; at the end it threads the gap between the silos and climbs out into the sky. Built as one camera — each part continues from the exact last frame of the part before (checked: no cut, no fade). Runs 29 s with light speed-ramps on the empty stretches; it can be retimed further in the edit."
+      "note": "Director notes applied: opens on sky and ends on sky; the hospital and the university get real screen time; the camera paces the train instead of rushing past; the solar farm is close and short; the drone flies right past a spinning turbine blade; at the end it threads the gap between the silos and climbs out into the sky. Built as one camera — each part continues from the exact last frame of the part before (checked: no cut, no fade). Runs 29 s with light speed-ramps on the empty stretches; it can be retimed further in the edit. Superseded by t5 (camera hit the dome and the turbine)."
+     },
+     {
+      "v": "t5",
+      "title": "ONE TAKE · sky to sky — clears the dome, flies between the turbines",
+      "badge": "ONE TAKE · TEST",
+      "video": "anim/sh03_onetake_t5_720p.mp4",
+      "poster": "anim/sh03_onetake_t5_poster.jpg",
+      "meta": "29.1s · 24 fps · 1280×720 · test render, no cut anywhere",
+      "chapters": [
+       {
+        "t": 0,
+        "label": "Sky"
+       },
+       {
+        "t": 1.5,
+        "label": "King Faisal Specialist Hospital"
+       },
+       {
+        "t": 5.5,
+        "label": "Princess Nourah University"
+       },
+       {
+        "t": 7.5,
+        "label": "Over the dome"
+       },
+       {
+        "t": 10,
+        "label": "Haramain train"
+       },
+       {
+        "t": 15,
+        "label": "CST tower · sphere"
+       },
+       {
+        "t": 19,
+        "label": "Solar farm"
+       },
+       {
+        "t": 21,
+        "label": "Between the turbines"
+       },
+       {
+        "t": 23.5,
+        "label": "Silos · through the gap"
+       },
+       {
+        "t": 27,
+        "label": "Sky"
+       }
+      ],
+      "note": "Director notes on t4 applied: the camera now flies over the university dome with clear space instead of crashing into it, and passes between two spinning wind turbines without touching them, then threads the gap between the silos and climbs out to the sky. Same one-camera build — each part continues from the exact last frame of the part before (checked: no cut, no fade). 29 s with light speed-ramps on the solar stretch."
      }
     ]
    },
@@ -3168,9 +3223,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-21T19:12:00+04:00",
+ "updated": "2026-11-21T19:25:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 42,
+ "build": 43,
  "removed": [
   {
    "id": "SH31",
