@@ -246,6 +246,10 @@
     {
      "t": "SH03 t5 (21 Nov): camera clears the dome and flies between the spinning turbines — per director note",
      "done": true
+    },
+    {
+     "t": "SH03 h1 (22 Nov): the client's six notes applied — one single 19 s generation, no joined parts",
+     "done": true
     }
    ],
    "versions": [
@@ -619,6 +623,57 @@
        }
       ],
       "note": "Director notes on t4 applied: the camera now flies over the university dome with clear space instead of crashing into it, and passes between two spinning wind turbines without touching them, then threads the gap between the silos and climbs out to the sky. Same one-camera build — each part continues from the exact last frame of the part before (checked: no cut, no fade). 29 s with light speed-ramps on the solar stretch."
+     },
+     {
+      "v": "h1",
+      "title": "ONE TAKE · client notes · one generation, 19 s",
+      "badge": "ONE TAKE · CLIENT NOTES",
+      "video": "anim/sh03_onetake_h1_720p.mp4",
+      "poster": "anim/sh03_onetake_h1_poster.jpg",
+      "meta": "18.9s · 24 fps · 1280×720 · a single generation, no stitched parts, no cut anywhere",
+      "chapters": [
+       {
+        "t": 0,
+        "label": "Sky"
+       },
+       {
+        "t": 0.6,
+        "label": "King Faisal Specialist Hospital"
+       },
+       {
+        "t": 4.2,
+        "label": "Princess Nourah University"
+       },
+       {
+        "t": 7.2,
+        "label": "Haramain train"
+       },
+       {
+        "t": 9.3,
+        "label": "Into the train station"
+       },
+       {
+        "t": 10.6,
+        "label": "CST tower · one sphere"
+       },
+       {
+        "t": 12.5,
+        "label": "Solar farm"
+       },
+       {
+        "t": 14.5,
+        "label": "Wind turbines"
+       },
+       {
+        "t": 16.6,
+        "label": "Silos · through the gap"
+       },
+       {
+        "t": 18.3,
+        "label": "Sun"
+       }
+      ],
+      "note": "Client notes applied in one single generation (no parts joined, so nothing pops in or out): 1) hospital to university is one continuous glide over the hospital roof, no jump; 2) the university is approached from the front with the camera sliding right to left, same golden light throughout; 3) the Haramain train drives into the arched train station, not into the tower; 4) the CST tower is one tower with one sphere, reached straight out of the station; 5) the wind turbines are visible from far across the solar farm and grow gradually, they do not appear suddenly; 6) the train is seen once only. Light is the same low golden sun from the first frame to the last. Test resolution 720p; the 4K master follows once this move is approved."
      }
     ]
    },
@@ -3257,7 +3312,7 @@
  ],
  "updated": "2026-11-21T19:40:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 48,
+ "build": 49,
  "removed": [
   {
    "id": "SH31",
