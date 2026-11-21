@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#060608">
+<title>Waghtna Wadha · Motion 4K Deliveries</title>
+<meta property="og:title" content="Waghtna Wadha · Motion 4K Deliveries">
+<meta property="og:description" content="Every finished 4K motion shot — watch the preview, download the clean master.">
+<meta property="og:image" content="https://amrsabry.com/waghtna-wadha/poster.jpg">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=Chakra+Petch:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap">
+<style>
+:root{
+  --bg:#060608; --panel:rgba(255,255,255,.025); --panel2:rgba(255,255,255,.045);
+  --line:rgba(237,234,228,.08); --line2:rgba(237,234,228,.16); --line3:rgba(237,234,228,.28);
+  --text:#EDEAE4; --soft:#c4c0b8; --mute:#85827b; --dim:#55534e;
+  --amber:#FFB054; --teal:#46D3CB; --green:#82E39C; --violet:#B9A2FF;
+  --serif:'Orbitron',system-ui,sans-serif; --sans:'Chakra Petch',system-ui,sans-serif; --mono:'Share Tech Mono',ui-monospace,Menlo,monospace;
+  --wrap:min(1560px,100% - 2*clamp(16px,3.2vw,48px)); color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.55;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+img,video{display:block;max-width:100%}
+svg.i{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.wrap{width:var(--wrap);margin-inline:auto}
+.mono{font-family:var(--mono)}
+.vig{position:fixed;inset:0;z-index:89;pointer-events:none;background:radial-gradient(120% 90% at 50% 40%,transparent 55%,rgba(0,0,0,.55) 100%)}
+
+.nav{position:sticky;top:0;z-index:60;height:60px;display:flex;align-items:center;background:rgba(6,6,8,.72);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:12px;font-size:13px;letter-spacing:.18em;text-transform:uppercase;white-space:nowrap}
+.brand b{font-weight:600}.brand .sep{width:1px;height:16px;background:var(--line3)}.brand span{color:var(--mute)}
+.mark{width:28px;height:28px;border-radius:50%;border:1px solid var(--line3);display:grid;place-items:center;color:var(--violet)}
+.pill{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px;border:1px solid var(--line2);border-radius:99px;font-size:12.5px;color:var(--soft);white-space:nowrap;transition:border-color .2s,color .2s,background .2s}
+.pill:hover{border-color:var(--line3);color:var(--text);background:var(--panel2)}
+
+.hero{padding:clamp(40px,7vw,84px) 0 clamp(24px,4vw,40px)}
+.kick{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--violet)}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,5.4vw,64px);line-height:1.02;letter-spacing:.02em;margin:14px 0 14px}
+h1 em{font-style:normal;color:var(--violet)}
+.lead{max-width:760px;color:var(--soft);margin:0}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.stat{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:12px 16px;min-width:150px}
+.stat .k{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.stat .v{font-family:var(--serif);font-size:20px;font-weight:600;margin-top:2px}
+.tools{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,560px),1fr));gap:clamp(14px,2vw,24px);padding-bottom:90px}
+.card{border:1px solid var(--line);background:var(--panel);border-radius:20px;overflow:hidden;transition:border-color .3s,box-shadow .3s}
+.card:hover{border-color:var(--line2)}
+.card.flash{border-color:var(--violet);box-shadow:0 0 0 1px var(--violet),0 0 60px -10px rgba(185,162,255,.45)}
+.vid{position:relative;aspect-ratio:16/9;background:#000;cursor:pointer}
+.vid video{width:100%;height:100%;object-fit:cover}
+.vid .chip{position:absolute;left:12px;top:12px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;padding:4px 9px;border-radius:99px;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.14)}
+.vid .chip.new{left:auto;right:12px;top:auto;bottom:12px;color:#0b0b0e;background:var(--violet);border-color:transparent;font-weight:600}
+.vid .pl{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transition:opacity .25s}
+.vid .pl span{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.2)}
+.vid .pl svg{width:22px;height:22px}
+.vid.paused .pl{opacity:1}
+.body{padding:16px 18px 18px}
+.top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.id{font-family:var(--serif);font-weight:700;font-size:18px;letter-spacing:.06em}
+.ttl{font-size:15.5px;font-weight:500}
+.tag{font-family:var(--mono);font-size:11px;color:var(--mute);letter-spacing:.12em;text-transform:uppercase;margin-left:auto}
+.meta{font-family:var(--mono);font-size:12px;color:var(--mute);margin-top:6px}
+.meta b{color:var(--soft);font-weight:400}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.btn{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px;border-radius:99px;font-size:13px;font-weight:500;border:1px solid var(--line2);color:var(--text);white-space:nowrap;transition:filter .2s,border-color .2s,background .2s}
+.btn:hover{border-color:var(--line3);background:var(--panel2)}
+.btn.dl{background:var(--violet);color:#0b0b0e;border-color:transparent}
+.btn.dl:hover{filter:brightness(1.12);background:var(--violet)}
+.btn small{font-family:var(--mono);font-size:11px;font-weight:400;opacity:.75}
+.btn.ok{border-color:var(--green);color:var(--green)}
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);opacity:0;z-index:99;background:#15151b;border:1px solid var(--line2);border-radius:99px;padding:10px 18px;font-size:13px;transition:all .3s;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.empty{color:var(--mute);padding:40px 0}
+@media (max-width:640px){.brand span,.brand .sep{display:none}.tag{margin-left:0;width:100%}}
+</style>
+</head>
+<body>
+<div class="vig" aria-hidden="true"></div>
+<header class="nav">
+  <div class="wrap">
+    <div class="brand"><span class="mark"><svg class="i" viewBox="0 0 24 24"><use href="#i-video"/></svg></span><b>Waghtna Wadha</b><i class="sep"></i><span>Motion 4K</span></div>
+    <a class="pill" href="/waghtna-wadha"><svg class="i" viewBox="0 0 24 24"><use href="#i-back"/></svg>Project Room</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="kick">Deliveries · Seedance 2.5 · 4K</div>
+    <h1>Motion <em>4K</em> shots</h1>
+    <p class="lead">Every finished motion shot in one place. The player shows the watermarked preview; the violet button downloads the clean 3840×2160 master with no watermark, encoded at high bitrate for the edit.</p>
+    <div class="stats">
+      <div class="stat"><div class="k">Shots ready</div><div class="v" id="sN">—</div></div>
+      <div class="stat"><div class="k">Format</div><div class="v">3840×2160 · 24p</div></div>
+      <div class="stat"><div class="k">Masters total</div><div class="v" id="sMB">—</div></div>
+      <div class="stat"><div class="k">Updated</div><div class="v" id="sUpd">—</div></div>
+    </div>
+    <div class="tools">
+      <button class="pill" id="copyAll"><svg class="i" viewBox="0 0 24 24"><use href="#i-link"/></svg>Copy all download links</button>
+    </div>
+  </div>
+</section>
+
+<main class="wrap"><div class="grid" id="grid"><div class="empty">Loading…</div></div></main>
+<div class="toast" id="toast"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-video" viewBox="0 0 24 24"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+  <symbol id="i-ext" viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
+  <symbol id="i-room" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 3v18"/></symbol>
+</svg>
+
+<script>
+const BASE = 'waghtna-wadha/';
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const abs = p => new URL(p, location.origin + '/').href;
+const ic = n => `<svg class="i" viewBox="0 0 24 24"><use href="#i-${n}"/></svg>`;
+let LIST = [];
+function toast(t) { const el = $('#toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove('on'), 1800); }
+async function copy(t) { try { await navigator.clipboard.writeText(t); return true; } catch { const a = document.createElement('textarea'); a.value = t; document.body.appendChild(a); a.select(); let ok = false; try { ok = document.execCommand('copy'); } catch {} a.remove(); return ok; } }
+
+function card(s) {
+  const v = s.animatic.versions[s.animatic.versions.length - 1];
+  const prev = BASE + v.video, dl = BASE + v.download, page = location.pathname + '#' + s.id.toLowerCase();
+  const fname = v.download.split('/').pop();
+  return `<article class="card" id="${s.id.toLowerCase()}">
+    <div class="vid paused"><video muted loop playsinline preload="none" poster="${BASE + v.poster}" data-src="${prev}"></video>
+      <span class="chip">${esc(s.id)} · ${esc(v.v)}</span><span class="chip new">MOTION 4K</span><span class="pl"><span>${ic('play')}</span></span></div>
+    <div class="body">
+      <div class="top"><span class="id">${esc(s.id)}</span><span class="ttl">${esc(s.title)}</span><span class="tag">${esc(s.tag || '')}</span></div>
+      <div class="meta"><b>${esc(v.meta ? v.meta.split('·').slice(0, 3).join('·').trim() : '5.04s · 24 fps · 3840×2160')}</b> · master ${esc(v.dlmeta || '')} · ${esc(fname)}</div>
+      <div class="acts">
+        <a class="btn dl" href="${dl}" download="${esc(fname)}">${ic('download')}Download 4K <small>clean · no watermark</small></a>
+        <a class="btn" href="${prev}" target="_blank" rel="noopener">${ic('ext')}Preview</a>
+        <button class="btn" data-copy="${esc(abs(page))}\n${esc(abs(dl))}" data-what="${esc(s.id)}">${ic('link')}Copy links</button>
+        <a class="btn" href="/waghtna-wadha#${s.id.toLowerCase()}">${ic('room')}In the room</a>
+      </div>
+    </div>
+  </article>`;
+}
+
+function wire() {
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    const v = $('video', e.target);
+    if (e.isIntersecting) { if (!v.src) v.src = v.dataset.src; v.play().then(() => e.target.classList.remove('paused')).catch(() => {}); }
+    else { v.pause(); e.target.classList.add('paused'); }
+  }), {threshold: .35});
+  document.querySelectorAll('.vid').forEach(el => {
+    io.observe(el);
+    el.addEventListener('click', () => { const v = $('video', el); if (!v.src) v.src = v.dataset.src; if (v.paused) { v.play(); el.classList.remove('paused'); } else { v.pause(); el.classList.add('paused'); } });
+  });
+  document.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', async () => {
+    if (await copy(b.dataset.copy)) { b.classList.add('ok'); toast(b.dataset.what + ' · preview + download links copied'); setTimeout(() => b.classList.remove('ok'), 1500); }
+  }));
+}
+
+async function load() {
+  const r = await fetch(BASE + 'data.json?x=' + Date.now(), {cache: 'no-store'}); const D = await r.json();
+  LIST = D.shots.filter(s => s.animatic && s.animatic.kind === 'motion' && (s.animatic.versions || []).length && !(D.removed || []).includes(s.id));
+  $('#grid').innerHTML = LIST.length ? LIST.map(card).join('') : '<div class="empty">No motion shots yet.</div>';
+  $('#sN').textContent = LIST.length;
+  const mb = LIST.reduce((a, s) => { const m = /([\d.]+)\s*MB/.exec(s.animatic.versions.at(-1).dlmeta || ''); return a + (m ? +m[1] : 0); }, 0);
+  $('#sMB').textContent = mb ? (mb / 1000).toFixed(2) + ' GB' : '—';
+  try { const d = new Date(D.updated); $('#sUpd').textContent = d.toLocaleString('en-GB', {day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'}); } catch {}
+  wire();
+  if (location.hash) { const el = document.getElementById(location.hash.slice(1).toLowerCase()); if (el) setTimeout(() => { el.scrollIntoView({behavior: 'smooth', block: 'center'}); el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 2600); }, 300); }
+}
+$('#copyAll').addEventListener('click', async () => {
+  const t = LIST.map(s => s.id + '  ' + abs(BASE + s.animatic.versions.at(-1).download)).join('\n');
+  if (await copy(t)) toast(LIST.length + ' download links copied');
+});
+load();
+</script>
+</body>
+</html>

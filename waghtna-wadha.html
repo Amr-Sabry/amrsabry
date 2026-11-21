@@ -237,6 +237,14 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .anim.motion{margin:2px 16px 18px;padding:16px;border:1px solid rgba(185,162,255,.6);background:linear-gradient(180deg,rgba(185,162,255,.11),rgba(255,255,255,.015));box-shadow:0 0 0 1px rgba(185,162,255,.12),0 28px 80px -24px rgba(140,110,255,.55)}
 .anim.motion .anim-h h4{color:var(--violet);font-size:12.5px}
 .anim.motion .anim-v{border-color:rgba(185,162,255,.45)}
+.mlink{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 12px;border-radius:99px;border:1px solid rgba(185,162,255,.45);color:var(--violet);font-size:12px;font-weight:500;white-space:nowrap;transition:background .2s}
+.mlink:hover{background:rgba(185,162,255,.1)}
+.mlink svg{width:15px;height:15px}
+.mlink b{font-family:var(--mono);font-weight:400;font-size:11px;color:#0b0b0e;background:var(--violet);border-radius:99px;padding:0 6px;line-height:17px}
+.mlink b:empty{display:none}
+.pvdl{width:auto!important;padding:0 10px!important;gap:6px;color:var(--violet)!important;border:1px solid rgba(185,162,255,.5)!important;display:inline-flex;align-items:center;border-radius:99px}
+.pvdl span{font-family:var(--mono);font-size:11px}
+@media (max-width:640px){.mlink span{display:none}}
 .anim-dl{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 13px;border-radius:99px;font-size:12px;font-weight:500;color:#0b0b0e;background:var(--violet);text-decoration:none;white-space:nowrap}
 .anim-dl svg{width:14px;height:14px}
 .anim-dl small{font-family:var(--mono);font-size:10.5px;font-weight:400;opacity:.75}
@@ -460,6 +468,7 @@ a.ref:hover{border-color:var(--amber)}
     <div class="brand"><span class="mark"><svg class="i" viewBox="0 0 24 24"><use href="#i-aperture"/></svg></span><b>Waghtna Wadha</b><i class="sep"></i><span>Project Room</span></div>
     <div class="navr">
       <div class="live" title="This page updates as the work lands"><i></i><span class="lt">Live ·</span>&nbsp;<span id="upd">—</span></div>
+      <a class="mlink" href="/waghtna-wadha-motion" title="All finished 4K motion shots — preview + clean download"><svg class="i" viewBox="0 0 24 24"><use href="#i-video"/></svg><span>Motion 4K</span><b id="mlinkN"></b></a>
       <button class="ib" id="share" aria-label="Copy page link" title="Copy link"><svg class="i" viewBox="0 0 24 24"><use href="#i-link"/></svg></button>
     </div>
   </div>
@@ -499,6 +508,7 @@ a.ref:hover{border-color:var(--amber)}
           <div class="tc" id="tc">00:00:00 <span>/ 00:00:00</span></div>
           <div class="grow"></div>
           <div class="modes" id="modes" role="tablist" aria-label="Player view"><button data-pm="orig" title="Original cut"><svg class="i" viewBox="0 0 24 24"><use href="#i-film"/></svg><span>Original</span></button><button data-pm="cmp" title="Wipe between the cut and the reworked frame"><svg class="i" viewBox="0 0 24 24"><use href="#i-columns"/></svg><span>Compare</span></button><button data-pm="split" title="Original and new side by side — the new motion clip plays in sync when the shot has one"><svg class="i" viewBox="0 0 24 24"><use href="#i-video"/></svg><span>Split</span></button><button data-pm="ref" class="on" title="Reworked frame as a thumbnail reference"><svg class="i" viewBox="0 0 24 24"><use href="#i-image"/></svg><span>Ref</span></button></div>
+          <a class="ib pvdl" id="pvDl" hidden download aria-label="Download clean 4K master" title="Download this shot's clean 4K master (no watermark)"><svg class="i" viewBox="0 0 24 24"><use href="#i-download"/></svg><span>4K</span></a>
           <button class="ib" id="toCard" aria-label="Open this shot's card" title="Go to this shot's card"><svg class="i" viewBox="0 0 24 24"><use href="#i-arrow-down"/></svg></button>
           <button class="ib" id="mute" aria-label="Mute"><svg class="i" viewBox="0 0 24 24"><use href="#i-vol"/></svg></button>
           <button class="ib" id="fs" aria-label="Fullscreen"><svg class="i" viewBox="0 0 24 24"><use href="#i-max"/></svg></button>
@@ -619,7 +629,7 @@ const STATUS = {
 };
 const FPS = 25;
 const tc = t => { const f = Math.max(0, Math.round(t * FPS)); const s = Math.floor(f / FPS), ff = f % FPS; return [Math.floor(s / 60), s % 60, ff].map(n => String(n).padStart(2, '0')).join(':'); };
-const BUILD = 21;
+const BUILD = 22;
 let D = null, filter = 'all', view = 'rows', stamp = null, pendingReload = false;
 const verSel = {}; const animSel = {};
 
@@ -742,6 +752,7 @@ function setFacts() {
   $('#footUpd').textContent = 'Last update · ' + fmtUpd(D.updated);
   $('#f-run').textContent = tc(D.duration).slice(0, 5);
   $('#f-shots').textContent = D.shots.length;
+  { const n = D.shots.filter(isMotion).length; const b = document.getElementById('mlinkN'); if (b) b.textContent = n || ''; }
   $('#f-date').textContent = D.date;
   const appr = D.shots.filter(s => ['approved','motion','final'].includes(s.status)).length;
   $('#f-appr').textContent = appr; $('#f-of').textContent = '/ ' + D.shots.length;
@@ -970,6 +981,9 @@ const pv2 = $('#pv2');
 function updateSplit(s, v) {
   const R = $('#pvsR'), lab = $('#pvsLab'), mv = s && isMotion(s) ? s.animatic.versions[s.animatic.versions.length - 1] : null;
   R.classList.toggle('vid', !!mv); R.classList.toggle('still', !mv && !!v); R.classList.toggle('empty', !mv && !v);
+  const dlb = $('#pvDl');
+  if (mv && mv.download) { dlb.hidden = false; dlb.href = BASE + mv.download; dlb.setAttribute('download', mv.download.split('/').pop()); dlb.title = s.id + ' · download clean 4K master · ' + (mv.dlmeta || 'no watermark'); }
+  else dlb.hidden = true;
   if (mv) {
     const src = BASE + mv.video; if (pmode === 'split' && pv2.dataset.cur !== src) { pv2.dataset.cur = src; pv2.src = src; }
     lab.textContent = 'NEW · MOTION 4K · ' + mv.v;
