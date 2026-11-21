@@ -790,6 +790,10 @@
     {
      "t": "Motion m2 (21 Nov): camera now rises bottom-to-top like the original cut (m1 pushed in) — keeps the edit rhythm",
      "done": true
+    },
+    {
+     "t": "Motion k1 (21 Nov): Kroma keeps the reference camera move frame for frame; only the look changes",
+     "done": true
     }
    ],
    "versions": [
@@ -847,6 +851,17 @@
       "dlmeta": "77 Mbps · 48 MB",
       "meta": "5.04s · 24 fps · 3840×2160 · preview · 4K UHD badge",
       "note": "Re-shot to follow the original move: starts low over the interchange overpass and climbs straight up, the whole cloverleaf revealed — measured ×0.49 scale change. Keyframe = end frame reference. Download = clean high-bitrate master, no watermark."
+     },
+     {
+      "v": "k1",
+      "title": "Motion · exact reference move · 4K",
+      "badge": "MOTION 4K · REF MOVE",
+      "video": "motion/sh06_k1_4k_wm.mp4",
+      "poster": "motion/sh06_k1_poster.jpg",
+      "download": "master/WW_SH06_k1_4K_HQ.mp4",
+      "dlmeta": "74 Mbps · 15 MB",
+      "meta": "1.58s (cut length) · 24 fps · 3840×2160 · preview · 4K UHD badge",
+      "note": "Exact camera move of the original cut — same angle, rotation, speed and timing (checked by motion tracking against the reference) — re-rendered in our look: golden low sun from the top-left, long shadows of the overpasses and cars, amber roads, warm flare, teal shadows. Download = clean high-bitrate master, no watermark."
      }
     ]
    }
@@ -2873,9 +2888,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-21T17:38:00+04:00",
+ "updated": "2026-11-21T17:52:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 29,
+ "build": 30,
  "removed": [
   {
    "id": "SH31",
