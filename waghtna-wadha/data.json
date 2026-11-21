@@ -1477,6 +1477,10 @@
     {
      "t": "Sun just beyond top-right, valley falls into teal shade with haze",
      "done": true
+    },
+    {
+     "t": "v2 (21 Nov): greener, more of a farm — every terrace densely planted with healthy coffee trees, green grass on the walls, no dry yellow soil; same golden sun top-right, haze and long shadows",
+     "done": true
     }
    ],
    "versions": [
@@ -1486,6 +1490,13 @@
      "full": "after/sh24_v1.jpg",
      "date": "20 Nov",
      "note": "Golden-hour relight · Seedream 5.5"
+    },
+    {
+     "v": "v2",
+     "image": "after/sh24_v2_m.webp",
+     "full": "after/sh24_v2.jpg",
+     "date": "21 Nov",
+     "note": "Lush coffee farm — greener, same golden mood"
     }
    ],
    "refs": [
@@ -2343,9 +2354,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-21T14:50:00+04:00",
+ "updated": "2026-11-21T14:58:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 16,
+ "build": 17,
  "removed": [
   {
    "id": "SH31",
