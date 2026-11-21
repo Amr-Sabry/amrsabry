@@ -1560,6 +1560,10 @@
      "done": true
     },
     {
+     "t": "v3 (client photo): tank farm & pipe rack kept as shot, relit to the agreed mood — low sun behind the tanks, flare, amber highlights along the pipes; Aramco logo removed, tanks plain white",
+     "done": true
+    },
+    {
      "t": "Next: director picks the framing, then motion",
      "done": false
     }
@@ -1578,6 +1582,13 @@
      "full": "after/sh26_pipe_v2.jpg",
      "date": "21 Nov",
      "note": "Pipeline — low angle, leading line into the sun"
+    },
+    {
+     "v": "v3",
+     "image": "after/sh26_pipe_v3_m.webp",
+     "full": "after/sh26_pipe_v3.jpg",
+     "date": "21 Nov",
+     "note": "Tank farm & pipe rack — client photo in our mood, logo removed"
     }
    ],
    "refs": [
@@ -2282,9 +2293,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-21T14:35:00+04:00",
+ "updated": "2026-11-21T14:40:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 14,
+ "build": 15,
  "removed": [
   {
    "id": "SH31",
