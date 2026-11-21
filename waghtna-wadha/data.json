@@ -1531,8 +1531,8 @@
   {
    "id": "SH26",
    "key": "sh26",
-   "title": "Perforated Facade — Cyclists",
-   "tag": "Top-down",
+   "title": "East–West Pipeline",
+   "tag": "Exterior · Aerial",
    "in": 86.48,
    "out": 88.92,
    "tcIn": "01:26:12",
@@ -1544,43 +1544,69 @@
    "status": "wip",
    "notes": [
     {
-     "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
+     "t": "Client change (21 Nov): replace the Sports Boulevard cycling shot with the Saudi East–West crude pipeline",
      "done": true
     },
     {
-     "t": "Low sun pours through the perforations — golden light dots on the lane, long cyclist shadows, facade glows amber",
+     "t": "No Aramco logo anywhere — logo also removed from the client's tank-farm reference",
      "done": true
+    },
+    {
+     "t": "Mood as SH23: low golden sun, flare hitting the lens, long raking shadows, dust haze",
+     "done": true
+    },
+    {
+     "t": "Two framings to choose from: v1 aerial (keeps the original drone move for the edit) · v2 low angle, leading line into the sun (as in the client refs)",
+     "done": true
+    },
+    {
+     "t": "Next: director picks the framing, then motion",
+     "done": false
     }
    ],
    "versions": [
     {
      "v": "v1",
-     "image": "after/sh26_v1_m.webp",
-     "full": "after/sh26_v1.jpg",
-     "date": "20 Nov",
-     "note": "Golden-hour mood"
+     "image": "after/sh26_pipe_v1_m.webp",
+     "full": "after/sh26_pipe_v1.jpg",
+     "date": "21 Nov",
+     "note": "Pipeline — aerial, follows the original drone move"
+    },
+    {
+     "v": "v2",
+     "image": "after/sh26_pipe_v2_m.webp",
+     "full": "after/sh26_pipe_v2.jpg",
+     "date": "21 Nov",
+     "note": "Pipeline — low angle, leading line into the sun"
     }
    ],
    "refs": [
+    {
+     "img": "refs/sh26_pipeline_twin_t.webp",
+     "full": "refs/sh26_pipeline_twin.jpg",
+     "label": "East–West pipeline — twin lines through the dunes",
+     "src": "Client · WhatsApp 21 Nov",
+     "href": "refs/sh26_pipeline_twin.jpg"
+    },
+    {
+     "img": "refs/sh26_pipeline_platform_t.webp",
+     "full": "refs/sh26_pipeline_platform.jpg",
+     "label": "Pipeline with maintenance platform (news caption cropped)",
+     "src": "Client · WhatsApp 21 Nov",
+     "href": "refs/sh26_pipeline_platform.jpg"
+    },
+    {
+     "img": "refs/sh26_tankfarm_t.webp",
+     "full": "refs/sh26_tankfarm.jpg",
+     "label": "Tank farm & pipe rack — logo removed per client",
+     "src": "Client · WhatsApp 21 Nov",
+     "href": "refs/sh26_tankfarm.jpg"
+    },
     {
      "img": "before/sh23_m.webp",
      "label": "Mood frame — the agreed look: low dramatic sun, flare, long shadows",
      "src": "SH23 · this cut",
      "href": "#sh23"
-    },
-    {
-     "img": "refs/mood_pin05_low_sun_t.webp",
-     "full": "refs/mood_pin05_low_sun.jpg",
-     "label": "Low sun & lens flare",
-     "src": "Mood board · Pinterest",
-     "href": "https://www.pinterest.com/amrsabry/sunny/"
-    },
-    {
-     "img": "refs/mood_pin09_long_shadows_t.webp",
-     "full": "refs/mood_pin09_long_shadows.jpg",
-     "label": "Long raking shadows",
-     "src": "Mood board · Pinterest",
-     "href": "https://www.pinterest.com/amrsabry/sunny/"
     }
    ]
   },
@@ -2245,9 +2271,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-20T19:15:00+04:00",
+ "updated": "2026-11-21T13:05:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 12,
+ "build": 13,
  "removed": [
   {
    "id": "SH31",
