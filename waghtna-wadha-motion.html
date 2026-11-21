@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#060608">
-<title>Waghtna Wadha · Motion 4K Deliveries</title>
-<meta property="og:title" content="Waghtna Wadha · Motion 4K Deliveries">
-<meta property="og:description" content="Every finished 4K motion shot — watch the preview, download the clean master.">
+<title>Waghtna Wadha · 4K Deliveries · Directed by Abdullah Al-Fajjar</title>
+<meta property="og:title" content="Waghtna Wadha · Directed by Abdullah Al-Fajjar">
+<meta property="og:description" content="Final 4K shots — watch and download.">
 <meta property="og:image" content="https://amrsabry.com/waghtna-wadha/poster.jpg">
 <link rel="icon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -81,6 +81,20 @@ h1 em{font-style:normal;color:var(--violet)}
 .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);opacity:0;z-index:99;background:#15151b;border:1px solid var(--line2);border-radius:99px;padding:10px 18px;font-size:13px;transition:all .3s;pointer-events:none}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .empty{color:var(--mute);padding:40px 0}
+.navdir{display:flex;align-items:baseline;gap:9px;white-space:nowrap}
+.navdir span{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute)}
+.navdir b{font-family:var(--serif);font-weight:600;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber)}
+.credit{display:flex;flex-direction:column;gap:6px;margin-bottom:26px}
+.credit .cl{font-family:var(--mono);font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:var(--soft)}
+.credit .cn{font-family:var(--serif);font-weight:700;font-size:clamp(22px,3.2vw,38px);letter-spacing:.16em;text-transform:uppercase;
+  background:linear-gradient(90deg,#FFE2B0 0%,var(--amber) 45%,#FF7A3D 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 22px rgba(255,176,84,.35));position:relative;width:max-content;max-width:100%;padding-bottom:12px}
+.credit .cn::after{content:"";position:absolute;left:0;bottom:0;width:72px;height:2px;background:linear-gradient(90deg,var(--amber),transparent)}
+.lead b{color:var(--text);font-weight:600}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:10px}
+.row .meta{margin-top:0}
+.vid{cursor:auto}
+@media (max-width:640px){.navdir span{display:none}}
 @media (max-width:640px){.brand span,.brand .sep{display:none}.tag{margin-left:0;width:100%}}
 </style>
 </head>
@@ -88,24 +102,20 @@ h1 em{font-style:normal;color:var(--violet)}
 <div class="vig" aria-hidden="true"></div>
 <header class="nav">
   <div class="wrap">
-    <div class="brand"><span class="mark"><svg class="i" viewBox="0 0 24 24"><use href="#i-video"/></svg></span><b>Waghtna Wadha</b><i class="sep"></i><span>Motion 4K</span></div>
-    <a class="pill" href="/waghtna-wadha"><svg class="i" viewBox="0 0 24 24"><use href="#i-back"/></svg>Project Room</a>
+    <div class="brand"><span class="mark"><svg class="i" viewBox="0 0 24 24"><use href="#i-video"/></svg></span><b>Waghtna Wadha</b><i class="sep"></i><span>4K Deliveries</span></div>
+    <div class="navdir"><span>Directed by</span><b>Abdullah Al-Fajjar</b></div>
   </div>
 </header>
 
 <section class="hero">
   <div class="wrap">
-    <div class="kick">Deliveries · Seedance 2.5 · 4K</div>
-    <h1>Motion <em>4K</em> shots</h1>
-    <p class="lead">Every finished motion shot in one place. The player shows the watermarked preview; the violet button downloads the clean 3840×2160 master with no watermark, encoded at high bitrate for the edit.</p>
+    <div class="credit"><span class="cl">A film directed by</span><span class="cn">Abdullah Al-Fajjar</span></div>
+    <div class="kick">Waghtna Wadha · #OurDestinationIsClear</div>
+    <h1>Final <em>4K</em> shots</h1>
+    <p class="lead">Every finished shot, ready to play and download. Press play to watch the preview — <b>Download 4K</b> gives the clean 3840×2160 master, no watermark.</p>
     <div class="stats">
-      <div class="stat"><div class="k">Shots ready</div><div class="v" id="sN">—</div></div>
-      <div class="stat"><div class="k">Format</div><div class="v">3840×2160 · 24p</div></div>
-      <div class="stat"><div class="k">Masters total</div><div class="v" id="sMB">—</div></div>
-      <div class="stat"><div class="k">Updated</div><div class="v" id="sUpd">—</div></div>
-    </div>
-    <div class="tools">
-      <button class="pill" id="copyAll"><svg class="i" viewBox="0 0 24 24"><use href="#i-link"/></svg>Copy all download links</button>
+      <div class="stat"><div class="k">Shots</div><div class="v" id="sN">—</div></div>
+      <div class="stat"><div class="k">Format</div><div class="v">4K UHD · 24p</div></div>
     </div>
   </div>
 </section>
@@ -135,19 +145,17 @@ async function copy(t) { try { await navigator.clipboard.writeText(t); return tr
 
 function card(s) {
   const v = s.animatic.versions[s.animatic.versions.length - 1];
-  const prev = BASE + v.video, dl = BASE + v.download, page = location.pathname + '#' + s.id.toLowerCase();
-  const fname = v.download.split('/').pop();
+  const prev = BASE + v.video, dl = BASE + v.download;
+  const fname = 'Waghtna_Wadha_' + s.id + '_4K.mp4';
+  const mb = /([\d.]+)\s*MB/.exec(v.dlmeta || '');
   return `<article class="card" id="${s.id.toLowerCase()}">
-    <div class="vid paused"><video muted loop playsinline preload="none" poster="${BASE + v.poster}" data-src="${prev}"></video>
-      <span class="chip">${esc(s.id)} · ${esc(v.v)}</span><span class="chip new">MOTION 4K</span><span class="pl"><span>${ic('play')}</span></span></div>
+    <div class="vid"><video controls muted loop playsinline preload="none" poster="${BASE + v.poster}" data-src="${prev}"></video>
+      <span class="chip">${esc(s.id)}</span></div>
     <div class="body">
-      <div class="top"><span class="id">${esc(s.id)}</span><span class="ttl">${esc(s.title)}</span><span class="tag">${esc(s.tag || '')}</span></div>
-      <div class="meta"><b>${esc(v.meta ? v.meta.split('·').slice(0, 3).join('·').trim() : '5.04s · 24 fps · 3840×2160')}</b> · master ${esc(v.dlmeta || '')} · ${esc(fname)}</div>
-      <div class="acts">
-        <a class="btn dl" href="${dl}" download="${esc(fname)}">${ic('download')}Download 4K <small>clean · no watermark</small></a>
-        <a class="btn" href="${prev}" target="_blank" rel="noopener">${ic('ext')}Preview</a>
-        <button class="btn" data-copy="${esc(abs(page))}\n${esc(abs(dl))}" data-what="${esc(s.id)}">${ic('link')}Copy links</button>
-        <a class="btn" href="/waghtna-wadha#${s.id.toLowerCase()}">${ic('room')}In the room</a>
+      <div class="top"><span class="id">${esc(s.id)}</span><span class="ttl">${esc(s.title)}</span></div>
+      <div class="row">
+        <div class="meta">3840×2160 · 24 fps · ${esc((v.meta || '5.04s').split('·')[0].trim())}${mb ? ' · ' + Math.round(+mb[1]) + ' MB' : ''}</div>
+        <a class="btn dl" href="${dl}" download="${esc(fname)}">${ic('download')}Download 4K <small>no watermark</small></a>
       </div>
     </div>
   </article>`;
@@ -156,33 +164,25 @@ function card(s) {
 function wire() {
   const io = new IntersectionObserver(es => es.forEach(e => {
     const v = $('video', e.target);
-    if (e.isIntersecting) { if (!v.src) v.src = v.dataset.src; v.play().then(() => e.target.classList.remove('paused')).catch(() => {}); }
-    else { v.pause(); e.target.classList.add('paused'); }
-  }), {threshold: .35});
+    if (e.isIntersecting) { if (!v.src) v.src = v.dataset.src; if (!v.dataset.user) v.play().catch(() => {}); }
+    else if (!v.paused) v.pause();
+  }), {threshold: .4});
   document.querySelectorAll('.vid').forEach(el => {
-    io.observe(el);
-    el.addEventListener('click', () => { const v = $('video', el); if (!v.src) v.src = v.dataset.src; if (v.paused) { v.play(); el.classList.remove('paused'); } else { v.pause(); el.classList.add('paused'); } });
+    io.observe(el); const v = $('video', el);
+    v.addEventListener('play', () => { if (!v.src) v.src = v.dataset.src; });
+    v.addEventListener('volumechange', () => { v.dataset.user = 1; });
+    v.addEventListener('seeking', () => { v.dataset.user = 1; });
   });
-  document.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', async () => {
-    if (await copy(b.dataset.copy)) { b.classList.add('ok'); toast(b.dataset.what + ' · preview + download links copied'); setTimeout(() => b.classList.remove('ok'), 1500); }
-  }));
 }
 
 async function load() {
   const r = await fetch(BASE + 'data.json?x=' + Date.now(), {cache: 'no-store'}); const D = await r.json();
-  LIST = D.shots.filter(s => s.animatic && s.animatic.kind === 'motion' && (s.animatic.versions || []).length);
-  $('#grid').innerHTML = LIST.length ? LIST.map(card).join('') : '<div class="empty">No motion shots yet.</div>';
+  LIST = D.shots.filter(s => s.animatic && s.animatic.kind === 'motion' && (s.animatic.versions || []).length && s.animatic.versions.at(-1).download).sort((a, b) => parseInt(a.id.slice(2)) - parseInt(b.id.slice(2)));
+  $('#grid').innerHTML = LIST.length ? LIST.map(card).join('') : '<div class="empty">No shots yet.</div>';
   $('#sN').textContent = LIST.length;
-  const mb = LIST.reduce((a, s) => { const m = /([\d.]+)\s*MB/.exec(s.animatic.versions.at(-1).dlmeta || ''); return a + (m ? +m[1] : 0); }, 0);
-  $('#sMB').textContent = mb ? (mb / 1000).toFixed(2) + ' GB' : '—';
-  try { const d = new Date(D.updated); $('#sUpd').textContent = d.toLocaleString('en-GB', {day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'}); } catch {}
   wire();
   if (location.hash) { const el = document.getElementById(location.hash.slice(1).toLowerCase()); if (el) setTimeout(() => { el.scrollIntoView({behavior: 'smooth', block: 'center'}); el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 2600); }, 300); }
 }
-$('#copyAll').addEventListener('click', async () => {
-  const t = LIST.map(s => s.id + '  ' + abs(BASE + s.animatic.versions.at(-1).download)).join('\n');
-  if (await copy(t)) toast(LIST.length + ' download links copied');
-});
 load();
 </script>
 </body>

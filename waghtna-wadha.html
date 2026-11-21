@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#060608">
-<title>Waghtna Wadha · Project Room</title>
-<meta property="og:title" content="Waghtna Wadha · Project Room">
+<title>Waghtna Wadha · Directed by Abdullah Al-Fajjar</title>
+<meta property="og:title" content="Waghtna Wadha · Directed by Abdullah Al-Fajjar">
 <meta property="og:description" content="Shot-by-shot director room — before, after and approvals.">
 <meta property="og:image" content="https://amrsabry.com/waghtna-wadha/poster.jpg">
 <link rel="icon" href="data:,">
@@ -237,6 +237,15 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .anim.motion{margin:2px 16px 18px;padding:16px;border:1px solid rgba(185,162,255,.6);background:linear-gradient(180deg,rgba(185,162,255,.11),rgba(255,255,255,.015));box-shadow:0 0 0 1px rgba(185,162,255,.12),0 28px 80px -24px rgba(140,110,255,.55)}
 .anim.motion .anim-h h4{color:var(--violet);font-size:12.5px}
 .anim.motion .anim-v{border-color:rgba(185,162,255,.45)}
+.brand .dirby{color:var(--mute);letter-spacing:.16em}
+.brand .dirby b{color:var(--amber);font-weight:600}
+.credit{display:flex;flex-direction:column;gap:6px;margin-bottom:22px}
+.credit .cl{font-family:var(--mono);font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:var(--soft)}
+.credit .cn{font-family:var(--serif);font-weight:700;font-size:clamp(22px,3.2vw,38px);letter-spacing:.16em;text-transform:uppercase;
+  background:linear-gradient(90deg,#FFE2B0 0%,var(--amber) 45%,#FF7A3D 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 22px rgba(255,176,84,.35));position:relative;width:max-content;max-width:100%;padding-bottom:12px}
+.credit .cn::after{content:"";position:absolute;left:0;bottom:0;width:72px;height:2px;background:linear-gradient(90deg,var(--amber),transparent)}
+@media (max-width:760px){.brand .dirby,.brand .sep{display:none}}
 .mlink{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 12px;border-radius:99px;border:1px solid rgba(185,162,255,.45);color:var(--violet);font-size:12px;font-weight:500;white-space:nowrap;transition:background .2s}
 .mlink:hover{background:rgba(185,162,255,.1)}
 .mlink svg{width:15px;height:15px}
@@ -465,7 +474,7 @@ a.ref:hover{border-color:var(--amber)}
 
 <header class="nav" id="nav">
   <div class="wrap">
-    <div class="brand"><span class="mark"><svg class="i" viewBox="0 0 24 24"><use href="#i-aperture"/></svg></span><b>Waghtna Wadha</b><i class="sep"></i><span>Project Room</span></div>
+    <div class="brand"><span class="mark"><svg class="i" viewBox="0 0 24 24"><use href="#i-aperture"/></svg></span><b>Waghtna Wadha</b><i class="sep"></i><span class="dirby">Directed by <b>Abdullah Al-Fajjar</b></span></div>
     <div class="navr">
       <div class="live" title="This page updates as the work lands"><i></i><span class="lt">Live ·</span>&nbsp;<span id="upd">—</span></div>
       <a class="mlink" href="/waghtna-wadha-motion" title="All finished 4K motion shots — preview + clean download"><svg class="i" viewBox="0 0 24 24"><use href="#i-video"/></svg><span>Motion 4K</span><b id="mlinkN"></b></a>
@@ -477,6 +486,7 @@ a.ref:hover{border-color:var(--amber)}
 <section class="hero">
   <div class="hero-bg"><img src="waghtna-wadha/poster.jpg" alt=""></div>
   <div class="wrap">
+    <div class="credit"><span class="cl">A film directed by</span><span class="cn">Abdullah Al-Fajjar</span></div>
     <div class="kick">Director Room · <span id="draft">Draft</span></div>
     <h1 class="title" id="title" aria-label="Waghtna Wadha">Waghtna <em>Wadha</em></h1>
     <div class="sub"><span class="tag" id="tagline">#OurDestinationIsClear</span><span>Shot-by-shot room for the director — the cut, every shot on loop, and each rework side by side with the original.</span></div>
@@ -542,7 +552,7 @@ a.ref:hover{border-color:var(--amber)}
       <div class="step rv"><span class="n">02</span><div class="ic"><svg class="i" viewBox="0 0 24 24"><use href="#i-eye"/></svg></div><h3>Client approval</h3><p>The still goes to the client. Nothing moves until the look is signed off.</p></div>
       <div class="step rv"><span class="n">03</span><div class="ic"><svg class="i" viewBox="0 0 24 24"><use href="#i-clapper"/></svg></div><h3>Motion</h3><p>The approved look is generated as a moving shot and drops into the cut on this page.</p></div>
     </div>
-    <footer class="foot"><span>Waghtna Wadha · Director Room</span><span id="footUpd"></span></footer>
+    <footer class="foot"><span>Waghtna Wadha · Directed by Abdullah Al-Fajjar</span><span id="footUpd"></span></footer>
   </div>
 </section>
 
@@ -629,7 +639,7 @@ const STATUS = {
 };
 const FPS = 25;
 const tc = t => { const f = Math.max(0, Math.round(t * FPS)); const s = Math.floor(f / FPS), ff = f % FPS; return [Math.floor(s / 60), s % 60, ff].map(n => String(n).padStart(2, '0')).join(':'); };
-const BUILD = 23;
+const BUILD = 24;
 let D = null, filter = 'all', view = 'rows', stamp = null, pendingReload = false;
 const verSel = {}; const animSel = {};
 
