@@ -1683,6 +1683,10 @@
     {
      "t": "Motion m1 (21 Nov): Seedance 2.5, 4K 3840×2160, 5 s, camera move as in the original cut, same cinematography — original file published untouched",
      "done": true
+    },
+    {
+     "t": "SH18 h1 (22 Nov): turbines grounded on desert land per client note — same camera move as m1",
+     "done": true
     }
    ],
    "versions": [
@@ -1722,6 +1726,17 @@
       "dlmeta": "59 Mbps · 37 MB",
       "meta": "5.04s · 24 fps · 3840×2160 · preview · 4K UHD badge",
       "note": "Slow truck right with parallax between the three turbines and the farm behind, blades turning — as in the original. Keyframe = the approved still (reference, not a start frame). Download = clean high-bitrate master, no watermark."
+     },
+     {
+      "v": "h1",
+      "title": "Motion · turbines on the ground · 4K",
+      "badge": "MOTION 4K",
+      "video": "motion/sh18_h1_4k_wm.mp4",
+      "poster": "motion/sh18_h1_poster.jpg",
+      "download": "master/WW_SH18_h1_4K_HQ.mp4",
+      "dlmeta": "83 Mbps · 52 MB",
+      "meta": "5.04s · 24 fps · 3840×2160 · preview · 4K UHD badge",
+      "note": "Client note: the turbines must stand on the ground, not rise out of the clouds. Same approved camera move as m1, frame for frame; the cloud bank under the farm is now solid desert land, every turbine planted on the ridge, sun setting behind it. Download = clean high-bitrate master, no watermark."
      }
     ]
    }
@@ -3242,7 +3257,7 @@
  ],
  "updated": "2026-11-21T19:40:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 47,
+ "build": 48,
  "removed": [
   {
    "id": "SH31",
