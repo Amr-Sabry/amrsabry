@@ -1797,6 +1797,10 @@
     {
      "t": "v4: wordmark now painted on, not stuck on — sits on the panel the scene itself lit, takes the same warm light as the white fuselage paint, panel keeps its natural curved edge and shadow, grain matched",
      "done": true
+    },
+    {
+     "t": "v5 (21 Nov): logo removed from underneath — belly wordmark panel painted out to plain white fuselage, Saudia emblem removed from both engines; light, grain and everything else untouched",
+     "done": true
     }
    ],
    "versions": [
@@ -1820,6 +1824,13 @@
      "full": "after/sh33_v4.jpg",
      "date": "20 Nov",
      "note": "Wordmark integrated with the light"
+    },
+    {
+     "v": "v5",
+     "image": "after/sh33_v5_m.webp",
+     "full": "after/sh33_v5.jpg",
+     "date": "21 Nov",
+     "note": "Logo removed from the belly and engines"
     }
    ],
    "refs": [
@@ -2271,9 +2282,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-21T13:05:00+04:00",
+ "updated": "2026-11-21T14:35:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 13,
+ "build": 14,
  "removed": [
   {
    "id": "SH31",
