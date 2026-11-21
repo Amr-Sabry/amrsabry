@@ -2075,6 +2075,10 @@
     {
      "t": "Motion k1 (21 Nov): Kroma keeps the reference camera move frame for frame; only the look changes",
      "done": true
+    },
+    {
+     "t": "Motion k2 (21 Nov): Kroma keeps the reference camera move frame for frame; only the look changes",
+     "done": true
     }
    ],
    "versions": [
@@ -2128,6 +2132,17 @@
       "dlmeta": "76 Mbps · 12 MB",
       "meta": "1.25s (cut length) · 24 fps · 3840×2160 · preview · 4K UHD badge",
       "note": "Exact camera move of the original cut — same angle, rotation, speed and timing (checked by motion tracking against the reference) — re-rendered in our look: lush green coffee terraces, golden low sun, long shadows down the terraces, warm flare. Download = clean high-bitrate master, no watermark."
+     },
+     {
+      "v": "k2",
+      "title": "Motion · exact reference move · 4K",
+      "badge": "MOTION 4K · REF MOVE",
+      "video": "motion/sh24_k2_4k_wm.mp4",
+      "poster": "motion/sh24_k2_poster.jpg",
+      "download": "master/WW_SH24_k2_4K_HQ.mp4",
+      "dlmeta": "76 Mbps · 12 MB",
+      "meta": "1.25s (cut length) · 24 fps · 3840×2160 · preview · 4K UHD badge",
+      "note": "Exact camera move of the original cut — same angle, rotation, speed and timing (checked by motion tracking against the reference) — re-rendered in our look: lush green coffee terraces with strong golden sun beams pouring down across the valley through soft haze, the sun flaring at the top of frame, long shadows. Download = clean high-bitrate master, no watermark."
      }
     ]
    }
@@ -2161,6 +2176,10 @@
     },
     {
      "t": "Motion k1 (21 Nov): Kroma keeps the reference camera move frame for frame; only the look changes",
+     "done": true
+    },
+    {
+     "t": "Motion m1 (21 Nov): forward glide between the palm rows into the sun beams, no people — per director note",
      "done": true
     }
    ],
@@ -2215,6 +2234,17 @@
       "dlmeta": "78 Mbps · 16 MB",
       "meta": "1.67s (cut length) · 24 fps · 3840×2160 · preview · 4K UHD badge",
       "note": "Exact camera move of the original cut — same angle, rotation, speed and timing (checked by motion tracking against the reference) — re-rendered in our look: palm plantation rows with golden sun beams through the fronds, long palm shadows, warm flare. Download = clean high-bitrate master, no watermark."
+     },
+     {
+      "v": "m1",
+      "title": "Motion · Seedance 2.5 · 4K",
+      "badge": "MOTION 4K",
+      "video": "motion/sh25_m1_4k_wm.mp4",
+      "poster": "motion/sh25_m1_poster.jpg",
+      "download": "master/WW_SH25_m1_4K_HQ.mp4",
+      "dlmeta": "79 Mbps · 50 MB",
+      "meta": "5.04s · 24 fps · 3840×2160 · preview · 4K UHD badge",
+      "note": "New move per director: the camera glides forward down the alley between endless palm rows toward the low sun, sun beams streaming between the trunks into the lens, infinity feeling, nobody in the frame. Download = clean high-bitrate master, no watermark."
      }
     ]
    }
@@ -2784,6 +2814,14 @@
     {
      "t": "Motion m2 (21 Nov): background flag put out of focus — its writing was malformed",
      "done": true
+    },
+    {
+     "t": "Motion k1 (21 Nov): Kroma keeps the reference camera move frame for frame; only the look changes",
+     "done": true
+    },
+    {
+     "t": "Flag k1 (21 Nov): the malformed flag replaced with the official Saudi flag from a web reference (Flagpedia, public domain)",
+     "done": true
     }
    ],
    "versions": [
@@ -2828,6 +2866,17 @@
       "dlmeta": "81 Mbps · 51 MB",
       "meta": "5.04s · 24 fps · 3840×2160 · preview · 4K UHD badge",
       "note": "m2: the flag behind them is now defocused like a natural shallow depth of field, so its writing can no longer be read — the approved performance and camera are untouched. Download = clean high-bitrate master, no watermark."
+     },
+     {
+      "v": "k1",
+      "title": "Motion · real Saudi flag · 4K",
+      "badge": "MOTION 4K",
+      "video": "motion/sh36_k1_4k_wm.mp4",
+      "poster": "motion/sh36_k1_poster.jpg",
+      "download": "master/WW_SH32_k1_4K_HQ.mp4",
+      "dlmeta": "79 Mbps · 50 MB",
+      "meta": "5.04s (cut length) · 24 fps · 3840×2160 · preview · 4K UHD badge",
+      "note": "Exact camera move of the original cut — same angle, rotation, speed and timing (checked by motion tracking against the reference) — re-rendered in our look: the approved celebration shot with the real official Saudi flag swapped in from a reference (correct Shahada and sword), warm golden backlight — the people and the camera untouched. Download = clean high-bitrate master, no watermark."
      }
     ]
    }
@@ -3099,9 +3148,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-21T18:45:00+04:00",
+ "updated": "2026-11-21T18:55:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 37,
+ "build": 38,
  "removed": [
   {
    "id": "SH31",
