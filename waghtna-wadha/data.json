@@ -608,6 +608,10 @@
     {
      "t": "Motion m2 (21 Nov): camera now rises bottom-to-top like the original cut (m1 did not climb) — keeps the edit rhythm",
      "done": true
+    },
+    {
+     "t": "Motion k1 (21 Nov): Kroma keeps the reference camera move frame for frame; only the look changes",
+     "done": true
     }
    ],
    "versions": [
@@ -665,6 +669,17 @@
       "dlmeta": "73 Mbps · 46 MB",
       "meta": "5.04s · 24 fps · 3840×2160 · preview · 4K UHD badge",
       "note": "Re-shot to follow the original move: the drone starts low over the pivot hub and climbs straight up (pull-up), the circle shrinking in frame — measured ×0.40 scale change over the shot. Keyframe = end frame reference. Download = clean high-bitrate master, no watermark."
+     },
+     {
+      "v": "k1",
+      "title": "Motion · exact reference move · 4K",
+      "badge": "MOTION 4K · REF MOVE",
+      "video": "motion/sh04_k1_4k_wm.mp4",
+      "poster": "motion/sh04_k1_poster.jpg",
+      "download": "master/WW_SH04_k1_4K_HQ.mp4",
+      "dlmeta": "76 Mbps · 14 MB",
+      "meta": "1.50s (cut length) · 24 fps · 3840×2160 · preview · 4K UHD badge",
+      "note": "Exact camera move of the original cut — same angle, rotation, speed and timing (checked by motion tracking against the reference) — re-rendered in our look: golden low sun from the left, long shadows of the pivot arm across the crop rings, half the circle in gold and half in green shade, warm flare. Download = clean high-bitrate master, no watermark."
      }
     ]
    }
@@ -698,6 +713,10 @@
     },
     {
      "t": "Motion m2 (21 Nov): camera now rises bottom-to-top like the original cut (m1 did not climb) — keeps the edit rhythm",
+     "done": true
+    },
+    {
+     "t": "Motion k1 (21 Nov): Kroma keeps the reference camera move frame for frame; only the look changes",
      "done": true
     }
    ],
@@ -756,6 +775,17 @@
       "dlmeta": "80 Mbps · 50 MB",
       "meta": "5.04s · 24 fps · 3840×2160 · preview · 4K UHD badge",
       "note": "Re-shot to follow the original move: starts low over the fish cages and climbs straight up, more cages and the service boat revealed — measured ×0.39 scale change. Keyframe = end frame reference. Download = clean high-bitrate master, no watermark."
+     },
+     {
+      "v": "k1",
+      "title": "Motion · exact reference move · 4K",
+      "badge": "MOTION 4K · REF MOVE",
+      "video": "motion/sh05_k1_4k_wm.mp4",
+      "poster": "motion/sh05_k1_poster.jpg",
+      "download": "master/WW_SH05_k1_4K_HQ.mp4",
+      "dlmeta": "78 Mbps · 15 MB",
+      "meta": "1.50s (cut length) · 24 fps · 3840×2160 · preview · 4K UHD badge",
+      "note": "Exact camera move of the original cut — same angle, rotation, speed and timing (checked by motion tracking against the reference) — re-rendered in our look: golden sun-glint path on the sea, cage rings rim-lit gold, deep teal water, warm flare. Download = clean high-bitrate master, no watermark."
      }
     ]
    }
@@ -892,6 +922,10 @@
     {
      "t": "Motion m1 (21 Nov): Seedance 2.5, 4K 3840×2160, 5 s, camera move as in the original cut, same cinematography; preview carries a 4K watermark, clean high-bitrate master to download",
      "done": true
+    },
+    {
+     "t": "Motion k1 (21 Nov): Kroma keeps the reference camera move frame for frame; only the look changes",
+     "done": true
     }
    ],
    "versions": [
@@ -938,6 +972,17 @@
       "dlmeta": "81 Mbps · 51 MB",
       "meta": "5.04s · 24 fps · 3840×2160 · preview · 4K UHD badge",
       "note": "Slow top-down rotation and push toward the centre of the star canopy, fabric glowing — as in the original. Keyframe = the approved still (reference, not a start frame). Download = clean high-bitrate master, no watermark."
+     },
+     {
+      "v": "k1",
+      "title": "Motion · exact reference move · 4K",
+      "badge": "MOTION 4K · REF MOVE",
+      "video": "motion/sh07_k1_4k_wm.mp4",
+      "poster": "motion/sh07_k1_poster.jpg",
+      "download": "master/WW_SH07_k1_4K_HQ.mp4",
+      "dlmeta": "77 Mbps · 17 MB",
+      "meta": "1.79s (cut length) · 24 fps · 3840×2160 · preview · 4K UHD badge",
+      "note": "Exact camera move of the original cut — same angle, rotation, speed and timing (checked by motion tracking against the reference) — re-rendered in our look: golden low sun across the star canopy, long patterned shadows, warm flare, teal shadows. Download = clean high-bitrate master, no watermark."
      }
     ]
    }
@@ -1017,7 +1062,7 @@
    "loop": "loop/sh09.mp4",
    "before": "before/sh09_m.webp",
    "beforeFull": "before/sh09.jpg",
-   "status": "wip",
+   "status": "motion",
    "notes": [
     {
      "t": "Doctor recast with Saudi features — same blue scrubs, same watch, same pose",
@@ -1033,6 +1078,10 @@
     },
     {
      "t": "v2: phone changed to champagne gold — everything else unchanged",
+     "done": true
+    },
+    {
+     "t": "Motion k1 (21 Nov): Kroma keeps the reference camera move frame for frame; only the look changes",
      "done": true
     }
    ],
@@ -1059,7 +1108,23 @@
      "src": "SH23 · this cut",
      "href": "#sh23"
     }
-   ]
+   ],
+   "animatic": {
+    "kind": "motion",
+    "versions": [
+     {
+      "v": "k1",
+      "title": "Motion · exact reference move · 4K",
+      "badge": "MOTION 4K · REF MOVE",
+      "video": "motion/sh09_k1_4k_wm.mp4",
+      "poster": "motion/sh09_k1_poster.jpg",
+      "download": "master/WW_SH09_k1_4K_HQ.mp4",
+      "dlmeta": "96 Mbps · 9 MB",
+      "meta": "0.75s (cut length) · 24 fps · 3840×2160 · preview · 4K UHD badge",
+      "note": "Exact camera move of the original cut — same angle, rotation, speed and timing (checked by motion tracking against the reference) — re-rendered in our look: the approved doctor and clinic from the keyframe, warm low window light, soft flare, teal shadows — his hand gesture on the phone kept from the original. Download = clean high-bitrate master, no watermark."
+     }
+    ]
+   }
   },
   {
    "id": "SH10",
@@ -2888,9 +2953,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-21T17:52:00+04:00",
+ "updated": "2026-11-21T18:00:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 30,
+ "build": 31,
  "removed": [
   {
    "id": "SH31",
