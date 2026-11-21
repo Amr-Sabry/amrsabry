@@ -216,6 +216,14 @@
      "done": true
     },
     {
+     "t": "v4 (21 Nov): camera framing by project type — train: lead it looking back at the nose; buildings: close, filling the frame; silos→solar: rise-over reveal; CST: finale at the end of the line",
+     "done": true
+    },
+    {
+     "t": "v4 order for the presentation: Haramain → KFSH → PNU → Silos → Solar & wind → CST tower",
+     "done": true
+    },
+    {
      "t": "Next: lock camera + layout with the director, then render the final shot over the blocking",
      "done": false
     }
@@ -241,6 +249,13 @@
      "full": "after/sh03_blk_v3.jpg",
      "date": "20 Nov",
      "note": "Blocking v3 — Talgo alongside, CST tower ahead"
+    },
+    {
+     "v": "v4",
+     "image": "after/sh03_blk_v4_m.webp",
+     "full": "after/sh03_blk_v4.jpg",
+     "date": "21 Nov",
+     "note": "Blocking v4 — university framed big"
     }
    ],
    "animatic": {
@@ -322,7 +337,6 @@
       "video": "anim/sh03_blocking_v3.mp4",
       "poster": "anim/sh03_blocking_v3_poster.jpg",
       "meta": "8.08s · 25 fps · 55° lens · ~50 m/s",
-      "link": "/waghtna-wadha-sh03-3d.html",
       "chapters": [
        {
         "t": 0,
@@ -349,7 +363,43 @@
         "label": "Grain silos"
        }
       ],
-      "note": "v3: the six projects regrouped into one compact district along a single 400 m boulevard (v2 covered 1.6 km in 8 s). Projects alternate sides and sit ahead of the camera so it sees them without whipping round: hospital left, university right, the Talgo pulls out of the station and runs alongside on the viaduct, CST tower right with the skyline behind, solar & turbines left, then the camera rises over the line toward the silos. Steady ~50 m/s, look turns capped (avg 17°/s), bank ≤ 8°, calmer 55° lens."
+      "note": "v3: the six projects regrouped into one compact district along a single 400 m boulevard (v2 covered 1.6 km in 8 s). Projects alternate sides and sit ahead of the camera so it sees them without whipping round: hospital left, university right, the Talgo pulls out of the station and runs alongside on the viaduct, CST tower right with the skyline behind, solar & turbines left, then the camera rises over the line toward the silos. Steady ~50 m/s, look turns capped (avg 17°/s), bank ≤ 8°, calmer 55° lens. — superseded by v4 (projects too small, at the frame edges)."
+     },
+     {
+      "v": "v4",
+      "title": "3D blocking v4 · each project framed for what it is",
+      "badge": "3D BLOCKING",
+      "video": "anim/sh03_blocking_v4.mp4",
+      "poster": "anim/sh03_blocking_v4_poster.jpg",
+      "meta": "8.08s · 25 fps · 55° lens · keyframed camera + target",
+      "link": "/waghtna-wadha-sh03-3d.html",
+      "chapters": [
+       {
+        "t": 0,
+        "label": "Haramain High-Speed Railway"
+       },
+       {
+        "t": 1.6,
+        "label": "King Faisal Specialist Hospital"
+       },
+       {
+        "t": 3.25,
+        "label": "Princess Nourah University"
+       },
+       {
+        "t": 4.6,
+        "label": "Grain silos"
+       },
+       {
+        "t": 5.75,
+        "label": "Solar & wind"
+       },
+       {
+        "t": 6.75,
+        "label": "CST Commission HQ"
+       }
+      ],
+      "note": "v4: camera keyframed on each project instead of a straight pass. Train: we fly ahead of the Talgo looking back at the nose, it catches up and passes, we lift over the line behind it. Buildings: camera holds on each one close so it fills the frame — hospital, then the university's arcade and dome. Silos: close pass along the row, then the camera rises over them to reveal the solar field and the turbines behind. Finale: the CST tower stands at the end of the railway line, centred with its spire as the train arrives. The look sweeps one way (back → left → forward) so there's no back-and-forth whip."
      }
     ]
    },
@@ -2293,9 +2343,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-21T14:40:00+04:00",
+ "updated": "2026-11-21T14:50:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 15,
+ "build": 16,
  "removed": [
   {
    "id": "SH31",

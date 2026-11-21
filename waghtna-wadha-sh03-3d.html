@@ -241,7 +241,7 @@ function buildPeople() {
 }
 
 /* ================= 01 · King Faisal Specialist Hospital ================= */
-proj('KFSH', .7, 0, 0, -62, 0, -90, () => {
+proj('KFSH', .55, -0.35, 0, 12, 60, -75, () => {
   const Z = -62;
   flat(300, 200, std({ map: rep(T.urbanGround, 4, 3), roughness: 1 }), 0, .02, -40);
   tbox(132, 27, 24, 0, 0, Z, { front: T.kfsh, tw: 3.6, th: 4.5 });
@@ -268,7 +268,7 @@ proj('KFSH', .7, 0, 0, -62, 0, -90, () => {
 });
 
 /* ================= 02 · Princess Nourah University ================= */
-proj('PNU', .6, -Math.PI / 2, 236, -20, 150, 115, () => {
+proj('PNU', .55, 1.266, 179, -20, 150, -70, () => {
   const CX = 236, CZ = -20, R = 50, W = 14, H = 15;
   flat(300, 260, std({ map: rep(T.urbanGround, 4, 3), roughness: 1 }), 290, .02, -20);
   add(new THREE.CylinderGeometry(R + W, R + W, H, 96, 1, true, Math.PI, Math.PI), std({ map: rep(T.arcade, 26, 1) }), CX, H / 2, CZ);
@@ -294,9 +294,9 @@ proj('PNU', .6, -Math.PI / 2, 236, -20, 150, 115, () => {
 
 /* ================= 03 · Haramain High-Speed Railway ================= */
 const TRAIN = new THREE.Group(); TARGET.add(TRAIN);
-const TZ = -10, DECK = 8.5;
+const TZ = 0, DECK = 8.5;
 (() => {
-  const X0 = -420, X1 = 820, L = X1 - X0;
+  const X0 = -420, X1 = 392, L = X1 - X0;
   box(L, 1.8, 13, M.conc, (X0 + X1) / 2, DECK - 1.8, TZ);
   for (const dz of [-6.3, 6.3]) box(L, 1.1, .4, M.conc, (X0 + X1) / 2, DECK, TZ + dz);
   for (let x = X0 + 10; x < X1; x += 32) { add(new THREE.CylinderGeometry(1.6, 2, DECK - 1.8, 16), M.conc, x, (DECK - 1.8) / 2, TZ); box(5, 1.2, 9, M.conc, x, DECK - 3, TZ); }
@@ -304,8 +304,8 @@ const TZ = -10, DECK = 8.5;
   for (let x = X0; x < X1; x += 48) { cyl(.25, 9, M.steel, x, DECK, TZ - 6.2, 8); box(.25, .25, 8, M.steel, x, DECK + 8.4, TZ - 2.4); }
   for (const dz of [-2.4, 2.4]) { const w = new THREE.Mesh(new THREE.BoxGeometry(L, .05, .05), M.dark); w.position.set((X0 + X1) / 2, DECK + 8, TZ + dz); TARGET.add(w); }
   const vmat = std({ map: rep(T.latticeAlpha, 3, 2), alphaTest: .5, side: THREE.DoubleSide, color: 0xe4ded2, roughness: .6 });
-  for (let i = 0; i < 6; i++) { const v = new THREE.Mesh(new THREE.CylinderGeometry(9, 9, 46, 32, 1, true, -Math.PI / 2, Math.PI), vmat); v.rotation.x = Math.PI / 2; v.position.set(-142 + i * 16, DECK + 10, TZ); v.castShadow = true; TARGET.add(v); }
-  for (let i = 0; i <= 6; i++) for (const dz of [-22, 22]) cyl(.7, DECK + 10, M.white, -150 + i * 16, 0, TZ + dz, 10);
+  for (let i = 0; i < 6; i++) { const v = new THREE.Mesh(new THREE.CylinderGeometry(9, 9, 46, 32, 1, true, -Math.PI / 2, Math.PI), vmat); v.rotation.x = Math.PI / 2; v.position.set(-236 + i * 16, DECK + 10, TZ); v.castShadow = true; TARGET.add(v); }
+  for (let i = 0; i <= 6; i++) for (const dz of [-22, 22]) cyl(.7, DECK + 10, M.white, -244 + i * 16, 0, TZ + dz, 10);
 })();
 // Talgo 350 SRO: long duck-bill nose, wrap-around dark visor, white body, green & gold swooshes
 function talgoHead(dir) {
@@ -341,7 +341,7 @@ function talgoHead(dir) {
 let trainX = t => 0;   // set once the camera path exists: nose passes the camera ~t=3.0
 
 /* ================= 04 · Communications, Space & Technology Commission ================= */
-proj('CST', .7, Math.PI, 526, -6, 300, 165, () => {
+proj('CST', .65, -1.45, 526, -6, 440, -40, () => {
   const X = 526, Z = -6;
   flat(360, 240, std({ map: rep(T.urbanGround, 5, 3), roughness: 1 }), X - 30, .02, Z - 10);
   tbox(104, 11, 64, X - 6, 0, Z - 4, { front: T.glassDark, side: T.sand, tw: 4, th: 5.5 });
@@ -351,7 +351,7 @@ proj('CST', .7, Math.PI, 526, -6, 300, 165, () => {
   add(new THREE.CylinderGeometry(7, 7.4, 118, 40), std({ map: rep(T.core, 2, 6), roughness: .3, metalness: .6 }), X, 11 + 59, Z);
   for (const s of [-1, 1]) {
     const pv = new THREE.Group(); pv.position.set(X + s * 14.5, 11, Z); pv.rotation.z = -s * .075; TARGET.add(pv);
-    const gl = new THREE.Mesh(new THREE.BoxGeometry(17, 100, 22), std({ map: rep(T.cstGlass, 1, 4), color: 0xb8c8d8, roughness: .3, metalness: .25, envMapIntensity: 1.6 }));
+    const gl = new THREE.Mesh(new THREE.BoxGeometry(17, 100, 22), std({ map: rep(T.cstGlass, 1, 4), color: 0xb8c8d8, roughness: .3, metalness: .25, envMapIntensity: 1.6, emissive: 0x24303c }));
     gl.position.set(s * 2, 50, 0); gl.castShadow = gl.receiveShadow = true; pv.add(gl);
     const fin = new THREE.Mesh(new THREE.BoxGeometry(3, 100, 23), M.steel); fin.position.set(-s * 7.5, 50, 0); fin.castShadow = true; pv.add(fin);
     const cap = new THREE.Mesh(new THREE.BoxGeometry(28, 1.6, 30), M.steel); cap.position.set(s * 6, 101.5, 0); cap.rotation.z = -s * .22; cap.castShadow = true; pv.add(cap);
@@ -366,7 +366,7 @@ proj('CST', .7, Math.PI, 526, -6, 300, 165, () => {
 });
 /* Riyadh skyline behind the tower: Kingdom Centre + Al Faisaliah + towers */
 (() => {
-  const X = 300, Z = 820, mat = std({ color: 0x8c9aa6, roughness: .35, metalness: .5 });
+  const X = 1150, Z = -300, mat = std({ color: 0x8c9aa6, roughness: .35, metalness: .5 });
   const s = new THREE.Shape(); s.moveTo(-28, 0); s.lineTo(28, 0); s.quadraticCurveTo(26, 200, 6, 302); s.lineTo(-6, 302); s.quadraticCurveTo(-26, 200, -28, 0);
   const hole = new THREE.Path(); hole.moveTo(-14, 232); hole.quadraticCurveTo(0, 168, 14, 232); hole.quadraticCurveTo(10, 280, 4, 296); hole.lineTo(-4, 296); hole.quadraticCurveTo(-10, 280, -14, 232); s.holes.push(hole);
   const kg = new THREE.ExtrudeGeometry(s, { depth: 34, bevelEnabled: false }); kg.translate(0, 0, -17); add(kg, mat, X, 0, Z).rotation.y = .5;
@@ -378,9 +378,9 @@ proj('CST', .7, Math.PI, 526, -6, 300, 165, () => {
 
 /* ================= 05 · Solar + wind ================= */
 const BLADES = [];
-proj('SOLAR', .7, 0, 750, -55, 360, -140, () => {
+proj('SOLAR', .55, 0, 750, -55, 290, -172, () => {
   const rows = 26, cols = 30, n = rows * cols;
-  const inst = new THREE.InstancedMesh(new THREE.BoxGeometry(6.4, .12, 3.4), std({ map: rep(T.panel, 4, 2), roughness: .15, metalness: .4, envMapIntensity: 1.8 }), n);
+  const inst = new THREE.InstancedMesh(new THREE.BoxGeometry(6.4, .12, 3.4), std({ map: rep(T.panel, 4, 2), color: 0x9fb8d6, roughness: .2, metalness: .35, envMapIntensity: 2.2, emissive: 0x0c1a2a }), n);
   let k = 0;
   for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) { _o.position.set(640 + c * 7.2 + (c > 14 ? 6 : 0), 1.9, 40 - r * 7 - (r > 12 ? 6 : 0)); _o.rotation.set(-.45, 0, 0); _o.scale.set(1, 1, 1); _o.updateMatrix(); inst.setMatrixAt(k++, _o.matrix); }
   inst.castShadow = inst.receiveShadow = true; TARGET.add(inst);
@@ -398,7 +398,7 @@ proj('SOLAR', .7, 0, 750, -55, 360, -140, () => {
 });
 
 /* ================= 06 · Grain silos ================= */
-proj('SILOS', .8, 0, 1014, -42, 520, -60, () => {
+proj('SILOS', .6, Math.PI, 1014, -42, 250, -75, () => {
   const Z = -42, X0 = 922, N = 15, P = 13.2, Hs = 54;
   flat(320, 160, std({ map: rep(T.urbanGround, 4, 2), roughness: 1 }), 1000, .02, -30);
   tbox(22, 74, 22, 900, 0, Z, { front: T.siloTower, side: T.siloTower, tw: 5.5, th: 6 });
@@ -413,26 +413,49 @@ proj('SILOS', .8, 0, 1014, -42, 520, -60, () => {
   for (let i = 0; i < 6; i++) box(2.5, 3, 10, M.white, 860 + i * 12, 0, Z + 32);
 });
 
-/* ================= camera route (defined before the city so streets keep clear of it) ================= */
+/* ================= camera: keyframed every 0.5 s — position + what it looks at (time-uniform Catmull-Rom) ================= */
 const V = (x, y, z) => new THREE.Vector3(x, y, z);
-// one calm ~400 m pass: drift toward the hospital, settle onto the boulevard, ride beside the railway, rise over the station toward the silos
-const WP = [V(-62, 38, 58), V(-24, 33, 41), V(16, 30, 29), V(70, 28, 20), V(125, 26, 17), V(180, 28, 15), V(234, 32, 12), V(288, 38, 6), V(342, 46, -4)];
-const curve = new THREE.CatmullRomCurve3(WP, false, 'centripetal');
-const ease = u => u - .05 * Math.sin(2 * Math.PI * u) / (2 * Math.PI);          // near-constant speed, a touch slower at both ends
-const sAt = t => ease(Math.min(Math.max(t / DUR, 0), 1));
-const posAt = t => curve.getPointAt(sAt(t));
-const tanAt = t => curve.getTangentAt(Math.min(Math.max(sAt(t), 0), 1));
-{ const TXP = curve.getPointAt(sAt(1.7)).x; trainX = t => TXP + 75 * (t - 1.7); }   // pulls out of the station, passes the camera ~1.7 s, leads the frame through the railway chapter
+trainX = t => -60 + 55 * t;                                  // nose leaves the station at t=0
+// order for the presentation: train lead → hospital → university → solar & wind → silos → CST tower finale (rising to the spire)
+const KF = [
+  [-0.5, [-60, 14, 15], [-87.5, 10, 0]],
+  [0.0, [-44, 14, 15], [-60, 10, 0]],        // ahead of the Talgo, looking back at the nose
+  [0.5, [-28, 14.5, 15], [-32.5, 10, 0]],
+  [1.0, [-12, 16, 14], [-5, 10, 0]],          // nose draws level and passes
+  [1.5, [5, 20, 8], [40, 9, -30]],            // lift over the line behind the nose
+  [2.0, [24, 25, -4], [55, 10, -70]],         // King Faisal Specialist Hospital
+  [2.5, [46, 26, -14], [62, 10, -78]],
+  [3.0, [70, 26, -18], [80, 10, -82]],
+  [3.5, [95, 26, -20], [140, 10, -72]],       // Princess Nourah University
+  [4.0, [121, 26, -20], [150, 9, -82]],
+  [4.5, [148, 26, -22], [178, 14, -82]],
+  [5.0, [174, 31, -26], [232, 18, -75]],      // grain silos
+  [5.5, [200, 46, -32], [262, 16, -78]],
+  [6.0, [226, 64, -40], [292, 2, -168]],      // rise over the silos: solar field behind, turbines on the ridge
+  [6.5, [256, 78, -42], [372, 22, -160]],     // drift from the field toward the tower ahead
+  [7.0, [284, 82, -40], [440, 46, -40]],      // CST tower at the end of the line — rise toward the spire
+  [7.5, [312, 84, -37], [440, 66, -40]],
+  [8.0, [338, 88, -35], [440, 88, -40]],
+  [8.5, [362, 94, -34], [440, 106, -40]],
+];
+const camCurve = new THREE.CatmullRomCurve3(KF.map(k => V(...k[1])), false, 'catmullrom', .5);
+const tgtCurve = new THREE.CatmullRomCurve3(KF.map(k => V(...k[2])), false, 'catmullrom', .5);
+const KT0 = KF[0][0], KT1 = KF[KF.length - 1][0];
+const uOf = t => (Math.min(Math.max(t, KT0), KT1) - KT0) / (KT1 - KT0);
+const posAt = t => camCurve.getPoint(uOf(t));
+const tgtAt = t => tgtCurve.getPoint(uOf(t));
+const tanAt = t => posAt(t + .05).sub(posAt(t - .05)).normalize();
+const curve = { getPointAt: u => posAt(u * DUR) };
 
 /* ================= city fabric, roads, mountains ================= */
 scene.updateMatrixWorld(true);
 const EXB = PROJ.map(([, g]) => { const b = new THREE.Box3(); g.traverse(o => { if (o.isMesh && o.geometry.type !== 'PlaneGeometry') b.expandByObject(o); }); return [b.min.x, b.max.x, b.min.z, b.max.z]; });
 const EXG = PROJ.map(([, g]) => { const b = new THREE.Box3().setFromObject(g); return [b.min.x, b.max.x, b.min.z, b.max.z]; });
-EXB.push([-420, 820, TZ - 8, TZ + 8]); EXG.push([-420, 820, TZ - 14, TZ + 14], [150, 700, -82, -14]);
+EXB.push([-420, 820, TZ - 8, TZ + 8]); EXG.push([-420, 820, TZ - 14, TZ + 14], [-60, 600, -72, -14]);
 const inBox = (L, x, z, m = 0) => L.some(([a, b, c, d]) => x > a - m && x < b + m && z > c - m && z < d + m);
 const RS = []; for (let i = 0; i <= 160; i++) { const q = curve.getPointAt(i / 160); RS.push([q.x, q.z]); }
 const nearRoute = (x, z, r) => RS.some(([a, b]) => (x - a) ** 2 + (z - b) ** 2 < r * r);
-const AV = 34, XS_ = [-200, 200], XN_ = [40, 450];
+const AV = 34, XS_ = [-200, -110], XN_ = [60, 260, 450];
 (() => {
   road(-340, AV, 900, AV, 16);
   for (const x of XS_) road(x, -240, x, AV);
@@ -458,27 +481,12 @@ const AV = 34, XS_ = [-200, 200], XN_ = [40, 450];
 })();
 buildPalms(); buildCars(); buildPeople();
 
-/* ================= FPV camera: calm — forward-led look, gentle drift to each project, small bank ================= */
+/* ================= look ================= */
 let TIME = 0;
-const CH = [0, 1.38, 2.82, 4.18, 5.38, 6.72];
-const SUBJ = [                              // [point, how much the look leans toward it]
-  [() => V(0, 12, -84), .45],
-  [() => V(150, 8, 100), .42],
-  [() => V(trainX(Math.min(Math.max(TIME, 2.4), 4.2)) + 10, DECK + 3, TZ), .35],
-  [() => V(300, 70, 165), .45],
-  [() => V(360, 6, -140), .42],
-  [() => V(520, 24, -60), .5],
-];
-const sstep = (a, b, x) => { const u = Math.min(Math.max((x - a) / (b - a), 0), 1); return u * u * (3 - 2 * u); };
-function lookDir(t) {
-  TIME = t; const p = posAt(t), f = tanAt(t);
-  let d = SUBJ[0][0]().sub(p).normalize(), w = SUBJ[0][1];
-  for (let i = 1; i < SUBJ.length; i++) { const k = sstep(CH[i] - .85, CH[i] + .85, t); if (k <= 0) continue; d.lerp(SUBJ[i][0]().sub(p).normalize(), k).normalize(); w += (SUBJ[i][1] - w) * k; }
-  return f.multiplyScalar(1 - w).add(d.multiplyScalar(w)).normalize();
-}
-function smoothLook(t) { const T0 = TIME, d = new THREE.Vector3(); for (const [o, w] of [[-.45, .04], [-.3, .08], [-.15, .16], [0, .24], [.15, .24], [.3, .16], [.45, .08]]) d.addScaledVector(lookDir(t + o), w); TIME = T0; return d.normalize(); }
-function yawRate(t) { const a = tanAt(t - .15), b = tanAt(t + .15); let d = Math.atan2(b.x, b.z) - Math.atan2(a.x, a.z); if (d > Math.PI) d -= 2 * Math.PI; if (d < -Math.PI) d += 2 * Math.PI; return d / .3; }
-function rollAt(t) { let r = 0; for (const [o, w] of [[-.2, .25], [0, .5], [.2, .25]]) r += w * yawRate(t + o); return THREE.MathUtils.clamp(-r * 9, -8, 8); }
+const lookDir = t => tgtAt(t).sub(posAt(t)).normalize();
+function smoothLook(t) { const d = new THREE.Vector3(); for (const [o, w] of [[-.2, .15], [-.1, .2], [0, .3], [.1, .2], [.2, .15]]) d.addScaledVector(lookDir(t + o), w); return d.normalize(); }
+function yawRate(t) { const a = smoothLook(t - .1), b = smoothLook(t + .1); let d = Math.atan2(b.x, b.z) - Math.atan2(a.x, a.z); if (d > Math.PI) d -= 2 * Math.PI; if (d < -Math.PI) d += 2 * Math.PI; return d / .2; }
+function rollAt(t) { return THREE.MathUtils.clamp(-yawRate(t) * 5, -6, 6); }
 
 /* ================= place / render ================= */
 let mode = 'fpv';
@@ -507,19 +515,20 @@ window.WW = { renderAt(t) { place(t); renderer.render(scene, camera); return tru
 if (Q.has('plan')) {
   const pts = []; for (let i = 0; i <= 240; i++) { const q = posAt(i / 240 * DUR); pts.push(V(q.x, 160, q.z)); }
   scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: 0xff2a1a })));
-  CH.forEach(c => { const q = posAt(c), m = new THREE.Mesh(new THREE.SphereGeometry(5, 12, 8), new THREE.MeshBasicMaterial({ color: 0x00d8ff })); m.position.set(q.x, 160, q.z); scene.add(m); });
+  [0, 1.6, 3.25, 4.6, 5.75, 6.75].forEach(c => { const q = posAt(c), m = new THREE.Mesh(new THREE.SphereGeometry(5, 12, 8), new THREE.MeshBasicMaterial({ color: 0x00d8ff })); m.position.set(q.x, 160, q.z); scene.add(m); });
   const oc = new THREE.OrthographicCamera(-520, 520, 292.5, -292.5, 1, 4000); oc.position.set(200, 2000, -40); oc.up.set(0, 0, -1); oc.lookAt(200, 0, -40);
   window.WW.renderPlan = t => { place(t); scene.fog = null; sky.visible = false; renderer.render(scene, oc); return true; };
 }
 
 const ZONES = [
-  [0, 'King Faisal Specialist Hospital', 'Health sector', V(0, 12, -84), 'KFSH'],
-  [1.38, 'Princess Nourah University', 'Education', V(150, 10, 108), 'PNU'],
-  [2.82, 'Haramain High-Speed Railway', 'Transport', V(120, 10, TZ), 'Haramain'],
-  [4.18, 'Communications, Space & Technology Commission', 'Communications · Space · Technology', V(300, 60, 165), 'CST'],
-  [5.38, 'Solar & wind', 'Renewable energy', V(360, 12, -150), 'Solar & wind'],
-  [6.72, 'Grain silos', 'Food security', V(520, 25, -60), 'Silos'],
+  [0, 'Haramain High-Speed Railway', 'Transport', V(0, 10, TZ), 'Haramain'],
+  [1.6, 'King Faisal Specialist Hospital', 'Health sector', V(62, 10, -82), 'KFSH'],
+  [3.25, 'Princess Nourah University', 'Education', V(160, 8, -88), 'PNU'],
+  [4.6, 'Grain silos', 'Food security', V(250, 20, -75), 'Silos'],
+  [5.75, 'Solar & wind', 'Renewable energy', V(290, 8, -175), 'Solar & wind'],
+  [6.75, 'Communications, Space & Technology Commission', 'Communications · Space · Technology', V(440, 55, -40), 'CST'],
 ];
+const CH = ZONES.map(z => z[0]);
 const zoneAt = t => { let z = 0; ZONES.forEach((q, i) => { if (t >= q[0]) z = i; }); return z; };
 if (!CAPTURE) {
   const $ = s => document.querySelector(s);
