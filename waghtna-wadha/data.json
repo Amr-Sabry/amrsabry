@@ -472,7 +472,7 @@
    "loop": "loop/sh04.mp4",
    "before": "before/sh04_m.webp",
    "beforeFull": "before/sh04.jpg",
-   "status": "wip",
+   "status": "motion",
    "notes": [
     {
      "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
@@ -480,6 +480,10 @@
     },
     {
      "t": "Sun low from the left — pivot arm and hub throw long shadows across the crop",
+     "done": true
+    },
+    {
+     "t": "Motion m1 (21 Nov): Seedance 2.5, 4K 3840×2160, 5 s, camera move as in the original cut, same cinematography; preview carries a 4K watermark, clean high-bitrate master to download",
      "done": true
     }
    ],
@@ -513,7 +517,23 @@
      "src": "Mood board · Pinterest",
      "href": "https://www.pinterest.com/amrsabry/sunny/"
     }
-   ]
+   ],
+   "animatic": {
+    "kind": "motion",
+    "versions": [
+     {
+      "v": "m1",
+      "title": "Motion · Seedance 2.5 · 4K",
+      "badge": "MOTION 4K",
+      "video": "motion/sh04_m1_4k_wm.mp4",
+      "poster": "motion/sh04_m1_poster.jpg",
+      "download": "master/WW_SH04_m1_4K_HQ.mp4",
+      "dlmeta": "78 Mbps · 49 MB",
+      "meta": "5.04s · 24 fps · 3840×2160 · preview watermarked",
+      "note": "Slow top-down drift with a gentle rotation over the pivot circle, the arm creeping with water mist — as in the original. Keyframe = the approved still (reference, not a start frame). Download = clean high-bitrate master, no watermark."
+     }
+    ]
+   }
   },
   {
    "id": "SH05",
@@ -528,7 +548,7 @@
    "loop": "loop/sh05.mp4",
    "before": "before/sh05_m.webp",
    "beforeFull": "before/sh05.jpg",
-   "status": "wip",
+   "status": "motion",
    "notes": [
     {
      "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
@@ -536,6 +556,10 @@
     },
     {
      "t": "Golden sun-glint path across the sea, cage rings rim-lit with shadows on the water",
+     "done": true
+    },
+    {
+     "t": "Motion m1 (21 Nov): Seedance 2.5, 4K 3840×2160, 5 s, camera move as in the original cut, same cinematography; preview carries a 4K watermark, clean high-bitrate master to download",
      "done": true
     }
    ],
@@ -569,7 +593,23 @@
      "src": "Mood board · Pinterest",
      "href": "https://www.pinterest.com/amrsabry/sunny/"
     }
-   ]
+   ],
+   "animatic": {
+    "kind": "motion",
+    "versions": [
+     {
+      "v": "m1",
+      "title": "Motion · Seedance 2.5 · 4K",
+      "badge": "MOTION 4K",
+      "video": "motion/sh05_m1_4k_wm.mp4",
+      "poster": "motion/sh05_m1_poster.jpg",
+      "download": "master/WW_SH05_m1_4K_HQ.mp4",
+      "dlmeta": "76 Mbps · 48 MB",
+      "meta": "5.04s · 24 fps · 3840×2160 · preview watermarked",
+      "note": "Slow top-down truck across the cages, swell and sun-glint moving on the water — as in the original. Keyframe = the approved still (reference, not a start frame). Download = clean high-bitrate master, no watermark."
+     }
+    ]
+   }
   },
   {
    "id": "SH06",
@@ -584,7 +624,7 @@
    "loop": "loop/sh06.mp4",
    "before": "before/sh06_m.webp",
    "beforeFull": "before/sh06.jpg",
-   "status": "wip",
+   "status": "motion",
    "notes": [
     {
      "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
@@ -592,6 +632,10 @@
     },
     {
      "t": "Sun low from the left — overpasses, trees and cars throw long shadows, flare from top-left",
+     "done": true
+    },
+    {
+     "t": "Motion m1 (21 Nov): Seedance 2.5, 4K 3840×2160, 5 s, camera move as in the original cut, same cinematography; preview carries a 4K watermark, clean high-bitrate master to download",
      "done": true
     }
    ],
@@ -625,7 +669,23 @@
      "src": "Mood board · Pinterest",
      "href": "https://www.pinterest.com/amrsabry/sunny/"
     }
-   ]
+   ],
+   "animatic": {
+    "kind": "motion",
+    "versions": [
+     {
+      "v": "m1",
+      "title": "Motion · Seedance 2.5 · 4K",
+      "badge": "MOTION 4K",
+      "video": "motion/sh06_m1_4k_wm.mp4",
+      "poster": "motion/sh06_m1_poster.jpg",
+      "download": "master/WW_SH06_m1_4K_HQ.mp4",
+      "dlmeta": "78 Mbps · 49 MB",
+      "meta": "5.04s · 24 fps · 3840×2160 · preview watermarked",
+      "note": "Slow top-down rotation over the interchange with traffic flowing on every ramp — as in the original. Keyframe = the approved still (reference, not a start frame). Download = clean high-bitrate master, no watermark."
+     }
+    ]
+   }
   },
   {
    "id": "SH07",
@@ -640,7 +700,7 @@
    "loop": "loop/sh07.mp4",
    "before": "before/sh07_m.webp",
    "beforeFull": "before/sh07.jpg",
-   "status": "wip",
+   "status": "motion",
    "notes": [
     {
      "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
@@ -648,6 +708,10 @@
     },
     {
      "t": "Low sun rakes across the canopies — fabric glows amber, masts cast long shadows over the plaza",
+     "done": true
+    },
+    {
+     "t": "Motion m1 (21 Nov): Seedance 2.5, 4K 3840×2160, 5 s, camera move as in the original cut, same cinematography; preview carries a 4K watermark, clean high-bitrate master to download",
      "done": true
     }
    ],
@@ -681,7 +745,23 @@
      "src": "Mood board · Pinterest",
      "href": "https://www.pinterest.com/amrsabry/sunny/"
     }
-   ]
+   ],
+   "animatic": {
+    "kind": "motion",
+    "versions": [
+     {
+      "v": "m1",
+      "title": "Motion · Seedance 2.5 · 4K",
+      "badge": "MOTION 4K",
+      "video": "motion/sh07_m1_4k_wm.mp4",
+      "poster": "motion/sh07_m1_poster.jpg",
+      "download": "master/WW_SH07_m1_4K_HQ.mp4",
+      "dlmeta": "81 Mbps · 51 MB",
+      "meta": "5.04s · 24 fps · 3840×2160 · preview watermarked",
+      "note": "Slow top-down rotation and push toward the centre of the star canopy, fabric glowing — as in the original. Keyframe = the approved still (reference, not a start frame). Download = clean high-bitrate master, no watermark."
+     }
+    ]
+   }
   },
   {
    "id": "SH08",
@@ -1047,18 +1127,20 @@
     }
    ],
    "animatic": {
+    "kind": "motion",
     "versions": [
      {
       "v": "m1",
       "title": "Motion · Seedance 2.5 · 4K",
       "badge": "MOTION 4K",
-      "video": "motion/sh16_m1_4k.mp4",
+      "video": "motion/sh16_m1_4k_wm.mp4",
       "poster": "motion/sh16_m1_poster.jpg",
-      "meta": "5.04s · 24 fps · 3840×2160 · H.264 original (untouched)",
-      "note": "Slow handheld push-in toward her profile, as in the original; flare drifts across the lens, tail fin kept outside the window. Keyframe = the approved still (as reference, not a start frame)."
+      "download": "master/WW_SH16_m1_4K_HQ.mp4",
+      "dlmeta": "55 Mbps · 35 MB",
+      "meta": "5.04s · 24 fps · 3840×2160 · preview watermarked",
+      "note": "Slow handheld push-in toward her profile, flare drifting across the lens, tail fin kept — as in the original. Keyframe = the approved still (reference, not a start frame). Download = clean high-bitrate master, no watermark."
      }
-    ],
-    "kind": "motion"
+    ]
    }
   },
   {
@@ -1114,18 +1196,20 @@
     }
    ],
    "animatic": {
+    "kind": "motion",
     "versions": [
      {
       "v": "m1",
       "title": "Motion · Seedance 2.5 · 4K",
       "badge": "MOTION 4K",
-      "video": "motion/sh17_m1_4k.mp4",
+      "video": "motion/sh17_m1_4k_wm.mp4",
       "poster": "motion/sh17_m1_poster.jpg",
-      "meta": "5.04s · 24 fps · 3840×2160 · H.264 original (untouched)",
-      "note": "Slow drift toward the window over her shoulder, the island sliding across as the plane banks, as in the original. Keyframe = the approved still (as reference, not a start frame)."
+      "download": "master/WW_SH17_m1_4K_HQ.mp4",
+      "dlmeta": "81 Mbps · 51 MB",
+      "meta": "5.04s · 24 fps · 3840×2160 · preview watermarked",
+      "note": "Slow drift toward the window over her shoulder, the island sliding across as the plane banks — as in the original. Keyframe = the approved still (reference, not a start frame). Download = clean high-bitrate master, no watermark."
      }
-    ],
-    "kind": "motion"
+    ]
    }
   },
   {
@@ -1181,18 +1265,20 @@
     }
    ],
    "animatic": {
+    "kind": "motion",
     "versions": [
      {
       "v": "m1",
       "title": "Motion · Seedance 2.5 · 4K",
       "badge": "MOTION 4K",
-      "video": "motion/sh18_m1_4k.mp4",
+      "video": "motion/sh18_m1_4k_wm.mp4",
       "poster": "motion/sh18_m1_poster.jpg",
-      "meta": "5.04s · 24 fps · 3840×2160 · H.264 original (untouched)",
-      "note": "Slow truck right with parallax between the three turbines and the farm behind, blades turning, sun on the cloud bank. Keyframe = the approved still (as reference, not a start frame)."
+      "download": "master/WW_SH18_m1_4K_HQ.mp4",
+      "dlmeta": "59 Mbps · 37 MB",
+      "meta": "5.04s · 24 fps · 3840×2160 · preview watermarked",
+      "note": "Slow truck right with parallax between the three turbines and the farm behind, blades turning — as in the original. Keyframe = the approved still (reference, not a start frame). Download = clean high-bitrate master, no watermark."
      }
-    ],
-    "kind": "motion"
+    ]
    }
   },
   {
@@ -1255,18 +1341,20 @@
     }
    ],
    "animatic": {
+    "kind": "motion",
     "versions": [
      {
       "v": "m1",
       "title": "Motion · Seedance 2.5 · 4K",
       "badge": "MOTION 4K",
-      "video": "motion/sh19_m1_4k.mp4",
+      "video": "motion/sh19_m1_4k_wm.mp4",
       "poster": "motion/sh19_m1_poster.jpg",
-      "meta": "5.04s · 24 fps · 3840×2160 · H.264 original (untouched)",
-      "note": "Lateral dolly with the foreground tree sliding across and revealing the canopy peaks, flare shifting across the lens. Keyframe = the approved still (as reference, not a start frame)."
+      "download": "master/WW_SH19_m1_4K_HQ.mp4",
+      "dlmeta": "75 Mbps · 47 MB",
+      "meta": "5.04s · 24 fps · 3840×2160 · preview watermarked",
+      "note": "Lateral dolly with the foreground tree sliding across and revealing the canopy peaks — as in the original. Keyframe = the approved still (reference, not a start frame). Download = clean high-bitrate master, no watermark."
      }
-    ],
-    "kind": "motion"
+    ]
    }
   },
   {
@@ -2426,9 +2514,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-21T15:20:00+04:00",
+ "updated": "2026-11-21T15:55:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 19,
+ "build": 20,
  "removed": [
   {
    "id": "SH31",

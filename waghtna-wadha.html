@@ -237,6 +237,10 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .anim.motion{margin:2px 16px 18px;padding:16px;border:1px solid rgba(185,162,255,.6);background:linear-gradient(180deg,rgba(185,162,255,.11),rgba(255,255,255,.015));box-shadow:0 0 0 1px rgba(185,162,255,.12),0 28px 80px -24px rgba(140,110,255,.55)}
 .anim.motion .anim-h h4{color:var(--violet);font-size:12.5px}
 .anim.motion .anim-v{border-color:rgba(185,162,255,.45)}
+.anim-dl{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 13px;border-radius:99px;font-size:12px;font-weight:500;color:#0b0b0e;background:var(--violet);text-decoration:none;white-space:nowrap}
+.anim-dl svg{width:14px;height:14px}
+.anim-dl small{font-family:var(--mono);font-size:10.5px;font-weight:400;opacity:.75}
+.anim-dl:hover{filter:brightness(1.12)}
 .anim .new{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;padding:3px 9px;border-radius:99px;background:var(--violet);color:#0b0b0e;font-weight:600;animation:newPulse 2.4s ease-in-out infinite}
 @keyframes newPulse{0%{box-shadow:0 0 0 0 rgba(185,162,255,.6)}70%{box-shadow:0 0 0 9px rgba(185,162,255,0)}100%{box-shadow:0 0 0 0 rgba(185,162,255,0)}}
 /* player split: original left, new right */
@@ -615,7 +619,7 @@ const STATUS = {
 };
 const FPS = 25;
 const tc = t => { const f = Math.max(0, Math.round(t * FPS)); const s = Math.floor(f / FPS), ff = f % FPS; return [Math.floor(s / 60), s % 60, ff].map(n => String(n).padStart(2, '0')).join(':'); };
-const BUILD = 19;
+const BUILD = 20;
 let D = null, filter = 'all', view = 'rows', stamp = null, pendingReload = false;
 const verSel = {}; const animSel = {};
 
@@ -796,7 +800,7 @@ function animHTML(s) {
   const ch = (v.chapters || []).map((c, i) => `<button data-seek="${c.t}"><b>${String(i + 1).padStart(2, '0')}</b>${esc(c.label)}</button>`).join('');
   const fr = (v.frames || []).map((f, i) => `<li><a href="${BASE + (f.full || f.img)}" target="_blank" rel="noopener"><img loading="lazy" src="${BASE + f.img}" alt=""><span><b>${String(i + 1).padStart(2, '0')}</b>${esc(f.label)}</span></a></li>`).join('');
   const mo = a.kind === 'motion';
-  return `<div class="anim${mo ? ' motion' : ''}"><div class="anim-h"><h4>${mo ? '<span class="new">NEW</span>' : ''}${ic(mo ? 'video' : 'film')}${esc(v.title || a.title || 'Animatic')}</h4><span class="mono">${esc(v.meta || '')}</span>${modes}${vers}</div>
+  return `<div class="anim${mo ? ' motion' : ''}"><div class="anim-h"><h4>${mo ? '<span class="new">NEW</span>' : ''}${ic(mo ? 'video' : 'film')}${esc(v.title || a.title || 'Animatic')}</h4><span class="mono">${esc(v.meta || '')}</span>${v.download ? `<a class="anim-dl" href="${BASE + v.download}" download title="Clean master, no watermark">${ic('download')}Download 4K <small>clean · ${esc(v.dlmeta || 'no watermark')}</small></a>` : ''}${modes}${vers}</div>
     <div class="anim-v" data-link="${esc(v.link || '')}"><video muted loop playsinline controls preload="none" poster="${BASE + v.poster}" data-src="${BASE + v.video}"></video><span class="badge"><span class="chip">${ic('video')}${esc(v.badge || 'ANIMATIC')} · ${esc(v.v)}</span></span></div>
     ${ch ? `<div class="anim-ch">${ch}</div>` : ''}${fr ? `<ol class="anim-f">${fr}</ol>` : ''}${v.note || a.note ? `<p>${esc(v.note || a.note)}</p>` : ''}</div>`;
 }
