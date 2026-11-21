@@ -2346,6 +2346,10 @@
     {
      "t": "Motion m1 (21 Nov): pipeline, top-down rise with a clockwise turn like the reference move",
      "done": true
+    },
+    {
+     "t": "Motion m2 (21 Nov): Option 2 — tank farm, rising clockwise reveal over the pipes",
+     "done": true
     }
    ],
    "versions": [
@@ -2414,6 +2418,18 @@
       "meta": "5.04s · 24 fps · 3840×2160 · preview · 4K UHD badge",
       "note": "East–West pipeline with the original camera idea: straight top-down, starting close over the twin pipes, then rising and turning clockwise to reveal the pipeline corridor across the dunes. Kroma could not turn the sports-boulevard footage into pipes while keeping its move, so this is a new shot that follows the reference move. Download = clean high-bitrate master, no watermark.",
       "option": 1
+     },
+     {
+      "v": "m2",
+      "title": "Motion · Option 2 · tank farm · 4K",
+      "badge": "MOTION 4K",
+      "video": "motion/sh26_m2_4k_wm.mp4",
+      "poster": "motion/sh26_m2_poster.jpg",
+      "download": "master/WW_SH26_m2_4K_HQ.mp4",
+      "dlmeta": "78 Mbps · 50 MB",
+      "meta": "5.04s · 24 fps · 3840×2160 · preview · 4K UHD badge",
+      "note": "Option 2 — the v3 tank-farm still animated: the drone starts low beside the pipes and rises up while turning clockwise, the pipes streaming past below the lens, revealing the giant oil tanks and the low sun between them. Download = clean high-bitrate master, no watermark.",
+      "option": 2
      }
     ]
    }
@@ -3224,9 +3240,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-21T19:30:00+04:00",
+ "updated": "2026-11-21T19:40:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 44,
+ "build": 45,
  "removed": [
   {
    "id": "SH31",
