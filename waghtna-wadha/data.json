@@ -2262,7 +2262,7 @@
    "loop": "loop/sh26.mp4",
    "before": "before/sh26_m.webp",
    "beforeFull": "before/sh26.jpg",
-   "status": "wip",
+   "status": "motion",
    "notes": [
     {
      "t": "Client change (21 Nov): replace the Sports Boulevard cycling shot with the Saudi East–West crude pipeline",
@@ -2287,6 +2287,10 @@
     {
      "t": "Next: director picks the framing, then motion",
      "done": false
+    },
+    {
+     "t": "Motion m1 (21 Nov): pipeline, top-down rise with a clockwise turn like the reference move",
+     "done": true
     }
    ],
    "versions": [
@@ -2340,7 +2344,23 @@
      "src": "SH23 · this cut",
      "href": "#sh23"
     }
-   ]
+   ],
+   "animatic": {
+    "kind": "motion",
+    "versions": [
+     {
+      "v": "m1",
+      "title": "Motion · Seedance 2.5 · 4K",
+      "badge": "MOTION 4K",
+      "video": "motion/sh26_m1_4k_wm.mp4",
+      "poster": "motion/sh26_m1_poster.jpg",
+      "download": "master/WW_SH26_m1_4K_HQ.mp4",
+      "dlmeta": "80 Mbps · 51 MB",
+      "meta": "5.04s · 24 fps · 3840×2160 · preview · 4K UHD badge",
+      "note": "East–West pipeline with the original camera idea: straight top-down, starting close over the twin pipes, then rising and turning clockwise to reveal the pipeline corridor across the dunes. Kroma could not turn the sports-boulevard footage into pipes while keeping its move, so this is a new shot that follows the reference move. Download = clean high-bitrate master, no watermark."
+     }
+    ]
+   }
   },
   {
    "id": "SH27",
@@ -3148,9 +3168,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-21T18:55:00+04:00",
+ "updated": "2026-11-21T19:00:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 38,
+ "build": 39,
  "removed": [
   {
    "id": "SH31",
