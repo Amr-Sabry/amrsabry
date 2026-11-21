@@ -1203,6 +1203,10 @@
     {
      "t": "Motion m1 (21 Nov): Seedance 2.5, 4K 3840×2160, 5 s, camera move as in the original cut, same cinematography; preview carries a 4K watermark, clean high-bitrate master to download",
      "done": true
+    },
+    {
+     "t": "Motion k1 (21 Nov): Kroma keeps the reference camera move frame for frame; only the look changes",
+     "done": true
     }
    ],
    "versions": [
@@ -1249,6 +1253,17 @@
       "dlmeta": "80 Mbps · 50 MB",
       "meta": "5.04s · 24 fps · 3840×2160 · preview · 4K UHD badge",
       "note": "Smooth forward glide along the diagonal panel rows, golden glare sliding across the glass — as in the original. Keyframe = the approved still (reference, not a start frame). Download = clean high-bitrate master, no watermark."
+     },
+     {
+      "v": "k1",
+      "title": "Motion · exact reference move · 4K",
+      "badge": "MOTION 4K · REF MOVE",
+      "video": "motion/sh13_k1_4k_wm.mp4",
+      "poster": "motion/sh13_k1_poster.jpg",
+      "download": "master/WW_SH13_k1_4K_HQ.mp4",
+      "dlmeta": "87 Mbps · 15 MB",
+      "meta": "1.42s (cut length) · 24 fps · 3840×2160 · preview · 4K UHD badge",
+      "note": "Exact camera move of the original cut — same angle, rotation, speed and timing (checked by motion tracking against the reference) — re-rendered in our look: golden low sun glinting off the panels, long shadows between the rows, warm sand, warm flare. Download = clean high-bitrate master, no watermark."
      }
     ]
    }
@@ -2953,9 +2968,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-21T18:00:00+04:00",
+ "updated": "2026-11-21T18:06:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 31,
+ "build": 32,
  "removed": [
   {
    "id": "SH31",
