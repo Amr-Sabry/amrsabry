@@ -81,6 +81,7 @@ h1 em{font-style:normal;color:var(--violet)}
 .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);opacity:0;z-index:99;background:#15151b;border:1px solid var(--line2);border-radius:99px;padding:10px 18px;font-size:13px;transition:all .3s;pointer-events:none}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .empty{color:var(--mute);padding:40px 0}
+.vid .opt{position:absolute;right:12px;top:12px;font-family:var(--serif);font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#0b0b0e;background:var(--amber);padding:5px 11px;border-radius:99px}
 .navdir{display:flex;align-items:baseline;gap:9px;white-space:nowrap}
 .navdir span{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute)}
 .navdir b{font-family:var(--serif);font-weight:600;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber)}
@@ -143,22 +144,28 @@ let LIST = [];
 function toast(t) { const el = $('#toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove('on'), 1800); }
 async function copy(t) { try { await navigator.clipboard.writeText(t); return true; } catch { const a = document.createElement('textarea'); a.value = t; document.body.appendChild(a); a.select(); let ok = false; try { ok = document.execCommand('copy'); } catch {} a.remove(); return ok; } }
 
-function card(s) {
-  const v = s.animatic.versions[s.animatic.versions.length - 1];
+function card(s, v, opt) {
+  v = v || s.animatic.versions[s.animatic.versions.length - 1];
   const prev = BASE + v.video, dl = BASE + v.download;
-  const fname = 'Waghtna_Wadha_' + s.id + '_4K.mp4';
+  const tag = opt ? ' · Option ' + opt : '';
+  const fname = 'Waghtna_Wadha_' + s.id + (opt ? '_Option' + opt : '') + '_4K.mp4';
   const mb = /([\d.]+)\s*MB/.exec(v.dlmeta || '');
-  return `<article class="card" id="${s.id.toLowerCase()}">
+  const aid = s.id.toLowerCase() + (opt && opt > 1 ? '-o' + opt : '');
+  return `<article class="card" id="${aid}">
     <div class="vid"><video controls muted loop playsinline preload="none" poster="${BASE + v.poster}" data-src="${prev}"></video>
-      <span class="chip">${esc(s.id)}</span></div>
+      <span class="chip">${esc(s.id)}${opt ? ' · OPTION ' + opt : ''}</span>${opt ? `<span class="opt">Option ${opt}</span>` : ''}</div>
     <div class="body">
-      <div class="top"><span class="id">${esc(s.id)}</span><span class="ttl">${esc(s.title)}</span></div>
+      <div class="top"><span class="id">${esc(s.id)}</span><span class="ttl">${esc(s.title)}${esc(tag)}</span></div>
       <div class="row">
         <div class="meta">3840×2160 · 24 fps · ${esc((v.meta || '5.04s').split('·')[0].trim())}${mb ? ' · ' + Math.round(+mb[1]) + ' MB' : ''}</div>
         <a class="btn dl" href="${dl}" download="${esc(fname)}">${ic('download')}Download 4K <small>no watermark</small></a>
       </div>
     </div>
   </article>`;
+}
+function cardsFor(s) {
+  const opts = (s.animatic.versions || []).filter(v => v.option && v.download).sort((a, b) => a.option - b.option);
+  return opts.length ? opts.map(v => card(s, v, v.option)).join('') : card(s);
 }
 
 function wire() {
@@ -179,7 +186,7 @@ async function load() {
   const r = await fetch(BASE + 'data.json?x=' + Date.now(), {cache: 'no-store'}); const D = await r.json();
   const OK = Array.isArray(D.motionApproved) ? D.motionApproved : null;
   LIST = D.shots.filter(s => s.animatic && s.animatic.kind === 'motion' && (s.animatic.versions || []).length && s.animatic.versions.at(-1).download && (!OK || OK.includes(s.id))).sort((a, b) => parseInt(a.id.slice(2)) - parseInt(b.id.slice(2)));
-  $('#grid').innerHTML = LIST.length ? LIST.map(card).join('') : '<div class="empty">No shots yet.</div>';
+  $('#grid').innerHTML = LIST.length ? LIST.map(cardsFor).join('') : '<div class="empty">No shots yet.</div>';
   $('#sN').textContent = LIST.length;
   wire();
   if (location.hash) { const el = document.getElementById(location.hash.slice(1).toLowerCase()); if (el) setTimeout(() => { el.scrollIntoView({behavior: 'smooth', block: 'center'}); el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 2600); }, 300); }

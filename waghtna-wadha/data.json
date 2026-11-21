@@ -2405,14 +2405,15 @@
     "versions": [
      {
       "v": "m1",
-      "title": "Motion · Seedance 2.5 · 4K",
+      "title": "Motion · Option 1 · aerial pipeline · 4K",
       "badge": "MOTION 4K",
       "video": "motion/sh26_m1_4k_wm.mp4",
       "poster": "motion/sh26_m1_poster.jpg",
       "download": "master/WW_SH26_m1_4K_HQ.mp4",
       "dlmeta": "80 Mbps · 51 MB",
       "meta": "5.04s · 24 fps · 3840×2160 · preview · 4K UHD badge",
-      "note": "East–West pipeline with the original camera idea: straight top-down, starting close over the twin pipes, then rising and turning clockwise to reveal the pipeline corridor across the dunes. Kroma could not turn the sports-boulevard footage into pipes while keeping its move, so this is a new shot that follows the reference move. Download = clean high-bitrate master, no watermark."
+      "note": "East–West pipeline with the original camera idea: straight top-down, starting close over the twin pipes, then rising and turning clockwise to reveal the pipeline corridor across the dunes. Kroma could not turn the sports-boulevard footage into pipes while keeping its move, so this is a new shot that follows the reference move. Download = clean high-bitrate master, no watermark.",
+      "option": 1
      }
     ]
    }
@@ -3223,9 +3224,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-21T19:25:00+04:00",
+ "updated": "2026-11-21T19:30:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 43,
+ "build": 44,
  "removed": [
   {
    "id": "SH31",
@@ -3261,6 +3262,7 @@
   "SH21",
   "SH24",
   "SH25",
+  "SH26",
   "SH27",
   "SH29",
   "SH30",
