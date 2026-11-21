@@ -233,6 +233,28 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .anim-x{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:99px;border:1px solid var(--line2);color:var(--soft)}
 .anim-x svg{width:13px;height:13px}
 .anim-v iframe{width:100%;height:100%;border:0;display:block;background:#000}
+/* new motion clip: hero of its card */
+.anim.motion{margin:2px 16px 18px;padding:16px;border:1px solid rgba(185,162,255,.6);background:linear-gradient(180deg,rgba(185,162,255,.11),rgba(255,255,255,.015));box-shadow:0 0 0 1px rgba(185,162,255,.12),0 28px 80px -24px rgba(140,110,255,.55)}
+.anim.motion .anim-h h4{color:var(--violet);font-size:12.5px}
+.anim.motion .anim-v{border-color:rgba(185,162,255,.45)}
+.anim .new{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;padding:3px 9px;border-radius:99px;background:var(--violet);color:#0b0b0e;font-weight:600;animation:newPulse 2.4s ease-in-out infinite}
+@keyframes newPulse{0%{box-shadow:0 0 0 0 rgba(185,162,255,.6)}70%{box-shadow:0 0 0 9px rgba(185,162,255,0)}100%{box-shadow:0 0 0 0 rgba(185,162,255,0)}}
+/* player split: original left, new right */
+.pvs{position:absolute;inset:0;display:none;z-index:1;pointer-events:none}
+.screen.m-split .pvs{display:block}
+.screen.m-split #pv{width:50%;right:auto}
+.pvs .r{position:absolute;right:0;top:0;width:50%;height:100%;background:#000}
+.pvs .r video,.pvs .r img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+.pvs .r .none{position:absolute;inset:25% 0;display:none;place-items:center;align-content:center;gap:8px;color:var(--mute);font-size:12.5px;background:repeating-linear-gradient(-45deg,#111116 0 8px,#0d0d11 8px 16px)}
+.pvs .r .none svg{width:20px;height:20px;color:var(--amber)}
+.pvs .r.empty .none{display:grid}.pvs .r.empty img,.pvs .r.empty video{display:none}
+.pvs .r.still video{display:none}.pvs .r.vid img{display:none}
+.pvs .div{position:absolute;left:50%;top:25%;bottom:25%;width:1px;background:rgba(255,255,255,.35)}
+.pvs .lab{position:absolute;top:calc(25% + 10px);z-index:2}
+.pvs .lab.l{left:10px}.pvs .lab.r2{left:calc(50% + 10px)}
+.pvs .lab .chip{font-size:10.5px;padding:3px 9px}
+.pvs .r.vid~.lab.r2 .chip{border-color:rgba(185,162,255,.7);color:#fff;background:rgba(120,90,255,.35)}
+.screen.playing.idle .pvs .lab{opacity:.0;transition:opacity .5s}
 .anim p{margin:10px 0 0;font-size:12.5px;color:var(--soft);line-height:1.55}
 .refs{margin:0 16px 16px;padding-top:12px;border-top:1px dashed var(--line2);display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap}
 .refs h4{margin:0 6px 0 0;display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);font-weight:500;white-space:nowrap}
@@ -461,6 +483,7 @@ a.ref:hover{border-color:var(--amber)}
     <div class="theater rv">
       <div class="screen bars idle-bars m-ref" id="screen">
         <video id="pv" playsinline preload="metadata" poster="waghtna-wadha/poster.jpg"></video>
+        <div class="pvs" id="pvs"><div class="r empty" id="pvsR"><video id="pv2" muted playsinline preload="none"></video><img alt=""><span class="none"><svg class="i" viewBox="0 0 24 24"><use href="#i-image-plus"/></svg>Awaiting rework</span></div><i class="div"></i><span class="lab l"><span class="chip">ORIGINAL · CUT</span></span><span class="lab r2"><span class="chip" id="pvsLab">NEW</span></span></div>
         <div class="cmpv pvx" id="pvx"><img class="aft" alt=""><i class="bar"></i><span class="knob"><svg class="i" viewBox="0 0 24 24"><use href="#i-move"/></svg></span><span class="lab l"><span class="chip">ORIGINAL · LIVE</span></span><span class="lab r"><span class="chip" id="pvxLab">AFTER</span></span><button class="auto" data-auto title="Pause sweep" aria-label="Pause sweep"><svg class="i" viewBox="0 0 24 24"><use href="#i-pause"/></svg></button></div>
         <button class="pref" id="pref" title="Open this shot"><img alt=""><span class="none"><svg class="i" viewBox="0 0 24 24"><use href="#i-image-plus"/></svg>Awaiting rework</span><span class="cap"><b id="prefId"></b><span id="prefT"></span></span></button>
         <div class="hud"><span class="chip shot" id="hudShot"><b>—</b><span></span></span><span class="chip" id="hudRec" hidden><i class="dot"></i>PLAYING</span></div>
@@ -471,7 +494,7 @@ a.ref:hover{border-color:var(--amber)}
           <button class="ib" id="nextShot" aria-label="Next shot" title="Next shot"><svg class="i" viewBox="0 0 24 24"><use href="#i-skip-fwd"/></svg></button>
           <div class="tc" id="tc">00:00:00 <span>/ 00:00:00</span></div>
           <div class="grow"></div>
-          <div class="modes" id="modes" role="tablist" aria-label="Player view"><button data-pm="orig" title="Original cut"><svg class="i" viewBox="0 0 24 24"><use href="#i-film"/></svg><span>Original</span></button><button data-pm="cmp" title="Wipe between the cut and the reworked frame"><svg class="i" viewBox="0 0 24 24"><use href="#i-columns"/></svg><span>Compare</span></button><button data-pm="ref" class="on" title="Reworked frame as a thumbnail reference"><svg class="i" viewBox="0 0 24 24"><use href="#i-image"/></svg><span>Ref</span></button></div>
+          <div class="modes" id="modes" role="tablist" aria-label="Player view"><button data-pm="orig" title="Original cut"><svg class="i" viewBox="0 0 24 24"><use href="#i-film"/></svg><span>Original</span></button><button data-pm="cmp" title="Wipe between the cut and the reworked frame"><svg class="i" viewBox="0 0 24 24"><use href="#i-columns"/></svg><span>Compare</span></button><button data-pm="split" title="Original and new side by side — the new motion clip plays in sync when the shot has one"><svg class="i" viewBox="0 0 24 24"><use href="#i-video"/></svg><span>Split</span></button><button data-pm="ref" class="on" title="Reworked frame as a thumbnail reference"><svg class="i" viewBox="0 0 24 24"><use href="#i-image"/></svg><span>Ref</span></button></div>
           <button class="ib" id="toCard" aria-label="Open this shot's card" title="Go to this shot's card"><svg class="i" viewBox="0 0 24 24"><use href="#i-arrow-down"/></svg></button>
           <button class="ib" id="mute" aria-label="Mute"><svg class="i" viewBox="0 0 24 24"><use href="#i-vol"/></svg></button>
           <button class="ib" id="fs" aria-label="Fullscreen"><svg class="i" viewBox="0 0 24 24"><use href="#i-max"/></svg></button>
@@ -592,7 +615,7 @@ const STATUS = {
 };
 const FPS = 25;
 const tc = t => { const f = Math.max(0, Math.round(t * FPS)); const s = Math.floor(f / FPS), ff = f % FPS; return [Math.floor(s / 60), s % 60, ff].map(n => String(n).padStart(2, '0')).join(':'); };
-const BUILD = 18;
+const BUILD = 19;
 let D = null, filter = 'all', view = 'rows', stamp = null, pendingReload = false;
 const verSel = {}; const animSel = {};
 
@@ -764,6 +787,7 @@ function refsHTML(s) {
     return `<a class="ref" href="${esc(href)}"${ext ? ' target="_blank" rel="noopener"' : ''}>${body}</a>`;
   }).join('')}</div>`;
 }
+const isMotion = s => !!(s.animatic && s.animatic.kind === 'motion' && (s.animatic.versions || []).length);
 function animHTML(s) {
   const a = s.animatic; if (!a || !(a.versions || []).length) return '';
   const k = animSel[s.id], v = a.versions.find(x => x.v === k) || a.versions[a.versions.length - 1];
@@ -771,7 +795,8 @@ function animHTML(s) {
   const modes = v.link ? `<span class="anim-vers"><button data-amode="video" class="on">${ic('video')}Video</button><button data-amode="3d">${ic('box')}Interactive 3D</button><a class="anim-x" href="${esc(v.link)}" target="_blank" rel="noopener" title="Open full screen">${ic('max')}</a></span>` : '';
   const ch = (v.chapters || []).map((c, i) => `<button data-seek="${c.t}"><b>${String(i + 1).padStart(2, '0')}</b>${esc(c.label)}</button>`).join('');
   const fr = (v.frames || []).map((f, i) => `<li><a href="${BASE + (f.full || f.img)}" target="_blank" rel="noopener"><img loading="lazy" src="${BASE + f.img}" alt=""><span><b>${String(i + 1).padStart(2, '0')}</b>${esc(f.label)}</span></a></li>`).join('');
-  return `<div class="anim"><div class="anim-h"><h4>${ic('film')}${esc(v.title || a.title || 'Animatic')}</h4><span class="mono">${esc(v.meta || '')}</span>${modes}${vers}</div>
+  const mo = a.kind === 'motion';
+  return `<div class="anim${mo ? ' motion' : ''}"><div class="anim-h"><h4>${mo ? '<span class="new">NEW</span>' : ''}${ic(mo ? 'video' : 'film')}${esc(v.title || a.title || 'Animatic')}</h4><span class="mono">${esc(v.meta || '')}</span>${modes}${vers}</div>
     <div class="anim-v" data-link="${esc(v.link || '')}"><video muted loop playsinline controls preload="none" poster="${BASE + v.poster}" data-src="${BASE + v.video}"></video><span class="badge"><span class="chip">${ic('video')}${esc(v.badge || 'ANIMATIC')} · ${esc(v.v)}</span></span></div>
     ${ch ? `<div class="anim-ch">${ch}</div>` : ''}${fr ? `<ol class="anim-f">${fr}</ol>` : ''}${v.note || a.note ? `<p>${esc(v.note || a.note)}</p>` : ''}</div>`;
 }
@@ -790,6 +815,7 @@ function cardHTML(s) {
       <button class="playedit" data-play>${ic('play')}Play in the cut</button>
     </div>
     <div class="body">
+    ${isMotion(s) ? animHTML(s) : ''}
     <div class="panes">
       <figure class="pane loop"><div class="pm" data-open="loop"><video muted loop playsinline preload="none" poster="${BASE + s.before}" data-src="${BASE + s.loop}"></video><span class="badge"><span class="chip">${ic('repeat')}LOOP</span></span><span class="x">${ic('max')}</span><i class="ring2"></i></div>
         <figcaption><span>${ic('film')}Original · Loop</span><span class="mono">${dur}s</span></figcaption></figure>
@@ -797,7 +823,7 @@ function cardHTML(s) {
         <figcaption><span>${ic('image')}Before · Frame</span><span class="mono">${s.tcIn}</span></figcaption></figure>
       ${afterPane(s)}
     </div>
-    ${animHTML(s)}
+    ${isMotion(s) ? '' : animHTML(s)}
     <div class="notes"><h4>${ic('pen')}Edit notes</h4>${notes}</div>
     ${refsHTML(s)}
     </div>
@@ -913,9 +939,9 @@ function tick() {
 }
 let pmode = 'ref';
 function setMode(m) {
-  pmode = m; scr.classList.toggle('m-cmp', m === 'cmp'); scr.classList.toggle('m-ref', m === 'ref');
+  pmode = m; scr.classList.toggle('m-cmp', m === 'cmp'); scr.classList.toggle('m-ref', m === 'ref'); scr.classList.toggle('m-split', m === 'split');
   $$('#modes button').forEach(b => b.classList.toggle('on', b.dataset.pm === m));
-  try { localStorage.setItem('ww-pmode2', m); } catch {}
+  try { localStorage.setItem('ww-pmode3', m); } catch {}
   updatePX();
 }
 $$('#modes button').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); setMode(b.dataset.pm); }));
@@ -927,13 +953,39 @@ function updatePX() {
   px.classList.toggle('has', !!v);
   if (v) { const im = $('img.aft', px), src = BASE + (v.full || v.image); if (im.getAttribute('src') !== src) im.src = src; $('#pvxLab').textContent = 'AFTER · ' + v.v; }
   pr.classList.toggle('on', !!s); pr.classList.toggle('empty', !v);
+  updateSplit(s, v);
   if (s) {
     $('#prefId').textContent = s.id; $('#prefT').textContent = v ? 'After · ' + v.v : 'Not reworked yet';
     if (v) { const im = $('img', pr), src = BASE + v.image; if (im.getAttribute('src') !== src) { im.style.opacity = 0; im.onload = () => im.style.opacity = 1; im.src = src; } }
   }
 }
 $('#pref').addEventListener('click', e => { e.stopPropagation(); if (!cur) return; const s = D.shots.find(x => x.id === cur); openLB(cur, latest(s) ? 'compare' : 'before'); });
-{ let m = 'ref'; try { m = localStorage.getItem('ww-pmode2') || 'ref'; } catch {} setTimeout(() => setMode(m), 0); }
+{ let m = 'split'; try { m = localStorage.getItem('ww-pmode3') || 'split'; } catch {} setTimeout(() => setMode(m), 0); }
+/* split: the new motion clip (or the reworked still) beside the running cut, kept in sync with the playhead */
+const pv2 = $('#pv2');
+function updateSplit(s, v) {
+  const R = $('#pvsR'), lab = $('#pvsLab'), mv = s && isMotion(s) ? s.animatic.versions[s.animatic.versions.length - 1] : null;
+  R.classList.toggle('vid', !!mv); R.classList.toggle('still', !mv && !!v); R.classList.toggle('empty', !mv && !v);
+  if (mv) {
+    const src = BASE + mv.video; if (pmode === 'split' && pv2.dataset.cur !== src) { pv2.dataset.cur = src; pv2.src = src; }
+    lab.textContent = 'NEW · MOTION 4K · ' + mv.v;
+  } else {
+    if (!pv2.paused) pv2.pause();
+    if (v) { const im = $('img', R), src = BASE + (v.full || v.image); if (im.getAttribute('src') !== src) im.src = src; lab.textContent = 'AFTER · ' + v.v + ' · STILL'; }
+    else lab.textContent = s ? 'NOT REWORKED YET' : '—';
+  }
+  syncSplit();
+}
+function syncSplit() {
+  if (pmode !== 'split' || !cur) return;
+  const s = D.shots.find(x => x.id === cur); if (!s || !isMotion(s) || !pv2.src) return;
+  const want = Math.max(0, (pv.currentTime || 0) - s.in);
+  if (pv2.readyState >= 1 && Math.abs(pv2.currentTime - want) > .12) { try { pv2.currentTime = Math.min(want, (pv2.duration || 99) - .05); } catch {} }
+  if (!pv.paused && pv2.paused) pv2.play().catch(() => {});
+  if (pv.paused && !pv2.paused) pv2.pause();
+}
+(function splitLoop() { if (!pv.paused && pmode === 'split') syncSplit(); requestAnimationFrame(splitLoop); })();
+pv.addEventListener('play', syncSplit); pv.addEventListener('pause', syncSplit); pv.addEventListener('seeked', syncSplit);
 function markNow() { $$('.card').forEach(c => c.classList.toggle('now', c.dataset.id === cur)); }
 const setPP = () => { $('#pp use').setAttribute('href', pv.paused ? '#i-play' : '#i-pause'); };
 const toggle = () => pv.paused ? pv.play() : pv.pause();
