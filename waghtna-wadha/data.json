@@ -2007,7 +2007,7 @@
    "loop": "loop/sh24.mp4",
    "before": "before/sh24_m.webp",
    "beforeFull": "before/sh24.jpg",
-   "status": "wip",
+   "status": "motion",
    "notes": [
     {
      "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
@@ -2019,6 +2019,10 @@
     },
     {
      "t": "v2 (21 Nov): greener, more of a farm — every terrace densely planted with healthy coffee trees, green grass on the walls, no dry yellow soil; same golden sun top-right, haze and long shadows",
+     "done": true
+    },
+    {
+     "t": "Motion k1 (21 Nov): Kroma keeps the reference camera move frame for frame; only the look changes",
      "done": true
     }
    ],
@@ -2059,7 +2063,23 @@
      "src": "Mood board · Pinterest",
      "href": "https://www.pinterest.com/amrsabry/sunny/"
     }
-   ]
+   ],
+   "animatic": {
+    "kind": "motion",
+    "versions": [
+     {
+      "v": "k1",
+      "title": "Motion · exact reference move · 4K",
+      "badge": "MOTION 4K · REF MOVE",
+      "video": "motion/sh24_k1_4k_wm.mp4",
+      "poster": "motion/sh24_k1_poster.jpg",
+      "download": "master/WW_SH24_k1_4K_HQ.mp4",
+      "dlmeta": "76 Mbps · 12 MB",
+      "meta": "1.25s (cut length) · 24 fps · 3840×2160 · preview · 4K UHD badge",
+      "note": "Exact camera move of the original cut — same angle, rotation, speed and timing (checked by motion tracking against the reference) — re-rendered in our look: lush green coffee terraces, golden low sun, long shadows down the terraces, warm flare. Download = clean high-bitrate master, no watermark."
+     }
+    ]
+   }
   },
   {
    "id": "SH25",
@@ -2074,7 +2094,7 @@
    "loop": "loop/sh25.mp4",
    "before": "before/sh25_m.webp",
    "beforeFull": "before/sh25.jpg",
-   "status": "wip",
+   "status": "motion",
    "notes": [
     {
      "t": "Camera between the palms, low among the trunks — no horizon, the plantation feels endless",
@@ -2086,6 +2106,10 @@
     },
     {
      "t": "v3: camera raised to frond height, still between the palms, looking down the rows",
+     "done": true
+    },
+    {
+     "t": "Motion k1 (21 Nov): Kroma keeps the reference camera move frame for frame; only the look changes",
      "done": true
     }
    ],
@@ -2126,7 +2150,23 @@
      "src": "Mood board · Pinterest",
      "href": "https://www.pinterest.com/amrsabry/sunny/"
     }
-   ]
+   ],
+   "animatic": {
+    "kind": "motion",
+    "versions": [
+     {
+      "v": "k1",
+      "title": "Motion · exact reference move · 4K",
+      "badge": "MOTION 4K · REF MOVE",
+      "video": "motion/sh25_k1_4k_wm.mp4",
+      "poster": "motion/sh25_k1_poster.jpg",
+      "download": "master/WW_SH25_k1_4K_HQ.mp4",
+      "dlmeta": "78 Mbps · 16 MB",
+      "meta": "1.67s (cut length) · 24 fps · 3840×2160 · preview · 4K UHD badge",
+      "note": "Exact camera move of the original cut — same angle, rotation, speed and timing (checked by motion tracking against the reference) — re-rendered in our look: palm plantation rows with golden sun beams through the fronds, long palm shadows, warm flare. Download = clean high-bitrate master, no watermark."
+     }
+    ]
+   }
   },
   {
    "id": "SH26",
@@ -2968,9 +3008,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-21T18:06:00+04:00",
+ "updated": "2026-11-21T18:14:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 32,
+ "build": 33,
  "removed": [
   {
    "id": "SH31",
