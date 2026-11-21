@@ -238,6 +238,10 @@
     {
      "t": "Director brief (21 Nov): open on sky only → tilt down onto the first project → fly project to project in order (hospital, university, train, CST, solar & wind, silos), each big in frame — no cut, no fade, no group shot of all the projects at any point; the shot ends on the last project",
      "done": true
+    },
+    {
+     "t": "SH03 t4 (21 Nov): sky → hospital → university → train → CST → solar → turbine pass → silos gap → sky, one take, no cut",
+     "done": true
     }
    ],
    "versions": [
@@ -513,6 +517,53 @@
        }
       ],
       "note": "Director brief: open on sky, tilt down, then project after project with no cut, no fade and no group shot at the end. One camera from start to finish: Seedance flew the first 7 s (sky → hospital → university → train → CST spire), then Seedance Extend continued from that exact last frame over the solar farm and the turbines to the concrete silos — checked frame by frame, no cut anywhere. Runs 18 s at real speed; the solar stretch can be speed-ramped to fit the slot."
+     },
+     {
+      "v": "t4",
+      "title": "ONE TAKE · sky to sky — project after project, professional drone",
+      "badge": "ONE TAKE · TEST",
+      "video": "anim/sh03_onetake_t4_720p.mp4",
+      "poster": "anim/sh03_onetake_t4_poster.jpg",
+      "meta": "29.2s · 24 fps · 1280×720 · test render, no cut anywhere",
+      "chapters": [
+       {
+        "t": 0,
+        "label": "Sky"
+       },
+       {
+        "t": 1.5,
+        "label": "King Faisal Specialist Hospital"
+       },
+       {
+        "t": 5.5,
+        "label": "Princess Nourah University"
+       },
+       {
+        "t": 9,
+        "label": "Haramain train"
+       },
+       {
+        "t": 13,
+        "label": "CST tower"
+       },
+       {
+        "t": 18.5,
+        "label": "Solar farm"
+       },
+       {
+        "t": 21,
+        "label": "Wind turbine pass"
+       },
+       {
+        "t": 24,
+        "label": "Grain silos · through the gap"
+       },
+       {
+        "t": 27.5,
+        "label": "Sky"
+       }
+      ],
+      "note": "Director notes applied: opens on sky and ends on sky; the hospital and the university get real screen time; the camera paces the train instead of rushing past; the solar farm is close and short; the drone flies right past a spinning turbine blade; at the end it threads the gap between the silos and climbs out into the sky. Built as one camera — each part continues from the exact last frame of the part before (checked: no cut, no fade). Runs 29 s with light speed-ramps on the empty stretches; it can be retimed further in the edit."
      }
     ]
    },
@@ -3048,9 +3099,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-21T18:20:00+04:00",
+ "updated": "2026-11-21T18:30:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 34,
+ "build": 35,
  "removed": [
   {
    "id": "SH31",
