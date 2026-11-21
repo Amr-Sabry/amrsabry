@@ -3168,9 +3168,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-21T19:08:00+04:00",
+ "updated": "2026-11-21T19:12:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 41,
+ "build": 42,
  "removed": [
   {
    "id": "SH31",
@@ -3197,6 +3197,7 @@
   "SH08",
   "SH09",
   "SH13",
+  "SH15",
   "SH16",
   "SH17",
   "SH18",
