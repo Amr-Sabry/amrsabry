@@ -1906,6 +1906,10 @@
     {
      "t": "Motion m1 (21 Nov): Seedance 2.5, 4K 3840×2160, 5 s, camera move as in the original cut, same cinematography; preview carries a 4K watermark, clean high-bitrate master to download",
      "done": true
+    },
+    {
+     "t": "Motion k1 (22 Nov): client note — the car was sliding. Car and camera motion now come frame for frame from the original shot; only the light changes",
+     "done": true
     }
    ],
    "versions": [
@@ -1973,6 +1977,17 @@
       "dlmeta": "85 Mbps · 53 MB",
       "meta": "5.04s · 24 fps · 3840×2160 · preview · 4K UHD badge",
       "note": "Low, almost locked camera as the car drives toward us from the far bend, front light bar on, sun right behind it — as in the original. Keyframe = the approved still (reference, not a start frame). Download = clean high-bitrate master, no watermark."
+     },
+     {
+      "v": "k1",
+      "title": "Motion · exact reference move · 4K",
+      "badge": "MOTION 4K · REF MOVE",
+      "video": "motion/sh20_k1_4k_wm.mp4",
+      "poster": "motion/sh20_k1_poster.jpg",
+      "download": "master/WW_SH20_k1_4K_HQ.mp4",
+      "dlmeta": "86 Mbps · 14 MB",
+      "meta": "1.25s (cut length) · 24 fps · 3840×2160 · preview · 4K UHD badge",
+      "note": "Client note: the car looked like it was sliding. This version takes the car's driving and the camera straight from the original shot, frame for frame (checked by overlaying the original's outlines on every frame): the car comes over the crest, settles and steers across the line while the long lens tilts and pans to follow it, as in the reference. Only the light is ours: golden backlight over the hills, rim-lit car, dust lifting behind the tyres. Cut length, same timing as the edit. Download = clean high-bitrate master, no watermark."
      }
     ]
    }
@@ -3312,7 +3327,7 @@
  ],
  "updated": "2026-11-21T19:40:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 49,
+ "build": 50,
  "removed": [
   {
    "id": "SH31",
