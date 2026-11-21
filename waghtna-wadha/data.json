@@ -1000,7 +1000,7 @@
    "loop": "loop/sh16.mp4",
    "before": "before/sh16_m.webp",
    "beforeFull": "before/sh16.jpg",
-   "status": "wip",
+   "status": "motion",
    "notes": [
     {
      "t": "Mood: low golden sun outside the window, warm rim light on her face, flare from the window",
@@ -1008,6 +1008,10 @@
     },
     {
      "t": "Fixed: the aircraft tail outside the window kept exactly as in the original (v1 had changed it)",
+     "done": true
+    },
+    {
+     "t": "Motion m1 (21 Nov): Seedance 2.5, 4K 3840×2160, 5 s, camera move as in the original cut, same cinematography — original file published untouched",
      "done": true
     }
    ],
@@ -1041,7 +1045,20 @@
      "src": "Mood board · Pinterest",
      "href": "https://www.pinterest.com/amrsabry/sunny/"
     }
-   ]
+   ],
+   "animatic": {
+    "versions": [
+     {
+      "v": "m1",
+      "title": "Motion · Seedance 2.5 · 4K",
+      "badge": "MOTION 4K",
+      "video": "motion/sh16_m1_4k.mp4",
+      "poster": "motion/sh16_m1_poster.jpg",
+      "meta": "5.04s · 24 fps · 3840×2160 · H.264 original (untouched)",
+      "note": "Slow handheld push-in toward her profile, as in the original; flare drifts across the lens, tail fin kept outside the window. Keyframe = the approved still (as reference, not a start frame)."
+     }
+    ]
+   }
   },
   {
    "id": "SH17",
@@ -1056,7 +1073,7 @@
    "loop": "loop/sh17.mp4",
    "before": "before/sh17_m.webp",
    "beforeFull": "before/sh17.jpg",
-   "status": "wip",
+   "status": "motion",
    "notes": [
     {
      "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
@@ -1064,6 +1081,10 @@
     },
     {
      "t": "Golden sun-glint on the sea around the island, warm flare at the window, silhouette stays dark",
+     "done": true
+    },
+    {
+     "t": "Motion m1 (21 Nov): Seedance 2.5, 4K 3840×2160, 5 s, camera move as in the original cut, same cinematography — original file published untouched",
      "done": true
     }
    ],
@@ -1090,7 +1111,20 @@
      "src": "Mood board · Pinterest",
      "href": "https://www.pinterest.com/amrsabry/sunny/"
     }
-   ]
+   ],
+   "animatic": {
+    "versions": [
+     {
+      "v": "m1",
+      "title": "Motion · Seedance 2.5 · 4K",
+      "badge": "MOTION 4K",
+      "video": "motion/sh17_m1_4k.mp4",
+      "poster": "motion/sh17_m1_poster.jpg",
+      "meta": "5.04s · 24 fps · 3840×2160 · H.264 original (untouched)",
+      "note": "Slow drift toward the window over her shoulder, the island sliding across as the plane banks, as in the original. Keyframe = the approved still (as reference, not a start frame)."
+     }
+    ]
+   }
   },
   {
    "id": "SH18",
@@ -1105,7 +1139,7 @@
    "loop": "loop/sh18.mp4",
    "before": "before/sh18_m.webp",
    "beforeFull": "before/sh18.jpg",
-   "status": "wip",
+   "status": "motion",
    "notes": [
     {
      "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
@@ -1113,6 +1147,10 @@
     },
     {
      "t": "Same sky and angle, the three turbines kept — a full wind farm added behind, sun on the cloud bank with flare",
+     "done": true
+    },
+    {
+     "t": "Motion m1 (21 Nov): Seedance 2.5, 4K 3840×2160, 5 s, camera move as in the original cut, same cinematography — original file published untouched",
      "done": true
     }
    ],
@@ -1139,7 +1177,20 @@
      "src": "Mood board · Pinterest",
      "href": "https://www.pinterest.com/amrsabry/sunny/"
     }
-   ]
+   ],
+   "animatic": {
+    "versions": [
+     {
+      "v": "m1",
+      "title": "Motion · Seedance 2.5 · 4K",
+      "badge": "MOTION 4K",
+      "video": "motion/sh18_m1_4k.mp4",
+      "poster": "motion/sh18_m1_poster.jpg",
+      "meta": "5.04s · 24 fps · 3840×2160 · H.264 original (untouched)",
+      "note": "Slow truck right with parallax between the three turbines and the farm behind, blades turning, sun on the cloud bank. Keyframe = the approved still (as reference, not a start frame)."
+     }
+    ]
+   }
   },
   {
    "id": "SH19",
@@ -1154,7 +1205,7 @@
    "loop": "loop/sh19.mp4",
    "before": "before/sh19_m.webp",
    "beforeFull": "before/sh19.jpg",
-   "status": "wip",
+   "status": "motion",
    "notes": [
     {
      "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
@@ -1162,6 +1213,10 @@
     },
     {
      "t": "Pink haze shifted to warm gold — strong flare at left, fabric glows amber, mast shadows across the tents",
+     "done": true
+    },
+    {
+     "t": "Motion m1 (21 Nov): Seedance 2.5, 4K 3840×2160, 5 s, camera move as in the original cut, same cinematography — original file published untouched",
      "done": true
     }
    ],
@@ -1195,7 +1250,20 @@
      "src": "Mood board · Pinterest",
      "href": "https://www.pinterest.com/amrsabry/sunny/"
     }
-   ]
+   ],
+   "animatic": {
+    "versions": [
+     {
+      "v": "m1",
+      "title": "Motion · Seedance 2.5 · 4K",
+      "badge": "MOTION 4K",
+      "video": "motion/sh19_m1_4k.mp4",
+      "poster": "motion/sh19_m1_poster.jpg",
+      "meta": "5.04s · 24 fps · 3840×2160 · H.264 original (untouched)",
+      "note": "Lateral dolly with the foreground tree sliding across and revealing the canopy peaks, flare shifting across the lens. Keyframe = the approved still (as reference, not a start frame)."
+     }
+    ]
+   }
   },
   {
    "id": "SH20",
@@ -2354,9 +2422,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-21T14:58:00+04:00",
+ "updated": "2026-11-21T15:10:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 17,
+ "build": 18,
  "removed": [
   {
    "id": "SH31",
