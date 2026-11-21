@@ -234,6 +234,10 @@
     {
      "t": "SH03 one-take (21 Nov): director note — one camera flying over and between all projects, as if they are in one place, no cuts. Master keyframe built; t2 is the first true one-take",
      "done": false
+    },
+    {
+     "t": "Director brief (21 Nov): open on sky only → tilt down onto the first project → fly project to project in order (hospital, university, train, CST, solar & wind, silos), each big in frame — no cut, no fade, no group shot of all the projects at any point; the shot ends on the last project",
+     "done": true
     }
    ],
    "versions": [
@@ -469,7 +473,46 @@
         "label": "Whole district wide"
        }
       ],
-      "note": "New approach: first a master keyframe with all six projects standing together in one district (SH23 golden light), then Seedance flies ONE camera through it — no cuts, every project revealed by the same move. Still to improve: the first two seconds keep the daylight of the hospital photo, and the solar & wind field needs a clearer reveal. Two more takes using only the master keyframe are rendering."
+      "note": "First true one-take (no cuts) through the master district. Off-brief: it starts on the hospital instead of the sky and ends on a wide of all the projects — the director wants project after project with no group shot. Kept for reference only."
+     },
+     {
+      "v": "t3",
+      "title": "ONE TAKE · sky → project after project, no cut",
+      "badge": "ONE TAKE · TEST",
+      "video": "anim/sh03_onetake_t3_720p.mp4",
+      "poster": "anim/sh03_onetake_t3_poster.jpg",
+      "meta": "18.0s · 24 fps · 1280×720 · test render, real speed (to be timed in the edit)",
+      "chapters": [
+       {
+        "t": 0,
+        "label": "Sky"
+       },
+       {
+        "t": 1.2,
+        "label": "Tilt down · King Faisal Specialist Hospital"
+       },
+       {
+        "t": 3.2,
+        "label": "Princess Nourah University"
+       },
+       {
+        "t": 4.8,
+        "label": "Haramain High-Speed Railway"
+       },
+       {
+        "t": 5.8,
+        "label": "CST tower"
+       },
+       {
+        "t": 7.6,
+        "label": "Solar & wind"
+       },
+       {
+        "t": 13.6,
+        "label": "Grain silos"
+       }
+      ],
+      "note": "Director brief: open on sky, tilt down, then project after project with no cut, no fade and no group shot at the end. One camera from start to finish: Seedance flew the first 7 s (sky → hospital → university → train → CST spire), then Seedance Extend continued from that exact last frame over the solar farm and the turbines to the concrete silos — checked frame by frame, no cut anywhere. Runs 18 s at real speed; the solar stretch can be speed-ramped to fit the slot."
      }
     ]
    },
@@ -2815,9 +2858,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-21T16:48:00+04:00",
+ "updated": "2026-11-21T17:05:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 25,
+ "build": 26,
  "removed": [
   {
    "id": "SH31",
