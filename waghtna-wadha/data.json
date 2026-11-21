@@ -2554,6 +2554,10 @@
     {
      "t": "Motion m1 (21 Nov): Seedance 2.5, 4K 3840×2160, 5 s, camera feel as in the original cut, same cinematography",
      "done": true
+    },
+    {
+     "t": "Motion m2 (21 Nov): background flag put out of focus — its writing was malformed",
+     "done": true
     }
    ],
    "versions": [
@@ -2587,6 +2591,17 @@
       "dlmeta": "76 Mbps · 48 MB",
       "meta": "5.04s · 24 fps · 3840×2160 · preview · 4K UHD badge",
       "note": "Close handheld drift with the two friends as they reach out and hug, friends clapping, the flag behind, golden backlight and flare — as in the original. Keyframe = the approved still (reference). Download = clean high-bitrate master, no watermark."
+     },
+     {
+      "v": "m2",
+      "title": "Motion · Seedance 2.5 · 4K",
+      "badge": "MOTION 4K",
+      "video": "motion/sh36_m2_4k_wm.mp4",
+      "poster": "motion/sh36_m2_poster.jpg",
+      "download": "master/WW_SH32_m2_4K_HQ.mp4",
+      "dlmeta": "81 Mbps · 51 MB",
+      "meta": "5.04s · 24 fps · 3840×2160 · preview · 4K UHD badge",
+      "note": "m2: the flag behind them is now defocused like a natural shallow depth of field, so its writing can no longer be read — the approved performance and camera are untouched. Download = clean high-bitrate master, no watermark."
      }
     ]
    }
@@ -2858,9 +2873,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-21T17:08:00+04:00",
+ "updated": "2026-11-21T17:38:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 28,
+ "build": 29,
  "removed": [
   {
    "id": "SH31",
