@@ -230,6 +230,10 @@
     {
      "t": "Seedance test t1 (21 Nov, 480p): camera-travel through the six projects in the Drive order — order right; continuity, mood and silos to fix in t2",
      "done": false
+    },
+    {
+     "t": "SH03 one-take (21 Nov): director note — one camera flying over and between all projects, as if they are in one place, no cuts. Master keyframe built; t2 is the first true one-take",
+     "done": false
     }
    ],
    "versions": [
@@ -439,10 +443,43 @@
        }
       ],
       "note": "First Seedance test, no 3D blocking: the six Drive photos in their order + SH23 for the sky and light. Order and buildings read right. Not yet there: it cuts between places instead of one continuous travel, the hospital, university and CST came out in plain daylight instead of the SH23 golden mood, and the silos turned into cooling towers. Test t2 is running with mood-graded references and a tighter brief."
+     },
+     {
+      "v": "t2",
+      "title": "Seedance 2.5 test · ONE TAKE — one camera over one district",
+      "badge": "ONE TAKE · 480p TEST",
+      "video": "anim/sh03_seedance_t2_onetake_480p.mp4",
+      "poster": "anim/sh03_seedance_t2_poster.jpg",
+      "meta": "10.04s · 24 fps · 854×480 · test render, no cuts",
+      "chapters": [
+       {
+        "t": 0,
+        "label": "King Faisal Specialist Hospital"
+       },
+       {
+        "t": 1.8,
+        "label": "Princess Nourah University"
+       },
+       {
+        "t": 5,
+        "label": "CST tower · Haramain train · silos"
+       },
+       {
+        "t": 8,
+        "label": "Whole district wide"
+       }
+      ],
+      "note": "New approach: first a master keyframe with all six projects standing together in one district (SH23 golden light), then Seedance flies ONE camera through it — no cuts, every project revealed by the same move. Still to improve: the first two seconds keep the daylight of the hospital photo, and the solar & wind field needs a clearer reveal. Two more takes using only the master keyframe are rendering."
      }
     ]
    },
    "refs": [
+    {
+     "img": "anim/sh03_master_key_t.jpg",
+     "full": "anim/sh03_master_key.jpg",
+     "label": "Master keyframe — all six projects in one district",
+     "src": "Built for the one-take · SH23 light"
+    },
     {
      "img": "refs/sh03/01b_t.webp",
      "full": "refs/sh03/01b.jpg",
@@ -2778,9 +2815,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-21T16:40:00+04:00",
+ "updated": "2026-11-21T16:48:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 24,
+ "build": 25,
  "removed": [
   {
    "id": "SH31",
