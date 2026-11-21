@@ -776,7 +776,7 @@
    "loop": "loop/sh08.mp4",
    "before": "before/sh08_m.webp",
    "beforeFull": "before/sh08.jpg",
-   "status": "wip",
+   "status": "motion",
    "notes": [
     {
      "t": "More dramatic: room falls into deep teal shadow, the surgical lamps are the only warm light",
@@ -784,6 +784,10 @@
     },
     {
      "t": "Warm light lands on the operating field and the team — the eye goes to it; light = clarity of vision",
+     "done": true
+    },
+    {
+     "t": "Motion m1 (21 Nov): Seedance 2.5, 4K 3840×2160, 5 s, camera move as in the original cut, same cinematography; preview carries a 4K watermark, clean high-bitrate master to download",
      "done": true
     }
    ],
@@ -803,7 +807,23 @@
      "src": "SH23 · this cut",
      "href": "#sh23"
     }
-   ]
+   ],
+   "animatic": {
+    "kind": "motion",
+    "versions": [
+     {
+      "v": "m1",
+      "title": "Motion · Seedance 2.5 · 4K",
+      "badge": "MOTION 4K",
+      "video": "motion/sh08_m1_4k_wm.mp4",
+      "poster": "motion/sh08_m1_poster.jpg",
+      "download": "master/WW_SH08_m1_4K_HQ.mp4",
+      "dlmeta": "80 Mbps · 50 MB",
+      "meta": "5.04s · 24 fps · 3840×2160 · preview watermarked",
+      "note": "Near-locked shot with a slow push-in: the team works calmly under the robot, warm light on the operating field — as in the original. Keyframe = the approved still (reference, not a start frame). Download = clean high-bitrate master, no watermark."
+     }
+    ]
+   }
   },
   {
    "id": "SH09",
@@ -926,7 +946,7 @@
    "loop": "loop/sh13.mp4",
    "before": "before/sh13_m.webp",
    "beforeFull": "before/sh13.jpg",
-   "status": "wip",
+   "status": "motion",
    "notes": [
     {
      "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
@@ -934,6 +954,10 @@
     },
     {
      "t": "Sun beyond top-right — golden glare across the panels, each row throws a long shadow on orange sand",
+     "done": true
+    },
+    {
+     "t": "Motion m1 (21 Nov): Seedance 2.5, 4K 3840×2160, 5 s, camera move as in the original cut, same cinematography; preview carries a 4K watermark, clean high-bitrate master to download",
      "done": true
     }
    ],
@@ -967,7 +991,23 @@
      "src": "Mood board · Pinterest",
      "href": "https://www.pinterest.com/amrsabry/sunny/"
     }
-   ]
+   ],
+   "animatic": {
+    "kind": "motion",
+    "versions": [
+     {
+      "v": "m1",
+      "title": "Motion · Seedance 2.5 · 4K",
+      "badge": "MOTION 4K",
+      "video": "motion/sh13_m1_4k_wm.mp4",
+      "poster": "motion/sh13_m1_poster.jpg",
+      "download": "master/WW_SH13_m1_4K_HQ.mp4",
+      "dlmeta": "80 Mbps · 50 MB",
+      "meta": "5.04s · 24 fps · 3840×2160 · preview watermarked",
+      "note": "Smooth forward glide along the diagonal panel rows, golden glare sliding across the glass — as in the original. Keyframe = the approved still (reference, not a start frame). Download = clean high-bitrate master, no watermark."
+     }
+    ]
+   }
   },
   {
    "id": "SH14",
@@ -982,7 +1022,7 @@
    "loop": "loop/sh14.mp4",
    "before": "before/sh14_m.webp",
    "beforeFull": "before/sh14.jpg",
-   "status": "wip",
+   "status": "motion",
    "notes": [
     {
      "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
@@ -990,6 +1030,10 @@
     },
     {
      "t": "Sun bursts through the lattice tower as a starburst, steel rim-lit gold against a teal sky",
+     "done": true
+    },
+    {
+     "t": "Motion m1 (21 Nov): Seedance 2.5, 4K 3840×2160, 5 s, camera move as in the original cut, same cinematography; preview carries a 4K watermark, clean high-bitrate master to download",
      "done": true
     }
    ],
@@ -1016,7 +1060,23 @@
      "src": "Mood board · Pinterest",
      "href": "https://www.pinterest.com/amrsabry/sunny/"
     }
-   ]
+   ],
+   "animatic": {
+    "kind": "motion",
+    "versions": [
+     {
+      "v": "m1",
+      "title": "Motion · Seedance 2.5 · 4K",
+      "badge": "MOTION 4K",
+      "video": "motion/sh14_m1_4k_wm.mp4",
+      "poster": "motion/sh14_m1_poster.jpg",
+      "download": "master/WW_SH14_m1_4K_HQ.mp4",
+      "dlmeta": "75 Mbps · 47 MB",
+      "meta": "5.04s · 24 fps · 3840×2160 · preview watermarked",
+      "note": "Low angle tilting up and turning around the crane mast, the sun flickering through the lattice — as in the original. Keyframe = the approved still (reference, not a start frame). Download = clean high-bitrate master, no watermark."
+     }
+    ]
+   }
   },
   {
    "id": "SH15",
@@ -1031,7 +1091,7 @@
    "loop": "loop/sh15.mp4",
    "before": "before/sh15_m.webp",
    "beforeFull": "before/sh15.jpg",
-   "status": "wip",
+   "status": "motion",
    "notes": [
     {
      "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
@@ -1039,6 +1099,10 @@
     },
     {
      "t": "Golden shafts through a high factory window, hot highlights on the cans, long shadows on the line",
+     "done": true
+    },
+    {
+     "t": "Motion m1 (21 Nov): Seedance 2.5, 4K 3840×2160, 5 s, camera move as in the original cut, same cinematography; preview carries a 4K watermark, clean high-bitrate master to download",
      "done": true
     }
    ],
@@ -1065,7 +1129,23 @@
      "src": "Mood board · Pinterest",
      "href": "https://www.pinterest.com/amrsabry/sunny/"
     }
-   ]
+   ],
+   "animatic": {
+    "kind": "motion",
+    "versions": [
+     {
+      "v": "m1",
+      "title": "Motion · Seedance 2.5 · 4K",
+      "badge": "MOTION 4K",
+      "video": "motion/sh15_m1_4k_wm.mp4",
+      "poster": "motion/sh15_m1_poster.jpg",
+      "download": "master/WW_SH15_m1_4K_HQ.mp4",
+      "dlmeta": "77 Mbps · 49 MB",
+      "meta": "5.04s · 24 fps · 3840×2160 · preview watermarked",
+      "note": "Macro slide along the canning line, cans gliding under the heads, light shafts through the window — as in the original. Keyframe = the approved still (reference, not a start frame). Download = clean high-bitrate master, no watermark."
+     }
+    ]
+   }
   },
   {
    "id": "SH16",
@@ -1370,7 +1450,7 @@
    "loop": "loop/sh20.mp4",
    "before": "before/sh20_m.webp",
    "beforeFull": "before/sh20.jpg",
-   "status": "wip",
+   "status": "motion",
    "notes": [
     {
      "t": "Same angle, car, road and canyon — mood only",
@@ -1386,6 +1466,10 @@
     },
     {
      "t": "Fix: this is the car's FRONT approaching camera, not its rear — white DRL light bar + front plate, no red tail lights (v3)",
+     "done": true
+    },
+    {
+     "t": "Motion m1 (21 Nov): Seedance 2.5, 4K 3840×2160, 5 s, camera move as in the original cut, same cinematography; preview carries a 4K watermark, clean high-bitrate master to download",
      "done": true
     }
    ],
@@ -1440,7 +1524,23 @@
      "src": "Mood board · Pinterest",
      "href": "https://www.pinterest.com/amrsabry/sunny/"
     }
-   ]
+   ],
+   "animatic": {
+    "kind": "motion",
+    "versions": [
+     {
+      "v": "m1",
+      "title": "Motion · Seedance 2.5 · 4K",
+      "badge": "MOTION 4K",
+      "video": "motion/sh20_m1_4k_wm.mp4",
+      "poster": "motion/sh20_m1_poster.jpg",
+      "download": "master/WW_SH20_m1_4K_HQ.mp4",
+      "dlmeta": "85 Mbps · 53 MB",
+      "meta": "5.04s · 24 fps · 3840×2160 · preview watermarked",
+      "note": "Low, almost locked camera as the car drives toward us from the far bend, front light bar on, sun right behind it — as in the original. Keyframe = the approved still (reference, not a start frame). Download = clean high-bitrate master, no watermark."
+     }
+    ]
+   }
   },
   {
    "id": "SH21",
@@ -1455,7 +1555,7 @@
    "loop": "loop/sh21.mp4",
    "before": "before/sh21_m.webp",
    "beforeFull": "before/sh21.jpg",
-   "status": "wip",
+   "status": "motion",
    "notes": [
     {
      "t": "Same tracking angle, car, lane line and sandstone mesas — mood only",
@@ -1467,6 +1567,10 @@
     },
     {
      "t": "Long shadow racing toward camera, speed blur, dust glowing behind the wheels, mesas warm on top / teal in shade",
+     "done": true
+    },
+    {
+     "t": "Motion m1 (21 Nov): Seedance 2.5, 4K 3840×2160, 5 s, camera move as in the original cut, same cinematography; preview carries a 4K watermark, clean high-bitrate master to download",
      "done": true
     }
    ],
@@ -1507,7 +1611,23 @@
      "src": "Mood board · Pinterest",
      "href": "https://www.pinterest.com/amrsabry/sunny/"
     }
-   ]
+   ],
+   "animatic": {
+    "kind": "motion",
+    "versions": [
+     {
+      "v": "m1",
+      "title": "Motion · Seedance 2.5 · 4K",
+      "badge": "MOTION 4K",
+      "video": "motion/sh21_m1_4k_wm.mp4",
+      "poster": "motion/sh21_m1_poster.jpg",
+      "download": "master/WW_SH21_m1_4K_HQ.mp4",
+      "dlmeta": "81 Mbps · 51 MB",
+      "meta": "5.04s · 24 fps · 3840×2160 · preview watermarked",
+      "note": "Low tracking move alongside the car, swinging round the rear quarter as it pulls away, sun flaring over the roof — as in the original. Keyframe = the approved still (reference, not a start frame). Download = clean high-bitrate master, no watermark."
+     }
+    ]
+   }
   },
   {
    "id": "SH22",
@@ -2514,9 +2634,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-21T15:55:00+04:00",
+ "updated": "2026-11-21T16:05:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 20,
+ "build": 21,
  "removed": [
   {
    "id": "SH31",
