@@ -2274,7 +2274,7 @@
    "loop": "loop/sh27.mp4",
    "before": "before/sh27_m.webp",
    "beforeFull": "before/sh27.jpg",
-   "status": "wip",
+   "status": "motion",
    "notes": [
     {
      "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
@@ -2286,6 +2286,10 @@
     },
     {
      "t": "v2: blue technology accent — LED rings on robot joints, laser scan line on the battery pack, blue screens behind; gold stays the key light",
+     "done": true
+    },
+    {
+     "t": "Motion k1 (21 Nov): Kroma keeps the reference camera move frame for frame; only the look changes",
      "done": true
     }
    ],
@@ -2312,7 +2316,23 @@
      "src": "SH23 · this cut",
      "href": "#sh23"
     }
-   ]
+   ],
+   "animatic": {
+    "kind": "motion",
+    "versions": [
+     {
+      "v": "k1",
+      "title": "Motion · exact reference move · 4K",
+      "badge": "MOTION 4K · REF MOVE",
+      "video": "motion/sh27_k1_4k_wm.mp4",
+      "poster": "motion/sh27_k1_poster.jpg",
+      "download": "master/WW_SH27_k1_4K_HQ.mp4",
+      "dlmeta": "87 Mbps · 11 MB",
+      "meta": "1.04s (cut length) · 24 fps · 3840×2160 · preview · 4K UHD badge",
+      "note": "Exact camera move of the original cut — same angle, rotation, speed and timing (checked by motion tracking against the reference) — re-rendered in our look: warm golden low light raking across the robot arms, reflections, warm flare, teal shadows — the robot motion kept from the original. Download = clean high-bitrate master, no watermark."
+     }
+    ]
+   }
   },
   {
    "id": "SH28",
@@ -2431,7 +2451,7 @@
    "loop": "loop/sh33.mp4",
    "before": "before/sh33_m.webp",
    "beforeFull": "before/sh33.jpg",
-   "status": "wip",
+   "status": "motion",
    "notes": [
     {
      "t": "Rebuilt from real photos of the current Saudia livery (787-10 from below) — not from text",
@@ -2451,6 +2471,10 @@
     },
     {
      "t": "v5 (21 Nov): logo removed from underneath — belly wordmark panel painted out to plain white fuselage, Saudia emblem removed from both engines; light, grain and everything else untouched",
+     "done": true
+    },
+    {
+     "t": "Motion k1 (21 Nov): Kroma keeps the reference camera move frame for frame; only the look changes",
      "done": true
     }
    ],
@@ -2520,7 +2544,23 @@
      "href": "#sh23"
     }
    ],
-   "was": "SH33"
+   "was": "SH33",
+   "animatic": {
+    "kind": "motion",
+    "versions": [
+     {
+      "v": "k1",
+      "title": "Motion · exact reference move · 4K",
+      "badge": "MOTION 4K · REF MOVE",
+      "video": "motion/sh33_k1_4k_wm.mp4",
+      "poster": "motion/sh33_k1_poster.jpg",
+      "download": "master/WW_SH29_k1_4K_HQ.mp4",
+      "dlmeta": "76 Mbps · 16 MB",
+      "meta": "1.71s (cut length) · 24 fps · 3840×2160 · preview · 4K UHD badge",
+      "note": "Exact camera move of the original cut — same angle, rotation, speed and timing (checked by motion tracking against the reference) — re-rendered in our look: the aircraft crossing the portal exactly on the original path, no logo underneath, low golden sun flaring at the edge of the portal, teal-gold sky. Download = clean high-bitrate master, no watermark."
+     }
+    ]
+   }
   },
   {
    "id": "SH30",
@@ -3008,9 +3048,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-21T18:14:00+04:00",
+ "updated": "2026-11-21T18:20:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 33,
+ "build": 34,
  "removed": [
   {
    "id": "SH31",
