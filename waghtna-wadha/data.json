@@ -2858,9 +2858,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-21T17:05:00+04:00",
+ "updated": "2026-11-21T17:06:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 26,
+ "build": 27,
  "removed": [
   {
    "id": "SH31",
@@ -2878,5 +2878,14 @@
    "id": "SH30",
    "title": "Honour Guard — Wide"
   }
+ ],
+ "motionApproved": [
+  "SH08",
+  "SH16",
+  "SH17",
+  "SH18",
+  "SH19",
+  "SH20",
+  "SH21"
  ]
 }

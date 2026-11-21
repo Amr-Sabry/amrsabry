@@ -111,10 +111,10 @@ h1 em{font-style:normal;color:var(--violet)}
   <div class="wrap">
     <div class="credit"><span class="cl">A film directed by</span><span class="cn">Abdullah Al-Fajjar</span></div>
     <div class="kick">Waghtna Wadha · #OurDestinationIsClear</div>
-    <h1>Final <em>4K</em> shots</h1>
-    <p class="lead">Every finished shot, ready to play and download. Press play to watch the preview — <b>Download 4K</b> gives the clean 3840×2160 master, no watermark.</p>
+    <h1>Approved <em>4K</em> shots</h1>
+    <p class="lead">Every approved shot, ready to play and download. Press play to watch the preview — <b>Download 4K</b> gives the clean 3840×2160 master, no watermark.</p>
     <div class="stats">
-      <div class="stat"><div class="k">Shots</div><div class="v" id="sN">—</div></div>
+      <div class="stat"><div class="k">Approved shots</div><div class="v" id="sN">—</div></div>
       <div class="stat"><div class="k">Format</div><div class="v">4K UHD · 24p</div></div>
     </div>
   </div>
@@ -177,7 +177,8 @@ function wire() {
 
 async function load() {
   const r = await fetch(BASE + 'data.json?x=' + Date.now(), {cache: 'no-store'}); const D = await r.json();
-  LIST = D.shots.filter(s => s.animatic && s.animatic.kind === 'motion' && (s.animatic.versions || []).length && s.animatic.versions.at(-1).download).sort((a, b) => parseInt(a.id.slice(2)) - parseInt(b.id.slice(2)));
+  const OK = Array.isArray(D.motionApproved) ? D.motionApproved : null;
+  LIST = D.shots.filter(s => s.animatic && s.animatic.kind === 'motion' && (s.animatic.versions || []).length && s.animatic.versions.at(-1).download && (!OK || OK.includes(s.id))).sort((a, b) => parseInt(a.id.slice(2)) - parseInt(b.id.slice(2)));
   $('#grid').innerHTML = LIST.length ? LIST.map(card).join('') : '<div class="empty">No shots yet.</div>';
   $('#sN').textContent = LIST.length;
   wire();

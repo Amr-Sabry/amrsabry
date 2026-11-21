@@ -477,7 +477,7 @@ a.ref:hover{border-color:var(--amber)}
     <div class="brand"><span class="mark"><svg class="i" viewBox="0 0 24 24"><use href="#i-aperture"/></svg></span><b>Waghtna Wadha</b><i class="sep"></i><span class="dirby">Directed by <b>Abdullah Al-Fajjar</b></span></div>
     <div class="navr">
       <div class="live" title="This page updates as the work lands"><i></i><span class="lt">Live ·</span>&nbsp;<span id="upd">—</span></div>
-      <a class="mlink" href="/waghtna-wadha-motion" title="All finished 4K motion shots — preview + clean download"><svg class="i" viewBox="0 0 24 24"><use href="#i-video"/></svg><span>Motion 4K</span><b id="mlinkN"></b></a>
+      <a class="mlink" href="/waghtna-wadha-motion" title="Approved 4K shots — play + clean download"><svg class="i" viewBox="0 0 24 24"><use href="#i-video"/></svg><span>Motion 4K</span><b id="mlinkN"></b></a>
       <button class="ib" id="share" aria-label="Copy page link" title="Copy link"><svg class="i" viewBox="0 0 24 24"><use href="#i-link"/></svg></button>
     </div>
   </div>
@@ -639,7 +639,7 @@ const STATUS = {
 };
 const FPS = 25;
 const tc = t => { const f = Math.max(0, Math.round(t * FPS)); const s = Math.floor(f / FPS), ff = f % FPS; return [Math.floor(s / 60), s % 60, ff].map(n => String(n).padStart(2, '0')).join(':'); };
-const BUILD = 26;
+const BUILD = 27;
 let D = null, filter = 'all', view = 'rows', stamp = null, pendingReload = false;
 const verSel = {}; const animSel = {};
 
@@ -762,7 +762,7 @@ function setFacts() {
   $('#footUpd').textContent = 'Last update · ' + fmtUpd(D.updated);
   $('#f-run').textContent = tc(D.duration).slice(0, 5);
   $('#f-shots').textContent = D.shots.length;
-  { const n = D.shots.filter(isMotion).length; const b = document.getElementById('mlinkN'); if (b) b.textContent = n || ''; }
+  { const n = Array.isArray(D.motionApproved) ? D.motionApproved.length : D.shots.filter(isMotion).length; const b = document.getElementById('mlinkN'); if (b) b.textContent = n || ''; }
   $('#f-date').textContent = D.date;
   const appr = D.shots.filter(s => ['approved','motion','final'].includes(s.status)).length;
   $('#f-appr').textContent = appr; $('#f-of').textContent = '/ ' + D.shots.length;
