@@ -639,7 +639,8 @@ const STATUS = {
 };
 const FPS = 25;
 const tc = t => { const f = Math.max(0, Math.round(t * FPS)); const s = Math.floor(f / FPS), ff = f % FPS; return [Math.floor(s / 60), s % 60, ff].map(n => String(n).padStart(2, '0')).join(':'); };
-const BUILD = 45;
+const U = p => /^https?:\/\//.test(p || '') ? p : BASE + p;
+const BUILD = 46;
 let D = null, filter = 'all', view = 'rows', stamp = null, pendingReload = false;
 const verSel = {}; const animSel = {};
 
@@ -821,7 +822,7 @@ function animHTML(s) {
   const ch = (v.chapters || []).map((c, i) => `<button data-seek="${c.t}"><b>${String(i + 1).padStart(2, '0')}</b>${esc(c.label)}</button>`).join('');
   const fr = (v.frames || []).map((f, i) => `<li><a href="${BASE + (f.full || f.img)}" target="_blank" rel="noopener"><img loading="lazy" src="${BASE + f.img}" alt=""><span><b>${String(i + 1).padStart(2, '0')}</b>${esc(f.label)}</span></a></li>`).join('');
   const mo = a.kind === 'motion';
-  return `<div class="anim${mo ? ' motion' : ''}"><div class="anim-h"><h4>${mo ? '<span class="new">NEW</span>' : ''}${ic(mo ? 'video' : 'film')}${esc(v.title || a.title || 'Animatic')}</h4><span class="mono">${esc(v.meta || '')}</span>${v.download ? `<a class="anim-dl" href="${BASE + v.download}" download title="Clean master, no watermark">${ic('download')}Download 4K <small>clean · ${esc(v.dlmeta || 'no watermark')}</small></a>` : ''}${modes}${vers}</div>
+  return `<div class="anim${mo ? ' motion' : ''}"><div class="anim-h"><h4>${mo ? '<span class="new">NEW</span>' : ''}${ic(mo ? 'video' : 'film')}${esc(v.title || a.title || 'Animatic')}</h4><span class="mono">${esc(v.meta || '')}</span>${v.download ? `<a class="anim-dl" href="${U(v.download)}" download title="Clean master, no watermark">${ic('download')}Download 4K <small>clean · ${esc(v.dlmeta || 'no watermark')}</small></a>` : ''}${modes}${vers}</div>
     <div class="anim-v" data-link="${esc(v.link || '')}"><video muted loop playsinline controls preload="none" poster="${BASE + v.poster}" data-src="${BASE + v.video}"></video><span class="badge"><span class="chip">${ic('video')}${esc(v.badge || 'ANIMATIC')} · ${esc(v.v)}</span></span></div>
     ${ch ? `<div class="anim-ch">${ch}</div>` : ''}${fr ? `<ol class="anim-f">${fr}</ol>` : ''}${v.note || a.note ? `<p>${esc(v.note || a.note)}</p>` : ''}</div>`;
 }
@@ -992,7 +993,7 @@ function updateSplit(s, v) {
   const R = $('#pvsR'), lab = $('#pvsLab'), mv = s && isMotion(s) ? s.animatic.versions[s.animatic.versions.length - 1] : null;
   R.classList.toggle('vid', !!mv); R.classList.toggle('still', !mv && !!v); R.classList.toggle('empty', !mv && !v);
   const dlb = $('#pvDl');
-  if (mv && mv.download) { dlb.hidden = false; dlb.href = BASE + mv.download; dlb.setAttribute('download', mv.download.split('/').pop()); dlb.title = s.id + ' · download clean 4K master · ' + (mv.dlmeta || 'no watermark'); }
+  if (mv && mv.download) { dlb.hidden = false; dlb.href = U(mv.download); dlb.setAttribute('download', mv.download.split('/').pop()); dlb.title = s.id + ' · download clean 4K master · ' + (mv.dlmeta || 'no watermark'); }
   else dlb.hidden = true;
   if (mv) {
     const src = BASE + mv.video; if (pmode === 'split' && pv2.dataset.cur !== src) { pv2.dataset.cur = src; pv2.src = src; }

@@ -246,6 +246,10 @@
     {
      "t": "SH03 t5 (21 Nov): camera clears the dome and flies between the spinning turbines — per director note",
      "done": true
+    },
+    {
+     "t": "SH03 t6 (21 Nov): native 4K regeneration with reference sheets for all six projects — train livery and CST tower now match the client photos; one consistent golden-hour light",
+     "done": true
     }
    ],
    "versions": [
@@ -619,6 +623,55 @@
        }
       ],
       "note": "Director notes on t4 applied: the camera now flies over the university dome with clear space instead of crashing into it, and passes between two spinning wind turbines without touching them, then threads the gap between the silos and climbs out to the sky. Same one-camera build — each part continues from the exact last frame of the part before (checked: no cut, no fade). 29 s with light speed-ramps on the solar stretch."
+     },
+     {
+      "v": "t6",
+      "title": "ONE TAKE · native 4K — real train livery & CST tower from the reference sheets",
+      "badge": "NATIVE 4K",
+      "video": "anim/sh03_onetake_t6_1080_wm.mp4",
+      "poster": "anim/sh03_onetake_t6_poster.jpg",
+      "download": "https://e1wj4sdxt68zy0lz.public.blob.vercel-storage.com/videos/1795276312625-1be4d4a4-corn-corn_70afe5f29cc946e08362.mp4",
+      "dlmeta": "native 3840×2160 · HEVC · 106 MB",
+      "meta": "30s · 24 fps · generated natively at 3840×2160 (no upscale) · preview 1080p with 4K badge",
+      "chapters": [
+       {
+        "t": 0,
+        "label": "Sky"
+       },
+       {
+        "t": 1.5,
+        "label": "King Faisal Specialist Hospital"
+       },
+       {
+        "t": 6,
+        "label": "Princess Nourah University"
+       },
+       {
+        "t": 9,
+        "label": "Haramain train"
+       },
+       {
+        "t": 15,
+        "label": "CST tower · sphere"
+       },
+       {
+        "t": 18.5,
+        "label": "Solar farm"
+       },
+       {
+        "t": 21,
+        "label": "Between the turbines"
+       },
+       {
+        "t": 24,
+        "label": "Silos · through the gap"
+       },
+       {
+        "t": 27.4,
+        "label": "Sky"
+       }
+      ],
+      "note": "New native-4K generation (not an upscale). Reference sheets built for every project from the client's Drive photos — hospital, university, Haramain train, CST tower, solar & wind, silos — then turned into clean design references so the model copies the design, not the photo. Train now has the real Haramain livery (white, duck-bill nose, thin green & gold swooshes) and the glass tower is the real CST tower with its sphere. One golden-hour sun from first to last frame. Download = the native 4K file straight from the generator."
      }
     ]
    },
@@ -3242,7 +3295,7 @@
  ],
  "updated": "2026-11-21T19:40:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 45,
+ "build": 46,
  "removed": [
   {
    "id": "SH31",
