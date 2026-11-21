@@ -170,7 +170,7 @@ function wire() {
 
 async function load() {
   const r = await fetch(BASE + 'data.json?x=' + Date.now(), {cache: 'no-store'}); const D = await r.json();
-  LIST = D.shots.filter(s => s.animatic && s.animatic.kind === 'motion' && (s.animatic.versions || []).length && !(D.removed || []).includes(s.id));
+  LIST = D.shots.filter(s => s.animatic && s.animatic.kind === 'motion' && (s.animatic.versions || []).length);
   $('#grid').innerHTML = LIST.length ? LIST.map(card).join('') : '<div class="empty">No motion shots yet.</div>';
   $('#sN').textContent = LIST.length;
   const mb = LIST.reduce((a, s) => { const m = /([\d.]+)\s*MB/.exec(s.animatic.versions.at(-1).dlmeta || ''); return a + (m ? +m[1] : 0); }, 0);

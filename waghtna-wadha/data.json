@@ -226,6 +226,10 @@
     {
      "t": "Next: lock camera + layout with the director, then render the final shot over the blocking",
      "done": false
+    },
+    {
+     "t": "Seedance test t1 (21 Nov, 480p): camera-travel through the six projects in the Drive order — order right; continuity, mood and silos to fix in t2",
+     "done": false
     }
    ],
    "versions": [
@@ -400,6 +404,41 @@
        }
       ],
       "note": "v4: camera keyframed on each project instead of a straight pass. Train: we fly ahead of the Talgo looking back at the nose, it catches up and passes, we lift over the line behind it. Buildings: camera holds on each one close so it fills the frame — hospital, then the university's arcade and dome. Silos: close pass along the row, then the camera rises over them to reveal the solar field and the turbines behind. Finale: the CST tower stands at the end of the railway line, centred with its spire as the train arrives. The look sweeps one way (back → left → forward) so there's no back-and-forth whip."
+     },
+     {
+      "v": "t1",
+      "title": "Seedance 2.5 test · 480p camera travel — six projects",
+      "badge": "SEEDANCE TEST 480p",
+      "video": "anim/sh03_seedance_t1_480p.mp4",
+      "poster": "anim/sh03_seedance_t1_poster.jpg",
+      "meta": "8.06s · 24 fps · 854×480 · test render, not final",
+      "chapters": [
+       {
+        "t": 0,
+        "label": "King Faisal Specialist Hospital"
+       },
+       {
+        "t": 2.4,
+        "label": "Princess Nourah University"
+       },
+       {
+        "t": 3.6,
+        "label": "Haramain High-Speed Railway"
+       },
+       {
+        "t": 4.4,
+        "label": "CST Commission HQ"
+       },
+       {
+        "t": 5.6,
+        "label": "Solar & wind"
+       },
+       {
+        "t": 6.8,
+        "label": "Grain silos"
+       }
+      ],
+      "note": "First Seedance test, no 3D blocking: the six Drive photos in their order + SH23 for the sky and light. Order and buildings read right. Not yet there: it cuts between places instead of one continuous travel, the hospital, university and CST came out in plain daylight instead of the SH23 golden mood, and the silos turned into cooling towers. Test t2 is running with mood-graded references and a tighter brief."
      }
     ]
    },
@@ -485,6 +524,10 @@
     {
      "t": "Motion m1 (21 Nov): Seedance 2.5, 4K 3840×2160, 5 s, camera move as in the original cut, same cinematography; preview carries a 4K watermark, clean high-bitrate master to download",
      "done": true
+    },
+    {
+     "t": "Motion m2 (21 Nov): camera now rises bottom-to-top like the original cut (m1 did not climb) — keeps the edit rhythm",
+     "done": true
     }
    ],
    "versions": [
@@ -531,6 +574,17 @@
       "dlmeta": "78 Mbps · 49 MB",
       "meta": "5.04s · 24 fps · 3840×2160 · preview · 4K UHD badge",
       "note": "Slow top-down drift with a gentle rotation over the pivot circle, the arm creeping with water mist — as in the original. Keyframe = the approved still (reference, not a start frame). Download = clean high-bitrate master, no watermark."
+     },
+     {
+      "v": "m2",
+      "title": "Motion · Seedance 2.5 · 4K",
+      "badge": "MOTION 4K",
+      "video": "motion/sh04_m2_4k_wm.mp4",
+      "poster": "motion/sh04_m2_poster.jpg",
+      "download": "master/WW_SH04_m2_4K_HQ.mp4",
+      "dlmeta": "73 Mbps · 46 MB",
+      "meta": "5.04s · 24 fps · 3840×2160 · preview · 4K UHD badge",
+      "note": "Re-shot to follow the original move: the drone starts low over the pivot hub and climbs straight up (pull-up), the circle shrinking in frame — measured ×0.40 scale change over the shot. Keyframe = end frame reference. Download = clean high-bitrate master, no watermark."
      }
     ]
    }
@@ -560,6 +614,10 @@
     },
     {
      "t": "Motion m1 (21 Nov): Seedance 2.5, 4K 3840×2160, 5 s, camera move as in the original cut, same cinematography; preview carries a 4K watermark, clean high-bitrate master to download",
+     "done": true
+    },
+    {
+     "t": "Motion m2 (21 Nov): camera now rises bottom-to-top like the original cut (m1 did not climb) — keeps the edit rhythm",
      "done": true
     }
    ],
@@ -607,6 +665,17 @@
       "dlmeta": "76 Mbps · 48 MB",
       "meta": "5.04s · 24 fps · 3840×2160 · preview · 4K UHD badge",
       "note": "Slow top-down truck across the cages, swell and sun-glint moving on the water — as in the original. Keyframe = the approved still (reference, not a start frame). Download = clean high-bitrate master, no watermark."
+     },
+     {
+      "v": "m2",
+      "title": "Motion · Seedance 2.5 · 4K",
+      "badge": "MOTION 4K",
+      "video": "motion/sh05_m2_4k_wm.mp4",
+      "poster": "motion/sh05_m2_poster.jpg",
+      "download": "master/WW_SH05_m2_4K_HQ.mp4",
+      "dlmeta": "80 Mbps · 50 MB",
+      "meta": "5.04s · 24 fps · 3840×2160 · preview · 4K UHD badge",
+      "note": "Re-shot to follow the original move: starts low over the fish cages and climbs straight up, more cages and the service boat revealed — measured ×0.39 scale change. Keyframe = end frame reference. Download = clean high-bitrate master, no watermark."
      }
     ]
    }
@@ -2634,9 +2703,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-21T16:25:00+04:00",
+ "updated": "2026-11-21T16:32:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 22,
+ "build": 23,
  "removed": [
   {
    "id": "SH31",
