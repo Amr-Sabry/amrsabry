@@ -3062,6 +3062,10 @@
    "status": "motion",
    "notes": [
     {
+     "t": "Motion m1 (22 Nov): Kroma dropped — new 4-second shot generated natively in 4K, handheld track along the robot line",
+     "done": true
+    },
+    {
      "t": "Mood: dramatic low golden sun as in SH23 — sun flare hitting the lens, long raking shadows",
      "done": true
     },
@@ -3115,6 +3119,17 @@
       "dlmeta": "87 Mbps · 11 MB",
       "meta": "1.04s (cut length) · 24 fps · 3840×2160 · preview · 4K UHD badge",
       "note": "Exact camera move of the original cut — same angle, rotation, speed and timing (checked by motion tracking against the reference) — re-rendered in our look: warm golden low light raking across the robot arms, reflections, warm flare, teal shadows — the robot motion kept from the original. Download = clean high-bitrate master, no watermark."
+     },
+     {
+      "v": "m1",
+      "title": "Motion · new 4-second shot · handheld track along the line · native 4K",
+      "badge": "MOTION 4K · 4 SECONDS",
+      "video": "motion/sh27_m1_4k_wm.mp4",
+      "poster": "motion/sh27_m1_poster.jpg",
+      "download": "master/WW_SH27_m1_4K_HQ.mp4",
+      "dlmeta": "80 Mbps · 40 MB",
+      "meta": "4.04s · 24 fps · 3840×2160 native · preview · 4K UHD badge",
+      "note": "A new 4-second shot generated directly in native 4K on Seedance 2.5 — no Kroma and no upscale. Still v2 was used as a reference for the robots, the battery pack and the look (not as a start frame). The camera travels sideways along the assembly line, handheld on a slider, from the first frame to the last, with foreground parallax; the robot arms lower their battery modules onto the pack, the blue laser scan line starts across the pack and the low sun flares between the arms at the end. The first half-second has a dark foreground post passing on the left. The slot in the cut is 26 frames (1.04 s), so the editor can pick any part of the four seconds. Download = clean high-bitrate master, no watermark."
      }
     ]
    }
@@ -3852,9 +3867,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-22T16:42:09+04:00",
+ "updated": "2026-11-22T17:22:45+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 66,
+ "build": 67,
  "removed": [
   {
    "id": "SH31",
