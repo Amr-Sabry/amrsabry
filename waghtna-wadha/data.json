@@ -23,6 +23,10 @@
    "status": "motion",
    "notes": [
     {
+     "t": "Motion m2 (22 Nov): god rays are continuous soft shafts in the air, they are not cut into bands and they cast no shadows; the wall brightens as one warm wash",
+     "done": true
+    },
+    {
      "t": "Same raw concrete wall, same texture and window-light pattern, same sun and flare",
      "done": true
     },
@@ -204,6 +208,28 @@
       "dlmeta": "80 Mbps · 21 MB",
       "meta": "2.13s (cut length) · 24 fps · 3840×2160 native · preview · 4K UHD badge",
       "note": "Option 01 in motion, native 4K on Seedance 2.5 (no upscale). The camera does what the original shot does — locked off with the same tiny drift, measured on the original clip and applied to this one. The action is the light: the sun slides out from behind the edge of the arch, its star and shafts grow, and sunlight creeps across the ribs onto the wall until long bands of light and shadow fan out from the sun and the whole space glows. One light source only, so every shadow points away from the sun. Start look = v16, end look = v15, both used as references (not start frames). This is the cut-length version (2.13 s, the slot in the edit), the same take played 1.9× faster. Download = clean high-bitrate master, no watermark."
+     },
+     {
+      "v": "m2s",
+      "title": "Motion · soft god rays, sunrise on the wall · native 4K · full length (4 s)",
+      "badge": "MOTION 4K · FULL LENGTH",
+      "video": "motion/sh01_m2s_4k_wm.mp4",
+      "poster": "motion/sh01_m2s_poster.jpg",
+      "download": "master/WW_SH01_m2s_4K_HQ.mp4",
+      "dlmeta": "83 Mbps · 42 MB",
+      "meta": "4.04s · 24 fps · 3840×2160 native · preview · 4K UHD badge",
+      "note": "Correction of m1: the god rays are no longer chopped into bands and they cast no shadows. The rays are light in the air — soft, unbroken shafts that grow out of the sun and fade into the haze. The wall is lit the way a sunrise lights it: one warm wash that comes through the opening between the ribs and spreads across the concrete, bounded only by the real shadow of the architecture, with no stripes and no fan of light and shadow. Reference used: v16 only (the banded v15 look is dropped). Native 4K on Seedance 2.5, no upscale. Camera = the original shot's tiny drift, measured on the original clip and applied to this one. This is the full-length take, for handles or a retime in the edit. Download = clean high-bitrate master, no watermark."
+     },
+     {
+      "v": "m2",
+      "title": "Motion · soft god rays, sunrise on the wall · native 4K",
+      "badge": "MOTION 4K",
+      "video": "motion/sh01_m2_4k_wm.mp4",
+      "poster": "motion/sh01_m2_poster.jpg",
+      "download": "master/WW_SH01_m2_4K_HQ.mp4",
+      "dlmeta": "84 Mbps · 22 MB",
+      "meta": "2.13s (cut length) · 24 fps · 3840×2160 native · preview · 4K UHD badge",
+      "note": "Correction of m1: the god rays are no longer chopped into bands and they cast no shadows. The rays are light in the air — soft, unbroken shafts that grow out of the sun and fade into the haze. The wall is lit the way a sunrise lights it: one warm wash that comes through the opening between the ribs and spreads across the concrete, bounded only by the real shadow of the architecture, with no stripes and no fan of light and shadow. Reference used: v16 only (the banded v15 look is dropped). Native 4K on Seedance 2.5, no upscale. Camera = the original shot's tiny drift, measured on the original clip and applied to this one. This is the cut-length version (2.13 s, the slot in the edit), the same take played 1.9× faster. Download = clean high-bitrate master, no watermark."
      }
     ]
    }
@@ -2457,6 +2483,10 @@
    "status": "motion",
    "notes": [
     {
+     "t": "Motion m4 (22 Nov): handheld, dynamic cameras in all three shots; the vehicles drive with weight — wheels turning and gripping, no sliding; no zoom, nothing close to the lens",
+     "done": true
+    },
+    {
      "t": "Client's angle and idea kept: top-down, one armoured vehicle flanked by two helicopters",
      "done": true
     },
@@ -2576,6 +2606,17 @@
       "dlmeta": "75 Mbps · 38 MB",
       "meta": "4.04s · 24 fps · 3840×2160 native · preview · 4K UHD badge",
       "note": "Client notes on m2 applied: it was too fast and unlike the rest of the edit, and the camera zoom did not look good. This version has no whip-pan drop, no crash zoom and no speed ramps — three steady shots joined by plain cuts, in the pace of the film: 1) the three Apaches in formation high over the dunes, the camera gliding alongside; 2) the three armoured vehicles driving in formation, the camera travelling smoothly with them; 3) wide hero frame — the three vehicles advancing with their dust trails and the three helicopters high above them against the sun, on a slow crane up. One native 4K generation on Seedance 2.5. Download = clean high-bitrate master, no watermark."
+     },
+     {
+      "v": "m4",
+      "title": "Motion · handheld cut · wheels gripping, no zoom · native 4K",
+      "badge": "MOTION 4K · HANDHELD",
+      "video": "motion/sh22_m4_4k_wm.mp4",
+      "poster": "motion/sh22_m4_poster.jpg",
+      "download": "master/WW_SH22_m4_4K_HQ.mp4",
+      "dlmeta": "90 Mbps · 45 MB",
+      "meta": "4.04s · 24 fps · 3840×2160 native · preview · 4K UHD badge",
+      "note": "Notes on m3 applied: the armoured vehicle looked like it was sliding and the cameras had no handheld, dynamic feel. Every shot is now filmed like an operator riding with the action, still with no zoom, no whip pan and no sudden drop: 1) air-to-air, handheld from the open door of a helicopter in the formation — the door frame in the foreground, the lead Apache banking across the frame with the other two behind it, high over the dunes; 2) handheld from a chase vehicle at wheel height — the three armoured vehicles driving hard, tyres turning and biting into the ground, sand and stones thrown from every wheel, suspension working; 3) handheld from the ground, wide — the three vehicles crossing in the distance with their dust and the three helicopters high above them against the sun. Nothing passes close to the lens. One native 4K generation on Seedance 2.5; the handheld shake of the last shot was added in compositing to match the first two. Download = clean high-bitrate master, no watermark."
      }
     ]
    }
@@ -3811,9 +3852,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-22T16:30:19+04:00",
+ "updated": "2026-11-22T16:42:09+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 65,
+ "build": 66,
  "removed": [
   {
    "id": "SH31",
@@ -3833,6 +3874,7 @@
   }
  ],
  "motionApproved": [
+  "SH01",
   "SH04",
   "SH05",
   "SH06",
@@ -3848,6 +3890,7 @@
   "SH19",
   "SH20",
   "SH21",
+  "SH22",
   "SH23",
   "SH24",
   "SH25",
