@@ -20,7 +20,7 @@
    "loop": "loop/sh01.mp4",
    "before": "before/sh01_m.webp",
    "beforeFull": "before/sh01.jpg",
-   "status": "wip",
+   "status": "motion",
    "notes": [
     {
      "t": "Same raw concrete wall, same texture and window-light pattern, same sun and flare",
@@ -60,6 +60,10 @@
     },
     {
      "t": "Client (22 Nov): Option 01 is the best look, but the shadows are physically wrong. v15 / v16: same Option 01 architecture and framing, relit from one single source — the sun in the arch. The window-grid pattern (which had no window to cast it and pointed the wrong way) is gone. v15: the ribs throw long bands of light and shadow across the wall, every band lying on a line that runs back to the sun. v16: strict backlight — the wall facing the camera sits in open shade, only the surfaces that face the sun are lit, rim light on the rib edges",
+     "done": true
+    },
+    {
+     "t": "Motion m1 / m1s (22 Nov): Option 01 animated in native 4K — same camera as the original shot; the sun comes out from behind the arch and the light grows across the wall and the space",
      "done": true
     }
    ],
@@ -175,7 +179,34 @@
      "label": "Direction: Zaha Hadid fluid architecture — continuous curved surfaces, no hard edges",
      "src": "Creative direction"
     }
-   ]
+   ],
+   "animatic": {
+    "kind": "motion",
+    "versions": [
+     {
+      "v": "m1s",
+      "title": "Motion · sun rising into the space · native 4K · full length (4 s)",
+      "badge": "MOTION 4K · FULL LENGTH",
+      "video": "motion/sh01_m1s_4k_wm.mp4",
+      "poster": "motion/sh01_m1s_poster.jpg",
+      "download": "master/WW_SH01_m1s_4K_HQ.mp4",
+      "dlmeta": "80 Mbps · 40 MB",
+      "meta": "4.04s · 24 fps · 3840×2160 native · preview · 4K UHD badge",
+      "note": "Option 01 in motion, native 4K on Seedance 2.5 (no upscale). The camera does what the original shot does — locked off with the same tiny drift, measured on the original clip and applied to this one. The action is the light: the sun slides out from behind the edge of the arch, its star and shafts grow, and sunlight creeps across the ribs onto the wall until long bands of light and shadow fan out from the sun and the whole space glows. One light source only, so every shadow points away from the sun. Start look = v16, end look = v15, both used as references (not start frames). This is the full-length take, for handles or a retime in the edit. Download = clean high-bitrate master, no watermark."
+     },
+     {
+      "v": "m1",
+      "title": "Motion · sun rising into the space · native 4K",
+      "badge": "MOTION 4K",
+      "video": "motion/sh01_m1_4k_wm.mp4",
+      "poster": "motion/sh01_m1_poster.jpg",
+      "download": "master/WW_SH01_m1_4K_HQ.mp4",
+      "dlmeta": "80 Mbps · 21 MB",
+      "meta": "2.13s (cut length) · 24 fps · 3840×2160 native · preview · 4K UHD badge",
+      "note": "Option 01 in motion, native 4K on Seedance 2.5 (no upscale). The camera does what the original shot does — locked off with the same tiny drift, measured on the original clip and applied to this one. The action is the light: the sun slides out from behind the edge of the arch, its star and shafts grow, and sunlight creeps across the ribs onto the wall until long bands of light and shadow fan out from the sun and the whole space glows. One light source only, so every shadow points away from the sun. Start look = v16, end look = v15, both used as references (not start frames). This is the cut-length version (2.13 s, the slot in the edit), the same take played 1.9× faster. Download = clean high-bitrate master, no watermark."
+     }
+    ]
+   }
   },
   {
    "id": "SH02",
@@ -3745,9 +3776,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-22T15:42:00+04:00",
+ "updated": "2026-11-22T16:02:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 62,
+ "build": 63,
  "removed": [
   {
    "id": "SH31",
