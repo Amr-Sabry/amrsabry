@@ -1610,6 +1610,10 @@
    "status": "motion",
    "notes": [
     {
+     "t": "Motion m3: the client's three framing references, mood of reference 2, one 4 s video with straight cuts, real Sehhaty / Absher / Tawakkalna screens keyed frame by frame",
+     "done": true
+    },
+    {
      "t": "v5 (23 Nov): all three phone shots at the angle of the client reference photo, real-photo look instead of the glossy render",
      "done": true
     },
@@ -1704,6 +1708,31 @@
       "dlmeta": "82 Mbps · 31 MB",
       "meta": "3.04s · 24 fps · 3840×2160 native · Shots 10+11+12 as one piece · preview · 4K UHD badge",
       "note": "Same match cut as m1 with one change: the boy in the background of the woman's scene is removed in every frame — the room behind her is empty. One hand movement carried through three people, three places and three times of day. It opens on the hand lifting the phone from below the frame (Sehhaty, morning at home); the first cut lands in the middle of that lift and the phone carries on rising in the airport (Absher, golden hour, Saudia aircraft outside) until it settles; the second cut lands on the same phone position, size and tilt on the terrace (Tawakkalna, blue hour) while the slow push-in continues. Cut lengths 0.83 s + 1.13 s + 1.08 s. Generated in native 4K on Seedance 2.5 with the three approved stills as references (not start frames); the phone was tracked frame by frame and matched across the cuts, and the screens are the real app screenshots pinned to the phone so the Arabic is exact. Download = clean high-bitrate master, no watermark."
+     },
+     {
+      "v": "m3",
+      "title": "Motion · Shots 10–12 · three people, three places · one video, straight cuts · native 4K",
+      "badge": "MOTION 4K · 4 SECONDS",
+      "video": "motion/sh10_m3_4k_wm.mp4",
+      "poster": "motion/sh10_m3_poster.jpg",
+      "download": "master/WW_SH10_m3_4K_HQ.mp4",
+      "dlmeta": "86 Mbps · 43 MB",
+      "meta": "4.04s · 24 fps · 3840×2160 native · cuts at 1.13 s and 3.0 s · preview · 4K UHD badge",
+      "chapters": [
+       {
+        "t": 0,
+        "label": "Sehhaty · home"
+       },
+       {
+        "t": 1.13,
+        "label": "Absher · car"
+       },
+       {
+        "t": 3.0,
+        "label": "Tawakkalna · café"
+       }
+      ],
+      "note": "Built on the client's three framing references, all in the mood of reference 2: soft hazy daylight, warm beige tones, low contrast, shallow focus. One video with two straight cuts (not a match cut). Shot 1: over his left shoulder at home in the morning — the green studio background of the reference is replaced by a living room with sheer curtains and a sofa. Shot 2: close-up of both hands typing, thobe cuffs with cufflinks, inside a car. Shot 3: over his right shoulder in a café. Handheld camera with a light natural shake. The real app screens (Sehhaty, Absher, Tawakkalna) are keyed onto clean green screens frame by frame, the thumbs stay in front of the screen. Apps follow the order of the ad; swapping which app sits in which shot is a re-composite, no new generation. Download = clean high-bitrate master, no watermark."
      }
     ]
    }
@@ -4043,9 +4072,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-23T01:34:35+04:00",
+ "updated": "2026-11-23T01:38:13+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 76,
+ "build": 77,
  "removed": [
   {
    "id": "SH31",
