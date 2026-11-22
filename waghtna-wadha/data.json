@@ -1610,6 +1610,10 @@
    "status": "motion",
    "notes": [
     {
+     "t": "Motion m4: phone screens rendered by Seedance (not composited) — Sehhaty / Absher / Tawakkalna; small Arabic text on the screens not letter-perfect",
+     "done": true
+    },
+    {
      "t": "Motion m3: the client's three framing references, mood of reference 2, one 4 s video with straight cuts, real Sehhaty / Absher / Tawakkalna screens keyed frame by frame",
      "done": true
     },
@@ -1733,6 +1737,31 @@
        }
       ],
       "note": "Built on the client's three framing references, all in the mood of reference 2: soft hazy daylight, warm beige tones, low contrast, shallow focus. One video with two straight cuts (not a match cut). Shot 1: over his left shoulder at home in the morning — the green studio background of the reference is replaced by a living room with sheer curtains and a sofa. Shot 2: close-up of both hands typing, thobe cuffs with cufflinks, inside a car. Shot 3: over his right shoulder in a café. Handheld camera with a light natural shake. The real app screens (Sehhaty, Absher, Tawakkalna) are keyed onto clean green screens frame by frame, the thumbs stay in front of the screen. Apps follow the order of the ad; swapping which app sits in which shot is a re-composite, no new generation. Download = clean high-bitrate master, no watermark."
+     },
+     {
+      "v": "m4",
+      "title": "Motion · Shots 10–12 · app screens rendered by Seedance (no compositing) · native 4K",
+      "badge": "MOTION 4K · 4 SECONDS",
+      "video": "motion/sh10_m4_4k_wm.mp4",
+      "poster": "motion/sh10_m4_poster.jpg",
+      "download": "master/WW_SH10_m4_4K_HQ.mp4",
+      "dlmeta": "84 Mbps · 42 MB",
+      "meta": "4.04s · 24 fps · 3840×2160 native · cuts at 1.13 s and 3.0 s · preview · 4K UHD badge",
+      "chapters": [
+       {
+        "t": 0,
+        "label": "Sehhaty · home"
+       },
+       {
+        "t": 1.13,
+        "label": "Absher · car"
+       },
+       {
+        "t": 3.0,
+        "label": "Tawakkalna · café"
+       }
+      ],
+      "note": "Same three shots as m3 (the client's framing references, mood of reference 2, straight cuts, handheld), but the phone screens are now rendered by Seedance 2.5 itself instead of being composited: the green-screen footage was given as the source and the three real app screens as references, so the display light, glass reflection, perspective and the fingers on the screen are part of the same render. Sehhaty at home, Absher in the car, Tawakkalna in the café. Known limit: some of the very small Arabic text on the screens is not letter-perfect (e.g. the Tawakkalna city card title); the large headers and logos are right. Download = clean high-bitrate master, no watermark."
      }
     ]
    }
@@ -4072,9 +4101,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-23T01:38:13+04:00",
+ "updated": "2026-11-23T02:11:35+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 77,
+ "build": 78,
  "removed": [
   {
    "id": "SH31",
