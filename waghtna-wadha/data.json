@@ -740,10 +740,10 @@
       "badge": "ONE TAKE · DESIGN REFS",
       "video": "anim/sh03_onetake_h3_720p.mp4",
       "poster": "anim/sh03_onetake_h3_poster.jpg",
-      "meta": "18.2s · 24 fps · 1280×720 · h1 with the first two buildings rebuilt, same single take, no cut",
+      "meta": "19.9s · 24 fps · 1280×720 · h1 with the first two buildings rebuilt, same single take, no cut · cadence corrected",
       "chapters": [
        {
-        "t": 0,
+        "t": 0.0,
         "label": "Sky"
        },
        {
@@ -751,39 +751,39 @@
         "label": "King Faisal Specialist Hospital"
        },
        {
-        "t": 3.6,
+        "t": 3.9,
         "label": "Princess Nourah University"
        },
        {
-        "t": 7.0,
+        "t": 7.7,
         "label": "Haramain train"
        },
        {
-        "t": 8.6,
+        "t": 9.4,
         "label": "Into the train station"
        },
        {
-        "t": 10.2,
+        "t": 11.2,
         "label": "CST tower · one sphere"
        },
        {
-        "t": 12.3,
+        "t": 13.5,
         "label": "Solar farm"
        },
        {
-        "t": 14.2,
+        "t": 15.5,
         "label": "Wind turbines"
        },
        {
-        "t": 15.8,
+        "t": 17.3,
         "label": "Silos · through the gap"
        },
        {
-        "t": 17.8,
+        "t": 19.5,
         "label": "Sun"
        }
       ],
-      "note": "Same take as h1, with only the first two buildings rebuilt to the design references: the hospital is now the complex of connected white blocks with dark-green glass, the small domed mosque with its minaret and the white shade-sail plaza; the university is the sandstone campus with the two curved colonnaded wings, corner towers and the central domed block with the arched portal. Everything after the university is unchanged (train, station, tower with one sphere, solar farm, turbines, silos). Known issue: an unreadable sign and a green emblem appear on the hospital facade for about a second — a pass without any signage is rendering. Test resolution 720p."
+      "note": "Same take as h1, with only the first two buildings rebuilt to the design references: the hospital is now the complex of connected white blocks with dark-green glass, the small domed mosque with its minaret and the white shade-sail plaza; the university is the sandstone campus with the two curved colonnaded wings, corner towers and the central domed block with the arched portal. Everything after the university is unchanged (train, station, tower with one sphere, solar farm, turbines, silos). Known issue: an unreadable sign and a green emblem appear on the hospital facade for about a second — still to be removed. Test resolution 720p. Cadence corrected on 22 Nov: the generator repeats one frame every second and drops one about every 0.8 s, which read as a judder; repeated frames are removed and the dropped ones rebuilt."
      }
     ]
    },
@@ -3448,7 +3448,7 @@
  ],
  "updated": "2026-11-21T19:40:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 52,
+ "build": 53,
  "removed": [
   {
    "id": "SH31",
