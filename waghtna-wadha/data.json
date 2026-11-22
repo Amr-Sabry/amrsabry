@@ -1555,6 +1555,10 @@
    "status": "motion",
    "notes": [
     {
+     "t": "v3 (22 Nov): client note — phone too big, look, corner glitch. New idea: three people, three places, three new framings; phone at its real size; screen fitted with a key instead of a patch",
+     "done": true
+    },
+    {
      "t": "Beat 1: morning at home, a mother checks Sehhaty, low sun through the window (v2: the boy in the background removed)",
      "done": true
     },
@@ -1601,6 +1605,13 @@
      "full": "after/sh10_v2.jpg",
      "date": "22 Nov",
      "note": "Boy removed from the background — the room is empty behind her"
+    },
+    {
+     "v": "v3",
+     "image": "after/sh10_v3_m.webp",
+     "full": "after/sh10_v3.jpg",
+     "date": "22 Nov",
+     "note": "New framing: high angle over her shoulder at the breakfast table by the window. Normal-size phone, natural in the hand. Real Sehhaty screen fitted with a clean key (no patch at the corners); the small side handle from the screenshot removed."
     }
    ],
    "animatic": {
@@ -1646,6 +1657,10 @@
    "beforeFull": "before/sh11.jpg",
    "status": "motion",
    "notes": [
+    {
+     "t": "v3 (22 Nov): client note — phone too big, look, corner glitch. New idea: three people, three places, three new framings; phone at its real size; screen fitted with a key instead of a patch",
+     "done": true
+    },
     {
      "t": "Beat 2: golden hour at the airport, a young man in a red shemagh opens Absher, aircraft outside the glass",
      "done": true
@@ -1693,6 +1708,13 @@
      "full": "after/sh11_v2.jpg",
      "date": "22 Nov",
      "note": "Aircraft in Saudia colours — green tail, green & blue stripes"
+    },
+    {
+     "v": "v3",
+     "image": "after/sh11_v3_m.webp",
+     "full": "after/sh11_v3.jpg",
+     "date": "22 Nov",
+     "note": "New framing: low angle from behind, the terminal roof above, the aircraft with the green tail outside. Normal-size phone. Real Absher screen fitted with a clean key; the dark patch at the top-right corner is gone and the side handle is removed."
     }
    ]
   },
@@ -1711,6 +1733,10 @@
    "beforeFull": "before/sh12.jpg",
    "status": "motion",
    "notes": [
+    {
+     "t": "v2 (22 Nov): client note — phone too big, look, corner glitch. New idea: three people, three places, three new framings; phone at its real size; screen fitted with a key instead of a patch",
+     "done": true
+    },
     {
      "t": "Beat 3: blue hour on a terrace, a man in his fifties opens Tawakkalna, anonymous city lights behind",
      "done": true
@@ -1747,6 +1773,13 @@
      "full": "after/sh12_v1.jpg",
      "date": "22 Nov",
      "note": "Beat 3 — Tawakkalna, blue hour, terrace"
+    },
+    {
+     "v": "v2",
+     "image": "after/sh12_v2_m.webp",
+     "full": "after/sh12_v2.jpg",
+     "date": "22 Nov",
+     "note": "New framing: eye level over his right shoulder on the terrace, lanterns and coffee, anonymous skyline. Normal-size phone. Real Tawakkalna screen fitted with a clean key; side handle removed."
     }
    ]
   },
@@ -3902,9 +3935,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-22T18:20:16+04:00",
+ "updated": "2026-11-22T23:55:42+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 70,
+ "build": 71,
  "removed": [
   {
    "id": "SH31",
