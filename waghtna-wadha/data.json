@@ -1610,6 +1610,10 @@
    "status": "motion",
    "notes": [
     {
+     "t": "v5 (23 Nov): all three phone shots at the angle of the client reference photo, real-photo look instead of the glossy render",
+     "done": true
+    },
+    {
      "t": "v4 (22 Nov): client note — phone too big, look, corner glitch. New idea: three people, three places, three new framings; phone at its real size; screen fitted with a key instead of a patch",
      "done": true
     },
@@ -1667,6 +1671,13 @@
      "full": "after/sh10_v4.jpg",
      "date": "22 Nov",
      "note": "New framing: directly behind her, over the right shoulder, looking down at the breakfast table by the window — we see what she sees. Hand corrected (v3 had a left hand on the right arm and the phone turned away from her): a real right hand, thumb on the right edge, phone in front of her face. Normal-size phone. Real Sehhaty screen fitted with a clean key; side handle removed."
+    },
+    {
+     "v": "v5",
+     "image": "after/sh10_v5_m.webp",
+     "full": "after/sh10_v5.jpg",
+     "date": "23 Nov",
+     "note": "Same angle as the client reference photo: high over the shoulder, phone low in the hand, shoulder and headscarf on the right. Real-photo look — natural light, real skin and fabric, no heavy grade. Morning at home. Real Sehhaty screen keyed in."
     }
    ],
    "animatic": {
@@ -1712,6 +1723,10 @@
    "beforeFull": "before/sh11.jpg",
    "status": "motion",
    "notes": [
+    {
+     "t": "v4 (23 Nov): all three phone shots at the angle of the client reference photo, real-photo look instead of the glossy render",
+     "done": true
+    },
     {
      "t": "v3 (22 Nov): client note — phone too big, look, corner glitch. New idea: three people, three places, three new framings; phone at its real size; screen fitted with a key instead of a patch",
      "done": true
@@ -1770,6 +1785,13 @@
      "full": "after/sh11_v3.jpg",
      "date": "22 Nov",
      "note": "New framing: low angle from behind, the terminal roof above, the aircraft with the green tail outside. Normal-size phone. Real Absher screen fitted with a clean key; the dark patch at the top-right corner is gone and the side handle is removed."
+    },
+    {
+     "v": "v4",
+     "image": "after/sh11_v4_m.webp",
+     "full": "after/sh11_v4.jpg",
+     "date": "23 Nov",
+     "note": "Same angle as the client reference photo: high over the shoulder, phone low in the hand, shemagh on the right. Real-photo look. Airport gate, passport and boarding pass on the table. Real Absher screen keyed in, thumb in front of it."
     }
    ]
   },
@@ -1788,6 +1810,10 @@
    "beforeFull": "before/sh12.jpg",
    "status": "motion",
    "notes": [
+    {
+     "t": "v3 (23 Nov): all three phone shots at the angle of the client reference photo, real-photo look instead of the glossy render",
+     "done": true
+    },
     {
      "t": "v2 (22 Nov): client note — phone too big, look, corner glitch. New idea: three people, three places, three new framings; phone at its real size; screen fitted with a key instead of a patch",
      "done": true
@@ -1835,6 +1861,13 @@
      "full": "after/sh12_v2.jpg",
      "date": "22 Nov",
      "note": "New framing: eye level over his right shoulder on the terrace, lanterns and coffee, anonymous skyline. Normal-size phone. Real Tawakkalna screen fitted with a clean key; side handle removed."
+    },
+    {
+     "v": "v3",
+     "image": "after/sh12_v3_m.webp",
+     "full": "after/sh12_v3.jpg",
+     "date": "23 Nov",
+     "note": "Same angle as the client reference photo: high over the shoulder, phone low in the hand, ghutra on the right. Real-photo look. Terrace in the evening, coffee and lantern. Real Tawakkalna screen keyed in, thumb in front of it."
     }
    ]
   },
@@ -3990,9 +4023,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-23T00:15:09+04:00",
+ "updated": "2026-11-23T00:27:20+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 73,
+ "build": 74,
  "removed": [
   {
    "id": "SH31",
