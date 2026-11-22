@@ -1673,11 +1673,11 @@
      "note": "New framing: directly behind her, over the right shoulder, looking down at the breakfast table by the window — we see what she sees. Hand corrected (v3 had a left hand on the right arm and the phone turned away from her): a real right hand, thumb on the right edge, phone in front of her face. Normal-size phone. Real Sehhaty screen fitted with a clean key; side handle removed."
     },
     {
-     "v": "v5",
-     "image": "after/sh10_v5_m.webp",
-     "full": "after/sh10_v5.jpg",
+     "v": "v6",
+     "image": "after/sh10_v6_m.webp",
+     "full": "after/sh10_v6.jpg",
      "date": "23 Nov",
-     "note": "Same angle as the client reference photo: high over the shoulder, phone low in the hand, shoulder and headscarf on the right. Real-photo look — natural light, real skin and fabric, no heavy grade. Morning at home. Real Sehhaty screen keyed in."
+     "note": "Rebuilt from one master frame so the three phone shots match exactly: same camera angle as the client reference photo, and the phone in the same position and at the same size in all three (within 3 px). Saudi woman, black abaya, living room at home. Real-photo look. Real Sehhaty screen keyed in."
     }
    ],
    "animatic": {
@@ -1787,11 +1787,11 @@
      "note": "New framing: low angle from behind, the terminal roof above, the aircraft with the green tail outside. Normal-size phone. Real Absher screen fitted with a clean key; the dark patch at the top-right corner is gone and the side handle is removed."
     },
     {
-     "v": "v4",
-     "image": "after/sh11_v4_m.webp",
-     "full": "after/sh11_v4.jpg",
+     "v": "v5",
+     "image": "after/sh11_v5_m.webp",
+     "full": "after/sh11_v5.jpg",
      "date": "23 Nov",
-     "note": "Same angle as the client reference photo: high over the shoulder, phone low in the hand, shemagh on the right. Real-photo look. Airport gate, passport and boarding pass on the table. Real Absher screen keyed in, thumb in front of it."
+     "note": "Master frame of the three phone shots: same camera angle as the client reference photo, phone in the same position and at the same size in all three (within 3 px). Saudi dress — white thobe, red-and-white shemagh. Airport lounge. Real-photo look. Real Absher screen keyed in, thumb in front of it."
     }
    ]
   },
@@ -1863,11 +1863,11 @@
      "note": "New framing: eye level over his right shoulder on the terrace, lanterns and coffee, anonymous skyline. Normal-size phone. Real Tawakkalna screen fitted with a clean key; side handle removed."
     },
     {
-     "v": "v3",
-     "image": "after/sh12_v3_m.webp",
-     "full": "after/sh12_v3.jpg",
+     "v": "v4",
+     "image": "after/sh12_v4_m.webp",
+     "full": "after/sh12_v4.jpg",
      "date": "23 Nov",
-     "note": "Same angle as the client reference photo: high over the shoulder, phone low in the hand, ghutra on the right. Real-photo look. Terrace in the evening, coffee and lantern. Real Tawakkalna screen keyed in, thumb in front of it."
+     "note": "Rebuilt from the same master frame: same angle, phone in the same position and at the same size as the other two (within 3 px). Dress corrected to Saudi — red-and-white shemagh, winter thobe (the previous version read as Emirati and is removed). Garden terrace in the evening, coffee and lantern. Real Tawakkalna screen keyed in, thumb in front of it."
     }
    ]
   },
@@ -4023,9 +4023,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-23T00:27:20+04:00",
+ "updated": "2026-11-23T00:42:37+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 74,
+ "build": 75,
  "removed": [
   {
    "id": "SH31",
