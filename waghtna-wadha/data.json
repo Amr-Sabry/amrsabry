@@ -1445,7 +1445,7 @@
    "status": "motion",
    "notes": [
     {
-     "t": "Beat 1: morning at home, a mother checks Sehhaty, her son in the background, low sun through the window",
+     "t": "Beat 1: morning at home, a mother checks Sehhaty, low sun through the window (v2: the boy in the background removed)",
      "done": true
     },
     {
@@ -1471,6 +1471,10 @@
     {
      "t": "Motion m1 (22 Nov): Shots 10–12 delivered as one match cut — it starts with the hand lifting the phone from below, and the movement continues through both cuts",
      "done": true
+    },
+    {
+     "t": "Motion m2 (22 Nov): boy removed from the woman's scene in the match cut",
+     "done": true
     }
    ],
    "versions": [
@@ -1480,6 +1484,13 @@
      "full": "after/sh10_v1.jpg",
      "date": "22 Nov",
      "note": "Beat 1 — Sehhaty, morning, mother at home"
+    },
+    {
+     "v": "v2",
+     "image": "after/sh10_v2_m.webp",
+     "full": "after/sh10_v2.jpg",
+     "date": "22 Nov",
+     "note": "Boy removed from the background — the room is empty behind her"
     }
    ],
    "animatic": {
@@ -1495,6 +1506,17 @@
       "dlmeta": "83 Mbps · 31 MB",
       "meta": "3.04s · 24 fps · 3840×2160 native · Shots 10+11+12 as one piece · preview · 4K UHD badge",
       "note": "One hand movement carried through three people, three places and three times of day. It opens on the hand lifting the phone from below the frame (Sehhaty, morning at home); the first cut lands in the middle of that lift and the phone carries on rising in the airport (Absher, golden hour, Saudia aircraft outside) until it settles; the second cut lands on the same phone position, size and tilt on the terrace (Tawakkalna, blue hour) while the slow push-in continues. Cut lengths 0.83 s + 1.13 s + 1.08 s. Generated in native 4K on Seedance 2.5 with the three approved stills as references (not start frames); the phone was tracked frame by frame and matched across the cuts, and the screens are the real app screenshots pinned to the phone so the Arabic is exact. Download = clean high-bitrate master, no watermark."
+     },
+     {
+      "v": "m2",
+      "title": "Motion · Shots 10–12 match cut · boy removed · native 4K",
+      "badge": "MOTION 4K · MATCH CUT 10–12",
+      "video": "motion/sh10_m2_4k_wm.mp4",
+      "poster": "motion/sh10_m2_poster.jpg",
+      "download": "master/WW_SH10_m2_4K_HQ.mp4",
+      "dlmeta": "82 Mbps · 31 MB",
+      "meta": "3.04s · 24 fps · 3840×2160 native · Shots 10+11+12 as one piece · preview · 4K UHD badge",
+      "note": "Same match cut as m1 with one change: the boy in the background of the woman's scene is removed in every frame — the room behind her is empty. One hand movement carried through three people, three places and three times of day. It opens on the hand lifting the phone from below the frame (Sehhaty, morning at home); the first cut lands in the middle of that lift and the phone carries on rising in the airport (Absher, golden hour, Saudia aircraft outside) until it settles; the second cut lands on the same phone position, size and tilt on the terrace (Tawakkalna, blue hour) while the slow push-in continues. Cut lengths 0.83 s + 1.13 s + 1.08 s. Generated in native 4K on Seedance 2.5 with the three approved stills as references (not start frames); the phone was tracked frame by frame and matched across the cuts, and the screens are the real app screenshots pinned to the phone so the Arabic is exact. Download = clean high-bitrate master, no watermark."
      }
     ]
    }
@@ -2510,6 +2532,10 @@
    "status": "wip",
    "notes": [
     {
+     "t": "Client note (22 Nov): swap the train for the Riyadh Metro and keep it away from the front of the frame — v3 and v4: Riyadh Metro train (flat glass front framed by the blue band, cream lower body, dark window band), no overhead wires, set back in the middle of the frame",
+     "done": true
+    },
+    {
      "t": "The train is now the real Haramain high-speed train — duck-bill nose, dark cockpit band, green and gold stripes, short white coaches — running under a real overhead line",
      "done": true
     },
@@ -2544,6 +2570,20 @@
      "full": "after/sh23_v2.jpg",
      "date": "22 Nov",
      "note": "Real look, Haramain train as the hero of the frame"
+    },
+    {
+     "v": "v3",
+     "image": "after/sh23_v3_m.webp",
+     "full": "after/sh23_v3.jpg",
+     "date": "22 Nov",
+     "note": "Riyadh Metro, set back on the viaduct in three-quarter view"
+    },
+    {
+     "v": "v4",
+     "image": "after/sh23_v4_m.webp",
+     "full": "after/sh23_v4.jpg",
+     "date": "22 Nov",
+     "note": "Riyadh Metro far on the viaduct, side-on — original composition"
     }
    ]
   },
@@ -3687,9 +3727,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-22T15:00:00+04:00",
+ "updated": "2026-11-22T15:28:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 59,
+ "build": 60,
  "removed": [
   {
    "id": "SH31",
