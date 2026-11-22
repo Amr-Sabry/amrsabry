@@ -3303,8 +3303,12 @@
    "loop": "loop/sh28.mp4",
    "before": "before/sh28_m.webp",
    "beforeFull": "before/sh28.jpg",
-   "status": "wip",
+   "status": "motion",
    "notes": [
+    {
+     "t": "Motion m1: same composition and camera move as the original, in the golden-hour light of the film (low sun, glitter on the sea, long crane shadows); no logo; native 4K, 4 s",
+     "done": true
+    },
     {
      "t": "Same port: orange ship-to-shore cranes, container stacks, ships at the quay",
      "done": true
@@ -3392,7 +3396,23 @@
      "src": "SH23 · this cut",
      "href": "#sh23"
     }
-   ]
+   ],
+   "animatic": {
+    "kind": "motion",
+    "versions": [
+     {
+      "v": "m1",
+      "title": "Motion · same composition and camera move · golden-hour light · native 4K",
+      "badge": "MOTION 4K · 4 SECONDS",
+      "video": "motion/sh28_m1_4k_wm.mp4",
+      "poster": "motion/sh28_m1_poster.jpg",
+      "download": "master/WW_SH28_m1_4K_HQ.mp4",
+      "dlmeta": "78 Mbps · 39 MB",
+      "meta": "4.04s · 24 fps · 3840×2160 native · preview · 4K UHD badge",
+      "note": "Same framing as the original shot — cranes, container stacks, the ship at the quay, the far pier with its harbour light — and the same slow drone drift to the left along the quay with parallax, now in the film's agreed light: low golden sun over the sea, sun glitter on the water, warm light raking across the port and long crane shadows. One continuous take, no cut. The broadcaster logo of the original footage is gone. Made on Seedance 2.5 in Popcorn Video Studio: a relit still of the original frame for the look, and a grey edge-only copy of the original move for the camera only. The slot in the cut is 22 frames (0.88 s), so the editor can pick any part of the four seconds. Download = clean high-bitrate master, no watermark."
+     }
+    ]
+   }
   },
   {
    "id": "SH29",
@@ -4023,9 +4043,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-23T00:42:37+04:00",
+ "updated": "2026-11-23T01:34:35+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 75,
+ "build": 76,
  "removed": [
   {
    "id": "SH31",
@@ -4069,6 +4089,7 @@
   "SH25",
   "SH26",
   "SH27",
+  "SH28",
   "SH29",
   "SH30",
   "SH31",
