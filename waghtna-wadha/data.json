@@ -2433,9 +2433,45 @@
    "loop": "loop/sh23.mp4",
    "before": "before/sh23_m.webp",
    "beforeFull": "before/sh23.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "The train is now the real Haramain high-speed train — duck-bill nose, dark cockpit band, green and gold stripes, short white coaches — running under a real overhead line",
+     "done": true
+    },
+    {
+     "t": "Whole scene made real: live-action photography look, real concrete, real crane, turbines and solar rows — same portal framing and same low golden sun as the cut",
+     "done": true
+    },
+    {
+     "t": "Two framings for approval: v1 keeps the original composition with the train side-on on the viaduct · v2 brings the viaduct close so the train is the hero of the frame",
+     "done": true
+    },
+    {
+     "t": "Distant city kept anonymous — no recognisable landmarks",
+     "done": true
+    },
+    {
+     "t": "Stills first — motion follows once one framing is approved",
+     "done": false
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh23_v1_m.webp",
+     "full": "after/sh23_v1.jpg",
+     "date": "22 Nov",
+     "note": "Real look, Haramain train — original composition"
+    },
+    {
+     "v": "v2",
+     "image": "after/sh23_v2_m.webp",
+     "full": "after/sh23_v2.jpg",
+     "date": "22 Nov",
+     "note": "Real look, Haramain train as the hero of the frame"
+    }
+   ]
   },
   {
    "id": "SH24",
@@ -3579,7 +3615,7 @@
  ],
  "updated": "2026-11-21T19:40:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 54,
+ "build": 55,
  "removed": [
   {
    "id": "SH31",
