@@ -172,9 +172,41 @@
    "loop": "loop/sh02.mp4",
    "before": "before/sh02_m.webp",
    "beforeFull": "before/sh02.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Rendered without any lettering or numbers — architecture only",
+     "done": true
+    },
+    {
+     "t": "Made real: an actual tower with metal fins and recessed LED lines, real glass, real neighbouring towers — same low wide-angle composition as the cut",
+     "done": true
+    },
+    {
+     "t": "Two looks for approval: v1 blue hour with the LED lines lit · v2 the agreed low golden sun with flare, warm metal and teal shadows",
+     "done": true
+    },
+    {
+     "t": "Stills first — motion follows once one look is approved",
+     "done": false
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh02_v1_m.webp",
+     "full": "after/sh02_v1.jpg",
+     "date": "22 Nov",
+     "note": "Real tower, blue hour, LED lines — no text"
+    },
+    {
+     "v": "v2",
+     "image": "after/sh02_v2_m.webp",
+     "full": "after/sh02_v2.jpg",
+     "date": "22 Nov",
+     "note": "Real tower, low golden sun and flare — no text"
+    }
+   ]
   },
   {
    "id": "SH03",
@@ -1400,7 +1432,7 @@
   {
    "id": "SH10",
    "key": "sh10",
-   "title": "Mobile App — Living Room I",
+   "title": "Mobile App — Sehhaty · Morning at Home",
    "tag": "Insert",
    "in": 49.76,
    "out": 50.68,
@@ -1410,14 +1442,47 @@
    "loop": "loop/sh10.mp4",
    "before": "before/sh10_m.webp",
    "beforeFull": "before/sh10.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Beat 1: morning at home, a mother checks Sehhaty, her son in the background, low sun through the window",
+     "done": true
+    },
+    {
+     "t": "Shots 10–12 become one match cut on the phone: three Saudi characters, three places, three times of day — the phone stays in the same place, size and tilt in every frame",
+     "done": true
+    },
+    {
+     "t": "Over-the-shoulder, 50mm, shallow depth of field, the same champagne-gold phone as Shot 09",
+     "done": true
+    },
+    {
+     "t": "Phone screen is the real app screenshot composited onto the phone, so the Arabic is exact; personal data removed from the screens",
+     "done": true
+    },
+    {
+     "t": "Locations carry no recognisable landmarks",
+     "done": true
+    },
+    {
+     "t": "Stills first — the match-cut motion follows once the three frames are approved",
+     "done": false
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh10_v1_m.webp",
+     "full": "after/sh10_v1.jpg",
+     "date": "22 Nov",
+     "note": "Beat 1 — Sehhaty, morning, mother at home"
+    }
+   ]
   },
   {
    "id": "SH11",
    "key": "sh11",
-   "title": "Mobile App — Living Room II",
+   "title": "Mobile App — Absher · Airport",
    "tag": "Insert",
    "in": 50.68,
    "out": 51.96,
@@ -1427,14 +1492,47 @@
    "loop": "loop/sh11.mp4",
    "before": "before/sh11_m.webp",
    "beforeFull": "before/sh11.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Beat 2: golden hour at the airport, a young man in a red shemagh opens Absher, aircraft outside the glass",
+     "done": true
+    },
+    {
+     "t": "Shots 10–12 become one match cut on the phone: three Saudi characters, three places, three times of day — the phone stays in the same place, size and tilt in every frame",
+     "done": true
+    },
+    {
+     "t": "Over-the-shoulder, 50mm, shallow depth of field, the same champagne-gold phone as Shot 09",
+     "done": true
+    },
+    {
+     "t": "Phone screen is the real app screenshot composited onto the phone, so the Arabic is exact; personal data removed from the screens",
+     "done": true
+    },
+    {
+     "t": "Locations carry no recognisable landmarks",
+     "done": true
+    },
+    {
+     "t": "Stills first — the match-cut motion follows once the three frames are approved",
+     "done": false
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh11_v1_m.webp",
+     "full": "after/sh11_v1.jpg",
+     "date": "22 Nov",
+     "note": "Beat 2 — Absher, golden hour, airport"
+    }
+   ]
   },
   {
    "id": "SH12",
    "key": "sh12",
-   "title": "Mobile App — Home Interior",
+   "title": "Mobile App — Tawakkalna · Terrace",
    "tag": "Insert",
    "in": 51.96,
    "out": 53.08,
@@ -1444,9 +1542,42 @@
    "loop": "loop/sh12.mp4",
    "before": "before/sh12_m.webp",
    "beforeFull": "before/sh12.jpg",
-   "status": "pending",
-   "notes": [],
-   "versions": []
+   "status": "wip",
+   "notes": [
+    {
+     "t": "Beat 3: blue hour on a terrace, a man in his fifties opens Tawakkalna, anonymous city lights behind",
+     "done": true
+    },
+    {
+     "t": "Shots 10–12 become one match cut on the phone: three Saudi characters, three places, three times of day — the phone stays in the same place, size and tilt in every frame",
+     "done": true
+    },
+    {
+     "t": "Over-the-shoulder, 50mm, shallow depth of field, the same champagne-gold phone as Shot 09",
+     "done": true
+    },
+    {
+     "t": "Phone screen is the real app screenshot composited onto the phone, so the Arabic is exact; personal data removed from the screens",
+     "done": true
+    },
+    {
+     "t": "Locations carry no recognisable landmarks",
+     "done": true
+    },
+    {
+     "t": "Stills first — the match-cut motion follows once the three frames are approved",
+     "done": false
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "image": "after/sh12_v1_m.webp",
+     "full": "after/sh12_v1.jpg",
+     "date": "22 Nov",
+     "note": "Beat 3 — Tawakkalna, blue hour, terrace"
+    }
+   ]
   },
   {
    "id": "SH13",
@@ -3448,7 +3579,7 @@
  ],
  "updated": "2026-11-21T19:40:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 53,
+ "build": 54,
  "removed": [
   {
    "id": "SH31",
