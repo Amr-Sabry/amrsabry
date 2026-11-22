@@ -2593,8 +2593,12 @@
    "loop": "loop/sh23.mp4",
    "before": "before/sh23_m.webp",
    "beforeFull": "before/sh23.jpg",
-   "status": "wip",
+   "status": "motion",
    "notes": [
+    {
+     "t": "Motion m1 (22 Nov): Riyadh Metro passing in clear air — no smoke or dust behind the train; gentle camera; the sun grows during the shot",
+     "done": true
+    },
     {
      "t": "Client note (22 Nov): swap the train for the Riyadh Metro and keep it away from the front of the frame — v3 and v4: Riyadh Metro train (flat glass front framed by the blue band, cream lower body, dark window band), no overhead wires, set back in the middle of the frame",
      "done": true
@@ -2649,7 +2653,23 @@
      "date": "22 Nov",
      "note": "Riyadh Metro far on the viaduct, side-on — original composition"
     }
-   ]
+   ],
+   "animatic": {
+    "kind": "motion",
+    "versions": [
+     {
+      "v": "m1",
+      "title": "Motion · Riyadh Metro gliding past · native 4K · full length (4 s)",
+      "badge": "MOTION 4K · FULL LENGTH",
+      "video": "motion/sh23_m1_4k_wm.mp4",
+      "poster": "motion/sh23_m1_poster.jpg",
+      "download": "master/WW_SH23_m1_4K_HQ.mp4",
+      "dlmeta": "80 Mbps · 40 MB",
+      "meta": "4.04s · 24 fps · 3840×2160 native · preview · 4K UHD badge",
+      "note": "The approved frame in motion, native 4K on Seedance 2.5 (no upscale). The Riyadh Metro glides across the viaduct from left to right, far from the camera and side-on, in clean clear air: no smoke, no dust and no haze trailing behind it, and no overhead wire. The camera is gentle, a slow handheld drift through the portal. The drama is the light: the sun strengthens over the hills during the shot, its rays reach across the valley and the warm glow climbs the building and the portal floor. The turbines turn, the workers on the decks move. Full 4 seconds delivered; the slot in the cut is 36 frames (1.44 s), so the editor has room to choose the best part."
+     }
+    ]
+   }
   },
   {
    "id": "SH24",
@@ -3791,9 +3811,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-22T16:10:00+04:00",
+ "updated": "2026-11-22T16:30:19+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 64,
+ "build": 65,
  "removed": [
   {
    "id": "SH31",
@@ -3828,6 +3848,7 @@
   "SH19",
   "SH20",
   "SH21",
+  "SH23",
   "SH24",
   "SH25",
   "SH26",
