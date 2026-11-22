@@ -1499,6 +1499,10 @@
      "done": true
     },
     {
+     "t": "v2 (22 Nov): client note — the aircraft outside the glass now wears Saudia colours: green tail fin and the green and blue stripes along the fuselage; nothing else touched",
+     "done": true
+    },
+    {
      "t": "Shots 10–12 become one match cut on the phone: three Saudi characters, three places, three times of day — the phone stays in the same place, size and tilt in every frame",
      "done": true
     },
@@ -1526,6 +1530,13 @@
      "full": "after/sh11_v1.jpg",
      "date": "22 Nov",
      "note": "Beat 2 — Absher, golden hour, airport"
+    },
+    {
+     "v": "v2",
+     "image": "after/sh11_v2_m.webp",
+     "full": "after/sh11_v2.jpg",
+     "date": "22 Nov",
+     "note": "Aircraft in Saudia colours — green tail, green & blue stripes"
     }
    ]
   },
@@ -2369,6 +2380,10 @@
     {
      "t": "Motion m1 (22 Nov): 4-second war-trailer cut from the approved frames — Apache banking pass → dust wipe → three armoured vehicles charging the lens → the lead vehicle drives over the camera → Apache hero against the sun. One native 4K generation on Seedance 2.5, transitions made in camera",
      "done": true
+    },
+    {
+     "t": "Motion m2 (22 Nov): director notes on m1 — more variety, helicopters high in the sky, nothing hits the camera. Four different framings and three different transitions in 4 s: cockpit POV of the formation over the dunes → whip-pan → long-lens profile of the vehicles, crash-zoom to the wheel → cut on the spinning wheel to a close-up of the pilot under the rotor → sun flare → low wide hero frame with the three vehicles and the three helicopters overhead",
+     "done": true
     }
    ],
    "versions": [
@@ -2436,6 +2451,17 @@
       "dlmeta": "82 Mbps · 41 MB",
       "meta": "4.04s · 24 fps · 3840×2160 native · preview · 4K UHD badge",
       "note": "Three shots in four seconds, joined in camera with no fades: 1) the lead Apache banks low over the dunes and sweeps across the lens with two more behind it; 2) its fuselage and a wall of sand wipe the frame and the three armoured vehicles burst out of the dust at wheel height, the lead one growing until its grille fills the frame and it drives over the camera; 3) cut on that dark underside to the Apache hanging in front of the low sun, rotor chopping the light, dust ring blasting outward, camera pushing in under the nose. Built from the approved frames used as references (not start frames). Exactly three vehicles. The dust wipe covers the picture for about 0.2 s. Download = clean high-bitrate master, no watermark."
+     },
+     {
+      "v": "m2",
+      "title": "Motion · war-trailer cut v2 · four framings · native 4K",
+      "badge": "MOTION 4K · TRAILER CUT v2",
+      "video": "motion/sh22_m2_4k_wm.mp4",
+      "poster": "motion/sh22_m2_poster.jpg",
+      "download": "master/WW_SH22_m2_4K_HQ.mp4",
+      "dlmeta": "87 Mbps · 44 MB",
+      "meta": "4.04s · 24 fps · 3840×2160 native · preview · 4K UHD badge",
+      "note": "Director notes on m1 applied: the angles and transitions are now varied, the helicopters stay high in the sky, and nothing drives or flies into the camera. Four framings in four seconds — 1) pilot's point of view from the cockpit: two Apaches ahead in formation high over the dunes, sun flaring through the canopy; whip-pan down; 2) long-lens side profile of the armoured vehicles racing across the flat, crash-zoom into the spinning front wheel; 3) cut on the spinning wheel to a close-up from below the nose of an Apache in flight — rotor, canopy, pilot — banking over the dunes; sun flare; 4) low wide hero frame: the three vehicles charging in formation with the three helicopters sweeping overhead. One native 4K generation on Seedance 2.5, approved frames used as design references only. Known point: in the side-profile shot two of the three vehicles are visible (the third is hidden behind them); all three are in the final frame. Download = clean high-bitrate master, no watermark."
      }
     ]
    }
@@ -3633,9 +3659,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-22T13:34:00+04:00",
+ "updated": "2026-11-22T14:15:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 57,
+ "build": 58,
  "removed": [
   {
    "id": "SH31",
