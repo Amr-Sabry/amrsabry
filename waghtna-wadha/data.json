@@ -1555,7 +1555,7 @@
    "status": "motion",
    "notes": [
     {
-     "t": "v3 (22 Nov): client note — phone too big, look, corner glitch. New idea: three people, three places, three new framings; phone at its real size; screen fitted with a key instead of a patch",
+     "t": "v4 (22 Nov): client note — phone too big, look, corner glitch. New idea: three people, three places, three new framings; phone at its real size; screen fitted with a key instead of a patch",
      "done": true
     },
     {
@@ -1607,11 +1607,11 @@
      "note": "Boy removed from the background — the room is empty behind her"
     },
     {
-     "v": "v3",
-     "image": "after/sh10_v3_m.webp",
-     "full": "after/sh10_v3.jpg",
+     "v": "v4",
+     "image": "after/sh10_v4_m.webp",
+     "full": "after/sh10_v4.jpg",
      "date": "22 Nov",
-     "note": "New framing: high angle over her shoulder at the breakfast table by the window. Normal-size phone, natural in the hand. Real Sehhaty screen fitted with a clean key (no patch at the corners); the small side handle from the screenshot removed."
+     "note": "New framing: directly behind her, over the right shoulder, looking down at the breakfast table by the window — we see what she sees. Hand corrected (v3 had a left hand on the right arm and the phone turned away from her): a real right hand, thumb on the right edge, phone in front of her face. Normal-size phone. Real Sehhaty screen fitted with a clean key; side handle removed."
     }
    ],
    "animatic": {
@@ -3935,9 +3935,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-22T23:55:42+04:00",
+ "updated": "2026-11-23T00:00:09+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 71,
+ "build": 72,
  "removed": [
   {
    "id": "SH31",
