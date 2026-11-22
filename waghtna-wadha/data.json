@@ -331,8 +331,12 @@
    "loop": "loop/sh03.mp4",
    "before": "before/sh03_m.webp",
    "beforeFull": "before/sh03.jpg",
-   "status": "wip",
+   "status": "motion",
    "notes": [
+    {
+     "t": "Motion m1 (23 Nov): isometric map as the shot + seven isolated landmark objects as references; one continuous 10 s flight, no cuts; Higgsfield Seedance 2.5 720p",
+     "done": true
+    },
     {
      "t": "SH03 n2 (23 Nov): client note — looked like desert, no sense of development. All six projects now sit in one living green city; 15 s; Seedance 2.5 720p in Video Studio, no Kroma",
      "done": true
@@ -981,8 +985,54 @@
        }
       ],
       "note": "Client note: the place read as desert and did not feel like development. This take puts all six projects inside one living, green, modern city: palm-lined streets with traffic, gardens, neighbourhoods, mosques, tower cranes on new buildings, and green farm fields and a highway around the solar farm and the turbines. There is no open sand anywhere in the shot. Length cut to 15 seconds as asked, generated at 720p directly in Popcorn Video Studio on Seedance 2.5 (no Kroma). Same order and one take: sky, hospital, university, train into the station, CST tower, solar, between the turbines, through the silos, sun. The skyline is kept low and anonymous. To know: the silos fade in over the fields for about a third of a second before the camera reaches them, and the train is on screen only briefly. Test render, not final resolution."
+     },
+     {
+      "v": "m1",
+      "title": "Motion · one continuous drone flight through the isometric city · seven landmarks",
+      "badge": "MOTION 720p · 10 SECONDS",
+      "video": "motion/sh03_m1_720p.mp4",
+      "poster": "motion/sh03_m1_poster.jpg",
+      "download": "master/WW_SH03_m1_720p_native.mp4",
+      "dlmeta": "5.8 Mbps · 7 MB · 720p native, no upscale",
+      "meta": "10.04s · 24 fps · 1280×720 native",
+      "chapters": [
+       {
+        "t": 0,
+        "label": "Dive into the city"
+       },
+       {
+        "t": 1.5,
+        "label": "King Faisal Specialist Hospital"
+       },
+       {
+        "t": 3.0,
+        "label": "Princess Nourah University"
+       },
+       {
+        "t": 4.2,
+        "label": "Haramain High-Speed Railway"
+       },
+       {
+        "t": 5.9,
+        "label": "CST Commission HQ"
+       },
+       {
+        "t": 7.0,
+        "label": "Solar farm"
+       },
+       {
+        "t": 8.0,
+        "label": "Wind turbines"
+       },
+       {
+        "t": 9.0,
+        "label": "Grain silos"
+       }
+      ],
+      "note": "Test of the new method: the isometric map of the whole district is the shot, and each landmark is given to Seedance as an isolated object on a blank grey background, so it learns what the building looks like without copying a desert or a skyline. Result: one continuous FPV flight through the same green city, the seven landmarks in order, no cuts, no numbers, no grey backgrounds, golden hour, ending on the silos with the train into the sun. Known issues: at 5.5 s the camera passes under the station arch for a moment, and the university reference here was only the domed building (the full campus is in m2). Made on Higgsfield, Seedance 2.5, 720p, Unlimited. 720p native — not upscaled."
      }
-    ]
+    ],
+    "kind": "motion"
    },
    "refs": [
     {
@@ -4130,9 +4180,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-23T02:42:54+04:00",
+ "updated": "2026-11-23T03:56:31+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 79,
+ "build": 80,
  "removed": [
   {
    "id": "SH31",
@@ -4154,6 +4204,7 @@
  "motionApproved": [
   "SH01",
   "SH02",
+  "SH03",
   "SH04",
   "SH05",
   "SH06",
