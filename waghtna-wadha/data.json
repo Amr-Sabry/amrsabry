@@ -254,6 +254,10 @@
     {
      "t": "SH03 h2 (22 Nov): all six client notes — university move is now right to left, away from the dome; one single 19 s generation",
      "done": true
+    },
+    {
+     "t": "SH03 h3 (22 Nov): hospital and university rebuilt to the design references on the h1 take",
+     "done": true
     }
    ],
    "versions": [
@@ -729,6 +733,57 @@
        }
       ],
       "note": "The client's six notes in one single generation (no parts joined, so nothing pops in or out): 1) hospital to university is one continuous glide over the hospital roof, no jump; 2) at the university the camera now slides from right to left around the building and keeps its distance — it never rises beside the dome — and the light stays the same; 3) the Haramain train drives into the arched train station, not into the tower; 4) the CST tower is one tower with one sphere, reached straight out of the station; 5) the wind turbines are visible from far across the solar farm and grow gradually; 6) the train is seen once only. Same low golden sun from the first frame to the last. Test resolution 720p; the 4K master follows once this move is approved."
+     },
+     {
+      "v": "h3",
+      "title": "ONE TAKE · hospital & university to the design refs · 19 s",
+      "badge": "ONE TAKE · DESIGN REFS",
+      "video": "anim/sh03_onetake_h3_720p.mp4",
+      "poster": "anim/sh03_onetake_h3_poster.jpg",
+      "meta": "18.2s · 24 fps · 1280×720 · h1 with the first two buildings rebuilt, same single take, no cut",
+      "chapters": [
+       {
+        "t": 0,
+        "label": "Sky"
+       },
+       {
+        "t": 0.5,
+        "label": "King Faisal Specialist Hospital"
+       },
+       {
+        "t": 3.6,
+        "label": "Princess Nourah University"
+       },
+       {
+        "t": 7.0,
+        "label": "Haramain train"
+       },
+       {
+        "t": 8.6,
+        "label": "Into the train station"
+       },
+       {
+        "t": 10.2,
+        "label": "CST tower · one sphere"
+       },
+       {
+        "t": 12.3,
+        "label": "Solar farm"
+       },
+       {
+        "t": 14.2,
+        "label": "Wind turbines"
+       },
+       {
+        "t": 15.8,
+        "label": "Silos · through the gap"
+       },
+       {
+        "t": 17.8,
+        "label": "Sun"
+       }
+      ],
+      "note": "Same take as h1, with only the first two buildings rebuilt to the design references: the hospital is now the complex of connected white blocks with dark-green glass, the small domed mosque with its minaret and the white shade-sail plaza; the university is the sandstone campus with the two curved colonnaded wings, corner towers and the central domed block with the arched portal. Everything after the university is unchanged (train, station, tower with one sphere, solar farm, turbines, silos). Known issue: an unreadable sign and a green emblem appear on the hospital facade for about a second — a pass without any signage is rendering. Test resolution 720p."
      }
     ]
    },
@@ -1963,7 +2018,7 @@
      "done": true
     },
     {
-     "t": "Motion k1 (22 Nov): client note — the car was sliding. Car and camera motion now come frame for frame from the original shot; only the light changes",
+     "t": "Motion n1 (22 Nov): client note — the car was sliding. Native 4K, car and camera follow the original shot, approved sun-in-lens look",
      "done": true
     }
    ],
@@ -2034,15 +2089,26 @@
       "note": "Low, almost locked camera as the car drives toward us from the far bend, front light bar on, sun right behind it — as in the original. Keyframe = the approved still (reference, not a start frame). Download = clean high-bitrate master, no watermark."
      },
      {
-      "v": "k1",
-      "title": "Motion · exact reference move · 4K",
+      "v": "n1s",
+      "title": "Motion · reference move · native 4K · slow motion (5 s)",
+      "badge": "MOTION 4K · REF MOVE · SLOW",
+      "video": "motion/sh20_n1s_4k_wm.mp4",
+      "poster": "motion/sh20_n1s_poster.jpg",
+      "download": "master/WW_SH20_n1s_4K_HQ.mp4",
+      "dlmeta": "81 Mbps · 51 MB",
+      "meta": "5.04s (4× slow motion, full length) · 24 fps · 3840×2160 native · preview · 4K UHD badge",
+      "note": "Client note: the car looked like it was sliding. New native 4K generation on Seedance 2.5 (no upscale): the car's driving and the camera move follow the original shot (checked by overlaying the original's outlines on the frames) — the car comes over the crest, settles and steers across the line while the long lens tilts and pans with it. Look = the approved key frame: sun in the lens, flare, rim-lit car, dust lifting behind the tyres. This is the full-length slow-motion take, for handles or a retime in the edit. Download = clean high-bitrate master, no watermark."
+     },
+     {
+      "v": "n1",
+      "title": "Motion · reference move · native 4K",
       "badge": "MOTION 4K · REF MOVE",
-      "video": "motion/sh20_k1_4k_wm.mp4",
-      "poster": "motion/sh20_k1_poster.jpg",
-      "download": "master/WW_SH20_k1_4K_HQ.mp4",
-      "dlmeta": "86 Mbps · 14 MB",
-      "meta": "1.25s (cut length) · 24 fps · 3840×2160 · preview · 4K UHD badge",
-      "note": "Client note: the car looked like it was sliding. This version takes the car's driving and the camera straight from the original shot, frame for frame (checked by overlaying the original's outlines on every frame): the car comes over the crest, settles and steers across the line while the long lens tilts and pans to follow it, as in the reference. Only the light is ours: golden backlight over the hills, rim-lit car, dust lifting behind the tyres. Cut length, same timing as the edit. Download = clean high-bitrate master, no watermark."
+      "video": "motion/sh20_n1_4k_wm.mp4",
+      "poster": "motion/sh20_n1_poster.jpg",
+      "download": "master/WW_SH20_n1_4K_HQ.mp4",
+      "dlmeta": "87 Mbps · 13 MB",
+      "meta": "1.21s (cut length) · 24 fps · 3840×2160 native · preview · 4K UHD badge",
+      "note": "Client note: the car looked like it was sliding. New native 4K generation on Seedance 2.5 (no upscale): the car's driving and the camera move follow the original shot (checked by overlaying the original's outlines on the frames) — the car comes over the crest, settles and steers across the line while the long lens tilts and pans with it. Look = the approved key frame: sun in the lens, flare, rim-lit car, dust lifting behind the tyres. Cut length, same timing as the edit. Download = clean high-bitrate master, no watermark."
      }
     ]
    }
@@ -3382,7 +3448,7 @@
  ],
  "updated": "2026-11-21T19:40:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 51,
+ "build": 52,
  "removed": [
   {
    "id": "SH31",
