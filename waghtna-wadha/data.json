@@ -2344,7 +2344,7 @@
    "loop": "loop/sh22.mp4",
    "before": "before/sh22_m.webp",
    "beforeFull": "before/sh22.jpg",
-   "status": "wip",
+   "status": "motion",
    "notes": [
     {
      "t": "Client's angle and idea kept: top-down, one armoured vehicle flanked by two helicopters",
@@ -2364,6 +2364,10 @@
     },
     {
      "t": "v4 / v5: real depth — the two helicopters at two different heights: one high, near the lens, huge and motion-blurred; one low over the sand, small, kicking a downwash ring",
+     "done": true
+    },
+    {
+     "t": "Motion m1 (22 Nov): 4-second war-trailer cut from the approved frames — Apache banking pass → dust wipe → three armoured vehicles charging the lens → the lead vehicle drives over the camera → Apache hero against the sun. One native 4K generation on Seedance 2.5, transitions made in camera",
      "done": true
     }
    ],
@@ -2418,7 +2422,23 @@
      "src": "Mood board · Pinterest",
      "href": "https://www.pinterest.com/amrsabry/sunny/"
     }
-   ]
+   ],
+   "animatic": {
+    "kind": "motion",
+    "versions": [
+     {
+      "v": "m1",
+      "title": "Motion · war-trailer cut · native 4K",
+      "badge": "MOTION 4K · TRAILER CUT",
+      "video": "motion/sh22_m1_4k_wm.mp4",
+      "poster": "motion/sh22_m1_poster.jpg",
+      "download": "master/WW_SH22_m1_4K_HQ.mp4",
+      "dlmeta": "82 Mbps · 41 MB",
+      "meta": "4.04s · 24 fps · 3840×2160 native · preview · 4K UHD badge",
+      "note": "Three shots in four seconds, joined in camera with no fades: 1) the lead Apache banks low over the dunes and sweeps across the lens with two more behind it; 2) its fuselage and a wall of sand wipe the frame and the three armoured vehicles burst out of the dust at wheel height, the lead one growing until its grille fills the frame and it drives over the camera; 3) cut on that dark underside to the Apache hanging in front of the low sun, rotor chopping the light, dust ring blasting outward, camera pushing in under the nose. Built from the approved frames used as references (not start frames). Exactly three vehicles. The dust wipe covers the picture for about 0.2 s. Download = clean high-bitrate master, no watermark."
+     }
+    ]
+   }
   },
   {
    "id": "SH23",
@@ -3615,7 +3635,7 @@
  ],
  "updated": "2026-11-21T19:40:00+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 55,
+ "build": 56,
  "removed": [
   {
    "id": "SH31",
