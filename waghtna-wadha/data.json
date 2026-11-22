@@ -334,6 +334,10 @@
    "status": "wip",
    "notes": [
     {
+     "t": "SH03 n2 (23 Nov): client note — looked like desert, no sense of development. All six projects now sit in one living green city; 15 s; Seedance 2.5 720p in Video Studio, no Kroma",
+     "done": true
+    },
+    {
      "t": "FPV flythrough through six real Saudi projects, in the client's folder order",
      "done": true
     },
@@ -926,6 +930,57 @@
        }
       ],
       "note": "Same take as h1, with only the first two buildings rebuilt to the design references: the hospital is now the complex of connected white blocks with dark-green glass, the small domed mosque with its minaret and the white shade-sail plaza; the university is the sandstone campus with the two curved colonnaded wings, corner towers and the central domed block with the arched portal. Everything after the university is unchanged (train, station, tower with one sphere, solar farm, turbines, silos). Known issue: an unreadable sign and a green emblem appear on the hospital facade for about a second — still to be removed. Test resolution 720p. Cadence corrected on 22 Nov: the generator repeats one frame every second and drops one about every 0.8 s, which read as a judder; repeated frames are removed and the dropped ones rebuilt."
+     },
+     {
+      "v": "n2",
+      "title": "ONE TAKE · 15 s · inside a developed city — no desert",
+      "badge": "ONE TAKE · 15 s · 720p TEST",
+      "video": "anim/sh03_onetake_n2_720p.mp4",
+      "poster": "anim/sh03_onetake_n2_poster.jpg",
+      "meta": "15.0s · 24 fps · 1280×720 · Seedance 2.5 in Video Studio, a single generation, no Kroma, no cut",
+      "chapters": [
+       {
+        "t": 0,
+        "label": "Sky"
+       },
+       {
+        "t": 0.7,
+        "label": "King Faisal Specialist Hospital"
+       },
+       {
+        "t": 3.7,
+        "label": "Princess Nourah University"
+       },
+       {
+        "t": 5.2,
+        "label": "Rail viaduct through the city"
+       },
+       {
+        "t": 6.7,
+        "label": "Haramain train · into the station"
+       },
+       {
+        "t": 9.0,
+        "label": "CST tower · one sphere"
+       },
+       {
+        "t": 10.4,
+        "label": "Solar farm"
+       },
+       {
+        "t": 11.9,
+        "label": "Between the wind turbines"
+       },
+       {
+        "t": 13.3,
+        "label": "Grain silos · through the gap"
+       },
+       {
+        "t": 14.6,
+        "label": "Sun"
+       }
+      ],
+      "note": "Client note: the place read as desert and did not feel like development. This take puts all six projects inside one living, green, modern city: palm-lined streets with traffic, gardens, neighbourhoods, mosques, tower cranes on new buildings, and green farm fields and a highway around the solar farm and the turbines. There is no open sand anywhere in the shot. Length cut to 15 seconds as asked, generated at 720p directly in Popcorn Video Studio on Seedance 2.5 (no Kroma). Same order and one take: sky, hospital, university, train into the station, CST tower, solar, between the turbines, through the silos, sun. The skyline is kept low and anonymous. To know: the silos fade in over the fields for about a third of a second before the camera reaches them, and the train is on screen only briefly. Test render, not final resolution."
      }
     ]
    },
@@ -3935,9 +3990,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-23T00:00:09+04:00",
+ "updated": "2026-11-23T00:15:09+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 72,
+ "build": 73,
  "removed": [
   {
    "id": "SH31",
