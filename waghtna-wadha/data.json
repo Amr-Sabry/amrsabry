@@ -1610,6 +1610,10 @@
    "status": "motion",
    "notes": [
     {
+     "t": "Motion m5: reading only — nobody taps or scrolls (screens are still images); Seedance-rendered Sehhaty / Absher / Tawakkalna screens",
+     "done": true
+    },
+    {
      "t": "Motion m4: phone screens rendered by Seedance (not composited) — Sehhaty / Absher / Tawakkalna; small Arabic text on the screens not letter-perfect",
      "done": true
     },
@@ -1762,6 +1766,31 @@
        }
       ],
       "note": "Same three shots as m3 (the client's framing references, mood of reference 2, straight cuts, handheld), but the phone screens are now rendered by Seedance 2.5 itself instead of being composited: the green-screen footage was given as the source and the three real app screens as references, so the display light, glass reflection, perspective and the fingers on the screen are part of the same render. Sehhaty at home, Absher in the car, Tawakkalna in the café. Known limit: some of the very small Arabic text on the screens is not letter-perfect (e.g. the Tawakkalna city card title); the large headers and logos are right. Download = clean high-bitrate master, no watermark."
+     },
+     {
+      "v": "m5",
+      "title": "Motion · Shots 10–12 · reading only, nobody touches the screen · screens rendered by Seedance · native 4K",
+      "badge": "MOTION 4K · 4 SECONDS",
+      "video": "motion/sh10_m5_4k_wm.mp4",
+      "poster": "motion/sh10_m5_poster.jpg",
+      "download": "master/WW_SH10_m5_4K_HQ.mp4",
+      "dlmeta": "77 Mbps · 39 MB",
+      "meta": "4.04s · 24 fps · 3840×2160 native · cuts at 1.0 s and 2.71 s · preview · 4K UHD badge",
+      "chapters": [
+       {
+        "t": 0,
+        "label": "Sehhaty · home"
+       },
+       {
+        "t": 1.0,
+        "label": "Absher · car"
+       },
+       {
+        "t": 2.71,
+        "label": "Tawakkalna · café"
+       }
+      ],
+      "note": "The app screens are still images, so nobody taps or scrolls: the people only hold the phone and read — fingers behind and around the phone, thumbs on the side edges, no pressing, the screens stay still. Same three places and the soft daylight mood of reference 2, straight cuts, handheld camera. The screens are rendered by Seedance 2.5 itself from the real Sehhaty, Absher and Tawakkalna screens (no compositing). Made from two edited stills (home and car) where the thumbs were moved off the glass, plus the café still. Known limits: in the home shot the left thumb rests on the very edge of the screen (no pressing); some very small Arabic text on the screens is not letter-perfect. Download = clean high-bitrate master, no watermark."
      }
     ]
    }
@@ -4101,9 +4130,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-23T02:11:35+04:00",
+ "updated": "2026-11-23T02:42:54+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 78,
+ "build": 79,
  "removed": [
   {
    "id": "SH31",
