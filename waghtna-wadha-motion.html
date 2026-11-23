@@ -148,7 +148,7 @@ function card(s, v, opt) {
   v = v || s.animatic.versions[s.animatic.versions.length - 1];
   const prev = BASE + v.video, dl = BASE + v.download;
   const tag = opt ? ' · Option ' + opt : '';
-  const fname = 'Waghtna_Wadha_' + s.id + (opt ? '_Option' + opt : '') + '_4K.mp4';
+  const fname = 'Waghtna_Wadha_' + s.id + (opt ? '_Option' + opt : '') + (v.upscale ? '_4K_upscale.mp4' : '_4K.mp4');
   const mb = /([\d.]+)\s*MB/.exec(v.dlmeta || '');
   const aid = s.id.toLowerCase() + (opt && opt > 1 ? '-o' + opt : '');
   return `<article class="card" id="${aid}">
@@ -157,8 +157,8 @@ function card(s, v, opt) {
     <div class="body">
       <div class="top"><span class="id">${esc(s.id)}</span><span class="ttl">${esc(s.title)}${esc(tag)}</span></div>
       <div class="row">
-        <div class="meta">3840×2160 · 24 fps · ${esc((v.meta || '5.04s').split('·')[0].trim())}${mb ? ' · ' + Math.round(+mb[1]) + ' MB' : ''}</div>
-        <a class="btn dl" href="${dl}" download="${esc(fname)}">${ic('download')}Download 4K <small>no watermark</small></a>
+        <div class="meta">3840×2160 · ${esc(v.fps || '24 fps')} · ${esc((v.meta || '5.04s').split('·')[0].trim())}${mb ? ' · ' + Math.round(+mb[1]) + ' MB' : ''}${v.upscale ? ' · <b>upscaled from ' + esc(v.upscale) + '</b>' : ''}</div>
+        <a class="btn dl" href="${dl}" download="${esc(fname)}">${ic('download')}${v.upscale ? 'Download 4K upscale' : 'Download 4K'} <small>no watermark</small></a>
       </div>
     </div>
   </article>`;

@@ -1172,7 +1172,9 @@
         "label": "Out into the sun"
        }
       ],
-      "note": "The take Amr picked as the right one: one continuous 20-second flight — from the sun down to the hospital, over the whole university campus, past the train at the station, around the CST tower, over the solar farm and the turbines, then between the rows of grain silos and out into the sun. Kept exactly as generated (Seedance 2.5, 720p) and only upscaled to 3840×2160 at 60 fps with ByteDance Upscale on Higgsfield, so nothing in the shot changes — this is an upscale, not a native 4K render."
+      "note": "The take Amr picked as the right one: one continuous 20-second flight — from the sun down to the hospital, over the whole university campus, past the train at the station, around the CST tower, over the solar farm and the turbines, then between the rows of grain silos and out into the sun. Kept exactly as generated (Seedance 2.5, 720p) and only upscaled to 3840×2160 at 60 fps with ByteDance Upscale on Higgsfield, so nothing in the shot changes — this is an upscale, not a native 4K render.",
+      "upscale": "720p",
+      "fps": "60 fps"
      }
     ],
     "kind": "motion"
@@ -4325,7 +4327,7 @@
  ],
  "updated": "2026-11-23T09:51:33+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 83,
+ "build": 84,
  "removed": [
   {
    "id": "SH31",
