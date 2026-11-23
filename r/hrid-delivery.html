@@ -625,7 +625,7 @@ const STATUS = {
 const FPS = 25;
 const srcOf = t => { t = String(t || '').toLowerCase(); const l = t.includes('live'), a = t.includes('ai'), d = t.includes('3d'); return (l + a + d) > 1 ? 'src-mix' : l ? 'src-live' : a ? 'src-ai' : d ? 'src-3d' : ''; };
 const tc = t => { const f = Math.max(0, Math.round(t * FPS)); const s = Math.floor(f / FPS), ff = f % FPS; return [Math.floor(s / 60), s % 60, ff].map(n => String(n).padStart(2, '0')).join(':'); };
-const BUILD = 1;
+const BUILD = 2;
 let D = null, filter = 'all', view = 'rows', stamp = null, pendingReload = false;
 const verSel = {}; const animSel = {};
 
@@ -989,11 +989,11 @@ $('#pref').addEventListener('click', e => { e.stopPropagation(); if (!cur) retur
 /* split: the new motion clip (or the reworked still) beside the running cut, kept in sync with the playhead */
 const pv2 = $('#pv2');
 function updateSplit(s, v) {
-  const R = $('#pvsR'), lab = $('#pvsLab'), mv = s && isMotion(s) ? s.animatic.versions[s.animatic.versions.length - 1] : null;
+  const R = $('#pvsR'), lab = $('#pvsLab'), mv = s && isMotion(s) ? s.animatic.versions[s.animatic.versions.length - 1] : (v && v.video ? v : null);
   R.classList.toggle('vid', !!mv); R.classList.toggle('still', !mv && !!v); R.classList.toggle('empty', !mv && !v);
   if (mv) {
     const src = BASE + mv.video; if (pmode === 'split' && pv2.dataset.cur !== src) { pv2.dataset.cur = src; pv2.src = src; }
-    lab.textContent = 'NEW · MOTION 4K · ' + mv.v;
+    lab.textContent = 'AFTER · ' + mv.v + (mv.note ? ' · ' + mv.note.toUpperCase() : '');
   } else {
     if (!pv2.paused) pv2.pause();
     if (v) { const im = $('img', R), src = BASE + (v.full || v.image); if (im.getAttribute('src') !== src) im.src = src; lab.textContent = 'AFTER · ' + v.v + ' · STILL'; }
@@ -1003,7 +1003,7 @@ function updateSplit(s, v) {
 }
 function syncSplit() {
   if (pmode !== 'split' || !cur) return;
-  const s = D.shots.find(x => x.id === cur); if (!s || !isMotion(s) || !pv2.src) return;
+  const s = D.shots.find(x => x.id === cur), lv = s && latest(s); if (!s || !(isMotion(s) || (lv && lv.video)) || !pv2.src) return;
   const want = Math.max(0, (pv.currentTime || 0) - s.in);
   if (pv2.readyState >= 1 && Math.abs(pv2.currentTime - want) > .12) { try { pv2.currentTime = Math.min(want, (pv2.duration || 99) - .05); } catch {} }
   if (!pv.paused && pv2.paused) pv2.play().catch(() => {});
