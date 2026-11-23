@@ -11,8 +11,8 @@
  ],
  "previewBytes": 7965960,
  "poster": "poster.jpg",
- "updated": "2026-11-23T10:44:43+04:00",
- "build": 5,
+ "updated": "2026-11-23T10:59:47+04:00",
+ "build": 7,
  "shots": [
   {
    "id": "SH01",
@@ -142,7 +142,7 @@
    "title": "The nib, closer",
    "tag": "Live",
    "was": "SH06",
-   "status": "pending",
+   "status": "final",
    "in": 7.96,
    "out": 8.48,
    "frames": 13,
@@ -152,7 +152,16 @@
    "beforeFull": "before/sh06.jpg",
    "loop": "loop/sh06.mp4",
    "notes": [],
-   "versions": [],
+   "versions": [
+    {
+     "v": "v1",
+     "date": "23 Nov 2026",
+     "note": "As shot",
+     "image": "before/sh06_m.webp",
+     "full": "before/sh06.jpg",
+     "video": "loop/sh06.mp4"
+    }
+   ],
    "refs": []
   },
   {
@@ -199,7 +208,7 @@
    "title": "The nib draws the line",
    "tag": "Live",
    "was": "SH09",
-   "status": "pending",
+   "status": "final",
    "in": 9.32,
    "out": 10.72,
    "frames": 35,
@@ -209,7 +218,16 @@
    "beforeFull": "before/sh09.jpg",
    "loop": "loop/sh09.mp4",
    "notes": [],
-   "versions": [],
+   "versions": [
+    {
+     "v": "v1",
+     "date": "23 Nov 2026",
+     "note": "As shot",
+     "image": "before/sh09_m.webp",
+     "full": "before/sh09.jpg",
+     "video": "loop/sh09.mp4"
+    }
+   ],
    "refs": []
   },
   {
@@ -1098,6 +1116,20 @@
    "out": 64.32,
    "kind": "shot",
    "id": "SH41"
+  }
+ ],
+ "log": [
+  {
+   "t": "2026-11-23T10:59:47+04:00",
+   "msg": "SH06 + SH09 final as shot · SH41 in Seedance (Rauf written by the pen)"
+  },
+  {
+   "t": "2026-11-23T10:44:00+04:00",
+   "msg": "SH31 v1 · Seedance 2.5 · 4K · ready to download"
+  },
+  {
+   "t": "2026-11-23T10:16:00+04:00",
+   "msg": "SH01–SH03 final as shot"
   }
  ]
 }
