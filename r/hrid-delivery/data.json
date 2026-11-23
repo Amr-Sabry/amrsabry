@@ -11,8 +11,8 @@
  ],
  "previewBytes": 7965960,
  "poster": "poster.jpg",
- "updated": "2026-11-23T10:25:56+04:00",
- "build": 3,
+ "updated": "2026-11-23T10:31:50+04:00",
+ "build": 4,
  "shots": [
   {
    "id": "SH01",
@@ -617,7 +617,7 @@
    "title": "SLEMANI sign at sunrise",
    "tag": "AI",
    "was": "SH26",
-   "status": "pending",
+   "status": "review",
    "in": 49.64,
    "out": 51.68,
    "frames": 51,
@@ -626,9 +626,29 @@
    "before": "before/sh31_m.webp",
    "beforeFull": "before/sh31.jpg",
    "loop": "loop/sh31.mp4",
-   "notes": [],
-   "versions": [],
-   "refs": []
+   "notes": [
+    {
+     "t": "Light drone move, the sun climbs with flare hitting the lens and haze building (Seedance 2.5, Popcorn Video Studio, 4K, 4 s)",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "date": "23 Nov 2026",
+     "note": "Seedance 2.5 · 4K",
+     "image": "sh31_v1.jpg",
+     "full": "sh31_v1.jpg",
+     "video": "sh31_v1.mp4"
+    }
+   ],
+   "refs": [
+    {
+     "label": "4K original · 3840×2160 · 4 s",
+     "src": "Popcorn · Seedance 2.5",
+     "href": "https://e1wj4sdxt68zy0lz.public.blob.vercel-storage.com/videos/1795415422461-9cab0c9e-corn-corn_eed2b0147cea41c78ea3.mp4"
+    }
+   ]
   },
   {
    "id": "SH32",
