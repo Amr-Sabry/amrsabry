@@ -334,6 +334,10 @@
    "status": "motion",
    "notes": [
     {
+     "t": "Motion m4 (23 Nov): Amr's chosen 20 s take, kept exactly; 4K upscale from 720p (ByteDance Upscale, 60 fps) — labelled as an upscale, not native 4K",
+     "done": true
+    },
+    {
      "t": "Motion m3 (23 Nov): director note — no station, more palms; real-photo map as the shot; one continuous 10 s flight; Higgsfield Seedance 2.5 720p",
      "done": true
     },
@@ -1120,6 +1124,55 @@
        }
       ],
       "note": "The isometric map was first turned into a real aerial photograph of the same layout (full university campus), then edited per the director's note: the arched train station is removed — the train now runs on an open elevated viaduct over a palm park — and many more palms line every street and fill the parks. That photo is the shot; each landmark is given as an isolated object on a blank background. Result: one continuous FPV flight, photoreal, from the sun down onto the hospital, low along its front over the palms, over the whole university campus, along the train on the open viaduct, around the CST tower, over the solar farm and the turbines, ending on the full row of grain silos in the low sun. No cuts, no station, no tunnel, no numbers. Made on Higgsfield, Seedance 2.5, 720p, Unlimited. 720p native — not upscaled."
+     },
+     {
+      "v": "m4",
+      "title": "Motion · the director's chosen take · 4K upscale (from 720p)",
+      "badge": "MOTION 4K UPSCALE · 20 SECONDS",
+      "video": "master/WW_SH03_m4_4K_upscale_from720p.mp4",
+      "poster": "motion/sh03_m4_poster.jpg",
+      "download": "master/WW_SH03_m4_4K_upscale_from720p.mp4",
+      "dlmeta": "21 Mbps · 53 MB · 3840×2160 · 60 fps · upscaled from 720p — not native 4K",
+      "meta": "19.9s · 60 fps · 3840×2160 upscaled from 1280×720 (ByteDance Upscale)",
+      "chapters": [
+       {
+        "t": 0,
+        "label": "Into the sun"
+       },
+       {
+        "t": 1.0,
+        "label": "King Faisal Specialist Hospital"
+       },
+       {
+        "t": 4.5,
+        "label": "Princess Nourah University"
+       },
+       {
+        "t": 9.0,
+        "label": "Haramain High-Speed Railway"
+       },
+       {
+        "t": 11.8,
+        "label": "CST Commission HQ"
+       },
+       {
+        "t": 13.8,
+        "label": "Solar farm"
+       },
+       {
+        "t": 15.0,
+        "label": "Wind turbines"
+       },
+       {
+        "t": 16.8,
+        "label": "Grain silos"
+       },
+       {
+        "t": 19.4,
+        "label": "Out into the sun"
+       }
+      ],
+      "note": "The take Amr picked as the right one: one continuous 20-second flight — from the sun down to the hospital, over the whole university campus, past the train at the station, around the CST tower, over the solar farm and the turbines, then between the rows of grain silos and out into the sun. Kept exactly as generated (Seedance 2.5, 720p) and only upscaled to 3840×2160 at 60 fps with ByteDance Upscale on Higgsfield, so nothing in the shot changes — this is an upscale, not a native 4K render."
      }
     ],
     "kind": "motion"
@@ -4270,9 +4323,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-23T05:01:11+04:00",
+ "updated": "2026-11-23T09:51:33+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 82,
+ "build": 83,
  "removed": [
   {
    "id": "SH31",
