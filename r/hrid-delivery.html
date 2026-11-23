@@ -79,6 +79,10 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .title .ch{display:inline-block;opacity:0;transform:translateY(.35em);filter:blur(12px);animation:chin 1.1s var(--ease) forwards}
 .title em{display:inline-block;font-style:normal;padding:0 .04em 0 0;color:transparent;background:linear-gradient(100deg,#FFD8A1 0%,var(--amber) 40%,var(--ember) 100%);-webkit-background-clip:text;background-clip:text;opacity:0;transform:translateY(.25em);filter:blur(14px);animation:chin 1.4s var(--ease) .75s forwards}
 @keyframes chin{to{opacity:1;transform:none;filter:none}}
+.director{display:flex;align-items:center;flex-wrap:wrap;gap:10px 22px;margin-top:20px;opacity:0;animation:chin 1.2s var(--ease) .5s forwards}
+.director span{font-family:var(--mono);font-size:12.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--soft);display:flex;align-items:center;gap:14px}
+.director span::after{content:"";width:40px;height:1px;background:var(--amber)}
+.director b{font-family:var(--serif);font-weight:800;font-size:clamp(30px,4.6vw,72px);line-height:1;letter-spacing:.08em;text-transform:uppercase;color:transparent;background:linear-gradient(100deg,#FFF3E0 0%,#FFD8A1 35%,var(--amber) 70%,var(--ember) 100%);-webkit-background-clip:text;background-clip:text;text-shadow:0 0 40px rgba(255,150,60,.18)}
 .sub{display:flex;flex-wrap:wrap;align-items:center;gap:10px 28px;margin-top:26px;color:var(--soft);font-size:16px}
 .sub .tag{font-family:var(--mono);font-size:13px;color:var(--text);padding:6px 12px;border:1px solid var(--line2);border-radius:99px;background:rgba(6,6,8,.4);backdrop-filter:blur(8px)}
 .facts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;margin-top:clamp(36px,6vh,64px);background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
@@ -477,8 +481,8 @@ a.ref:hover{border-color:var(--amber)}
   <div class="hero-bg"><img src="/r/hrid-delivery/poster.jpg" alt=""></div>
   <div class="wrap">
     <div class="kick">Delivery Room · <span id="draft">Edit</span></div>
-    <h1 class="title" id="title" aria-label="One Line">One <em>Line</em></h1>
-    <div class="sub"><span class="tag" id="tagline">Hiwa Rauf Investment &amp; Development</span><span class="tag">Director · Jad Eid</span><span>Shot-by-shot delivery room — the cut, every shot on loop, and each new version side by side with the frame in the edit.</span></div>
+    <h1 class="title" id="title" aria-label="One Line">One <em>Line</em></h1><div class="director"><span>Directed by</span><b>Jad Eid</b></div>
+    <div class="sub"><span class="tag" id="tagline">Hiwa Rauf Investment &amp; Development</span><span>Shot-by-shot delivery room — the cut, every shot on loop, and each new version side by side with the frame in the edit.</span></div>
     <div class="facts rv" id="facts">
       <div class="fact"><div class="k"><svg class="i" viewBox="0 0 24 24"><use href="#i-clock"/></svg>Runtime</div><div class="v" id="f-run">—</div></div>
       <div class="fact"><div class="k"><svg class="i" viewBox="0 0 24 24"><use href="#i-layers"/></svg>Shots in scope</div><div class="v" id="f-shots">—</div></div>
@@ -613,6 +617,8 @@ a.ref:hover{border-color:var(--amber)}
 <script>
 (() => {
 const BASE = '/r/hrid-delivery/';
+const RAW = 'https://raw.githubusercontent.com/Amr-Sabry/amrsabry/main/r/hrid-delivery/';
+document.addEventListener('error', e => { const el = e.target; if (!el || !/^(IMG|VIDEO)$/.test(el.tagName) || el.dataset.raw) return; const src = el.getAttribute('src') || ''; const i = src.indexOf(BASE); if (i < 0) return; el.dataset.raw = 1; el.src = RAW + src.slice(i + BASE.length) + '?t=' + Date.now(); }, true);
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const ic = (n, cls = '') => `<svg class="i ${cls}" viewBox="0 0 24 24"><use href="#i-${n}"/></svg>`;
@@ -628,7 +634,7 @@ const STATUS = {
 const FPS = 25;
 const srcOf = t => { t = String(t || '').toLowerCase(); const l = t.includes('live'), a = t.includes('ai'), d = t.includes('3d'); return (l + a + d) > 1 ? 'src-mix' : l ? 'src-live' : a ? 'src-ai' : d ? 'src-3d' : ''; };
 const tc = t => { const f = Math.max(0, Math.round(t * FPS)); const s = Math.floor(f / FPS), ff = f % FPS; return [Math.floor(s / 60), s % 60, ff].map(n => String(n).padStart(2, '0')).join(':'); };
-const BUILD = 3;
+const BUILD = 4;
 let D = null, filter = 'all', view = 'rows', stamp = null, pendingReload = false;
 const verSel = {}; const animSel = {};
 
@@ -714,10 +720,12 @@ let lastT = performance.now();
 
 /* ---------- data ---------- */
 async function load(first) {
-  const r = await fetch(BASE + 'data.json?t=' + Date.now(), {cache:'no-store'});
-  const d = await r.json();
+  let d = null;
+  for (const u of [RAW, BASE]) { try { const r = await fetch(u + 'data.json?t=' + Date.now(), {cache:'no-store'}); if (r.ok) { d = await r.json(); break; } } catch {} }
+  if (!d) return;
   if (first) { D = d; stamp = d.updated; boot(); return; }
-  if ((d.build || 0) > BUILD || JSON.stringify(d.preview) !== JSON.stringify(D.preview)) { pendingReload = true; maybeReload(); return; }
+  if ((d.build || 0) > BUILD) { try { const h = await (await fetch(location.pathname + '?b=' + Date.now(), {cache:'no-store'})).text(); const m = h.match(/const BUILD = (\d+)/); if (m && +m[1] > BUILD) { pendingReload = true; maybeReload(); return; } } catch {} }
+  if (JSON.stringify(d.preview) !== JSON.stringify(D.preview)) { pendingReload = true; maybeReload(); return; }
   if (d.updated === stamp) return;
   const changed = d.shots.filter(s => { const o = D.shots.find(x => x.id === s.id); return !o || JSON.stringify(o) !== JSON.stringify(s); }).map(s => s.id);
   D = d; stamp = d.updated;
@@ -932,7 +940,7 @@ async function loadPreview() {
   if (parts.length === 1) { pv.src = BASE + parts[0]; bar.classList.add('done'); return; }
   const total = D.previewBytes || 0; let got = 0; const bufs = [];
   for (const p of parts) {
-    const r = await fetch(BASE + p); if (!r.ok) throw new Error('cut part ' + p);
+    let r = await fetch(BASE + p); if (!r.ok) r = await fetch(RAW + p); if (!r.ok) throw new Error('cut part ' + p);
     const rd = r.body.getReader(); const chunks = [];
     for (;;) { const {done, value} = await rd.read(); if (done) break; chunks.push(value); got += value.length; if (total) $('i', bar).style.width = Math.min(100, got / total * 100) + '%'; }
     bufs.push(new Blob(chunks));
