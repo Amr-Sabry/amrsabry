@@ -334,6 +334,10 @@
    "status": "motion",
    "notes": [
     {
+     "t": "Motion m2 (23 Nov): full university campus as the reference, calmer and sharper flight, camera kept above the train and station (no tunnel); Higgsfield Seedance 2.5 720p",
+     "done": true
+    },
+    {
      "t": "Motion m1 (23 Nov): isometric map as the shot + seven isolated landmark objects as references; one continuous 10 s flight, no cuts; Higgsfield Seedance 2.5 720p",
      "done": true
     },
@@ -1030,6 +1034,43 @@
        }
       ],
       "note": "Test of the new method: the isometric map of the whole district is the shot, and each landmark is given to Seedance as an isolated object on a blank grey background, so it learns what the building looks like without copying a desert or a skyline. Result: one continuous FPV flight through the same green city, the seven landmarks in order, no cuts, no numbers, no grey backgrounds, golden hour, ending on the silos with the train into the sun. Known issues: at 5.5 s the camera passes under the station arch for a moment, and the university reference here was only the domed building (the full campus is in m2). Made on Higgsfield, Seedance 2.5, 720p, Unlimited. 720p native — not upscaled."
+     },
+     {
+      "v": "m2",
+      "title": "Motion · smooth drone flight through the isometric city · full university campus",
+      "badge": "MOTION 720p · 10 SECONDS",
+      "video": "motion/sh03_m2_720p.mp4",
+      "poster": "motion/sh03_m2_poster.jpg",
+      "download": "master/WW_SH03_m2_720p_native.mp4",
+      "dlmeta": "5.7 Mbps · 7 MB · 720p native, no upscale",
+      "meta": "10.04s · 24 fps · 1280×720 native",
+      "chapters": [
+       {
+        "t": 0,
+        "label": "Golden sky over the city"
+       },
+       {
+        "t": 1.0,
+        "label": "Princess Nourah University"
+       },
+       {
+        "t": 4.0,
+        "label": "Haramain High-Speed Railway"
+       },
+       {
+        "t": 5.5,
+        "label": "CST Commission HQ"
+       },
+       {
+        "t": 7.0,
+        "label": "Solar farm & wind turbines"
+       },
+       {
+        "t": 8.5,
+        "label": "Grain silos"
+       }
+      ],
+      "note": "Same method as m1 (isometric map = the shot, each landmark as an isolated object on a blank background), now with the whole university campus as its reference — the domed main building, the two curved arcaded buildings around the garden courtyard and the side wings — and a calmer, sharper camera. One continuous take from the golden sky down into the green city, around the university, along the train on the elevated line beside the arched station (the camera stays above it: no tunnel, no dark pass), past the CST tower, over the solar farm and turbines, ending on the silos in the low sun. No cuts, no numbers, no grey backgrounds. Known issue: the hospital is only seen at the edge of frame — it needs its own beat. Made on Higgsfield, Seedance 2.5, 720p, Unlimited. 720p native — not upscaled."
      }
     ],
     "kind": "motion"
@@ -4180,9 +4221,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-23T03:56:31+04:00",
+ "updated": "2026-11-23T04:22:02+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 80,
+ "build": 81,
  "removed": [
   {
    "id": "SH31",
