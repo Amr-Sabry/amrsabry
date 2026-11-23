@@ -334,6 +334,10 @@
    "status": "motion",
    "notes": [
     {
+     "t": "Motion m3 (23 Nov): director note — no station, more palms; real-photo map as the shot; one continuous 10 s flight; Higgsfield Seedance 2.5 720p",
+     "done": true
+    },
+    {
      "t": "Motion m2 (23 Nov): full university campus as the reference, calmer and sharper flight, camera kept above the train and station (no tunnel); Higgsfield Seedance 2.5 720p",
      "done": true
     },
@@ -1071,6 +1075,51 @@
        }
       ],
       "note": "Same method as m1 (isometric map = the shot, each landmark as an isolated object on a blank background), now with the whole university campus as its reference — the domed main building, the two curved arcaded buildings around the garden courtyard and the side wings — and a calmer, sharper camera. One continuous take from the golden sky down into the green city, around the university, along the train on the elevated line beside the arched station (the camera stays above it: no tunnel, no dark pass), past the CST tower, over the solar farm and turbines, ending on the silos in the low sun. No cuts, no numbers, no grey backgrounds. Known issue: the hospital is only seen at the edge of frame — it needs its own beat. Made on Higgsfield, Seedance 2.5, 720p, Unlimited. 720p native — not upscaled."
+     },
+     {
+      "v": "m3",
+      "title": "Motion · real-photo city · no station · palm-lined streets · one continuous flight",
+      "badge": "MOTION 720p · 10 SECONDS",
+      "video": "motion/sh03_m3_720p.mp4",
+      "poster": "motion/sh03_m3_poster.jpg",
+      "download": "master/WW_SH03_m3_720p_native.mp4",
+      "dlmeta": "8.2 Mbps · 10 MB · 720p native, no upscale",
+      "meta": "10.04s · 24 fps · 1280×720 native",
+      "chapters": [
+       {
+        "t": 0,
+        "label": "Golden sky — dive"
+       },
+       {
+        "t": 1.0,
+        "label": "King Faisal Specialist Hospital"
+       },
+       {
+        "t": 3.0,
+        "label": "Princess Nourah University"
+       },
+       {
+        "t": 4.6,
+        "label": "Haramain High-Speed Railway"
+       },
+       {
+        "t": 5.6,
+        "label": "CST Commission HQ"
+       },
+       {
+        "t": 6.9,
+        "label": "Solar farm"
+       },
+       {
+        "t": 8.0,
+        "label": "Wind turbines"
+       },
+       {
+        "t": 9.0,
+        "label": "Grain silos"
+       }
+      ],
+      "note": "The isometric map was first turned into a real aerial photograph of the same layout (full university campus), then edited per the director's note: the arched train station is removed — the train now runs on an open elevated viaduct over a palm park — and many more palms line every street and fill the parks. That photo is the shot; each landmark is given as an isolated object on a blank background. Result: one continuous FPV flight, photoreal, from the sun down onto the hospital, low along its front over the palms, over the whole university campus, along the train on the open viaduct, around the CST tower, over the solar farm and the turbines, ending on the full row of grain silos in the low sun. No cuts, no station, no tunnel, no numbers. Made on Higgsfield, Seedance 2.5, 720p, Unlimited. 720p native — not upscaled."
      }
     ],
     "kind": "motion"
@@ -4221,9 +4270,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-23T04:22:02+04:00",
+ "updated": "2026-11-23T05:01:11+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 81,
+ "build": 82,
  "removed": [
   {
    "id": "SH31",
