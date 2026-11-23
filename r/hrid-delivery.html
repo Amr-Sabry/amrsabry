@@ -166,6 +166,25 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .loadbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--amber),var(--ember));transition:width .3s}
 .loadbar.done{opacity:0}
 
+/* finished video in the card */
+.final{margin:0 0 18px;border:1px solid var(--line2);border-radius:16px;overflow:hidden;background:#000;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+.final .fv{position:relative;aspect-ratio:16/9;cursor:zoom-in;background:#000}
+.final .fv video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.final .wm{position:absolute;inset:0;pointer-events:none;font-family:var(--mono);color:rgba(255,255,255,.9);text-shadow:0 1px 6px rgba(0,0,0,.7)}
+.final .wm span{position:absolute;font-size:clamp(10px,1.05vw,13px);letter-spacing:.08em;text-transform:uppercase;display:flex;gap:10px;align-items:center}
+.final .wm b{color:#111;background:var(--amber);padding:3px 8px;border-radius:5px;font-weight:700;text-shadow:none;letter-spacing:.06em}
+.final .wm-tl{left:14px;top:12px}.final .wm-tr{right:14px;top:14px}.final .wm-bl{left:14px;bottom:12px}.final .wm-br{right:14px;bottom:12px}
+.final .wm-c{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-14deg);font-style:normal;font-family:var(--serif);font-weight:800;font-size:clamp(26px,6vw,84px);letter-spacing:.2em;color:rgba(255,255,255,.13);white-space:nowrap;text-shadow:none}
+.final .fbar{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--line)}
+.final .finfo{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;font-family:var(--mono);font-size:12px;color:var(--soft);letter-spacing:.06em}
+.final .finfo .res{color:#111;background:var(--amber);padding:3px 9px;border-radius:6px;font-weight:700}
+.final .dls{display:flex;flex-wrap:wrap;gap:10px}
+.final .dl{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:99px;background:var(--amber);color:#111;font-weight:600;font-size:13px;text-decoration:none;transition:transform .2s,opacity .2s}
+.final .dl:hover{transform:translateY(-1px)}.final .dl .i{width:16px;height:16px}
+.final .dl.alt{background:transparent;color:var(--text);border:1px solid var(--line3)}
+.final .dl.busy{opacity:.55;pointer-events:none}
+.final .newtag{position:absolute;left:50%;top:12px;transform:translateX(-50%);font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:#111;background:#7CF2B6;padding:3px 10px;border-radius:99px}
+
 /* filter bar */
 .fbar{position:sticky;top:var(--nav);z-index:40;margin:0 0 18px;padding:10px 0;background:linear-gradient(180deg,var(--bg) 70%,rgba(6,6,8,0))}
 .fbar .in{display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -634,7 +653,7 @@ const STATUS = {
 const FPS = 25;
 const srcOf = t => { t = String(t || '').toLowerCase(); const l = t.includes('live'), a = t.includes('ai'), d = t.includes('3d'); return (l + a + d) > 1 ? 'src-mix' : l ? 'src-live' : a ? 'src-ai' : d ? 'src-3d' : ''; };
 const tc = t => { const f = Math.max(0, Math.round(t * FPS)); const s = Math.floor(f / FPS), ff = f % FPS; return [Math.floor(s / 60), s % 60, ff].map(n => String(n).padStart(2, '0')).join(':'); };
-const BUILD = 4;
+const BUILD = 5;
 let D = null, filter = 'all', view = 'rows', stamp = null, pendingReload = false;
 const verSel = {}; const animSel = {};
 
@@ -821,6 +840,24 @@ function animHTML(s) {
     <div class="anim-v" data-link="${esc(v.link || '')}"><video muted loop playsinline controls preload="none" poster="${BASE + v.poster}" data-src="${BASE + v.video}"></video><span class="badge"><span class="chip">${ic('video')}${esc(v.badge || 'ANIMATIC')} · ${esc(v.v)}</span></span></div>
     ${ch ? `<div class="anim-ch">${ch}</div>` : ''}${fr ? `<ol class="anim-f">${fr}</ol>` : ''}${v.note || a.note ? `<p>${esc(v.note || a.note)}</p>` : ''}</div>`;
 }
+const resLabel = w => w >= 3800 ? '4K UHD' : w >= 1900 ? 'FHD' : w >= 1260 ? 'HD' : 'SD';
+const absU = p => /^https?:/.test(p || '') ? p : BASE + p;
+function finalHTML(s) {
+  const v = latest(s), f = v && v.final; if (!f) return '';
+  const res = resLabel(f.w), spec = `${f.w}×${f.h} · ${f.fps} fps`, dur = (+f.dur || 0).toFixed(2) + ' s', tag = res.split(' ')[0];
+  return `<div class="final">
+    <div class="fv" data-open="after"><video muted loop playsinline preload="metadata" poster="${absU(f.poster)}" data-src="${absU(f.preview)}"></video>
+      <div class="wm"><span class="wm-tl"><b>${res}</b>${spec}</span><span class="wm-tr">${esc(s.id)} · ${esc(v.v)}</span><span class="wm-bl">HRID · One Line · ${esc(s.title)}</span><span class="wm-br">${dur}${f.model ? ' · ' + esc(f.model) : ''}</span><i class="wm-c">AROMA · PREVIEW</i></div></div>
+    <div class="fbar"><div class="finfo"><span class="res">${res}</span><span>${spec}</span><span>${dur}</span>${f.model ? `<span>${esc(f.model)}</span>` : ''}${v.date ? `<span>${esc(v.date)}</span>` : ''}</div>
+      <div class="dls"><a class="dl" href="${absU(f.clean)}" data-dl="${absU(f.clean)}" data-name="HRID_${s.id}_${v.v}_${tag}_clean.mp4">${ic('download')}Download clean</a><a class="dl alt" href="${absU(f.info)}" data-dl="${absU(f.info)}" data-name="HRID_${s.id}_${v.v}_${tag}_info.mp4">${ic('download')}Download with info</a></div></div></div>`;
+}
+document.addEventListener('click', async e => {
+  const a = e.target.closest && e.target.closest('a[data-dl]'); if (!a) return;
+  e.preventDefault(); e.stopPropagation(); a.classList.add('busy');
+  const urls = [a.dataset.dl]; const i = a.dataset.dl.indexOf(BASE); if (i >= 0) urls.push(RAW + a.dataset.dl.slice(i + BASE.length));
+  for (const u of urls) { try { const r = await fetch(u); if (!r.ok) continue; const b = await r.blob(); const o = URL.createObjectURL(new Blob([b], {type:'video/mp4'})); const t = document.createElement('a'); t.href = o; t.download = a.dataset.name; document.body.appendChild(t); t.click(); t.remove(); setTimeout(() => URL.revokeObjectURL(o), 8000); a.classList.remove('busy'); return; } catch {} }
+  a.classList.remove('busy'); window.open(a.dataset.dl, '_blank');
+}, true);
 function cardHTML(s) {
   const st = STATUS[s.status] || STATUS.pending, step = st.step;
   const pipe = [1,2,3,4].map(i => `<i class="${step >= i ? 'done' : (Math.ceil(step + .01) === i && s.status !== 'pending' ? 'cur' : '')}"></i>`).join('');
@@ -836,6 +873,7 @@ function cardHTML(s) {
       <button class="playedit" data-play>${ic('play')}Play in the cut</button>
     </div>
     <div class="body">
+    ${finalHTML(s)}
     ${isMotion(s) ? animHTML(s) : ''}
     <div class="panes">
       <figure class="pane loop"><div class="pm" data-open="loop"><video muted loop playsinline preload="none" poster="${BASE + s.before}" data-src="${BASE + s.loop}"></video><span class="badge"><span class="chip">${ic('repeat')}LOOP</span></span><span class="x">${ic('max')}</span><i class="ring2"></i></div>
