@@ -678,7 +678,7 @@ const STATUS = {
 const FPS = 25;
 const srcOf = t => { t = String(t || '').toLowerCase(); const l = t.includes('live'), a = t.includes('ai'), d = t.includes('3d'); return (l + a + d) > 1 ? 'src-mix' : l ? 'src-live' : a ? 'src-ai' : d ? 'src-3d' : ''; };
 const tc = t => { const f = Math.max(0, Math.round(t * FPS)); const s = Math.floor(f / FPS), ff = f % FPS; return [Math.floor(s / 60), s % 60, ff].map(n => String(n).padStart(2, '0')).join(':'); };
-const BUILD = 7;
+const BUILD = 8;
 let D = null, filter = 'all', view = 'rows', stamp = null, pendingReload = false;
 const verSel = {}; const animSel = {};
 
@@ -876,7 +876,7 @@ function finalHTML(s) {
   const res = resLabel(f.w), tag = res.split(' ')[0], dur = (+f.dur || 0).toFixed(2) + ' s';
   const row = (k, val) => val ? `<div class="ms-row"><span>${k}</span><b>${esc(String(val))}</b></div>` : '';
   return `<div class="final">
-    <div class="fv" data-open="after"><video autoplay muted loop playsinline preload="auto" poster="${absU(f.poster)}" data-src="${absU(f.preview)}"></video>
+    <div class="fv" data-open="after" style="aspect-ratio:${f.w}/${f.h}"><video autoplay muted loop playsinline preload="auto" poster="${absU(f.poster)}" data-src="${absU(f.preview)}"></video>
       <div class="meta-strip"><div class="ms-h">HRID · One Line</div><div class="ms-id">${esc(s.id)}<small>${esc(v.v)}</small></div><div class="ms-res">${res}</div>
         ${row('Size', f.w + '×' + f.h)}${row('Frame rate', f.fps + ' fps')}${row('Duration', dur)}${row('Model', f.model)}${row('Shot', s.title)}${row('Date', v.date)}
         <div class="ms-foot">Aroma Studios · Director Jad Eid</div></div></div>
