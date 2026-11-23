@@ -11,8 +11,8 @@
  ],
  "previewBytes": 7965960,
  "poster": "poster.jpg",
- "updated": "2026-11-23T11:07:46+04:00",
- "build": 8,
+ "updated": "2026-11-23T11:14:40+04:00",
+ "build": 9,
  "shots": [
   {
    "id": "SH01",
@@ -646,7 +646,7 @@
    "loop": "loop/sh31.mp4",
    "notes": [
     {
-     "t": "Light drone move, the sun climbs with flare hitting the lens and haze building (Seedance 2.5, Popcorn Video Studio, 4K, 4 s)",
+     "t": "Light drone move; the sun climbs with its flare hitting the lens and haze building (Seedance 2.5, 4K, 4 s).",
      "done": true
     }
    ],
@@ -674,7 +674,7 @@
    "refs": [
     {
      "label": "4K original · 3840×2160 · 4 s",
-     "src": "Popcorn · Seedance 2.5",
+     "src": "Seedance 2.5",
      "href": "https://e1wj4sdxt68zy0lz.public.blob.vercel-storage.com/videos/1795415422461-9cab0c9e-corn-corn_eed2b0147cea41c78ea3.mp4"
     }
    ]
@@ -867,7 +867,7 @@
    "loop": "loop/sh41.mp4",
    "notes": [
     {
-     "t": "The pen writes \"Rauf\" letter by letter after \"Hiwa\", ink under the nib, hand follows the stroke; same camera, light and fade (Higgsfield Seedance 2.5 Edit, 720p, Unlimited). The 4 s take plays in the card; the cut slot uses it sped to 2.48 s.",
+     "t": "The pen writes \"Rauf\" letter by letter after \"Hiwa\", ink under the nib, the hand follows the stroke; same camera, light and fade (Seedance 2.5 Edit, 720p). The 4 s take plays in the card; the cut slot uses it sped to 2.48 s.",
      "done": true
     }
    ],
@@ -1145,8 +1145,8 @@
  ],
  "log": [
   {
-   "t": "2026-11-23T11:07:46+04:00",
-   "msg": "SH41 v1 · the pen writes \"Rauf\" · Seedance 2.5 Edit"
+   "t": "2026-11-23T11:14:40+04:00",
+   "msg": "SH41 v1 live · the pen writes \"Rauf\""
   },
   {
    "t": "2026-11-23T10:59:47+04:00",
