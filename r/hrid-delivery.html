@@ -178,7 +178,7 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .final .fv{position:relative;cursor:zoom-in;background:#000}
 .final .vbox{position:relative;width:100%;background:#000}
 .final .vbox video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.final .meta-strip{position:absolute;top:0;right:0;bottom:0;width:clamp(170px,19%,230px);display:flex;flex-direction:column;gap:2px;padding:16px 18px 14px;font-family:var(--mono);color:#fff;pointer-events:none;text-shadow:0 1px 2px rgba(0,0,0,.95),0 0 10px rgba(0,0,0,.75)}
+.final .meta-strip{position:absolute;top:0;right:0;bottom:auto;transform-origin:top right;width:clamp(170px,19%,230px);display:flex;flex-direction:column;gap:2px;padding:16px 18px 14px;font-family:var(--mono);color:#fff;pointer-events:none;text-shadow:0 1px 2px rgba(0,0,0,.95),0 0 10px rgba(0,0,0,.75)}
 .final .ms-h{font-size:10.5px;letter-spacing:.22em;color:var(--amber);text-transform:uppercase;margin-bottom:2px}
 .final .ms-id{font-family:var(--serif);font-weight:800;font-size:clamp(20px,2.2vw,30px);letter-spacing:.04em;line-height:1;margin-bottom:10px}
 .final .ms-id small{font-family:var(--mono);font-weight:500;font-size:11px;color:#ddd;margin-left:6px;letter-spacing:.1em}
@@ -186,7 +186,7 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .final .ms-row{display:flex;justify-content:space-between;gap:10px;font-size:11px;letter-spacing:.06em;padding:4px 0}
 .final .ms-row span{color:rgba(255,255,255,.72);text-transform:uppercase;letter-spacing:.16em;font-size:9.5px}
 .final .ms-row b{font-weight:600;text-align:right}
-.final .ms-foot{margin-top:auto;font-size:9.5px;letter-spacing:.2em;color:rgba(255,255,255,.75);text-transform:uppercase}
+.final .ms-foot{margin-top:8px;font-size:9.5px;letter-spacing:.2em;color:rgba(255,255,255,.75);text-transform:uppercase}
 .final .fbar{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(255,255,255,.02);border-top:1px solid var(--line)}
 .final .fbar .ft{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);display:flex;align-items:center;gap:8px}
 .final .fbar .ft i{width:8px;height:8px;border-radius:50%;background:#7CF2B6;box-shadow:0 0 10px #7CF2B6}
@@ -196,6 +196,10 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .final .dl.alt{background:transparent;color:var(--text);border:1px solid var(--line3)}
 .final .dl.busy{opacity:.55;pointer-events:none}
 @media (max-width:760px){.final .meta-strip{position:static;width:auto;display:grid;grid-template-columns:1fr 1fr;gap:0 16px;padding:14px 16px;text-shadow:none;border-top:1px solid var(--line)}.final .ms-h,.final .ms-id,.final .ms-res,.final .ms-foot{grid-column:1/-1}.final .ms-foot{margin-top:8px}.final .fbar{flex-direction:column;align-items:stretch}.final .dls{display:grid;grid-template-columns:1fr 1fr}.final .dl{justify-content:center;padding:10px 8px;font-size:12px}}
+
+.final .fv.ms-below .meta-strip{position:static;width:auto;transform:none!important;display:grid;grid-template-columns:1fr 1fr;gap:0 16px;padding:14px 16px;text-shadow:none;border-top:1px solid var(--line)}
+.final .fv.ms-below .ms-h,.final .fv.ms-below .ms-id,.final .fv.ms-below .ms-res,.final .fv.ms-below .ms-foot{grid-column:1/-1}
+.final .fv.ms-fit .meta-strip{opacity:1}.final .meta-strip{transition:opacity .2s}
 
 /* filter bar */
 .fbar{position:sticky;top:var(--nav);z-index:40;margin:0 0 18px;padding:10px 0;background:linear-gradient(180deg,var(--bg) 70%,rgba(6,6,8,0))}
@@ -679,7 +683,7 @@ const STATUS = {
 const FPS = 25;
 const srcOf = t => { t = String(t || '').toLowerCase(); const l = t.includes('live'), a = t.includes('ai'), d = t.includes('3d'); return (l + a + d) > 1 ? 'src-mix' : l ? 'src-live' : a ? 'src-ai' : d ? 'src-3d' : ''; };
 const tc = t => { const f = Math.max(0, Math.round(t * FPS)); const s = Math.floor(f / FPS), ff = f % FPS; return [Math.floor(s / 60), s % 60, ff].map(n => String(n).padStart(2, '0')).join(':'); };
-const BUILD = 9;
+const BUILD = 10;
 let D = null, filter = 'all', view = 'rows', stamp = null, pendingReload = false;
 const verSel = {}; const animSel = {};
 
@@ -891,6 +895,19 @@ document.addEventListener('click', async e => {
   for (const u of urls) { try { const r = await fetch(u); if (!r.ok) continue; const b = await r.blob(); const o = URL.createObjectURL(new Blob([b], {type:'video/mp4'})); const t = document.createElement('a'); t.href = o; t.download = a.dataset.name; document.body.appendChild(t); t.click(); t.remove(); setTimeout(() => URL.revokeObjectURL(o), 8000); a.classList.remove('busy'); return; } catch {} }
   a.classList.remove('busy'); window.open(a.dataset.dl, '_blank');
 }, true);
+function fitStrip(fv) {
+  const ms = fv.querySelector('.meta-strip'), vb = fv.querySelector('.vbox'); if (!ms || !vb) return;
+  fv.classList.remove('ms-below'); ms.style.transform = '';
+  if (getComputedStyle(ms).position !== 'absolute') return;
+  const H = vb.getBoundingClientRect().height, h = ms.scrollHeight; if (!H || !h) return;
+  const k = Math.min(1, (H - 2) / h);
+  if (k < 0.72) { fv.classList.add('ms-below'); return; }
+  if (k < 1) ms.style.transform = 'scale(' + k.toFixed(3) + ')';
+}
+const stripRO = 'ResizeObserver' in window ? new ResizeObserver(es => es.forEach(e => { const fv = e.target.closest('.fv'); if (fv) fitStrip(fv); })) : null;
+const fitAll = () => $$('.final .fv').forEach(fitStrip);
+addEventListener('resize', () => { clearTimeout(fitAll.t); fitAll.t = setTimeout(fitAll, 80); });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitAll);
 function cardHTML(s) {
   const st = STATUS[s.status] || STATUS.pending, step = st.step;
   const pipe = [1,2,3,4].map(i => `<i class="${step >= i ? 'done' : (Math.ceil(step + .01) === i && s.status !== 'pending' ? 'cur' : '')}"></i>`).join('');
@@ -970,6 +987,7 @@ function bindCard(c) {
   $$('[data-cmp]', c).forEach(el => attachCmp(el, () => openLB(s.id, 'compare')));
   $$('video', c).forEach(v => vIO.observe(v));
   $$('.final video', c).forEach(v => { if (!v.src && v.dataset.src) v.src = v.dataset.src; v.play().catch(() => {}); });
+  $$('.final .fv', c).forEach(fv => { fitStrip(fv); requestAnimationFrame(() => fitStrip(fv)); const vb = fv.querySelector('.vbox'); if (stripRO && vb) stripRO.observe(vb); });
   $$('img.lz', c).forEach(im => imgIO.observe(im));
   c.classList.toggle('now', c.dataset.id === cur);
 }
