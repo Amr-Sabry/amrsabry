@@ -11,8 +11,8 @@
  ],
  "previewBytes": 7965960,
  "poster": "poster.jpg",
- "updated": "2026-11-21T18:30:20+04:00",
- "build": 1,
+ "updated": "2026-11-23T10:15:35+04:00",
+ "build": 2,
  "shots": [
   {
    "id": "SH01",
@@ -20,7 +20,7 @@
    "title": "Pens, opening macro",
    "tag": "Live",
    "was": "SH01",
-   "status": "pending",
+   "status": "final",
    "in": 0.0,
    "out": 2.08,
    "frames": 52,
@@ -30,7 +30,16 @@
    "beforeFull": "before/sh01.jpg",
    "loop": "loop/sh01.mp4",
    "notes": [],
-   "versions": [],
+   "versions": [
+    {
+     "v": "v1",
+     "date": "23 Nov 2026",
+     "note": "As shot",
+     "image": "before/sh01_m.webp",
+     "full": "before/sh01.jpg",
+     "video": "loop/sh01.mp4"
+    }
+   ],
    "refs": []
   },
   {
@@ -39,7 +48,7 @@
    "title": "Architect at his desk, from behind",
    "tag": "Live",
    "was": "SH02",
-   "status": "pending",
+   "status": "final",
    "in": 2.08,
    "out": 4.28,
    "frames": 55,
@@ -49,7 +58,16 @@
    "beforeFull": "before/sh02.jpg",
    "loop": "loop/sh02.mp4",
    "notes": [],
-   "versions": [],
+   "versions": [
+    {
+     "v": "v1",
+     "date": "23 Nov 2026",
+     "note": "As shot",
+     "image": "before/sh02_m.webp",
+     "full": "before/sh02.jpg",
+     "video": "loop/sh02.mp4"
+    }
+   ],
    "refs": []
   },
   {
@@ -58,7 +76,7 @@
    "title": "The nib lands on paper",
    "tag": "Live",
    "was": "SH03",
-   "status": "pending",
+   "status": "final",
    "in": 4.28,
    "out": 7.08,
    "frames": 70,
@@ -68,7 +86,16 @@
    "beforeFull": "before/sh03.jpg",
    "loop": "loop/sh03.mp4",
    "notes": [],
-   "versions": [],
+   "versions": [
+    {
+     "v": "v1",
+     "date": "23 Nov 2026",
+     "note": "As shot",
+     "image": "before/sh03_m.webp",
+     "full": "before/sh03.jpg",
+     "video": "loop/sh03.mp4"
+    }
+   ],
    "refs": []
   },
   {
