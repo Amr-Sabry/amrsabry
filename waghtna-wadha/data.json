@@ -250,6 +250,10 @@
    "status": "motion",
    "notes": [
     {
+     "t": "Motion m3 (23 Nov): clean plate on the Motion page — no words, no watermark (native 4K)",
+     "done": true
+    },
+    {
      "t": "Motion m2 (22 Nov): words stay in place in the scene and the camera travels to them; brushed metal lit by the scene's own light and mood; reflections of the words on the facade",
      "done": true
     },
@@ -314,6 +318,18 @@
       "dlmeta": "72 Mbps · 41 MB",
       "meta": "4.52s (cut length) · 25 fps · 113 frames · 3840×2160 native · preview · 4K UHD badge",
       "note": "Note on m1 applied: the words looked like they were flying in the air. In this version each word stands still in its place in the scene and the camera travels to it — the words now carry the plate camera's own rotation and vibration, so they stay locked to the world instead of to the screen. They are made of the same brushed champagne metal as the tower's fins, and their light is taken from the plate frame by frame: the warm low sun from the right at the start, the cooler, moodier tone when the facade goes into shade, the sky and the tower reflected in their faces. Each word is reflected in the glossy metal and glass of the facade below it, with a soft occlusion and a little warm spill. Same five words in DIN Next Arabic Bold, same size, position and timing as the original shot, no numbers. Same native 4K plate as m1 (Seedance 2.5). 113 frames at 25 fps, exactly the slot in the cut."
+     },
+     {
+      "v": "m3",
+      "title": "Motion · clean plate · no words, no watermark · native 4K",
+      "badge": "MOTION 4K · CLEAN",
+      "video": "master/WW_SH02_m1_plate_notext_4K.mp4",
+      "poster": "motion/sh02_m3_poster.jpg",
+      "download": "master/WW_SH02_m1_plate_notext_4K.mp4",
+      "dlmeta": "50 Mbps · 28 MB · no words, no watermark",
+      "meta": "4.52s (cut length) · 25 fps · 113 frames · 3840×2160 native · clean, no badge",
+      "fps": "25 fps",
+      "note": "Per Amr: SH02 on the Motion page with no writing and no watermark. This is the clean plate under m1 and m2 — the same camera move up the gold-lined tower into the sun, native 4K, with no Arabic words and no 4K badge burned in. The preview and the download are the same clean file. The DIN Next Arabic words stay available as a separate pack if they are needed later."
      }
     ]
    }
@@ -4325,9 +4341,9 @@
    "label": "Chroma · End card"
   }
  ],
- "updated": "2026-11-23T09:51:33+04:00",
+ "updated": "2026-11-23T17:24:21+04:00",
  "tagline": "#OurDestinationIsClear",
- "build": 84,
+ "build": 85,
  "removed": [
   {
    "id": "SH31",
