@@ -11,8 +11,8 @@
  ],
  "previewBytes": 7965960,
  "poster": "poster.jpg",
- "updated": "2026-11-23T10:59:47+04:00",
- "build": 7,
+ "updated": "2026-11-23T11:07:46+04:00",
+ "build": 8,
  "shots": [
   {
    "id": "SH01",
@@ -856,7 +856,7 @@
    "title": "The signature, fade to black",
    "tag": "Live",
    "was": "SH36",
-   "status": "pending",
+   "status": "review",
    "in": 61.84,
    "out": 64.32,
    "frames": 62,
@@ -865,8 +865,33 @@
    "before": "before/sh41_m.webp",
    "beforeFull": "before/sh41.jpg",
    "loop": "loop/sh41.mp4",
-   "notes": [],
-   "versions": [],
+   "notes": [
+    {
+     "t": "The pen writes \"Rauf\" letter by letter after \"Hiwa\", ink under the nib, hand follows the stroke; same camera, light and fade (Higgsfield Seedance 2.5 Edit, 720p, Unlimited). The 4 s take plays in the card; the cut slot uses it sped to 2.48 s.",
+     "done": true
+    }
+   ],
+   "versions": [
+    {
+     "v": "v1",
+     "date": "23 Nov 2026",
+     "note": "Seedance 2.5 Edit · 720p",
+     "image": "sh41_v1.jpg",
+     "full": "sh41_v1.jpg",
+     "video": "sh41_v1.mp4",
+     "final": {
+      "preview": "sh41_v1_prev.mp4",
+      "poster": "sh41_v1_prev.jpg",
+      "w": 1486,
+      "h": 622,
+      "fps": 24,
+      "dur": 4.04,
+      "model": "Seedance 2.5 Edit",
+      "clean": "https://d8j0ntlcm91z4.cloudfront.net/user_2vb9Z8LkMqNLrCY7FsWz99oFfwC/hf_20261123_065846_1ce23fab-43e4-4fe4-b17f-5fafbff03cd5.mp4",
+      "info": "HRID_SH41_v1_HD_info.mp4"
+     }
+    }
+   ],
    "refs": []
   }
  ],
@@ -1119,6 +1144,10 @@
   }
  ],
  "log": [
+  {
+   "t": "2026-11-23T11:07:46+04:00",
+   "msg": "SH41 v1 · the pen writes \"Rauf\" · Seedance 2.5 Edit"
+  },
   {
    "t": "2026-11-23T10:59:47+04:00",
    "msg": "SH06 + SH09 final as shot · SH41 in Seedance (Rauf written by the pen)"
