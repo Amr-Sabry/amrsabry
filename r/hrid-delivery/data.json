@@ -11,8 +11,8 @@
  ],
  "previewBytes": 7965960,
  "poster": "poster.jpg",
- "updated": "2026-11-23T10:31:50+04:00",
- "build": 4,
+ "updated": "2026-11-23T10:44:43+04:00",
+ "build": 5,
  "shots": [
   {
    "id": "SH01",
@@ -639,7 +639,18 @@
      "note": "Seedance 2.5 · 4K",
      "image": "sh31_v1.jpg",
      "full": "sh31_v1.jpg",
-     "video": "sh31_v1.mp4"
+     "video": "sh31_v1.mp4",
+     "final": {
+      "preview": "sh31_v1_prev.mp4",
+      "poster": "sh31_v1_prev.jpg",
+      "w": 3840,
+      "h": 2160,
+      "fps": 24,
+      "dur": 4.04,
+      "model": "Seedance 2.5",
+      "clean": "https://e1wj4sdxt68zy0lz.public.blob.vercel-storage.com/videos/1795415422461-9cab0c9e-corn-corn_eed2b0147cea41c78ea3.mp4",
+      "info": "HRID_SH31_v1_4K_info.mp4"
+     }
     }
    ],
    "refs": [
