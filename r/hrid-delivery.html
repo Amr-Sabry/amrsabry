@@ -554,7 +554,7 @@ a.ref:hover{border-color:var(--amber)}
   <div class="wrap">
     <div class="sh rv"><div><div class="kick">01 — The Cut</div><h2>Current <em>edit</em></h2></div><p>Click any block on the strip to jump to that shot, double-click to open its card. The colour line under each block is where the shot comes from.</p></div>
     <div class="theater rv">
-      <div class="screen m-ref" id="screen">
+      <div class="screen m-split" id="screen">
         <video id="pv" playsinline preload="metadata" poster="/r/hrid-delivery/poster.jpg"></video><div class="loadbar" id="loadbar"><i></i></div>
         <div class="pvs" id="pvs"><div class="r empty" id="pvsR"><video id="pv2" muted playsinline preload="none"></video><img alt=""><span class="none"><svg class="i" viewBox="0 0 24 24"><use href="#i-image-plus"/></svg>Awaiting rework</span></div><i class="div"></i><span class="lab l"><span class="chip">EDIT</span></span><span class="lab r2"><span class="chip" id="pvsLab">NEW</span></span></div>
         <div class="cmpv pvx" id="pvx"><img class="aft" alt=""><i class="bar"></i><span class="knob"><svg class="i" viewBox="0 0 24 24"><use href="#i-move"/></svg></span><span class="lab l"><span class="chip">EDIT</span></span><span class="lab r"><span class="chip" id="pvxLab">AFTER</span></span><button class="auto" data-auto title="Pause sweep" aria-label="Pause sweep"><svg class="i" viewBox="0 0 24 24"><use href="#i-pause"/></svg></button></div>
@@ -567,7 +567,7 @@ a.ref:hover{border-color:var(--amber)}
           <button class="ib" id="nextShot" aria-label="Next shot" title="Next shot"><svg class="i" viewBox="0 0 24 24"><use href="#i-skip-fwd"/></svg></button>
           <div class="tc" id="tc">00:00:00 <span>/ 00:00:00</span></div>
           <div class="grow"></div>
-          <div class="modes" id="modes" role="tablist" aria-label="Player view"><button data-pm="orig" title="Original cut"><svg class="i" viewBox="0 0 24 24"><use href="#i-film"/></svg><span>Original</span></button><button data-pm="cmp" title="Wipe between the cut and the reworked frame"><svg class="i" viewBox="0 0 24 24"><use href="#i-columns"/></svg><span>Compare</span></button><button data-pm="split" title="Original and new side by side — the new motion clip plays in sync when the shot has one"><svg class="i" viewBox="0 0 24 24"><use href="#i-video"/></svg><span>Split</span></button><button data-pm="ref" class="on" title="Reworked frame as a thumbnail reference"><svg class="i" viewBox="0 0 24 24"><use href="#i-image"/></svg><span>Ref</span></button></div>
+          <div class="modes" id="modes" role="tablist" aria-label="Player view"><button data-pm="orig" title="Original cut"><svg class="i" viewBox="0 0 24 24"><use href="#i-film"/></svg><span>Original</span></button><button data-pm="cmp" title="Wipe between the cut and the reworked frame"><svg class="i" viewBox="0 0 24 24"><use href="#i-columns"/></svg><span>Compare</span></button><button data-pm="split" class="on" title="Original and new side by side — the new motion clip plays in sync when the shot has one"><svg class="i" viewBox="0 0 24 24"><use href="#i-video"/></svg><span>Split</span></button><button data-pm="ref" title="Reworked frame as a thumbnail reference"><svg class="i" viewBox="0 0 24 24"><use href="#i-image"/></svg><span>Ref</span></button></div>
           <button class="ib" id="toCard" aria-label="Open this shot's card" title="Go to this shot's card"><svg class="i" viewBox="0 0 24 24"><use href="#i-arrow-down"/></svg></button>
           <button class="ib" id="mute" aria-label="Mute"><svg class="i" viewBox="0 0 24 24"><use href="#i-vol"/></svg></button>
           <button class="ib" id="fs" aria-label="Fullscreen"><svg class="i" viewBox="0 0 24 24"><use href="#i-max"/></svg></button>
@@ -1073,11 +1073,11 @@ function tick() {
   if (id !== cur) { cur = id; $$('.seg.shot', tl).forEach(el => el.classList.toggle('on', el.dataset.id === id)); markNow(); updatePX(); }
   $('#toCard').style.visibility = id ? 'visible' : 'hidden';
 }
-let pmode = 'ref';
+let pmode = 'split';
 function setMode(m) {
   pmode = m; scr.classList.toggle('m-cmp', m === 'cmp'); scr.classList.toggle('m-ref', m === 'ref'); scr.classList.toggle('m-split', m === 'split');
   $$('#modes button').forEach(b => b.classList.toggle('on', b.dataset.pm === m));
-  try { localStorage.setItem('hd-pmode', m); } catch {}
+  try { localStorage.setItem('hd-pmode2', m); } catch {}
   updatePX();
 }
 $$('#modes button').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); setMode(b.dataset.pm); }));
@@ -1096,7 +1096,7 @@ function updatePX() {
   }
 }
 $('#pref').addEventListener('click', e => { e.stopPropagation(); if (!cur) return; const s = D.shots.find(x => x.id === cur); openLB(cur, latest(s) ? 'compare' : 'before'); });
-{ let m = 'orig'; try { m = localStorage.getItem('hd-pmode') || 'orig'; } catch {} setTimeout(() => setMode(m), 0); }
+{ let m = 'split'; try { m = localStorage.getItem('hd-pmode2') || 'split'; } catch {} setTimeout(() => setMode(m), 0); }
 /* split: the new motion clip (or the reworked still) beside the running cut, kept in sync with the playhead */
 const pv2 = $('#pv2');
 function updateSplit(s, v) {
